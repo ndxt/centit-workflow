@@ -1,0 +1,359 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommitFlow>
+	<Flow code="undefined" name="undefined" type="undefined" desc="undefined">
+		<Nodes>
+			<Node>
+				<BaseProperties id="begin" name="开始" flowphase="0"
+					nodedesc="" nodetype="A" nodecode="" opttype="A" optcode=""
+					optbean="" optparam="" subwfcode="" roletype="0" rolecode="0"
+					isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F" unitexp="P"
+					powerexp="" expireopt="" desc="" riskinfo="" 
+					/>
+				<VMLProperties shapetype="Oval" textWeight="null"
+					strokeWeight="null" zIndex="null" width="60" height="40" x="270px"
+					y="120px" />
+			</Node>
+			<Node>
+				<BaseProperties id="end" name="结束" flowphase="0"
+					nodedesc="" nodetype="F" nodecode="" opttype="A" optcode=""
+					optbean="" optparam="" subwfcode="" roletype="0" rolecode="0"
+					isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F" unitexp="P"
+					powerexp="" expireopt="" desc="" riskinfo="" />
+				<VMLProperties shapetype="Oval" textWeight="null"
+					strokeWeight="null" zIndex="null" width="60" height="40" x="270px"
+					y="990px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33454" name="拟稿" flowphase="nw"
+					nodedesc="" nodetype="B" nodecode="N_nw" opttype="A" optcode="10001546"
+					optbean="" optparam="moduleCode=XMSB_NW&amp;amp;nw=nw" subwfcode=""
+					roletype="bj" rolecode="jbr" isaccounttime="T" timeLimitType="I"
+					inheritType="0" inheritNodeCode="" timeLimit="" isTrunkLine="T"
+					unitexp="P" powerexp="" expireopt="" desc="" riskinfo="" />
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="240px"
+					y="220px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33455" name="分管领导审核" flowphase="nw"
+					nodedesc="" nodetype="C" nodecode="zbcsfzrsh" opttype="C" optcode="10001675"
+					optbean="optHTFinish" optparam="moduleCode=XMSB_ZBSHfenzhi"
+					subwfcode="" roletype="bj" rolecode="fgwldSH" isaccounttime="T"
+					timeLimitType="I" inheritType="0" inheritNodeCode="" timeLimit=""
+					isTrunkLine="T" unitexp="" powerexp="" expireopt="" desc=""
+					riskinfo="" />
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="240px"
+					y="420px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33456" name="处长签发" flowphase="0"
+					nodedesc="" nodetype="C" nodecode="fgwldqf" opttype="A" optcode="10001675"
+					optbean="" optparam="moduleCode=XMSB_FGQF" subwfcode="" roletype="bj"
+					rolecode="wldqf" isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F" unitexp=""
+					powerexp="" expireopt="" desc="" riskinfo="" />
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="240px"
+					y="660px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33457" name="置文号" flowphase="0"
+					nodedesc="" nodetype="C" nodecode="fwh" opttype="A" optcode="10001548"
+					optbean="" optparam="moduleCode=XMSB_FWH" subwfcode="" roletype="gw"
+					rolecode="wysry" isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F"
+					unitexp="&amp;quot;001821&amp;quot;" powerexp="" expireopt="" desc=""
+					riskinfo="" />
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="240px"
+					y="740px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33458" name="办公室核发、归档" flowphase="0"
+					nodedesc="" nodetype="C" nodecode="pb" opttype="A" optcode="10001675"
+					optbean="" optparam="moduleCode=XMSB_PB" subwfcode="" roletype="gw"
+					rolecode="sr" isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F"
+					unitexp="&amp;quot;001821&amp;quot;" powerexp="" expireopt="" desc=""
+					riskinfo="" />
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="140" height="40" x="230px"
+					y="820px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33459" name="部门会签" flowphase="0"
+					nodedesc="" nodetype="G" nodecode="hqxgcs" opttype="A" optcode="10001546"
+					optbean="" optparam="moduleCode=qb_hq" subwfcode="" roletype="gw"
+					rolecode="BMHQ" isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F" unitexp="zbcshq"
+					powerexp="" expireopt="" desc="" riskinfo="" />
+				<VMLProperties shapetype="multi" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="610px"
+					y="320px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33460" name="意见汇总" flowphase="nw"
+					nodedesc="" nodetype="E" nodecode="N_ngrhqhz" opttype="A" optcode="10001676"
+					optbean="" optparam="moduleCode=XMSB_HQHZ" subwfcode="" roletype="bj"
+					rolecode="jbr" isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F" unitexp=""
+					powerexp="" expireopt="" desc="" riskinfo="" />
+				<VMLProperties shapetype="ju" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="610px"
+					y="420px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33461" name="办公室核稿" flowphase="0"
+					nodedesc="" nodetype="C" nodecode="FW_LDHQ" opttype="A" optcode="10001546"
+					optbean="" optparam="moduleCode=FW_BGSLDHQ" subwfcode="" roletype="gw"
+					rolecode="bgsms" isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F"
+					unitexp="&amp;quot;001821&amp;quot;" powerexp="" expireopt="" desc=""
+					riskinfo="" />
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="240px"
+					y="540px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33462" name="科室负责人审核" flowphase="nw"
+					nodedesc="" nodetype="C" nodecode="FW_CSSH" opttype="A" optcode="10001675"
+					optbean="" optparam="moduleCode=FW_CSSH" subwfcode="" roletype="gw"
+					rolecode="FWcssh" isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F" unitexp="P"
+					powerexp="" expireopt="" desc="" riskinfo="" />
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="240px"
+					y="320px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33463" name="科室意见汇总" flowphase="nw"
+					nodedesc="" nodetype="C" nodecode="FW_CSSHYJ" opttype="A" optcode="10001546"
+					optbean="" optparam="moduleCode=FW_YJHZSH" subwfcode="" roletype="gw"
+					rolecode="FWcssh" isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F" unitexp="P"
+					powerexp="" expireopt="" desc="" riskinfo="" />
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="430px"
+					y="420px" />
+			</Node>
+			<Node>
+				<BaseProperties id="33464" name="自动办结" flowphase="0"
+					nodedesc="" nodetype="C" nodecode="" opttype="D" optcode=""
+					optbean="optApplyFlowFinish" optparam="" subwfcode="" roletype="gw"
+					rolecode="BMSWGD" isaccounttime="T" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" timeLimit="" isTrunkLine="F" unitexp="P"
+					powerexp="" expireopt="" desc="" riskinfo="" />
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="100" height="40" x="250px"
+					y="900px" />
+			</Node>
+		</Nodes>
+		<Transitions>
+			<Transition>
+				<BaseProperties id="33465" name="开始" from="begin" to="33454"
+					cond="1" desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="226pt,120pt,226pt,165pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33465" width="34px" height="24px"
+					x="288px" y="181px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33466" name="提交" from="33457" to="33458"
+					cond="1" desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="226pt,588pt,226pt,620pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33466" width="34px" height="24px"
+					x="270px" y="786px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33467" name="提交" from="33458" to="33464"
+					cond="1" desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="226pt,650pt,226pt,680pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33467" width="34px" height="24px"
+					x="261px" y="873px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33468" name="提交" from="33454" to="33462"
+					cond="1" desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="205pt,195pt,205pt,241pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33468" width="34px" height="24px"
+					x="255px" y="278px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33469" name="同意并提交" from="33462"
+					to="33455"
+					cond="ideacode==&amp;apos;T&amp;apos;&amp;amp;&amp;amp;ishq==&amp;apos;F&amp;apos;"
+					desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="226pt,271pt,226pt,318pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33469" width="74px" height="24px"
+					x="267px" y="373px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33470" name="提交" from="33455" to="33461"
+					cond="ideacode==&amp;apos;T&amp;apos;" desc="" timeLimit=""
+					timeLimitType="I" inheritType="0" inheritNodeCode="" />
+				<VMLProperties points="226pt,348pt,226pt,408pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33470" width="34px" height="24px"
+					x="262px" y="472px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33471" name="同意并提交" from="33461"
+					to="33456" cond="ideacode==&amp;apos;T&amp;apos;" desc=""
+					timeLimit="" timeLimitType="I" inheritType="0" inheritNodeCode="" />
+				<VMLProperties points="226pt,438pt,226pt,498pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33471" width="74px" height="24px"
+					x="265px" y="603px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33472" name="退回拟稿人" from="33462"
+					to="33454" cond="ideacode==&amp;apos;B&amp;apos;" desc=""
+					timeLimit="" timeLimitType="I" inheritType="0" inheritNodeCode="" />
+				<VMLProperties points="250pt,241pt,250pt,195pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33472" width="74px" height="24px"
+					x="307px" y="275px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33473" name="提交" from="33459" to="33460"
+					cond="1" desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="506pt,271pt,506pt,318pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33473" width="34px" height="24px"
+					x="651px" y="385px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33474" name="提交" from="33460" to="33463"
+					cond="1" desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="461pt,333pt,416pt,333pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33474" width="34px" height="24px"
+					x="571px" y="422px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33475" name="退回" from="33461" to="33455"
+					cond="ideacode==&amp;apos;B&amp;apos;" desc="" timeLimit=""
+					timeLimitType="I" inheritType="0" inheritNodeCode="" />
+				<VMLProperties points="180pt,423pt,165pt,409pt,165pt,362pt,180pt,340pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33475" width="34px" height="24px"
+					x="192px" y="526px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33476" name="同意并提交" from="33456"
+					to="33457" cond="isHT==&amp;apos;T&amp;apos;" desc="" timeLimit=""
+					timeLimitType="I" inheritType="0" inheritNodeCode="" />
+				<VMLProperties points="226pt,528pt,226pt,558pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33476" width="74px" height="24px"
+					x="267px" y="708px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33477" name="部门会签" from="33462"
+					to="33459"
+					cond="ishq==&amp;apos;T&amp;apos;&amp;amp;&amp;amp;ideacode==&amp;apos;T&amp;apos;"
+					desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="271pt,256pt,461pt,256pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33477" width="61px" height="24px"
+					x="415px" y="323px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33478" name="提交" from="33463" to="33455"
+					cond="1" desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="325pt,333pt,271pt,333pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33478" width="36px" height="24px"
+					x="396px" y="427px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33479" name="完成" from="33464" to="end"
+					cond="1" desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" />
+				<VMLProperties points="226pt,710pt,226pt,747pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33479" width="34px" height="24px"
+					x="305px" y="951px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33480" name="提交归档" from="33455"
+					to="33458" cond="ideacode==&amp;apos;BJ&amp;apos;" desc=""
+					timeLimit="" timeLimitType="I" inheritType="0" inheritNodeCode="" />
+				<VMLProperties points="271pt,340pt,334pt,378pt,334pt,617pt,280pt,635pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33480" width="61px" height="24px"
+					x="355px" y="482px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33481" name="一般性文件" from="33456"
+					to="33458" cond="isHT==&amp;apos;F&amp;apos;" desc="" timeLimit=""
+					timeLimitType="I" inheritType="0" inheritNodeCode="" />
+				<VMLProperties points="180pt,521pt,120pt,522pt,120pt,635pt,174pt,635pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33481" width="74px" height="24px"
+					x="137px" y="702px" />
+			</Transition>
+			<Transition>
+				<BaseProperties id="33482" name="一般性文件" from="33455"
+					to="33456" cond="ideacode==&amp;apos;F&amp;apos;" desc=""
+					timeLimit="" timeLimitType="I" inheritType="0" inheritNodeCode="" />
+				<VMLProperties points="180pt,333pt,120pt,333pt,120pt,510pt,180pt,521pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33482" width="74px" height="24px"
+					x="167px" y="422px" />
+			</Transition>
+		</Transitions>
+	</Flow>
+</CommitFlow>

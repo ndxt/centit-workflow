@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommitFlow>
+	<Flow code="undefined" name="undefined" type="undefined" desc="undefined">
+		<Nodes>
+			<!-- ...... -->
+			<Node>
+				<BaseProperties id="33455" name="分管领导审核" flowphase="nw"
+					nodedesc="" nodetype="C" nodecode="zbcsfzrsh" opttype="C" optcode="10001675"
+					optbean="optHTFinish" optparam="moduleCode=XMSB_ZBSHfenzhi"
+					subwfcode="" roletype="bj" rolecode="fgwldSH" isaccounttime="T"
+					timeLimitType="I" inheritType="0" inheritNodeCode="" timeLimit=""
+					isTrunkLine="T" unitexp="" powerexp="" expireopt="" desc=""
+					riskinfo="" 
+					
+					routertype="路由类别"
+					multiinsttype="多实例类别" multiinstparam="多实例参数"
+					convergetype="汇聚类别 " convergeparam="汇聚参数"
+					warningrule="报警规则" warningparam="报警参数"/>
+					<!--从routertype属性往后为新添的属性  -->
+					
+				<VMLProperties shapetype="roundrect" textWeight="null"
+					strokeWeight="null" zIndex="null" width="120" height="40" x="240px"
+					y="420px" />
+			</Node>
+			<!-- ...... -->
+		</Nodes>
+		<Transitions>
+			<!-- ...... -->
+			<Transition>
+				<BaseProperties id="33466" name="提交" from="33457" to="33458"
+					cond="1" desc="" timeLimit="" timeLimitType="I" inheritType="0"
+					inheritNodeCode="" isaccounttime="I"
+					canignore="是否可以忽略，新增的一个属性"/>
+					<!--从canignore属性往后为新添的属性  -->
+					
+				<VMLProperties points="226pt,588pt,226pt,620pt"
+					shapetype="PolyLine" startArrow="none" endArrow="Classic"
+					strokeWeight="1" zIndex="2" fromRelX="1" fromRelY="0.5" toRelX="0"
+					toRelY="0" />
+				<LabelProperties id="lab33466" width="34px" height="24px"
+					x="270px" y="786px" />
+			</Transition>
+			<!-- ...... -->
+		</Transitions>
+	</Flow>
+</CommitFlow>

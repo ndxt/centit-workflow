@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.centit.product</groupId>
+    <artifactId>centit-workflow</artifactId>
+    <packaging>pom</packaging>
+    <version>4.0.0-SNAPSHOT</version>
+    <name>com.centit.product:centit-workflow</name>
+    <description>基于职能型组织架构的 工作流引擎服务器。
+    </description>
+    <url>https://github.com/ndxt/centit-workflow</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <centit.framework.version>4.0.0-SNAPSHOT</centit.framework.version>
+        <centit.workflow.version>4.0.0-SNAPSHOT</centit.workflow.version>
+        <jdk.version>1.8</jdk.version>
+        <centit.commons.version>2.2.1</centit.commons.version>
+        <centit.ui.version>3.0.1-SNAPSHOT</centit.ui.version>
+        <centit.ip.version>0.0.2-SNAPSHOT</centit.ip.version>
+        <servlet-api.version>3.1.0</servlet-api.version>
+
+        <ojdbc6.version>11.2.0.4</ojdbc6.version>
+        <junit.version>4.12</junit.version>
+        <mysql.version>5.1.9</mysql.version>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>杨淮生</name>
+            <email>codefan@sina.com</email>
+            <organization>centit.com</organization>
+            <organizationUrl>http://www.centit.com</organizationUrl>
+        </developer>
+
+        <developer>
+            <name>陈芮军</name>
+            <email>chen_rj@centit.com</email>
+            <organization>centit.com</organization>
+            <organizationUrl>http://www.centit.com</organizationUrl>
+        </developer>
+
+        <developer>
+            <name>张凯</name>
+            <email>zk@centit.com</email>
+            <organization>centit.com</organization>
+            <organizationUrl>http://www.centit.com</organizationUrl>
+        </developer>
+
+        <developer>
+            <name>李苏红</name>
+            <email>lsh@centit.com</email>
+            <organization>centit.com</organization>
+            <organizationUrl>http://www.centit.com</organizationUrl>
+        </developer>
+
+         <developer>
+            <name>刘建洋</name>
+            <email>ljy@centit.com</email>
+            <organization>centit.com</organization>
+            <organizationUrl>http://www.centit.com</organizationUrl>
+        </developer>
+
+    </developers>
+
+    <scm>
+        <connection>
+            scm:git:https://github.com/ndxt/centit-workflow.git
+        </connection>
+        <developerConnection>
+            scm:git:https://github.com/ndxt/centit-workflow.git
+        </developerConnection>
+        <url>https://github.com/ndxt/centit-workflow</url>
+        <tag>v1.12</tag>
+    </scm>
+
+    <modules>
+        <module>centit-workflow-module</module>
+        <module>centit-workflow-view</module>
+        <module>centit-workflow-server</module>
+        <module>centit-workflow-client</module>
+        <module>centit-workflow-imbed</module>
+    </modules>
+
+
+    <!-- mvn deploy -DpomFile=pom.xml -->
+
+    <!--    <distributionManagement>
+            <repository>
+                <id>ossrh</id>
+                <name>sonatype-releases</name>
+                <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+            </repository>
+            <snapshotRepository>
+                <id>ossrh</id>
+                <name>sonatype-snapshots</name>
+                <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            </snapshotRepository>
+        </distributionManagement>-->
+
+    <distributionManagement>
+        <repository>
+            <id>centit-releases</id>
+            <name>centit-release</name>
+            <url>http://develop.centit.com:8080/nexus/content/repositories/centit-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>centit-snapshots</id>
+            <name>centit-snapshots</name>
+            <url>http://develop.centit.com:8080/nexus/content/repositories/centit-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerArguments>
+                        <verbose />
+                        <bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>
+                    </compilerArguments>
+                </configuration>
+            </plugin>
+
+            <!-- 打包时添加源码 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- GPG自动签名的插件-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--sonatype release :
+               mvn nexus-staging:release-->
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
