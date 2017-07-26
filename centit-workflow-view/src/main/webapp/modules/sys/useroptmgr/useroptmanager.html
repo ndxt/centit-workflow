@@ -1,0 +1,200 @@
+<style>
+    <!--
+    .left {
+        float: left
+    }
+
+    -->
+</style>
+<div>
+    <div class="easyui-panel" title="基本信息" >
+        <form class="form centit" id="baseInfoForm">
+            <div class="fields three">
+                <div class="field required" >
+                    <label>用户名</label>
+                    <input  class="easyui-combobox" name="userName" id="userName"
+                            data-options="valueField:'userCode',textField:'userName',url:'service/flow/useroptmgr/listAllUser'"
+                    />
+                </div>
+                <div class="field required">
+                    <label>登录名</label>
+                    <input type="text" class="easyui-textbox" name="loginName"
+                           readonly="true" required/>
+                </div>
+                <div class="field required">
+                    <label>账号状态</label>
+                    <input type="text" class="easyui-textbox" name="isValid"
+                           required readonly="true"/>
+                </div>
+            </div>
+            <div class="fields three">
+                <div class="field required">
+                    <label>主机构</label>
+                    <input type="text" class="easyui-textbox" name="unitCode"
+                           readonly="true" required/>
+                </div>
+                <div class="field required">
+                    <label>岗位</label>
+                    <input type="text" class="easyui-textbox" name="userStation"
+                           readonly="true" required/>
+                </div>
+                <div class="field required">
+                    <label>职务</label>
+                    <input type="text" class="easyui-textbox" name="userRank"
+                           required readonly="true"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="easyui-tabs">
+    <div title="待办列表">
+        <div class="easyui-panel" title="待办列表" style="width:100%;height:400px;" data-options="cls:'left'">
+            <div title="待办列表" style="padding: 10px;">
+                <table url="service/flow/useroptmgr/usertasks?_search=true" style="height:auto" id="taskTable"
+                       search=".search"
+                       toolbar=""
+                       layoutH=".search"
+                >
+                    <thead frozen="true">
+                    <tr>
+                        <th data-options="field:'flowOptName'" width="100" align="center">业务名</th>
+                        <th data-options="field:'nodeName'" width="100" align="center">节点名称</th>
+                        <th data-options="field:'timeLimitStr'" width="100" sortable="true" align="center">剩余时间</th>
+                        <th data-options="field:'authDesc'" width="100" align="center">描述</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div title="已办列表">
+        <div class="easyui-panel" title="已办列表" style="width:100%;height:400px;" data-options="cls:'left'">
+            <div title="已办列表" style="padding: 10px;">
+                <table url="service/flow/useroptmgr/usertasksfin?_search=true" style="height:auto"  id="finTaskTable"
+                       search=".search"
+                       toolbar=""
+                       layoutH=".search"
+                >
+                    <thead frozen="true">
+                    <tr>
+                        <th data-options="field:'flowOptName'" width="100" align="center">业务名</th>
+                        <th data-options="field:'nodeName'" width="100" align="center">节点名称</th>
+                        <th data-options="field:'timeLimitStr'" width="100" sortable="true" align="center">剩余时间</th>
+                        <th data-options="field:'authDesc'" width="100" align="center">描述</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div title="任务委托">
+        <div class="easyui-tabs">
+            <div title="接受的委托">
+                <div class="easyui-panel" style="width:100%;height:400px;" data-options="cls:'left'">
+                    <div style="padding: 10px;height:300px;">
+                        <table url="service/flow/useroptmgr/getrelegates"
+                                id="relegateTableGet"
+                               idField="wfInstId"
+                               search=".search"
+                               toolbar=".temp-toolbar"
+                               layoutH=".search"
+                        >
+                            <thead frozen="true">
+                            <tr>
+                                <th data-options="field:'grantorName'" width="100" sortable="true" align="center">委托人
+                                </th>
+                                <th data-options="field:'isvalid'" format="Dictionary:YesOrNo" width="100"
+                                    sortable="true"
+                                    align="center">是否有效
+                                </th>
+                                <th data-options="field:'rolename'" width="100" sortable="true" align="center">委托角色</th>
+                                <th data-options="field:'roletypeText'" width="100" sortable="true" align="center">
+                                    委托角色类别
+                                </th>
+                                <th data-options="field:'recorddate'" width="100" sortable="true" align="center">录入时间
+                                </th>
+                                <th data-options="field:'relegatetime'" width="100" sortable="true" align="center">
+                                    委托时间
+                                </th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div title="发起的委托">
+                <div class="easyui-panel" style="width:100%;height:400px;" data-options="cls:'left'">
+                    <div style="padding: 10px;height:300px;">
+                        <table url="service/flow/useroptmgr/setrelegates"
+                                id="relegateTableSet"
+                               idField="wfInstId"
+                               search=".search"
+                               toolbar=".temp-toolbar"
+                               layoutH=".search"
+                        >
+                            <thead frozen="true">
+                            <tr>
+                                <th data-options="field:'grantorName'" width="100" sortable="true" align="center">委托人
+                                </th>
+                                <th data-options="field:'isvalid'" format="Dictionary:YesOrNo" width="100"
+                                    sortable="true"
+                                    align="center">是否有效
+                                </th>
+                                <th data-options="field:'rolename'" width="100" sortable="true" align="center">委托角色</th>
+                                <th data-options="field:'roletypeText'" width="100" sortable="true" align="center">
+                                    委托角色类别
+                                </th>
+                                <th data-options="field:'recorddate'" width="100" sortable="true" align="center">录入时间
+                                </th>
+                                <th data-options="field:'relegatetime'" width="100" sortable="true" align="center">
+                                    委托时间
+                                </th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div title="关注列表">
+        <div class="easyui-panel" style="width:100%;height:400px;" data-options="cls:'left'">
+            <div style="padding: 10px;">
+                <table url="service/flow/useroptmgr/getAttentions/A" style="height:auto" id="attTable"
+                       search=".search"
+                       toolbar=""
+                       layoutH=".search"
+                >
+                    <thead frozen="true">
+                    <tr>
+                        <th data-options="field:'flowInstId'"     sortable="true" align="center">流程实例号</th>
+                        <th data-options="field:'flowOptName'"   sortable="true"align="center">业务名称</th>
+                        <th data-options="field:'flowOptTag'"    sortable="true" align="center">业务号</th>
+                        <th data-options="field:'flowCode'"      align="center">流程代码</th>
+                        <th data-options="field:'userCode'"      align="center">用户代码</th>
+                        <th data-options="field:'unitCode'"      align="center">组织机构代码</th>
+                        <th data-options="field:'instStateText'"      align="center">流程状态</th>
+                        <th data-options="field:'timeLimitStr'"      align="center">剩余时间</th>
+                        <th data-options="field:'createTime'"      align="center">创建时间</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $.parser.onComplete = function (panel) {
+        $.parser.onComplete = $.noop;
+
+        requirejs(['core/filter/filter.dictionary',
+            'modules/sys/useroptmgr/ctrl/useroptmgr'
+        ], function (FilterDictionary, UserOptMgr) {
+            FilterDictionary.add(['YesOrNo']).then(function () {
+                new UserOptMgr('useroptmgr', panel).load(panel);
+            });
+
+        });
+    };
+</script>

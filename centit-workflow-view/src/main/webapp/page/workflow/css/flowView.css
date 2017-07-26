@@ -1,0 +1,150 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Microsoft Yahei';
+}
+body {
+    background: url(../images/canvasbg.gif) repeat;
+}
+.row{
+    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    border-radius: 6px;
+    /* padding-right: 15px;
+    padding-left: 15px; */
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 400px;
+    background: #ffffff;
+    display: none;
+}
+.col-md-12{
+    width: 100%;
+    float: left;
+    position: relative;
+}
+.panel{
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+.panel-heading{
+    padding: 10px 15px;
+    border-bottom: 1px solid #dddddd;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    color: #333;
+    background-color: #f5f5f5;
+    font-size: 14px;
+    cursor: move;
+}
+.panel-content{
+    min-height: 100px;
+}
+.panel-footer{
+    padding: 10px 15px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+    background: #eee;
+}
+.btn{
+    line-height: 1;
+    display: inline-block;
+    overflow: visible;
+    padding: 3px 8px 3px 10px;
+    cursor: pointer;
+    text-align: center;
+    letter-spacing: 3px;
+    color: #333;
+    border: solid 1px #999;
+    border-radius: 3px;
+    font-size: 14px;
+}
+ul{
+    list-style: none;
+}
+ul li{
+    font-size: 12px;
+    height: 50px;
+    position: relative;
+    padding-left: 15px;
+    z-index: 99;
+}
+ul li a{
+    height: 49px;
+    line-height: 49px;
+    border-bottom: 1px solid #edf1f2;
+    display: block;
+}
+a i{
+    width: 7px;
+    height: 12px;
+    display: block;
+    position: absolute;
+    right: 15px;
+    top: 26px;
+}
+.sort{
+    position: absolute;
+    top: 0;
+    display: none;
+    left: 390px;
+    width: 290px;
+    font-size: 12px;
+    background: #fff;
+    z-index: 9;
+    box-shadow: 0 2px 5px #d5d7d8;
+}
+.sort-bg{
+    position: absolute;
+    left: -5px;
+    top: 0;
+    height: 50px;
+    width: 5px;
+    background: #fff;
+}
+li.hover i{
+    background-position: 0 -12px;
+}
+li.hover>a{
+    border-bottom: 1px solid #ffffff;
+}
+li.hover{
+    box-shadow: 0 2px 5px #d5d7d8;
+}
+li.hover .sort{
+    display: block;
+}
+.red{
+    color:red;
+}
+.blue{
+    color: #0000ff;
+}
+#lineCon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+.step {
+  position: absolute;
+  left: 0;
+  top: 0;
+  text-align: center;
+  white-space: nowrap;
+  padding: 0 4px;
+  height: 24px;
+  line-height: 24px;
+  cursor: default;
+  z-index: 100;
+    font-size:12px;
+}
+.count{
+    text-align:center;
+    position:absolute;
+    font-size:12px;
+}

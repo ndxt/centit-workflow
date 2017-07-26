@@ -1,0 +1,63 @@
+<form class="form centit">
+	<div class="fields two">
+		<div class="field required">
+			<label>流程代码</label>
+			<input type="text" class="easyui-textbox" name="flowCode" 
+				readonly="true" required />
+				<input type="hidden"name="oldFlowCode" 
+				/>
+		</div>
+		
+		<div class="field required">
+			<label>当前版本</label>
+			<input type="text" class="easyui-textbox" name="version" 
+				readonly="true" required />
+		</div>
+	</div>
+	
+	<div class="fields two">
+		<div class="field required">
+			<label>流程名称</label>
+			<input type="text" class="easyui-textbox" name="flowName" 
+				required />
+		</div>
+		
+		<div class="field required">
+			<label>业务模块</label>
+			<input type="text" class="easyui-textbox" name="optId" 
+				required />
+		</div>
+	</div>
+	
+	<div class="fields two">
+		<div class="field">
+			<label>完成期限</label>
+			<input type="text" class="easyui-textbox" name="timeLimit" />
+		</div>
+		
+		<div class="field">
+			<label>逾期处理</label>
+			<input type="text" class="easyui-combobox" name="expireOpt" required target="dictionary" key="WFExpireOpt" />
+		</div>
+	</div>
+	
+	<div class="fields two">
+		<div class="field required">
+			<label>自动发布日期</label>
+			<input type="text" class="easyui-datebox" name="publishDate" />
+		</div>
+		<div class="field">
+		<div class="centit radio">
+				<input type="radio" name="doCopyXML" value="T" />
+				<label>复制图</label>
+				<input type="radio" name="doCopyXML" value="F" />
+				<label>不复制图</label>
+		</div>
+		</div>
+	</div>
+	
+	<div class="field">
+		<label>描述</label>
+		<input type="text" class="easyui-textbox" name="flowDesc" height="100" multiline="true" style="height: 130px;"/>
+	</div>
+</form>

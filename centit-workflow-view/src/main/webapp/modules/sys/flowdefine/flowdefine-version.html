@@ -1,0 +1,45 @@
+<form class="form centit">
+	<div class="fields two">
+		<div class="field">
+			<label>流程名称</label>
+			<input type="text" class="easyui-textbox" name="flowName" 
+				readonly />
+		</div>
+		
+		<div class="field">
+			<label>当前版本</label>
+			<input type="text" class="easyui-textbox" name="version" 
+				readonly="true" />
+		</div>
+	</div>
+</form>
+
+<table style="width: 99%; margin: 0 auto;" id="table_allversion"
+	idField="version"
+	search=".search"
+	toolbar="#flowdefine_version_toolbar"
+	height="300"
+	>
+	<thead frozen="true">
+		<tr>
+			<th field="flowName" width="200" sortable="true">流程名称</th>
+			<th field="version" width="60" sortable="true" align="center">版本</th>
+			<th field="flowState" width="100" 
+				filter="Columen:flowStateText"
+				>状态</th>
+		</tr>
+	</thead>
+	<thead>
+		<tr>
+			<th field="flowDesc" width="300">描述</th>
+		</tr>
+	</thead>
+</table>
+
+<div class="temp-toolbar" id="flowdefine_version_toolbar">
+	<a rel="flowdefine_version_view" iconCls="icon-base icon-base-info"
+		target="custom" trigger="single">查看</a>
+		
+	<a rel="flowdefine_version_edit" iconCls="icon-edit"
+		target="confirm" trigger="single" title="是否确定还原草稿至当前版本？">从当前版本编辑</a>
+</div>

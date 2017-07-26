@@ -1,0 +1,171 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    -moz-user-select: none;
+    font-family: "Microsoft YaHei", sans-serif;
+}
+
+body {
+    background: url(../images/canvasbg.gif) repeat;
+}
+
+li {
+    list-style: none;
+}
+
+table {
+    background: #dddddd;
+    display: inline-table;
+}
+table td div {
+    padding: 4px;
+    text-align: right;
+    line-height: 20px;
+}
+
+table td span {
+    padding: 4px;
+}
+
+table td label {
+    padding-left: 2px;
+}
+
+#tool {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 408px;
+    height: 24px;
+    padding: 0 0 6px 2px;
+    background: buttonface;
+    z-index: 120;
+    border-right: gray 2px solid;
+    border-bottom: gray 2px solid;
+}
+
+#tool div {
+    position: relative;
+    z-index: 10;
+    float: left;
+    height: 24px;
+    margin-top: 4px;
+    padding-right: 2px;
+    background: buttonface;
+    width: 24px;
+    text-align: center;
+}
+
+#tool div:hover {
+    background: #ccccff;
+    border: black 1px solid;
+}
+
+#tool img {
+    cursor: pointer;
+    margin-top: 4px;
+}
+#tool div.split{
+    background:url(../images/split.gif);
+    width:2px;
+    height:30px;
+    margin-top:0;
+}
+#argumentTool {
+    position: fixed;
+    width: 282px;
+    right: 100px;
+    top: 0;
+    z-index: 120;
+    background: #ffffff;
+    display: none;
+    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    border-radius: 6px;
+    /* padding:0 15px 15px 15px; */
+}
+#argumentTool ul{
+    float: left;
+    width: auto;
+    list-style: none;
+    cursor: pointer;
+}
+#argumentTool ul li{
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 70px;
+    border-bottom: 1px solid #dddddd;
+    color: #333;
+    float: left;
+    box-sizing: border-box;
+    border-radius: 4px 4px 0 0;
+}
+#argumentTool ul li.active{
+    font-weight: bold;
+    background: #dddddd;
+}
+#argumentTool ul li:hover{
+    background: #eeeeee;
+}
+.tool-body{
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+.argumentTitle {
+    cursor: move;
+    padding: 4px 0;
+    height: 20px;
+    background: #f5f5f5;
+    color: #333;
+    font-size: 14px;
+    line-height: 20px;
+    text-indent: 10px;
+    border-radius: 6px 6px 0 0;
+}
+#tool .move {
+    cursor: move;
+    background: url(../images/tb_title.gif);
+    width: 4px;
+}
+
+#canvas {
+    width: 100%;
+    height: 1000px;
+    min-height: 1000px;
+    position: absolute;
+}
+
+#lineCon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+
+.step {
+    position: absolute;
+    left: 0;
+    top: 0;
+    text-align: center;
+    white-space: nowrap;
+    padding: 0 4px;
+    height: 24px;
+    line-height: 24px;
+    cursor: pointer;
+    z-index: 100;
+}
+text::selection{
+    background: none;
+}
+.row{
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    border-radius: 6px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 400px;
+    background: #ffffff;
+    display: none;
+}

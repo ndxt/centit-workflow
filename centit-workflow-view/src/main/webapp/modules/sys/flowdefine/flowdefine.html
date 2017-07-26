@@ -1,0 +1,79 @@
+<div class="easyui-panel search-body" cls="search">
+	<form>
+		<div class="search-item">
+			<label>名称</label>
+			<input type="text" class="easyui-textbox" name="s_wfName" />
+		</div>
+		
+		<a class="easyui-linkbutton btn-search" iconCls="icon-search">搜索</a>
+	</form>
+</div>
+
+<table url="service/flow/define?_search=true&field=flowCode&field=flowName&field=version&field=flowDesc&field=flowState&field=canPublish"
+	idField="flowCode"
+	search=".search"
+	toolbar=".temp-toolbar"
+	layoutH=".search"	
+	>
+	<thead frozen="true">
+		<tr>
+			<th data-options="field:'flowCode'" width="100" sortable="true" align="center">编码</th>
+			<th data-options="field:'flowName'" width="325" sortable="true">名称</th>
+			<th data-options="field:'flowState'" width="60"  format="Dictionary:WFFlowState"sortable="true" align="center">状态</th>
+			<th data-options="field:'version'" width="60" sortable="true" align="center">版本</th>
+		</tr>
+	</thead>
+	<thead>
+		<tr>
+			<th data-options="field:'flowDesc'" width="355">描述</th>
+		</tr>
+	</thead>
+</table>
+
+<div class="temp-toolbar">
+	<a rel="flowdefine_add" iconCls="icon-add"
+		href="modules/sys/flowdefine/flowdefine-info.html"
+		target="dialog" trigger="none" title="新建工作流定义" btnValue="添加" width="640" height="540">新增</a>
+		
+	<a rel="flowdefine_edit"  iconCls="icon-edit"
+		href="modules/sys/flowdefine/flowdefine-info.html"
+		target="dialog" trigger="single" title="编辑  {{flowName}}" width="640" height="540">编辑</a>
+		
+	<a rel="flowdefine_stage"  iconCls="icon-base icon-base-flag"
+		href="modules/sys/flowdefine/flowdefine-stage.html"
+		target="dialog" trigger="single" title="编辑  {{flowName}} 阶段" width="740" height="470">阶段</a>
+		
+	<hr>
+	
+	<a rel="flowdefine_version" iconCls="icon-base icon-base-option "
+		href="modules/sys/flowdefine/flowdefine-version.html"
+		target="dialog" trigger="single" title="查看  {{flowName}} 所有版本" width="640" height=470>所有版本</a>
+		
+	<a rel="flowdefine_copy" iconCls="icon-base icon-base-copy_in"
+		href="modules/sys/flowdefine/flowdefine-copy.html"
+		target="dialog" trigger="single" title="复制  {{flowName}}" width="640" height="480">复制</a>
+		
+	<hr>
+	
+	<a rel="flowdefine_release" iconCls="icon-base icon-base-take_out"
+		target="confirm" trigger="single" title="是否确定发布 {{flowName}}">发布</a>
+		
+	<hr>
+	
+	<a rel="flowdefine_draw" iconCls="icon-base icon-base-bruch " 
+		target="custom" trigger="single">编辑流程图</a>
+</div>
+
+<script>
+	$.parser.onComplete = function(panel) {
+		$.parser.onComplete = $.noop;
+		requirejs(['core/filter/filter.dictionary',
+		           'modules/sys/flowdefine/ctrl/flowdefine'
+		          ], function(FilterDictionary,FlowDefine) {
+			FilterDictionary.add(['YesOrNo','WFFlowState']).then(function(){
+				new FlowDefine('flowdefine', panel).load(panel);
+			});
+			
+		});
+	};
+</script>

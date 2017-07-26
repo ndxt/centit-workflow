@@ -1,0 +1,40 @@
+<form class="form centit">
+	<div class="fields three">
+		<div class="field required">
+			<label>流程实例id</label>
+			<input type="text" class="easyui-textbox" name="flowInstId" 
+				readonly="true" required />
+		</div>
+		<div class="field required">
+			<label>流程代码</label>
+			<input type="text" class="easyui-textbox" name="wfCode" 
+				readonly="true" required />
+		</div>
+		<div class="field required">
+			<label>业务名称</label>
+			<input type="text" class="easyui-textbox" name="flowOptName" 
+				required readonly="true" />
+		</div>
+	</div>
+</form>
+		
+
+<table style="width: 99%; margin: 0 auto;"
+	toolbar=".temp-toolbar"
+	height="300"
+	pageNumber="false" pagination="false"
+	editable="false"
+	>
+	<thead>
+		<tr>
+			<th field="userCode" align="center"
+				 data-options="editor:{type:'textbox', options:{required: true}}">操作人</th>
+			<th field="actionTypeText" 
+				 data-options="editor:{type:'textbox', options:{required: true}}">操作类型</th>
+			<th field="adminDesc" align="center"
+				 data-options="editor:{type:'textbox', options:{required: true}}">描述</th>
+			<th field="actionTime"  align="center"
+				 data-options="editor:{type:'textbox', options:{required: true}}">操作时间</th>
+		</tr>
+	</thead>
+</table>

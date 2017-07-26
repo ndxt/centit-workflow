@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<title>工作流在线编辑</title>
+<link href="css/style.css" rel="stylesheet">
+    <style>
+		.step{
+			border-radius:2px;
+		}
+    </style>
+</head>
+<body onselectstart="return false;">
+	<div id="tool">
+		<div id="move" class="move"></div>
+		<div id="undo">
+			<img src="images/undo.gif" title="撤销" />
+		</div>
+		<div id="redo">
+			<img src="images/redo.gif" title="前进" />
+		</div>
+		<div id="toxml" onclick="saveXml();">
+			<img src="images/has_saved.png" title="保存流程图" />
+		</div>
+		<div id="validate" onclick="validate();">
+			<img src="images/validate.gif" title="校验流程图" />
+		</div>
+		<div class="split"></div>
+		<div id="delete">
+			<img src="images/delete.png" title="删除选中对象" />
+		</div>
+		<div class="opt" id="cursor" style="background: #888;">
+			<img id="default" src="images/default.png" title="修改选中对象" />
+		</div>
+		<div class="opt"  style="background: buttonface;">
+			<img id="selectMore" src="images/select_area.png" title="多选" />
+		</div>
+		<div class="opt">
+			<img id="rect" src="images/rect.png" title="点击画业务节点" />
+		</div>
+		<div class="opt">
+			<img id="circle" src="images/circle.png" title="点击画路由节点" />
+		</div>
+		<div class="opt">
+			<img id="line" src="images/polyline.png" title="点击画流转线" />
+		</div>
+		<div class="split"></div>
+		<div onclick="setZoom('big');">
+			<img src="images/zoomin.gif" title="放大显示比例 " />
+		</div>
+		<div style="width: 45px;">
+			<select id="zoomshow" oninput="changeZoom(this.value);"
+				style="width: 50px; margin-top: 2px;">
+				<option value="0.2">20%</option>
+				<option value="0.4">40%</option>
+				<option value="0.6">60%</option>
+				<option value="0.8">80%</option>
+				<option value="1" selected>100%</option>
+				<option value="1.2">120%</option>
+				<option value="1.4">140%</option>
+				<option value="1.6">160%</option>
+				<option value="1.8">180%</option>
+				<option value="2">200%</option>
+			</select>
+		</div>
+		<div onclick="setZoom('small');">
+			<img src="images/zoomout.gif" title="缩小显示比例 " />
+		</div>
+		<!-- <div id="undo" onclick="undoLog();"><img src="images/undo.gif" title="撤消最后一次操作"/></div>
+    <div id="redo" onclick="redoLog();"><img src="images/redo.gif" title="恢复最后一次取消的操作"/></div> -->
+		<div class="split"></div>
+		<div id="close" onclick="closeWindow();">
+			<img src="images/exit.gif" title="返回" />
+		</div>
+	</div>
+	<div id="argumentTool">
+		<div class="tool-body">
+			<div id="argumentTitle" class="argumentTitle">属性</div>
+			<ul>
+				<li id="common">基本属性</li>
+				<li id="operate">业务设置</li>
+				<li id="permission">权限定义</li>
+				<li id="time">时间约束</li>
+				<li id="special" style="display: none;">特殊属性</li>
+				<li id="constraint" style="width: 120px; display: none;">目标节点时间约束</li>
+			</ul>
+			<div id="argumentContent" class="argumentContent">
+				<table width="100%" cellpadding="0" cellspacing="10" id="commonAttr">
+					<tr>
+						<td width="37%">
+							<div>
+								<label for="nodename">名称</label>
+							</div>
+						</td>
+						<td width="63%">
+							<div>
+								<input type="text" id="nodename" value="" style="width: 97%;"
+									   oninput="changeValue(this,'title')" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="nodecode">环节代码</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="nodecode" value="" style="width: 97%;"
+									   oninput="changeValue(this,'nodecode')" />
+							</div>
+						</td>
+					</tr>
+					<tr id="route-type" style="display: none;">
+						<td>
+							<div>
+								<label for="routertype">路由类型</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="routertype"
+									oninput="setRouteType(this,'routertype')">
+									<option selected value="D">分支</option>
+									<option value="E">汇聚</option>
+									<option value="G">多实例</option>
+									<option value="H">并行</option>
+									<option value="R">游离</option>
+									<option value="S">同步</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr id="flow-phase">
+						<td>
+							<div>
+								<label for="flowphase">流程节点阶段</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="flowphase"
+									oninput="changeValue(this,'flowphase')">
+									<option value="0">请选择</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr id="is-trunkLine">
+						<td>
+							<div>
+								<label for="isTrunkLine">是否主干节点</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="isTrunkLine"
+									oninput="changeValue(this,'isTrunkLine')">
+									<option value="T">是</option>
+									<option selected value="F">否</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div style="height: 47px; line-height: 47px;">
+								<label for="nodedesc">节点描述</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<textarea id="nodedesc" oninput="changeValue(this,'nodedesc')"
+									style="height: 40px; width: 97%;"></textarea>
+							</div>
+						</td>
+					</tr>
+				</table>
+				<table width="100%" cellpadding="0" cellspacing="10"
+					id="operateAttr">
+					<tr>
+						<td>
+							<div>
+								<label for="opttype">操作类别</label>
+							</div>
+						</td>
+						<td width="67%">
+							<div>
+								<select style="width: 99%;" id="opttype"
+										oninput="changeValue(this,'opttype')">
+									<option value="D">自动执行</option>
+									<option value="E">哑元</option>
+									<option value="S">子流程</option>
+									<option value="A">抢先（一般）</option>
+									<option value="C">多人操作</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr id="business" style="">
+						<td>
+							<div>
+								<label for="optcode">业务操作</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="optcode"
+									oninput="changeValue(this,'optcode')">
+									<option selected='selected'>请选择</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="optparam">操作参数</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="optparam" value="" style="width: 97%;"
+									oninput="changeValue(this,'optparam')" />
+							</div>
+						</td>
+					</tr>
+					<tr id="childNode" style="">
+						<td>
+							<div>
+								<label for="subwfcode">子流程</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="subwfcode"
+									oninput="changeValue(this,'subwfcode')">
+									<option>请选择</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr id="nodeEvent">
+						<td>
+							<div style="white-space: nowrap;">
+								<label for="optbean">事件Bean</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="optbean" value="" style="width: 97%;"
+									oninput="changeValue(this,'optbean')" />
+							</div>
+						</td>
+					</tr>
+					<!-- 
+					<tr>
+						<td>
+							<div>
+								<label for="riskinfo">风险点设置</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" value="" id="riskinfo"
+									oninput="changeValue(this,'riskinfo')" style="width: 97%;" />
+							</div>
+						</td>
+					</tr>
+					 -->
+				</table>
+				<table width="100%" cellpadding="0" cellspacing="10"
+					id="permissionAttr">
+					<tr>
+						<td>
+							<div>
+								<label for="unitexp">机构表达式</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="unitexp" value="P" style="width: 97%;"
+									oninput="changeValue(this,'unitexp')" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="roletype">角色类别</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="roletype"
+									oninput="changeValue(this,'roletype')">
+									<option value="">不设置</option>
+									<option value="bj">办件角色</option>
+									<option value="gw">岗位角色</option>
+									<option value="xz">行政角色</option>
+									<option value="en">权限引擎</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr id="roleName">
+						<td>
+							<div>
+								<label for="rolecode">角色代码</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="rolecode"
+									oninput="changeValue(this,'rolecode')">
+									<option value="">请选择</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr id="powerName" style="display: none;">
+						<td>
+							<div>
+								<label for="powerexp">权限表达式</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input id="powerexp" oninput="changeValue(this,'powerexp')"
+									type="text" style="width: 97%;" />
+							</div>
+						</td>
+					</tr>
+				</table>
+				<table width="100%" cellpadding="0" cellspacing="10" id="timeAttr">
+					<tr>
+						<td>
+							<div>
+								<label for="isaccounttime">是否计时</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="isaccounttime"
+									oninput="changeValue(this,'isaccounttime')">
+									<option value="H">仅环节计时</option>
+									<option value="F">不计时</option>
+									<option selected value="T">计时</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="timeLimitType">期限类别</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="timeLimitType"
+									oninput="changeValue(this,'timeLimitType')">
+									<option value="I" selected>未设置</option>
+									<option value="N">无期限</option>
+									<option value="F">每实例固定期限</option>
+									<option value="C">节点固定期限</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="timelimit">期限设定</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="timelimit" value="" style="width: 97%;"
+									oninput="changeValue(this,'timeLimit')" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="inheritType">继承期限类别</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="inheritType"
+									oninput="changeValue(this,'inheritType')">
+									<option value="0" selected>不继承</option>
+									<option value="1">继承前一节点</option>
+									<option value="2">继承指定节点</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr style="display: none;" id="inheritCode">
+						<td>
+							<div>
+								<label for="inheritNodeCode">继承环节代码</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="inheritNodeCode" value=""
+									style="width: 97%;"
+									oninput="changeValue(this,'inheritNodeCode')" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="expireopt">过期处理方法</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input style="width: 97%;" id="expireopt" value="预警" readonly />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="warningrule">预警规则</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select id="warningrule" style="width: 99%;"
+									oninput="changeValue(this,'warningrule')">
+									<option value="R" selected>运行时间预警</option>
+									<option value="L">剩余时间预警</option>
+									<option value="P">期限比例预警</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="warningparam">预警时间参数</label>
+							</div>
+						</td>
+						<td><div>
+								<input type="text" id="warningparam" style="width: 97%;"
+									oninput="changeValue(this,'warningparam')" />
+							</div></td>
+					</tr>
+				</table>
+				<table width="100%" cellpadding="0" cellspacing="10"
+					id="specialAttr">
+					<tr class="multi-special">
+						<td>
+							<div>
+								<label for="multiinsttype">多实例类别</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select id="multiinsttype" style="width: 99%;"
+									oninput="changeValue(this,'multiinsttype')">
+									<option value="D" selected>按照机构变量</option>
+									<option value="U">按照人员</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr class="multi-special">
+						<td>
+							<div>
+								<label for="route-unitexp">机构表达式</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="route-unitexp" value="P"
+									style="width: 97%;" oninput="changeValue(this,'unitexp')" />
+							</div>
+						</td>
+					</tr>
+					<tr class="multi-special">
+						<td>
+							<div>
+								<label for="route-roletype">角色类别</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="route-roletype"
+									oninput="setRoleType(this)">
+									<option value="bj">办件角色</option>
+									<option value="gw">岗位角色</option>
+									<option value="xz">行政角色</option>
+									<option value="en">权限引擎</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr id="route-roleName" class="multi-special">
+						<td>
+							<div>
+								<label for="route-rolecode">角色代码</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="route-rolecode"
+									oninput="changeValue(this,'rolecode')">
+									<option value="">请选择</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr id="route-powerName" style="display: none;"
+						class="multi-special">
+						<td>
+							<div>
+								<label for="route-powerexp">权限表达式</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input id="route-powerexp"
+									oninput="changeValue(this,'powerexp')" type="text"
+									style="width: 97%;" />
+							</div>
+						</td>
+					</tr>
+					<tr class="ju-special">
+						<td>
+							<div>
+								<label for="convergetype">汇聚条件类别</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select id="convergetype" style="width: 99%;"
+									oninput="changeValue(this,'convergetype')">
+									<option value="A" selected>全部完成</option>
+									<option value="L">至少完成x条路径</option>
+									<option value="M">最多有x条路径没有完成</option>
+									<option value="V">完成比率要到的x</option>
+									<option value="E">外埠bean判断</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr class="ju-special">
+						<td><div>
+								<label for="convergeparam">汇聚参数</label>
+							</div></td>
+						<td><div>
+								<input id="convergeparam" type="text" style="width: 97%"
+									oninput="setConvergeparam(this)">
+							</div></td>
+					</tr>
+					<tr class="ju-special">
+						<td><div>
+								<label for="route-optbean">汇聚外埠判断</label>
+							</div></td>
+						<td><div>
+								<input id="route-optbean" type="text" style="width: 97%"
+									oninput="changeValue(this,'optbean')">
+							</div></td>
+					</tr>
+				</table>
+				<table id="lineAttr" width="100%" cellpadding="0" cellspacing="10">
+					<tr>
+						<td><div>
+								<label for="line-name">名称</label>
+							</div></td>
+						<td><div>
+								<input id="line-name" type="text" style="width: 97%;"
+									oninput="setLineName(this)">
+							</div></td>
+					</tr>
+					<tr>
+						<td><div>
+								<label for="cond">条件表达式</label>
+							</div></td>
+						<td><div>
+								<input id="cond" type="text" style="width: 97%;"
+									oninput="changeValue(this,'cond')">
+							</div></td>
+					</tr>
+				</table>
+				<table id="constraintAttr" width="100%" cellpadding="0" cellspacing="10">
+					<tr>
+	                    <td>
+	                        <div><label for="line-isaccounttime">是否计时</label></div>
+	                    </td>
+	                    <td>
+	                        <div><select style="width:99%;" id="line-isaccounttime"
+	                                     oninput="changeValue(this,'isaccounttime')">
+	                            <option value="I">忽略</option>
+	                            <option value="H">仅环节计时</option>
+		                        <option value="F">不计时</option>
+		                        <option value="T">计时</option>
+	                        </select></div>
+	                    </td>
+	                </tr>
+					<tr>
+						<td>
+							<div>
+								<label for="line-timeLimitType">期限类别</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="line-timeLimitType"
+									oninput="changeValue(this,'timeLimitType')">
+									<option value="I" selected>未设置</option>
+									<option value="N">无期限</option>
+									<option value="F">每实例固定期限</option>
+									<option value="C">节点固定期限</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="line-timeLimit">期限设定</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="line-timeLimit" value=""
+									style="width: 97%;" oninput="changeValue(this,'timeLimit')" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="line-inheritType">继承期限类别</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="line-inheritType"
+									oninput="setInheritType(this)">
+									<option value="0" selected>不继承</option>
+									<option value="1">继承前一节点</option>
+									<option value="2">继承指定节点</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr style="display: none;" id="line-inheritCode">
+						<td>
+							<div>
+								<label for="line-inheritNodeCode">继承环节代码</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" id="line-inheritNodeCode" value=""
+									style="width: 97%;"
+									oninput="changeValue(this,'inheritNodeCode')" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<label for="canignore">可以忽略运行</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="canignore"
+									oninput="changeValue(this,'canignore')">
+									<option value="T">是</option>
+									<option value="F">否</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td><div>
+								<label for="line-desc">描述</label>
+							</div></td>
+						<td><div>
+								<input id="line-desc" type="text" style="width: 97%;"
+									oninput="changeValue(this,'desc')">
+							</div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div id="canvas"></div>
+	<div id="lineCon"></div>
+	<script type="text/javascript" src="js/url.js"></script>
+	<script type="text/javascript" src="js/svg.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/moveTip.js"></script>
+	<script type="text/javascript" src="js/topflow.js"></script>
+	<script type="text/javascript" src="js/topflowevent.js"></script>
+	<script type="text/javascript" src="js/drag.js"></script>
+	<script type="text/javascript" src="js/reundo.js"></script>
+	<script type="text/javascript">
+		var path = getQueryString('contentPath') || '/'+location.pathname.split("/")[1]+'/';
+		var csrf = getQueryString('cs');
+
+		if (!csrf) {
+			$.ajax({
+				url: path + 'system/mainframe/login/csrf',
+				dataType: 'json',
+				success: function(res) {
+					console.log(1);
+					var data = res.data;
+					var ajaxData = {};
+					ajaxData[data.parameterName] = data.token;
+
+					$.ajaxSetup({
+						data: ajaxData
+					});
+				}
+			});
+		}
+		else {
+			$.ajaxSetup({
+				data: {
+					_csrf: csrf
+				}
+			});
+		}
+
+    if (SVG.supported) {
+    	var flowCode = location.search.substr(1).split("&")[0].split("=")[1];
+    	var Data;
+
+        var xml;
+        $.ajax({
+			type: "get",
+			async: false,
+			url: path+loadDefineXml+flowCode + "/000",
+			dataType: "json",
+			success: function (data) {
+				xml = data.data;
+//				xml = data;
+			}
+        });
+        init();
+        if (xml&&xml!="0"&&xml!="") {
+            loadXml((xml));
+        	//createEmptyXml();//覆盖老数据，创建只有开始结束节点的流程图
+        }
+        else{
+            createEmptyXml();
+        }
+        $.ajax({
+        	type:"get",
+        	async:false,
+        	url:path+loadDefineData+flowCode,
+        	success:function(data){
+        		Data = data.data;
+        	},
+        	error:function(data){
+        		alert("请求失败");
+        	}
+        });
+    }
+    else {
+        alert("您的浏览器不支持SVG，请换其他浏览器");
+        window.close();
+    }
+    $("#argumentTool").find("li").each(function (index) {
+        $(this).bind("click", function () {
+            if ($(this).hasClass("active")) {
+                return false;
+            }
+            $("#argumentTool").find("li").removeClass("active");
+            $(this).addClass("active");
+            if (index == 0) {
+                $("table").hide();
+               	$("polyline[stroke='#18b217']")[0] ? $("#lineAttr").show() : $("#commonAttr").show();
+            }
+            else if (index == 1) {
+                $("table").hide();
+                $("#operateAttr").show();
+            }
+            else if (index == 2) {
+                $("table").hide();
+                $("#permissionAttr").show();
+            }
+            else if (index == 3) {
+                $("table").hide();
+                $("#timeAttr").show();
+            }
+            else if (index == 4) {
+                $("table").hide();
+                $("#specialAttr").show();
+            }
+            else if (index == 5) {
+                $("table").hide();
+                $("#constraintAttr").show();
+            }
+        });
+    });
+
+
+</script>
+</body>
+</html>

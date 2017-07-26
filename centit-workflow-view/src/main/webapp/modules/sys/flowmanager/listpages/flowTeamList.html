@@ -1,0 +1,49 @@
+<form class="form centit">
+    <div class="fields three">
+        <div class="field required">
+            <label>流程实例id</label>
+            <input type="text" class="easyui-textbox" name="flowInstId"
+                   readonly="true" required />
+        </div>
+        <div class="field required">
+            <label>流程代码</label>
+            <input type="text" class="easyui-textbox" name="flowCode"
+                   readonly="true" required />
+        </div>
+        <div class="field required">
+            <label>业务名称</label>
+            <input type="text" class="easyui-textbox" name="flowOptName"
+                   required readonly="true" />
+        </div>
+    </div>
+</form>
+<table style="width: 99%; margin: 0 auto;"
+       toolbar="#team-Toolbar"
+       height="300"
+       pageNumber="false" pagination="false"
+       editable="false"
+>
+    <thead>
+    <tr>
+        <!--<th  field="flowInstId" width="" align="center">流程实例id</th>-->
+        <th  field="roleCode" width="" align="center">角色代码</th>
+        <!--<th  field="value" align="center" width="" data-options="formatter: function (v,rec) {return rec.value[0].userCode}">用户代码</th>-->
+        <th  field="userCode" align="center" width="" >用户名</th>
+        <th  field="userName" align="center" width="" >用户名</th>
+        <!--<th  field="userOrder" align="center" width="">排序号</th>-->
+        <!--<th  field="authDesc" align="center" width="">授权说明</th>-->
+        <!--<th  field="authTime" align="center" width="">创建时间</th>-->
+    </tr>
+    </thead>
+</table>
+
+<div class="temp-toolbar node" id="team-Toolbar">
+    <a rel="addteam" iconCls="icon-add"
+       href="modules/sys/flowmanager/listpages/flowTeam_info.html"
+       target="dialog" trigger="none" title=""  width="640" height="540">新增</a>
+    <hr>
+    <a rel="deleteteam" iconCls="icon-remove"
+       target="confirm" trigger="single" title="确定删除{{userName}}用户吗？" >删除</a>
+    <hr>
+
+</div>

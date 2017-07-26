@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<!-- 数据表格 -->
+<div xt-grid="variable in variableList"  order="" serach="" >
+	<a xt-button ng-click="addVariable()" class="add" icon="plus">添加流程变量</a>
+
+    <div xt-grid-column property="runToken" title="令牌"></div>
+
+	<div xt-grid-column property="varName"  title="变量名"></div>
+	
+	<div xt-grid-column property="varValue"  title="变量值"></div>
+
+	<div xt-grid-column xt-grid-operation title="操作">
+	
+		<a xt-button class="edit" ng-click="parent.editVari(variable)" >编辑变量值</a>
+	</div>
+</div>
