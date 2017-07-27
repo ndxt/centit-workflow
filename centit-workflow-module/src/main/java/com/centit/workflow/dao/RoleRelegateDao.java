@@ -27,9 +27,9 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate,Long> {
 
             filterField.put("isValid", CodeBook.LIKE_HQL_ID);
 
-            filterField.put("relegateTime", "relegateTime like to_date(?,'yyyy-mm-dd')");
+            filterField.put("(date)relegateTime", "relegateTime like :relegateTime");
 
-            filterField.put("expireTime", "expireTime like to_date(?,'yyyy-mm-dd')");
+            filterField.put("(date)expireTime", "expireTime like :relegateTime");
 
             filterField.put("unitCode", CodeBook.LIKE_HQL_ID);
 

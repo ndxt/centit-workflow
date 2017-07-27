@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
+import com.centit.support.database.QueryAndNamedParams;
+import com.centit.workflow.po.UserTask;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +29,9 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId>
 		if( filterField == null){
 			filterField = new HashMap<String, String>();
 
-			filterField.put("flowCode" , "cid.flowCode=?");
+			filterField.put("flowCode" , "cid.flowCode= :flowCode");
 
-			filterField.put("version" , "cid.version=?");
+			filterField.put("version" , "cid.version= :version");
 
 			filterField.put("flowName" , CodeBook.LIKE_HQL_ID);
 
@@ -67,8 +70,8 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId>
 	public List<FlowInfo> getAllLastVertionFlows(Map<String,Object> filterMap){
 		
 		String sql =  "SELECT * FROM F_V_LASTVERSIONFLOW WHERE 1=1 " ;
-		QueryAndParams sqlAndParams =  builderHqlAndParams(sql,filterMap);
-		return (List<FlowInfo>)DatabaseOptUtils.findObjectsBySql(this,sqlAndParams.getHql(),sqlAndParams.getParams(), FlowInfo.class);
+		QueryAndNamedParams sqlAndParams = QueryUtils.translateQuery(sql,filterMap);
+		return (List<FlowInfo>)DatabaseOptUtils.findObjectsByHql(this,sqlAndParams.getHql(),sqlAndParams.getParams());
 	}
 	@Transactional(propagation= Propagation.MANDATORY)
 	public List<FlowInfo> getAllVersionFlowsByCode(String wfCode, PageDesc pageDesc){
@@ -106,14 +109,16 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId>
             Map<String, Object> filterMap, PageDesc pageDesc) {
         
         String sql =  "FROM LastVersionFlowDefine WHERE 1=1" ;
-        QueryAndParams sqlAndParams =  builderHqlAndParams(sql,filterMap);
-        @SuppressWarnings("unchecked")
-        List<LastVersionFlowDefine> ls=(List<LastVersionFlowDefine>) DatabaseOptUtils.findObjectsByHql(
-                    this, sqlAndParams.getHql(),sqlAndParams.getParams(), pageDesc);
+		QueryAndNamedParams sqlAndParams = QueryUtils.translateQuery(sql,filterMap);
+		List<LastVersionFlowDefine> ls = (List<LastVersionFlowDefine>)DatabaseOptUtils.findObjectsByHql(this,sqlAndParams.getHql(),sqlAndParams.getParams(),pageDesc);
+
+		@SuppressWarnings("unchecked")
         List<FlowInfo>all=new ArrayList<FlowInfo>();
-        for(LastVersionFlowDefine s:ls){
-            all.add(s.toWfFlowDefine());
-        }
+        if(ls != null && ls.size() > 0) {
+			for (LastVersionFlowDefine s : ls) {
+				all.add(s.toWfFlowDefine());
+			}
+		}
         return all;
     }
 

@@ -28,13 +28,12 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long>
 			filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
 			filterField.put("flowId" , CodeBook.LIKE_HQL_ID);
 			filterField.put("version" , CodeBook.LIKE_HQL_ID);
-//			filterField.put("createtime" , "createtime like to_date(?,'yyyy-mm-dd')");
 
-			filterField.put("createTimeBeg",
-                    " createTime>= to_date(?, 'yyyy-MM-dd hh24:mi:ss') ");
-            filterField.put("createTimeEnd",
-                    " createTime< to_date(?, 'yyyy-MM-dd hh24:mi:ss')+1 ");
-			filterField.put("lastUpdateTime" , "lastUpdateTime = to_date(?,'yyyy-mm-dd')");
+			filterField.put("(date)createTimeBeg",
+                    " createTime>= :createTimeBeg");
+            filterField.put("(date)createTimeEnd",
+                    " createTime<= createTimeEnd  ");
+			filterField.put("(date)lastUpdateTime" , "lastUpdateTime = :lastUpdateTime");
 
 			filterField.put("instState" , CodeBook.EQUAL_HQL_ID);
 			filterField.put("isSubInst" , CodeBook.LIKE_HQL_ID);
@@ -44,11 +43,11 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long>
 			filterField.put("preNodeInstId" , CodeBook.LIKE_HQL_ID);
 			filterField.put("unitCode" , CodeBook.LIKE_HQL_ID);
             filterField.put("userCode" , CodeBook.LIKE_HQL_ID);
-            filterField.put("nodeId" , "flowInstId in (select flowInstId from NodeInstance where nodeState='N' and nodeId=to_number(?))" );
+            filterField.put("(long)nodeId" , "flowInstId in (select flowInstId from NodeInstance where nodeState='N' and nodeId=:nodeId)" );
             filterField.put("optCode", "flowInstId in "+
-               "(select a.flowInstId from NodeInstance a,NodeInfo b where a.nodeId=b.nodeId and a.nodeState='N' and b.optCode=?)" );
+               "(select a.flowInstId from NodeInstance a,NodeInfo b where a.nodeId=b.nodeId and a.nodeState='N' and b.optCode=:optCode)" );
 			
-            filterField.put("nocom" , "instState <> ?");
+            filterField.put("nocom" , "instState <> :nocom");
             filterField.put("NP_warning" , "flowInstId in (select flowInstId from FlowWarning ) ");
 
             filterField.put(CodeBook.ORDER_BY_HQL_ID , "createTime desc,flowInstId desc");

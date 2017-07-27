@@ -6,11 +6,9 @@ import com.centit.framework.core.common.JsonResultUtils;
 import com.centit.framework.core.common.ResponseData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.dao.PageDesc;
+import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.framework.model.basedata.IUserUnit;
-import com.centit.framework.staticsystem.po.UserInfo;
-import com.centit.framework.staticsystem.service.impl.AbstractStaticPlatformEnvironment;
-import com.centit.support.database.QueryUtils;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.RoleRelegate;
@@ -38,7 +36,7 @@ public class UserOptController extends BaseController{
     @Resource
     private FlowEngine flowEng;
     @Resource
-    private AbstractStaticPlatformEnvironment platformEnvironment;
+    private PlatformEnvironment platformEnvironment;
     @Resource
     FlowManager flowManager;
     private ResponseData resData;
@@ -46,7 +44,7 @@ public class UserOptController extends BaseController{
 
     @RequestMapping(value = "/listAllUser", method = RequestMethod.GET)
     public void listAllUser(HttpServletResponse response){
-        List<UserInfo> userList = platformEnvironment.listAllUsers();
+        Object userList = platformEnvironment.listAllUsers();
         JsonResultUtils.writeSingleDataJson(userList,response);
     }
     /**

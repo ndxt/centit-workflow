@@ -52,7 +52,7 @@ public class WebInitializer implements WebApplicationInitializer {
      */
     private void initializeSpringConfig(ServletContext servletContext){
         AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
-        springContext.register(SystemBeanConfig.class);
+        springContext.register(SystemBeanConfig.class,ServiceConfig.class);
         servletContext.addListener(new ContextLoaderListener(springContext));
     }
 

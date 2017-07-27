@@ -23,8 +23,8 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
 			filterField.put("nodeInstId", CodeBook.EQUAL_HQL_ID);
 			filterField.put("flowInstId", CodeBook.EQUAL_HQL_ID);
 			filterField.put("nodeId", CodeBook.EQUAL_HQL_ID);
-            filterField.put("createTime" , "createTime like to_date(?,'yyyy-mm-dd')");
-            filterField.put("lastUpdateTime" , "lastUpdateTime like to_date(?,'yyyy-mm-dd')");
+            filterField.put("(date)createTime" , "createTime like :createTime");
+            filterField.put("(date)lastUpdateTime" , "lastUpdateTime like :createTime");
             filterField.put("lastUpdateUser", CodeBook.EQUAL_HQL_ID);
 			filterField.put("startTime", CodeBook.EQUAL_HQL_ID);
 			filterField.put("nodeState", CodeBook.EQUAL_HQL_ID);
