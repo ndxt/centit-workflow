@@ -18,6 +18,7 @@ import com.centit.workflow.service.FlowManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -161,8 +162,10 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value="/saveorg/{flowInstId}/{roleCode}/{unitCode}/{authDesc}",method=RequestMethod.POST)
-    public void assignOrganize(@PathVariable Long flowInstId,@PathVariable String roleCode,
-                               @PathVariable String unitCode,@PathVariable String authDesc, HttpServletRequest request,HttpServletResponse response){
+    public void assignOrganize(
+            @PathVariable Long flowInstId, @PathVariable String roleCode,
+                               @PathVariable String unitCode, @PathVariable String authDesc,
+                               HttpServletRequest request, HttpServletResponse response){
         flowEng.assignFlowOrganize(flowInstId,roleCode,unitCode,authDesc);
         JsonResultUtils.writeSingleDataJson("", response);
         

@@ -14,5 +14,22 @@
     <name>com.centit.product:centit-workflow-client</name>
     <description>工作流引擎客户端，和独立运行的工作流引擎配对使用。
     </description>
+    <dependencies>
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-core</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-client</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
