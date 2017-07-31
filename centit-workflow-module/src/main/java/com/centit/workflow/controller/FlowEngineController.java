@@ -8,7 +8,9 @@ import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.service.FlowEngine;
 import org.apache.http.HttpResponse;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
@@ -27,8 +29,8 @@ public class FlowEngineController  extends BaseController {
     @Resource
     private FlowEngine flowEng;
     @RequestMapping(value = "/createFlowInstDefault")
-    public void createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, HttpServletResponse httpResponse) {
-        FlowInstance flowInstance = flowEng.createInstance(flowCode, flowOptName,flowOptTag,userCode,unitCode);
+    public void createInstance(@RequestBody FlowInstance flowInstanceParam, HttpServletResponse httpResponse) {
+        FlowInstance flowInstance = flowEng.createInstance(flowInstanceParam.getFlowCode(), flowInstanceParam.getFlowOptName(),flowInstanceParam.getFlowOptTag(),flowInstanceParam.getUserCode(),flowInstanceParam.getUnitCode());
         JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
     }
 

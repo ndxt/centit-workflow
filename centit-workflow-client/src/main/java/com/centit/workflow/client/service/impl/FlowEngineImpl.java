@@ -42,7 +42,9 @@ public class FlowEngineImpl implements FlowEngine {
     @Override
     public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception{
         FlowInstance flowInstance = new FlowInstance();
-        flowInstance.setFlowCode(flowCode);
+        FlowInfo flowInfo = new FlowInfo();
+        flowInfo.setFlowCode("000057");
+        flowInstance.setFlowInfo(flowInfo);
         flowInstance.setFlowOptName(flowOptName);
         flowInstance.setFlowOptTag(flowOptTag);
         flowInstance.setUserCode(userCode);
@@ -52,7 +54,6 @@ public class FlowEngineImpl implements FlowEngine {
         appSession.checkAccessToken(httpClient);
         String jsonStr = HttpExecutor.jsonPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/createFlowInstDefault"), flowInstance);
-        //ResponseJSON resJson = ResponseJSON.valueOfJson(jsonStr);
         return JSON.parseObject(jsonStr,FlowInstance.class);
     }
 
