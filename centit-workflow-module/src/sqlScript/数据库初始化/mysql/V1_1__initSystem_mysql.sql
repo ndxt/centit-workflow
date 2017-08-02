@@ -472,6 +472,7 @@ select a.FLOW_CODE,
    a.TIME_LIMIT,
    a.EXPIRE_OPT,
    a.OPT_ID,
+   a.OS_ID,
    a.FLOW_PUBLISH_DATE,
    a.AT_PUBLISH_DATE
 from 
@@ -555,6 +556,9 @@ join f_v_wf_optdef_url_map d on (n.OPT_CODE=d.OPTCODE)
 join wf_flow_instance f on t.FLOW_INST_ID = f.FLOW_INST_ID;
 
 
+
+alter table wf_node change column multiInst_Type multi_Inst_Type char;
+alter table wf_node change column multiInst_Param multi_Inst_Param VARCHAR(512);
 
 alter table wf_node change column multiInst_Type multi_Inst_Type char;
 alter table wf_node change column multiInst_Param multi_Inst_Param VARCHAR(512);

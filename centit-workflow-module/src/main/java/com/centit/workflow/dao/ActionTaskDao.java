@@ -65,7 +65,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
      */
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
-    public JSONArray listUserTaskFinJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
+    public List<UserTask> listUserTaskFinJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
         String baseSQL = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
                 "FLOW_OPT_TAG,NODE_INST_ID,UNITCODE,USER_CODE,ROLE_TYPE," +
                 "ROLE_CODE,AUTHDESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
@@ -82,16 +82,15 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
                 "[ :stageCode| and STAGE_CODE = :stageCode] ";
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(baseSQL,filter);
-        return DatabaseOptUtils.findObjectsAsJSonBySql(
-                this,queryAndNamedParams.getSql(),
-                queryAndNamedParams.getParams(),pageDesc);
+        List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc);
+        return userTasks;
     }
 
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
     public List<UserTask> listUserTaskFinByFilter(Map<String,Object> filter, PageDesc pageDesc){
-        JSONArray userTask = listUserTaskFinJsonByFilter(filter,pageDesc);
-        return userTask == null?new ArrayList<UserTask>():userTask.toJavaList(UserTask.class);
+        List<UserTask> userTask = listUserTaskJsonByFilter(filter,pageDesc);
+        return userTask;
     }
 
 
@@ -100,7 +99,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
 	@SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
-	public JSONArray listUserTaskJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
+	public List<UserTask>  listUserTaskJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
         /*switch(DBType.mapDialectToDBType(DatabaseOptUtils.getDialectName())){
             case Oracle:
@@ -133,16 +132,15 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
                 "[ :stageCode| and STAGE_CODE = :stageCode] ";
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(baseSQL,filter);
-        return DatabaseOptUtils.findObjectsAsJSonBySql(
-                this,queryAndNamedParams.getSql(),
-                queryAndNamedParams.getParams(),pageDesc);
+        List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc);
+        return userTasks;
 	}
 
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
     public List<UserTask> listUserTaskByFilter(Map<String,Object> filter, PageDesc pageDesc){
-        JSONArray userTask = listUserTaskJsonByFilter(filter,pageDesc);
-        return userTask == null?new ArrayList<UserTask>():userTask.toJavaList(UserTask.class);
+        List<UserTask> userTask = listUserTaskJsonByFilter(filter,pageDesc);
+        return userTask;
     }
 
 
