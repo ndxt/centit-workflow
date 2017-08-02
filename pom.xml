@@ -90,6 +90,7 @@
         <module>centit-workflow-server</module>
         <module>centit-workflow-client</module>
         <module>centit-workflow-imbed</module>
+        <module>centit-workflow-demo</module>
     </modules>
 
 
