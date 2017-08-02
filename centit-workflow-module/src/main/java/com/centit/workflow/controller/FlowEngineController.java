@@ -29,14 +29,16 @@ public class FlowEngineController  extends BaseController {
     @Resource
     private FlowEngine flowEng;
     @RequestMapping(value = "/createFlowInstDefault")
-    public void createInstance(@RequestBody FlowInstance flowInstanceParam, HttpServletResponse httpResponse) {
-        FlowInstance flowInstance = flowEng.createInstance(flowInstanceParam.getFlowCode(), flowInstanceParam.getFlowOptName(),flowInstanceParam.getFlowOptTag(),flowInstanceParam.getUserCode(),flowInstanceParam.getUnitCode());
+    public void createInstance(String flowCode, String flowOptName,String flowOptTag,String userCode,String unitCode, HttpServletResponse httpResponse) {
+        FlowInstance flowInstance = flowEng.createInstance(flowCode, flowOptName,flowOptTag,userCode,unitCode);
         JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
     }
 
-//    public FlowInstance createInstance(String flowCode, long version, String flowOptName, String flowOptTag, String userCode, String unitCode) {
-//        return null;
-//    }
+    @RequestMapping(value = "/createFlowInstWithVersion")
+    public void createInstance(String flowCode, long version, String flowOptName, String flowOptTag, String userCode, String unitCode, HttpServletResponse httpResponse) {
+        FlowInstance flowInstance = flowEng.createInstance(flowCode, version,flowOptName,flowOptTag,userCode,unitCode);
+        JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
+    }
 //
 //    public FlowInstance createInstance(String flowCode, long version, String flowOptName, String flowOptTag, String userCode, String unitCode, Map<String, Object> varTrans, ServletContext application) {
 //        return null;
