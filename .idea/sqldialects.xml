@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/centit-workflow-demo/src/main/resources/migration/mysql/V1_1__createDatabase_mysql.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/mysql/V1_1__initSystem_mysql.sql" dialect="MySQL" />
+  </component>
+</project>
