@@ -95,13 +95,13 @@ public class FlowModelDataImpl implements FlowModelData,Serializable {
 		Map<String, Map<String, String>> roleList=new HashMap<>();
 	
 		Map<String,String> map1 = CodeRepositoryUtil.getLabelValueMap("StationType");	
-		roleList.put(SysUserFilterEngine.ROLE_TYPE_GW /*"gw"*/, map1);
+		roleList.put(SysUserFilterEngine.ROLE_TYPE_GW.toLowerCase() /*"gw"*/, map1);
 		
 		Map<String,String> map2 = CodeRepositoryUtil.getLabelValueMap("RankType");		
-		roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ /*"xz"*/, map2);
+		roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ.toLowerCase() /*"xz"*/, map2);
 		
 		Map<String,String> map3=CodeRepositoryUtil.getLabelValueMap("FlowUserRole");
-		roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM /*"bj"*/, map3);
+		roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, map3);
 		
 		return roleList;
 	}
