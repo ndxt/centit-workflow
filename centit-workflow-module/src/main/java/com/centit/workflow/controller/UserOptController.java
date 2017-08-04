@@ -4,6 +4,7 @@ import aQute.bnd.osgi.Clazz;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.common.JsonResultUtils;
 import com.centit.framework.core.common.ResponseData;
+import com.centit.framework.core.common.ResponseMapData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.model.adapter.PlatformEnvironment;
@@ -39,7 +40,7 @@ public class UserOptController extends BaseController{
     private PlatformEnvironment platformEnvironment;
     @Resource
     FlowManager flowManager;
-    private ResponseData resData;
+    private ResponseMapData  resData;
     private  Map<Class<?>, String[]> excludes;
 
     @RequestMapping(value = "/listAllUser", method = RequestMethod.GET)
@@ -58,7 +59,7 @@ public class UserOptController extends BaseController{
         IUserInfo userDetails = CodeRepositoryUtil.getUserInfoByCode(userCode);
         excludes  =new HashMap<Class<?>, String[]>();
         excludes.put(IUserInfo.class,new String[]{"userUnits","userRoles"});
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("userInfo", userDetails);
         resData.addResponseData("primaryUnit", primaryUnit);
         JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
@@ -77,7 +78,7 @@ public class UserOptController extends BaseController{
         IUserInfo userDetails =  CodeRepositoryUtil.getUserInfoByCode(userCode);
         excludes  =new HashMap<Class<?>, String[]>();
         excludes.put(IUserInfo.class,new String[]{"userUnits","userRoles"});
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("userInfo", userDetails);
         resData.addResponseData("primaryUnit", primaryUnit);
         JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
@@ -98,7 +99,7 @@ public class UserOptController extends BaseController{
         List<? extends IUserUnit> userUnitList =  CodeRepositoryUtil.listUserUnits(usercode);
         excludes  =new HashMap<Class<?>, String[]>();
         excludes.put(IUserInfo.class,new String[]{"userUnits","userRoles"});
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("objList", userUnitList);
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
@@ -114,7 +115,7 @@ public class UserOptController extends BaseController{
     public void getSysUserTasksList(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
         String usercode=this.getLoginUser(request).getUserCode();
         List<UserTask> taskList=flowEng.listUserTasks(usercode, pageDesc);
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("objList", taskList);
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response);
@@ -131,7 +132,7 @@ public class UserOptController extends BaseController{
         List<? extends IUserUnit> userUnitList =  CodeRepositoryUtil.listUserUnits(userCode);
         excludes  =new HashMap<Class<?>, String[]>();
         excludes.put(IUserInfo.class,new String[]{"userUnits","userRoles"});
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("objList", userUnitList);
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
@@ -146,7 +147,7 @@ public class UserOptController extends BaseController{
     @RequestMapping(value="/usertasks/{usercode}",method={RequestMethod.GET})
     public void getUserTasksList(@PathVariable String usercode,PageDesc pageDesc,HttpServletResponse response){
         List<UserTask> taskList=flowEng.listUserTasks(usercode, pageDesc);
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("objList", taskList);
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response);
@@ -163,7 +164,7 @@ public class UserOptController extends BaseController{
         Map<String,Object> filter = new HashMap<String,Object>();
         filter.put("userCode",usercode);
         List<UserTask> taskList=flowEng.listUserCompleteTasks(filter,pageDesc);
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("objList", taskList);
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response);
@@ -179,7 +180,7 @@ public class UserOptController extends BaseController{
     @RequestMapping(value="/getrelegates/{usercode}",method={RequestMethod.GET})
     public void getRelegateList(@PathVariable String usercode,PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
         List<RoleRelegate> relegateList=flowManager.listRoleRelegateByUser(usercode);
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("objList", relegateList);
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response);
@@ -194,7 +195,7 @@ public class UserOptController extends BaseController{
     public void getRelegateListByLoginUser(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
         String usercode = this.getLoginUser(request).getUserCode();
         List<RoleRelegate> relegateList=flowManager.listRoleRelegateByUser(usercode);
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("objList", relegateList);
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response);
@@ -210,7 +211,7 @@ public class UserOptController extends BaseController{
     @RequestMapping(value="/setrelegates/{usercode}",method={RequestMethod.GET})
     public void getRelegateSetList(@PathVariable String usercode,PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
         List<RoleRelegate> relegateList=flowManager.listRoleRelegateByGrantor(usercode);
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("objList", relegateList);
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response);
@@ -225,7 +226,7 @@ public class UserOptController extends BaseController{
     public void getRelegateSetListByLoginUser(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
         String usercode = this.getLoginUser(request).getUserCode();
         List<RoleRelegate> relegateList=flowManager.listRoleRelegateByGrantor(usercode);
-        resData = new ResponseData();
+        resData = new ResponseMapData();
         resData.addResponseData("objList", relegateList);
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response);

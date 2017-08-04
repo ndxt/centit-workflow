@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.common.JsonResultUtils;
 import com.centit.framework.core.common.ResponseData;
+import com.centit.framework.core.common.ResponseMapData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.security.model.CentitUserDetails;
@@ -43,7 +44,7 @@ public class FlowManagerController extends BaseController {
     private FlowDefine flowDef;
 
     private ExtraFlowManager extraFlowManager;
-    private ResponseData resData=new ResponseData();
+    private ResponseMapData resData=new ResponseMapData();
     private  Map<Class<?>, String[]> excludes;
     /**
      * 流程实例检索查询
@@ -471,7 +472,7 @@ public class FlowManagerController extends BaseController {
         NodeInfo nodeInfo =flowDef.getNodeInfoById(nodeInst.getNodeId());
         List<UserTask> tasks = flowManager.listNodeTasks(nodeInstId);
         List<ActionLog> logs = flowManager.listNodeActionLogs(nodeInstId);
-        ResponseData resData = new ResponseData();
+        ResponseMapData resData = new ResponseMapData();
         resData.addResponseData("inst", nodeInst);
         resData.addResponseData("node", nodeInfo);
         resData.addResponseData("tasks", tasks);
