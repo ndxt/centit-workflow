@@ -39,7 +39,12 @@ public class ApprovalController {
         approvalAuditor.setPhraseNo("0");
         approvalAuditor.setUserCode("u0000000");
         approvalAuditors.add(approvalAuditor);
-        approvalService.startProcess(approvalEvent,approvalAuditors,3);
+        approvalService.startProcess(approvalEvent,approvalAuditors,3,approvalAuditor.getUserCode());
+        JsonResultUtils.writeBlankJson(response);
+    }
+    @RequestMapping("/submitRequestForm")
+    public void submitRequestForm(HttpServletResponse response){
+        flowEngine.submitOpt(17,"u0000000","",null,null);
         JsonResultUtils.writeBlankJson(response);
     }
 }

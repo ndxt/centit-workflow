@@ -10,7 +10,7 @@ CREATE TABLE  f_mysql_sequence (
   currvalue int(11) NOT NULL,  
   increment int(11) NOT NULL DEFAULT '1',  
    primary key (name)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC COMMENT='ÐòÁÐ±í£¬ÃüÃûs_[table_name]';  
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC COMMENT='ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½s_[table_name]';  
   
 DROP FUNCTION IF EXISTS sequence_currval;  
 
@@ -96,5 +96,14 @@ INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 
 INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
 ('S_OPTDEFCODE', 0, 1);
+
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
+('S_APPROVALEVENT', 0, 1);
+
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
+('S_APPROVALAUDITOR', 0, 1);
+
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
+('S_APPROVALPROCESS', 0, 1);
 
 

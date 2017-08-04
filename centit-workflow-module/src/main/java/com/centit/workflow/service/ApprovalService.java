@@ -15,7 +15,7 @@ public interface ApprovalService {
      * @param approvalEvent
      * @param approvalAuditors
      */
-    public void startApplication(ApprovalEvent approvalEvent,List<ApprovalAuditor> approvalAuditors,long flowInstId);
+    public void startProcess(ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors,int phaseNO,String userCode);
 
     /**
      * 审批通过或者不通过  需要保存审批意见，审批结果，如果通过还要设置下一步的审批人
@@ -23,5 +23,5 @@ public interface ApprovalService {
      * @param approvalAuditors
      * @param approvalProcess
      */
-    public void doApproval(ApprovalEvent approvalEvent,List<ApprovalAuditor> approvalAuditors,ApprovalProcess approvalProcess,long flowInstId);
+    public void doApproval(ApprovalEvent approvalEvent,List<ApprovalAuditor> approvalAuditors,ApprovalProcess approvalProcess,long flowInstId ,long nodeInstId);
 }

@@ -17,7 +17,7 @@ public class ApprovalProcess implements  java.io.Serializable{
     @Id
     @NotNull
     @Column(name="PROCESS_ID")
-    private String processId;
+    private Long processId;
     @Column(name="PHASE_NO")
     private String phraseNo;
     @Column(name="USER_CODE")
@@ -27,11 +27,11 @@ public class ApprovalProcess implements  java.io.Serializable{
     @Column(name="RESULT_DESC")
     private String resultDesc;
 
-    public String getProcessId() {
+    public Long getProcessId() {
         return processId;
     }
 
-    public void setProcessId(String processId) {
+    public void setProcessId(Long processId) {
         this.processId = processId;
     }
 

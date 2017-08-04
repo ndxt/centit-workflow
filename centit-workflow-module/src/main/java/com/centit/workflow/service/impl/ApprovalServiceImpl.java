@@ -1,15 +1,14 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.core.dao.PageDesc;
 import com.centit.workflow.dao.ApprovalAuditorDao;
 import com.centit.workflow.dao.ApprovalEventDao;
 import com.centit.workflow.dao.ApprovalProcessDao;
-import com.centit.workflow.po.ApprovalAuditor;
-import com.centit.workflow.po.ApprovalEvent;
-import com.centit.workflow.po.ApprovalProcess;
-import com.centit.workflow.po.FlowVariable;
+import com.centit.workflow.po.*;
 import com.centit.workflow.service.ApprovalService;
 import com.centit.workflow.service.FlowEngine;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Collections;
@@ -19,6 +18,7 @@ import java.util.List;
  * Created by chen_rj on 2017/8/3.
  */
 @Service
+@Transactional
 public class ApprovalServiceImpl implements ApprovalService{
     @Resource
     private ApprovalEventDao approvalEventDao;
@@ -29,27 +29,48 @@ public class ApprovalServiceImpl implements ApprovalService{
     @Resource
     private FlowEngine flowEngine;
     @Override
-    public void startApplication(ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors,long flowInstId) {
+    public void startProcess(ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors,int phaseNO,String userCode) {
+        //保存业务数据 创建流程
         approvalEventDao.saveNewObject(approvalEvent);
-        approvalAuditorDao.saveNewObjects(approvalAuditors);
+        if(approvalAuditors != null && approvalAuditors.size()>0){
+            for(ApprovalAuditor approvalAuditor : approvalAuditors){
+                approvalAuditorDao.saveNewObject(approvalAuditor);
+            }
+        }
+        FlowInstance flowInstance = flowEngine.createInstanceLockFirstNode("000070",approvalEvent.getEventTitle(),String.valueOf(approvalEvent.getApprovalId()),"u0000000",null);
+//        List<UserTask> userTasks = flowEngine.listUserTasksByFlowCode(userCode,"000070",new PageDesc(-1,-1));
+//        Long nodeInstId = 0l;
+//        if(userTasks != null && userTasks.size()>0){
+//            nodeInstId = userTasks.get(0).getNodeInstId();
+//        }
+//        flowEngine.submitOpt(nodeInstId,userCode,"",null,null);
         //初始化阶段计数变量
-        flowEngine.saveFlowVariable(flowInstId,"currentPhase","0");
+        flowEngine.saveFlowVariable(flowInstance.getFlowInstId(),"currentPhase","0");
+        flowEngine.saveFlowVariable(flowInstance.getFlowInstId(),"maxPhase",String.valueOf(phaseNO));
+
     }
 
     @Override
-    public void doApproval(ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors, ApprovalProcess approvalProcess,long flowInstId) {
+    public void doApproval(ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors, ApprovalProcess approvalProcess,long flowInstId ,long nodeInstId) {
         approvalEventDao.saveNewObject(approvalEvent);
         approvalProcessDao.saveNewObject(approvalProcess);
+        if(approvalAuditors != null && approvalAuditors.size()>0){
+            for(ApprovalAuditor approvalAuditor : approvalAuditors){
+                approvalAuditorDao.saveNewObject(approvalAuditor);
+            }
+        }
+        //是否通过
+        String pass = approvalProcess.getAuditResult();
+        flowEngine.saveFlowVariable(flowInstId,"pass","Y".equals(pass)?"0":"1");
+        //阶段计数
         List<FlowVariable> variables = flowEngine.viewFlowVariablesByVarname(flowInstId,"currentPhase");
-        //设置阶段计数值
-        if(variables != null && variables.size() > 0){
-            String value = variables.get(0).getVarValue();
+        if(variables != null && variables.size()>0){
             try {
-                value = String.valueOf(Integer.parseInt(value)+1);
+                flowEngine.saveFlowVariable(flowInstId,"currentPhase",String.valueOf(Integer.parseInt(variables.get(0).getVarValue())+1));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
-            flowEngine.saveFlowVariable(flowInstId,"currentPhase",value);
         }
+        flowEngine.submitOpt(nodeInstId,approvalProcess.getUserCode(),"",null,null);
     }
 }
