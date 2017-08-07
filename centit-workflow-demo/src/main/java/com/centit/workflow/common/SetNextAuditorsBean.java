@@ -1,12 +1,24 @@
-package com.centit.workflow.commons;
+package com.centit.workflow.common;
 
+import com.centit.workflow.commons.NodeEventSupport;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.service.FlowEngine;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 /**
  * Created by chen_rj on 2017/8/4.
  */
-public class VoteAndSetAuditorsBean implements NodeEventSupport {
+@Transactional
+@Component("SetNextAuditorsBean")
+public class SetNextAuditorsBean implements NodeEventSupport {
+    @Resource
+    private FlowEngine flowEngine;
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst, String optParam, String optUserCode) throws WorkflowException {
 
@@ -15,6 +27,7 @@ public class VoteAndSetAuditorsBean implements NodeEventSupport {
     @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst, String optParam, String optUserCode) throws WorkflowException {
 
+        System.out.print(">>>>>>>>>runBeforeSubmit>>>>>>>");
     }
 
     @Override

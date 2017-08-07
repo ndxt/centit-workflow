@@ -1,12 +1,16 @@
-package com.centit.workflow.commons;
+package com.centit.workflow.common;
 
+import com.centit.workflow.commons.NodeEventSupport;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInstance;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by chen_rj on 2017/8/4.
  */
-public class SetNextAuditorsBean implements NodeEventSupport {
+@Component("VoteAndSetAuditorsBean")
+public class VoteAndSetAuditorsBean implements NodeEventSupport {
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst, String optParam, String optUserCode) throws WorkflowException {
 

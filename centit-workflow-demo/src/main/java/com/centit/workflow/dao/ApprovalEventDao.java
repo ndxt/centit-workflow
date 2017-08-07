@@ -2,8 +2,6 @@ package com.centit.workflow.dao;
 
 import com.centit.framework.hibernate.dao.BaseDaoImpl;
 import com.centit.framework.hibernate.dao.DatabaseOptUtils;
-import com.centit.workflow.po.ApprovalEvent;
-import com.centit.workflow.po.ApprovalProcess;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,18 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
  * Created by chen_rj on 2017/8/3.
  */
 @Repository
-public class ApprovalProcessDao extends BaseDaoImpl<ApprovalProcess,Long> {
+public class ApprovalEventDao extends BaseDaoImpl<ApprovalEvent,Long> {
     @Transactional(propagation= Propagation.MANDATORY)
-    private long getNextApprovalProcessId(){
-        String sNo = DatabaseOptUtils.getNextValueOfSequence(this,"S_APPROVALPROCESS");
+    private long getNextApprovalEventId(){
+        String sNo = DatabaseOptUtils.getNextValueOfSequence(this,"S_APPROVALEVENT");
         return Long.valueOf(sNo);
     }
 
     @Override
     @Transactional(propagation= Propagation.MANDATORY)
-    public void saveNewObject(ApprovalProcess o) {
-        if(o.getProcessId() == null || o.getProcessId() == 0){
-            o.setProcessId(getNextApprovalProcessId());
+    public void saveNewObject(ApprovalEvent o) {
+        if(o.getApprovalId() == null || o.getApprovalId() == 0){
+            o.setApprovalId(getNextApprovalEventId());
         }
         super.saveNewObject(o);
     }

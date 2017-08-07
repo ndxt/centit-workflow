@@ -24,6 +24,11 @@
             <version>${centit.workflow.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-workflow-demo</artifactId>
+            <version>${centit.workflow.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.centit.product</groupId>
