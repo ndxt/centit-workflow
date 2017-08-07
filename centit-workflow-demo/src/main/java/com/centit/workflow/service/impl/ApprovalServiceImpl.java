@@ -1,6 +1,10 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.workflow.dao.ApprovalAuditorDao;
+import com.centit.workflow.dao.ApprovalEventDao;
+import com.centit.workflow.dao.ApprovalProcessDao;
 import com.centit.workflow.po.*;
+import com.centit.workflow.service.ApprovalService;
 import com.centit.workflow.service.FlowEngine;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +18,7 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class ApprovalServiceImpl implements ApprovalService{
+public class ApprovalServiceImpl implements ApprovalService {
     @Resource
     private ApprovalEventDao approvalEventDao;
     @Resource

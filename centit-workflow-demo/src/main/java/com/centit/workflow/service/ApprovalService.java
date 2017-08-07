@@ -1,5 +1,9 @@
 package com.centit.workflow.service;
 
+import com.centit.workflow.po.ApprovalAuditor;
+import com.centit.workflow.po.ApprovalEvent;
+import com.centit.workflow.po.ApprovalProcess;
+
 import javax.servlet.ServletContext;
 import java.util.List;
 
