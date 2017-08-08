@@ -19,7 +19,7 @@ public class ApprovalAuditor implements java.io.Serializable{
     @Column(name="AUDITOR_ID")
     private Long auditorId;
     @Column(name="PHASE_NO")
-    private String phraseNo;
+    private String phaseNo;
     @Column(name="USER_CODE")
     private String userCode;
     @Column(name="IS_PRIMARY_AUDITOR")
@@ -33,12 +33,12 @@ public class ApprovalAuditor implements java.io.Serializable{
         this.auditorId = auditorId;
     }
 
-    public String getPhraseNo() {
-        return phraseNo;
+    public String getPhaseNo() {
+        return phaseNo;
     }
 
-    public void setPhraseNo(String phraseNo) {
-        this.phraseNo = phraseNo;
+    public void setPhaseNo(String phraseNo) {
+        this.phaseNo = phraseNo;
     }
 
     public String getUserCode() {

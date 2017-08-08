@@ -28,7 +28,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     @Resource
     private FlowEngine flowEngine;
     @Override
-    public void startProcess(ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors,int phaseNO,String userCode) {
+    public Long startProcess(ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors,int phaseNO,String userCode) {
         //保存业务数据 创建流程
         approvalEventDao.saveNewObject(approvalEvent);
         FlowInstance flowInstance = flowEngine.createInstanceLockFirstNode("000070",approvalEvent.getEventTitle(),String.valueOf(approvalEvent.getApprovalId()),"u0000000",null);
@@ -47,6 +47,7 @@ public class ApprovalServiceImpl implements ApprovalService {
         //初始化阶段计数变量
         flowEngine.saveFlowVariable(flowInstance.getFlowInstId(),"currentPhase","0");
         flowEngine.saveFlowVariable(flowInstance.getFlowInstId(),"maxPhase",String.valueOf(phaseNO));
+        return flowInstance.getFlowInstId();
 
     }
 
