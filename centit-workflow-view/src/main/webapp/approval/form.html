@@ -1,0 +1,157 @@
+<form id="approvalForm">
+    <div class="field ">
+        <label>申请事项</label>
+        <input type="text" class="easyui-textbox" name="approvalTitle"/>
+    </div>
+    <div class="field">
+        <label>事项描述</label>
+        <input type="text" class="easyui-textbox" name="approvalDesc" multiline="true"
+               style="height: 130px;width: 400px"/>
+    </div>
+    <div class="field">
+        <label>审核人</label>
+        <input type="text" class="easyui-textbox" name="approvalAuditors" id="approvalAuditors" hidden="true"/>
+    </div>
+    <div class="field" style="float:left">
+        <label>各级审核人</label>
+        <table id="dg" title="阶段和审核人" class="easyui-datagrid" style="width:600px;height:200px;"
+               url="javascript:void(0)"
+               toolbar="#toolbar"
+               fitColumns="true" singleSelect="true">
+            <thead>
+            <tr>
+                <th field="phaseNo" width="20">阶段名</th>
+                <th field="auditorList" width="80">审核人</th>
+                <th field="userCodes" width="80" hidden="true">审核人</th>
+                <th field="_operate" formatter="formatOper" width="80"></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <input type="button" value="提交" onclick="submitForm()"/>
+</form>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+       onclick="newPhase()">新增审核节点</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyPhase()">
+        删除审核节点</a>
+</div>
+<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+    <div class="ftitle">设置审核人</div>
+    <div class="fitem">
+        <label>阶段号</label>
+        <input id="phaseno" class="easyui-textbox" readonly="true">
+    </div>
+    <div class="fitem">
+        <label>审核人列表</label>
+        <input name="auditorList" id="auditorList" class="easyui-textbox" readonly="true" multiline="true"
+               style="height: 100px;width: 200px">
+    </div>
+    <div class="fitem">
+        <label>审核人</label>
+        <input class="easyui-combobox" name="auditor" id="auditor"
+               data-options="valueField:'userCode',textField:'userName',url:'service/flow/useroptmgr/listAllUser'"
+        />
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+           onclick="newAuditor()"></a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+           onclick="deleteAuditor()"></a>
+    </div>
+</div>
+<script type="text/javascript">
+    var url, rowObject;
+    function newPhase() {
+        debugger;
+        var rowNum = $("#dg").datagrid("getRows").length;
+        $("#dg").datagrid("appendRow", {phaseNo: rowNum + 1, auditor: ""});
+        $("#dg").datagrid("selectRow", rowNum).datagrid("beginEdit", rowNum);
+    }
+    function destroyPhase() {
+        debugger;
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('Confirm', '确认删除该审核过程吗?', function (r) {
+                if (r) {
+                    $('#dg').datagrid("deleteRow", $('#dg').datagrid("getRowIndex", row));
+                }
+            });
+        }
+    }
+    function formatOper(val, row, index) {
+        debugger;
+        rowObject = row;
+        return '<a href="#" onclick="setAuditors(rowObject)">设置审核员</a>';
+    }
+    function setAuditors(rowObject) {
+        debugger;
+        $('#dlg').dialog('open').dialog('setTitle', '设置审核员');
+        $("#phaseno").textbox("setValue", rowObject.phaseNo);
+    }
+    function newAuditor() {
+        debugger;
+        $("#auditorList").textbox("setValue", $("#auditorList").textbox("getValue") + $("#auditor").combobox("getText")
+            + ";");
+        rowObject.auditorList = $("#auditorList").textbox("getValue");
+        if (rowObject.userCodes == undefined) {
+            rowObject.userCodes = $("#auditor").combobox("getValue") + ";"
+        } else {
+            rowObject.userCodes = rowObject.userCodes + $("#auditor").combobox("getValue") + ";"
+        }
+        $('#dg').datagrid('refreshRow', parseInt(rowObject.phaseNo) - 1);
+    }
+    //将审核人拆分 去重
+    function submitForm() {
+        debugger;
+        var all = $("#dg").datagrid("getData");
+        var rows = all.rows;
+        var arr = new Array();
+        for(var i=0;i<rows.length;i++){
+            var row = rows[i];
+            var userCodes = row.userCodes;
+            var userCodeArr = userCodes.split(";");
+            userCodeArr = unique(userCodeArr);
+            for(var j=0;j<userCodeArr.length;j++) {
+                if(userCodeArr[j].trim().length == 0){
+                    continue;
+                }
+                var obj = {};
+                obj.phaseNo = row.phaseNo;
+                obj.userCode = userCodeArr[j].trim();
+                obj.isPrimaryAuditor = "Y";
+                arr.push(obj);
+            }
+        }
+        var json = JSON.stringify(arr);
+        $('#approvalAuditors').textbox("setValue",json);
+        $('#approvalForm').submit();
+    }
+    $(function () {
+        $('#approvalForm').form({
+            url: 'http://localhost:8080/workflow/service/approval/startProcess',
+            data:$('#approvalForm').serialize(),
+            onSubmit: function () {
+                debugger;
+                var dgData=$('#dg').datagrid("getData");
+                if(dgData){
+                }
+                // do some check
+                // return false to prevent submit;
+            },
+            success: function (data) {
+                $.messager.alert('Info', data, 'info');
+            }
+        });
+    });
+    //数组去重
+    function unique(arr) {
+        var result = [], hash = {};
+        for (var i = 0, elem; (elem = arr[i]) != null; i++) {
+            if (!hash[elem]) {
+                result.push(elem);
+                hash[elem] = true;
+            }
+        }
+        return result;
+    }
+</script>
