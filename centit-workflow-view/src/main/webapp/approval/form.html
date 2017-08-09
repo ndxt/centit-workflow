@@ -8,9 +8,9 @@
         <input type="text" class="easyui-textbox" name="approvalDesc" multiline="true"
                style="height: 130px;width: 400px"/>
     </div>
-    <div class="field">
+    <div class="field" style="display: none;">
         <label>审核人</label>
-        <input type="text" class="easyui-textbox" name="approvalAuditors" id="approvalAuditors" hidden="true"/>
+        <input type="text" class="easyui-textbox" name="approvalAuditors" id="approvalAuditors"  />
     </div>
     <div class="field" style="float:left">
         <label>各级审核人</label>
@@ -131,15 +131,15 @@
             url: 'http://localhost:8080/workflow/service/approval/startProcess',
             data:$('#approvalForm').serialize(),
             onSubmit: function () {
-                debugger;
-                var dgData=$('#dg').datagrid("getData");
-                if(dgData){
-                }
-                // do some check
-                // return false to prevent submit;
+//                debugger;
+//                var dgData=$('#dg').datagrid("getData");
+//                if(dgData){
+//                }
+//                // do some check
+//                // return false to prevent submit;
             },
             success: function (data) {
-                $.messager.alert('Info', data, 'info');
+//                $.messager.alert('Info', data, 'info');
             }
         });
     });

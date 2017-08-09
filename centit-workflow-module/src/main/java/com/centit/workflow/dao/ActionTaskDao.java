@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.support.database.DBType;
 import com.centit.support.database.QueryAndNamedParams;
 import org.apache.commons.lang3.StringUtils;
@@ -82,14 +83,20 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
                 "[ :stageCode| and STAGE_CODE = :stageCode] ";
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(baseSQL,filter);
-        List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc);
-        return userTasks;
+        JSONArray dataList = DatabaseOptUtils.findObjectsAsJSONBySql(this,
+                queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
+        List<UserTask> list = new ArrayList<>();
+        if(dataList != null) {
+            list = JSONObject.parseArray(dataList.toJSONString(),UserTask.class);
+        }
+        //List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc,UserTask.class);
+        return list;
     }
 
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
     public List<UserTask> listUserTaskFinByFilter(Map<String,Object> filter, PageDesc pageDesc){
-        List<UserTask> userTask = listUserTaskJsonByFilter(filter,pageDesc);
+        List<UserTask> userTask = listUserTaskFinJsonByFilter(filter,pageDesc);
         return userTask;
     }
 
@@ -132,8 +139,15 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
                 "[ :stageCode| and STAGE_CODE = :stageCode] ";
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(baseSQL,filter);
-        List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc);
-        return userTasks;
+        JSONArray dataList = DatabaseOptUtils.findObjectsAsJSONBySql(this,
+                queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
+        List<UserTask> list = new ArrayList<>();
+        if(dataList != null) {
+            list = JSONObject.parseArray(dataList.toJSONString(), UserTask.class);
+        }
+        //List<UserTask>  userTasks = JSONArray.t
+        //List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc,UserTask.class);
+        return list;
 	}
 
     @SuppressWarnings("unchecked")

@@ -1,0 +1,94 @@
+<div class="field required" >
+    <label>用户名</label>
+    <input  class="easyui-combobox" name="userName" id="userName"
+            data-options="valueField:'userCode',textField:'userName',url:'service/flow/useroptmgr/listAllUser'"
+    />
+</div>
+<div title="待办列表" style="padding: 10px;width: 600px" >
+    <table class="easyui-datagrid"  style="height:auto" id="taskTable">
+        <thead>
+        <tr>
+            <th data-options="field:'flowOptName'" width="100" align="center">业务名</th>
+            <th data-options="field:'nodeName'" width="100" align="center">节点名称</th>
+            <th data-options="field:'timeLimitStr'" width="100" sortable="true" align="center">剩余时间</th>
+            <th data-options="field:'authDesc'" width="100" align="center">描述</th>
+            <th data-options="field:'flowInstId'" width="100" align="center" hidden="true"></th>
+            <th data-options="field:'nodeInstId'" width="100" align="center" hidden="true"></th>
+            <th field="_operate" formatter="formatOper" width="100" align="center">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<div id="dlg" class="easyui-dialog" style="width:700px;height:300px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+    <form id="approvalform">
+        <div style="display: none">
+        <input id="flowInstId" name="flowInstId" class="easyui-textbox" >
+        <input id="nodeInstId" name="nodeInstId" class="easyui-textbox" >
+        </div>
+        <div class="fitem">
+            <label style="width: 48px">事项</label>
+            <input id="eventTitle" name="eventTitle" class="easyui-textbox">
+        </div>
+        <div class="fitem">
+            <label style="width: 48px">事项说明</label>
+            <input name="eventDesc" id="eventDesc" class="easyui-textbox" multiline="true"
+                   style="height: 100px;width: 200px">
+        </div>
+        <div>
+            <label style="width: 48px">审批是否通过</label>
+            <span class="radioSpan">
+                <input type="radio" name="pass" value="1">否</input>
+                <input type="radio" name="pass" value="0">是</input>
+            </span>
+        </div>
+        <input type="button" value="提交" onclick="submitForm()"/>
+    </form>
+</div>
+<script type="text/javascript">
+    var rowObject={};
+    function formatOper(val, row, index) {
+        debugger;
+        rowObject = row;
+        return '<a href="#" onclick="doApproval(rowObject)">审核</a>';
+    }
+    function doApproval(rowObject) {
+        debugger;
+        $("#flowInstId").textbox("setValue",rowObject.flowInstId);
+        $("#nodeInstId").textbox("setValue",rowObject.nodeInstId);
+        $('#dlg').dialog('open').dialog('setTitle', '审核');
+    }
+    function submitForm() {
+        $("#approvalform").submit();
+    }
+
+    $(function () {
+        $('#approvalform').form({
+            url: 'http://localhost:8080/workflow/service/approval/doApproval',
+            data:$('#approvalform').serialize(),
+            onSubmit: function () {
+            },
+            success: function (data) {
+               // $.messager.alert('Info', data, 'info');
+            }
+        });
+    });
+    //选择用户触发事件
+    $("#userName").combobox({
+        onSelect:function(rec) {
+            debugger;
+            $.ajax({
+                method: 'GET',
+                url: 'http://localhost:8080/workflow/service/flow/useroptmgr/usertasks/' + rec.userCode,
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                    debugger;
+                    var total=data.data.objList.length;
+                    var rows = data.data.objList;
+                    $('#taskTable').datagrid('loadData', rows);
+                }
+            })
+        }
+    })
+</script>

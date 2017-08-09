@@ -6,6 +6,7 @@ import com.centit.workflow.po.ApprovalProcess;
 
 import javax.servlet.ServletContext;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chen_rj on 2017/8/3.
