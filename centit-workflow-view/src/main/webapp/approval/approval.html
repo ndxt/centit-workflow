@@ -25,6 +25,7 @@
         <div style="display: none">
         <input id="flowInstId" name="flowInstId" class="easyui-textbox" >
         <input id="nodeInstId" name="nodeInstId" class="easyui-textbox" >
+            <input id="userCodes" name="userCodes" class="easyui-textbox" >
         </div>
         <div class="fitem">
             <label style="width: 48px">事项</label>
@@ -34,6 +35,17 @@
             <label style="width: 48px">事项说明</label>
             <input name="eventDesc" id="eventDesc" class="easyui-textbox" multiline="true"
                    style="height: 100px;width: 200px">
+        </div>
+        <div>
+            <label style="width: 48px">下一批次的审批人</label>
+            <input name="auditorList" id="auditorList" class="easyui-textbox" readonly="true" >
+            <input class="easyui-combobox" name="auditor" id="auditor"
+                   data-options="valueField:'userCode',textField:'userName',url:'service/flow/useroptmgr/listAllUser'"
+            />
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+               onclick="newAuditor()"></a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+               onclick="deleteAuditor()"></a>
         </div>
         <div>
             <label style="width: 48px">审批是否通过</label>
@@ -60,6 +72,7 @@
     }
     function submitForm() {
         $("#approvalform").submit();
+        //$('#dlg').dialog("destroy");
     }
 
     $(function () {
@@ -73,6 +86,11 @@
             }
         });
     });
+    function newAuditor() {
+        debugger;
+        $("#auditorList").textbox("setValue", $("#auditorList").textbox("getValue") + $("#auditor").combobox("getText") + ";");
+        $("#userCodes").textbox("setValue", $("#userCodes").textbox("getValue") + $("#auditor").combobox("getValue") + ";");
+    }
     //选择用户触发事件
     $("#userName").combobox({
         onSelect:function(rec) {

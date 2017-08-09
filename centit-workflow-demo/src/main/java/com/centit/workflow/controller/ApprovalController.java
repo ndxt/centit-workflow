@@ -74,24 +74,27 @@ public class ApprovalController {
 
     @RequestMapping("/doApproval")
     public void doApproval(HttpServletRequest request, HttpServletResponse response,Long flowInstId,Long nodeInstId,
-                           String eventTitle,String eventDesc, String pass){
+                           String userCodes,String eventTitle,String eventDesc, String pass){
         ApprovalEvent approvalEvent = new ApprovalEvent();
         approvalEvent.setEventTitle(eventTitle);
         approvalEvent.setEventDesc(eventDesc);
         approvalEvent.setRequestTime(new Date());
         approvalEvent.setApprovalState("A");
-        //TODO 获取当前阶段
-        approvalEvent.setCurrentPhase("0");
-        List<ApprovalAuditor> approvalAuditors =new ArrayList<>();
-        ApprovalAuditor approvalAuditor = new ApprovalAuditor();
-        approvalAuditor.setPhaseNo("0");
-        approvalAuditor.setUserCode("u0000000");
-        approvalAuditors.add(approvalAuditor);
+        //将前台传过来的usercode 字符串 拆分
+        List<String> userCodeList  = new ArrayList<>();
+        if(userCodes != null && userCodes.trim().length() > 0){
+            String[] arr = userCodes.split(";");
+            for(int i=0;i<arr.length;i++){
+                if(!"".equals(arr[i].trim())){
+                    userCodeList.add(arr[i]);
+                }
+            }
+        }
         ApprovalProcess approvalProcess = new ApprovalProcess();
         approvalProcess.setAuditResult("0".equals(pass)?"Y":"N");
         approvalProcess.setUserCode("u0000000");
         //flowEngine.saveFlowVariable(flowInstId,"pass","0");
-        approvalService.doApproval(approvalEvent,approvalAuditors,approvalProcess,flowInstId,nodeInstId,request.getServletContext());
+        approvalService.doApproval(approvalEvent,userCodeList,approvalProcess,flowInstId,nodeInstId,request.getServletContext());
         JsonResultUtils.writeBlankJson(response);
     }
 }

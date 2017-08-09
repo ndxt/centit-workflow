@@ -36,7 +36,7 @@
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyPhase()">
         删除审核节点</a>
 </div>
-<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+<div id="formdlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
      closed="true" buttons="#dlg-buttons">
     <div class="ftitle">设置审核人</div>
     <div class="fitem">
@@ -85,7 +85,7 @@
     }
     function setAuditors(rowObject) {
         debugger;
-        $('#dlg').dialog('open').dialog('setTitle', '设置审核员');
+        $('#formdlg').dialog('open').dialog('setTitle', '设置审核员');
         $("#phaseno").textbox("setValue", rowObject.phaseNo);
     }
     function newAuditor() {
@@ -125,6 +125,7 @@
         var json = JSON.stringify(arr);
         $('#approvalAuditors').textbox("setValue",json);
         $('#approvalForm').submit();
+        $('#formdlg').dialog("destroy");
     }
     $(function () {
         $('#approvalForm').form({
