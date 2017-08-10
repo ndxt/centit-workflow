@@ -105,7 +105,7 @@ public class FlowOptUtils {
         nodeInst.setNodeParam(nodeParam);
         nodeInst.setNodeState("N");     
         //nodeInst.setIsTimer(isTimer);
-        nodeInst.setTaskAssigned("D");
+        nodeInst.setTaskAssigned("S");
         //给一个默认的令牌 T
         nodeInst.setRunToken("T");
         nodeInst.setLastUpdateUser(usercode);

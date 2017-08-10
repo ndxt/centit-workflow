@@ -634,16 +634,9 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                                      nodeInst,  preTransPath,nodeTran, uc, 
                                      CodeRepositoryUtil.getUserInfoByCode(uc).getPrimaryUnit(),
                                      null,nodeToken+"."+nRn,
-                                     false, varTrans,  nodeUnits, nodeOptUsers,             
+                                     true, varTrans,  nodeUnits, nodeOptUsers,
                                      application);
-                            
-                            ActionTask wfactTask = FlowOptUtils.createActionTask(uc, nextNodeInst,
-                                    nextNode);
-                            wfactTask.setTaskId(actionTaskDao.getNextTaskId());
-                            wfactTask.setAssignTime(currentTime );
-                            nextNodeInst.addWfActionTask(wfactTask);
-                            nodeInstanceDao.updateObject(nextNodeInst);
-                            
+
                             resNodes.add(nextNodeInst.getNodeInstId());
                             nRn ++;
                         }
@@ -886,8 +879,6 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                      userCode ,  unitCode,
                      varTrans );
             //计算人员的分配策略 
-            nextNodeInst.setTaskAssigned("S");
-            
             if(optUsers != null && optUsers.size() > 0)
                 nextNodeInst.setUserCode( optUsers.iterator().next());
             
@@ -911,6 +902,9 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                         wfactTask.setAssignTime(currentTime );
                         nextNodeInst.addWfActionTask(wfactTask);
                     }
+                }else{
+                    nextNodeInst.setTaskAssigned("S");
+                    nextNodeInst.setUserCode(optUsers.iterator().next());
                 }
             }
         }
