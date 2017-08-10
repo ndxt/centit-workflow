@@ -26,6 +26,7 @@
         <input id="flowInstId" name="flowInstId" class="easyui-textbox" >
         <input id="nodeInstId" name="nodeInstId" class="easyui-textbox" >
             <input id="userCodes" name="userCodes" class="easyui-textbox" >
+            <input id="optUserCode" name="optUserCode" class="easyui-textbox" >
         </div>
         <div class="fitem">
             <label style="width: 48px">事项</label>
@@ -43,9 +44,9 @@
                    data-options="valueField:'userCode',textField:'userName',url:'service/flow/useroptmgr/listAllUser'"
             />
             <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
-               onclick="newAuditor()"></a>
+               onclick="newAuditor2()"></a>
             <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true"
-               onclick="deleteAuditor()"></a>
+               onclick="deleteAuditor2()"></a>
         </div>
         <div>
             <label style="width: 48px">审批是否通过</label>
@@ -68,6 +69,7 @@
         debugger;
         $("#flowInstId").textbox("setValue",rowObject.flowInstId);
         $("#nodeInstId").textbox("setValue",rowObject.nodeInstId);
+        $("#optUserCode").textbox("setValue",$("#userName").combobox("getValue"));
         $('#dlg').dialog('open').dialog('setTitle', '审核');
     }
     function submitForm() {
@@ -86,7 +88,7 @@
             }
         });
     });
-    function newAuditor() {
+    function newAuditor2() {
         debugger;
         $("#auditorList").textbox("setValue", $("#auditorList").textbox("getValue") + $("#auditor").combobox("getText") + ";");
         $("#userCodes").textbox("setValue", $("#userCodes").textbox("getValue") + $("#auditor").combobox("getValue") + ";");

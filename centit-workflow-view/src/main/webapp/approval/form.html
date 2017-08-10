@@ -85,19 +85,48 @@
     }
     function setAuditors(rowObject) {
         debugger;
+        $("#formdlg").dialog({
+            onClose: function () {
+                //$(this).dialog('destroy');//销毁
+                $("#auditorList").textbox("setValue","");
+            }
+        });
         $('#formdlg').dialog('open').dialog('setTitle', '设置审核员');
         $("#phaseno").textbox("setValue", rowObject.phaseNo);
     }
     function newAuditor() {
         debugger;
-        $("#auditorList").textbox("setValue", $("#auditorList").textbox("getValue") + $("#auditor").combobox("getText")
-            + ";");
-        rowObject.auditorList = $("#auditorList").textbox("getValue");
-        if (rowObject.userCodes == undefined) {
-            rowObject.userCodes = $("#auditor").combobox("getValue") + ";"
-        } else {
-            rowObject.userCodes = rowObject.userCodes + $("#auditor").combobox("getValue") + ";"
+        var userText = $("#auditorList").textbox("getValue");
+        var userValue = rowObject.userCodes;
+        var userCode = $("#auditor").combobox("getText") + ";";
+        var userCodeValue = $("#auditor").combobox("getValue") + ";";
+        var userCodes = rowObject.userCodes == undefined?"":rowObject.userCodes;
+
+        if(userCode.trim() == ";" || userText.indexOf(userCode) > -1){
+            return;
         }
+        $("#auditorList").textbox("setValue",userText+userCode);
+        rowObject.auditorList = userText+userCode;
+        rowObject.userCodes = userCodes + userCodeValue;
+        $('#dg').datagrid('refreshRow', parseInt(rowObject.phaseNo) - 1);
+    }
+    function deleteAuditor() {
+        debugger;
+        var userText = $("#auditorList").textbox("getValue");
+        var userValue = rowObject.userCodes;
+        userValue = userValue==undefined?"":userValue;
+        var userCode = $("#auditor").combobox("getText") + ";";
+        var userCodeValue = $("#auditor").combobox("getValue") + ";";
+        var index = userText.indexOf(userCode);
+        var valueIndex = userValue.indexOf(userCodeValue);
+        if (userText.trim().length === 0 || userCode.trim() == ";" || index === -1) {
+            return;
+        }
+        userText = userText.slice(0, index) + userText.slice(index + userCode.length + 1);
+        userValue = userValue.slice(0, valueIndex) + userValue.slice(valueIndex + userCodeValue.length + 1);
+        $("#auditorList").textbox("setValue", userText);
+        rowObject.auditorList = userText;
+        rowObject.userCodes = userValue;
         $('#dg').datagrid('refreshRow', parseInt(rowObject.phaseNo) - 1);
     }
     //将审核人拆分 去重
@@ -112,7 +141,7 @@
             var userCodeArr = userCodes.split(";");
             userCodeArr = unique(userCodeArr);
             for(var j=0;j<userCodeArr.length;j++) {
-                if(userCodeArr[j].trim().length == 0){
+                if(userCodeArr[j].trim().length === 0){
                     continue;
                 }
                 var obj = {};
@@ -125,19 +154,12 @@
         var json = JSON.stringify(arr);
         $('#approvalAuditors').textbox("setValue",json);
         $('#approvalForm').submit();
-        $('#formdlg').dialog("destroy");
     }
     $(function () {
         $('#approvalForm').form({
             url: 'http://localhost:8080/workflow/service/approval/startProcess',
             data:$('#approvalForm').serialize(),
             onSubmit: function () {
-//                debugger;
-//                var dgData=$('#dg').datagrid("getData");
-//                if(dgData){
-//                }
-//                // do some check
-//                // return false to prevent submit;
             },
             success: function (data) {
 //                $.messager.alert('Info', data, 'info');

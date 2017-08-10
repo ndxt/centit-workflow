@@ -589,8 +589,9 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                         UserUnitParamBuilder.addParamToParamMap(userParams,"C",flowInst.getUserCode());
                         UserUnitParamBuilder.addParamToParamMap(userParams,"O",userCode);
 
-                        optUsers = SysUserFilterEngine.calcSystemOperators(nextNode.getPowerExp(),
-                                unitParams,userParams,null,varTrans);
+                        optUsers = SysUserFilterEngine.calcSystemOperators(
+                                "en".equals(nextNode.getRoleType())?nextNode.getPowerExp():"D(N)"+nextNode.getRoleType() +"('"+ nextNode.getRoleCode() +"')",
+                                unitParams,userParams,new HashMap<>(),varTrans);
                     }
                     if(optUsers == null || optUsers.size()==0){
                         throw new WorkflowException(WorkflowException.FlowExceptionType.NoValueForMultiInst,
