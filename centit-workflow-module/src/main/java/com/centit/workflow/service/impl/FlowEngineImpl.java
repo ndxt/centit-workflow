@@ -380,6 +380,52 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
             endNodeInst.setTransPath(transPath+","+String.valueOf(trans.getTransid()));
         flowInst.addWfNodeInstance(endNodeInst);
     }
+
+    private  Set<String> calcNodeOpterators(FlowInstance flowInst ,NodeInstance nodeInst,String nodeToken,
+                                            NodeInfo nextOptNode,
+                                            String userCode , String unitCode,
+                                            FlowVariableTranslate varTrans ){
+
+
+        Set<String> optUsers=null;
+        if( "en".equals(nextOptNode.getRoleType())){
+            //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色
+            //根据权限表达式创建任务列表
+            String oldNodeInstUnitCode=null;
+            NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(  nextOptNode.getNodeId() ,nodeInst,0l);
+            if(oldNodeInst!=null)
+                oldNodeInstUnitCode = oldNodeInst.getUnitCode();
+
+            Map<String, Set<String>>  unitParams = UserUnitParamBuilder.createEmptyParamMap();
+            UserUnitParamBuilder.addParamToParamMap(unitParams,"L",oldNodeInstUnitCode );
+            UserUnitParamBuilder.addParamToParamMap(unitParams,"U",
+                    unitCode==null? CodeRepositoryUtil.getUserInfoByCode(userCode).getPrimaryUnit():unitCode  );
+            UserUnitParamBuilder.addParamToParamMap(unitParams,"P",flowInst.getNearestNodeUnitCode(nodeInst,nodeToken));
+            UserUnitParamBuilder.addParamToParamMap(unitParams,"N",unitCode );
+            UserUnitParamBuilder.addParamToParamMap(unitParams,"F",flowInst.getUnitCode() );
+
+            Map<String, Set<String>>  userParams = UserUnitParamBuilder.createEmptyParamMap();
+            UserUnitParamBuilder.addParamToParamMap(userParams,"C",flowInst.getUserCode());
+            UserUnitParamBuilder.addParamToParamMap(userParams,"O",userCode);
+
+            optUsers = SysUserFilterEngine.calcSystemOperators(nextOptNode.getPowerExp(),
+                    unitParams,userParams,null,varTrans);
+            if(optUsers == null || optUsers.size()==0){
+                logger.error("权限引擎没有识别出符合表达式的操作人员！ wid:"+flowInst.getFlowInstId() +" nid"+ nextOptNode.getNodeId());
+            }
+        }else if("bj".equals(nextOptNode.getRoleType()) ){
+            optUsers = new HashSet<String>();
+            List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(nodeInst.getFlowInstId(), nextOptNode.getRoleCode());
+            for(FlowWorkTeam u : users)
+                optUsers.add(u.getUserCode());
+        }else/*gw xz*/{
+            optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(
+                    new SystemUserUnitFilterCalcContext(),
+                    nextOptNode.getRoleType(), nextOptNode.getRoleCode(), unitCode );
+        }
+
+        return optUsers;
+    }
     
     /**
      *
@@ -565,33 +611,15 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                             nRn ++;
                         }
                     }
-                }else if("U".equals(nextRoutertNode.getMultiInstType())){ 
-                    String oldNodeInstUnitCode=null;
+                }else if("U".equals(nextRoutertNode.getMultiInstType())){
          
                     Set<String> optUsers  = null;
                     if(nodeOptUsers!=null)
                         optUsers = nodeOptUsers.get(nextNode.getNodeId());
-                    if(optUsers==null){                        
-                        NodeInstance oldNodeInst = flowInst.findLastSameNodeInst( nextNodeId,nodeInst,0l);
-                        if(oldNodeInst!=null)
-                            oldNodeInstUnitCode = oldNodeInst.getUnitCode();
-
-                        Map<String, Set<String>>  unitParams = UserUnitParamBuilder.createEmptyParamMap();
-                        UserUnitParamBuilder.addParamToParamMap(unitParams,"L",oldNodeInstUnitCode );
-                        UserUnitParamBuilder.addParamToParamMap(unitParams,"U",
-                                unitCode==null? CodeRepositoryUtil.getUserInfoByCode(userCode).getPrimaryUnit():unitCode  );
-                        UserUnitParamBuilder.addParamToParamMap(unitParams,"P",flowInst.getNearestNodeUnitCode(nodeInst,nodeToken));
-                        UserUnitParamBuilder.addParamToParamMap(unitParams,"F",flowInst.getUnitCode() );
-
-                        UserUnitParamBuilder.addParamToParamMap(unitParams,"N",unitCode );
-
-                        Map<String, Set<String>>  userParams = UserUnitParamBuilder.createEmptyParamMap();
-                        UserUnitParamBuilder.addParamToParamMap(userParams,"C",flowInst.getUserCode());
-                        UserUnitParamBuilder.addParamToParamMap(userParams,"O",userCode);
-
-                        optUsers = SysUserFilterEngine.calcSystemOperators(
-                                "en".equals(nextNode.getRoleType())?nextNode.getPowerExp():"D(N)"+nextNode.getRoleType() +"('"+ nextNode.getRoleCode() +"')",
-                                unitParams,userParams,new HashMap<>(),varTrans);
+                    if(optUsers==null){
+                        optUsers = calcNodeOpterators( flowInst , nodeInst, nodeToken,
+                                nextNode, userCode ,  unitCode,
+                                varTrans );
                     }
                     if(optUsers == null || optUsers.size()==0){
                         throw new WorkflowException(WorkflowException.FlowExceptionType.NoValueForMultiInst,
@@ -810,7 +838,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
      
         Date currentTime = new Date(System.currentTimeMillis()); 
         
-        long nextCode = nextOptNode.getNodeId();
+        //long nextCode = nextOptNode.getNodeId();
         long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
         
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, userCode, nodeParam,
@@ -853,42 +881,10 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                 flowInstanceDao.updateObject(flowInst);                
             }
         }else if(! assignedUser){
-            Set<String> optUsers=null;
-            if( "en".equals(nextOptNode.getRoleType())){
-                //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色
-                //根据权限表达式创建任务列表 
-                String oldNodeInstUnitCode=null;
-                NodeInstance oldNodeInst = flowInst.findLastSameNodeInst( nextCode,nodeInst,0l);
-                if(oldNodeInst!=null)
-                    oldNodeInstUnitCode = oldNodeInst.getUnitCode();
-
-                Map<String, Set<String>>  unitParams = UserUnitParamBuilder.createEmptyParamMap();
-                UserUnitParamBuilder.addParamToParamMap(unitParams,"L",oldNodeInstUnitCode );
-                UserUnitParamBuilder.addParamToParamMap(unitParams,"U",
-                        unitCode==null? CodeRepositoryUtil.getUserInfoByCode(userCode).getPrimaryUnit():unitCode  );
-                UserUnitParamBuilder.addParamToParamMap(unitParams,"P",flowInst.getNearestNodeUnitCode(nodeInst,nodeToken));
-                UserUnitParamBuilder.addParamToParamMap(unitParams,"N",unitCode );
-                UserUnitParamBuilder.addParamToParamMap(unitParams,"F",flowInst.getUnitCode() );
-
-                Map<String, Set<String>>  userParams = UserUnitParamBuilder.createEmptyParamMap();
-                UserUnitParamBuilder.addParamToParamMap(userParams,"C",flowInst.getUserCode());
-                UserUnitParamBuilder.addParamToParamMap(userParams,"O",userCode);
-
-                optUsers = SysUserFilterEngine.calcSystemOperators(nextOptNode.getPowerExp(),
-                        unitParams,userParams,null,varTrans);
-                if(optUsers == null || optUsers.size()==0){
-                    logger.error("权限引擎没有识别出符合表达式的操作人员！ wid:"+nextNodeInst.getFlowInstId() +" nid"+ nextNodeInst.getNodeId());
-                }
-            }else if("bj".equals(nextOptNode.getRoleType()) ){
-                optUsers = new HashSet<String>();
-                List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(nodeInst.getFlowInstId(), nextOptNode.getRoleCode());
-                for(FlowWorkTeam u : users)
-                    optUsers.add(u.getUserCode());
-            }else/*gw xz*/{
-                 optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(
-                         new SystemUserUnitFilterCalcContext(),
-                         nextOptNode.getRoleType(), nextOptNode.getRoleCode(), unitCode );
-            }
+            Set<String> optUsers= calcNodeOpterators( flowInst , nodeInst, nodeToken,
+                     nextOptNode,
+                     userCode ,  unitCode,
+                     varTrans );
             //计算人员的分配策略 
             nextNodeInst.setTaskAssigned("S");
             
@@ -1537,26 +1533,14 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                 SysUnitFilterEngine.calcSingleSystemUnitByExp(nextNode.getUnitExp(),unitParams,null);
 
 
-        UserUnitVariableTranslate  flowVarTrans = new FlowVariableTranslate(varTrans,
+        FlowVariableTranslate  flowVarTrans = new FlowVariableTranslate(varTrans,
                 flowVariableDao.listFlowVariables(flowInst.getFlowInstId()),nodeInst,flowInst);
              
         //判断是否为子流程 A:一般 B:抢先机制 C:多人操作 S:子流程
         if(! "S".equals(nextNode.getOptType())){
-            UserUnitParamBuilder.addParamToParamMap(unitParams,"N",nextNodeUnit );
-
-            Map<String, Set<String>>  userParams = UserUnitParamBuilder.createEmptyParamMap();
-            UserUnitParamBuilder.addParamToParamMap(userParams,"C",flowInst.getUserCode());
-            UserUnitParamBuilder.addParamToParamMap(userParams,"O",userCode);
-
-            if("en".equals(nextNode.getRoleType())){
-            //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色
-            //根据权限表达式创建任务列表 
-                optUsers = SysUserFilterEngine.calcSystemOperators(nextNode.getPowerExp(),
-                        userParams,userParams,null,flowVarTrans);
-            }else
-                optUsers = SysUserFilterEngine.calcSystemOperators(
-                        "D(N)"+nextNode.getRoleType() +"('"+ nextNode.getRoleCode() +"')",
-                        userParams,userParams,null,flowVarTrans);
+            optUsers = calcNodeOpterators( flowInst , nodeInst, nodeInst.getRunToken(),
+                    nextNode, userCode ,  nextNodeUnit,
+                    flowVarTrans );
         }               
     
         return optUsers;
