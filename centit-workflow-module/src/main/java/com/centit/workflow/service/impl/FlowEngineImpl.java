@@ -627,7 +627,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                                 " 节点：" + nodeInst.getNodeInstId() +" 路由："+ nextRoutertNode.getNodeId());
                     }else{
                         int nRn=1;
-                        Date currentTime = new Date(System.currentTimeMillis());
+                        //Date currentTime = new Date(System.currentTimeMillis());
                         for(String uc : optUsers){
                             NodeInstance nextNodeInst = submitToSingleNextOptNode(
                                      nextNode,  flowInst ,  flowInfo ,
