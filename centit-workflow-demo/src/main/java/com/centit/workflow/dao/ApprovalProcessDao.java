@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created by chen_rj on 2017/8/3.
  */
@@ -25,5 +27,10 @@ public class ApprovalProcessDao extends BaseDaoImpl<ApprovalProcess,Long> {
             o.setProcessId(getNextApprovalProcessId());
         }
         super.saveNewObject(o);
+    }
+
+    @Transactional(propagation= Propagation.MANDATORY)
+    public List<ApprovalProcess> getApprovalProcessByNodeInstId(Long nodeInstId){
+        return this.listObjects("From ApprovalProcess o where o.nodeInstId = ?",new Object[]{nodeInstId});
     }
 }

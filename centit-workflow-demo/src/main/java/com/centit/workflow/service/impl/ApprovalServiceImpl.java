@@ -36,11 +36,15 @@ public class ApprovalServiceImpl implements ApprovalService {
     public Long startProcess(HttpServletRequest request,ApprovalEvent approvalEvent,
                              List<ApprovalAuditor> approvalAuditors, int phaseNO, String userCode) {
         //保存业务数据 创建流程
-        approvalEventDao.saveNewObject(approvalEvent);
+        Long approvalId = approvalEventDao.getNextApprovalEventId();
+        approvalEvent.setApprovalId(approvalId);
         FlowInstance flowInstance = flowEngine.createInstanceLockFirstNode("000070",
                 approvalEvent.getEventTitle(),String.valueOf(approvalEvent.getApprovalId()),"u0000000",null);
+        approvalEvent.setFlowInstId(flowInstance.getFlowInstId());
+        approvalEventDao.saveNewObject(approvalEvent);
         if(approvalAuditors != null && approvalAuditors.size()>0){
             for(ApprovalAuditor approvalAuditor : approvalAuditors){
+                approvalAuditor.setApprovalId(approvalId);
                 approvalAuditorDao.saveNewObject(approvalAuditor);
             }
         }
@@ -62,19 +66,19 @@ public class ApprovalServiceImpl implements ApprovalService {
 
     }
     @Override
-    public void doApproval(ApprovalEvent approvalEvent, List<String> userCodes, ApprovalProcess approvalProcess,
+    public void doApproval(List<String> userCodes, ApprovalProcess approvalProcess,
                            long flowInstId , long nodeInstId,String userCode, ServletContext ctx) {
-        //设置下一次的 审核阶段  返回本次的阶段
-        Map<String,String> phaseNoMap = setNextStepPhaseNo(flowInstId,"currentPhase");
-        approvalEvent.setCurrentPhase(phaseNoMap.get("currentPhaseNo"));
-        approvalProcess.setPhraseNo(phaseNoMap.get("currentPhaseNo"));
-        approvalEventDao.saveNewObject(approvalEvent);
+        List<ApprovalEvent> approvalEvents = approvalEventDao.getApprovalEventByFlowInstId(flowInstId);
+        if(approvalEvents != null && approvalEvents.size()>0){
+            approvalProcess.setPhraseNo(approvalEvents.get(0).getCurrentPhase());
+            approvalProcess.setApprovalId(approvalEvents.get(0).getApprovalId());
+        }
         approvalProcessDao.saveNewObject(approvalProcess);
         //是否通过
         String pass = approvalProcess.getAuditResult();
         flowEngine.saveFlowVariable(flowInstId,"pass","Y".equals(pass)?"0":"1");
-        //设置审批人
-        setNextStepAuditors(flowInstId,"auditor",userCodes,phaseNoMap.get("nextPhaseNo"));
+//        //设置审批人
+//        setNextStepAuditors(flowInstId,"auditor",userCodes,phaseNoMap.get("nextPhaseNo"));
         flowEngine.submitOpt(nodeInstId,userCode,"",null,ctx);
 
     }
@@ -127,7 +131,7 @@ public class ApprovalServiceImpl implements ApprovalService {
      * @param flowInstId
      * @return
      */
-    private Map<String,String> setNextStepPhaseNo(Long flowInstId, String varName) {
+    private Map<String,String> setNextStepPhaseNo(Long flowInstId,Long nodeInstId, String varName) {
         Map<String,String> map = new HashMap<>();
         String currentPhaseNo = "";
         String nextPhaseNo = "";
@@ -141,9 +145,26 @@ public class ApprovalServiceImpl implements ApprovalService {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
-        if(currentPhaseNo_Num >= 0){
-            nextPhaseNo = String.valueOf(currentPhaseNo_Num+1);
-            flowEngine.saveFlowVariable(flowInstId,varName,nextPhaseNo);
+        nextPhaseNo = currentPhaseNo;
+        //如果是多实例 只有所有节点都提交了才修改阶段计数
+        NodeInstance nodeInstance = flowEngine.getNodeInstById(nodeInstId);
+        FlowInstance flowInstance = flowEngine.getFlowInstById(flowInstId);
+        if(flowInstance != null && nodeInstance != null){
+            String preRunToken = NodeInstance.calcSuperToken(nodeInstance.getRunToken());
+            Set<String> noSubmitTokens = flowInstance.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
+            Set<Long> submitTokens = flowInstance.calcSubmitSubNodeIdByToken(preRunToken);
+            //非多实例
+            if("".equals(preRunToken)){
+                nextPhaseNo = String.valueOf(currentPhaseNo_Num+1);
+                flowEngine.saveFlowVariable(flowInstId,varName,nextPhaseNo);
+            }
+            //当前节点是多实例最后的节点
+            if(noSubmitTokens != null && noSubmitTokens.size() == 1 && submitTokens != null && submitTokens.size() > 0){
+                if(currentPhaseNo_Num >= 0){
+                    nextPhaseNo = String.valueOf(currentPhaseNo_Num+1);
+                    flowEngine.saveFlowVariable(flowInstId,varName,nextPhaseNo);
+                }
+            }
         }
         map.put("currentPhaseNo",currentPhaseNo);
         map.put("nextPhaseNo",nextPhaseNo);

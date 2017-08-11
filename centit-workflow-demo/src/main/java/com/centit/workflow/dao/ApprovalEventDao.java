@@ -7,13 +7,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created by chen_rj on 2017/8/3.
  */
 @Repository
 public class ApprovalEventDao extends BaseDaoImpl<ApprovalEvent,Long> {
     @Transactional(propagation= Propagation.MANDATORY)
-    private long getNextApprovalEventId(){
+    public long getNextApprovalEventId(){
         String sNo = DatabaseOptUtils.getNextValueOfSequence(this,"S_APPROVALEVENT");
         return Long.valueOf(sNo);
     }
@@ -25,5 +27,10 @@ public class ApprovalEventDao extends BaseDaoImpl<ApprovalEvent,Long> {
             o.setApprovalId(getNextApprovalEventId());
         }
         super.saveNewObject(o);
+    }
+
+    @Transactional(propagation= Propagation.MANDATORY)
+    public List<ApprovalEvent> getApprovalEventByFlowInstId(Long flowInstId){
+        return this.listObjects("From ApprovalEvent o where o.flowInstId = ?",new Object[]{flowInstId});
     }
 }

@@ -18,6 +18,10 @@ public class ApprovalProcess implements  java.io.Serializable{
     @NotNull
     @Column(name="PROCESS_ID")
     private Long processId;
+    @Column(name="APPROVAL_ID")
+    private Long approvalId;
+    @Column(name="NODE_INST_ID")
+    private Long nodeInstId;
     @Column(name="PHASE_NO")
     private String phraseNo;
     @Column(name="USER_CODE")
@@ -33,6 +37,22 @@ public class ApprovalProcess implements  java.io.Serializable{
 
     public void setProcessId(Long processId) {
         this.processId = processId;
+    }
+
+    public Long getApprovalId() {
+        return approvalId;
+    }
+
+    public void setApprovalId(Long approvalId) {
+        this.approvalId = approvalId;
+    }
+
+    public Long getNodeInstId() {
+        return nodeInstId;
+    }
+
+    public void setNodeInstId(Long nodeInstId) {
+        this.nodeInstId = nodeInstId;
     }
 
     public String getPhraseNo() {

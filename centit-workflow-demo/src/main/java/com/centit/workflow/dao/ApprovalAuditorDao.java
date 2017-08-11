@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created by chen_rj on 2017/8/3.
  */
@@ -25,5 +27,10 @@ public class ApprovalAuditorDao extends BaseDaoImpl<ApprovalAuditor,Long> {
             o.setAuditorId(getNextApprovalAuditorId());
         }
         super.saveNewObject(o);
+    }
+
+    @Transactional(propagation= Propagation.MANDATORY)
+    public List<ApprovalAuditor> getAuditorsByPhaseNo(String phaseNo){
+        return this.listObjects("From ApprovalAuditor o where o.phaseNo = ?",new Object[]{phaseNo});
     }
 }

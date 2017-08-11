@@ -23,10 +23,9 @@ public interface ApprovalService {
 
     /**
      * 审批通过或者不通过  需要保存审批意见，审批结果，如果通过还要设置下一步的审批人
-     * @param approvalEvent
      * @param userCodes
      * @param approvalProcess
      */
-    public void doApproval(ApprovalEvent approvalEvent, List<String> userCodes, ApprovalProcess approvalProcess,
+    public void doApproval(List<String> userCodes, ApprovalProcess approvalProcess,
                            long flowInstId, long nodeInstId,String userCode, ServletContext ctx);
 }

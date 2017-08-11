@@ -18,6 +18,8 @@ public class ApprovalAuditor implements java.io.Serializable{
     @NotNull
     @Column(name="AUDITOR_ID")
     private Long auditorId;
+    @Column(name="APPROVAL_ID")
+    private Long approvalId;
     @Column(name="PHASE_NO")
     private String phaseNo;
     @Column(name="USER_CODE")
@@ -31,6 +33,14 @@ public class ApprovalAuditor implements java.io.Serializable{
 
     public void setAuditorId(Long auditorId) {
         this.auditorId = auditorId;
+    }
+
+    public Long getApprovalId() {
+        return approvalId;
+    }
+
+    public void setApprovalId(Long approvalId) {
+        this.approvalId = approvalId;
     }
 
     public String getPhaseNo() {

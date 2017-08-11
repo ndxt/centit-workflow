@@ -51,14 +51,13 @@ public class ApprovalController {
         approvalEvent.setEventDesc(approvalDesc);
         approvalEvent.setRequestTime(new Date());
         approvalEvent.setApprovalState("A");
-        approvalEvent.setCurrentPhase("0");
+        approvalEvent.setCurrentPhase("1");
         //计算总 审批节点数
         Set<String> set = new HashSet<>();
         for(ApprovalAuditor approvalAuditor:auditors){
             set.add(approvalAuditor.getPhaseNo());
         }
         int phaseCount = set.size();
-        //flowCode,userCode
         //开启工作流 提交申请节点
         Long flowInstId = approvalService.startProcess(request,approvalEvent,auditors,phaseCount,
                 auditors.get(0).getUserCode());
@@ -71,12 +70,7 @@ public class ApprovalController {
     }
     @RequestMapping("/doApproval")
     public void doApproval(HttpServletRequest request, HttpServletResponse response,Long flowInstId,Long nodeInstId,
-                           String userCodes,String eventTitle,String eventDesc, String pass,String optUserCode){
-        ApprovalEvent approvalEvent = new ApprovalEvent();
-        approvalEvent.setEventTitle(eventTitle);
-        approvalEvent.setEventDesc(eventDesc);
-        approvalEvent.setRequestTime(new Date());
-        approvalEvent.setApprovalState("A");
+                           String userCodes,String auditResult, String pass,String optUserCode){
         //将前台传过来的usercode 字符串 拆分
         List<String> userCodeList  = new ArrayList<>();
         if(userCodes != null && userCodes.trim().length() > 0){
@@ -90,8 +84,9 @@ public class ApprovalController {
         ApprovalProcess approvalProcess = new ApprovalProcess();
         approvalProcess.setAuditResult("0".equals(pass)?"Y":"N");
         approvalProcess.setUserCode("u0000000");
-        //flowEngine.saveFlowVariable(flowInstId,"pass","0");
-        approvalService.doApproval(approvalEvent,userCodeList,approvalProcess,flowInstId,nodeInstId,optUserCode,request.getServletContext());
+        approvalProcess.setResultDesc(auditResult);
+        approvalProcess.setNodeInstId(nodeInstId);
+        approvalService.doApproval(userCodeList,approvalProcess,flowInstId,nodeInstId,optUserCode,request.getServletContext());
         JsonResultUtils.writeBlankJson(response);
     }
 }
