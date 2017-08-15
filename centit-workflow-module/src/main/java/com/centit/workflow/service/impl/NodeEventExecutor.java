@@ -1,6 +1,8 @@
-package com.centit.workflow.commons;
+package com.centit.workflow.service.impl;
 
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
+import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
 
 /**
@@ -11,39 +13,39 @@ import com.centit.workflow.po.NodeInstance;
  * @create 2013-7-10
  * @version
  */
-public interface NodeEventSupport {
+public interface NodeEventExecutor {
     /**
      * 在节点创建后的调用的的事件
      * @param flowInst 流程实例
      * @param nodeInst 节点实例
-     * @param optParam 用户自定义操作参数
+     * @param nodeInfo 用户自定义操作参数
      * @param optUserCode 当前操作用户
      */
     void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
-                        String optParam, String optUserCode) throws WorkflowException;
-    
+                        NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
+
     /**
-     * 在节点提交前的调用的的事件 
+     * 在节点提交前的调用的的事件
      * @param flowInst 流程实例
      * @param nodeInst 节点实例
-     * @param optParam 用户自定义操作参数
-     * @param optUserCode 当前操作用户    
+     * @param nodeInfo 用户自定义操作参数
+     * @param optUserCode 当前操作用户
      */
-    
+
     void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
-            String optParam,String optUserCode) throws WorkflowException;
-    
+                         NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
+
     /**
      * 自动运行节点所指向的spring bean需要实现这个接口
      * @param flowInst 流程实例
      * @param nodeInst 节点实例
-     * @param optParam 用户自定义操作参数
+     * @param nodeInfo 用户自定义操作参数
      * @param optUserCode 当前操作用户
      * @return true 需要运行后需要调用自动提交，false 则不需要，一般在函数内部已经调用submitNode
      */
     boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
-            String optParam,String optUserCode) throws WorkflowException;
+                            NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
 
     boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
-                          String optParam,String optUserCode) throws WorkflowException;
+                          NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
 }

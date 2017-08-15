@@ -2,14 +2,15 @@ package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.centit.framework.core.common.JsonResultUtils;
-import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.model.adapter.PlatformEnvironment;
-import com.centit.workflow.po.*;
+import com.centit.workflow.client.po.NodeInstance;
+import com.centit.workflow.client.service.FlowEngineClient;
+import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
+import com.centit.workflow.po.ApprovalAuditor;
+import com.centit.workflow.po.ApprovalEvent;
+import com.centit.workflow.po.ApprovalProcess;
 import com.centit.workflow.service.ApprovalService;
-import com.centit.workflow.service.FlowEngine;
-import com.centit.workflow.service.FlowManager;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -25,13 +26,15 @@ import java.util.*;
 @RequestMapping("/approval")
 public class ApprovalController {
     @Resource
-    private FlowEngine flowEngine;
+    private FlowEngineClient flowEngine;
     @Resource
     private ApprovalService approvalService;
     @Resource
     private PlatformEnvironment platformEnvironment;
+//    @Resource
+//    private FlowManager flowManager;
     @Resource
-    private FlowManager flowManager;
+    private FlowManagerClientImpl flowManager;
     @RequestMapping(value = "/listAllUser", method = RequestMethod.GET)
     public void listAllUser(HttpServletResponse response){
         Object userList = platformEnvironment.listAllUsers();
@@ -39,7 +42,7 @@ public class ApprovalController {
     }
     @RequestMapping("/startProcess")
     public void startProcess(HttpServletRequest request,HttpServletResponse response,String approvalTitle,
-                             String approvalDesc,String approvalAuditors){
+                             String approvalDesc,String approvalAuditors) throws Exception{
         //设置审核人  申请事项等业务数据
         List<ApprovalAuditor> auditors = JSON.parseArray(approvalAuditors,ApprovalAuditor.class);
         if(auditors == null || auditors.size() == 0){
@@ -61,7 +64,12 @@ public class ApprovalController {
         //开启工作流 提交申请节点
         Long flowInstId = approvalService.startProcess(request,approvalEvent,auditors,phaseCount,
                 auditors.get(0).getUserCode());
-        List<NodeInstance> nodeInstances = flowManager.listFlowInstNodes(flowInstId);
+        List<NodeInstance> nodeInstances = null;
+        try {
+            nodeInstances = flowManager.listFlowInstNodes(flowInstId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(nodeInstances != null && nodeInstances.size()>0){
             flowEngine.submitOpt(nodeInstances.get(0).getNodeInstId(),"u0000000","",null,
                     request.getServletContext());
@@ -70,7 +78,7 @@ public class ApprovalController {
     }
     @RequestMapping("/doApproval")
     public void doApproval(HttpServletRequest request, HttpServletResponse response,Long flowInstId,Long nodeInstId,
-                           String userCodes,String auditResult, String pass,String optUserCode){
+                           String userCodes,String auditResult, String pass,String optUserCode) throws Exception{
         //将前台传过来的usercode 字符串 拆分
         List<String> userCodeList  = new ArrayList<>();
         if(userCodes != null && userCodes.trim().length() > 0){

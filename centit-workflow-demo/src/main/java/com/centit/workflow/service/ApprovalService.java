@@ -7,7 +7,6 @@ import com.centit.workflow.po.ApprovalProcess;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by chen_rj on 2017/8/3.
@@ -19,7 +18,7 @@ public interface ApprovalService {
      * @param approvalAuditors
      */
     public Long startProcess(HttpServletRequest request,ApprovalEvent approvalEvent,
-                             List<ApprovalAuditor> approvalAuditors, int phaseNO, String userCode);
+                             List<ApprovalAuditor> approvalAuditors, int phaseNO, String userCode) throws Exception;
 
     /**
      * 审批通过或者不通过  需要保存审批意见，审批结果，如果通过还要设置下一步的审批人
@@ -27,5 +26,5 @@ public interface ApprovalService {
      * @param approvalProcess
      */
     public void doApproval(List<String> userCodes, ApprovalProcess approvalProcess,
-                           long flowInstId, long nodeInstId,String userCode, ServletContext ctx);
+                           long flowInstId, long nodeInstId,String userCode, ServletContext ctx) throws Exception;
 }

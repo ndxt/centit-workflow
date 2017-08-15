@@ -1,12 +1,16 @@
 package com.centit.workflow.common;
 
-import com.centit.workflow.commons.NodeEventSupport;
-import com.centit.workflow.commons.WorkflowException;
+
+import com.centit.workflow.client.commons.NodeEventSupport;
+import com.centit.workflow.client.commons.WorkflowException;
+import com.centit.workflow.client.po.FlowInstance;
+import com.centit.workflow.client.po.FlowVariable;
+import com.centit.workflow.client.po.NodeInstance;
+import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.dao.ApprovalAuditorDao;
 import com.centit.workflow.dao.ApprovalEventDao;
-import com.centit.workflow.po.*;
-import com.centit.workflow.service.FlowEngine;
-import org.springframework.context.annotation.Bean;
+import com.centit.workflow.po.ApprovalAuditor;
+import com.centit.workflow.po.ApprovalEvent;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -21,7 +25,7 @@ import java.util.List;
 @Component("SetNextAuditorsBean")
 public class SetNextAuditorsBean implements NodeEventSupport {
     @Resource
-    private FlowEngine flowEngine;
+    private FlowEngineClient flowEngine;
     @Resource
     private ApprovalEventDao approvalEventDao;
     @Resource
@@ -62,7 +66,12 @@ public class SetNextAuditorsBean implements NodeEventSupport {
             e.printStackTrace();
             return false;
         }
-        List<FlowVariable> flowVariables = flowEngine.viewFlowVariablesByVarname(flowInst.getFlowInstId(),"maxPhase");
+        List<FlowVariable> flowVariables = null;
+        try {
+            flowVariables = flowEngine.viewFlowVariablesByVarname(flowInst.getFlowInstId(),"maxPhase");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(flowVariables == null || flowVariables.size() == 0){
             return false;
         }
@@ -71,14 +80,22 @@ public class SetNextAuditorsBean implements NodeEventSupport {
             return false;
         }
         //设置 currentPhaseNo 变量和审核人数量 和 审核人
-        flowEngine.saveFlowVariable(flowInst.getFlowInstId(),"currentPhase",nextPhaseNo);
+        try {
+            flowEngine.saveFlowVariable(flowInst.getFlowInstId(),"currentPhase",nextPhaseNo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         List<String> userCodes = new ArrayList<>();
         for(ApprovalAuditor approvalAuditor:approvalAuditors){
             userCodes.add(approvalAuditor.getUserCode());
         }
-        flowEngine.deleteFlowWorkTeam(flowInst.getFlowInstId(),"auditor");
-        flowEngine.assignFlowWorkTeam(flowInst.getFlowInstId(),"auditor",userCodes);
-        flowEngine.saveFlowVariable(flowInst.getFlowInstId(),"auditorCount",String.valueOf(userCodes.size()));
+        try {
+            flowEngine.deleteFlowWorkTeam(flowInst.getFlowInstId(),"auditor");
+            flowEngine.assignFlowWorkTeam(flowInst.getFlowInstId(),"auditor",userCodes);
+            flowEngine.saveFlowVariable(flowInst.getFlowInstId(),"auditorCount",String.valueOf(userCodes.size()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //同步业务中的 阶段计数
         approvalEvent.setCurrentPhase(nextPhaseNo);
         approvalEventDao.mergeObject(approvalEvent);

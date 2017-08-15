@@ -1,14 +1,13 @@
 package com.centit.workflow.common;
 
-import com.centit.workflow.commons.NodeEventSupport;
-import com.centit.workflow.commons.WorkflowException;
+import com.centit.workflow.client.commons.NodeEventSupport;
+import com.centit.workflow.client.commons.WorkflowException;
+import com.centit.workflow.client.po.FlowInstance;
+import com.centit.workflow.client.po.NodeInstance;
+import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.dao.ApprovalEventDao;
 import com.centit.workflow.dao.ApprovalProcessDao;
-import com.centit.workflow.po.ApprovalEvent;
 import com.centit.workflow.po.ApprovalProcess;
-import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.NodeInstance;
-import com.centit.workflow.service.FlowEngine;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -24,7 +23,7 @@ public class VoteAndSetAuditorsBean implements NodeEventSupport {
     @Resource
     private ApprovalProcessDao approvalProcessDao;
     @Resource
-    private FlowEngine flowEngine;
+    private FlowEngineClient flowEngine;
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst, String optParam, String optUserCode) throws WorkflowException {
 
@@ -51,7 +50,11 @@ public class VoteAndSetAuditorsBean implements NodeEventSupport {
                 break;
             }
         }
-        flowEngine.saveFlowVariable(flowInst.getFlowInstId(),"pass",pass);
+        try {
+            flowEngine.saveFlowVariable(flowInst.getFlowInstId(),"pass",pass);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

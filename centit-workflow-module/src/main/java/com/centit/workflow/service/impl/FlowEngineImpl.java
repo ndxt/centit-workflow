@@ -261,9 +261,10 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 	    //如果首节点是哑元 或者自动执行，请运行自动提交
 
         //自动执行
-        if("D".equals(node.getOptType()) ){    
-            boolean needSubmit = FlowOptUtils.runAutoOperator(flowInst,nodeInst ,
-                    node,userCode,application);
+        if("D".equals(node.getOptType()) ){
+            NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean();
+            boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst,nodeInst ,
+                    node,userCode);
             if(needSubmit)
                 this.submitOpt(nodeInst.getNodeInstId(), userCode, unitCode, varTrans, null);
             
@@ -943,14 +944,15 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         flowInstanceDao.updateObject(flowInst);
     
         //执行节点创建后 事件
-        FlowOptUtils.runAfterCreate(flowInst, nextNodeInst, nextOptNode,userCode,application);
+        NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean();
+        nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nextOptNode,userCode);
         
         //检查自动执行节点 并执行相关操作
    
         //自动执行
-        if("D".equals(nextOptNode.getOptType()) ){    
-            boolean needSubmit = FlowOptUtils.runAutoOperator(flowInst, nextNodeInst,
-                    nextOptNode,userCode,application);
+        if("D".equals(nextOptNode.getOptType()) ){
+            boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nextNodeInst,
+                    nextOptNode,userCode);
             if(needSubmit)
                 this.submitOptInside(lastNodeInstId, userCode,null, unitCode,
                         varTrans, nodeUnits,nodeOptUsers,application);
@@ -1154,7 +1156,8 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 		/**
 		 * 节点提交前事件
 		 */
-		FlowOptUtils.runBeforeSubmit(flowInst, nodeInst,currNode,userCode,application);
+        NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean();
+        nodeEventExecutor.runBeforeSubmit(flowInst, nodeInst,currNode,userCode);
         
 		//判断是否为临时插入节点
 		if(nodeInst.getRunToken().startsWith("L")){

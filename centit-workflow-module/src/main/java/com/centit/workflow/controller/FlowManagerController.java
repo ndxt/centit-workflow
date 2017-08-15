@@ -3,7 +3,6 @@ package com.centit.workflow.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.common.JsonResultUtils;
-import com.centit.framework.core.common.ResponseData;
 import com.centit.framework.core.common.ResponseMapData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.dao.PageDesc;
@@ -19,14 +18,12 @@ import com.centit.workflow.service.FlowManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.util.*;
 
 
@@ -675,5 +672,12 @@ public class FlowManagerController extends BaseController {
     public void Test(HttpServletResponse response){
         flowManager.moveUserTaskTo("u0000002","u0000001","u0000000","测试");
         JsonResultUtils.writeBlankJson(response);
+    }
+
+    @RequestMapping(value="/listFlowInstNodes",method = RequestMethod.GET)
+    public void  listFlowInstNodes(HttpServletResponse response,Long flowInstId){
+        List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
+        resData.addResponseData(OBJLIST, nodeInstList);
+        JsonResultUtils.writeSingleDataJson(resData,response);
     }
 }

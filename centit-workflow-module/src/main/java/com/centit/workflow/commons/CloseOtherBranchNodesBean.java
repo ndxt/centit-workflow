@@ -5,11 +5,11 @@ import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.service.FlowEngine;
 
 
-public class CloseOtherBranchNodesBean implements NodeEventSupport{
+public class CloseOtherBranchNodesBean {
 
     private FlowEngine flowEng;
     
-    @Override
+
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                                    String optParam, String optUserCode) {
         flowEng.disableOtherBranchNodes(nodeInst.getNodeInstId(), optUserCode);
@@ -20,14 +20,14 @@ public class CloseOtherBranchNodesBean implements NodeEventSupport{
         this.flowEng = flowEng;
     }
 
-    @Override
+
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
             String optParam, String optUserCode) {
         // TODO Auto-generated method stub
         
     }
 
-    @Override
+
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
             String optParam, String optUserCode) {
         // TODO Auto-generated method stub

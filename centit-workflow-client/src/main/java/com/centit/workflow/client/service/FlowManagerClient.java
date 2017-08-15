@@ -1,10 +1,8 @@
 package com.centit.workflow.client.service;
 
-import com.centit.framework.core.dao.PageDesc;
+import com.centit.workflow.client.po.NodeInstance;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /** 
  * 流程管理业务接口类 
@@ -13,7 +11,7 @@ import java.util.Map;
  * @version 2.0 <br>
  *        
  */
-public interface FlowManager{
+public interface FlowManagerClient {
     //------------查看流程运行状态图---------------------------------
     /**
      *  获取系统中所有的流程实例
@@ -113,12 +111,12 @@ public interface FlowManager{
 //
 //    //节点实例管理-------------------------------
 //
-//    /**
-//     * 获取流程实例下的节点实例列表
-//     * @param wfinstid 流程实例编号
-//     * @return List<NodeInstance>
-//     */
-//    List<NodeInstance> listFlowInstNodes(long wfinstid);
+    /**
+     * 获取流程实例下的节点实例列表
+     * @param wfinstid 流程实例编号
+     * @return List<NodeInstance>
+     */
+    List<NodeInstance> listFlowInstNodes(Long wfinstid) throws Exception;
 //    //-----------节点状态变更-------------------------------
 //    /*
 //     * N 正常  B 已回退    C 完成   F被强制结束
