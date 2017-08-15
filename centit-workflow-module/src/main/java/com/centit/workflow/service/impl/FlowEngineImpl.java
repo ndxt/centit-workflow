@@ -262,7 +262,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 
         //自动执行
         if("D".equals(node.getOptType()) ){
-            NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean();
+            NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(node);
             boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst,nodeInst ,
                     node,userCode);
             if(needSubmit)
@@ -944,7 +944,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         flowInstanceDao.updateObject(flowInst);
     
         //执行节点创建后 事件
-        NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean();
+        NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nextOptNode);
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nextOptNode,userCode);
         
         //检查自动执行节点 并执行相关操作
@@ -1156,7 +1156,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 		/**
 		 * 节点提交前事件
 		 */
-        NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean();
+        NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(currNode);
         nodeEventExecutor.runBeforeSubmit(flowInst, nodeInst,currNode,userCode);
         
 		//判断是否为临时插入节点

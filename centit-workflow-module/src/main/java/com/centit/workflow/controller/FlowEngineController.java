@@ -2,6 +2,7 @@ package com.centit.workflow.controller;
 
 import com.centit.framework.core.common.JsonResultUtils;
 import com.centit.framework.core.controller.BaseController;
+import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInstance;
@@ -14,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by chen_rj on 2017/7/28.
@@ -28,6 +27,7 @@ public class FlowEngineController  extends BaseController {
     private FlowEngine flowEng;
     @Resource
     private FlowManager flowManager;
+    private Map<Class<?>, String[]> excludes;
     @RequestMapping(value = "/createFlowInstDefault")
     public void createInstance(String flowCode, String flowOptName,String flowOptTag,String userCode,String unitCode, HttpServletResponse httpResponse) {
         FlowInstance flowInstance = flowEng.createInstance(flowCode, flowOptName,flowOptTag,userCode,unitCode);
@@ -78,7 +78,9 @@ public class FlowEngineController  extends BaseController {
     @RequestMapping(value="/listFlowInstNodes",method = RequestMethod.GET)
     public void  listFlowInstNodes(HttpServletResponse response,Long flowInstId){
         List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
-        JsonResultUtils.writeSingleDataJson(nodeInstList,response);
+        excludes  =new HashMap<Class<?>, String[]>();
+        excludes.put(NodeInstance.class,new String[]{"wfActionLogs","wfActionTasks"});
+        JsonResultUtils.writeSingleDataJson(nodeInstList,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
 
 }

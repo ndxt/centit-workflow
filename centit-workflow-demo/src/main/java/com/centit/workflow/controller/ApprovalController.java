@@ -31,8 +31,6 @@ public class ApprovalController {
     private ApprovalService approvalService;
     @Resource
     private PlatformEnvironment platformEnvironment;
-//    @Resource
-//    private FlowManager flowManager;
     @Resource
     private FlowManagerClientImpl flowManager;
     @RequestMapping(value = "/listAllUser", method = RequestMethod.GET)
