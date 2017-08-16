@@ -1,5 +1,6 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.centit.framework.appclient.AppSession;
 import com.centit.support.network.HttpExecutor;
 import com.centit.workflow.commons.WorkflowException;
@@ -9,6 +10,9 @@ import com.centit.workflow.po.NodeInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -34,13 +38,22 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
         if( nodeInfo.getOptBean()==null || "".equals(nodeInfo.getOptBean()))
             return;
         String optBeanUrl = url + "/" + nodeInfo.getOptBean();
+        Map<String,Object> paramMap = new HashMap<>();
+        String s = JSON.toJSONString(flowInst);
+        FlowInstance flowInstance = JSON.parseObject(s,FlowInstance.class);
+        paramMap.put("flowInst",s);
+        paramMap.put("nodeInst",nodeInst);
+        paramMap.put("nodeInfo",nodeInfo);
+        paramMap.put("optUserCode",optUserCode);
+        String jsonParam = JSON.toJSONString(paramMap);
         try {
             AppSession appSession = new AppSession(url,false,null,null);
             CloseableHttpClient httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
-            String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/"+ nodeInfo.getOptBean()),null);
+            String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAfterCreate"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("远程Bean失败");
         }
 
     }
@@ -50,13 +63,21 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
         if( nodeInfo.getOptBean()==null || "".equals(nodeInfo.getOptBean()))
             return;
         String optBeanUrl = url + "/" + nodeInfo.getOptBean();
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("flowInst",flowInst);
+        paramMap.put("nodeInst",nodeInst);
+        paramMap.put("nodeInfo",nodeInfo);
+        paramMap.put("optUserCode",optUserCode);
+        paramMap.put("beanName",nodeInfo.getOptBean());
+        String jsonParam = JSON.toJSONString(flowInst);
         try {
             AppSession appSession = new AppSession(url,false,null,null);
             CloseableHttpClient httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
-            String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/"+ nodeInfo.getOptBean()),null);
+            String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runBeforeSubmit"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("远程Bean失败");
         }
     }
 
@@ -78,9 +99,17 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
             AppSession appSession = new AppSession(url,false,null,null);
             CloseableHttpClient httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
-            String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/"+ nodeInfo.getOptBean()),null);
+            Map<String,Object> paramMap = new HashMap<>();
+            paramMap.put("flowInst",flowInst);
+            paramMap.put("nodeInst",nodeInst);
+            paramMap.put("nodeInfo",nodeInfo);
+            paramMap.put("optUserCode",optUserCode);
+            paramMap.put("beanName",nodeInfo.getOptBean());
+            String jsonParam = JSON.toJSONString(flowInst);
+            String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAutoOperator"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("远程Bean失败");
         }
         return needSubmit;
     }
