@@ -57,6 +57,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
         String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/createFlowInstDefault"),paramMap);
+        appSession.releaseHttpClient(httpClient);
         return result;
     }
 
@@ -72,6 +73,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
         String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/createFlowInstWithVersion"),paramMap);
+        appSession.releaseHttpClient(httpClient);
         return result;
     }
 
@@ -91,6 +93,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
         String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/createInstanceLockFirstNode"),paramMap);
+        appSession.releaseHttpClient(httpClient);
         JSONObject jsonObject = JSONObject.parseObject(result);
         String dataStr = jsonObject.get("data").toString();
         FlowInstance flowInstance= JSONObject.parseObject(dataStr,FlowInstance.class);
@@ -106,6 +109,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
         String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/saveFlowVariable"),paramMap);
+        appSession.releaseHttpClient(httpClient);
     }
 
     @Override
@@ -117,6 +121,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
         String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/assignFlowWorkTeam"),paramMap);
+        appSession.releaseHttpClient(httpClient);
     }
 
     @Override
@@ -130,6 +135,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
         String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/submitOpt"),paramMap);
+        appSession.releaseHttpClient(httpClient);
         return  null;
     }
 
@@ -141,6 +147,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
         String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/viewFlowVariablesByVarname"),paramMap);
+        appSession.releaseHttpClient(httpClient);
         JSONObject jsonObject = JSONObject.parseObject(result);
         String dataStr = jsonObject.get("data").toString();
         List<FlowVariable> flowVariables= JSONObject.parseArray(dataStr,FlowVariable.class);
@@ -154,5 +161,6 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
         String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/deleteFlowWorkTeam"),paramMap);
+        appSession.releaseHttpClient(httpClient);
     }
 }

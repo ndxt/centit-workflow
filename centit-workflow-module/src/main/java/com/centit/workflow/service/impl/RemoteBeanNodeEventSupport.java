@@ -39,11 +39,9 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
             return;
         String optBeanUrl = url + "/" + nodeInfo.getOptBean();
         Map<String,Object> paramMap = new HashMap<>();
-        String s = JSON.toJSONString(flowInst);
-        FlowInstance flowInstance = JSON.parseObject(s,FlowInstance.class);
-        paramMap.put("flowInst",s);
-        paramMap.put("nodeInst",nodeInst);
-        paramMap.put("nodeInfo",nodeInfo);
+        paramMap.put("flowInst",JSON.toJSONString(flowInst));
+        paramMap.put("nodeInst",JSON.toJSONString(nodeInst));
+        paramMap.put("nodeInfo",JSON.toJSONString(nodeInfo));
         paramMap.put("optUserCode",optUserCode);
         String jsonParam = JSON.toJSONString(paramMap);
         try {
@@ -64,12 +62,11 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
             return;
         String optBeanUrl = url + "/" + nodeInfo.getOptBean();
         Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInst",flowInst);
-        paramMap.put("nodeInst",nodeInst);
-        paramMap.put("nodeInfo",nodeInfo);
+        paramMap.put("flowInst",JSON.toJSONString(flowInst));
+        paramMap.put("nodeInst",JSON.toJSONString(nodeInst));
+        paramMap.put("nodeInfo",JSON.toJSONString(nodeInfo));
         paramMap.put("optUserCode",optUserCode);
-        paramMap.put("beanName",nodeInfo.getOptBean());
-        String jsonParam = JSON.toJSONString(flowInst);
+        String jsonParam = JSON.toJSONString(paramMap);
         try {
             AppSession appSession = new AppSession(url,false,null,null);
             CloseableHttpClient httpClient = appSession.getHttpClient();
@@ -100,12 +97,11 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
             CloseableHttpClient httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
             Map<String,Object> paramMap = new HashMap<>();
-            paramMap.put("flowInst",flowInst);
-            paramMap.put("nodeInst",nodeInst);
-            paramMap.put("nodeInfo",nodeInfo);
+            paramMap.put("flowInst",JSON.toJSONString(flowInst));
+            paramMap.put("nodeInst",JSON.toJSONString(nodeInst));
+            paramMap.put("nodeInfo",JSON.toJSONString(nodeInfo));
             paramMap.put("optUserCode",optUserCode);
-            paramMap.put("beanName",nodeInfo.getOptBean());
-            String jsonParam = JSON.toJSONString(flowInst);
+            String jsonParam = JSON.toJSONString(paramMap);
             String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAutoOperator"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();

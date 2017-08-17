@@ -28,13 +28,12 @@ public class  EventBeanController{
     public void runAfterCreate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,@RequestBody Map<String,Object> paramMap ){
         WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(httpServletRequest.getServletContext());//获取spring的context
         try {
-            String s = paramMap.get("flowInst").toString();
             FlowInstance flowInstance = JSONObject.parseObject(paramMap.get("flowInst").toString(), FlowInstance.class);
-            NodeInstance nodeInstance = (NodeInstance) JSONObject.parse((String)paramMap.get("nodeInst"));
-            NodeInfo nodeInfo = (NodeInfo) JSONObject.parse((String)paramMap.get("nodeInfo"));
+            NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
+            NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
             String optUserCode = (String)paramMap.get("optUserCode");
             NodeEventSupport autoRun = (NodeEventSupport)wac.getBean(nodeInfo.getOptBean());
-           // autoRun.runAfterCreate(flowInstance, nodeInstance, nodeInfo.getOptParam(),optUserCode);
+            autoRun.runAfterCreate(flowInstance, nodeInstance, nodeInfo.getOptParam(),optUserCode);
         } catch (BeansException e) {
             e.printStackTrace();
             JsonResultUtils.writeCodeAndMessageJson(0, "bean调用失败", httpServletResponse);
