@@ -11,11 +11,13 @@ import com.centit.workflow.po.ApprovalProcess;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
  * Created by chen_rj on 2017/8/4.
  */
+@Transactional
 @Component("VoteAndSetAuditorsBean")
 public class VoteAndSetAuditorsBean implements NodeEventSupport {
     @Resource
@@ -39,7 +41,13 @@ public class VoteAndSetAuditorsBean implements NodeEventSupport {
      */
     @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst, String optParam, String optUserCode) throws WorkflowException {
-        List<ApprovalProcess> approvalProcesses = approvalProcessDao.getApprovalProcessByNodeInstId(nodeInst.getNodeInstId());
+        Long nodeInstId = nodeInst.getNodeInstId();
+        List<ApprovalProcess> approvalProcesses = null;
+        try {
+            approvalProcesses = approvalProcessDao.getApprovalProcessByNodeInstId(nodeInst.getNodeInstId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(approvalProcesses == null || approvalProcesses.size() == 0){
             return;
         }

@@ -3,10 +3,8 @@ package com.centit.workflow.dao;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.hibernate.dao.BaseDaoImpl;
 import com.centit.framework.hibernate.dao.DatabaseOptUtils;
-import com.centit.support.database.QueryUtils;
 import com.centit.workflow.po.FlowOrganize;
 import com.centit.workflow.po.FlowOrganizeId;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +41,7 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
     public void deleteFlowOrganize(long flowInstId, String roleCode,String authDesc) {
         DatabaseOptUtils.doExecuteHql(this,"delete FlowOrganize where cid.flowInstId=? and cid.roleCode=? and authDesc = ?",new Object[]{flowInstId, roleCode,authDesc});
     }
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional(propagation= Propagation.REQUIRES_NEW)
     public List<FlowOrganize> listFlowOrganize(long flowInstId)
     {
         //Map<String,String> filterDesc = new HashMap<String,String>();

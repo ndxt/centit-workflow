@@ -2,11 +2,8 @@ package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.hibernate.dao.BaseDaoImpl;
-import com.centit.framework.hibernate.dao.DatabaseOptUtils;
-import com.centit.support.database.QueryUtils;
 import com.centit.workflow.po.FlowWorkTeam;
 import com.centit.workflow.po.FlowWorkTeamId;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +39,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
         //DatabaseOptUtils.doExecuteHql(this,"delete WfTeam where id.flowInstId=? and id.roleCode=?",new Object[]{flowInstId, roleCode});
     }
     
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional(propagation= Propagation.REQUIRES_NEW)
     public List<FlowWorkTeam> listFlowWorkTeam(long flowInstId)
     {
         //Map<String,String> filterDesc = new HashMap<String,String>();
@@ -58,7 +55,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
      * @return
      */
     @SuppressWarnings("unchecked")
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional(propagation= Propagation.REQUIRES_NEW)
     public List<FlowWorkTeam> listFlowWorkTeamByRole(long flowInstId, String roleCode)
     {
         return this.listObjects("From FlowWorkTeam  " +

@@ -1,18 +1,13 @@
 package com.centit.workflow.service.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.compiler.ObjectTranslate;
 import com.centit.support.compiler.VariableTranslate;
-
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInstance;
+
+import java.util.*;
 
 public class FlowVariableTranslate implements UserUnitVariableTranslate, VariableTranslate {
 
@@ -212,4 +207,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
         return nodeUnits.get(varName);
     }
 
+    public UserUnitVariableTranslate getFlowVarTrans() {
+        return flowVarTrans;
+    }
 }

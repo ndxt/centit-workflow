@@ -1202,10 +1202,14 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
     		//DatabaseOptUtils.flush(nodeInstanceDao.getCurrentSession());
 		}
 		//刷新 变量接口 里面的变量
+        List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInst.getFlowInstId());
+		Map<String,List<String>> flowOrganizes = this.viewFlowOrganize(flowInst.getFlowInstId());
+        Map<String,List<String>> flowWorkTeam = this.viewFlowWorkTeam(flowInst.getFlowInstId());
+        flushVariables((FlowVariableTranslate) varTrans,flowVariables,flowOrganizes,flowWorkTeam);
 		FlowVariableTranslate  flowVarTrans = new FlowVariableTranslate(varTrans,
-                flowVariableDao.listFlowVariables(flowInst.getFlowInstId()),nodeInst,flowInst);
-        flowVarTrans.setFlowOrganizes( this.viewFlowOrganize(flowInst.getFlowInstId()));
-        flowVarTrans.setFlowWorkTeam( this.viewFlowWorkTeam(flowInst.getFlowInstId()));
+                flowVariables ,nodeInst,flowInst);
+        flowVarTrans.setFlowOrganizes(flowOrganizes);
+        flowVarTrans.setFlowWorkTeam(flowWorkTeam);
 
 	    long nextNodeId = nodeTran.getEndnodeid();
 	    String nodeToken = nodeInst.getRunToken();
@@ -2533,5 +2537,15 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         return new ArrayList<FlowWarning>(
                 runtimeWarningDao.listFlowWarningByWarningCode(warningCode,pageDesc));
     }
-
+    private void flushVariables(FlowVariableTranslate varTrans,List<FlowVariable> flowVariables,
+                                Map<String,List<String>> flowOrganizes,Map<String,List<String>> flowWorkTeam){
+        if(varTrans != null){
+            varTrans.setFlowVariables(flowVariables);
+            varTrans.setFlowOrganizes(flowOrganizes);
+            varTrans.setFlowWorkTeam(flowWorkTeam);
+            flushVariables((FlowVariableTranslate)varTrans.getFlowVarTrans(),flowVariables,flowOrganizes,flowWorkTeam);
+        }else{
+            return;
+        }
+    }
 }
