@@ -70,7 +70,7 @@ public class FlowEngineController  extends BaseController {
         flowEng.assignFlowWorkTeam(flowInstId,roleCode,userCodes);
         JsonResultUtils.writeBlankJson(httpServletResponse);
     }
-    @RequestMapping(value = "deleteFlowWorkTeam",method = RequestMethod.DELETE)
+    @RequestMapping(value = "deleteFlowWorkTeam",method = RequestMethod.GET)
     public void deleteFlowWorkTeam(HttpServletResponse httpServletResponse,Long flowInstId,String roleCode){
         flowEng.deleteFlowWorkTeam(flowInstId,roleCode);
         JsonResultUtils.writeBlankJson(httpServletResponse);

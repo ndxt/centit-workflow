@@ -1201,7 +1201,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
     		nodeInstanceDao.updateObject(nodeInst);
     		//DatabaseOptUtils.flush(nodeInstanceDao.getCurrentSession());
 		}
-		
+		//刷新 变量接口 里面的变量
 		FlowVariableTranslate  flowVarTrans = new FlowVariableTranslate(varTrans,
                 flowVariableDao.listFlowVariables(flowInst.getFlowInstId()),nodeInst,flowInst);
         flowVarTrans.setFlowOrganizes( this.viewFlowOrganize(flowInst.getFlowInstId()));
@@ -1383,7 +1383,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         return nns > 0;
     }
 
-    
+
     @Override
     public Set<Long> submitOpt(long nodeInstId, String userCode,String unitCode,
             UserUnitVariableTranslate varTrans,ServletContext application)

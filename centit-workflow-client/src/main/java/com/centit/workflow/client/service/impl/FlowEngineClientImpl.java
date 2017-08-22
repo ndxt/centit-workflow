@@ -56,7 +56,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("unitCode",unitCode);
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
-        String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/createFlowInstDefault"),paramMap);
+        String result = null;
+        result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/createFlowInstDefault"),paramMap);
         appSession.releaseHttpClient(httpClient);
         return result;
     }
@@ -140,13 +141,13 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId, String varname) throws Exception{
+    public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId, String varName) throws Exception{
         HashMap<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",flowInstId);
-        paramMap.put("varname",varname);
+        paramMap.put("varName",varName);
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
-        String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/viewFlowVariablesByVarname"),paramMap);
+        String result =  HttpExecutor.simpleGet(httpClient,appSession.completeQueryUrl("/flow/engine/viewFlowVariablesByVarname"),paramMap);
         appSession.releaseHttpClient(httpClient);
         JSONObject jsonObject = JSONObject.parseObject(result);
         String dataStr = jsonObject.get("data").toString();
@@ -160,7 +161,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("roleCode",roleCode);
         CloseableHttpClient httpClient = appSession.getHttpClient();
         appSession.checkAccessToken(httpClient);
-        String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/deleteFlowWorkTeam"),paramMap);
+        String result =  HttpExecutor.simpleGet(httpClient,appSession.completeQueryUrl("/flow/engine/deleteFlowWorkTeam"),paramMap);
         appSession.releaseHttpClient(httpClient);
     }
 }

@@ -49,6 +49,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
             CloseableHttpClient httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
             String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAfterCreate"),jsonParam);
+            appSession.releaseHttpClient(httpClient);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
@@ -72,6 +73,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
             CloseableHttpClient httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
             String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runBeforeSubmit"),jsonParam);
+            appSession.releaseHttpClient(httpClient);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
@@ -91,18 +93,18 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
                                           NodeInfo nodeInfo, String optUserCode )
             throws WorkflowException {
         boolean needSubmit = true;
-        String optBeanUrl = url + "/" + nodeInfo.getOptBean();
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("flowInst",JSON.toJSONString(flowInst));
+        paramMap.put("nodeInst",JSON.toJSONString(nodeInst));
+        paramMap.put("nodeInfo",JSON.toJSONString(nodeInfo));
+        paramMap.put("optUserCode",optUserCode);
+        String jsonParam = JSON.toJSONString(paramMap);
         try {
             AppSession appSession = new AppSession(url,false,null,null);
             CloseableHttpClient httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
-            Map<String,Object> paramMap = new HashMap<>();
-            paramMap.put("flowInst",JSON.toJSONString(flowInst));
-            paramMap.put("nodeInst",JSON.toJSONString(nodeInst));
-            paramMap.put("nodeInfo",JSON.toJSONString(nodeInfo));
-            paramMap.put("optUserCode",optUserCode);
-            String jsonParam = JSON.toJSONString(paramMap);
             String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAutoOperator"),jsonParam);
+            appSession.releaseHttpClient(httpClient);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
