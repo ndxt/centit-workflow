@@ -12,7 +12,7 @@ import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.hibernate.dao.BaseDaoImpl;
 import com.centit.framework.hibernate.dao.DatabaseOptUtils;
-import com.centit.support.database.QueryUtils;
+import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.FlowInstance;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

@@ -7,8 +7,8 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.centit.support.database.DBType;
-import com.centit.support.database.QueryAndNamedParams;
+import com.centit.support.database.utils.DBType;
+import com.centit.support.database.utils.QueryAndNamedParams;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +16,7 @@ import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.hibernate.dao.BaseDaoImpl;
 import com.centit.framework.hibernate.dao.DatabaseOptUtils;
-import com.centit.support.database.QueryUtils;
+import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.UserTask;
 import com.centit.workflow.po.ActionTask;
 import org.springframework.transaction.annotation.Propagation;

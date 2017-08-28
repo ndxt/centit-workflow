@@ -1,26 +1,22 @@
 package com.centit.workflow.dao;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.alibaba.fastjson.JSONArray;
-import com.centit.support.database.QueryAndNamedParams;
-import com.centit.workflow.po.UserTask;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.hibernate.dao.BaseDaoImpl;
 import com.centit.framework.hibernate.dao.DatabaseOptUtils;
-import com.centit.support.database.QueryAndParams;
-import com.centit.support.database.QueryUtils;
-import com.centit.workflow.po.LastVersionFlowDefine;
+import com.centit.support.database.utils.QueryAndNamedParams;
+import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowInfoId;
+import com.centit.workflow.po.LastVersionFlowDefine;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId>

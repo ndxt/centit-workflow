@@ -15,22 +15,17 @@
     <description>工作流引擎服务核心功能实现
     </description>
 
-
     <dependencies>
-
-
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-core</artifactId>
             <version>${centit.framework.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>framework-hibernate</artifactId>
-            <version>${centit.framework.version}</version>
+            <artifactId>centit-persistence-hibernate</artifactId>
+            <version>${centit.persistence.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.oracle</groupId>
@@ -38,7 +33,6 @@
             <version>${ojdbc6.version}</version>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

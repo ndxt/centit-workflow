@@ -6,7 +6,7 @@ package com.centit.workflow.service.impl;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.support.algorithm.DatetimeOpt;
-import com.centit.support.database.QueryUtils;
+import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.dao.ActionTaskDao;
 import com.centit.workflow.dao.FlowWarningDao;
 import com.centit.workflow.dao.NodeInstanceDao;

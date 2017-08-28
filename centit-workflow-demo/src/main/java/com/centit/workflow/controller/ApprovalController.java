@@ -1,7 +1,7 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.centit.framework.core.common.JsonResultUtils;
+import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.workflow.client.po.NodeInstance;
 import com.centit.workflow.client.service.FlowEngineClient;

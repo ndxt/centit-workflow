@@ -11,7 +11,7 @@ import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.compiler.Formula;
-import com.centit.support.database.QueryUtils;
+import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;

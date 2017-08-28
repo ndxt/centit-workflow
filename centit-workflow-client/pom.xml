@@ -25,11 +25,6 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlet-api.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-client</artifactId>
-            <version>${centit.framework.version}</version>
-        </dependency>
     </dependencies>
 
 </project>
