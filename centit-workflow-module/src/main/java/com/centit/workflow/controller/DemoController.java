@@ -1,8 +1,8 @@
 package com.centit.workflow.controller;
 
-import com.centit.framework.core.common.JsonResultUtils;
-import com.centit.framework.core.common.ResponseData;
-import com.centit.framework.core.common.ResponseMapData;
+import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.common.ResponseData;
+import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.service.FlowEngine;

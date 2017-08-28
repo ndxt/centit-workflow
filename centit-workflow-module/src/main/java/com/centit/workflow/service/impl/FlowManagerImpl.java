@@ -3,7 +3,7 @@ package com.centit.workflow.service.impl;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.common.WorkTimeSpan;
-import com.centit.support.database.QueryUtils;
+import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
