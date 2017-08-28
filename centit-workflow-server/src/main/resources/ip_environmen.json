@@ -7,14 +7,6 @@
       "ddeSyncUrl": "http://productsvr.centit.com:8080/contract/datasync",
       "sysDataPushOption": "NONE",
       "created": "u0000000"
-    },
-    {
-      "osId": "TEST",
-      "osName": "测试",
-      "osUrl": "http://localhost:8080/workflow",
-      "ddeSyncUrl": "",
-      "sysDataPushOption": "NONE",
-      "created": "u0000000"
     }
   ],
   "databaseInfos": [
