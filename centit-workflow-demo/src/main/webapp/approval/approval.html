@@ -55,6 +55,8 @@
     </form>
 </div>
 <script type="text/javascript">
+    var Config = require('config');
+    var basePath = Config.ContextPath;
     var rowObject={};
     function formatOper(val, row, index) {
         debugger;
@@ -75,7 +77,7 @@
 
     $(function () {
         $('#approvalform').form({
-            url: 'http://localhost:8080/demo/service/approval/doApproval',
+            url: basePath + 'service/approval/doApproval',
             data:$('#approvalform').serialize(),
             onSubmit: function () {
             },
@@ -95,7 +97,7 @@
             debugger;
             $.ajax({
                 method: 'GET',
-                url: 'http://localhost:8080/demo/service/approval/getUserTasksByUserCode/' + rec.userCode,
+                url: basePath + 'service/approval/getUserTasksByUserCode/' + rec.userCode,
                 async: false,
                 dataType: 'json',
                 success: function (data) {

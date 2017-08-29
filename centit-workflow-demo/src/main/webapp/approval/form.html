@@ -149,8 +149,9 @@
         $('#approvalForm').submit();
     }
     $(function () {
+        var Config = require('config');
         $('#approvalForm').form({
-            url: 'http://localhost:8080/demo/service/approval/startProcess',
+            url: Config.ContextPath + 'service/approval/startProcess',
             data:$('#approvalForm').serialize(),
             onSubmit: function () {
             },
