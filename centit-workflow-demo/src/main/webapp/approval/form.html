@@ -1,13 +1,173 @@
-<form class="form centit">
-    <div class="fields two">
-        <div class="field required">
-            <label>事项</label>
-            <input type="text" class="easyui-textbox" name="publishDate" />
-        </div>
+<form id="approvalForm">
+    <div class="field ">
+        <label>申请事项</label>
+        <input type="text" class="easyui-textbox" name="approvalTitle"/>
     </div>
-
     <div class="field">
-        <label>事项说明</label>
-        <input type="text" class="easyui-textbox" name="flowDesc" height="100" multiline="true" style="height: 130px;"/>
+        <label>事项描述</label>
+        <input type="text" class="easyui-textbox" name="approvalDesc" multiline="true"
+               style="height: 130px;width: 400px"/>
     </div>
+    <div class="field" style="display: none;">
+        <label>审核人</label>
+        <input type="text" class="easyui-textbox" name="approvalAuditors" id="approvalAuditors"  />
+    </div>
+    <div class="field" style="float:left">
+        <label>各级审核人</label>
+        <table id="dg" title="阶段和审核人" class="easyui-datagrid" style="width:600px;height:200px;"
+               url=""
+               toolbar="#toolbar"
+               fitColumns="true" singleSelect="true">
+            <thead>
+            <tr>
+                <th field="phaseNo" width="20">阶段名</th>
+                <th field="auditorList" width="80">审核人</th>
+                <th field="userCodes" width="80" hidden="true">审核人</th>
+                <th field="_operate" formatter="formatOper" width="80"></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <input type="button" value="提交" onclick="submitForm()"/>
 </form>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+       onclick="newPhase()">新增审核节点</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyPhase()">
+        删除审核节点</a>
+</div>
+<div id="formdlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+    <div class="ftitle">设置审核人</div>
+    <div class="fitem">
+        <label>阶段号</label>
+        <input id="phaseno" class="easyui-textbox" readonly="true">
+    </div>
+    <div class="fitem">
+        <label>审核人列表</label>
+        <input name="auditorList" id="auditorList" class="easyui-textbox" readonly="true" multiline="true"
+               style="height: 100px;width: 200px">
+    </div>
+    <div class="fitem">
+        <label>审核人</label>
+        <input class="easyui-combobox" name="auditor" id="auditor"
+               data-options="valueField:'userCode',textField:'userName',url:'service/approval/listAllUser'"
+        />
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+           onclick="newAuditor()"></a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+           onclick="deleteAuditor()"></a>
+    </div>
+</div>
+<script type="text/javascript">
+    var url, rowObject;
+    function newPhase() {
+        var rowNum = $("#dg").datagrid("getRows").length;
+        $("#dg").datagrid("appendRow", {phaseNo: rowNum + 1, auditor: ""});
+        $("#dg").datagrid("selectRow", rowNum).datagrid("beginEdit", rowNum);
+    }
+    function destroyPhase() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('Confirm', '确认删除该审核过程吗?', function (r) {
+                if (r) {
+                    $('#dg').datagrid("deleteRow", $('#dg').datagrid("getRowIndex", row));
+                }
+            });
+        }
+    }
+    function formatOper(val, row, index) {
+        rowObject = row;
+        return '<a href="#" onclick="setAuditors(rowObject)">设置审核员</a>';
+    }
+    function setAuditors(rowObject) {
+        $("#formdlg").dialog({
+            onClose: function () {
+                //$(this).dialog('destroy');//销毁
+                $("#auditorList").textbox("setValue","");
+            }
+        });
+        $('#formdlg').dialog('open').dialog('setTitle', '设置审核员');
+        $("#phaseno").textbox("setValue", rowObject.phaseNo);
+    }
+    function newAuditor() {
+        var userText = $("#auditorList").textbox("getValue");
+        var userValue = rowObject.userCodes;
+        var userCode = $("#auditor").combobox("getText") + ";";
+        var userCodeValue = $("#auditor").combobox("getValue") + ";";
+        var userCodes = rowObject.userCodes == undefined?"":rowObject.userCodes;
+
+        if(userCode.trim() == ";" || userText.indexOf(userCode) > -1){
+            return;
+        }
+        $("#auditorList").textbox("setValue",userText+userCode);
+        rowObject.auditorList = userText+userCode;
+        rowObject.userCodes = userCodes + userCodeValue;
+        $('#dg').datagrid('refreshRow', parseInt(rowObject.phaseNo) - 1);
+    }
+    function deleteAuditor() {
+        var userText = $("#auditorList").textbox("getValue");
+        var userValue = rowObject.userCodes;
+        userValue = userValue==undefined?"":userValue;
+        var userCode = $("#auditor").combobox("getText") + ";";
+        var userCodeValue = $("#auditor").combobox("getValue") + ";";
+        var index = userText.indexOf(userCode);
+        var valueIndex = userValue.indexOf(userCodeValue);
+        if (userText.trim().length === 0 || userCode.trim() == ";" || index === -1) {
+            return;
+        }
+        userText = userText.slice(0, index) + userText.slice(index + userCode.length + 1);
+        userValue = userValue.slice(0, valueIndex) + userValue.slice(valueIndex + userCodeValue.length + 1);
+        $("#auditorList").textbox("setValue", userText);
+        rowObject.auditorList = userText;
+        rowObject.userCodes = userValue;
+        $('#dg').datagrid('refreshRow', parseInt(rowObject.phaseNo) - 1);
+    }
+    //将审核人拆分 去重
+    function submitForm() {
+        var all = $("#dg").datagrid("getData");
+        var rows = all.rows;
+        var arr = new Array();
+        for(var i=0;i<rows.length;i++){
+            var row = rows[i];
+            var userCodes = row.userCodes;
+            var userCodeArr = userCodes.split(";");
+            userCodeArr = unique(userCodeArr);
+            for(var j=0;j<userCodeArr.length;j++) {
+                if(userCodeArr[j].trim().length === 0){
+                    continue;
+                }
+                var obj = {};
+                obj.phaseNo = row.phaseNo;
+                obj.userCode = userCodeArr[j].trim();
+                obj.isPrimaryAuditor = "Y";
+                arr.push(obj);
+            }
+        }
+        var json = JSON.stringify(arr);
+        $('#approvalAuditors').textbox("setValue",json);
+        $('#approvalForm').submit();
+    }
+    $(function () {
+        $('#approvalForm').form({
+            url: 'http://localhost:8080/demo/service/approval/startProcess',
+            data:$('#approvalForm').serialize(),
+            onSubmit: function () {
+            },
+            success: function (data) {
+//                $.messager.alert('Info', data, 'info');
+            }
+        });
+    });
+    //数组去重
+    function unique(arr) {
+        var result = [], hash = {};
+        for (var i = 0, elem; (elem = arr[i]) != null; i++) {
+            if (!hash[elem]) {
+                result.push(elem);
+                hash[elem] = true;
+            }
+        }
+        return result;
+    }
+</script>

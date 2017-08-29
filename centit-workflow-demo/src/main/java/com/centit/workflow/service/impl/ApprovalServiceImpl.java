@@ -86,4 +86,9 @@ public class ApprovalServiceImpl implements ApprovalService {
         flowEngine.submitOpt(nodeInstId,userCode,"",null,ctx);
 
     }
+
+    @Override
+    public void getUserTasksByUserCode(long userCode) throws Exception {
+
+    }
 }

@@ -27,4 +27,11 @@ public interface ApprovalService {
      */
     public void doApproval(List<String> userCodes, ApprovalProcess approvalProcess,
                            long flowInstId, long nodeInstId,String userCode, ServletContext ctx) throws Exception;
+
+    /**
+     * 根据userCode获取 待办任务
+     * @param userCode
+     * @throws Exception
+     */
+    public  void getUserTasksByUserCode(long userCode) throws Exception;
 }

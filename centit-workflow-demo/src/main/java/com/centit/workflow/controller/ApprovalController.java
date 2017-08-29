@@ -95,4 +95,8 @@ public class ApprovalController {
         approvalService.doApproval(userCodeList,approvalProcess,flowInstId,nodeInstId,optUserCode,request.getServletContext());
         JsonResultUtils.writeBlankJson(response);
     }
+    @RequestMapping("getUserTasksByUserCode")
+    public void getUserTasksByUserCode(){
+
+    }
 }
