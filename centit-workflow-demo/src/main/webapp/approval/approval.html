@@ -95,13 +95,12 @@
             debugger;
             $.ajax({
                 method: 'GET',
-                url: 'http://localhost:8080/workflow/service/flow/useroptmgr/usertasks/' + rec.userCode,
+                url: 'http://localhost:8080/demo/service/approval/getUserTasksByUserCode/' + rec.userCode,
                 async: false,
                 dataType: 'json',
                 success: function (data) {
                     debugger;
-                    var total=data.data.objList.length;
-                    var rows = data.data.objList;
+                    var rows = data.data;
                     $('#taskTable').datagrid('loadData', rows);
                 }
             })

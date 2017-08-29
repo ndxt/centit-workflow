@@ -2,9 +2,11 @@ package com.centit.workflow.client.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
+import com.centit.framework.core.dao.PageDesc;
 import com.centit.support.network.HttpExecutor;
 import com.centit.workflow.client.po.FlowInstance;
 import com.centit.workflow.client.po.FlowVariable;
+import com.centit.workflow.client.po.UserTask;
 import com.centit.workflow.client.service.FlowEngineClient;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.stereotype.Service;
@@ -205,5 +207,27 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
+    }
+
+    @Override
+    public List<UserTask> listUserTasks(String userCode, PageDesc pageDesc) {
+        HashMap<String,Object> paramMap = new HashMap<>();
+        paramMap.put("userCode",userCode);
+        paramMap.put("pageDesc",pageDesc);
+        CloseableHttpClient httpClient = null;
+        String result = null;
+        try {
+            httpClient = appSession.getHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.simpleGet(httpClient,appSession.completeQueryUrl("/flow/engine/listUserTasks"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        String dataStr = jsonObject.get("data").toString();
+        List<UserTask> userTasks= JSONObject.parseArray(dataStr,UserTask.class);
+        return userTasks;
     }
 }

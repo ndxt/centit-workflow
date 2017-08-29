@@ -2,10 +2,12 @@ package com.centit.workflow.controller;
 
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.core.controller.BaseController;
+import com.centit.framework.core.dao.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.po.UserTask;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import org.springframework.stereotype.Controller;
@@ -82,5 +84,9 @@ public class FlowEngineController  extends BaseController {
         excludes.put(NodeInstance.class,new String[]{"wfActionLogs","wfActionTasks"});
         JsonResultUtils.writeSingleDataJson(nodeInstList,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
-
+    @RequestMapping(value="/listUserTasks",method = RequestMethod.GET)
+    public void  listUserTasks(HttpServletResponse response,String userCode){
+        List<UserTask> userTasks = flowEng.listUserTasks(userCode,new PageDesc(-1,-1));
+        JsonResultUtils.writeSingleDataJson(userTasks,response);
+    }
 }

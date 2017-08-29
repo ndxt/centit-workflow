@@ -1,5 +1,6 @@
 package com.centit.workflow.service;
 
+import com.centit.workflow.client.po.UserTask;
 import com.centit.workflow.po.ApprovalAuditor;
 import com.centit.workflow.po.ApprovalEvent;
 import com.centit.workflow.po.ApprovalProcess;
@@ -33,5 +34,5 @@ public interface ApprovalService {
      * @param userCode
      * @throws Exception
      */
-    public  void getUserTasksByUserCode(long userCode) throws Exception;
+    public  List<UserTask> getUserTasksByUserCode(String userCode) throws Exception;
 }

@@ -1,6 +1,8 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.core.dao.PageDesc;
 import com.centit.workflow.client.po.FlowInstance;
+import com.centit.workflow.client.po.UserTask;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.dao.ApprovalAuditorDao;
@@ -88,7 +90,8 @@ public class ApprovalServiceImpl implements ApprovalService {
     }
 
     @Override
-    public void getUserTasksByUserCode(long userCode) throws Exception {
-
+    public List<UserTask> getUserTasksByUserCode(String userCode) throws Exception {
+        List<UserTask> userTasks = flowEngine.listUserTasks(userCode,new PageDesc(-1,-1));
+        return  userTasks;
     }
 }
