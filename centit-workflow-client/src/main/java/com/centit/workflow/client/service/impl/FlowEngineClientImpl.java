@@ -57,10 +57,16 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("userCode",userCode);
         paramMap.put("unitCode",unitCode);
         String result = null;
-        CloseableHttpClient httpClient = appSession.getHttpClient();
-        appSession.checkAccessToken(httpClient);
-        result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/createFlowInstDefault"),paramMap);
-        appSession.releaseHttpClient(httpClient);
+        CloseableHttpClient httpClient = null;
+        try {
+            httpClient = appSession.getHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/createFlowInstDefault"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
         return result;
     }
 
@@ -73,10 +79,17 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowOptTag",flowOptTag);
         paramMap.put("userCode",userCode);
         paramMap.put("unitCode",unitCode);
-        CloseableHttpClient httpClient = appSession.getHttpClient();
-        appSession.checkAccessToken(httpClient);
-        String result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/createFlowInstWithVersion"),paramMap);
-        appSession.releaseHttpClient(httpClient);
+        String result = null;
+        CloseableHttpClient httpClient = null;
+        try {
+            httpClient = appSession.getHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.formPost(httpClient,appSession.completeQueryUrl("/flow/engine/createFlowInstWithVersion"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
         return result;
     }
 
@@ -95,6 +108,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("unitCode",unitCode);
         CloseableHttpClient httpClient = null;
         String result = null;
+        FlowInstance flowInstance = null;
         try {
             httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
@@ -104,9 +118,13 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
-        JSONObject jsonObject = JSONObject.parseObject(result);
-        String dataStr = jsonObject.get("data").toString();
-        FlowInstance flowInstance= JSONObject.parseObject(dataStr,FlowInstance.class);
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            String dataStr = jsonObject.get("data").toString();
+            flowInstance= JSONObject.parseObject(dataStr,FlowInstance.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return flowInstance;
     }
 
@@ -177,6 +195,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("varName",varName);
         CloseableHttpClient httpClient = null;
         String result = null;
+        List<FlowVariable> flowVariables= null;
         try {
             httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
@@ -186,9 +205,13 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
-        JSONObject jsonObject = JSONObject.parseObject(result);
-        String dataStr = jsonObject.get("data").toString();
-        List<FlowVariable> flowVariables= JSONObject.parseArray(dataStr,FlowVariable.class);
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            String dataStr = jsonObject.get("data").toString();
+            flowVariables= JSONObject.parseArray(dataStr,FlowVariable.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return flowVariables;
     }
     @Override
@@ -216,6 +239,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("pageDesc",pageDesc);
         CloseableHttpClient httpClient = null;
         String result = null;
+        List<UserTask> userTasks = null;
         try {
             httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
@@ -225,9 +249,13 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
-        JSONObject jsonObject = JSONObject.parseObject(result);
-        String dataStr = jsonObject.get("data").toString();
-        List<UserTask> userTasks= JSONObject.parseArray(dataStr,UserTask.class);
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            String dataStr = jsonObject.get("data").toString();
+            userTasks= JSONObject.parseArray(dataStr,UserTask.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return userTasks;
     }
 }
