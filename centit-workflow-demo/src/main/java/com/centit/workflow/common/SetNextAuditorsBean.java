@@ -1,10 +1,11 @@
 package com.centit.workflow.common;
 
 
-import com.centit.workflow.client.commons.NodeEventSupport;
+import com.centit.workflow.client.commons.NodeEventExecutor;
 import com.centit.workflow.client.commons.WorkflowException;
 import com.centit.workflow.client.po.FlowInstance;
 import com.centit.workflow.client.po.FlowVariable;
+import com.centit.workflow.client.po.NodeInfo;
 import com.centit.workflow.client.po.NodeInstance;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.dao.ApprovalAuditorDao;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 @Transactional
 @Component("SetNextAuditorsBean")
-public class SetNextAuditorsBean implements NodeEventSupport {
+public class SetNextAuditorsBean implements NodeEventExecutor {
     @Resource
     private FlowEngineClient flowEngine;
     @Resource
@@ -31,12 +32,14 @@ public class SetNextAuditorsBean implements NodeEventSupport {
     @Resource
     private ApprovalAuditorDao approvalAuditorDao;
     @Override
-    public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst, String optParam, String optUserCode) throws WorkflowException {
+    public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
+                               NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
 
     }
 
     @Override
-    public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst, String optParam, String optUserCode) throws WorkflowException {
+    public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
+                                NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
 
     }
 
@@ -44,13 +47,14 @@ public class SetNextAuditorsBean implements NodeEventSupport {
      * 自动运行节点，帮助重置流程变量 和workTeam
      * @param flowInst 流程实例
      * @param nodeInst 节点实例
-     * @param optParam 用户自定义操作参数
+     * @param nodeInfo 用户自定义操作参数
      * @param optUserCode 当前操作用户
      * @return
      * @throws WorkflowException
      */
     @Override
-    public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst, String optParam, String optUserCode) throws WorkflowException {
+    public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
+                                   NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
         //先获取当前所在阶段
         List<ApprovalEvent> approvalEvents= approvalEventDao.getApprovalEventByFlowInstId(flowInst.getFlowInstId());
         if(approvalEvents == null || approvalEvents.size() == 0){
@@ -100,5 +104,10 @@ public class SetNextAuditorsBean implements NodeEventSupport {
         approvalEvent.setCurrentPhase(nextPhaseNo);
         approvalEventDao.mergeObject(approvalEvent);
         return true;
+    }
+
+    @Override
+    public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+        return false;
     }
 }

@@ -18,6 +18,8 @@ import java.io.IOException;
  * @version
  */
 public class NodeEventSupportFactory {
+    //读取配置文件
+    private static String jsonFile = Thread.currentThread().getContextClassLoader().getResource("").getPath()+"ip_environmen.json";
     public static NodeEventExecutor getNodeEventSupportBean(NodeInfo nodeInfo){
         if(nodeInfo == null){
             return  null;
@@ -28,8 +30,6 @@ public class NodeEventSupportFactory {
         String osId  =nodeInfo.getOsId();
         String url = "";
         NodeEventExecutor nodeEventExecutor = null;
-        //读取配置文件
-        String jsonFile = Thread.currentThread().getContextClassLoader().getResource("").getPath()+"ip_environmen.json";
         JSONObject json = null;
         try {
             String jsonStr = FileIOOpt.readStringFromFile(jsonFile,"utf-8");

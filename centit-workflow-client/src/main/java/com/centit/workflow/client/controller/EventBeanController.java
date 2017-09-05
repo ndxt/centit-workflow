@@ -1,8 +1,8 @@
-package com.centit.workflow.controller;
+package com.centit.workflow.client.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
-import com.centit.workflow.client.commons.NodeEventSupport;
+import com.centit.workflow.client.commons.NodeEventExecutor;
 import com.centit.workflow.client.commons.WorkflowException;
 import com.centit.workflow.client.po.FlowInstance;
 import com.centit.workflow.client.po.NodeInfo;
@@ -32,8 +32,8 @@ public class  EventBeanController{
             NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
             NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
             String optUserCode = (String)paramMap.get("optUserCode");
-            NodeEventSupport autoRun = (NodeEventSupport)wac.getBean(nodeInfo.getOptBean());
-            autoRun.runAfterCreate(flowInstance, nodeInstance, nodeInfo.getOptParam(),optUserCode);
+            NodeEventExecutor autoRun = (NodeEventExecutor)wac.getBean(nodeInfo.getOptBean());
+            autoRun.runAfterCreate(flowInstance, nodeInstance, nodeInfo,optUserCode);
         } catch (BeansException e) {
             e.printStackTrace();
             JsonResultUtils.writeCodeAndMessageJson(0, "bean调用失败", httpServletResponse);
@@ -51,8 +51,8 @@ public class  EventBeanController{
             NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
             NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
             String optUserCode = (String)paramMap.get("optUserCode");
-            NodeEventSupport autoRun = (NodeEventSupport)wac.getBean(nodeInfo.getOptBean());
-            autoRun.runBeforeSubmit(flowInstance, nodeInstance, nodeInfo.getOptParam(),optUserCode);
+            NodeEventExecutor autoRun = (NodeEventExecutor)wac.getBean(nodeInfo.getOptBean());
+            autoRun.runBeforeSubmit(flowInstance, nodeInstance, nodeInfo,optUserCode);
         } catch (BeansException e) {
             e.printStackTrace();
             JsonResultUtils.writeCodeAndMessageJson(0, "bean调用失败", httpServletResponse);
@@ -70,8 +70,8 @@ public class  EventBeanController{
             NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
             NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
             String optUserCode = (String)paramMap.get("optUserCode");
-            NodeEventSupport autoRun = (NodeEventSupport)wac.getBean(nodeInfo.getOptBean());
-            autoRun.runAutoOperator(flowInstance, nodeInstance, nodeInfo.getOptParam(),optUserCode);
+            NodeEventExecutor autoRun = (NodeEventExecutor)wac.getBean(nodeInfo.getOptBean());
+            autoRun.runAutoOperator(flowInstance, nodeInstance, nodeInfo,optUserCode);
         } catch (BeansException e) {
             e.printStackTrace();
             JsonResultUtils.writeCodeAndMessageJson(0, "bean调用失败", httpServletResponse);
