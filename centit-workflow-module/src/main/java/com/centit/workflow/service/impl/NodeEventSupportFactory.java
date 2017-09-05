@@ -18,16 +18,7 @@ import java.io.IOException;
  * @version
  */
 public class NodeEventSupportFactory {
-    //读取配置文件
-    private static String jsonFile = null;
-    static {
-        try {
-            jsonFile = Thread.currentThread().getContextClassLoader().getResource("").getPath()+"ip_environmen.json";
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("配置文件读取失败");
-        }
-    }
+    private static JSONArray osInfos = null;
     public static NodeEventExecutor getNodeEventSupportBean(NodeInfo nodeInfo){
         if(nodeInfo == null){
             return  null;
@@ -38,17 +29,20 @@ public class NodeEventSupportFactory {
         String osId  =nodeInfo.getOsId();
         String url = "";
         NodeEventExecutor nodeEventExecutor = null;
-        JSONObject json = null;
-        try {
-            String jsonStr = FileIOOpt.readStringFromFile(jsonFile,"utf-8");
-            json = JSON.parseObject(jsonStr);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(osInfos == null){
+            JSONObject json = null;
+            try {
+                String jsonFile = Thread.currentThread().getContextClassLoader().getResource("").getPath()+"ip_environmen.json";
+                String jsonStr = FileIOOpt.readStringFromFile(jsonFile,"utf-8");
+                json = JSON.parseObject(jsonStr);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(json == null ){
+                return null;
+            }
+            osInfos = JSONArray.parseArray(json.get("osInfos").toString());
         }
-        if(json == null ){
-            return null;
-        }
-        JSONArray osInfos = JSONArray.parseArray(json.get("osInfos").toString());
         if(osInfos == null || osInfos.size() == 0){
             return  null;
         }
