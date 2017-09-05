@@ -19,7 +19,15 @@ import java.io.IOException;
  */
 public class NodeEventSupportFactory {
     //读取配置文件
-    private static String jsonFile = Thread.currentThread().getContextClassLoader().getResource("").getPath()+"ip_environmen.json";
+    private static String jsonFile = null;
+    static {
+        try {
+            jsonFile = Thread.currentThread().getContextClassLoader().getResource("").getPath()+"ip_environmen.json";
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("配置文件读取失败");
+        }
+    }
     public static NodeEventExecutor getNodeEventSupportBean(NodeInfo nodeInfo){
         if(nodeInfo == null){
             return  null;
