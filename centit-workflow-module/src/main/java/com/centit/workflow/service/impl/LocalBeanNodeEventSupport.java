@@ -5,6 +5,7 @@ import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.service.NodeEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -21,7 +22,7 @@ import javax.servlet.ServletContext;
  * @create 2013-7-10
  * @version
  */
-public class LocalBeanNodeEventSupport implements NodeEventExecutor{
+public class LocalBeanNodeEventSupport implements NodeEventExecutor {
 
     private static Logger logger = LoggerFactory.getLogger(LocalBeanNodeEventSupport.class);
     private  ServletContext application;

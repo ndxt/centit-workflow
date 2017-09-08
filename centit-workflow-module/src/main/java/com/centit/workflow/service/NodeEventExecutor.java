@@ -1,4 +1,4 @@
-package com.centit.workflow.service.impl;
+package com.centit.workflow.service;
 
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;

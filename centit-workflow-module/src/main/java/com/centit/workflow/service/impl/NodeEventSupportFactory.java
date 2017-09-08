@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.support.file.FileIOOpt;
 import com.centit.workflow.po.NodeInfo;
+import com.centit.workflow.service.NodeEventExecutor;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
