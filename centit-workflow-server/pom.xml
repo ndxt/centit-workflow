@@ -15,18 +15,11 @@
     <description>工作流引擎服务，可以独立运行;这个工程也做为示例工程，业务需要用工作流引擎式可以复制这个工程，并对其进行改造
     </description>
 
-
     <dependencies>
 
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-module</artifactId>
-            <version>${centit.workflow.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-demo</artifactId>
             <version>${centit.workflow.version}</version>
         </dependency>
 

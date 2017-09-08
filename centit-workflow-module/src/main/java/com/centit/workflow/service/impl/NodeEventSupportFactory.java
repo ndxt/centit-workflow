@@ -18,6 +18,7 @@ import java.io.IOException;
  * @version
  */
 public class NodeEventSupportFactory {
+
     public static NodeEventExecutor getNodeEventSupportBean(NodeInfo nodeInfo){
         if(nodeInfo == null){
             return  null;

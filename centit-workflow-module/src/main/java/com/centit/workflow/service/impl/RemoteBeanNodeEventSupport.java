@@ -48,7 +48,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
             AppSession appSession = new AppSession(url,false,null,null);
             CloseableHttpClient httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
-            String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAfterCreate"),jsonParam);
+            /*String result =  */HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAfterCreate"),jsonParam);
             appSession.releaseHttpClient(httpClient);
         } catch (Exception e) {
             e.printStackTrace();

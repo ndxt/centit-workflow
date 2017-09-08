@@ -1,4 +1,4 @@
-package com.centit.workflow.controller;
+package com.centit.workflow.client.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
@@ -22,8 +22,9 @@ import java.util.Map;
  * Created by chen_rj on 2017/8/3.
  */
 @Controller
-@RequestMapping("/eventBean")
+@RequestMapping("/workflowEventBean")
 public class  EventBeanController{
+
     @RequestMapping(value = "/runAfterCreate")
     public void runAfterCreate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,@RequestBody Map<String,Object> paramMap ){
         WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(httpServletRequest.getServletContext());//获取spring的context
