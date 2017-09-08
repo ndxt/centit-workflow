@@ -44,15 +44,21 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
         paramMap.put("nodeInfo",JSON.toJSONString(nodeInfo));
         paramMap.put("optUserCode",optUserCode);
         String jsonParam = JSON.toJSONString(paramMap);
+        AppSession appSession = null;
+        CloseableHttpClient httpClient = null;
+        String result = null;
         try {
-            AppSession appSession = new AppSession(url,false,null,null);
-            CloseableHttpClient httpClient = appSession.getHttpClient();
+            appSession = new AppSession(url,false,null,null);
+            httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
-            /*String result =  */HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAfterCreate"),jsonParam);
-            appSession.releaseHttpClient(httpClient);
+            result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAfterCreate"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
+        }finally {
+            if(appSession != null && httpClient != null){
+                appSession.releaseHttpClient(httpClient);
+            }
         }
 
     }
@@ -68,15 +74,21 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
         paramMap.put("nodeInfo",JSON.toJSONString(nodeInfo));
         paramMap.put("optUserCode",optUserCode);
         String jsonParam = JSON.toJSONString(paramMap);
+        AppSession appSession = null;
+        CloseableHttpClient httpClient = null;
+        String result = null;
         try {
-            AppSession appSession = new AppSession(url,false,null,null);
-            CloseableHttpClient httpClient = appSession.getHttpClient();
+            appSession = new AppSession(url,false,null,null);
+            httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
-            String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runBeforeSubmit"),jsonParam);
-            appSession.releaseHttpClient(httpClient);
+            result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runBeforeSubmit"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
+        }finally {
+            if(appSession != null && httpClient != null){
+                appSession.releaseHttpClient(httpClient);
+            }
         }
     }
 
@@ -99,15 +111,21 @@ public class RemoteBeanNodeEventSupport implements NodeEventExecutor{
         paramMap.put("nodeInfo",JSON.toJSONString(nodeInfo));
         paramMap.put("optUserCode",optUserCode);
         String jsonParam = JSON.toJSONString(paramMap);
+        AppSession appSession = null;
+        CloseableHttpClient httpClient = null;
+        String result = null;
         try {
-            AppSession appSession = new AppSession(url,false,null,null);
-            CloseableHttpClient httpClient = appSession.getHttpClient();
+            appSession = new AppSession(url,false,null,null);
+            httpClient = appSession.getHttpClient();
             appSession.checkAccessToken(httpClient);
-            String result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAutoOperator"),jsonParam);
-            appSession.releaseHttpClient(httpClient);
+            result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAutoOperator"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
+        }finally {
+            if(appSession != null && httpClient != null){
+                appSession.releaseHttpClient(httpClient);
+            }
         }
         return needSubmit;
     }

@@ -1,5 +1,6 @@
 package com.centit.workflow.service;
 
+import com.centit.workflow.client.po.UserTask;
 import com.centit.workflow.po.ApprovalAuditor;
 import com.centit.workflow.po.ApprovalEvent;
 import com.centit.workflow.po.ApprovalProcess;
@@ -27,4 +28,11 @@ public interface ApprovalService {
      */
     public void doApproval(List<String> userCodes, ApprovalProcess approvalProcess,
                            long flowInstId, long nodeInstId,String userCode, ServletContext ctx) throws Exception;
+
+    /**
+     * 根据userCode获取 待办任务
+     * @param userCode
+     * @throws Exception
+     */
+    public  List<UserTask> getUserTasksByUserCode(String userCode) throws Exception;
 }

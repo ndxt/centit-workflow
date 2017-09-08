@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.workflow.client.po.NodeInstance;
+import com.centit.workflow.client.po.UserTask;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
 import com.centit.workflow.po.ApprovalAuditor;
@@ -11,6 +12,7 @@ import com.centit.workflow.po.ApprovalEvent;
 import com.centit.workflow.po.ApprovalProcess;
 import com.centit.workflow.service.ApprovalService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -94,5 +96,10 @@ public class ApprovalController {
         approvalProcess.setNodeInstId(nodeInstId);
         approvalService.doApproval(userCodeList,approvalProcess,flowInstId,nodeInstId,optUserCode,request.getServletContext());
         JsonResultUtils.writeBlankJson(response);
+    }
+    @RequestMapping(value = "/getUserTasksByUserCode/{userCode}",method = RequestMethod.GET)
+    public void getUserTasksByUserCode(HttpServletResponse response,@PathVariable String userCode) throws Exception{
+        List<UserTask> userTasks = approvalService.getUserTasksByUserCode(userCode);
+        JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
 }

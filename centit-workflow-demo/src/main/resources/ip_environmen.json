@@ -11,7 +11,7 @@
     {
       "osId": "TEST",
       "osName": "测试",
-      "osUrl": "http://localhost:8080/demo",
+      "osUrl": "http://localhost:8080/workflow",
       "ddeSyncUrl": "",
       "sysDataPushOption": "NONE",
       "created": "u0000000"

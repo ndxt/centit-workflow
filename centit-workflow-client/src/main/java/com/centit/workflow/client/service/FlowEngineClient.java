@@ -1,8 +1,10 @@
 package com.centit.workflow.client.service;
 
 
+import com.centit.framework.core.dao.PageDesc;
 import com.centit.workflow.client.po.FlowInstance;
 import com.centit.workflow.client.po.FlowVariable;
+import com.centit.workflow.client.po.UserTask;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import javax.servlet.ServletContext;
@@ -192,13 +194,13 @@ public interface FlowEngineClient {
 //
 //    //任务类表查看
 //
-//    /**
-//     * 查看某一个用户所有的待办，并且分页
-//     * @param userCode
-//     * @param pageDesc
-//     * @return
-//     */
-//    List<UserTask> listUserTasks(String userCode, PageDesc pageDesc);
+    /**
+     * 查看某一个用户所有的待办，并且分页
+     * @param userCode
+     * @param pageDesc
+     * @return
+     */
+    List<UserTask> listUserTasks(String userCode, PageDesc pageDesc);
 //
 //    /**
 //     * 这个查看某个用户对用特定流程的待办
