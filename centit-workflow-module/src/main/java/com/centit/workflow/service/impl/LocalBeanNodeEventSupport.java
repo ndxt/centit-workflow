@@ -55,6 +55,7 @@ public class LocalBeanNodeEventSupport implements NodeEventExecutor {
 
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
                                        NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+
         if( nodeInfo.getOptBean()==null || "".equals(nodeInfo.getOptBean()))
             return;
 
@@ -85,7 +86,6 @@ public class LocalBeanNodeEventSupport implements NodeEventExecutor {
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                                           NodeInfo nodeInfo, String optUserCode )
             throws WorkflowException {
-        boolean needSubmit = true;
         if( nodeInfo.getOptBean()==null || "".equals(nodeInfo.getOptBean()))
             throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，流程设置时没有设置节点的自动运行bean属性。");
@@ -95,18 +95,33 @@ public class LocalBeanNodeEventSupport implements NodeEventExecutor {
         try{
             WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean() );
-            needSubmit = autoRun.runAutoOperator(flowInst, nodeInst, nodeInfo.getOptParam(),optUserCode);
+            return autoRun.runAutoOperator(flowInst, nodeInst, nodeInfo.getOptParam(),optUserCode);
         }catch(BeansException e){
             logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
             throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
         }
-        return needSubmit;
     }
 
     @Override
     public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
                                  NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
-        return false;
+
+        if( nodeInfo.getOptBean()==null || "".equals(nodeInfo.getOptBean()))
+            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
+                    "自动运行节点 " + nodeInst.getNodeInstId() +"出错，流程设置时没有设置节点的自动运行bean属性。");
+
+        if(application==null)
+            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeWithoutApplcationContent,
+                    "自动运行节点 " + nodeInst.getNodeInstId() +"出错，传递的参数application为空");
+        try{
+            WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
+            NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean() );
+            return autoRun.canStepToNext(flowInst, nodeInst, nodeInfo.getOptParam(),optUserCode);
+        }catch(BeansException e){
+            logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
+            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
+                    "自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
+        }
     }
 }

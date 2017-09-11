@@ -1,6 +1,5 @@
-package com.centit.workflow.client.service;
+package com.centit.workflow.commons;
 
-import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
@@ -13,7 +12,7 @@ import com.centit.workflow.po.NodeInstance;
  * @create 2013-7-10
  * @version
  */
-public interface NodeEventExecutor {
+public interface NodeEventSupport {
     /**
      * 在节点创建后的调用的的事件
      * @param flowInst 流程实例
