@@ -5,7 +5,6 @@ import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
-import com.centit.workflow.service.NodeEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -22,7 +21,7 @@ import javax.servlet.ServletContext;
  * @create 2013-7-10
  * @version
  */
-public class LocalBeanNodeEventSupport implements NodeEventExecutor {
+public class LocalBeanNodeEventSupport implements NodeEventSupport {
 
     private static Logger logger = LoggerFactory.getLogger(LocalBeanNodeEventSupport.class);
     private  ServletContext application;
@@ -44,7 +43,7 @@ public class LocalBeanNodeEventSupport implements NodeEventExecutor {
         try{
             WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean() );
-            autoRun.runAfterCreate(flowInst, nodeInst, nodeInfo.getOptParam(),optUserCode);
+            autoRun.runAfterCreate(flowInst, nodeInst, nodeInfo,optUserCode);
         }catch(BeansException e){
             logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
             throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
@@ -65,7 +64,7 @@ public class LocalBeanNodeEventSupport implements NodeEventExecutor {
         try{
             WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean() );
-            autoRun.runBeforeSubmit(flowInst, nodeInst, nodeInfo.getOptParam(),optUserCode);
+            autoRun.runBeforeSubmit(flowInst, nodeInst, nodeInfo,optUserCode);
         }catch(BeansException e){
             logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
             throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
@@ -95,7 +94,7 @@ public class LocalBeanNodeEventSupport implements NodeEventExecutor {
         try{
             WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean() );
-            return autoRun.runAutoOperator(flowInst, nodeInst, nodeInfo.getOptParam(),optUserCode);
+            return autoRun.runAutoOperator(flowInst, nodeInst, nodeInfo,optUserCode);
         }catch(BeansException e){
             logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
             throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
@@ -117,7 +116,7 @@ public class LocalBeanNodeEventSupport implements NodeEventExecutor {
         try{
             WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean() );
-            return autoRun.canStepToNext(flowInst, nodeInst, nodeInfo.getOptParam(),optUserCode);
+            return autoRun.canStepToNext(flowInst, nodeInst, nodeInfo,optUserCode);
         }catch(BeansException e){
             logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
             throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,

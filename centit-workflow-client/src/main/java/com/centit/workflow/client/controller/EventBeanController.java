@@ -2,11 +2,11 @@ package com.centit.workflow.client.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
-import com.centit.workflow.client.commons.NodeEventExecutor;
-import com.centit.workflow.client.commons.WorkflowException;
-import com.centit.workflow.client.po.FlowInstance;
-import com.centit.workflow.client.po.NodeInfo;
-import com.centit.workflow.client.po.NodeInstance;
+import com.centit.workflow.commons.NodeEventSupport;
+import com.centit.workflow.commons.WorkflowException;
+import com.centit.workflow.po.FlowInstance;
+import com.centit.workflow.po.NodeInfo;
+import com.centit.workflow.po.NodeInstance;
 import org.springframework.beans.BeansException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +33,7 @@ public class  EventBeanController{
             NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
             NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
             String optUserCode = (String)paramMap.get("optUserCode");
-            NodeEventExecutor autoRun = (NodeEventExecutor)wac.getBean(nodeInfo.getOptBean());
+            NodeEventSupport autoRun = (NodeEventSupport)wac.getBean(nodeInfo.getOptBean());
             autoRun.runAfterCreate(flowInstance, nodeInstance, nodeInfo,optUserCode);
         } catch (BeansException e) {
             e.printStackTrace();
@@ -52,7 +52,7 @@ public class  EventBeanController{
             NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
             NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
             String optUserCode = (String)paramMap.get("optUserCode");
-            NodeEventExecutor autoRun = (NodeEventExecutor)wac.getBean(nodeInfo.getOptBean());
+            NodeEventSupport autoRun = (NodeEventSupport)wac.getBean(nodeInfo.getOptBean());
             autoRun.runBeforeSubmit(flowInstance, nodeInstance, nodeInfo,optUserCode);
         } catch (BeansException e) {
             e.printStackTrace();
@@ -71,7 +71,7 @@ public class  EventBeanController{
             NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
             NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
             String optUserCode = (String)paramMap.get("optUserCode");
-            NodeEventExecutor autoRun = (NodeEventExecutor)wac.getBean(nodeInfo.getOptBean());
+            NodeEventSupport autoRun = (NodeEventSupport)wac.getBean(nodeInfo.getOptBean());
             autoRun.runAutoOperator(flowInstance, nodeInstance, nodeInfo,optUserCode);
         } catch (BeansException e) {
             e.printStackTrace();

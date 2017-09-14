@@ -60,6 +60,11 @@
             <artifactId>framework-client</artifactId>
             <version>${centit.framework.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-workflow-core</artifactId>
+            <version>${centit.workflow.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

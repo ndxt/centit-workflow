@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.support.file.FileIOOpt;
+import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.po.NodeInfo;
-import com.centit.workflow.service.NodeEventExecutor;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -20,7 +20,7 @@ import java.io.IOException;
  */
 public class NodeEventSupportFactory {
     private static JSONArray osInfos = null;
-    public static NodeEventExecutor getNodeEventSupportBean(NodeInfo nodeInfo){
+    public static NodeEventSupport getNodeEventSupportBean(NodeInfo nodeInfo){
         if(nodeInfo == null){
             return  null;
         }
@@ -29,7 +29,7 @@ public class NodeEventSupportFactory {
         Boolean isLocal = true;
         String osId  =nodeInfo.getOsId();
         String url = "";
-        NodeEventExecutor nodeEventExecutor = null;
+        NodeEventSupport nodeEventSupport = null;
         if(osInfos == null){
             JSONObject json = null;
             try {
@@ -58,12 +58,12 @@ public class NodeEventSupportFactory {
         if(!isLocal){
             RemoteBeanNodeEventSupport remoteNodeEventExecutor = new RemoteBeanNodeEventSupport();
             remoteNodeEventExecutor.setUrl(url);
-            nodeEventExecutor = remoteNodeEventExecutor;
+            nodeEventSupport = remoteNodeEventExecutor;
         }else{
             LocalBeanNodeEventSupport localNodeEventExecutor = new LocalBeanNodeEventSupport();
             localNodeEventExecutor.setApplication(servletContext);
-            nodeEventExecutor = localNodeEventExecutor;
+            nodeEventSupport = localNodeEventExecutor;
         }
-        return nodeEventExecutor;
+        return nodeEventSupport;
     }
 }

@@ -3,11 +3,11 @@ package com.centit.workflow.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.centit.framework.appclient.AppSession;
 import com.centit.support.network.HttpExecutor;
+import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
-import com.centit.workflow.service.NodeEventExecutor;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import java.util.Map;
  * @create 2013-7-10
  * @version
  */
-public class RemoteBeanNodeEventSupport implements NodeEventExecutor {
+public class RemoteBeanNodeEventSupport implements NodeEventSupport {
 
     private static Logger logger = LoggerFactory.getLogger(RemoteBeanNodeEventSupport.class);
     private  String url;

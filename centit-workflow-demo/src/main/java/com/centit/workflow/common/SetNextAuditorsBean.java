@@ -1,17 +1,12 @@
 package com.centit.workflow.common;
 
 
-import com.centit.workflow.client.commons.NodeEventExecutor;
-import com.centit.workflow.client.commons.WorkflowException;
-import com.centit.workflow.client.po.FlowInstance;
-import com.centit.workflow.client.po.FlowVariable;
-import com.centit.workflow.client.po.NodeInfo;
-import com.centit.workflow.client.po.NodeInstance;
 import com.centit.workflow.client.service.FlowEngineClient;
+import com.centit.workflow.commons.NodeEventSupport;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.ApprovalAuditorDao;
 import com.centit.workflow.dao.ApprovalEventDao;
-import com.centit.workflow.po.ApprovalAuditor;
-import com.centit.workflow.po.ApprovalEvent;
+import com.centit.workflow.po.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -24,7 +19,7 @@ import java.util.List;
  */
 @Transactional
 @Component("SetNextAuditorsBean")
-public class SetNextAuditorsBean implements NodeEventExecutor {
+public class SetNextAuditorsBean implements NodeEventSupport {
     @Resource
     private FlowEngineClient flowEngine;
     @Resource

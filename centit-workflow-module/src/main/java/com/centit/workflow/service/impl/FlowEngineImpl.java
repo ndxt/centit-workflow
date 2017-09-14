@@ -10,11 +10,11 @@ import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.compiler.Formula;
 import com.centit.support.database.utils.QueryUtils;
+import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
-import com.centit.workflow.service.NodeEventExecutor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -261,7 +261,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 
         //自动执行
         if("D".equals(node.getOptType()) ){
-            NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(node);
+            NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(node);
             boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst,nodeInst ,
                     node,userCode);
             if(needSubmit)
@@ -943,7 +943,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         flowInstanceDao.updateObject(flowInst);
     
         //执行节点创建后 事件
-        NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nextOptNode);
+        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nextOptNode);
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nextOptNode,userCode);
         
         //检查自动执行节点 并执行相关操作
@@ -1155,7 +1155,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 		/**
 		 * 节点提交前事件
 		 */
-        NodeEventExecutor nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(currNode);
+        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(currNode);
         nodeEventExecutor.runBeforeSubmit(flowInst, nodeInst,currNode,userCode);
         
 		//判断是否为临时插入节点

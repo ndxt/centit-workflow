@@ -83,7 +83,6 @@ public class ExtSysUserUnit implements IUserUnit {
      *
      * @return 排序号
      */
-    @Override
     public Long getUserOrder() {
         return this.userOrder;
     }

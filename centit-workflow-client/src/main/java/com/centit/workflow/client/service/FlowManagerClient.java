@@ -1,6 +1,7 @@
 package com.centit.workflow.client.service;
 
-import com.centit.workflow.client.po.NodeInstance;
+
+import com.centit.workflow.po.NodeInstance;
 
 import java.util.List;
 
