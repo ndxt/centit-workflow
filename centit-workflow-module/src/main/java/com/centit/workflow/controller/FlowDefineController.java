@@ -1,7 +1,6 @@
 package com.centit.workflow.controller;
 
 import com.centit.framework.common.JsonResultUtils;
-import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.dao.PageDesc;
@@ -34,11 +33,10 @@ public class FlowDefineController extends BaseController {
     private com.centit.workflow.service.FlowDefine flowDef;
     @Resource
     private FlowModelData modelData;
+
     ResponseMapData resData = new ResponseMapData();
     
-    private Map<Class<?>, String[]> excludes;
-    
-    
+
     /**
      * 列举系统中的所有流程，只显示最新版本的
      */
@@ -99,9 +97,7 @@ public class FlowDefineController extends BaseController {
     @RequestMapping(value = "/draft/{flowcode}", method = RequestMethod.GET)
     public void getFlowDefineDraft(@PathVariable String flowcode, HttpServletResponse response) {
         FlowInfo obj = flowDef.getFlowDefObject(flowcode,0);
-        /*excludes  =new HashMap<Class<?>, String[]>();
-        excludes.put(FlowDescribe.class,new String[]{"wfNodes","wfTransitions","flowCode","version"});
-        excludes.put(WfFlowStage.class,new String[]{"flowDefine"});*/
+
         JsonResultUtils.writeSingleDataJson(obj, response);
     }
     
@@ -114,9 +110,6 @@ public class FlowDefineController extends BaseController {
     @RequestMapping(value = "/{version}/{flowcode}", method = RequestMethod.GET)
     public void getFlowDefine(@PathVariable Long version, @PathVariable String flowcode, HttpServletResponse response) {
         FlowInfo obj = flowDef.getFlowDefObject(flowcode,version);
-        /*excludes  =new HashMap<Class<?>, String[]>();
-        excludes.put(FlowDescribe.class,new String[]{"wfNodes","flowNodes","wfTransitions","flowTransitions","flowStages","flowCode","version"});
-        excludes.put(WfFlowStage.class,new String[]{"flowCode","version"});*/
         JsonResultUtils.writeSingleDataJson(obj, response);
     }
     
@@ -137,9 +130,6 @@ public class FlowDefineController extends BaseController {
         FlowInfo copy = new FlowInfo();
         copy.copyNotNullProperty(obj);
         copy.setCid(new FlowInfoId(0L, flowDef.getNextPrimarykey()));
-        /*excludes  =new HashMap<Class<?>, String[]>();
-        excludes.put(FlowDescribe.class,new String[]{"wfNodes","flowNodes","wfTransitions","flowTransitions","flowStages","flowCode","version"});
-        excludes.put(WfFlowStage.class,new String[]{"flowCode","version"});*/
         JsonResultUtils.writeSingleDataJson(copy, response);
     }
     
@@ -308,10 +298,7 @@ public class FlowDefineController extends BaseController {
     {
         FlowInfo copy = new FlowInfo();
         copy.setCid(new FlowInfoId(0L, flowDef.getNextPrimarykey()));
-        excludes  =new HashMap<Class<?>, String[]>();
-        excludes.put(FlowInfo.class,new String[]{"wfNodes","flowNodes","wfTransitions","flowTransitions","flowStages","flowCode","version"});
-        excludes.put(FlowStage.class,new String[]{"flowCode","version"});
-        JsonResultUtils.writeSingleDataJson(copy, response,JsonPropertyUtils.getExcludePropPreFilter(excludes));
+        JsonResultUtils.writeSingleDataJson(copy, response);
     }
     
     

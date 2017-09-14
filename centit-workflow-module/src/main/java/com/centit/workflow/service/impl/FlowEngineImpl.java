@@ -1,10 +1,8 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.components.CodeRepositoryUtil;
-import com.centit.framework.components.SysUnitFilterEngine;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitParamBuilder;
-import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -192,7 +190,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         UserUnitParamBuilder.addParamToParamMap(unitParams,"P",unitCode );
         UserUnitParamBuilder.addParamToParamMap(unitParams,"F",flowInst.getUnitCode() );
 		//计算节点机构
-		String nextNodeUnit = SysUnitFilterEngine.calcSingleSystemUnitByExp(node.getUnitExp() ,
+		String nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(node.getUnitExp() ,
                         unitParams, flowVarTrans);
 		nodeInst.setUnitCode(nextNodeUnit);		
 		//如果锁定首节点只能有本人操作，则要在任务表中添加一条记录
@@ -209,7 +207,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                 Map<String, Set<String>>  userParams = UserUnitParamBuilder.createEmptyParamMap();
                 UserUnitParamBuilder.addParamToParamMap(userParams,"C",flowInst.getUserCode());
                 UserUnitParamBuilder.addParamToParamMap(userParams,"O",userCode);
-                optUsers = SysUserFilterEngine.calcSystemOperators(node.getPowerExp(),
+                optUsers = UserUnitCalcEngine.calcOperators(node.getPowerExp(),
                         unitParams,userParams,null,flowVarTrans);
                 
                 if(optUsers == null || optUsers.size()==0)
@@ -222,7 +220,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                 }
 	        }else/*gw xz*/{
 	             optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(
-	                     new SystemUserUnitFilterCalcContext(),
+	                     UserUnitCalcEngine.createWorkFlowUUFCC(),
 	                     node.getRoleType(), node.getRoleCode(), nextNodeUnit );
 	        }
 
@@ -410,7 +408,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
             UserUnitParamBuilder.addParamToParamMap(userParams,"C",flowInst.getUserCode());
             UserUnitParamBuilder.addParamToParamMap(userParams,"O",userCode);
 
-            optUsers = SysUserFilterEngine.calcSystemOperators(nextOptNode.getPowerExp(),
+            optUsers = UserUnitCalcEngine.calcOperators(nextOptNode.getPowerExp(),
                     unitParams,userParams,null,varTrans);
             if(optUsers == null || optUsers.size()==0){
                 logger.error("权限引擎没有识别出符合表达式的操作人员！ wid:"+flowInst.getFlowInstId() +" nid"+ nextOptNode.getNodeId());
@@ -422,7 +420,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                 optUsers.add(u.getUserCode());
         }else/*gw xz*/{
             optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(
-                    new SystemUserUnitFilterCalcContext(),
+                    UserUnitCalcEngine.createWorkFlowUUFCC(),
                     nextOptNode.getRoleType(), nextOptNode.getRoleCode(), unitCode );
         }
 
@@ -593,7 +591,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                         UserUnitParamBuilder.addParamToParamMap(unitParams,"P",nodeInst.getUnitCode() );
                         UserUnitParamBuilder.addParamToParamMap(unitParams,"F",flowInst.getUnitCode() );
 
-                        nextNodeUnits =  SysUnitFilterEngine.calcSystemUnitsByExp(nextNode.getUnitExp() ,
+                        nextNodeUnits =  UserUnitCalcEngine.calcUnitsByExp(nextNode.getUnitExp() ,
                                 unitParams,flowVarTrans);
                     }
                     
@@ -779,7 +777,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                     flowInst.getNearestNodeUnitCode(nodeInst,nodeToken));
             UserUnitParamBuilder.addParamToParamMap(unitParams,"F",flowInst.getUnitCode() );
 
-            nextNodeUnit = SysUnitFilterEngine.calcSingleSystemUnitByExp(nextOptNode.getUnitExp() ,
+            nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(nextOptNode.getUnitExp() ,
                     unitParams,varTrans);
         }
         
@@ -1532,7 +1530,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         UserUnitParamBuilder.addParamToParamMap(unitParams,"F",flowInst.getUnitCode() );
 
         String nextNodeUnit =
-                SysUnitFilterEngine.calcSingleSystemUnitByExp(nextNode.getUnitExp(),unitParams,null);
+                UserUnitCalcEngine.calcSingleUnitByExp(nextNode.getUnitExp(),unitParams,null);
 
 
         FlowVariableTranslate  flowVarTrans = new FlowVariableTranslate(varTrans,

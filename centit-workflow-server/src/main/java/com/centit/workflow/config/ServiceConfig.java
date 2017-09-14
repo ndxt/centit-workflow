@@ -4,6 +4,7 @@ import com.centit.framework.components.impl.NotificationCenterImpl;
 import com.centit.framework.components.impl.TextOperationLogWriterImpl;
 
 import com.centit.framework.core.config.DataSourceConfig;
+import com.centit.framework.hibernate.config.HibernateConfig;
 import com.centit.framework.ip.app.config.IPAppSystemBeanConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
@@ -17,7 +18,9 @@ import org.springframework.context.annotation.Lazy;
  * Created by codefan on 17-7-18.
  */
 @Configuration
-@Import({IPAppSystemBeanConfig.class, DataSourceConfig.class})
+@Import({DataSourceConfig.class,
+        HibernateConfig.class,
+        IPAppSystemBeanConfig.class})
 public class ServiceConfig {
 
     @Bean
