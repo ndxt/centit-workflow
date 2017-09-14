@@ -1,16 +1,15 @@
 package com.centit.workflow.config;
 
-import com.centit.framework.hibernate.config.DataSourceConfig;
-import com.centit.framework.ip.app.config.IPAppSystemBeanConfig;
-import com.centit.framework.staticsystem.config.SpringSecurityDaoConfig;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)//启用注解事物管理
 @ComponentScan(basePackages = {"com.centit.*"})
 @PropertySource("classpath:/system.properties")
-
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class SystemBeanConfig {
 /*

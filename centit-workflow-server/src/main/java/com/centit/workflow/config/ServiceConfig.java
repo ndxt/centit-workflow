@@ -2,11 +2,11 @@ package com.centit.workflow.config;
 
 import com.centit.framework.components.impl.NotificationCenterImpl;
 import com.centit.framework.components.impl.TextOperationLogWriterImpl;
-import com.centit.framework.hibernate.config.DataSourceConfig;
+
+import com.centit.framework.core.config.DataSourceConfig;
 import com.centit.framework.ip.app.config.IPAppSystemBeanConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
-import com.centit.framework.staticsystem.config.SpringSecurityDaoConfig;
 import com.centit.workflow.listener.InstantiationServiceBeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

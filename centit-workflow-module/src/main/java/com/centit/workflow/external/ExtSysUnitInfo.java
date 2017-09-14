@@ -3,6 +3,7 @@ package com.centit.workflow.external;
 import com.centit.framework.model.basedata.IUnitInfo;
 import com.centit.framework.model.basedata.IUserUnit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public class ExtSysUnitInfo implements IUnitInfo{
     private List<ExtSysUserUnit> unitUsers;
     private Long unitOrder;
     private String unitManager;
+    private String unitPath;
     /**
      * 机构代码 是机构的主键
      *
@@ -84,7 +86,7 @@ public class ExtSysUnitInfo implements IUnitInfo{
      */
     @Override
     public String getUnitPath() {
-        return getUnitCode();
+        return this.unitPath;
     }
 
     /**
@@ -117,6 +119,13 @@ public class ExtSysUnitInfo implements IUnitInfo{
         return this.subUnits;
     }
 
+    public void addSubUnit(ExtSysUnitInfo subUnit){
+        if(this.subUnits==null){
+            this.subUnits = new ArrayList<>(4);
+        }
+        this.subUnits.add(subUnit);
+    }
+
     /**
      * 获取机构用户下属用户关系
      *
@@ -127,6 +136,12 @@ public class ExtSysUnitInfo implements IUnitInfo{
         return this.unitUsers;
     }
 
+    public void addUnitUser(ExtSysUserUnit unitUser){
+        if(this.unitUsers==null){
+            this.unitUsers = new ArrayList<>(4);
+        }
+        this.unitUsers.add(unitUser);
+    }
     public void setUnitCode(String unitCode) {
         this.unitCode = unitCode;
     }
@@ -153,5 +168,9 @@ public class ExtSysUnitInfo implements IUnitInfo{
 
     public void setUnitManager(String unitManager) {
         this.unitManager = unitManager;
+    }
+
+    public void setUnitPath(String unitPath) {
+        this.unitPath = unitPath;
     }
 }

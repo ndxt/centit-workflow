@@ -13,6 +13,7 @@ public class ExtSysUserUnit implements IUserUnit {
     private String isPrimary;
     private String userStation;
     private String userRank;
+    private Long userOrder;
 
     public ExtSysUserUnit(){
         this.userUnitId = UuidOpt.getUuidAsString32();
@@ -77,6 +78,16 @@ public class ExtSysUserUnit implements IUserUnit {
         return this.userRank;
     }
 
+    /**
+     * 用户在本单位的排序号
+     *
+     * @return 排序号
+     */
+    @Override
+    public Long getUserOrder() {
+        return this.userOrder;
+    }
+
     public void setUserCode(String userCode) {
         this.userCode = userCode;
     }
@@ -99,5 +110,9 @@ public class ExtSysUserUnit implements IUserUnit {
 
     public void setUserRank(String userRank) {
         this.userRank = userRank;
+    }
+
+    public void setUserOrder(Long userOrder) {
+        this.userOrder = userOrder;
     }
 }

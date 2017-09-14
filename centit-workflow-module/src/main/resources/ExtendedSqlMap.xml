@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap [
+        <!ELEMENT sqlMap (sql*)>
+        <!ELEMENT sql (#PCDATA)>
+        <!ATTLIST sql id  CDATA #REQUIRED>
+        ]>
+<sqlMap>
+    <sql id="QUERY_ID_TEST1">
+        <![CDATA[select a.userCode,a.uintCode,b.projectID,
+				b.name as projectName,b.projectType,b.totalPoeples
+				from projectInfo b join projectOwner a  on a.projectID=b.projectID
+				 [companyType | join CompanyInfo c on b.companyId=c.companyId]
+				where 1=1 {projectOwner:a,projectInfo:b}
+				[projectType:pt| and b.projectType=:pt]
+				[:companyType,:companyName | and
+				 	 c.companyType=:companyType and c.companyName like :companyName]
+				 order by b.name ]]>
+    </sql>
+    <!-- 工作流外部系统信息表 对应的语句按照 字段顺序识别，所以顺序不能错，名称可以不一致 -->
+    <sql id="WORKFLOW_EXTERNAL_USERINFO">
+        <![CDATA[
+            select USER_CODE as userCode, USER_NAME as userName,
+                PRIMARY_UNIT as primaryUnit, USER_ORDER as userOrder
+            from F_USERINFO where ISVALID='T' order by USER_ORDER
+        ]]>
+    </sql>
+
+    <sql id="WORKFLOW_EXTERNAL_UNITINFO">
+        <![CDATA[
+            select UNIT_CODE as unitCode, PARENT_UNIT as parentUnit, UNIT_NAME as unitName,
+                   UNIT_MANAGER as unitManager, UNIT_ORDER as unitOrder,  UNIT_PATH as unitPath
+            from F_UNITINFO where ISVALID='T' order by UNIT_ORDER
+        ]]>
+    </sql>
+
+    <sql id="WORKFLOW_EXTERNAL_USERUNIT">
+        <![CDATA[
+            select UNIT_CODE as unitCode, USER_CODE as userCode,
+                   USER_STATION as userStation, USER_RANK as userRank,
+                   IS_PRIMARY as isPrimary, USER_ORDER as userOrder
+            from F_USERUNIT
+        ]]>
+    </sql>
+
+    <sql id="WORKFLOW_EXTERNAL_RANKMAP">
+        <![CDATA[
+            select DATA_CODE as rankCode, EXTRA_CODE as rank
+            from F_DATADICTIONARY where CATALOG_CODE = 'RankType'
+        ]]>
+    </sql>
+
+</sqlMap>

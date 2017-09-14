@@ -26,11 +26,7 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
 
     @Override
     public ExtSysUnitInfo getUnitInfoByCode(String unitCode) {
-        for(ExtSysUnitInfo unitInfo : ExternalSystemData.allunitInfo){
-            if(unitInfo.getUnitCode().equals(unitCode))
-                return unitInfo;
-        }
-        return null;
+        return ExternalSystemData.getUnitInfoByCode(unitCode);
     }
 
     @Override
@@ -46,16 +42,11 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
 
     @Override
     public ExtSysUserInfo getUserInfoByCode(String userCode) {
-        for(ExtSysUserInfo userInfo : ExternalSystemData.allUserInfo){
-            if(userInfo.getUserCode().equals(userCode))
-                return userInfo;
-        }
-        return null;
+        return ExternalSystemData.getUserInfoByCode(userCode);
     }
 
     /**
      * 从数据字典中获取 Rank 的等级
-     *
      * @param rankCode 行政角色代码
      * @return 行政角色等级
      */
@@ -69,6 +60,6 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
      * 读取配置文件中的 JDBC 链接 和 sql语句
      */
     public void loadExternalSystemData(){
-        //ExtendedQueryPool.getExtendedSql("WORKFLOW_EXTERNAL_USERINFO");
+        ExternalSystemData.loadExternalSystemData();
     }
 }

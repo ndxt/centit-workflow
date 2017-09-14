@@ -2,6 +2,7 @@ package com.centit.workflow.external;
 
 import com.centit.framework.model.basedata.IUserInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,7 +51,7 @@ public class ExtSysUserInfo implements IUserInfo {
      */
     @Override
     public String getUserName() {
-        return this.getUserName();
+        return this.userName;
     }
 
     /**
@@ -74,7 +75,7 @@ public class ExtSysUserInfo implements IUserInfo {
     }
 
     /**
-     * 用户类别，各个业务系统自定义类别信息
+     * 用户类别，各个业务系统自定义类别信息return null;
      *
      * @return 用户类别，各个业务系统自定义类别信息
      */
@@ -123,6 +124,12 @@ public class ExtSysUserInfo implements IUserInfo {
         return this.userUnits;
     }
 
+    public void addUserUnit(ExtSysUserUnit userUnit){
+        if(this.userUnits==null){
+            this.userUnits = new ArrayList<>(4);
+        }
+        this.userUnits.add(userUnit);
+    }
 
     public void setUserCode(String userCode) {
         this.userCode = userCode;
