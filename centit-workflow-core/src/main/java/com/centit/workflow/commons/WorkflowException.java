@@ -22,8 +22,8 @@ public class WorkflowException extends  RuntimeException {
         ///////////////用户提供的接口异常////////////////////////////////////////////////
         BizDataCheckError,//业务数据验证异常
         BizLogicError,//业务逻辑异常
-        BizDefinedError;//业务自定义异常        
-    };
+        BizDefinedError//业务自定义异常
+    }
         
     private FlowExceptionType exceptionType;
     
