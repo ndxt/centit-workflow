@@ -5,13 +5,14 @@ import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
 
 /**
- * 
- * TODO 节点事件接口
- * 
+ *
+ * 节点事件接口
+ *
  * @author codefan
- * @create 2013-7-10
- * @version
+ *  2013-7-10
+ * @version 4.0.0
  */
+@SuppressWarnings("unused")
 public interface NodeEventSupport {
     /**
      * 在节点创建后的调用的的事件

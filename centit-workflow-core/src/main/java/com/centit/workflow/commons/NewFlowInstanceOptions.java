@@ -4,7 +4,9 @@ import java.util.Map;
 
 /**
  * Created by codefan on 17-9-11.
+ * @author codefan
  */
+@SuppressWarnings("unused")
 public class NewFlowInstanceOptions {
     /**
      * 流程代码

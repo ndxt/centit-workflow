@@ -1,5 +1,9 @@
 package com.centit.workflow.commons;
-
+/**
+ * Created by codefan on 17-9-11.
+ * @author codefan
+ */
+@SuppressWarnings("unused")
 public interface ExtraFlowManager {
 
     /**

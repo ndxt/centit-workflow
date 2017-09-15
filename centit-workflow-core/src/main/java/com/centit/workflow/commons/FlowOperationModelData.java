@@ -7,7 +7,10 @@ import java.util.Map;
  * 模型基础数据接口
  *
  * 这个数据模型用于对应的流程 编辑页面中的各种下拉框
+ * Created by codefan on 17-9-11.
+ * @author codefan
  */
+@SuppressWarnings("unused")
 public interface FlowOperationModelData {
 
 	/**
