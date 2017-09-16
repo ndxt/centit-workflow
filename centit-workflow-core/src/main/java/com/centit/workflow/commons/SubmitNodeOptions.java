@@ -5,7 +5,9 @@ import java.util.Set;
 
 /**
  * Created by codefan on 17-9-11.
+ * @author codefan
  */
+@SuppressWarnings("unused")
 public class SubmitNodeOptions {
 
     /**
