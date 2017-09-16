@@ -186,15 +186,15 @@ public class FlowInfo implements java.io.Serializable {
     public void setFlowXmlDesc(String wfxmldesc) {
         this.flowXmlDesc = wfxmldesc;
     }
-  
-    public Date getPublishDate() {
-        return this.flowPublishDate;
+
+    public Date getFlowPublishDate() {
+        return flowPublishDate;
     }
-    
-    public void setPublishDate(Date wfPubDate) {
-        this.flowPublishDate = wfPubDate;
+
+    public void setFlowPublishDate(Date flowPublishDate) {
+        this.flowPublishDate = flowPublishDate;
     }
-  
+
     public String getOptId() {
         return this.optId;
     }
@@ -461,7 +461,7 @@ public class FlowInfo implements java.io.Serializable {
         this.flowState = other.getFlowState();
         this.flowDesc = other.getFlowDesc();
         this.flowXmlDesc = other.getFlowXmlDesc();
-        this.flowPublishDate = other.getPublishDate();
+        this.flowPublishDate = other.getFlowPublishDate();
         this.optId = other.getOptId();
         this.timeLimit = other.getTimeLimit();
         this.expireOpt = other.getExpireOpt();
@@ -486,8 +486,8 @@ public class FlowInfo implements java.io.Serializable {
             this.flowDesc = other.getFlowDesc();
         if( other.getFlowXmlDesc() != null)
             this.flowXmlDesc = other.getFlowXmlDesc();
-        if( other.getPublishDate() != null)
-            this.flowPublishDate = other.getPublishDate();
+        if( other.getFlowPublishDate() != null)
+            this.flowPublishDate = other.getFlowPublishDate();
         if( other.getOptId() != null)
             this.optId = other.getOptId();
         if( other.getTimeLimit() != null)
@@ -518,8 +518,8 @@ public class FlowInfo implements java.io.Serializable {
                 this.flowDesc = other.getFlowDesc();
             if( this.getFlowXmlDesc() == null)
                 this.flowXmlDesc = other.getFlowXmlDesc();
-            if( this.getPublishDate() == null)
-                this.flowPublishDate = other.getPublishDate();
+            if( this.getFlowPublishDate() == null)
+                this.flowPublishDate = other.getFlowPublishDate();
             if (this.getOsId() ==null)
                 this.osId = other.getOsId();
             if( this.getOptId() == null)

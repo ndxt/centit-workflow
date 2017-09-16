@@ -1,7 +1,6 @@
 package com.centit.workflow.dao;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
@@ -104,14 +103,14 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
             Map<String, Object> filterMap, PageDesc pageDesc) {
         
         String sql =  "select VERSION,FLOW_CODE,FLOW_NAME,FLOW_CLASS,FLOW_STATE,FLOW_DESC,FLOW_XML_DESC," +
-				"FLOW_PUBLISH_DATE,OPT_ID,TIME_LIMIT" +
-				"from F_V_LASTVERSIONFLOW" ;
+				"FLOW_PUBLISH_DATE,OPT_ID,TIME_LIMIT " +
+				" from F_V_LASTVERSIONFLOW" ;
 		QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql,filterMap);
 		JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
 				queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
 		List<LastVersionFlowDefine> ls = new ArrayList<>();
 		if(dataList != null) {
-			ls = JSONObject.parseArray(dataList.toJSONString(),LastVersionFlowDefine.class);
+			ls = JSONArray.parseArray(dataList.toJSONString(),LastVersionFlowDefine.class);
 		}
 		//List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc,UserTask.class);
 

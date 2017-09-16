@@ -1,6 +1,11 @@
 package com.centit.workflow.po;
 
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -15,6 +20,16 @@ public class LastVersionFlowDefine implements Serializable {
 
     @EmbeddedId
     private FlowInfoId cid;
+
+    @Column(name = "VERSION")
+    @NotNull(message = "字段不能为空")
+    @Range( max = 9999, message = "版本号不能大于{max}")
+    private Long version;
+
+    @Column(name = "FLOW_CODE")
+    @NotBlank(message = "字段不能为空")
+    @Length(max = 32, message = "字段长度不能大于{max}")
+    private String flowCode;
 
     @Column(name = "FLOW_NAME")
     private String flowName;
@@ -41,60 +56,75 @@ public class LastVersionFlowDefine implements Serializable {
     @Column(name = "TIME_LIMIT")
     private String timeLimit;
 
-    public String getWfname() {
+    @Column(name = "EXPIRE_OPT")
+    private String expireOpt;
+
+    @Column(name = "AT_PUBLISH_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date atPublishDate;
+
+    public FlowInfoId getCid() {
+        return cid;
+    }
+
+    public void setCid(FlowInfoId cid) {
+        this.cid = cid;
+    }
+
+    public String getFlowName() {
         return flowName;
     }
 
-    public void setWfname(String wfname) {
-        this.flowName = wfname;
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
     }
 
-    public String getWfclass() {
+    public String getFlowClass() {
         return flowClass;
     }
 
-    public void setWfclass(String wfclass) {
-        this.flowClass = wfclass;
+    public void setFlowClass(String flowClass) {
+        this.flowClass = flowClass;
     }
 
-    public String getWfstate() {
+    public String getFlowState() {
         return flowState;
     }
 
-    public void setWfstate(String wfstate) {
-        this.flowState = wfstate;
+    public void setFlowState(String flowState) {
+        this.flowState = flowState;
     }
 
-    public String getWfdesc() {
+    public String getFlowDesc() {
         return flowDesc;
     }
 
-    public void setWfdesc(String wfdesc) {
-        this.flowDesc = wfdesc;
+    public void setFlowDesc(String flowDesc) {
+        this.flowDesc = flowDesc;
     }
 
-    public String getWfxmldesc() {
+    public String getFlowXmlDesc() {
         return flowXmlDesc;
     }
 
-    public void setWfxmldesc(String wfxmldesc) {
-        this.flowXmlDesc = wfxmldesc;
+    public void setFlowXmlDesc(String flowXmlDesc) {
+        this.flowXmlDesc = flowXmlDesc;
     }
 
-    public Date getWfPubDate() {
+    public Date getFlowPublishDate() {
         return flowPublishDate;
     }
 
-    public void setWfPubDate(Date wfPubDate) {
-        this.flowPublishDate = wfPubDate;
+    public void setFlowPublishDate(Date flowPublishDate) {
+        this.flowPublishDate = flowPublishDate;
     }
 
-    public String getOptid() {
+    public String getOptId() {
         return optId;
     }
 
-    public void setOptid(String optid) {
-        this.optId = optid;
+    public void setOptId(String optId) {
+        this.optId = optId;
     }
 
     public String getTimeLimit() {
@@ -121,20 +151,21 @@ public class LastVersionFlowDefine implements Serializable {
         this.atPublishDate = atPublishDate;
     }
 
-    public FlowInfoId getCid() {
-        return cid;
+    public Long getVersion() {
+        return version;
     }
 
-    public void setCid(FlowInfoId cid) {
-        this.cid = cid;
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
-    @Column(name = "EXPIRE_OPT")
-    private String expireOpt;
+    public String getFlowCode() {
+        return flowCode;
+    }
 
-    @Column(name = "AT_PUBLISH_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date atPublishDate;
+    public void setFlowCode(String flowCode) {
+        this.flowCode = flowCode;
+    }
 
     public FlowInfo toWfFlowDefine() {
         FlowInfo wf = new FlowInfo();
@@ -144,7 +175,7 @@ public class LastVersionFlowDefine implements Serializable {
         wf.setFlowDesc(this.flowDesc);
         wf.setFlowState(this.flowState);
         wf.setFlowXmlDesc(this.flowXmlDesc);
-        wf.setPublishDate(this.flowPublishDate);
+        wf.setFlowPublishDate(this.flowPublishDate);
         wf.setOptId(this.optId);
         wf.setTimeLimit(this.timeLimit);
         wf.setExpireOpt(this.expireOpt);

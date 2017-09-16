@@ -1,26 +1,5 @@
 package com.centit.workflow.service.impl;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import com.centit.workflow.service.FlowDefine;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
@@ -28,11 +7,21 @@ import com.centit.support.network.HtmlFormUtils;
 import com.centit.support.xml.XmlUtils;
 import com.centit.workflow.dao.FlowInfoDao;
 import com.centit.workflow.dao.NodeInfoDao;
-import com.centit.workflow.po.FlowInfo;
-import com.centit.workflow.po.FlowInfoId;
-import com.centit.workflow.po.FlowStage;
-import com.centit.workflow.po.NodeInfo;
-import com.centit.workflow.po.FlowTransition;
+import com.centit.workflow.po.*;
+import com.centit.workflow.service.FlowDefine;
+import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Attribute;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.util.*;
 
 @Service
 public class FlowDefineImpl implements FlowDefine, Serializable {
@@ -503,7 +492,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 		newFlowDef.setOptId(flowDef.getOptId());
 		newFlowDef.setTimeLimit(flowDef.getTimeLimit());
 		newFlowDef.setExpireOpt(flowDef.getExpireOpt());
-		newFlowDef.setPublishDate(DatetimeOpt.currentUtilDate());
+		newFlowDef.setFlowPublishDate(DatetimeOpt.currentUtilDate());
 		newFlowDef.setFlowState("B");		
 		//复制相关节点信息		
 		//newFlowDef.getWfFlowStages()		
