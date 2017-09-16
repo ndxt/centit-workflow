@@ -1,7 +1,7 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.StageInstance;
 import com.centit.workflow.po.StageInstanceId;
 import org.springframework.stereotype.Repository;
@@ -34,8 +34,7 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public List<StageInstance> listStageInstByFlowInstId(long flowInstId) {
-        
-        return this.listObjects("from StageInstance where id.flowInstId=?", flowInstId);
+        return this.listObjectsByFilter("where flow_Inst_Id=?",new Object[]{flowInstId});
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public StageInstance getObject(long flowInstId, long stageId) {

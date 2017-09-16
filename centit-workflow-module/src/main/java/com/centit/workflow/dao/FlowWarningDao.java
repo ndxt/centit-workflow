@@ -2,7 +2,7 @@ package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.core.dao.PageDesc;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.FlowWarning;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,26 +39,24 @@ public class FlowWarningDao extends BaseDaoImpl<FlowWarning,Long>
 	@Transactional(propagation= Propagation.MANDATORY)
 	public List<FlowWarning> listFlowWarningByInst(Long flowInstId,
                                                    PageDesc pageDesc) {
-        return this.listObjects("from FlowWarning where flowInstId = ?",
-                 flowInstId, pageDesc);        
+        return this.listObjectsByFilter("where flow_Inst_Id = ?",new Object[]{flowInstId},pageDesc);
     }
 
 	@Transactional(propagation= Propagation.MANDATORY)
 	public List<FlowWarning> listFlowWarningByNodeInst(Long nodeInstId,
                                                        PageDesc pageDesc) {
-        return this.listObjects("from FlowWarning where nodeInstId = ?",
-                nodeInstId, pageDesc);  
-    }
+		return this.listObjectsByFilter("where node_Inst_Id = ?",new Object[]{nodeInstId},pageDesc);
+
+	}
 
  
     public List<FlowWarning> listFlowWarningByWarningCode(String warningCode,
                                                           PageDesc pageDesc) {
-        return this.listObjects("from FlowWarning where warningCode = ?",
-                warningCode, pageDesc);  
-    }
+		return this.listObjectsByFilter("where warning_Code = ?",new Object[]{warningCode},pageDesc);
+	}
     
     public List<FlowWarning> listNeedNotifyWarning(){
-        return this.listObjects("from FlowWarning where noticeState = '0'");
+        return this.listObjectsByFilter("where notice_State = '0'",new Object[]{});
     }
     
 }

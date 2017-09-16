@@ -33,7 +33,7 @@
 
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>framework-persistence-hibernate</artifactId>
+            <artifactId>framework-persistence-jdbc</artifactId>
             <version>${centit.framework.version}</version>
         </dependency>
 

@@ -1,19 +1,18 @@
 package com.centit.workflow.dao;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.centit.framework.core.dao.CodeBook;
+import com.centit.framework.core.dao.PageDesc;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.workflow.po.NodeInstance;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.centit.framework.core.dao.CodeBook;
-import com.centit.framework.core.dao.PageDesc;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
-import com.centit.framework.hibernate.dao.DatabaseOptUtils;
-import com.centit.workflow.po.NodeInstance;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 @Repository
 public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
   
@@ -43,8 +42,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
 
     @Transactional(propagation= Propagation.MANDATORY)
     public long getNextNodeInstId() {
-		String sNo = DatabaseOptUtils.getNextValueOfSequence(this,"S_NODEINSTNO");
-		return Long.valueOf(sNo);
+		return DatabaseOptUtils.getSequenceNextValue(this,"S_NODEINSTNO");
 	}
 
 	/**
@@ -61,20 +59,22 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listNodeInstByState(long flowInstId, String nodeState) {
-        return listObjects("From NodeInstance where nodeState= ? and flowInstId= ?",new Object[]{nodeState,flowInstId,});
+        return this.listObjectsByFilter("where node_State= ? and flow_Inst_Id= ?",
+                new Object[]{nodeState,flowInstId,});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listNodesWithoutOpt() {
-        return listObjects("From NodeInstance where (nodeState='N' or nodeState='R') and  "
-                + " nodeInstId not in (select cid.nodeInstId from VUserTaskList) and "
-                + " flowInstId in (select flowInstId from FlowInstance where instState='N' )order by nodeInstId desc");
+        return this.listObjectsByFilter("where (node_State='N' or node_State='R') and  " +
+                        "node_Inst_Id not in (select node_Inst_Id from v_user_task_list) and " +
+                        "flow_Inst_Id in (select flow_Inst_Id from WF_FLOW_INSTANCE where inst_State='N' )order by node_Inst_Id desc",
+                new Object[]{});
     }
     //expireOptSign == 0未处理  1 已通知  ,2..6 已通知2..5次（暂时不启动重复通知） 6:不处理    7：已挂起  8 已终止 9 已完成
     @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listNearExpireNodeInstance(long leaveTime) {
-        return  this.listObjects("From NodeInstance" +
-                " where timeLimit <= ? and nodeState='N' and (isTimer='T' or isTimer='R')",leaveTime);
+        return this.listObjectsByFilter(" where time_Limit <= ? and node_State='N' and " +
+                "(is_Timer='T' or is_Timer='R')",new Object[]{leaveTime});
     }
     
 
@@ -86,8 +86,9 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listLastUpdateNodeInst(String userCode, String state){
-        return  this.listObjects("From NodeInstance" +
-                " where lastUpdateUser = ? and nodeState = ? order by lastUpdateTime ",new Object[]{userCode,state});
+        return this.listObjectsByFilter(" where last_Update_User = ? and node_State = ? " +
+                        "order by last_Update_Time ",
+                new Object[]{userCode,state});
     }
     
     /**
@@ -97,8 +98,8 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listNodeInstByTimer(String userCode, String isTimer, PageDesc pageDesc){
-        return  this.listObjects("From NodeInstance" +
-                " where lastUpdateUser = ? and isTimer = ? order by lastUpdateTime ",
+        return this.listObjectsByFilter(" where last_Update_User = ? and is_Timer = ? " +
+                        "order by last_Update_Time ",
                 new Object[]{userCode,isTimer},pageDesc);
     }
     
@@ -118,15 +119,13 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listActiveTimerNodeByFlow(long flowInstId){
-        return  this.listObjects("From NodeInstance" +
-                " where flowInstId = ? and isTimer = 'T' ",
+        return this.listObjectsByFilter(" where flow_Inst_Id = ? and is_Timer = 'T' ",
                 new Object[]{flowInstId});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listActiveTimerNodeByFlowStage(long flowInstId, String flowStage){
-        return  this.listObjects("From NodeInstance" +
-                " where flowInstId = ? and flowStage = ? and isTimer = 'T'",
+        return this.listObjectsByFilter(" where flow_Inst_Id = ? and flow_Stage = ? and is_Timer = 'T'",
                 new Object[]{flowInstId,flowStage});
     }
 }

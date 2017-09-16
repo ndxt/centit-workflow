@@ -1,26 +1,23 @@
 package com.centit.workflow.dao;
 
+import com.centit.framework.core.dao.CodeBook;
+import com.centit.framework.core.dao.PageDesc;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.database.utils.QueryUtils;
+import com.centit.workflow.po.FlowInstance;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.stereotype.Repository;
-
-import com.centit.framework.core.dao.CodeBook;
-import com.centit.framework.core.dao.PageDesc;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
-import com.centit.framework.hibernate.dao.DatabaseOptUtils;
-import com.centit.support.database.utils.QueryUtils;
-import com.centit.workflow.po.FlowInstance;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 @Repository
-public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long>
-	{
-
+public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
 	public Map<String, String> getFilterField() {
 		if( filterField == null){
 			filterField = new HashMap<String, String>();
@@ -57,8 +54,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long>
 	}
 	@Transactional(propagation= Propagation.MANDATORY)
 	public long getNextFlowInstId(){
-		String sNo = DatabaseOptUtils.getNextValueOfSequence(this,"S_FLOWINSTNO");
-		return Long.valueOf(sNo);
+		return  DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWINSTNO");
 	}
 	
 	/**
@@ -82,38 +78,39 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long>
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listUserAttachFlowInstance(String userCode, String flowPhase, Map<String, Object> filterMap, PageDesc pageDesc) {
         //TODO 这个方法有严重问题，直接删除 或者重新设计  VUserAttachFlow 视图不存在
-        String shql = "from FlowInstance where flowInstId in (select distinct u.cid.flowInstId from VUserAttachFlow u ";
+        String whereSql = " where flow_Inst_Id in (select distinct u.flow_Inst_Id from VUserAttachFlow u ";
         if (filterMap.get("oper") != null && filterMap.get("oper").equals("all")) {
-            shql += " )";
+            whereSql += " )";
         } else {
-            shql += " where u.cid.userCode="
+            whereSql += " where u.user_Code="
                     + QueryUtils.buildStringForQuery(userCode)
-                    + " and u.cid.flowPhase in (";
+                    + " and u.flow_Phase in (";
 
             if (flowPhase != null && flowPhase.equals("fw")) {
-                shql += "'fw','yh','qf','zwh','pb','ysp','gz'";
+                whereSql += "'fw','yh','qf','zwh','pb','ysp','gz'";
             } else {
-                shql += "'sw','pf','ys' ";
+                whereSql += "'sw','pf','ys' ";
             }
-            shql += " ) )";
+            whereSql += " ) )";
         }
-        
-        return  this.listObjects(shql, filterMap,pageDesc);
+        return this.listObjectsByFilter(whereSql,filterMap,pageDesc);
     }
     
     // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F  
     // expireOptSign == 0未处理  1 已通知  ,2..6 已通知2..5次（暂时不启动重复通知）6:不处理    7：已挂起  8 已终止 9 已完成
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listNearExpireFlowInstance(long leaveLimit) {
-        return  this.listObjects("From FlowInstance" +
-                " where timeLimit <= ? and expireOptSign<6 and instState='N' and isTimer='T'",leaveLimit);
+        String conditionSql = "where FLOW_INST_ID = ? " +
+                "and expireOptSign<6 and instState='N' and isTimer='T'";
+        return  this.listObjectsByFilter(conditionSql,new Object[]{leaveLimit});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public void updateTimeConsume(long consumeTime)
     {
-        DatabaseOptUtils.doExecuteHql(this,"update FlowInstance set timeLimit =timeLimit- ? " +
-                    "where instState='N' and isTimer='T' and timeLimit is not null  ", consumeTime);
+        String baseSql = "update WF_FLOW_INSTANCE set TIME_LIMIT =TIME_LIMIT- ? " +
+                "where inst_State='N' and is_Timer='T' and time_Limit is not null  ";
+        this.getJdbcTemplate().update(baseSql,new Object[]{consumeTime});
     }
     
     /**
@@ -122,16 +119,16 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long>
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listAllActiveFlowInst(PageDesc pageDesc){
-        return  this.listObjects("From FlowInstance where instState = 'N'",pageDesc);
+        return this.listObjectsByFilter("where inst_State = 'N'",new Object[]{},pageDesc);
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listAllActiveTimerFlowInst(){
-        return  this.listObjects("From FlowInstance where instState = 'N' and isTimer='T'");  // ( isTimer='T' or isTimer='F' ) ");
+        String whereSql = "where instState = 'N' and isTimer='T'";
+        return this.listObjectsByFilter(whereSql,(Object[]) null);
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listAllActiveTimerFlowInst(PageDesc pageDesc){
-        return  this.listObjects("From FlowInstance where instState = 'N' and isTimer='T'",
-                pageDesc);  // ( isTimer='T' or isTimer='F' ) ");
+        return this.listObjectsByFilter("where inst_State = 'N' and is_Timer='T'",new Object[]{},pageDesc);
     }
     
     /**
@@ -142,8 +139,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long>
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listFlowInstByTimer(String userCode, String isTimer, PageDesc pageDesc){
-        return  this.listObjects("From FlowInstance" +
-                " where lastUpdateUser = ? and isTimer =? order by lastUpdateTime ",
+        return super.listObjectsByFilter(
+                " where last_Update_User = ? and is_Timer =? order by last_Update_Time ",
                 new Object[]{userCode,isTimer},pageDesc);
     }
     
@@ -169,12 +166,10 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long>
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public long calcOtherSubflowSum(Long nodeInstId,Long curSubFlowId){
-        
-        Object obj = DatabaseOptUtils.getSingleObjectBySql(this,
-                "select count(1) as otherFlows from WF_FLOW_INSTANCE  "
+        String baseSql = "select count(1) as otherFlows from WF_FLOW_INSTANCE  "
                 + "where INST_STATE='N' and IS_SUB_INST='Y' "
-                + " and PRE_NODE_INST_ID=? and FLOW_INST_ID <> ?",
-                new Object[]{nodeInstId,curSubFlowId});
+                + " and PRE_NODE_INST_ID=? and FLOW_INST_ID <> ?";
+        Object obj = this.getJdbcTemplate().queryForObject(baseSql,new Object[]{nodeInstId,curSubFlowId},Long.class);
         if (obj == null)
             return 0;
         if (obj instanceof Long)

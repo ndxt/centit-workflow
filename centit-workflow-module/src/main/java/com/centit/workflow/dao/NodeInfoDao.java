@@ -1,19 +1,14 @@
 package com.centit.workflow.dao;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.centit.framework.core.dao.CodeBook;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.workflow.po.NodeInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.centit.framework.core.dao.CodeBook;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
-import com.centit.workflow.po.NodeInfo;
+import java.util.*;
 @Repository
 public class NodeInfoDao extends BaseDaoImpl<NodeInfo,Long>
 	{
@@ -51,12 +46,11 @@ public class NodeInfoDao extends BaseDaoImpl<NodeInfo,Long>
 
 	@Transactional(propagation= Propagation.MANDATORY)
 	public Set<String> getUnitExp(String flowCode, Long version) {
-	    String hql = " from NodeInfo where unitExp is not null";
 	    Map<String, Object> paramMap = new HashMap<String, Object>();
 	    paramMap.put("flowCode", flowCode);
 	    paramMap.put("version", version);
 	    
-	    List<NodeInfo> nodeList = listObjects(hql, paramMap);
+	    List<NodeInfo> nodeList = this.listObjectsByFilter("where unit_Exp is not null",paramMap);
 	    
 	    Set<String> unitExpSet = new HashSet<String>();
 	    
@@ -71,8 +65,7 @@ public class NodeInfoDao extends BaseDaoImpl<NodeInfo,Long>
 
 	@Transactional(propagation= Propagation.MANDATORY)
 	public List<NodeInfo> listNodeByNodecode(String flowCode, Long version, String nodeCode) {
-        String hql = "from NodeInfo where flowDefine.cid.flowCode=? and flowDefine.cid.version=? and nodeCode=?";
-        List<NodeInfo> nodeList = listObjects(hql, new Object[]{flowCode,  version,  nodeCode});
-        return nodeList;
+        return this.listObjectsByFilter("where FLOW_CODE=? " +
+				"and version=? and node_Code=?",new Object[]{flowCode,  version,  nodeCode});
     }
 }

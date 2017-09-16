@@ -1,8 +1,8 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
-import com.centit.framework.hibernate.dao.DatabaseOptUtils;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.workflow.po.RoleRelegate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -49,11 +49,9 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate,Long> {
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public long getNextReleGateId() {
-        String sNo = DatabaseOptUtils.getNextValueOfSequence(this,"S_RELEGATENO");
-        return Long.valueOf(sNo);
+        return DatabaseOptUtils.getSequenceNextValue(this,"S_RELEGATENO");
     }
     @Transactional(propagation= Propagation.MANDATORY)
-    @Override
     public void saveObject(RoleRelegate roleRelegate) {
         if (roleRelegate.getRelegateno() == null
                 || roleRelegate.getRelegateno() == 0) {

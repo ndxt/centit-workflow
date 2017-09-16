@@ -417,7 +417,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public List<FlowInstance> listFlowInstance(Map<String, Object> filterMap,
             PageDesc pageDesc) {
-        List<FlowInstance> instList = flowInstanceDao.listObjects(filterMap,
+        List<FlowInstance> instList = flowInstanceDao.listObjectsByProperties(filterMap,
                 pageDesc);
         return new ArrayList<FlowInstance>(this.convertor(instList));
     }
@@ -1074,7 +1074,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 actionLogList.add(wfactlog);
             }
             //nodeInstanceDao.saveNewObjects(nodeInstances);
-            actionLogDao.saveNewObjects(actionLogList);
+            //TODO 方法没找到
+            //actionLogDao.saveNewObjects(actionLogList);
         }
         //actiontask 中的待办
         filterMap.clear();
@@ -1133,7 +1134,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 actionLogList.add(wfactlog);
             }
             //actionTaskDao.saveNewObjects(actionTasks);
-            actionLogDao.saveNewObjects(actionLogList);
+            //TODO 方法没找到
+            //actionLogDao.saveNewObjects(actionLogList);
         }
         //wf_task_move这个没有对应的操作
         return 0;
@@ -1295,14 +1297,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public List<RoleRelegate> listRoleRelegateByUser(String userCode) {
         Map<String,Object> filterMap = new HashMap<String,Object>();
         filterMap.put("grantee",userCode);
-        return flowRoleRelegateDao.listObjects(filterMap, new PageDesc(-1,-1));
+        return flowRoleRelegateDao.listObjectsByProperties(filterMap, new PageDesc(-1,-1));
     }
 
     @Override
     public List<RoleRelegate> listRoleRelegateByGrantor(String grantor) {
         Map<String,Object> filterMap = new HashMap<String,Object>();
         filterMap.put("grantor",grantor);
-        return flowRoleRelegateDao.listObjects(filterMap, new PageDesc(-1,-1));
+        return flowRoleRelegateDao.listObjectsByProperties(filterMap, new PageDesc(-1,-1));
     }
 
     @Override

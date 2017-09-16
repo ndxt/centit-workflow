@@ -1,7 +1,7 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.FlowWorkTeam;
 import com.centit.workflow.po.FlowWorkTeamId;
 import org.springframework.stereotype.Repository;
@@ -42,10 +42,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
     @Transactional(propagation= Propagation.REQUIRES_NEW)
     public List<FlowWorkTeam> listFlowWorkTeam(long flowInstId)
     {
-        //Map<String,String> filterDesc = new HashMap<String,String>();
-        //filterDesc.put("flowinstid",new Long(flowInstId).toString());
-        return this.listObjects("From FlowWorkTeam where cid.flowInstId=?  " +
-                "order by cid.roleCode, userOrder",flowInstId);
+        return this.listObjectsByFilter("where flow_Inst_Id = ? order by role_Code, user_Order",new Object[]{flowInstId});
     }
     
     /**
@@ -58,9 +55,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
     @Transactional(propagation= Propagation.REQUIRES_NEW)
     public List<FlowWorkTeam> listFlowWorkTeamByRole(long flowInstId, String roleCode)
     {
-        return this.listObjects("From FlowWorkTeam  " +
-                "where cid.flowInstId = ?  and cid.roleCode = ? order by userOrder",
-                new Object[]{flowInstId,roleCode});
+        return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? order by user_Order",new Object[]{flowInstId,roleCode});
     }
     
     /**
@@ -74,8 +69,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowWorkTeam> listFlowWorkTeam(long flowInstId, String roleCode, String authdesc)
     {
-        return this.listObjects("From FlowWorkTeam  " +
-                        "where cid.flowInstId = ?  and roleCode = ? and authDesc = ? order by userOrder",
-                new Object[]{flowInstId,roleCode,authdesc});
+        return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? and auth_Desc = ? " +
+                "order by user_Order",new Object[]{flowInstId,roleCode,authdesc});
     }
 }

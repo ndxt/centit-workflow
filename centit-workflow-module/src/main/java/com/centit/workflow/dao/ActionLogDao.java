@@ -1,19 +1,15 @@
 package com.centit.workflow.dao;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Repository;
-
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.core.dao.PageDesc;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
-import com.centit.framework.hibernate.dao.DatabaseOptUtils;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.workflow.po.ActionLog;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 /**
  * 
@@ -24,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
  *          $Id$
  */
 @Repository
-public class ActionLogDao extends BaseDaoImpl<ActionLog,Long>
-	{
-
+public class ActionLogDao extends BaseDaoImpl<ActionLog,Long> {
     public Map<String, String> getFilterField() {
 		if( filterField == null){
 			filterField = new HashMap<String, String>();
@@ -45,13 +39,15 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long>
 	@Transactional(propagation= Propagation.MANDATORY)
 	public List<ActionLog> listUserActionLogs(String userCode, PageDesc pageDesc, Date lastTime )
 	{
-        if(lastTime==null)
-            return listObjects("From ActionLog where userCode=? order by actionTime desc" ,
-                    new Object[]{userCode},pageDesc ); 
-        else
-            return listObjects("From ActionLog where userCode=? and actionTime >= ? order by  actionTime desc" ,
-                    new Object[]{userCode,lastTime},pageDesc ); 
-
+		List<ActionLog> list = new ArrayList<>();
+        if(lastTime==null){
+        	list = this.listObjectsByFilter("where USER_CODE = ? order by action_Time desc",
+					new Object[]{userCode},pageDesc);
+		}else{
+        	list = this.listObjectsByFilter("where USER_CODE = ? and ACTION_TIME >= ?" +
+					"order by action_Time desc",new Object[]{userCode,lastTime},pageDesc);
+		}
+		return list;
 	}
 	
 	/**
@@ -62,7 +58,8 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long>
 	 */
 	@Transactional(propagation= Propagation.MANDATORY)
 	public List<ActionLog> listGrantedActionLog(String userCode, PageDesc pageDesc){
-	    return listObjects("from ActionLog where userCode=? and  grantor <> null",userCode, pageDesc);
+		return this.listObjectsByFilter("where USER_CODE = ? and  grantor <> null",
+				new Object[]{userCode},pageDesc);
 	}
 	
 	/**
@@ -74,8 +71,7 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long>
 	@Transactional(propagation= Propagation.MANDATORY)
     public List<ActionLog> listGrantorActionLog(String userCode,
                                                 PageDesc pageDesc) {
-        return listObjects("from ActionLog where grantor = ?", userCode,
-                pageDesc);
+		return this.listObjectsByFilter("where GRANTOR = ?",new Object[]{userCode},pageDesc);
     }
 	/**
 	 * 生成流程日志操作编号
@@ -83,7 +79,6 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long>
 	 */
 	@Transactional(propagation= Propagation.MANDATORY)
 	public long getNextActionId(){
-		String sNo = DatabaseOptUtils.getNextValueOfSequence(this,"S_ACTIONLOGNO");
-		return Long.valueOf(sNo);
+		return DatabaseOptUtils.getSequenceNextValue(this,"S_ACTIONLOGNO");
 	}
 }

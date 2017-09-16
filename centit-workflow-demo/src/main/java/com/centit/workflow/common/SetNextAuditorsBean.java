@@ -8,9 +8,9 @@ import com.centit.workflow.dao.ApprovalAuditorDao;
 import com.centit.workflow.dao.ApprovalEventDao;
 import com.centit.workflow.po.*;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 

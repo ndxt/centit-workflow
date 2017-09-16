@@ -2513,7 +2513,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
     public List<FlowWarning> listFlowWarning(Map<String, Object> filterMap,
             PageDesc pageDesc) {
         return new ArrayList<FlowWarning>(
-                runtimeWarningDao.listObjects(filterMap,pageDesc));
+                runtimeWarningDao.listObjectsByProperties(filterMap,pageDesc));
     }
 
     @Override

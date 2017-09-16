@@ -1,7 +1,7 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.FlowVariableId;
 import org.springframework.stereotype.Repository;
@@ -38,15 +38,14 @@ public class FlowVariableDao extends BaseDaoImpl<FlowVariable,FlowVariableId>
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
 	public List<FlowVariable> listFlowVariables(long flowInstId)
 	{
-	    return this.listObjects("From FlowVariable where cid.flowInstId=? order by cid.runToken",flowInstId);
+	    return this.listObjectsByFilter("where FLOW_INST_ID = ? order by run_Token",new Object[]{flowInstId});
 	}
 
 	@Transactional(propagation= Propagation.MANDATORY)
 	public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId,
                                                          String varname) {
-		return this
-				.listObjects(
-						"From FlowVariable where cid.flowInstId=? and cid.varName=? order by cid.runToken",
-						new Object[] { flowInstId, varname });
+		return this.listObjectsByFilter("where FLOW_INST_ID = ? and var_Name=? order by run_Token",
+				new Object[] { flowInstId, varname });
+
 	}
 }

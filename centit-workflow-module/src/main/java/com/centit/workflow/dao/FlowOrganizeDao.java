@@ -1,8 +1,7 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
-import com.centit.framework.hibernate.dao.BaseDaoImpl;
-import com.centit.framework.hibernate.dao.DatabaseOptUtils;
+import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.FlowOrganize;
 import com.centit.workflow.po.FlowOrganizeId;
 import org.springframework.stereotype.Repository;
@@ -35,32 +34,33 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
 
     @Transactional(propagation= Propagation.MANDATORY)
     public void deleteFlowOrganize(long flowInstId, String roleCode) {
-        DatabaseOptUtils.doExecuteHql(this,"delete FlowOrganize where cid.flowInstId=? and cid.roleCode=?",new Object[]{flowInstId, roleCode});
+        this.getJdbcTemplate().update("delete WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ?",
+                new Object[]{flowInstId, roleCode});
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public void deleteFlowOrganize(long flowInstId, String roleCode,String authDesc) {
-        DatabaseOptUtils.doExecuteHql(this,"delete FlowOrganize where cid.flowInstId=? and cid.roleCode=? and authDesc = ?",new Object[]{flowInstId, roleCode,authDesc});
+        this.getJdbcTemplate().update("delete WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ? " +
+                "and AUTH_DESC = ?",new Object[]{flowInstId, roleCode,authDesc});
     }
     @Transactional(propagation= Propagation.REQUIRES_NEW)
     public List<FlowOrganize> listFlowOrganize(long flowInstId)
     {
-        //Map<String,String> filterDesc = new HashMap<String,String>();
-        //filterDesc.put("flowinstid",new Long(flowInstId).toString());
-        return this.listObjects("From FlowOrganize where cid.flowInstId=? order by unitOrder",flowInstId);
+        return this.listObjectsByFilter("where FLOW_INST_ID = ? order by unit_Order",
+                new Object[]{flowInstId});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowOrganize> listFlowOrganizeByRole(long flowInstId, String roleCode)
     {
-        return this.listObjects("From FlowOrganize where cid.flowInstId = ? and cid.roleCode = ? order by unitOrder",
-                    new Object[]{flowInstId, roleCode});
+        return this.listObjectsByFilter("where FLOW_INST_ID = ? and ROLE_CODE = ? order by unit_Order",
+                new Object[]{flowInstId, roleCode});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowOrganize> listFlowOrganize(long flowInstId, String roleCode, String authDesc)
     {
-        return this.listObjects("From FlowOrganize " +
-                        "where cid.flowInstId = ? and cid.roleCode = ? and authDesc = ? order by unitOrder",
+        return this.listObjectsByFilter("where FLOW_INST_ID = ? and ROLE_CODE = ? and auth_Desc = ? " +
+                        "order by unit_Order",
                 new Object[]{flowInstId, roleCode, authDesc});
     }
 }
