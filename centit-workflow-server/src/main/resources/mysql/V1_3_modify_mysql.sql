@@ -1,1 +1,0 @@
-alter table wf_flow_define modify column version BIGINT;
