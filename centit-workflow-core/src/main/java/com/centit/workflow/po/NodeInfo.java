@@ -1,8 +1,12 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * create by scaffold
@@ -100,6 +104,20 @@ public class NodeInfo implements java.io.Serializable {
        @JoinColumn(name="FLOW_CODE", referencedColumnName="FLOW_CODE"),
        @JoinColumn(name="VERSION", referencedColumnName="VERSION")
     })
+
+    /**
+     * 框架解析 不到ManyToOne的属性 这儿单独 设置
+     */
+    @Column(name = "VERSION")
+    @NotNull(message = "字段不能为空")
+    @Range( max = 9999, message = "版本号不能大于{max}")
+    private Long version;
+
+    @Column(name = "FLOW_CODE")
+    @NotBlank(message = "字段不能为空")
+    @Length(max = 32, message = "字段长度不能大于{max}")
+    private String flowCode;
+
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
     public String getIsTrunkLine() {
@@ -160,20 +178,23 @@ public class NodeInfo implements java.io.Serializable {
         this.stageCode = flowPhase;
     }
 
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     public String getFlowCode() {
-        if(this.flowDefine==null)
-            return null;
-        return this.flowDefine.getFlowCode();
-	}
+        return flowCode;
+    }
 
-	public Long getVersion() {
-	    if(this.flowDefine==null)
-	        return null;
-		return this.flowDefine.getVersion();
-	}
+    public void setFlowCode(String flowCode) {
+        this.flowCode = flowCode;
+    }
 
-	
-	public FlowInfo getFlowDefine() {
+    public FlowInfo getFlowDefine() {
         return flowDefine;
     }
 

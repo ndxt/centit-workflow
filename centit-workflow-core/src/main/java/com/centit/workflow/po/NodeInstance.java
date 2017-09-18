@@ -24,6 +24,10 @@ public class NodeInstance implements java.io.Serializable {
 	@ManyToOne()
 	@JoinColumn(name="NODE_ID")
 	private NodeInfo node;
+
+	@Column(name = "NODE_ID")
+	private Long nodeId;
+
     @Column(name="CREATE_TIME")
 	private Date createTime;
     @Column(name="LAST_UPDATE_TIME")
@@ -158,16 +162,24 @@ public class NodeInstance implements java.io.Serializable {
 	public void setFlowInstId(Long wfinstid) {
 		this.flowInstId = wfinstid;
 	}
-  
+
 	public Long getNodeId() {
-		return this.node.getNodeId();
+		return nodeId;
 	}
-	
-	public void setNodeId(Long nodeid) {
-		this.node.setNodeId(nodeid);
+
+	public void setNodeId(Long nodeId) {
+		this.nodeId = nodeId;
 	}
-  
-	 public String getNodeCode(){
+
+	public String getStageCode() {
+		return stageCode;
+	}
+
+	public void setStageCode(String stageCode) {
+		this.stageCode = stageCode;
+	}
+
+	public String getNodeCode(){
 	     if(this.node==null)
 	         return null;
 	     return this.node.getNodeCode();

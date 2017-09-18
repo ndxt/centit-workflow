@@ -2,8 +2,12 @@ package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.support.common.WorkTimeSpan;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -26,6 +30,19 @@ public class FlowInstance implements java.io.Serializable {
         @JoinColumn(name="FLOW_CODE", referencedColumnName="FLOW_CODE")
     })
     private FlowInfo flowDefine;
+
+    /**
+     * 框架解析 不到ManyToOne的属性 这儿单独 设置
+     */
+    @Column(name = "VERSION")
+    @NotNull(message = "字段不能为空")
+    @Range( max = 9999, message = "版本号不能大于{max}")
+    private Long version;
+
+    @Column(name = "FLOW_CODE")
+    @NotBlank(message = "字段不能为空")
+    @Length(max = 32, message = "字段长度不能大于{max}")
+    private String flowCode;
 	
 	@Column(name="FLOW_OPT_NAME")
 	private String flowOptName;
@@ -139,24 +156,25 @@ public class FlowInstance implements java.io.Serializable {
 		this.flowInstId = wfinstid;
 	}
 	// Property accessors
-  
-	public Long getVersion() {
-		return this.getFlowDefine().getVersion();
-	}
-	
-	public void setVersion(Long version) {
-		this.getFlowDefine().setVersion(version);
-	}
-  
-	public String getFlowCode() {
-		return this.flowDefine.getFlowCode();
-	}
 
-	public void setFlowCode(String wfcode) {
-		this.getFlowDefine().setFlowCode(wfcode);
-	}
-  
-	public String getFlowOptName() {
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public String getFlowCode() {
+        return flowCode;
+    }
+
+    public void setFlowCode(String flowCode) {
+        this.flowCode = flowCode;
+    }
+
+    public String getFlowOptName() {
         return flowOptName;
     }
     public void setFlowOptName(String flowOptName) {
@@ -924,4 +942,15 @@ public class FlowInstance implements java.io.Serializable {
         this.curStep = curStep;
     }
 
+    public Long getPreInstId() {
+        return preInstId;
+    }
+
+    public Long getPreNodeInstId() {
+        return preNodeInstId;
+    }
+
+    public void setOptName(String optName) {
+        this.optName = optName;
+    }
 }
