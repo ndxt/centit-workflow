@@ -2,6 +2,7 @@ package com.centit.workflow.service;
 
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
+import com.centit.workflow.commons.NewFlowInstanceOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 
@@ -86,9 +87,20 @@ public interface FlowEngine {
      */
     FlowInstance createInstanceLockFirstNode(String  flowCode,String flowOptName,
             String flowOptTag,String userCode,String unitCode);
-    
 
-    
+    /**
+     * 使用 最新版本的流程 创建 流程实例
+     * @param newFlowInstanceOptions
+     * @return
+     */
+    FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions);
+
+    /**
+     * 使用 指定版本的流程 创建 流程实例
+     * @param newFlowInstanceOptions
+     * @return
+     */
+    FlowInstance createInstanceWithSpecifiedVersion(NewFlowInstanceOptions newFlowInstanceOptions);
     /**
      * 创建流程实例并锁定首节点，首节点只能有创建人操作 返回流程实例
      * @param flowCode 流程编码

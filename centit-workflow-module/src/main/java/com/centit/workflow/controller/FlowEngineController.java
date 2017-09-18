@@ -4,6 +4,7 @@ import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.dao.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
+import com.centit.workflow.commons.NewFlowInstanceOptions;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInstance;
@@ -32,13 +33,26 @@ public class FlowEngineController  extends BaseController {
     private Map<Class<?>, String[]> excludes;
     @RequestMapping(value = "/createFlowInstDefault")
     public void createInstance(String flowCode, String flowOptName,String flowOptTag,String userCode,String unitCode, HttpServletResponse httpResponse) {
-        FlowInstance flowInstance = flowEng.createInstance(flowCode, flowOptName,flowOptTag,userCode,unitCode);
+        NewFlowInstanceOptions newFlowInstanceOptions = new NewFlowInstanceOptions();
+        newFlowInstanceOptions.setFlowCode(flowCode);
+        newFlowInstanceOptions.setFlowOptName(flowOptName);
+        newFlowInstanceOptions.setFlowOptTag(flowOptTag);
+        newFlowInstanceOptions.setUserCode(userCode);
+        newFlowInstanceOptions.setUnitCode(unitCode);
+        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
         JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
     }
 
     @RequestMapping(value = "/createFlowInstWithVersion")
     public void createInstance(String flowCode, long version, String flowOptName, String flowOptTag, String userCode, String unitCode, HttpServletResponse httpResponse) {
-        FlowInstance flowInstance = flowEng.createInstance(flowCode, version,flowOptName,flowOptTag,userCode,unitCode);
+        NewFlowInstanceOptions newFlowInstanceOptions = new NewFlowInstanceOptions();
+        newFlowInstanceOptions.setFlowCode(flowCode);
+        newFlowInstanceOptions.setVersion(version);
+        newFlowInstanceOptions.setFlowOptName(flowOptName);
+        newFlowInstanceOptions.setFlowOptTag(flowOptTag);
+        newFlowInstanceOptions.setUserCode(userCode);
+        newFlowInstanceOptions.setUnitCode(unitCode);
+        FlowInstance flowInstance = flowEng.createInstanceWithSpecifiedVersion(newFlowInstanceOptions);
         JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
     }
 

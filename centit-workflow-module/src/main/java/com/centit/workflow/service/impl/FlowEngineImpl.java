@@ -10,6 +10,7 @@ import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.compiler.Formula;
 import com.centit.support.database.utils.QueryUtils;
+import com.centit.workflow.commons.NewFlowInstanceOptions;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.*;
@@ -73,22 +74,40 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 	@Override
 	public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) {
 	    return createInstInside(flowCode,flowDefDao.getLastVersion(flowCode),  flowOptName, flowOptTag,userCode,
-	            unitCode,0,0,null,false,null);
+	            unitCode,0,0,null,false);
 	}
+    @Override
+    public FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions) {
+        return createInstInside(newFlowInstanceOptions.getFlowCode(),
+                flowDefDao.getLastVersion(newFlowInstanceOptions.getFlowCode()),
+                newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
+                newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
+                newFlowInstanceOptions.getNodeInstId(),newFlowInstanceOptions.getFlowInstid(),
+                null,newFlowInstanceOptions.isLockFirstOpt());
+    }
 	@Override
 	public FlowInstance createInstance(String  flowCode, long version, String flowOptName, String flowOptTag,
                                        String userCode, String unitCode)
 	{
         return createInstInside(flowCode,version,  flowOptName, flowOptTag,userCode,
-                unitCode,0,0,null,false,null);
+                unitCode,0,0,null,false);
 	}
+    @Override
+    public FlowInstance createInstanceWithSpecifiedVersion(NewFlowInstanceOptions newFlowInstanceOptions)
+    {
+        return createInstInside(newFlowInstanceOptions.getFlowCode(),newFlowInstanceOptions.getVersion(),
+                newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
+                newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
+                newFlowInstanceOptions.getNodeInstId(),newFlowInstanceOptions.getFlowInstid(),
+                null,newFlowInstanceOptions.isLockFirstOpt());
+    }
 	
 	@Override
     public FlowInstance createInstanceLockFirstNode(String flowCode, String flowOptName,
                                                     String flowOptTag, String userCode, String unitCode) {
 
         return createInstInside(flowCode,flowDefDao.getLastVersion(flowCode),  flowOptName, flowOptTag,userCode,
-                unitCode,0,0,null,true,null);
+                unitCode,0,0,null,true);
     }
     
    
@@ -97,7 +116,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                                                     String flowOptName, String flowOptTag, String userCode, String unitCode)
     {
         return createInstInside(flowCode,version, flowOptName, flowOptTag,userCode,
-                unitCode,0,0,null,true,null);
+                unitCode,0,0,null,true);
     }
     
     
@@ -118,7 +137,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
             UserUnitVariableTranslate varTrans,ServletContext application){
         
         return createInstInside(flowCode,flowDefDao.getLastVersion(flowCode),  flowOptName, flowOptTag,userCode,
-                unitCode,0,0,varTrans,false,application);
+                unitCode,0,0,varTrans,false);
 
     }
 
@@ -128,7 +147,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
             UserUnitVariableTranslate varTrans,ServletContext application){
         
         return createInstInside(flowCode,version,  flowOptName, flowOptTag,userCode,
-                unitCode,0,0,varTrans,false,application);
+                unitCode,0,0,varTrans,false);
     }
   
     
@@ -143,7 +162,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 	 */
 	private FlowInstance createInstInside(String flowCode, long version, String flowOptName, String flowOptTag, String userCode,
                                           String unitCode, long nodeInstId, long flowInstid, UserUnitVariableTranslate varTrans ,
-                                          boolean lockFirstOpt, ServletContext application){
+                                          boolean lockFirstOpt){
 		
 		Date createTime = new Date(System.currentTimeMillis());
 		
@@ -866,7 +885,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                     flowDefDao.getLastVersion(nextOptNode.getSubFlowCode())  ,
                     flowInst.getFlowOptName()+"--"+nextOptNode.getNodeName() ,
                     flowInst.getFlowOptTag(),userCode,unitCode,lastNodeInstId,nodeInst.getFlowInstId(),
-                    varTrans,false,application);
+                    varTrans,false);
             nextNodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
             //子流程的时间限制和父流程节点的一致
             if( nextNodeInst.getTimeLimit() !=null ){
