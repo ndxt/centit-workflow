@@ -1,6 +1,7 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.core.dao.PageDesc;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.QueryUtils;
@@ -1074,8 +1075,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 actionLogList.add(wfactlog);
             }
             //nodeInstanceDao.saveNewObjects(nodeInstances);
-            //TODO 方法没找到
-            //actionLogDao.saveNewObjects(actionLogList);
+            DatabaseOptUtils.batchSaveNewObjects(actionLogDao,actionLogList);
         }
         //actiontask 中的待办
         filterMap.clear();
@@ -1134,8 +1134,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 actionLogList.add(wfactlog);
             }
             //actionTaskDao.saveNewObjects(actionTasks);
-            //TODO 方法没找到
-            //actionLogDao.saveNewObjects(actionLogList);
+            DatabaseOptUtils.batchSaveNewObjects(actionLogDao,actionLogList);
         }
         //wf_task_move这个没有对应的操作
         return 0;
