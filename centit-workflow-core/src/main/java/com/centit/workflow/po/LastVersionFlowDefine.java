@@ -152,19 +152,27 @@ public class LastVersionFlowDefine implements Serializable {
     }
 
     public Long getVersion() {
-        return version;
+        if(this.cid==null)
+            this.cid = new FlowInfoId();
+        return this.cid.getVersion();
     }
 
     public void setVersion(Long version) {
-        this.version = version;
+        if(this.cid==null)
+            this.cid = new FlowInfoId();
+        this.cid.setVersion(version);
     }
 
     public String getFlowCode() {
-        return flowCode;
+        if(this.cid==null)
+            this.cid = new FlowInfoId();
+        return this.cid.getFlowCode();
     }
 
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
+    public void setFlowCode(String wfcode) {
+        if(this.cid==null)
+            this.cid = new FlowInfoId();
+        this.cid.setFlowCode(wfcode);
     }
 
     public FlowInfo toWfFlowDefine() {
