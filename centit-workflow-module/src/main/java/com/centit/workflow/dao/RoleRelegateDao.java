@@ -53,9 +53,9 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate,Long> {
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public void saveObject(RoleRelegate roleRelegate) {
-        if (roleRelegate.getRelegateno() == null
-                || roleRelegate.getRelegateno() == 0) {
-            roleRelegate.setRelegateno(getNextReleGateId());
+        if (roleRelegate.getRelegateNo() == null
+                || roleRelegate.getRelegateNo() == 0) {
+            roleRelegate.setRelegateNo(getNextReleGateId());
         }
         super.saveNewObject(roleRelegate);
     }

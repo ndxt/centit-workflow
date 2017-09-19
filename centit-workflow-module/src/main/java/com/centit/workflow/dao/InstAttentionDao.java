@@ -21,9 +21,9 @@ public class InstAttentionDao extends BaseDaoImpl<InstAttention,InstAttentionId>
 		if( filterField == null){
 			filterField = new HashMap<String, String>();
 
-			filterField.put("userCode" , "cid.userCode=:userCode");
+			filterField.put("userCode" , "userCode=:userCode");
 			
-			filterField.put("flowInstId" , "cid.flowInstId=:flowInstId");
+			filterField.put("flowInstId" , "flowInstId=:flowInstId");
 
 			filterField.put("attSetTime" , CodeBook.LIKE_HQL_ID);
 

@@ -80,11 +80,11 @@ public class RoleRelegate implements java.io.Serializable {
         this.recordDate = recorddate;
     }
 
-    public Long getRelegateno() {
+    public Long getRelegateNo() {
         return this.relegateNo;
     }
 
-    public void setRelegateno(Long relegateno) {
+    public void setRelegateNo(Long relegateno) {
         this.relegateNo = relegateno;
     }
 
@@ -106,60 +106,60 @@ public class RoleRelegate implements java.io.Serializable {
         this.grantee = grantee;
     }
 
-    public String getIsvalid() {
+    public String getIsValid() {
         return this.isValid;
     }
 
-    public void setIsvalid(String isvalid) {
+    public void setIsValid(String isvalid) {
         this.isValid = isvalid;
     }
 
-    public Date getRelegatetime() {
+    public Date getRelegateTime() {
         return this.relegateTime;
     }
 
-    public void setRelegatetime(Date relegatetime) {
+    public void setRelegateTime(Date relegatetime) {
         this.relegateTime = relegatetime;
     }
 
-    public Date getExpiretime() {
+    public Date getExpireTime() {
         return this.expireTime;
     }
 
-    public void setExpiretime(Date expiretime) {
+    public void setExpireTime(Date expiretime) {
         this.expireTime = expiretime;
     }
 
-    public String getUnitcode() {
+    public String getUnitCode() {
         return this.unitCode;
     }
 
-    public void setUnitcode(String unitcode) {
+    public void setUnitCode(String unitcode) {
         this.unitCode = unitcode;
     }
 
-    public String getRoletype() {
+    public String getRoleType() {
         return this.roleType;
     }
 
 
-    public void setRoletype(String roletype) {
+    public void setRoleType(String roletype) {
         this.roleType = roletype;
     }
 
-    public String getRolecode() {
+    public String getRoleCode() {
         return this.roleCode;
     }
 
-    public void setRolecode(String rolecode) {
+    public void setRoleCode(String rolecode) {
         this.roleCode = rolecode;
     }
 
-    public String getGrantdesc() {
+    public String getGrantDesc() {
         return this.grantDesc;
     }
 
-    public void setGrantdesc(String grantdesc) {
+    public void setGrantDesc(String grantdesc) {
         this.grantDesc = grantdesc;
     }
 
@@ -171,59 +171,59 @@ public class RoleRelegate implements java.io.Serializable {
         this.recorder = recorder;
     }
 
-    public Date getRecorddate() {
+    public Date getRecordDate() {
         return this.recordDate;
     }
 
-    public void setRecorddate(Date recorddate) {
+    public void setRecordDate(Date recorddate) {
         this.recordDate = recorddate;
     }
 
     public void copy(RoleRelegate other) {
 
-        this.setRelegateno(other.getRelegateno());
+        this.setRelegateNo(other.getRelegateNo());
 
         this.grantor = other.getGrantor();
         this.grantee = other.getGrantee();
-        this.isValid = other.getIsvalid();
-        this.relegateTime = other.getRelegatetime();
-        this.expireTime = other.getExpiretime();
-        this.unitCode = other.getUnitcode();
-        this.roleType = other.getRoletype();
-        this.roleCode = other.getRolecode();
-        this.grantDesc = other.getGrantdesc();
+        this.isValid = other.getIsValid();
+        this.relegateTime = other.getRelegateTime();
+        this.expireTime = other.getExpireTime();
+        this.unitCode = other.getUnitCode();
+        this.roleType = other.getRoleType();
+        this.roleCode = other.getRoleCode();
+        this.grantDesc = other.getGrantDesc();
         this.recorder = other.getRecorder();
-        this.recordDate = other.getRecorddate();
+        this.recordDate = other.getRecordDate();
 
     }
 
     public void copyNotNullProperty(RoleRelegate other) {
 
-        if (other.getRelegateno() != null)
-            this.setRelegateno(other.getRelegateno());
+        if (other.getRelegateNo() != null)
+            this.setRelegateNo(other.getRelegateNo());
 
         if (other.getGrantor() != null)
             this.grantor = other.getGrantor();
         if (other.getGrantee() != null)
             this.grantee = other.getGrantee();
-        if (other.getIsvalid() != null)
-            this.isValid = other.getIsvalid();
-        if (other.getRelegatetime() != null)
-            this.relegateTime = other.getRelegatetime();
-        if (other.getExpiretime() != null)
-            this.expireTime = other.getExpiretime();
-        if (other.getUnitcode() != null)
-            this.unitCode = other.getUnitcode();
-        if (other.getRoletype() != null)
-            this.roleType = other.getRoletype();
-        if (other.getRolecode() != null)
-            this.roleCode = other.getRolecode();
-        if (other.getGrantdesc() != null)
-            this.grantDesc = other.getGrantdesc();
+        if (other.getIsValid() != null)
+            this.isValid = other.getIsValid();
+        if (other.getRelegateTime() != null)
+            this.relegateTime = other.getRelegateTime();
+        if (other.getExpireTime() != null)
+            this.expireTime = other.getExpireTime();
+        if (other.getUnitCode() != null)
+            this.unitCode = other.getUnitCode();
+        if (other.getRoleType() != null)
+            this.roleType = other.getRoleType();
+        if (other.getRoleCode() != null)
+            this.roleCode = other.getRoleCode();
+        if (other.getGrantDesc() != null)
+            this.grantDesc = other.getGrantDesc();
         if (other.getRecorder() != null)
             this.recorder = other.getRecorder();
-        if (other.getRecorddate() != null)
-            this.recordDate = other.getRecorddate();
+        if (other.getRecordDate() != null)
+            this.recordDate = other.getRecordDate();
 
     }
 

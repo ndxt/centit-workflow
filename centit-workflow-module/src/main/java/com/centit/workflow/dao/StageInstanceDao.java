@@ -20,9 +20,9 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
         if (filterField == null) {
             filterField = new HashMap<String, String>();
 
-            filterField.put("flowInstId", "cid.flowInstId = :flowInstId");
+            filterField.put("flowInstId", "flowInstId = :flowInstId");
 
-            filterField.put("stageId", "cid.stageId = :stageId");
+            filterField.put("stageId", "stageId = :stageId");
 
             filterField.put("promiseTime", CodeBook.LIKE_HQL_ID);
 

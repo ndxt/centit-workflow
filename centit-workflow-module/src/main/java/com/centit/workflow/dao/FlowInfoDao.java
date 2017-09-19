@@ -25,9 +25,9 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
 		if( filterField == null){
 			filterField = new HashMap<String, String>();
 
-			filterField.put("flowCode" , "cid.flowCode= :flowCode");
+			filterField.put("flowCode" , "flowCode= :flowCode");
 
-			filterField.put("version" , "cid.version= :version");
+			filterField.put("version" , "version= :version");
 
 			filterField.put("flowName" , CodeBook.LIKE_HQL_ID);
 
@@ -36,7 +36,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
 			filterField.put("flowDesc" , CodeBook.LIKE_HQL_ID);
 			filterField.put("optId" , CodeBook.EQUAL_HQL_ID);
 
-			filterField.put(CodeBook.ORDER_BY_HQL_ID , "cid.version DESC,flowPublishDate DESC,cid.flowCode DESC ");
+			filterField.put(CodeBook.ORDER_BY_HQL_ID , "version DESC,flowPublishDate DESC,flowCode DESC ");
 
 		}
 		return filterField;

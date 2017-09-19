@@ -20,9 +20,9 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
         if (filterField == null) {
             filterField = new HashMap<String, String>();
 
-            filterField.put("flowInstId" , "cid.flowInstId=:flowInstId");
-            filterField.put("unitCode" , "cid.userCode=:userCode");
-            filterField.put("roleCode" , "cid.roleCode=:roleCode");
+            filterField.put("flowInstId" , "flowInstId=:flowInstId");
+            filterField.put("unitCode" , "userCode=:userCode");
+            filterField.put("roleCode" , "roleCode=:roleCode");
             filterField.put("authDesc" , CodeBook.LIKE_HQL_ID);
             filterField.put("authTime" , CodeBook.EQUAL_HQL_ID);
 

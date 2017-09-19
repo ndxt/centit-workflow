@@ -18,9 +18,9 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
     public Map<String, String> getFilterField() {
 		if( filterField == null){
 			filterField = new HashMap<String, String>();
-			filterField.put("flowInstid" , "cid.flowInstId=:flowInstId");
-			filterField.put("userCode" , "cid.userCode=:userCode");
-			filterField.put("roleCode" , "cid.roleCode=:roleCode");
+			filterField.put("flowInstid" , "flowInstId=:flowInstId");
+			filterField.put("userCode" , "userCode=:userCode");
+			filterField.put("roleCode" , "roleCode=:roleCode");
 			filterField.put("authDesc" , CodeBook.LIKE_HQL_ID);
 			filterField.put("authTime" , CodeBook.EQUAL_HQL_ID);
 			filterField.put(CodeBook.ORDER_BY_HQL_ID , "userOrder");

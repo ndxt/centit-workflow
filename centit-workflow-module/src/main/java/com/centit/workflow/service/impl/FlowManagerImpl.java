@@ -1288,7 +1288,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public void saveRoleRelegate(RoleRelegate roleRelegate) {
-        roleRelegate.setRecorddate(DatetimeOpt.currentSqlDate());
+        roleRelegate.setRecordDate(DatetimeOpt.currentSqlDate());
         flowRoleRelegateDao.saveObject(roleRelegate);
     }
 
