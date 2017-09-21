@@ -61,10 +61,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     public String viewFlowInstance(long flowInstId) {
-        FlowInstance wfInst = flowInstanceDao.getObjectById(flowInstId);
+        FlowInstance wfInst = flowInstanceDao.getObjectCascadeById(flowInstId);
         FlowInfoId id= new FlowInfoId(wfInst
                 .getVersion(), wfInst.getFlowCode());
-        FlowInfo wfDef = flowDefDao.getObjectById(id);
+        FlowInfo wfDef = flowDefDao.getObjectCascadeById(id);
         Map<Long,String> nodeState = new HashMap<>();
         Map<Long,Integer> nodeInstCount = new HashMap<>();
         Map<Long,NodeInfo> nodeMap = new HashMap<>();
@@ -81,7 +81,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             nodeInstCount.put(node.getNodeId(), 0);
             nodeMap.put(node.getNodeId(), node);
         }
-        System.out.println(benginNodeId);
+        //System.out.println(benginNodeId);
+        //flowDefDao.fetchObjectReferences(wfDef);
         Set<FlowTransition> transSet = wfDef.getFlowTransitions();
         for(FlowTransition trans : transSet){
             if (trans.getStartnodeid().equals(benginNodeId)) {
@@ -90,7 +91,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 transState.put(String.valueOf(trans.getTransid()), "-1");
             transMap.put(String.valueOf(trans.getTransid()), trans);
         }
-        
+        //flowInstanceDao.fetchObjectReferences(wfInst);
         List<NodeInstance> nodeInstSet = wfInst.getNodeInstances();
         for(NodeInstance nodeInst : nodeInstSet){           
             if (nodeInst.getNodeState().equals("N") 

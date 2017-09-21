@@ -10,6 +10,7 @@ import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowInfoId;
 import com.centit.workflow.po.LastVersionFlowDefine;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,8 +90,8 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
 	public List<FlowInfo> getFlowsByState(String wfstate)
 	{
 		String sql="SELECT * FROM F_V_LASTVERSIONFLOW WHERE FLOW_STATE = ? ORDER BY VERSION";
-		return  this.getJdbcTemplate().queryForList(sql,
-				new Object[]{wfstate} ,FlowInfo.class);
+		return  this.getJdbcTemplate().query(sql,
+				new Object[]{wfstate} ,new BeanPropertyRowMapper<FlowInfo>(FlowInfo.class));
 	}
 	@Transactional(propagation= Propagation.MANDATORY)
 	public String getNextPrimarykey() {
