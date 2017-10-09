@@ -11,7 +11,7 @@ create table OPT_NODE
   OPT_NODE_ID          varchar(32) not null,
   OPT_ID               varchar(32) not null,
   FLOW_CODE            varchar(32) not null,
-  OPT_NAME             varchar(100) not null,
+  OPT_NODE_NAME             varchar(100) not null,
   OPT_URL              varchar(100),
   OPT_TYPE             varchar(50),
   OPT_NODE_ORDER       smallint,

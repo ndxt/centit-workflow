@@ -106,4 +106,19 @@ INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_APPROVALPROCESS', 0, 1);
 
+# 业务定义相关序列号
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
+  ('S_OPTNODE', 0, 1);
+
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
+  ('S_OPTSTAGE', 0, 1);
+
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
+  ('S_OPTTEAMROLE', 0, 1);
+
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
+  ('S_OPTVARIABLE', 0, 1);
+
+
+
 

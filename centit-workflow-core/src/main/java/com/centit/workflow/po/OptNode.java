@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,14 +14,15 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "OPT_NODE")
-public class OptNode {
+public class OptNode implements Serializable{
+    private static final long serialVersionUID = 1L;
     @Id
     @NotNull
     @Column(name = "OPT_NODE_ID")
-    private Long optNodeId;
+    private String optNodeId;
     @NotNull
     @Column(name = "OPT_ID")
-    private Long optId;
+    private String optId;
     @NotNull
     @Column(name = "OPT_NODE_NAME")
     private String optName;
@@ -34,4 +36,68 @@ public class OptNode {
     private Date gmtCreateTime;
     @Column(name = "GMT_MODIFY_TIME")
     private Date gmtModifyTime;
+
+    public String getOptNodeId() {
+        return optNodeId;
+    }
+
+    public void setOptNodeId(String optNodeId) {
+        this.optNodeId = optNodeId;
+    }
+
+    public String getOptId() {
+        return optId;
+    }
+
+    public void setOptId(String optId) {
+        this.optId = optId;
+    }
+
+    public String getOptName() {
+        return optName;
+    }
+
+    public void setOptName(String optName) {
+        this.optName = optName;
+    }
+
+    public String getOptUrl() {
+        return optUrl;
+    }
+
+    public void setOptUrl(String optUrl) {
+        this.optUrl = optUrl;
+    }
+
+    public String getOptType() {
+        return optType;
+    }
+
+    public void setOptType(String optType) {
+        this.optType = optType;
+    }
+
+    public Integer getOptNodeOrder() {
+        return optNodeOrder;
+    }
+
+    public void setOptNodeOrder(Integer optNodeOrder) {
+        this.optNodeOrder = optNodeOrder;
+    }
+
+    public Date getGmtCreateTime() {
+        return gmtCreateTime;
+    }
+
+    public void setGmtCreateTime(Date gmtCreateTime) {
+        this.gmtCreateTime = gmtCreateTime;
+    }
+
+    public Date getGmtModifyTime() {
+        return gmtModifyTime;
+    }
+
+    public void setGmtModifyTime(Date gmtModifyTime) {
+        this.gmtModifyTime = gmtModifyTime;
+    }
 }
