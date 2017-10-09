@@ -22,9 +22,6 @@ public class OptStage {
     @Column(name = "OPT_ID")
     private Long optId;
     @NotNull
-    @Column(name = "FLOW_CODE")
-    private Long flowCode;
-    @NotNull
     @Column(name = "OPT_STAGE_NAME")
     private String optStageName;
     @NotNull

@@ -1,0 +1,29 @@
+<div class="easyui-panel search-body" cls="search">
+    <form>
+        <div class="search-item">
+            <label>名称</label>
+            <input type="text" class="easyui-textbox" name="s_wfName" />
+        </div>
+
+        <a class="easyui-linkbutton btn-search" iconCls="icon-search">搜索</a>
+    </form>
+</div>
+
+<table url="system/cp/optinfo/W"
+       search=".search"
+       toolbar=".temp-toolbar"
+       layoutH=".search"
+>
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'optId'" width="100" sortable="true" align="center">业务Id</th>
+        <th data-options="field:'optName'" width="325" sortable="true">业务名称</th>
+        <th data-options="field:'optType'" width="60"  format="Dictionary:WFFlowState"sortable="true" align="center">业务类型</th>
+        <th data-options="field:'optUrl'" width="60" sortable="true" align="center">URL</th>
+    </tr>
+    </thead>
+</table>
+
+<div class="temp-toolbar">
+
+</div>

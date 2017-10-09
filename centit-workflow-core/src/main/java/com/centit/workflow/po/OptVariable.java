@@ -22,9 +22,6 @@ public class OptVariable {
     @Column(name = "OPT_ID")
     private Long optId;
     @NotNull
-    @Column(name = "FLOW_CODE")
-    private Long flowCode;
-    @NotNull
     @Column(name = "OPT_VARIABLE_NAME")
     private String optVariableName;
     @Column(name = "OPT_VARIABLE_TYPE")
