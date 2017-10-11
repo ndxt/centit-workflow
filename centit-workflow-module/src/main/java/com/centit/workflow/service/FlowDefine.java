@@ -1,6 +1,6 @@
 package com.centit.workflow.service;
 
-import com.centit.framework.core.dao.PageDesc;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.NodeInfo;
 

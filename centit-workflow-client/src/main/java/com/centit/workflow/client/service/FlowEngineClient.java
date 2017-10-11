@@ -1,7 +1,7 @@
 package com.centit.workflow.client.service;
 
 
-import com.centit.framework.core.dao.PageDesc;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.UserTask;

@@ -2,7 +2,7 @@ package com.centit.workflow.controller;
 
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.core.controller.BaseController;
-import com.centit.framework.core.dao.PageDesc;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
 import com.centit.workflow.po.FlowInstance;

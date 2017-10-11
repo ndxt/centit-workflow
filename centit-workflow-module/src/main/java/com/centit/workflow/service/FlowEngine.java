@@ -1,6 +1,6 @@
 package com.centit.workflow.service;
 
-import com.centit.framework.core.dao.PageDesc;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
 import com.centit.workflow.commons.WorkflowException;
@@ -200,8 +200,8 @@ public interface FlowEngine {
 
     /**
      * 查看某一个用户所有的待办，并且分页
-     * @param userCode
-     * @param pageDesc
+     * @param userCode  操作用户编号
+     * @param pageDesc 分页信息
      * @return
      */
     List<UserTask> listUserTasks(String userCode, PageDesc pageDesc);

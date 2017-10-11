@@ -1,6 +1,6 @@
 package com.centit.workflow.service.impl;
 
-import com.centit.framework.core.dao.PageDesc;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.common.WorkTimeSpan;

@@ -2,7 +2,7 @@ package com.centit.workflow.client.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
-import com.centit.framework.core.dao.PageDesc;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.HttpExecutor;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.po.FlowInstance;

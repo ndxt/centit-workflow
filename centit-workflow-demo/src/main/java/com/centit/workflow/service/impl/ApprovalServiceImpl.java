@@ -1,6 +1,6 @@
 package com.centit.workflow.service.impl;
 
-import com.centit.framework.core.dao.PageDesc;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.dao.ApprovalAuditorDao;
