@@ -68,8 +68,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         filterMap.put("optId", optId);
         
         List<FlowInfo> flows = flowDefineDao.getAllLastVertionFlows(filterMap);
-        return new ArrayList<FlowInfo>(
-                flows == null ? new ArrayList<FlowInfo>() : flows);
+        return new ArrayList<>(
+                flows == null ? new ArrayList<>() : flows);
     }
     
 	private static String getXmlNodeAttrAsStr(Element xNode,String  attrName){

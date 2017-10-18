@@ -22,20 +22,20 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     private FlowInstance flowInst;
     
     public void collectNodeUnitsAndUsers( FlowInstance flowInst) {
-        nodeUnits = new HashMap<String,Set<String>>();
-        nodeUsers = new HashMap<String,Set<String>>();
+        nodeUnits = new HashMap<>();
+        nodeUsers = new HashMap<>();
         for(NodeInstance nodeInst : flowInst.getNodeInstances()){
             String nc = nodeInst.getNodeCode();
             if(nc!=null){
                 Set<String> nUnits = nodeUnits.get(nc);
                 if(nUnits == null)
-                    nUnits = new HashSet<String>();
+                    nUnits = new HashSet<>();
                 nUnits.add( nodeInst.getUnitCode());
                 nodeUnits.put(nc, nUnits);
                 
                 Set<String> nUsers = nodeUsers.get(nc);
                 if(nUsers == null)
-                    nUsers = new HashSet<String>();
+                    nUsers = new HashSet<>();
                 nUsers.add( nodeInst.getUserCode());
                 nodeUsers.put(nc, nUsers);
             }
@@ -127,14 +127,14 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
 
     
     @Override
-    public String getLabelValue(String varName) {
+    public Object getLabelValue(String varName) {
           /**
          * 编写的流程变量接口
          */
         if(flowVarTrans !=null){
             Object obj =  flowVarTrans.getGeneralVariable(varName);
             if(obj!=null)
-                return ObjectTranslate.objectToFormulaString(obj);
+                return obj;
         }
         /**
          * 程序设置的流程变量
@@ -142,8 +142,6 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
         FlowVariable v = findFlowVariable(varName);
         if(v !=null)
             return v.getVarValue();
-
-
         /**
          * 系统内置变量
          * flowunit 流程机构
@@ -161,7 +159,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     }
 
     @Override
-    public String getVarValue(String varName) {
+    public Object getVarValue(String varName) {
         return getLabelValue(varName);
     }
 

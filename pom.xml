@@ -17,11 +17,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <centit.workflow.version>4.0.0-SNAPSHOT</centit.workflow.version>
 
-        <centit.framework.version>4.0.1</centit.framework.version>
-        <centit.persistence.version>1.0</centit.persistence.version>
-        <centit.commons.version>2.2.4</centit.commons.version>
+        <centit.framework.version>4.0.2-SNAPSHOT</centit.framework.version>
+        <centit.persistence.version>1.0.1-SNAPSHOT</centit.persistence.version>
+        <centit.commons.version>2.2.5-SNAPSHOT</centit.commons.version>
         <centit.ui.version>3.0.1</centit.ui.version>
-        <centit.ip.version>1.0</centit.ip.version>
+        <centit.ip.version>1.0.1-SNAPSHOT</centit.ip.version>
 
         <servlet-api.version>3.1.0</servlet-api.version>
         <hibernate.validator.version>5.4.1.Final</hibernate.validator.version>
@@ -101,25 +101,24 @@
 
     <!-- mvn deploy -DpomFile=pom.xml -->
 
-    <!--    <distributionManagement>
+    <distributionManagement>
             <repository>
                 <id>ossrh</id>
                 <name>sonatype-releases</name>
                 <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
             </repository>
-            <snapshotRepository>
+          <!--  <snapshotRepository>
                 <id>ossrh</id>
                 <name>sonatype-snapshots</name>
                 <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             </snapshotRepository>
-        </distributionManagement>-->
-
-    <distributionManagement>
-        <repository>
-            <id>centit-releases</id>
-            <name>centit-release</name>
-            <url>http://develop.centit.com:8080/nexus/content/repositories/centit-releases/</url>
-        </repository>
+        </distributionManagement>
+        <distributionManagement>
+            <repository>
+                <id>centit-releases</id>
+                <name>centit-release</name>
+                <url>http://develop.centit.com:8080/nexus/content/repositories/centit-releases/</url>
+            </repository>-->
         <snapshotRepository>
             <id>centit-snapshots</id>
             <name>centit-snapshots</name>

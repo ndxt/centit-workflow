@@ -3,12 +3,13 @@ package com.centit.workflow.service.impl;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitParamBuilder;
+import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
-import com.centit.support.compiler.Formula;
+import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
 import com.centit.workflow.commons.NodeEventSupport;
@@ -1024,8 +1025,9 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         
         if("H".equals(sRT) || "D".equals(sRT)){
             for(FlowTransition trans : transList){
-                Formula fCalcCond = new Formula();                
-                if (StringRegularOpt.isTrue(fCalcCond.calculate(trans.getTranscondition(),varTrans))){
+                VariableFormula fCalcCond = new VariableFormula();
+                if (BooleanBaseOpt.castObjectToBoolean(
+                        fCalcCond.calculate(trans.getTranscondition(),varTrans))){
                     //保存目标节点实例
                     selTrans.add(trans);
                     // D:分支节点 只能有一个出口
