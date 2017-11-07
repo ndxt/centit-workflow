@@ -15,37 +15,37 @@ import java.util.Map;
 @Repository
 public class FlowVariableDao extends BaseDaoImpl<FlowVariable,FlowVariableId>
 {
-		//public static final Logger logger = LoggerFactory.getLogger(WfFlowVariableDao.class);
-		
-	public Map<String, String> getFilterField() {
-		if( filterField == null){
-			filterField = new HashMap<String, String>();
+        //public static final Logger logger = LoggerFactory.getLogger(WfFlowVariableDao.class);
 
-			filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
+    public Map<String, String> getFilterField() {
+        if( filterField == null){
+            filterField = new HashMap<String, String>();
 
-			filterField.put("runToken" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
 
-			filterField.put("varName" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("runToken" , CodeBook.EQUAL_HQL_ID);
 
-			filterField.put("varValue" , CodeBook.LIKE_HQL_ID);
+            filterField.put("varName" , CodeBook.EQUAL_HQL_ID);
 
-			filterField.put("varType" , CodeBook.LIKE_HQL_ID);
+            filterField.put("varValue" , CodeBook.LIKE_HQL_ID);
 
-		}
-		return filterField;
-	}
+            filterField.put("varType" , CodeBook.LIKE_HQL_ID);
 
-	@Transactional(propagation= Propagation.REQUIRES_NEW)
-	public List<FlowVariable> listFlowVariables(long flowInstId)
-	{
-	    return this.listObjectsByFilter("where FLOW_INST_ID = ? order by run_Token",new Object[]{flowInstId});
-	}
+        }
+        return filterField;
+    }
 
-	@Transactional(propagation= Propagation.MANDATORY)
-	public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId,
+    @Transactional(propagation= Propagation.REQUIRES_NEW)
+    public List<FlowVariable> listFlowVariables(long flowInstId)
+    {
+        return this.listObjectsByFilter("where FLOW_INST_ID = ? order by run_Token",new Object[]{flowInstId});
+    }
+
+    @Transactional(propagation= Propagation.MANDATORY)
+    public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId,
                                                          String varname) {
-		return this.listObjectsByFilter("where FLOW_INST_ID = ? and var_Name=? order by run_Token",
-				new Object[] { flowInstId, varname });
+        return this.listObjectsByFilter("where FLOW_INST_ID = ? and var_Name=? order by run_Token",
+                new Object[] { flowInstId, varname });
 
-	}
+    }
 }

@@ -11,43 +11,43 @@ import java.util.List;
 import java.util.Map;
 @Repository
 public class FlowTransitionDao extends BaseDaoImpl<FlowTransition,Long>
-	{
- 	public Map<String, String> getFilterField() {
-		if( filterField == null){
-			filterField = new HashMap<String, String>();
+    {
+     public Map<String, String> getFilterField() {
+        if( filterField == null){
+            filterField = new HashMap<String, String>();
 
-			filterField.put("transId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("transId" , CodeBook.EQUAL_HQL_ID);
 
 
-			filterField.put("flowId" , CodeBook.LIKE_HQL_ID);
+            filterField.put("flowId" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("version" , CodeBook.LIKE_HQL_ID);
+            filterField.put("version" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("transClass" , CodeBook.LIKE_HQL_ID);
+            filterField.put("transClass" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("transName" , CodeBook.LIKE_HQL_ID);
+            filterField.put("transName" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("transDesc" , CodeBook.LIKE_HQL_ID);
+            filterField.put("transDesc" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("startNodeId" , CodeBook.LIKE_HQL_ID);
+            filterField.put("startNodeId" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("endNodeId" , CodeBook.LIKE_HQL_ID);
+            filterField.put("endNodeId" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("transCondition" , CodeBook.LIKE_HQL_ID);
+            filterField.put("transCondition" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("routerPos" , CodeBook.LIKE_HQL_ID);
+            filterField.put("routerPos" , CodeBook.LIKE_HQL_ID);
 
-		}
-		return filterField;
-	}
+        }
+        return filterField;
+    }
 
-	@Transactional(propagation= Propagation.MANDATORY)
-	public List<FlowTransition> getNodeTrans(long nodeID){
-		return this.listObjectsByFilter("where start_NodeId = ?",new Object[]{nodeID});
-	}
+    @Transactional(propagation= Propagation.MANDATORY)
+    public List<FlowTransition> getNodeTrans(long nodeID){
+        return this.listObjectsByFilter("where start_NodeId = ?",new Object[]{nodeID});
+    }
 
-	@Transactional(propagation= Propagation.MANDATORY)
+    @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowTransition> getNodeInputTrans(long nodeID){
-		return this.listObjectsByFilter("where endNodeId = ?",new Object[]{nodeID});
+        return this.listObjectsByFilter("where endNodeId = ?",new Object[]{nodeID});
     }
 }

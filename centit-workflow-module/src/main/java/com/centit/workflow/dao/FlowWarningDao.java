@@ -16,44 +16,44 @@ import java.util.Map;
 public class FlowWarningDao extends BaseDaoImpl<FlowWarning,Long>
 {
 
-	//public static final Logger logger = LoggerFactory.getLogger(WfRuntimeWarningDao.class);
-		
-	public Map<String, String> getFilterField() {
-		if( filterField == null){
-			filterField = new HashMap<String, String>();
-			filterField.put("warningId" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("nodeInstId" , CodeBook.LIKE_HQL_ID);
-			filterField.put("flowInstId" , CodeBook.LIKE_HQL_ID);
-			filterField.put("flowStage" , CodeBook.LIKE_HQL_ID);
-			filterField.put("warningType" , CodeBook.LIKE_HQL_ID);
-			filterField.put("warningCode" , CodeBook.LIKE_HQL_ID);
-			filterField.put("warningTime" , CodeBook.LIKE_HQL_ID);
-			filterField.put("warningState" , CodeBook.LIKE_HQL_ID);
-			filterField.put("warningidMsg" , CodeBook.LIKE_HQL_ID);
-			filterField.put("sendMsgTime" , CodeBook.LIKE_HQL_ID);
-			filterField.put("sendUsers" , CodeBook.LIKE_HQL_ID);
-		}
-		return filterField;
-	}
+    //public static final Logger logger = LoggerFactory.getLogger(WfRuntimeWarningDao.class);
 
-	@Transactional(propagation= Propagation.MANDATORY)
-	public List<FlowWarning> listFlowWarningByInst(Long flowInstId,
+    public Map<String, String> getFilterField() {
+        if( filterField == null){
+            filterField = new HashMap<String, String>();
+            filterField.put("warningId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("nodeInstId" , CodeBook.LIKE_HQL_ID);
+            filterField.put("flowInstId" , CodeBook.LIKE_HQL_ID);
+            filterField.put("flowStage" , CodeBook.LIKE_HQL_ID);
+            filterField.put("warningType" , CodeBook.LIKE_HQL_ID);
+            filterField.put("warningCode" , CodeBook.LIKE_HQL_ID);
+            filterField.put("warningTime" , CodeBook.LIKE_HQL_ID);
+            filterField.put("warningState" , CodeBook.LIKE_HQL_ID);
+            filterField.put("warningidMsg" , CodeBook.LIKE_HQL_ID);
+            filterField.put("sendMsgTime" , CodeBook.LIKE_HQL_ID);
+            filterField.put("sendUsers" , CodeBook.LIKE_HQL_ID);
+        }
+        return filterField;
+    }
+
+    @Transactional(propagation= Propagation.MANDATORY)
+    public List<FlowWarning> listFlowWarningByInst(Long flowInstId,
                                                    PageDesc pageDesc) {
         return this.listObjectsByFilter("where flow_Inst_Id = ?",new Object[]{flowInstId},pageDesc);
     }
 
-	@Transactional(propagation= Propagation.MANDATORY)
-	public List<FlowWarning> listFlowWarningByNodeInst(Long nodeInstId,
+    @Transactional(propagation= Propagation.MANDATORY)
+    public List<FlowWarning> listFlowWarningByNodeInst(Long nodeInstId,
                                                        PageDesc pageDesc) {
-		return this.listObjectsByFilter("where node_Inst_Id = ?",new Object[]{nodeInstId},pageDesc);
+        return this.listObjectsByFilter("where node_Inst_Id = ?",new Object[]{nodeInstId},pageDesc);
 
-	}
+    }
 
  
     public List<FlowWarning> listFlowWarningByWarningCode(String warningCode,
                                                           PageDesc pageDesc) {
-		return this.listObjectsByFilter("where warning_Code = ?",new Object[]{warningCode},pageDesc);
-	}
+        return this.listObjectsByFilter("where warning_Code = ?",new Object[]{warningCode},pageDesc);
+    }
     
     public List<FlowWarning> listNeedNotifyWarning(){
         return this.listObjectsByFilter("where notice_State = '0'",new Object[]{});

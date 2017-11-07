@@ -17,14 +17,14 @@ import java.util.*;
 @Entity
 @Table(name="WF_FLOW_INSTANCE")
 public class FlowInstance implements java.io.Serializable {
-	private static final long serialVersionUID =  1L;
+    private static final long serialVersionUID =  1L;
 
-	@Id
-	@Column(name = "FLOW_INST_ID")
+    @Id
+    @Column(name = "FLOW_INST_ID")
     @GeneratedValue(generator = "assignedGenerator")
-	private Long flowInstId;
-	
-	@ManyToOne
+    private Long flowInstId;
+
+    @ManyToOne
     @JoinColumns({
         @JoinColumn(name="VERSION", referencedColumnName="VERSION"),
         @JoinColumn(name="FLOW_CODE", referencedColumnName="FLOW_CODE")
@@ -43,10 +43,10 @@ public class FlowInstance implements java.io.Serializable {
     @NotBlank(message = "字段不能为空")
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String flowCode;
-	
-	@Column(name="FLOW_OPT_NAME")
-	private String flowOptName;
-	
+
+    @Column(name="FLOW_OPT_NAME")
+    private String flowOptName;
+
     public FlowInfo getFlowDefine() {
         if(null==flowDefine)
             return this.flowDefine=new FlowInfo();
@@ -68,27 +68,27 @@ public class FlowInstance implements java.io.Serializable {
      *  N 正常  C 完成   P 暂停 挂起     F 强行结束
      */
     @Column(name="INST_STATE")
-	private String instState;
+    private String instState;
     @Column(name="IS_SUB_INST")
-	private String isSubInst;
+    private String isSubInst;
     @Column(name="PRE_INST_ID")
-	private Long preInstId;
+    private Long preInstId;
     @Column(name="PRE_NODE_INST_ID")
-	private Long preNodeInstId;
+    private Long preNodeInstId;
     
     @Column(name="UNIT_CODE")
     private String unitCode;
 
     @Column(name="USER_CODE")
-	private String userCode;
+    private String userCode;
     
     @Column(name="LAST_UPDATE_TIME")
-	private Date  lastUpdateTime;
+    private Date  lastUpdateTime;
     @Column(name="LAST_UPDATE_USER")
-	private String lastUpdateUser;
+    private String lastUpdateUser;
     @Column(name="IS_TIMER")
-	private String isTimer; //不计时N、计时T(有期限)、暂停P  忽略(无期限) F
-	
+    private String isTimer; //不计时N、计时T(有期限)、暂停P  忽略(无期限) F
+
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name="FLOW_INST_ID")
     private List<NodeInstance> flowNodeInstances = null;// new ArrayList<WfNodeInstance>();
@@ -97,65 +97,65 @@ public class FlowInstance implements java.io.Serializable {
     private List<NodeInstance> activeNodeList;
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name="FLOW_INST_ID")
-	private List<StageInstance> flowStageInstances = null;// new ArrayList<WfNodeInstance>();
+    private List<StageInstance> flowStageInstances = null;// new ArrayList<WfNodeInstance>();
 
-	@Transient
-	private String  optName;
-	@Transient
-	private String flowName;
     @Transient
-	private String curStep;
-	// Constructors
-	/** default constructor */
-	public FlowInstance() {
+    private String  optName;
+    @Transient
+    private String flowName;
+    @Transient
+    private String curStep;
+    // Constructors
+    /** default constructor */
+    public FlowInstance() {
 
-	    this.timeLimit = null;
-	}
-	/** minimal constructor */
-	public FlowInstance(
-		Long wfinstid		
-		,Date  createtime) {
-	    this.timeLimit = null;	
-		this.flowInstId = wfinstid;
-	
-		this.createTime = createtime;
-	}
-	/** full constructor */
-	public FlowInstance(
-	 Long wfinstid		
-	,Long  version,String  wfcode,String flowOptName, String flowOptTag,Date  createtime,
-	Long  promiseTime,Long timeLimit,String  inststate,String  issubinst,
-	 Long  preinstid,Long  prenodeinstid,String  unitcode,String  usercode,
-	 Date lastUpdateTime,String lastUpdateUser,String isTimer) {
-		this.flowInstId = wfinstid;
-		this.getFlowDefine().setVersion(version);
-		this.getFlowDefine().setFlowClass(wfcode);
-		this.flowOptName = flowOptName;
+        this.timeLimit = null;
+    }
+    /** minimal constructor */
+    public FlowInstance(
+        Long wfinstid
+        ,Date  createtime) {
+        this.timeLimit = null;
+        this.flowInstId = wfinstid;
+
+        this.createTime = createtime;
+    }
+    /** full constructor */
+    public FlowInstance(
+     Long wfinstid
+    ,Long  version,String  wfcode,String flowOptName, String flowOptTag,Date  createtime,
+    Long  promiseTime,Long timeLimit,String  inststate,String  issubinst,
+     Long  preinstid,Long  prenodeinstid,String  unitcode,String  usercode,
+     Date lastUpdateTime,String lastUpdateUser,String isTimer) {
+        this.flowInstId = wfinstid;
+        this.getFlowDefine().setVersion(version);
+        this.getFlowDefine().setFlowClass(wfcode);
+        this.flowOptName = flowOptName;
         this.flowOptTag = flowOptTag;
-		this.createTime = createtime;
-		this.promiseTime = promiseTime;
-		this.timeLimit = timeLimit;
-		this.instState = inststate;
-		this.isSubInst = issubinst;
-		this.preInstId = preinstid;
-		this.preNodeInstId = prenodeinstid;
-		this.setUnitCode(unitcode);
-		this.userCode = usercode;
+        this.createTime = createtime;
+        this.promiseTime = promiseTime;
+        this.timeLimit = timeLimit;
+        this.instState = inststate;
+        this.isSubInst = issubinst;
+        this.preInstId = preinstid;
+        this.preNodeInstId = prenodeinstid;
+        this.setUnitCode(unitcode);
+        this.userCode = usercode;
 
-		this.lastUpdateTime = lastUpdateTime;
-		this.lastUpdateUser = lastUpdateUser;
-		this.isTimer = isTimer;
-	}
-	
+        this.lastUpdateTime = lastUpdateTime;
+        this.lastUpdateUser = lastUpdateUser;
+        this.isTimer = isTimer;
+    }
+
  
-	public Long getFlowInstId() {
-		return this.flowInstId;
-	}
+    public Long getFlowInstId() {
+        return this.flowInstId;
+    }
 
-	public void setFlowInstId(Long wfinstid) {
-		this.flowInstId = wfinstid;
-	}
-	// Property accessors
+    public void setFlowInstId(Long wfinstid) {
+        this.flowInstId = wfinstid;
+    }
+    // Property accessors
 
 
     public Long getVersion() {
@@ -181,13 +181,13 @@ public class FlowInstance implements java.io.Serializable {
         this.flowOptName = flowOptName;
     }
     public Date getCreateTime() {
-		return this.createTime;
-	}
-	
-	public void setCreateTime(Date createtime) {
-		this.createTime = createtime;
-	}
-	
+        return this.createTime;
+    }
+
+    public void setCreateTime(Date createtime) {
+        this.createTime = createtime;
+    }
+
     public String getPromiseTimeStr() {
         if(promiseTime==null)
             return "";
@@ -209,10 +209,10 @@ public class FlowInstance implements java.io.Serializable {
         wts.fromNumber(timeLimit);
         return wts.getTimeSpanDesc();
     }
-	public Long getTimeLimit() {
+    public Long getTimeLimit() {
         return timeLimit;
     }
-	
+
     public void setTimeLimit(Long timeLimit) {
         this.timeLimit = timeLimit;
     }
@@ -221,68 +221,68 @@ public class FlowInstance implements java.io.Serializable {
      *  流程状态 
      *  N 正常  C 完成   P 暂停 挂起     F 强行结束
      */
-	public String getInstState() {
-		return this.instState;
-	}
-	
-	/**
-	 * @param inststate 流程状态 
+    public String getInstState() {
+        return this.instState;
+    }
+
+    /**
+     * @param inststate 流程状态
      *  N 正常  C 完成   P 暂停 挂起     F 强行结束
      */
-	public void setInstState(String inststate) {
-		this.instState = inststate;
-	}
-	
+    public void setInstState(String inststate) {
+        this.instState = inststate;
+    }
+
     public boolean isSubFlow() {
         
         return "Y".equals(isSubInst);
     } 
-	/**
-	 * Y 子流程/ N 非子流程
-	 */
-	public String getIsSubInst() {
-		return this.isSubInst;
-	}
-	/**
-	 * 
-	 * @param issubinst Y 子流程/ N 非子流程
-	 */
-	public void setIsSubInst(String issubinst) {
-		this.isSubInst = issubinst;
-	}
+    /**
+     * Y 子流程/ N 非子流程
+     */
+    public String getIsSubInst() {
+        return this.isSubInst;
+    }
+    /**
+     *
+     * @param issubinst Y 子流程/ N 非子流程
+     */
+    public void setIsSubInst(String issubinst) {
+        this.isSubInst = issubinst;
+    }
   
-	public Long getPareFlowInstId() {
-		return this.preInstId;
-	}
-	
-	public void setPreInstId(Long preinstid) {
-		this.preInstId = preinstid;
-	}
+    public Long getPareFlowInstId() {
+        return this.preInstId;
+    }
+
+    public void setPreInstId(Long preinstid) {
+        this.preInstId = preinstid;
+    }
   
-	public Long getPareNodeInstId() {
-		return this.preNodeInstId;
-	}
-	
-	public void setPreNodeInstId(Long prenodeinstid) {
-		this.preNodeInstId = prenodeinstid;
-	}
+    public Long getPareNodeInstId() {
+        return this.preNodeInstId;
+    }
+
+    public void setPreNodeInstId(Long prenodeinstid) {
+        this.preNodeInstId = prenodeinstid;
+    }
   
-	public String getUnitCode() {
-	    return this.unitCode;
-	}
-	
-	
-	public void setUnitCode(String unitcode) {
-	    this.unitCode=unitcode;
-	}
+    public String getUnitCode() {
+        return this.unitCode;
+    }
+
+
+    public void setUnitCode(String unitcode) {
+        this.unitCode=unitcode;
+    }
   
-	public String getUserCode() {
-		return this.userCode;
-	}
-	
-	public void setUserCode(String usercode) {
-		this.userCode = usercode;
-	}
+    public String getUserCode() {
+        return this.userCode;
+    }
+
+    public void setUserCode(String usercode) {
+        this.userCode = usercode;
+    }
 
 
     public void getOptName(String on) {
@@ -328,36 +328,36 @@ public class FlowInstance implements java.io.Serializable {
          return new ArrayList<NodeInstance>(flowNodeInstances);
     }
     
-	public List<NodeInstance> getFlowNodeInstances(){
-		if(this.flowNodeInstances ==null)
-			this.flowNodeInstances = new ArrayList<NodeInstance>();
-		return this.flowNodeInstances;
-	}
+    public List<NodeInstance> getFlowNodeInstances(){
+        if(this.flowNodeInstances ==null)
+            this.flowNodeInstances = new ArrayList<NodeInstance>();
+        return this.flowNodeInstances;
+    }
 
-	public void setFlowNodeInstances(List<NodeInstance> flowNodeInstances) {
-		this.flowNodeInstances = flowNodeInstances;
-	}	
+    public void setFlowNodeInstances(List<NodeInstance> flowNodeInstances) {
+        this.flowNodeInstances = flowNodeInstances;
+    }
 
-	public void addWfNodeInstance(NodeInstance wfNodeInstance ){
-		if (this.flowNodeInstances ==null)
-			this.flowNodeInstances = new ArrayList<NodeInstance>();
-		this.flowNodeInstances.add(wfNodeInstance);
-	}
-	
-	public void removeWfNodeInstance(NodeInstance wfNodeInstance ){
-		if (this.flowNodeInstances ==null)
-			return;
-		this.flowNodeInstances.remove(wfNodeInstance);
-	}
-	
-	public NodeInstance newWfNodeInstance(){
-		NodeInstance res = new NodeInstance();
+    public void addWfNodeInstance(NodeInstance wfNodeInstance ){
+        if (this.flowNodeInstances ==null)
+            this.flowNodeInstances = new ArrayList<NodeInstance>();
+        this.flowNodeInstances.add(wfNodeInstance);
+    }
+
+    public void removeWfNodeInstance(NodeInstance wfNodeInstance ){
+        if (this.flowNodeInstances ==null)
+            return;
+        this.flowNodeInstances.remove(wfNodeInstance);
+    }
+
+    public NodeInstance newWfNodeInstance(){
+        NodeInstance res = new NodeInstance();
   
-		res.setFlowInstId(this.getFlowInstId());
+        res.setFlowInstId(this.getFlowInstId());
 
-		return res;
-	}
-	
+        return res;
+    }
+
     public NodeInstance getNodeInstanceById(long nodeInstId){
         if (this.flowNodeInstances ==null)
             return null;
@@ -368,7 +368,7 @@ public class FlowInstance implements java.io.Serializable {
 
         return null;
     }
-	
+
     public List<StageInstance> getFlowStageInstances() {
         if(this.flowStageInstances ==null)
             this.flowStageInstances = new ArrayList<StageInstance>();
@@ -758,104 +758,104 @@ public class FlowInstance implements java.io.Serializable {
         }   
     }   
     
-	public void replaceFlowNodeInstances(List<NodeInstance> wfNodeInstances) {
-		List<NodeInstance> newObjs = new ArrayList<NodeInstance>();
-		for(NodeInstance p :wfNodeInstances){
-			if(p==null)
-				continue;
-			NodeInstance newdt = newWfNodeInstance();
-			newdt.copyNotNullProperty(p);
-			newObjs.add(newdt);
-		}
-		//delete
-		boolean found = false;
-		Set<NodeInstance> oldObjs = new HashSet<NodeInstance>();
-		oldObjs.addAll(getFlowNodeInstances());
-		
-		for(Iterator<NodeInstance> it = oldObjs.iterator(); it.hasNext();){
-			NodeInstance odt = it.next();
-			found = false;
-			for(NodeInstance newdt :newObjs){
-				if(odt.getNodeInstId().equals( newdt.getNodeInstId())){
-					found = true;
-					break;
-				}
-			}
-			if(! found)
-				removeWfNodeInstance(odt);
-		}
-		oldObjs.clear();
-		//insert 
-		for(NodeInstance newdt :newObjs){
-			found = false;
-			for(Iterator<NodeInstance> it = getFlowNodeInstances().iterator();
+    public void replaceFlowNodeInstances(List<NodeInstance> wfNodeInstances) {
+        List<NodeInstance> newObjs = new ArrayList<NodeInstance>();
+        for(NodeInstance p :wfNodeInstances){
+            if(p==null)
+                continue;
+            NodeInstance newdt = newWfNodeInstance();
+            newdt.copyNotNullProperty(p);
+            newObjs.add(newdt);
+        }
+        //delete
+        boolean found = false;
+        Set<NodeInstance> oldObjs = new HashSet<NodeInstance>();
+        oldObjs.addAll(getFlowNodeInstances());
+
+        for(Iterator<NodeInstance> it = oldObjs.iterator(); it.hasNext();){
+            NodeInstance odt = it.next();
+            found = false;
+            for(NodeInstance newdt :newObjs){
+                if(odt.getNodeInstId().equals( newdt.getNodeInstId())){
+                    found = true;
+                    break;
+                }
+            }
+            if(! found)
+                removeWfNodeInstance(odt);
+        }
+        oldObjs.clear();
+        //insert
+        for(NodeInstance newdt :newObjs){
+            found = false;
+            for(Iterator<NodeInstance> it = getFlowNodeInstances().iterator();
                 it.hasNext();){
-				NodeInstance odt = it.next();
-				if(odt.getNodeInstId().equals( newdt.getNodeInstId())){
-					odt.copy(newdt);
-					found = true;
-					break;
-				}
-			}
-			if(! found)
-				addWfNodeInstance(newdt);
-		} 	
-	}	
+                NodeInstance odt = it.next();
+                if(odt.getNodeInstId().equals( newdt.getNodeInstId())){
+                    odt.copy(newdt);
+                    found = true;
+                    break;
+                }
+            }
+            if(! found)
+                addWfNodeInstance(newdt);
+        }
+    }
 
 
-	public void copy(FlowInstance other){
+    public void copy(FlowInstance other){
   
-		this.setFlowInstId(other.getFlowInstId());
+        this.setFlowInstId(other.getFlowInstId());
   
-		this.setVersion(other.getVersion());
-		this.setFlowCode(other.getFlowCode());
+        this.setVersion(other.getVersion());
+        this.setFlowCode(other.getFlowCode());
         this.flowOptName = other.getFlowOptName();
         this.flowOptTag = other.getFlowOptTag();
-		this.createTime = other.getCreateTime();
-		this.instState = other.getInstState();
-		this.isSubInst = other.getIsSubInst();
-		this.preInstId = other.getPareFlowInstId();
-		this.preNodeInstId = other.getPareNodeInstId();
-		this.setUnitCode(other.getUnitCode());  
-		this.userCode = other.getUserCode();
+        this.createTime = other.getCreateTime();
+        this.instState = other.getInstState();
+        this.isSubInst = other.getIsSubInst();
+        this.preInstId = other.getPareFlowInstId();
+        this.preNodeInstId = other.getPareNodeInstId();
+        this.setUnitCode(other.getUnitCode());
+        this.userCode = other.getUserCode();
 
         this.promiseTime = other.getPromiseTime();
         this.timeLimit = other.getTimeLimit();
-		this.flowNodeInstances = other.getFlowNodeInstances();
-		this.flowStageInstances = other.getFlowStageInstances();
-	    this.lastUpdateTime = other.getLastUpdateTime();
-	    this.lastUpdateUser = other.getLastUpdateUser();
-	    this.isTimer =  other.getIsTimer();
-	}
-	
-	public void copyNotNullProperty(FlowInstance other){
+        this.flowNodeInstances = other.getFlowNodeInstances();
+        this.flowStageInstances = other.getFlowStageInstances();
+        this.lastUpdateTime = other.getLastUpdateTime();
+        this.lastUpdateUser = other.getLastUpdateUser();
+        this.isTimer =  other.getIsTimer();
+    }
+
+    public void copyNotNullProperty(FlowInstance other){
   
-	if( other.getFlowInstId() != null)
-		this.setFlowInstId(other.getFlowInstId());
+    if( other.getFlowInstId() != null)
+        this.setFlowInstId(other.getFlowInstId());
   
-		if( other.getVersion() != null)
-			this.setVersion(other.getVersion()); 
-		if( other.getFlowCode() != null)
-			this.setFlowCode(other.getFlowCode());
+        if( other.getVersion() != null)
+            this.setVersion(other.getVersion());
+        if( other.getFlowCode() != null)
+            this.setFlowCode(other.getFlowCode());
         if( other.getFlowOptName() != null)
             this.flowOptName = other.getFlowOptName();
         if( other.getFlowOptTag() != null)
             this.flowOptTag = other.getFlowOptTag();
 
-		if( other.getCreateTime() != null)
-			this.createTime = other.getCreateTime();
-		if( other.getInstState() != null)
-			this.instState = other.getInstState();
-		if( other.getIsSubInst() != null)
-			this.isSubInst = other.getIsSubInst();
-		if( other.getPareFlowInstId() != null)
-			this.preInstId = other.getPareFlowInstId();
-		if( other.getPareNodeInstId() != null)
-			this.preNodeInstId = other.getPareNodeInstId();
-		if( other.getUnitCode() != null)
-			this.setUnitCode(other.getUnitCode()) ;  
-		if( other.getUserCode() != null)
-			this.userCode = other.getUserCode();
+        if( other.getCreateTime() != null)
+            this.createTime = other.getCreateTime();
+        if( other.getInstState() != null)
+            this.instState = other.getInstState();
+        if( other.getIsSubInst() != null)
+            this.isSubInst = other.getIsSubInst();
+        if( other.getPareFlowInstId() != null)
+            this.preInstId = other.getPareFlowInstId();
+        if( other.getPareNodeInstId() != null)
+            this.preNodeInstId = other.getPareNodeInstId();
+        if( other.getUnitCode() != null)
+            this.setUnitCode(other.getUnitCode()) ;
+        if( other.getUserCode() != null)
+            this.userCode = other.getUserCode();
 
         if( other.getPromiseTime() != null)
             this.promiseTime = other.getPromiseTime();
@@ -870,8 +870,8 @@ public class FlowInstance implements java.io.Serializable {
         
         this.replaceFlowNodeInstances(other.getFlowNodeInstances());
         this.replaceFlowStageInstances(other.getFlowStageInstances());
-		
-	}
+
+    }
     public void clearProperties()
     {
         //this.wfinstid= null;  

@@ -18,8 +18,8 @@ import java.util.Set;
 public interface FlowEngine {
     
     //--------------------创建流程实例接口-----------------------------------    
-	/**
-	 * 创建流程实例  返回流程实例
+    /**
+     * 创建流程实例  返回流程实例
      * @param flowCode 流程编码
      * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
      * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
@@ -27,10 +27,10 @@ public interface FlowEngine {
      * @param unitCode 将流程指定一个所属机构
      * @return
      */
-	FlowInstance createInstance(String  flowCode, String flowOptName,
+    FlowInstance createInstance(String  flowCode, String flowOptName,
                                        String flowOptTag, String userCode, String unitCode);
-	
-	
+
+
     /**
      * 创建流程实例 返回流程实例
      * @param flowCode 流程编码
@@ -44,7 +44,7 @@ public interface FlowEngine {
     FlowInstance createInstance(String  flowCode,long version,String flowOptName,
             String flowOptTag,String userCode,String unitCode);
  
-	/**
+    /**
      * 创建流程实例 返回流程实例
      * @param flowCode 流程编码
      * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
@@ -120,24 +120,24 @@ public interface FlowEngine {
   
     
    //--------------------提交流程业务节点-----------------------------------
-	/**
-	 * 返回下一步节点的节点实例ID
+    /**
+     * 返回下一步节点的节点实例ID
      * @param nodeInstId 当前节点实例编号
      * @param userCode 操作用户编号 对应用户表达式 O operator
      * @param unitCode 用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
      * @param varTrans 变量转换器
      * @return  节点实例编号列表
-   	 */
-	Set<Long> submitOpt(long nodeInstId,String userCode,
-	        String unitCode,UserUnitVariableTranslate varTrans,
-	        ServletContext application) throws WorkflowException;
+        */
+    Set<Long> submitOpt(long nodeInstId,String userCode,
+            String unitCode,UserUnitVariableTranslate varTrans,
+            ServletContext application) throws WorkflowException;
  
-	
-	Set<Long> submitOpt(long nodeInstId,String userCode,String grantorCode,
-	        String unitCode,UserUnitVariableTranslate varTrans,
-	        ServletContext application) throws WorkflowException;
-	 
-	/**
+
+    Set<Long> submitOpt(long nodeInstId,String userCode,String grantorCode,
+            String unitCode,UserUnitVariableTranslate varTrans,
+            ServletContext application) throws WorkflowException;
+
+    /**
      * 返回下一步节点的节点实例ID
      * @param nodeInstId 当前节点实例编号
      * @param userCode 操作用户编号 对应用户表达式  O operator
@@ -172,12 +172,12 @@ public interface FlowEngine {
     /**
      * 提交节点工作 是否成功
      * 预判下一步节点的节点编号
-	 * @param nodeInstId 当前节点实例编号
+     * @param nodeInstId 当前节点实例编号
      * @param userCode 操作用户编号 对应用户表达式 O operator
      * @param unitCode 用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
      * @param varTrans 变量转换器
-	 * @return 节点信息列表
-	 */
+     * @return 节点信息列表
+     */
     Set<NodeInfo> viewNextNode(long nodeInstId, String userCode,
                                String unitCode, UserUnitVariableTranslate varTrans);
     
@@ -192,7 +192,7 @@ public interface FlowEngine {
      */
     Set<String> viewNextNodeOperator(long nextNodeId,long curNodeInstId,
             String userCode,String unitCode,UserUnitVariableTranslate varTrans); 
-	
+
     
     //-------------------------用户待办接口---------------------------------------
 

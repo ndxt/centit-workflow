@@ -15,24 +15,24 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "WF_TRANSITION")
 public class FlowTransition implements java.io.Serializable {
-	private static final long serialVersionUID =  1L;
+    private static final long serialVersionUID =  1L;
 
-	@Id
-	@Column(name = "TRANS_ID")
-	private Long transId;
+    @Id
+    @Column(name = "TRANS_ID")
+    private Long transId;
 
     @Column(name = "TRANS_CLASS")
-	private String transClass;
+    private String transClass;
     @Column(name = "TRANS_NAME")
-	private String transName;
+    private String transName;
     @Column(name = "TRANS_DESC")
-	private String transDesc;
+    private String transDesc;
     @Column(name = "START_NODE_ID")
-	private Long startNodeId;
+    private Long startNodeId;
     @Column(name = "END_NODE_ID")
-	private Long endNodeId;
+    private Long endNodeId;
     @Column(name = "TRANS_CONDITION")
-	private String transCondition;
+    private String transCondition;
     @Column(name = "LIMIT_TYPE")
     private String limitType;
     @Column(name = "TIME_LIMIT")
@@ -67,44 +67,44 @@ public class FlowTransition implements java.io.Serializable {
     
     
     // Constructors
-	/** default constructor */
-	public FlowTransition() {
-	    this.canIgnore="T"; 
-	    isAccountTime ="I";
-	}
-	/** minimal constructor */
-	public FlowTransition(
-		Long transid		
-		) {
-	    this.canIgnore="T"; 
-	    isAccountTime ="I";
-		this.transId = transid;
-			
-	}
+    /** default constructor */
+    public FlowTransition() {
+        this.canIgnore="T";
+        isAccountTime ="I";
+    }
+    /** minimal constructor */
+    public FlowTransition(
+        Long transid
+        ) {
+        this.canIgnore="T";
+        isAccountTime ="I";
+        this.transId = transid;
+
+    }
 
 /** full constructor */
-	public FlowTransition(
-	 Long transid		
-	,Long  version,String  wfcode,String  transclass,String  transname,String  transdesc,
-	 Long  startnodeid,Long  endnodeid,String  transcondition,String limitType,String timelimit) {
-	
-	
-		this.transId = transid;
-	
-		this.getFlowDefine().setVersion(version);
-		this.getFlowDefine().setFlowCode(wfcode);
-		this.transClass = transclass;
-		this.transName = transname;
-		this.transDesc = transdesc;
-		this.startNodeId = startnodeid;
-		this.endNodeId = endnodeid;
-		this.transCondition = transcondition;
-		this.limitType = limitType;
-		this.timeLimit = timelimit;
-		this.canIgnore="T"; 
-		this.isAccountTime ="I";
-	}
-	
+    public FlowTransition(
+     Long transid
+    ,Long  version,String  wfcode,String  transclass,String  transname,String  transdesc,
+     Long  startnodeid,Long  endnodeid,String  transcondition,String limitType,String timelimit) {
+
+
+        this.transId = transid;
+
+        this.getFlowDefine().setVersion(version);
+        this.getFlowDefine().setFlowCode(wfcode);
+        this.transClass = transclass;
+        this.transName = transname;
+        this.transDesc = transdesc;
+        this.startNodeId = startnodeid;
+        this.endNodeId = endnodeid;
+        this.transCondition = transcondition;
+        this.limitType = limitType;
+        this.timeLimit = timelimit;
+        this.canIgnore="T";
+        this.isAccountTime ="I";
+    }
+
     /**
      * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
      * @return
@@ -128,14 +128,14 @@ public class FlowTransition implements java.io.Serializable {
         this.timeLimit = timelimit;
     }
   
-	public Long getTransid() {
-		return this.transId;
-	}
+    public Long getTransid() {
+        return this.transId;
+    }
 
-	public void setTransid(Long transid) {
-		this.transId = transid;
-	}
-	// Property accessors
+    public void setTransid(Long transid) {
+        this.transId = transid;
+    }
+    // Property accessors
 
 
     public Long getTransId() {
@@ -187,56 +187,56 @@ public class FlowTransition implements java.io.Serializable {
     }
 
     public String getTransClass() {
-		return this.transClass;
-	}
-	
-	public void setTransClass(String transClass) {
-		this.transClass = transClass;
-	}
+        return this.transClass;
+    }
+
+    public void setTransClass(String transClass) {
+        this.transClass = transClass;
+    }
   
-	public String getTransName() {
-		return this.transName;
-	}
-	
-	public void setTransName(String transName) {
-		this.transName = transName;
-	}
+    public String getTransName() {
+        return this.transName;
+    }
+
+    public void setTransName(String transName) {
+        this.transName = transName;
+    }
   
-	public String getTransDesc() {
-		return this.transDesc;
-	}
-	
-	public void setTransDesc(String transDesc) {
-		this.transDesc = transDesc;
-	}
+    public String getTransDesc() {
+        return this.transDesc;
+    }
+
+    public void setTransDesc(String transDesc) {
+        this.transDesc = transDesc;
+    }
   
-	public Long getStartnodeid() {
-		return this.startNodeId;
-	}
-	
-	public void setStartnodeid(Long startnodeid) {
-		this.startNodeId = startnodeid;
-	}
+    public Long getStartnodeid() {
+        return this.startNodeId;
+    }
+
+    public void setStartnodeid(Long startnodeid) {
+        this.startNodeId = startnodeid;
+    }
   
-	public Long getEndnodeid() {
-		return this.endNodeId;
-	}
-	
-	public void setEndnodeid(Long endnodeid) {
-		this.endNodeId = endnodeid;
-	}
+    public Long getEndnodeid() {
+        return this.endNodeId;
+    }
+
+    public void setEndnodeid(Long endnodeid) {
+        this.endNodeId = endnodeid;
+    }
   
-	public String getTranscondition() {
-		return this.transCondition;
-	}
-	
-	public void setTranscondition(String transcondition) {
-		this.transCondition = transcondition;
-	}
-	/**
-	 * 改是否记入时间 T/F  I 忽略
-	 * @return
-	 */
+    public String getTranscondition() {
+        return this.transCondition;
+    }
+
+    public void setTranscondition(String transcondition) {
+        this.transCondition = transcondition;
+    }
+    /**
+     * 改是否记入时间 T/F  I 忽略
+     * @return
+     */
     public String getIsAccountTime() {
         return isAccountTime;
     }

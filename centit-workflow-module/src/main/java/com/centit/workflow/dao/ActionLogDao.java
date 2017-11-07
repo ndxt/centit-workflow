@@ -22,63 +22,63 @@ import java.util.*;
 @Repository
 public class ActionLogDao extends BaseDaoImpl<ActionLog,Long> {
     public Map<String, String> getFilterField() {
-		if( filterField == null){
-			filterField = new HashMap<String, String>();
-			filterField.put("actionId" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("nodeInstId" , CodeBook.LIKE_HQL_ID);
-			filterField.put("actionType" , CodeBook.LIKE_HQL_ID);
-			filterField.put("actionTime" , CodeBook.LIKE_HQL_ID);
-			filterField.put("userCode" , CodeBook.LIKE_HQL_ID);
-			filterField.put("roleType" , CodeBook.LIKE_HQL_ID);
-			filterField.put("roleCode" , CodeBook.LIKE_HQL_ID);
+        if( filterField == null){
+            filterField = new HashMap<String, String>();
+            filterField.put("actionId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("nodeInstId" , CodeBook.LIKE_HQL_ID);
+            filterField.put("actionType" , CodeBook.LIKE_HQL_ID);
+            filterField.put("actionTime" , CodeBook.LIKE_HQL_ID);
+            filterField.put("userCode" , CodeBook.LIKE_HQL_ID);
+            filterField.put("roleType" , CodeBook.LIKE_HQL_ID);
+            filterField.put("roleCode" , CodeBook.LIKE_HQL_ID);
 
-		}
-		return filterField;
-	}
+        }
+        return filterField;
+    }
 
-	@Transactional(propagation= Propagation.MANDATORY)
-	public List<ActionLog> listUserActionLogs(String userCode, PageDesc pageDesc, Date lastTime )
-	{
-		List<ActionLog> list = new ArrayList<>();
+    @Transactional(propagation= Propagation.MANDATORY)
+    public List<ActionLog> listUserActionLogs(String userCode, PageDesc pageDesc, Date lastTime )
+    {
+        List<ActionLog> list = new ArrayList<>();
         if(lastTime==null){
-        	list = this.listObjectsByFilter("where USER_CODE = ? order by action_Time desc",
-					new Object[]{userCode},pageDesc);
-		}else{
-        	list = this.listObjectsByFilter("where USER_CODE = ? and ACTION_TIME >= ?" +
-					"order by action_Time desc",new Object[]{userCode,lastTime},pageDesc);
-		}
-		return list;
-	}
-	
-	/**
-	 * 查询受委托的工作记录
-	 * @param userCode
-	 * @param pageDesc
-	 * @return
-	 */
-	@Transactional(propagation= Propagation.MANDATORY)
-	public List<ActionLog> listGrantedActionLog(String userCode, PageDesc pageDesc){
-		return this.listObjectsByFilter("where USER_CODE = ? and  grantor <> null",
-				new Object[]{userCode},pageDesc);
-	}
-	
-	/**
-	 * 查询委托别人做的工作记录
-	 * @param userCode
-	 * @param pageDesc
-	 * @return
-	 */
-	@Transactional(propagation= Propagation.MANDATORY)
+            list = this.listObjectsByFilter("where USER_CODE = ? order by action_Time desc",
+                    new Object[]{userCode},pageDesc);
+        }else{
+            list = this.listObjectsByFilter("where USER_CODE = ? and ACTION_TIME >= ?" +
+                    "order by action_Time desc",new Object[]{userCode,lastTime},pageDesc);
+        }
+        return list;
+    }
+
+    /**
+     * 查询受委托的工作记录
+     * @param userCode
+     * @param pageDesc
+     * @return
+     */
+    @Transactional(propagation= Propagation.MANDATORY)
+    public List<ActionLog> listGrantedActionLog(String userCode, PageDesc pageDesc){
+        return this.listObjectsByFilter("where USER_CODE = ? and  grantor <> null",
+                new Object[]{userCode},pageDesc);
+    }
+
+    /**
+     * 查询委托别人做的工作记录
+     * @param userCode
+     * @param pageDesc
+     * @return
+     */
+    @Transactional(propagation= Propagation.MANDATORY)
     public List<ActionLog> listGrantorActionLog(String userCode,
                                                 PageDesc pageDesc) {
-		return this.listObjectsByFilter("where GRANTOR = ?",new Object[]{userCode},pageDesc);
+        return this.listObjectsByFilter("where GRANTOR = ?",new Object[]{userCode},pageDesc);
     }
-	/**
-	 * 生成流程日志操作编号
-	 * @return long
-	 */
-	@Transactional(propagation= Propagation.MANDATORY)
-	public long getNextActionId(){
-		return DatabaseOptUtils.getSequenceNextValue(this,"S_ACTIONLOGNO");
-	}
+    /**
+     * 生成流程日志操作编号
+     * @return long
+     */
+    @Transactional(propagation= Propagation.MANDATORY)
+    public long getNextActionId(){
+        return DatabaseOptUtils.getSequenceNextValue(this,"S_ACTIONLOGNO");
+    }
 }

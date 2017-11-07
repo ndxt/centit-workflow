@@ -16,24 +16,24 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "WF_NODE")
 public class NodeInfo implements java.io.Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
    
     @Id
     @Column(name = "NODE_ID")
-	private Long nodeId;
-	/*@Column(name = "FLOWCODE")
-	private String flowCode;
+    private Long nodeId;
+    /*@Column(name = "FLOWCODE")
+    private String flowCode;
     @Column(name = "VERSION")
-	private Long version;
+    private Long version;
     A:开始 B:首节点 C:业务节点  F结束  R: 路由节点 
     */
     @Column(name = "NODE_TYPE")
-	private String nodeType;
+    private String nodeType;
     @Column(name = "NODE_NAME")
-	private String nodeName;
+    private String nodeName;
     @Column(name = "OPT_TYPE")
-	private String optType;
+    private String optType;
 
     @Column(name = "OS_ID")
     private String osId;
@@ -42,43 +42,43 @@ public class NodeInfo implements java.io.Serializable {
     private String optId;
 
     @Column(name = "OPT_CODE")
-	private String optCode;
+    private String optCode;
 
     @Column(name = "OPT_PARAM")
-	private String optParam;
+    private String optParam;
     @Column(name = "OPT_BEAN")
-	private String optBean;
+    private String optBean;
     @Column(name = "SUB_FLOW_CODE")
-	private String subFlowCode;
+    private String subFlowCode;
     @Column(name = "ROLE_TYPE")
-	private String roleType;
+    private String roleType;
     @Column(name = "ROLE_CODE")
-	private String roleCode;
+    private String roleCode;
     @Column(name = "UNIT_EXP")
-	private String unitExp;
+    private String unitExp;
     @Column(name = "POWER_EXP")
-	private String powerExp;
+    private String powerExp;
     @Column(name = "NODE_DESC")
-	private String nodeDesc;
+    private String nodeDesc;
     @Column(name = "LIMIT_TYPE")
     private String limitType;
     @Column(name = "TIME_LIMIT")
-	private String timeLimit;
+    private String timeLimit;
     @Column(name = "INHERIT_TYPE")
     private String inheritType;
     @Column(name = "INHERIT_NODE_CODE")
     private String inheritNodeCode;
     @Column(name = "EXPIRE_OPT")
-	private String expireOpt;
+    private String expireOpt;
     @Column(name = "IS_ACCOUNT_TIME")
-	private String isAccountTime;
+    private String isAccountTime;
     @Column(name = "IS_TRUNK_LINE")
-	
-	private String isTrunkLine;
+
+    private String isTrunkLine;
     @Column(name = "NODE_CODE")
-	private String nodeCode;
+    private String nodeCode;
     @Column(name = "RISK_INFO")
-	private String riskinfo;
+    private String riskinfo;
     
     @Column(name = "STAGE_CODE")
     private String stageCode;
@@ -143,34 +143,34 @@ public class NodeInfo implements java.io.Serializable {
         this.riskinfo = riskinfo;
     }
 
-	// Constructors
-	/** default constructor */
-	public NodeInfo() {
-        this.isAccountTime = "T";
-        this.inheritType = "0";
-	}
-
-	/** minimal constructor */
-	public NodeInfo(Long nodeid, String nodetype) {
-
-		this.nodeId = nodeid;
-
-		this.nodeType = nodetype;
+    // Constructors
+    /** default constructor */
+    public NodeInfo() {
         this.isAccountTime = "T";
         this.inheritType = "0";
     }
 
-	public Long getNodeId() {
-		return this.nodeId;
-	}
+    /** minimal constructor */
+    public NodeInfo(Long nodeid, String nodetype) {
 
-	public void setNodeId(Long nodeid) {
-		this.nodeId = nodeid;
-	}
-	 
-	// Property accessors
+        this.nodeId = nodeid;
 
-	public String getStageCode() {
+        this.nodeType = nodetype;
+        this.isAccountTime = "T";
+        this.inheritType = "0";
+    }
+
+    public Long getNodeId() {
+        return this.nodeId;
+    }
+
+    public void setNodeId(Long nodeid) {
+        this.nodeId = nodeid;
+    }
+
+    // Property accessors
+
+    public String getStageCode() {
         return stageCode;
     }
 
@@ -203,87 +203,87 @@ public class NodeInfo implements java.io.Serializable {
     }
 
     /**
-	 * A:开始 B:首节点 C:业务节点  F结束  R: 路由节点 
-	 * @return
-	 */
-	public String getNodeType() {
-		return this.nodeType;
-	}
-	/**
-	 * 
-	 * @param nodetype A:开始 B:首节点 C:业务节点  F结束  R: 路由节点 
-	 */
-	public void setNodeType(String nodetype) {
-		this.nodeType = nodetype;
-	}
+     * A:开始 B:首节点 C:业务节点  F结束  R: 路由节点
+     * @return
+     */
+    public String getNodeType() {
+        return this.nodeType;
+    }
+    /**
+     *
+     * @param nodetype A:开始 B:首节点 C:业务节点  F结束  R: 路由节点
+     */
+    public void setNodeType(String nodetype) {
+        this.nodeType = nodetype;
+    }
 
-	public String getNodeName() {
-		return this.nodeName;
-	}
+    public String getNodeName() {
+        return this.nodeName;
+    }
 
-	public void setNodeName(String nodename) {
-		this.nodeName = nodename;
-	}
+    public void setNodeName(String nodename) {
+        this.nodeName = nodename;
+    }
 
-	/**
-	 * @return A:一般 B:抢先机制 C:多人操作 D:自动执行  E哑元（可用于嵌套汇聚） S:子流程
-	 */
-	public String getOptType() {
-		return this.optType;
-	}
+    /**
+     * @return A:一般 B:抢先机制 C:多人操作 D:自动执行  E哑元（可用于嵌套汇聚） S:子流程
+     */
+    public String getOptType() {
+        return this.optType;
+    }
 
-	/**
-	 * 
-	 * @param opttype A:一般 B:抢先机制 C:多人操作 D:自动执行   E哑元（可用于嵌套汇聚） S:子流程
-	 */
-	public void setOptType(String opttype) {
-		this.optType = opttype;
-	}
+    /**
+     *
+     * @param opttype A:一般 B:抢先机制 C:多人操作 D:自动执行   E哑元（可用于嵌套汇聚） S:子流程
+     */
+    public void setOptType(String opttype) {
+        this.optType = opttype;
+    }
 
-	public String getOptCode() {
-		return this.optCode;
-	}
+    public String getOptCode() {
+        return this.optCode;
+    }
 
-	public void setOptCode(String optcode) {
-		this.optCode = optcode;
-	}
+    public void setOptCode(String optcode) {
+        this.optCode = optcode;
+    }
 
-	public String getOptBean() {
-		return this.optBean;
-	}
+    public String getOptBean() {
+        return this.optBean;
+    }
 
-	public void setOptBean(String opturl) {
-		this.optBean = opturl;
-	}
+    public void setOptBean(String opturl) {
+        this.optBean = opturl;
+    }
 
-	public String getSubFlowCode() {
-		return this.subFlowCode;
-	}
+    public String getSubFlowCode() {
+        return this.subFlowCode;
+    }
 
-	public void setSubFlowCode(String subwfcode) {
-		this.subFlowCode = subwfcode;
-	}
-	/**
-	 * en gw xz bj
-	 * @return
-	 */
-	public String getRoleType() {
-		return this.roleType;
-	}
+    public void setSubFlowCode(String subwfcode) {
+        this.subFlowCode = subwfcode;
+    }
+    /**
+     * en gw xz bj
+     * @return
+     */
+    public String getRoleType() {
+        return this.roleType;
+    }
 
-	public void setRoleType(String roletype) {
-		this.roleType = roletype;
-	}
+    public void setRoleType(String roletype) {
+        this.roleType = roletype;
+    }
 
-	public String getRoleCode() {
-		return this.roleCode;
-	}
+    public String getRoleCode() {
+        return this.roleCode;
+    }
 
-	public void setRoleCode(String rolecode) {
-		this.roleCode = rolecode;
-	}
+    public void setRoleCode(String rolecode) {
+        this.roleCode = rolecode;
+    }
 
-	public String getOptParam() {
+    public String getOptParam() {
         return optParam;
     }
 
@@ -292,60 +292,60 @@ public class NodeInfo implements java.io.Serializable {
     }
 
     public String getUnitExp() {
-		return this.unitExp;
-	}
+        return this.unitExp;
+    }
 
-	public void setUnitExp(String unitexp) {
-		this.unitExp = unitexp;
-	}
+    public void setUnitExp(String unitexp) {
+        this.unitExp = unitexp;
+    }
 
-	public String getPowerExp() {
-		return this.powerExp;
-	}
+    public String getPowerExp() {
+        return this.powerExp;
+    }
 
-	public void setPowerExp(String powerexp) {
-		this.powerExp = powerexp;
-	}
+    public void setPowerExp(String powerexp) {
+        this.powerExp = powerexp;
+    }
 
-	public String getNodeDesc() {
-		return this.nodeDesc;
-	}
+    public String getNodeDesc() {
+        return this.nodeDesc;
+    }
 
-	public void setNodeDesc(String nodedesc) {
-		this.nodeDesc = nodedesc;
-	}
+    public void setNodeDesc(String nodedesc) {
+        this.nodeDesc = nodedesc;
+    }
 
-	/**
-	 * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
-	 * @return
-	 */
-	public String getLimitType() {
+    /**
+     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
+     * @return
+     */
+    public String getLimitType() {
         return limitType;
     }
-	/**
-	 * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
-	 * @param limitType
-	 */
+    /**
+     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
+     * @param limitType
+     */
     public void setLimitType(String limitType) {
         this.limitType = limitType;
     }
     public String getTimeLimit() {
-		return this.timeLimit;
-	}
+        return this.timeLimit;
+    }
 
-	public void setTimeLimit(String timelimit) {
-		this.timeLimit = timelimit;
-	}
-	/**
-	 *  0：不继承， 1 ：继承前节点 2 ：继承指定节点； 
-	 * @return
-	 */
-	public String getInheritType() {
+    public void setTimeLimit(String timelimit) {
+        this.timeLimit = timelimit;
+    }
+    /**
+     *  0：不继承， 1 ：继承前节点 2 ：继承指定节点；
+     * @return
+     */
+    public String getInheritType() {
         return inheritType;
     }
-	/**
-	 * @param inheritType  0：不继承， 1 ：继承前节点 2 ：继承指定节点； 
-	 */
+    /**
+     * @param inheritType  0：不继承， 1 ：继承前节点 2 ：继承指定节点；
+     */
     public void setInheritType(String inheritType) {
         this.inheritType = inheritType;
     }
@@ -363,40 +363,40 @@ public class NodeInfo implements java.io.Serializable {
     }
 
     /**
-	 * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
-	 * @return
-	 */
-	public String getExpireOpt() {
-		return this.expireOpt;
-	}
+     * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+     * @return
+     */
+    public String getExpireOpt() {
+        return this.expireOpt;
+    }
     /**
      * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
      * @param expireopt
      */
-	public void setExpireOpt(String expireopt) {
-		this.expireOpt = expireopt;
-	}
+    public void setExpireOpt(String expireopt) {
+        this.expireOpt = expireopt;
+    }
 
-	/**
+    /**
      * 节点执行时间是否计入时间限制     T 计时、有期限   F  不计时    H仅环节计时
      */
-	public String getIsAccountTime() {
-		return this.isAccountTime;
-	}
+    public String getIsAccountTime() {
+        return this.isAccountTime;
+    }
 
-	/**
-	 * 节点执行时间是否计入时间限制    T 计时、有期限  F 不计时   H 仅环节计时
-	 * @param issync
-	 */
-	public void setIsAccountTime(String issync) {
-		this.isAccountTime = issync;
-	}
+    /**
+     * 节点执行时间是否计入时间限制    T 计时、有期限  F 不计时   H 仅环节计时
+     * @param issync
+     */
+    public void setIsAccountTime(String issync) {
+        this.isAccountTime = issync;
+    }
 
 
-	/**
-	 * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
-	 * @return
-	 */
+    /**
+     * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
+     * @return
+     */
     public String getRouterType() {
         return routerType;
     }

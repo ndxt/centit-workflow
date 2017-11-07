@@ -14,52 +14,52 @@ import java.util.Map;
 
 @Repository
 public class InstAttentionDao extends BaseDaoImpl<InstAttention,InstAttentionId>
-	{
-		//public static final Logger logger = LoggerFactory.getLogger(WfInstAttentionDao.class);
-	@Override
-	public Map<String, String> getFilterField() {
-		if( filterField == null){
-			filterField = new HashMap<String, String>();
+    {
+        //public static final Logger logger = LoggerFactory.getLogger(WfInstAttentionDao.class);
+    @Override
+    public Map<String, String> getFilterField() {
+        if( filterField == null){
+            filterField = new HashMap<String, String>();
 
-			filterField.put("userCode" , "userCode=:userCode");
-			
-			filterField.put("flowInstId" , "flowInstId=:flowInstId");
+            filterField.put("userCode" , "userCode=:userCode");
 
-			filterField.put("attSetTime" , CodeBook.LIKE_HQL_ID);
+            filterField.put("flowInstId" , "flowInstId=:flowInstId");
 
-			filterField.put("attSetUser" , CodeBook.LIKE_HQL_ID);
+            filterField.put("attSetTime" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("attSetMemo" , CodeBook.LIKE_HQL_ID);
+            filterField.put("attSetUser" , CodeBook.LIKE_HQL_ID);
 
-		}
-		return filterField;
-	}
-	/**
-	 * 删除一个流程的所有关注
-	 * @param flowInstId
-	 */
-	@Transactional(propagation= Propagation.MANDATORY)
-	public void deleteFlowAttention(long flowInstId) {
-	    this.getJdbcTemplate().update("delete from WF_INST_ATTENTION where FLOW_INST_ID = ?",
-				new Object[]{flowInstId});
-	}
-	/**
+            filterField.put("attSetMemo" , CodeBook.LIKE_HQL_ID);
+
+        }
+        return filterField;
+    }
+    /**
+     * 删除一个流程的所有关注
+     * @param flowInstId
+     */
+    @Transactional(propagation= Propagation.MANDATORY)
+    public void deleteFlowAttention(long flowInstId) {
+        this.getJdbcTemplate().update("delete from WF_INST_ATTENTION where FLOW_INST_ID = ?",
+                new Object[]{flowInstId});
+    }
+    /**
      * 获得一个流程的所有关注
      * @param flowInstId
      */
-	@Transactional(propagation= Propagation.MANDATORY)
+    @Transactional(propagation= Propagation.MANDATORY)
     public List<InstAttention> listAttentionByFlowInstId(long flowInstId) {
         return this.listObjectsByFilter("where FLOW_INST_ID = ?",new Object[]{flowInstId});
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public List<InstAttention> listAttentionByFlowInstId(long flowInstId, String optUser) {
-		return this.listObjectsByFilter("where FLOW_INST_ID = ? and ATT_SET_USER = ? ",new Object[]{flowInstId,optUser});
+        return this.listObjectsByFilter("where FLOW_INST_ID = ? and ATT_SET_USER = ? ",new Object[]{flowInstId,optUser});
 
-	}
+    }
     @Transactional(propagation= Propagation.MANDATORY)
     public void deleteFlowAttentionByOptUser(long flowInstId,String optUser)
     {
         this.jdbcTemplate.update("delete From WF_INST_ATTENTION where FLOW_INST_ID = ? and ATT_SET_USER = ? ",
-				new Object[]{flowInstId,optUser});
+                new Object[]{flowInstId,optUser});
     }
 }

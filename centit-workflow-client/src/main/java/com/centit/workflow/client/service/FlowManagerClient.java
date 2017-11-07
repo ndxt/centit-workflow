@@ -42,22 +42,22 @@ public interface FlowManagerClient {
 //     * @return
 //     */
 //    String viewFlowNodeInstance(long flowInstId);
-//	//流程实例管理-------------------------------
+//    //流程实例管理-------------------------------
 //    //-----------流程状态变更-----N 正常  C 完成   P 暂停 挂起     F 强行结束---------------------------
-//	/**
-//	 * 终止一个流程  F 强行结束
-//	 */
-//	int stopInstance(long flowInstId, String mangerUserCode, String admindesc);
+//    /**
+//     * 终止一个流程  F 强行结束
+//     */
+//    int stopInstance(long flowInstId, String mangerUserCode, String admindesc);
 //
 //    /**
-//	 * 暂停一个流程    P 暂停 挂起
-//	 */
-//	int suspendInstance(long flowInstId, String mangerUserCode, String admindesc);
+//     * 暂停一个流程    P 暂停 挂起
+//     */
+//    int suspendInstance(long flowInstId, String mangerUserCode, String admindesc);
 //
-//	/**
-//	 * 激活一个 挂起的或者无效的流程  N 正常
-//	 */
-//	int activizeInstance(long flowInstId, String mangerUserCode, String admindesc);
+//    /**
+//     * 激活一个 挂起的或者无效的流程  N 正常
+//     */
+//    int activizeInstance(long flowInstId, String mangerUserCode, String admindesc);
 //
 //    /**
 //     * 查询某人暂停计时的流程
@@ -92,8 +92,8 @@ public interface FlowManagerClient {
 //     */
 //    long resetFlowTimelimt(long flowInstId, String timeLimit, String mangerUserCode, String admindesc);
 //
-//	//------------流程属性修改----------------------------------
-//	 /**
+//    //------------流程属性修改----------------------------------
+//     /**
 //     * 更改流程所属机构
 //     * @param flowInstId 流程实例ID
 //     * @param unitCode 机构代码
@@ -198,7 +198,7 @@ public interface FlowManagerClient {
 //    long resetNodeTimelimt(long nodeInstId, String timeLimit, String mangerUserCode);
 //
 //
-//	//----------节点任务管理--------------------------------
+//    //----------节点任务管理--------------------------------
 //    /**
 //     * 根据节点ID查询能够操作该节点的所有人员，如果为空，则需要分配工作任务单
 //     * 这个是返回所有能够操作本节点的人员
@@ -244,12 +244,12 @@ public interface FlowManagerClient {
 //    //------------流程预警管理------接口参见flowEngine---------------------
 //    //------查看节点信息-------------------------
 //
-//	/**
-//	 * 获取节点实例的操作日志列表
-//	 * @param nodeinstid
-//	 * @return List<WfActionLog>
-//	 */
-//	List<ActionLog> listNodeActionLogs(long nodeinstid);
+//    /**
+//     * 获取节点实例的操作日志列表
+//     * @param nodeinstid
+//     * @return List<WfActionLog>
+//     */
+//    List<ActionLog> listNodeActionLogs(long nodeinstid);
 //
 //
 //    /**

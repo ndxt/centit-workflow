@@ -51,29 +51,29 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "ASSIGN_TIME,EXPIRE_TIME,USER_CODE,ROLE_TYPE,ROLE_CODE,TASK_STATE,IS_VALID,AUTH_DESC" +
             "from WF_ACTION_TASK " +
             "where 1=1 ";
- 	public Map<String, String> getFilterField() {
-		if( filterField == null){
-			filterField = new HashMap<String, String>();
-			filterField.put("taskId" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("nodeInstId" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("assignTime" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("expireTime" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("userCode" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("roleType" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("roleCode" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("taskState" , CodeBook.EQUAL_HQL_ID);
-		}
-		return filterField;
-	} 
-	
-	/**
-	 * 生成主键编号
-	 * @return
-	 */
+     public Map<String, String> getFilterField() {
+        if( filterField == null){
+            filterField = new HashMap<String, String>();
+            filterField.put("taskId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("nodeInstId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("assignTime" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("expireTime" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("userCode" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("roleType" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("roleCode" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("taskState" , CodeBook.EQUAL_HQL_ID);
+        }
+        return filterField;
+    }
+
+    /**
+     * 生成主键编号
+     * @return
+     */
     @Transactional(propagation= Propagation.MANDATORY)
-	public long getNextTaskId(){
-		return DatabaseOptUtils.getSequenceNextValue(this,"S_ACTIONTASKNO");
-	}
+    public long getNextTaskId(){
+        return DatabaseOptUtils.getSequenceNextValue(this,"S_ACTIONTASKNO");
+    }
 
     /**
      *  根据用户编码获取用户已办任务列表
@@ -113,9 +113,9 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
 
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
-	public List<UserTask>  listUserTaskJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
+    public List<UserTask>  listUserTaskJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
         /*switch(DBType.mapDialectToDBType(DatabaseOptUtils.getDialectName())){
             case Oracle:
@@ -132,7 +132,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
         }*/
 
-		String conditionSql = "[ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
+        String conditionSql = "[ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
                 "[ :userCode| and USER_CODE = :userCode] " +
                 "[ :nodeCode| and NODE_CODE = :nodeCode] " +
                 "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
@@ -149,7 +149,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         //List<UserTask>  userTasks = JSONArray.t
         //List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc,UserTask.class);
         return list;
-	}
+    }
 
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
@@ -161,23 +161,23 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
 
     @Transactional(propagation= Propagation.MANDATORY)
-	public List<ActionTask> getActionTaskByNodeidAndUser(long nodeInstId , String userCode){
+    public List<ActionTask> getActionTaskByNodeidAndUser(long nodeInstId , String userCode){
         String whereSql = "where NODE_INST_ID=? and USER_CODE=? and IS_VALID='T'";
-		return this.listObjectsByFilter(whereSql, new Object[]{nodeInstId,userCode});
-	}
-	
-	@SuppressWarnings("unchecked")
+        return this.listObjectsByFilter(whereSql, new Object[]{nodeInstId,userCode});
+    }
+
+    @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
     public List<ActionTask> listActionTaskByNode(String userCode){
-	   // String baseHQL = "from WfActionTask t join WfNodeInstance i on i.nodeinstid = t.nodeinstid where i.nodestate <> 'C' and t.usercode = ?";
-	   //return this.listObjects(baseHQL,userCode);
+       // String baseHQL = "from WfActionTask t join WfNodeInstance i on i.nodeinstid = t.nodeinstid where i.nodestate <> 'C' and t.usercode = ?";
+       //return this.listObjects(baseHQL,userCode);
         Map<String,Object> filterMap = new HashMap<>();
         filterMap.put("userCode",userCode);
-	    String baseSQL = "SELECT * FROM WF_ACTION_TASK T JOIN FLOW_NODE_INSTANCE I ON I.NODE_INST_ID = T.NODE_INST_ID WHERE I.NODE_STATE <> 'C' AND T.USER_CODE = ?";
-	    return this.listObjectsBySql(baseSQL,filterMap);
-	}
-	
-	@SuppressWarnings("unchecked")
+        String baseSQL = "SELECT * FROM WF_ACTION_TASK T JOIN FLOW_NODE_INSTANCE I ON I.NODE_INST_ID = T.NODE_INST_ID WHERE I.NODE_STATE <> 'C' AND T.USER_CODE = ?";
+        return this.listObjectsBySql(baseSQL,filterMap);
+    }
+
+    @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
     public String getTaskGrantor(long nodeInstId ,String userCode){
         String baseSQL = "select GRANTOR  from V_USER_TASK_LIST where NODE_INST_ID = ? and USER_CODE =? ";
@@ -197,8 +197,8 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         }            
         return grantor;
     }
-	
-	@SuppressWarnings("unchecked")
+
+    @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
     public boolean hasOptPower(long nodeInstId ,String userCode,String grantorCode){
 
@@ -220,5 +220,5 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         }
         return true;
     }
-    	
+
 }

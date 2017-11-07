@@ -16,18 +16,18 @@ import java.util.Map;
 public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
 {
     public Map<String, String> getFilterField() {
-		if( filterField == null){
-			filterField = new HashMap<String, String>();
-			filterField.put("flowInstid" , "flowInstId=:flowInstId");
-			filterField.put("userCode" , "userCode=:userCode");
-			filterField.put("roleCode" , "roleCode=:roleCode");
-			filterField.put("authDesc" , CodeBook.LIKE_HQL_ID);
-			filterField.put("authTime" , CodeBook.EQUAL_HQL_ID);
-			filterField.put(CodeBook.ORDER_BY_HQL_ID , "userOrder");
+        if( filterField == null){
+            filterField = new HashMap<String, String>();
+            filterField.put("flowInstid" , "flowInstId=:flowInstId");
+            filterField.put("userCode" , "userCode=:userCode");
+            filterField.put("roleCode" , "roleCode=:roleCode");
+            filterField.put("authDesc" , CodeBook.LIKE_HQL_ID);
+            filterField.put("authTime" , CodeBook.EQUAL_HQL_ID);
+            filterField.put(CodeBook.ORDER_BY_HQL_ID , "userOrder");
 
-		}
-		return filterField;
-	}
+        }
+        return filterField;
+    }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public void deleteFlowWorkTeam(long flowInstId, String roleCode) {

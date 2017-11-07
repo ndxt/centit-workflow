@@ -18,58 +18,58 @@ import java.util.Map;
 
 @Repository
 public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
-	public Map<String, String> getFilterField() {
-		if( filterField == null){
-			filterField = new HashMap<String, String>();
+    public Map<String, String> getFilterField() {
+        if( filterField == null){
+            filterField = new HashMap<String, String>();
 
-			filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("flowId" , CodeBook.LIKE_HQL_ID);
-			filterField.put("version" , CodeBook.LIKE_HQL_ID);
+            filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("flowId" , CodeBook.LIKE_HQL_ID);
+            filterField.put("version" , CodeBook.LIKE_HQL_ID);
 
-			filterField.put("(date)createTimeBeg",
+            filterField.put("(date)createTimeBeg",
                     " createTime>= :createTimeBeg");
             filterField.put("(date)createTimeEnd",
                     " createTime<= createTimeEnd  ");
-			filterField.put("(date)lastUpdateTime" , "lastUpdateTime = :lastUpdateTime");
+            filterField.put("(date)lastUpdateTime" , "lastUpdateTime = :lastUpdateTime");
 
-			filterField.put("instState" , CodeBook.EQUAL_HQL_ID);
-			filterField.put("isSubInst" , CodeBook.LIKE_HQL_ID);
+            filterField.put("instState" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("isSubInst" , CodeBook.LIKE_HQL_ID);
             filterField.put("flowOptName" , CodeBook.LIKE_HQL_ID);
-            filterField.put("flowOptTag" , CodeBook.LIKE_HQL_ID);			
-			filterField.put("preInstId" , CodeBook.LIKE_HQL_ID);
-			filterField.put("preNodeInstId" , CodeBook.LIKE_HQL_ID);
-			filterField.put("unitCode" , CodeBook.LIKE_HQL_ID);
+            filterField.put("flowOptTag" , CodeBook.LIKE_HQL_ID);
+            filterField.put("preInstId" , CodeBook.LIKE_HQL_ID);
+            filterField.put("preNodeInstId" , CodeBook.LIKE_HQL_ID);
+            filterField.put("unitCode" , CodeBook.LIKE_HQL_ID);
             filterField.put("userCode" , CodeBook.LIKE_HQL_ID);
             filterField.put("(long)nodeId" , "flowInstId in (select flowInstId from NodeInstance where nodeState='N' and nodeId=:nodeId)" );
             filterField.put("optCode", "flowInstId in "+
                "(select a.flowInstId from NodeInstance a,NodeInfo b where a.nodeId=b.nodeId and a.nodeState='N' and b.optCode=:optCode)" );
-			
+
             filterField.put("nocom" , "instState <> :nocom");
             filterField.put("NP_warning" , "flowInstId in (select flowInstId from FlowWarning ) ");
 
             filterField.put(CodeBook.ORDER_BY_HQL_ID , "createTime desc,flowInstId desc");
 
-		}
-		return filterField;
-	}
-	@Transactional(propagation= Propagation.MANDATORY)
-	public long getNextFlowInstId(){
-		return  DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWINSTNO");
-	}
-	
-	/**
-	 * 更新流程实例状态
-	 * @param instid 实例编号
-	 * @param state
-	 */
+        }
+        return filterField;
+    }
     @Transactional(propagation= Propagation.MANDATORY)
-	public void updtFlowInstState(long instid,String state){
-		FlowInstance flowInst = this.getObjectById(instid);
-		flowInst.setInstState(state);
-		this.updateObject(flowInst);
-	}
-	
-	/**
+    public long getNextFlowInstId(){
+        return  DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWINSTNO");
+    }
+
+    /**
+     * 更新流程实例状态
+     * @param instid 实例编号
+     * @param state
+     */
+    @Transactional(propagation= Propagation.MANDATORY)
+    public void updtFlowInstState(long instid,String state){
+        FlowInstance flowInst = this.getObjectById(instid);
+        flowInst.setInstState(state);
+        this.updateObject(flowInst);
+    }
+
+    /**
      *  获取用户参与 流程实例 按照时间倒序排列 
      * @param userCode 用户代码
      * @param pageDesc 分页描述

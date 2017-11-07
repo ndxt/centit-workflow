@@ -16,46 +16,46 @@ import java.util.Map;
 @Repository
 public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
   
-	public Map<String, String> getFilterField() {
-		if (filterField == null) {
-			filterField = new HashMap<String, String>();
-			filterField.put("nodeInstId", CodeBook.EQUAL_HQL_ID);
-			filterField.put("flowInstId", CodeBook.EQUAL_HQL_ID);
-			filterField.put("nodeId", CodeBook.EQUAL_HQL_ID);
+    public Map<String, String> getFilterField() {
+        if (filterField == null) {
+            filterField = new HashMap<String, String>();
+            filterField.put("nodeInstId", CodeBook.EQUAL_HQL_ID);
+            filterField.put("flowInstId", CodeBook.EQUAL_HQL_ID);
+            filterField.put("nodeId", CodeBook.EQUAL_HQL_ID);
             filterField.put("(date)createTime" , "createTime like :createTime");
             filterField.put("(date)lastUpdateTime" , "lastUpdateTime like :createTime");
             filterField.put("lastUpdateUser", CodeBook.EQUAL_HQL_ID);
-			filterField.put("startTime", CodeBook.EQUAL_HQL_ID);
-			filterField.put("nodeState", CodeBook.EQUAL_HQL_ID);
-			filterField.put("subFlowInstId", CodeBook.EQUAL_HQL_ID);
-			filterField.put("unitCode", CodeBook.EQUAL_HQL_ID);
-			filterField.put("transId", CodeBook.EQUAL_HQL_ID);
-			filterField.put("runToken", CodeBook.EQUAL_HQL_ID);
+            filterField.put("startTime", CodeBook.EQUAL_HQL_ID);
+            filterField.put("nodeState", CodeBook.EQUAL_HQL_ID);
+            filterField.put("subFlowInstId", CodeBook.EQUAL_HQL_ID);
+            filterField.put("unitCode", CodeBook.EQUAL_HQL_ID);
+            filterField.put("transId", CodeBook.EQUAL_HQL_ID);
+            filterField.put("runToken", CodeBook.EQUAL_HQL_ID);
             filterField.put("taskAssigned", CodeBook.EQUAL_HQL_ID);
             filterField.put("userCode", CodeBook.EQUAL_HQL_ID);
-			
+
             filterField.put(CodeBook.ORDER_BY_HQL_ID, "nodeInstId desc");
 
-		}
-		return filterField;
-	}
+        }
+        return filterField;
+    }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public long getNextNodeInstId() {
-		return DatabaseOptUtils.getSequenceNextValue(this,"S_NODEINSTNO");
-	}
+        return DatabaseOptUtils.getSequenceNextValue(this,"S_NODEINSTNO");
+    }
 
-	/**
-	 * 根据节点实例编号，更新当前节点运行状态，
-	 * @param nodeinstid 节点实例编号
-	 * @param state 状态代码  
+    /**
+     * 根据节点实例编号，更新当前节点运行状态，
+     * @param nodeinstid 节点实例编号
+     * @param state 状态代码
     */
     @Transactional(propagation= Propagation.MANDATORY)
     public void updtNodeInstState(long nodeinstid, String state) {
-		NodeInstance nodeInst = this.getObjectById(nodeinstid);
-		nodeInst.setNodeState(state);
-		this.updateObject(nodeInst);
-	}
+        NodeInstance nodeInst = this.getObjectById(nodeinstid);
+        nodeInst.setNodeState(state);
+        this.updateObject(nodeInst);
+    }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listNodeInstByState(long flowInstId, String nodeState) {
