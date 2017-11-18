@@ -1,8 +1,10 @@
 package com.centit.workflow.external;
 
 import com.centit.framework.model.basedata.IUserInfo;
+import com.centit.support.algorithm.DatetimeOpt;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +34,11 @@ public class ExtSysUserInfo implements IUserInfo {
     @Override
     public String getUserPin() {
         return "password";
+    }
+
+    @Override
+    public Date getPwdExpiredTime() {
+        return DatetimeOpt.addDays(DatetimeOpt.currentUtilDate(),100);
     }
 
     /**
@@ -112,6 +119,16 @@ public class ExtSysUserInfo implements IUserInfo {
     @Override
     public Long getUserOrder() {
         return this.userOrder;
+    }
+
+    @Override
+    public String getIdCardNo() {
+        return null;
+    }
+
+    @Override
+    public String getUserTag() {
+        return null;
     }
 
     /**

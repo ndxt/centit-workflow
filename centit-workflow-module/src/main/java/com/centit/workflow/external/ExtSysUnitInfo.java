@@ -109,6 +109,11 @@ public class ExtSysUnitInfo implements IUnitInfo{
         return this.unitManager;
     }
 
+    @Override
+    public String getUnitTag() {
+        return null;
+    }
+
     /**
      * 获取下级机构
      *
