@@ -95,7 +95,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
      * @return
      */
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<UserTask> listUserTaskFinJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
+    public List<UserTask> listUserTaskFinByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskFinBaseSql ,filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
@@ -105,7 +105,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<UserTask> listUserTaskJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
+    public List<UserTask> listUserTaskByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskBaseSql,filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
