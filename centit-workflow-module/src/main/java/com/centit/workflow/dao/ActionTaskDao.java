@@ -32,25 +32,38 @@ import java.util.Map;
 public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 {
     private final static String userTaskFinBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
-            "FLOW_OPT_TAG,NODE_INST_ID,UNITCODE,USER_CODE,ROLE_TYPE," +
-            "ROLE_CODE,AUTHDESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
+            "FLOW_OPT_TAG,NODE_INST_ID,UNIT_CODE,USER_CODE,ROLE_TYPE," +
+            "ROLE_CODE,AUTH_DESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
             "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
             "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
             "LAST_UPDATE_TIME,INST_STATE " +
             "from V_USER_TASK_LIST_FIN " +
-            "where 1=1 ";
+            "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
+            "[ :userCode| and USER_CODE = :userCode] " +
+            "[ :nodeCode| and NODE_CODE = :nodeCode] " +
+            "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
+            "[ :flowCode| and FLOW_CODE = :flowCode] " +
+            "[ :stageCode| and STAGE_CODE = :stageCode] ";
+
     private final static String userTaskBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
-            "FLOW_OPT_TAG,NODE_INST_ID,UNITCODE,USER_CODE,ROLE_TYPE," +
-            "ROLE_CODE,AUTHDESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
+            "FLOW_OPT_TAG,NODE_INST_ID,UNIT_CODE,USER_CODE,ROLE_TYPE," +
+            "ROLE_CODE,AUTH_DESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
             "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
             "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
             "LAST_UPDATE_TIME,INST_STATE " +
             "from V_USER_TASK_LIST " +
-            "where 1=1 ";
+            "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
+            "[ :userCode| and USER_CODE = :userCode] " +
+            "[ :nodeCode| and NODE_CODE = :nodeCode] " +
+            "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
+            "[ :flowCode| and FLOW_CODE = :flowCode] " +
+            "[ :stageCode| and STAGE_CODE = :stageCode] ";
+
     private final static String actionTaskBaseSql = "select TASK_ID,NODE_INST_ID," +
             "ASSIGN_TIME,EXPIRE_TIME,USER_CODE,ROLE_TYPE,ROLE_CODE,TASK_STATE,IS_VALID,AUTH_DESC" +
             "from WF_ACTION_TASK " +
             "where 1=1 ";
+
      public Map<String, String> getFilterField() {
         if( filterField == null){
             filterField = new HashMap<>();
@@ -81,84 +94,24 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
      * @param pageDesc
      * @return
      */
-    @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
     public List<UserTask> listUserTaskFinJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
-        String conditionSql = "[ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
-                "[ :userCode| and USER_CODE = :userCode] " +
-                "[ :nodeCode| and NODE_CODE = :nodeCode] " +
-                "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
-                "[ :flowCode| and FLOW_CODE = :flowCode] " +
-                "[ :stageCode| and STAGE_CODE = :stageCode] ";
 
-        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskFinBaseSql + conditionSql,filter);
+        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskFinBaseSql ,filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
                 queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
-        List<UserTask> list = new ArrayList<>();
-        if(dataList != null) {
-            list = JSONObject.parseArray(dataList.toJSONString(),UserTask.class);
-        }
-        //List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc,UserTask.class);
-        return list;
+
+        return dataList == null? null : dataList.toJavaList(UserTask.class);
     }
 
-    @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<UserTask> listUserTaskFinByFilter(Map<String,Object> filter, PageDesc pageDesc){
-        List<UserTask> userTask = listUserTaskFinJsonByFilter(filter,pageDesc);
-        return userTask;
-    }
+    public List<UserTask> listUserTaskJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
-
-
-
-
-    @SuppressWarnings("unchecked")
-    @Transactional(propagation= Propagation.MANDATORY)
-    public List<UserTask>  listUserTaskJsonByFilter(Map<String,Object> filter, PageDesc pageDesc){
-
-        /*switch(DBType.mapDialectToDBType(DatabaseOptUtils.getDialectName())){
-            case Oracle:
-
-            case DB2:
-
-            case SqlServer:
-
-            case Access:
-
-            case MySql:
-
-            default:
-
-        }*/
-
-        String conditionSql = "[ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
-                "[ :userCode| and USER_CODE = :userCode] " +
-                "[ :nodeCode| and NODE_CODE = :nodeCode] " +
-                "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
-                "[ :flowCode| and FLOW_CODE = :flowCode] " +
-                "[ :stageCode| and STAGE_CODE = :stageCode] ";
-
-        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskBaseSql + conditionSql,filter);
+        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskBaseSql,filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
                 queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
-        List<UserTask> list = new ArrayList<>();
-        if(dataList != null) {
-            list = JSONObject.parseArray(dataList.toJSONString(), UserTask.class);
-        }
-        //List<UserTask>  userTasks = JSONArray.t
-        //List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc,UserTask.class);
-        return list;
+        return dataList == null? null : dataList.toJavaList(UserTask.class);
     }
-
-    @SuppressWarnings("unchecked")
-    @Transactional(propagation= Propagation.MANDATORY)
-    public List<UserTask> listUserTaskByFilter(Map<String,Object> filter, PageDesc pageDesc){
-        List<UserTask> userTask = listUserTaskJsonByFilter(filter,pageDesc);
-        return userTask;
-    }
-
-
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<ActionTask> getActionTaskByNodeidAndUser(long nodeInstId , String userCode){

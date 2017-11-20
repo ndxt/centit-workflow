@@ -21,12 +21,6 @@ public class UserTask implements java.io.Serializable {
     private String  authDesc;
     private String  flowOptName;
     private String  flowName;
-    public String getFlowName() {
-        return flowName;
-    }
-    public void setFlowName(String flowName) {
-        this.flowName = flowName;
-    }
     private String  flowOptTag;
     private String  flowCode;
     private String  version;
@@ -136,7 +130,15 @@ public class UserTask implements java.io.Serializable {
     }
 
     // Property accessors
-     public Long getFlowInstId() {
+    public String getFlowName() {
+        return flowName;
+    }
+
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
+    }
+
+    public Long getFlowInstId() {
         return this.flowInstId;
     }
 

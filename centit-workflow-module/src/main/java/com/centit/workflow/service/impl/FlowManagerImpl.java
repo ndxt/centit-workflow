@@ -824,8 +824,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
             nodeInst.setNodeName(node.getNodeName());
             if (nodeInst.getNodeState().equals("N")) {
-                List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(
-                        QueryUtils.createSqlParamsMap("nodeInstId",nodeInst.getNodeInstId()), new PageDesc(-1,-1));
+                List<UserTask> taskList = actionTaskDao.listObjectsByProperty( "nodeInstId",nodeInst.getNodeInstId());
 
                 List<String> trainsUsers = new ArrayList<String>();
                 for (UserTask userTask : taskList) {
