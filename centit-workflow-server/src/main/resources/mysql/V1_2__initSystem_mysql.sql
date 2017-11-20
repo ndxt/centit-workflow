@@ -71,7 +71,7 @@ UNION ALL
 		`c`.`NODE_CODE` AS `node_code`,
 		`c`.`NODE_NAME` AS `Node_Name`,
 		`c`.`NODE_TYPE` AS `Node_Type`,
-		`c`.`OPT_TYPE` AS `NODEOPTTYPE`,
+		`c`.`OPT_TYPE` AS `NODE_OPT_TYPE`,
 		`c`.`OPT_PARAM` AS `Opt_Param`,
 		`a`.`CREATE_TIME` AS `CREATE_TIME`,
 		`a`.`promise_Time` AS `Promise_Time`,

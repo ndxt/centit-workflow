@@ -34,7 +34,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     private final static String userTaskFinBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
             "FLOW_OPT_TAG,NODE_INST_ID,UNITCODE,USER_CODE,ROLE_TYPE," +
             "ROLE_CODE,AUTHDESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
-            "NODEOPTTYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
+            "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
             "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
             "LAST_UPDATE_TIME,INST_STATE " +
             "from V_USER_TASK_LIST_FIN " +
@@ -42,7 +42,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     private final static String userTaskBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
             "FLOW_OPT_TAG,NODE_INST_ID,UNITCODE,USER_CODE,ROLE_TYPE," +
             "ROLE_CODE,AUTHDESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
-            "NODEOPTTYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
+            "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
             "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
             "LAST_UPDATE_TIME,INST_STATE " +
             "from V_USER_TASK_LIST " +
@@ -53,7 +53,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "where 1=1 ";
      public Map<String, String> getFilterField() {
         if( filterField == null){
-            filterField = new HashMap<String, String>();
+            filterField = new HashMap<>();
             filterField.put("taskId" , CodeBook.EQUAL_HQL_ID);
             filterField.put("nodeInstId" , CodeBook.EQUAL_HQL_ID);
             filterField.put("assignTime" , CodeBook.EQUAL_HQL_ID);
