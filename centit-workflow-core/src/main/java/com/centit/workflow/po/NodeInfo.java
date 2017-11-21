@@ -97,14 +97,6 @@ public class NodeInfo implements java.io.Serializable {
     private String warningRule;
     @Column(name = "WARNING_PARAM")
     private String warningParam;
-    
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-       @JoinColumn(name="FLOW_CODE", referencedColumnName="FLOW_CODE"),
-       @JoinColumn(name="VERSION", referencedColumnName="VERSION")
-    })
-
     /**
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
      */

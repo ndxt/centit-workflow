@@ -34,12 +34,6 @@ public class FlowStage implements java.io.Serializable {
     @Column(name = "EXPIRE_OPT")
     private String  expireOpt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-        @JoinColumn(name="VERSION", referencedColumnName="VERSION"),
-        @JoinColumn(name="FLOW_CODE", referencedColumnName="FLOW_CODE")
-    })
-
     /**
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
      */

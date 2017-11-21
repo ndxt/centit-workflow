@@ -62,6 +62,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         this.flowDefineDao = baseDao;
     }
 
+    @Override
     @Transactional
     public List<FlowInfo> getFlowsByOptId(String optId) {
         Map<String, Object> filterMap = new HashMap<String, Object>();
@@ -99,7 +100,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @param flowDef
      * @return wfSet
      */
-    @Transactional
     private Set<NodeInfo> mapWfNodeSet(List<Node> nodeList, FlowInfo flowDef, FlowDataDetail flowData){
         flowData.nodeTagToId.clear();
         Set<NodeInfo> wfSet = new HashSet<NodeInfo>();
@@ -208,7 +208,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @param flowDef
      * @return wfTranSet
      */
-    @Transactional
     private Set<FlowTransition> getWfTransitionSet(List<Node> transList, FlowInfo flowDef, FlowDataDetail flowData){
         Set<FlowTransition> wfTranSet = new HashSet<FlowTransition>();
         flowData.transTagToId.clear();
@@ -496,7 +495,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         newFlowDef.setFlowState("B");
         //复制相关节点信息
         //newFlowDef.getWfFlowStages()
+
         flowDefineDao.saveNewObject(newFlowDef);
+        flowDefineDao.saveObjectReferences(newFlowDef);
 
         //将0版本更新为已发布
         flowDef.setFlowState("E");

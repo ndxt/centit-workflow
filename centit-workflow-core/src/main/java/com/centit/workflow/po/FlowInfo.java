@@ -67,10 +67,24 @@ public class FlowInfo implements java.io.Serializable {
     private Date  atPublishDate;        
 
     @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
+            @JoinColumn(name="version", referencedColumnName="version")
+    })
     private List<FlowStage> flowStages;// new ArrayList<WfFlowStage>();
+
     @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
+            @JoinColumn(name="version", referencedColumnName="version")
+    })
     private Set<NodeInfo> flowNodes;// new ArrayList<WfNode>();
+
     @OneToMany(mappedBy = "flowDefine", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
+            @JoinColumn(name="version", referencedColumnName="version")
+    })
     private Set<FlowTransition> flowTransitions;// new ArrayList<WfTransition>();
     
     // Constructors
