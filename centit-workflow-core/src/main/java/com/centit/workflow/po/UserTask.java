@@ -1,13 +1,14 @@
 package com.centit.workflow.po;
 
 import com.centit.support.common.WorkTimeSpan;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 
 public class UserTask implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
@@ -40,7 +41,8 @@ public class UserTask implements java.io.Serializable {
     private String roleType;
     private String roleCode;
     private String instState;
-    
+    private String optUrl;
+
     //流程节点阶段
     private String flowStage;
 
@@ -54,8 +56,8 @@ public class UserTask implements java.io.Serializable {
     private Date flowExpireTime;
 
     private Long flowTimeLimit;
-    
-  
+
+
     // Constructors
     /** default constructor */
     public UserTask() {
@@ -112,7 +114,7 @@ public class UserTask implements java.io.Serializable {
     public void setNodeCode(String nodeCode) {
         this.nodeCode = nodeCode;
     }
-    
+
     public String getRoleType() {
         return this.roleType;
     }
@@ -120,7 +122,7 @@ public class UserTask implements java.io.Serializable {
     public void setRoleType(String roleType) {
         this.roleType = roleType;
     }
-  
+
     public String getRoleCode() {
         return this.roleCode;
     }
@@ -145,7 +147,7 @@ public class UserTask implements java.io.Serializable {
     public void setFlowInstId(Long flowInstId) {
         this.flowInstId = flowInstId;
     }
-  
+
     public String getAuthDesc() {
         return this.authDesc;
     }
@@ -153,7 +155,7 @@ public class UserTask implements java.io.Serializable {
     public void setAuthDesc(String authDesc) {
         this.authDesc = authDesc;
     }
-  
+
     public String getFlowOptName() {
         return this.flowOptName;
     }
@@ -161,7 +163,7 @@ public class UserTask implements java.io.Serializable {
     public void setFlowOptName(String flowOptName) {
         this.flowOptName = flowOptName;
     }
-  
+
     public String getFlowOptTag() {
         return this.flowOptTag;
     }
@@ -169,7 +171,7 @@ public class UserTask implements java.io.Serializable {
     public void setFlowOptTag(String flowOptTag) {
         this.flowOptTag = flowOptTag;
     }
-  
+
     public String getNodeName() {
         return this.nodeName;
     }
@@ -177,7 +179,7 @@ public class UserTask implements java.io.Serializable {
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
     }
-  
+
     public String getNodeType() {
         return this.nodeType;
     }
@@ -185,7 +187,7 @@ public class UserTask implements java.io.Serializable {
     public void setNodeType(String nodeType) {
         this.nodeType = nodeType;
     }
-  
+
     public String getNodeOptType() {
         return this.nodeOptType;
     }
@@ -193,7 +195,7 @@ public class UserTask implements java.io.Serializable {
     public void setNodeOptType(String nodeOptType) {
         this.nodeOptType = nodeOptType;
     }
-  
+
     public String getOptParam() {
         return this.optParam;
     }
@@ -208,7 +210,7 @@ public class UserTask implements java.io.Serializable {
     public void setOptCode(String optCode) {
         this.optCode = optCode;
     }
-  
+
     public Date getCreateTime() {
         return this.createTime;
     }
@@ -224,15 +226,15 @@ public class UserTask implements java.io.Serializable {
         wts.fromNumber(promiseTime);
         return wts.getTimeSpanDesc();
     }
-    
+
     public Long getPromiseTime() {
         return promiseTime;
     }
-    
+
     public void setPromiseTime(Long promiseTime) {
         this.promiseTime = promiseTime;
     }
-  
+
     public String getTimeLimitStr() {
         if(timeLimit==null)
             return "";
@@ -242,8 +244,39 @@ public class UserTask implements java.io.Serializable {
     }
 
     public String getNodeOptUrl(){
-        return null;
+        if(this.optUrl==null)
+            return null;
+        StringBuilder urlBuilder = new StringBuilder(this.optUrl);
+        if(!this.optUrl.endsWith("?") && !this.optUrl.endsWith("&")){
+            if(this.optUrl.indexOf('?') == -1 )
+              urlBuilder.append('?');
+            else
+              urlBuilder.append('&');
+        }
+        urlBuilder.append("flowInstId=")
+            .append(this.flowInstId)
+            .append("&nodeInstId=")
+            .append(this.nodeInstId);
+        if(StringUtils.isNoneBlank(this.optParam)){
+            urlBuilder.append("&")
+            .append(this.optParam);
+        }
+        if(StringUtils.isNoneBlank(this.grantor) &&
+          ! StringUtils.equals(this.grantor, this.userCode)){
+            urlBuilder.append("&grantor=")
+              .append(this.grantor);
+        }
+        return urlBuilder.toString();
     }
+
+    public String getOptUrl() {
+        return optUrl;
+    }
+
+    public void setOptUrl(String optUrl) {
+        this.optUrl = optUrl;
+    }
+
     /**
      * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
      * @return
@@ -259,13 +292,13 @@ public class UserTask implements java.io.Serializable {
         this.expireOpt = expireopt;
     }
     public void copy(UserTask other){
-  
+
         this.setNodeInstId(other.getNodeInstId());
         this.setUnitCode(other.getUnitCode());
         this.setUserCode(other.getUserCode());
         this.setRoleType(other.getRoleType());
         this.setRoleCode(other.getRoleCode());
-  
+
         this.flowInstId= other.getFlowInstId();
         this.authDesc= other.getAuthDesc();
         this.flowOptName= other.getFlowOptName();
@@ -282,11 +315,12 @@ public class UserTask implements java.io.Serializable {
         this.grantor = other.getGrantor();
         this.flowStage = other.getFlowStage();
         this.roleType = other.getRoleType();
-        this.roleCode = other.getRoleCode(); 
+        this.roleCode = other.getRoleCode();
+        this.optUrl = other.getOptUrl();
     }
 
     public void copyNotNullProperty(UserTask other){
-  
+
     if( other.getNodeInstId() != null)
         this.setNodeInstId(other.getNodeInstId());
     if( other.getUnitCode() != null)
@@ -297,7 +331,7 @@ public class UserTask implements java.io.Serializable {
         this.setRoleType(other.getRoleType());
     if( other.getRoleCode() != null)
         this.setRoleCode(other.getRoleCode());
-  
+
         if( other.getFlowInstId() != null)
             this.flowInstId= other.getFlowInstId();
         if( other.getAuthDesc() != null)
@@ -335,10 +369,13 @@ public class UserTask implements java.io.Serializable {
         if(other.getRoleCode() != null){
             this.roleCode = other.getRoleCode();
         }
+        if(other.getOptUrl() != null){
+            this.optUrl = other.getOptUrl();
+        }
     }
 
     public void clearProperties(){
-  
+
         this.flowInstId= null;
         this.authDesc= null;
         this.flowOptName= null;
@@ -402,7 +439,7 @@ public class UserTask implements java.io.Serializable {
     public void setNodeExpireTime(Date nodeExpireTime) {
         this.nodeExpireTime = nodeExpireTime;
     }
- 
+
     public Date getNodeLastUpdateTime() {
         return nodeLastUpdateTime;
     }

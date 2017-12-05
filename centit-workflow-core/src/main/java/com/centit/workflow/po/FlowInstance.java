@@ -89,14 +89,14 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name="IS_TIMER")
     private String isTimer; //不计时N、计时T(有期限)、暂停P  忽略(无期限) F
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name="FLOW_INST_ID")
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInstance.class)
+    @JoinColumn(name="flowInstId")
     private List<NodeInstance> flowNodeInstances = null;// new ArrayList<WfNodeInstance>();
     @Transient
     @JSONField(serialize=false)
     private List<NodeInstance> activeNodeList;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name="FLOW_INST_ID")
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = StageInstance.class)
+    @JoinColumn(name="flowInstId")
     private List<StageInstance> flowStageInstances = null;// new ArrayList<WfNodeInstance>();
 
     @Transient
@@ -312,6 +312,8 @@ public class FlowInstance implements java.io.Serializable {
     }
 
     public List<NodeInstance> getNodeInstances() {
+        if(flowNodeInstances==null)
+            return null;
         Collections.sort(flowNodeInstances, new Comparator<NodeInstance>() {
 
             @Override
@@ -325,12 +327,12 @@ public class FlowInstance implements java.io.Serializable {
                 return -1;
             }
         });
-         return new ArrayList<NodeInstance>(flowNodeInstances);
+         return new ArrayList<>(flowNodeInstances);
     }
     
     public List<NodeInstance> getFlowNodeInstances(){
         if(this.flowNodeInstances ==null)
-            this.flowNodeInstances = new ArrayList<NodeInstance>();
+            this.flowNodeInstances = new ArrayList<>();
         return this.flowNodeInstances;
     }
 

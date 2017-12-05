@@ -456,8 +456,9 @@ public class NodeInstance implements java.io.Serializable {
     }
     
     public String getNodeName() {
-        return node.getNodeName();
+        return this.nodeName;
     }
+
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
     }

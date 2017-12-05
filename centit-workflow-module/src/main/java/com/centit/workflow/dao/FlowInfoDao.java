@@ -2,6 +2,7 @@ package com.centit.workflow.dao;
 
 import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
+import com.centit.support.database.orm.OrmDaoUtils;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
@@ -11,6 +12,7 @@ import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowInfoId;
 import com.centit.workflow.po.LastVersionFlowDefine;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +62,16 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     public long getNextStageId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
     }
-    
+
+    @Transactional(propagation= Propagation.MANDATORY)
+    public FlowInfo getObjectCascadeById(FlowInfoId flowInfoId){
+        return jdbcTemplate.execute(
+          (ConnectionCallback<FlowInfo>) conn ->
+            OrmDaoUtils.getObjectCascadeById(conn, flowInfoId, FlowInfo.class));
+      /*FlowInfo flowInfo = super.getObjectById(flowInfoId);
+        return super.fetchObjectReferences(flowInfo);*/
+    }
+
     @SuppressWarnings({ "unchecked", "deprecation" })
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInfo> getAllLastVertionFlows(Map<String,Object> filterMap){
@@ -82,7 +93,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     @Transactional(propagation= Propagation.MANDATORY)
     public FlowInfo getFlowDefineByID(String flowCode, Long version)
     {
-        return this.getObjectById(new FlowInfoId(version, flowCode));
+        return this.getObjectCascadeById(new FlowInfoId(version, flowCode));
     }
 
     @SuppressWarnings("unchecked")
@@ -102,7 +113,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInfo> getAllLastVertionFlows(
             Map<String, Object> filterMap, PageDesc pageDesc) {
-        
+
         String sql =  "select VERSION,FLOW_CODE,FLOW_NAME,FLOW_CLASS,FLOW_STATE,FLOW_DESC,FLOW_XML_DESC," +
                 "FLOW_PUBLISH_DATE,OPT_ID,TIME_LIMIT " +
                 " from F_V_LASTVERSIONFLOW" ;

@@ -70,9 +70,15 @@ public abstract class UserUnitCalcEngine {
         ecc.setFormula(roleExp);
         ecc.setVarTrans(varTrans);
         // if(lastSameNodeUnit!=null)
-        ecc.addAllUnitParam(unitParams);
-        ecc.addAllUserParam(userParams);
-        ecc.addAllRankParam(rankParams);
+        if(unitParams != null){
+            ecc.addAllUnitParam(unitParams);
+        }
+        if(userParams != null){
+            ecc.addAllUserParam(userParams);
+        }
+        if(rankParams != null){
+            ecc.addAllRankParam(rankParams);
+        }
 
         Set<String> sUsers = SysUserFilterEngine.calcRolesExp(ecc);
         if (sUsers == null || ecc.hasError())

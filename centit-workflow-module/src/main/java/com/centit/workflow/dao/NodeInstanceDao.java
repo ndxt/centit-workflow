@@ -1,10 +1,12 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
-import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.database.orm.OrmDaoUtils;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.NodeInstance;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 @Repository
 public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
-  
+
     public Map<String, String> getFilterField() {
         if (filterField == null) {
             filterField = new HashMap<String, String>();
@@ -64,6 +66,15 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
+    public NodeInstance getObjectCascadeById(long nodeInstid){
+        return jdbcTemplate.execute(
+            (ConnectionCallback<NodeInstance>) conn ->
+                OrmDaoUtils.getObjectCascadeById(conn, nodeInstid, NodeInstance.class));
+        /*NodeInstance flowInstance = super.getObjectById(nodeInstid);
+        return super.fetchObjectReferences(flowInstance);*/
+    }
+
+    @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listNodesWithoutOpt() {
         return this.listObjectsByFilter("where (node_State='N' or node_State='R') and  " +
                         "node_Inst_Id not in (select node_Inst_Id from v_user_task_list) and " +
@@ -76,7 +87,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
         return this.listObjectsByFilter(" where time_Limit <= ? and node_State='N' and " +
                 "(is_Timer='T' or is_Timer='R')",new Object[]{leaveTime});
     }
-    
+
 
     /**
      * 查询最后更改的节点
@@ -90,7 +101,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
                         "order by last_Update_Time ",
                 new Object[]{userCode,state});
     }
-    
+
     /**
      * 查询某人操作计时的节点
      * @param userCode
@@ -102,7 +113,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
                         "order by last_Update_Time ",
                 new Object[]{userCode,isTimer},pageDesc);
     }
-    
+
     /**
      * 更新节点实例时钟状态
      * @param instid 实例编号

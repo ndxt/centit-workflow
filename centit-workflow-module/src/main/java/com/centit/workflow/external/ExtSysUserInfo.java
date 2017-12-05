@@ -131,7 +131,17 @@ public class ExtSysUserInfo implements IUserInfo {
         return null;
     }
 
-    /**
+    @Override
+    public String getEnglishName() {
+      return this.userName;
+    }
+
+    @Override
+    public String getUserDesc() {
+      return this.userName;
+    }
+
+  /**
      * 获取用户归属机构关系
      *
      * @return 获取用户归属机构关系

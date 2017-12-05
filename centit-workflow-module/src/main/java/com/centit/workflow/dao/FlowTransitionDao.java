@@ -43,11 +43,11 @@ public class FlowTransitionDao extends BaseDaoImpl<FlowTransition,Long>
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowTransition> getNodeTrans(long nodeID){
-        return this.listObjectsByFilter("where start_NodeId = ?",new Object[]{nodeID});
+        return this.listObjectsByFilter("where start_Node_Id = ?",new Object[]{nodeID});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowTransition> getNodeInputTrans(long nodeID){
-        return this.listObjectsByFilter("where endNodeId = ?",new Object[]{nodeID});
+        return this.listObjectsByFilter("where end_Node_Id = ?",new Object[]{nodeID});
     }
 }

@@ -66,21 +66,21 @@ public class FlowInfo implements java.io.Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date  atPublishDate;        
 
-    @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowStage.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version")
     })
     private List<FlowStage> flowStages;// new ArrayList<WfFlowStage>();
 
-    @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInfo.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version")
     })
     private Set<NodeInfo> flowNodes;// new ArrayList<WfNode>();
 
-    @OneToMany(mappedBy = "flowDefine", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "flowDefine", cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowTransition.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version")
@@ -264,13 +264,22 @@ public class FlowInfo implements java.io.Serializable {
     }
 
     public void setFlowNodes(Set<NodeInfo> wfNodes) {
+        if(wfNodes == null || wfNodes.size() == 0){
+            this.flowNodes = wfNodes;
+            return;
+        }
+        for(NodeInfo nodeInfo:wfNodes){
+            addFlowNode(nodeInfo);
+        }
         this.flowNodes = wfNodes;
     }   
 
     public void addFlowNode(NodeInfo wfNode ){
         if (this.flowNodes ==null)
-            this.flowNodes = new HashSet<NodeInfo>();
-        wfNode.setFlowDefine(this);
+            this.flowNodes = new HashSet<>();
+        //wfNode.setFlowDefine(this);
+        wfNode.setFlowCode(this.getFlowCode());
+        wfNode.setVersion(this.getVersion());
         this.flowNodes.add(wfNode);
     }
     
@@ -303,13 +312,22 @@ public class FlowInfo implements java.io.Serializable {
     }
 
     public void setFlowTransitions(Set<FlowTransition> wfTransitions) {
+        if(wfTransitions == null || wfTransitions.size() == 0){
+            this.flowTransitions = wfTransitions;
+            return;
+        }
+        for(FlowTransition flowTransition:wfTransitions){
+            addFlowTransition(flowTransition);
+        }
         this.flowTransitions = wfTransitions;
     }   
 
     public void addFlowTransition(FlowTransition wfTransition ){
         if (this.flowTransitions ==null)
             this.flowTransitions = new HashSet<FlowTransition>();
-        wfTransition.setFlowDefine(this);
+        //wfTransition.setFlowDefine(this);
+        wfTransition.setFlowCode(this.getFlowCode());
+        wfTransition.setVersion(this.getVersion());
         this.flowTransitions.add(wfTransition);
     }
     
@@ -386,12 +404,22 @@ public class FlowInfo implements java.io.Serializable {
     }
     
     public void setFlowStages(List<FlowStage> flowstages){
+        if(flowstages == null || flowstages.size() == 0){
+            this.flowStages =flowstages;
+            return;
+        }
+        for(FlowStage flowStage:flowstages){
+            addFlowStage(flowStage);
+        }
         this.flowStages =flowstages;
     }
     
  
     public void addFlowStage(FlowStage wfFlowStage ){
-        wfFlowStage.setFlowDefine(this);
+        //wfFlowStage.setFlowDefine(this);
+        wfFlowStage.setFlowCode(this.getFlowCode());
+        wfFlowStage.setVersion(this.getVersion());
+
         //wfFlowStage.setVersion(this.getVersion());
         this.getFlowStages().add(wfFlowStage);
     }

@@ -65,8 +65,8 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/{flowInstId}", method = RequestMethod.GET)
     public void getFlowInstance(@PathVariable Long flowInstId,  HttpServletResponse response) {
         FlowInstance flowInst = flowManager.getFlowInstance(flowInstId);
-        Map<String ,Object> result=new HashMap<String,Object>();
-        excludes  =new HashMap<Class<?>, String[]>();
+        Map<String ,Object> result=new HashMap<>();
+        excludes  =new HashMap<>();
         excludes.put(FlowInstance.class,new String[]{"flowDefine","wfStageInstances"});
         excludes.put(NodeInstance.class,new String[]{"wfActionLogs"});
         excludes.put(NodeInfo.class,new String[]{"flowDefine"});

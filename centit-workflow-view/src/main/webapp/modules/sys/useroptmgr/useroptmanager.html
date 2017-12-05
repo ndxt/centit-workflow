@@ -62,6 +62,7 @@
                         <th data-options="field:'nodeName'" width="100" align="center">节点名称</th>
                         <th data-options="field:'timeLimitStr'" width="100" sortable="true" align="center">剩余时间</th>
                         <th data-options="field:'authDesc'" width="100" align="center">描述</th>
+                        <th data-options="field:'optUrl',formatter:optLink" width="100" align="center">操作</th>
                     </tr>
                     </thead>
                 </table>
@@ -184,6 +185,12 @@
         </div>
     </div>
 </div>
+<script>
+    //办理按钮URL绑定
+    function optLink(val,row,index) {
+        return "<a href='"+ val+"'>办理</a>";
+    }
+</script>
 <script>
     $.parser.onComplete = function (panel) {
         $.parser.onComplete = $.noop;

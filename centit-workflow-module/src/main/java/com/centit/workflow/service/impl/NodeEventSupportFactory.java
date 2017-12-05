@@ -39,20 +39,18 @@ public class NodeEventSupportFactory {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(json == null ){
-                return null;
+            if(json != null ){
+                osInfos = JSONArray.parseArray(json.get("osInfos").toString());
             }
-            osInfos = JSONArray.parseArray(json.get("osInfos").toString());
         }
-        if(osInfos == null || osInfos.size() == 0){
-            return  null;
-        }
-        for(int i = 0;i < osInfos.size();i++){
-            JSONObject osInfo = (JSONObject)osInfos.get(i);
-            if(osId != null && osId.equals(osInfo.get("osId"))){
-                url = (String) osInfo.get("osUrl");
-                isLocal = false;
-                break;
+        if(osInfos != null && osInfos.size() > 0){
+            for(int i = 0;i < osInfos.size();i++){
+                JSONObject osInfo = (JSONObject)osInfos.get(i);
+                if(osId != null && osId.equals(osInfo.get("osId"))){
+                    url = (String) osInfo.get("osUrl");
+                    isLocal = false;
+                    break;
+                }
             }
         }
         if(!isLocal){

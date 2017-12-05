@@ -1,11 +1,10 @@
 package com.centit.workflow.dao;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.core.dao.CodeBook;
-import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryAndNamedParams;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.ActionTask;
@@ -15,15 +14,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 
+ *
  * 流程任务数据操作类
- * 
+ *
  * @author ljy
  * @version $Rev$ <br>
  *          $Id$
@@ -36,7 +34,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "ROLE_CODE,AUTH_DESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
             "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
             "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
-            "LAST_UPDATE_TIME,INST_STATE " +
+            "LAST_UPDATE_TIME,INST_STATE,OPT_URL " +
             "from V_USER_TASK_LIST_FIN " +
             "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
             "[ :userCode| and USER_CODE = :userCode] " +
@@ -50,7 +48,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "ROLE_CODE,AUTH_DESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
             "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
             "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
-            "LAST_UPDATE_TIME,INST_STATE " +
+            "LAST_UPDATE_TIME,INST_STATE,OPT_URL " +
             "from V_USER_TASK_LIST " +
             "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
             "[ :userCode| and USER_CODE = :userCode] " +
@@ -110,12 +108,14 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskBaseSql,filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
                 queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
+
         return dataList == null? null : dataList.toJavaList(UserTask.class);
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<ActionTask> getActionTaskByNodeidAndUser(long nodeInstId , String userCode){
         String whereSql = "where NODE_INST_ID=? and USER_CODE=? and IS_VALID='T'";
+
         return this.listObjectsByFilter(whereSql, new Object[]{nodeInstId,userCode});
     }
 
@@ -147,7 +147,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
                  return userCode;
             else
                 grantor = task;
-        }            
+        }
         return grantor;
     }
 

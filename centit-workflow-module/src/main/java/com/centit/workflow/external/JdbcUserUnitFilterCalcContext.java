@@ -2,7 +2,11 @@ package com.centit.workflow.external;
 
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.impl.AbstractUserUnitFilterCalcContext;
+import com.centit.framework.model.basedata.IUnitInfo;
+import com.centit.framework.model.basedata.IUserUnit;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +29,22 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
     }
 
     @Override
+    public List<ExtSysUnitInfo> listSubUnit(String unitCode) {
+        List<ExtSysUnitInfo> units = new ArrayList<>(10);
+        for(ExtSysUnitInfo ui : ExternalSystemData.allunitInfo ){
+            if(StringUtils.equals(unitCode,ui.getParentUnit())){
+                units.add(ui);
+            }
+        }
+        return units;
+    }
+
+    @Override
+    public List<ExtSysUnitInfo> listSubUnitAll(String unitCode) {
+        return listSubUnit(unitCode);
+    }
+
+    @Override
     public ExtSysUnitInfo getUnitInfoByCode(String unitCode) {
         return ExternalSystemData.getUnitInfoByCode(unitCode);
     }
@@ -38,6 +58,14 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
     public List<ExtSysUserUnit> listUnitUsers(String unitCode) {
         ExtSysUnitInfo unitInfo = getUnitInfoByCode(unitCode);
         return unitInfo==null?null:unitInfo.getUnitUsers();
+    }
+
+    @Override
+    public List<ExtSysUserUnit> listUserUnits(String userCode) {
+        ExtSysUserInfo userInfo = getUserInfoByCode(userCode);
+        if(userInfo==null)
+            return null;
+        return userInfo.getUserUnits();
     }
 
     @Override

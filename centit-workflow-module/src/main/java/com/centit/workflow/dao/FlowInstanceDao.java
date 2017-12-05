@@ -1,11 +1,13 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
-import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.database.orm.OrmDaoUtils;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.FlowInstance;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,8 +71,17 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
         this.updateObject(flowInst);
     }
 
+    @Transactional(propagation= Propagation.MANDATORY)
+    public FlowInstance getObjectCascadeById(long instid){
+      return jdbcTemplate.execute(
+        (ConnectionCallback<FlowInstance>) conn ->
+          OrmDaoUtils.getObjectCascadeById(conn, instid, FlowInstance.class));
+
+      /*FlowInstance flowInstance = super.getObjectById(instid);
+        return super.fetchObjectReferences(flowInstance);*/
+    }
     /**
-     *  获取用户参与 流程实例 按照时间倒序排列 
+     *  获取用户参与 流程实例 按照时间倒序排列
      * @param userCode 用户代码
      * @param pageDesc 分页描述
      * @return
@@ -95,8 +106,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
         }
         return this.listObjectsByFilter(whereSql,filterMap,pageDesc);
     }
-    
-    // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F  
+
+    // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
     // expireOptSign == 0未处理  1 已通知  ,2..6 已通知2..5次（暂时不启动重复通知）6:不处理    7：已挂起  8 已终止 9 已完成
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listNearExpireFlowInstance(long leaveLimit) {
@@ -112,7 +123,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
                 "where inst_State='N' and is_Timer='T' and time_Limit is not null  ";
         this.getJdbcTemplate().update(baseSql,new Object[]{consumeTime});
     }
-    
+
     /**
      * 查询所有活动的流程
      * @return
@@ -130,7 +141,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     public List<FlowInstance> listAllActiveTimerFlowInst(PageDesc pageDesc){
         return this.listObjectsByFilter("where inst_State = 'N' and is_Timer='T'",new Object[]{},pageDesc);
     }
-    
+
     /**
      * 查询某人操作定时任务的流程
      * @param userCode
@@ -143,7 +154,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
                 " where last_Update_User = ? and is_Timer =? order by last_Update_Time ",
                 new Object[]{userCode,isTimer},pageDesc);
     }
-    
+
     /**
      * 更新流程实例时钟状态
      * @param instid 实例编号
@@ -157,7 +168,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
         flowInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
         this.updateObject(flowInst);
     }
-    
+
     /**
      * 检查节点是否有其他没有提交的子流程
      * @param nodeInstId
