@@ -8,7 +8,7 @@ define(function(require) {
 
 		// @override
 		this.submit = function(table, data) {
-			window.open(Config.ViewContextPath+'page/workflow/index.html?flowCode='+data.flowCode+'&contentPath='+window.ContextPath+'&cs='+Cache.get('csrf').token);
+			window.open(Config.ViewContextPath+'page/workflow/index.html?flowCode='+data.flowCode+'&contentPath='+window.ContextPath);
 		};
 	});
 
