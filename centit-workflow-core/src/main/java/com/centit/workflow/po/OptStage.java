@@ -1,6 +1,6 @@
 package com.centit.workflow.po;
 
-import org.jetbrains.annotations.NotNull;
+import javax.validation.constraints.NotNull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

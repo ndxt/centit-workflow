@@ -32,10 +32,26 @@
             <artifactId>centit-persistence-jdbc</artifactId>
             <version>${centit.persistence.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-persistence-jdbc-config</artifactId>
+            <version>${centit.persistence.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-persistence-config</artifactId>
+            <version>${centit.persistence.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-ip-app</artifactId>
+            <version>${centit.ip.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-ip-app-config</artifactId>
             <version>${centit.ip.version}</version>
         </dependency>
 
