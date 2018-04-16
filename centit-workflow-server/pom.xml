@@ -5,7 +5,7 @@
     <parent>
         <artifactId>centit-workflow</artifactId>
         <groupId>com.centit.product</groupId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,12 +15,17 @@
     <description>工作流引擎服务，可以独立运行;这个工程也做为示例工程，业务需要用工作流引擎式可以复制这个工程，并对其进行改造
     </description>
 
-
     <dependencies>
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-system-view-easyui</artifactId>
             <version>${centit.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-workflow-view</artifactId>
+            <version>${centit.workflow.version}</version>
         </dependency>
 
         <dependency>
@@ -36,20 +41,19 @@
 
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>framework-persistence-jdbc</artifactId>
+            <artifactId>framework-core-web</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-system-web</artifactId>
             <version>${centit.framework.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-module</artifactId>
-            <version>${centit.workflow.version}</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-view</artifactId>
             <version>${centit.workflow.version}</version>
         </dependency>
 
@@ -70,17 +74,18 @@
             <artifactId>framework-config</artifactId>
             <version>${centit.framework.version}</version>
         </dependency>
-        <!--<dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-app</artifactId>
-            <version>${centit.ip.version}</version>
-        </dependency>-->
 
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-app-config</artifactId>
+            <artifactId>centit-ip-adapter</artifactId>
             <version>${centit.ip.version}</version>
         </dependency>
+
+        <!--<dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-ip-app-config</artifactId>
+            <version>${centit.ip.version}</version>
+        </dependency>-->
 
         <dependency>
             <groupId>com.centit.framework</groupId>
@@ -121,6 +126,11 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlet-api.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-workflow-module</artifactId>
+            <version>4.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

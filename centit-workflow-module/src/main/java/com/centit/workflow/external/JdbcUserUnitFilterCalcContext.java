@@ -2,9 +2,8 @@ package com.centit.workflow.external;
 
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.impl.AbstractUserUnitFilterCalcContext;
-import com.centit.framework.model.basedata.IUnitInfo;
-import com.centit.framework.model.basedata.IUserUnit;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,14 @@ import java.util.List;
  * Rank 获取用户职务等级信息，有一个职务类表
  */
 public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcContext {
+
+    @Value("${wf.external.system.jdbc.url}")
+    protected String externalJdbcUrl;
+    @Value("${wf.external.system.jdbc.user}")
+    protected String externalJdbcUser;
+    @Value("${wf.external.system.jdbc.password}")
+    protected String externalJdbcPassword;
+
 
     @Override
     public List<ExtSysUserInfo> listAllUserInfo() {
@@ -88,6 +95,6 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
      * 读取配置文件中的 JDBC 链接 和 sql语句
      */
     public void loadExternalSystemData(){
-        ExternalSystemData.loadExternalSystemData();
+        ExternalSystemData.loadExternalSystemData(externalJdbcUrl, externalJdbcUser, externalJdbcPassword);
     }
 }

@@ -1,13 +1,17 @@
 package com.centit.workflow.config;
 
+import com.centit.framework.common.SysParametersUtils;
+import com.centit.framework.components.UserUnitFilterCalcContext;
 import com.centit.framework.components.impl.NotificationCenterImpl;
+import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
 import com.centit.framework.components.impl.TextOperationLogWriterImpl;
+import com.centit.framework.config.SpringSecurityDaoConfig;
 import com.centit.framework.core.config.DataSourceConfig;
 import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.system.config.SystemBeanConfig;
-import com.centit.workflow.listener.InstantiationServiceBeanPostProcessor;
+import com.centit.workflow.external.JdbcUserUnitFilterCalcContext;
 import org.springframework.context.annotation.*;
 
 /**
@@ -18,8 +22,8 @@ import org.springframework.context.annotation.*;
         JdbcConfig.class,
         SpringSecurityDaoConfig.class,
         SystemBeanConfig.class})
-@ComponentScan(basePackages = {"com.centit.*"})
-@PropertySource("classpath:/system.properties")
+@ComponentScan(basePackages = "com.centit",
+        excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceConfig {
 
@@ -39,8 +43,19 @@ public class ServiceConfig {
         return operationLog;
     }
 
-    @Bean
 
+    @Bean
+    public UserUnitFilterCalcContext userUnitFilterCalcContext() {
+        if ("external".equalsIgnoreCase(SysParametersUtils.getStringValue("wf.userunit.engine.type"))){
+            JdbcUserUnitFilterCalcContext uufcc = new JdbcUserUnitFilterCalcContext();
+            uufcc.loadExternalSystemData();
+            return uufcc;
+        } else {
+            return new SystemUserUnitFilterCalcContext();
+        }
+    }
+
+    @Bean
     public InstantiationServiceBeanPostProcessor instantiationServiceBeanPostProcessor() {
         return new InstantiationServiceBeanPostProcessor();
     }

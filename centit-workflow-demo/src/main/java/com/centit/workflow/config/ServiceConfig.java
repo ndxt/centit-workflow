@@ -9,7 +9,6 @@ import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.config.SpringSecurityCasConfig;
 import com.centit.framework.config.SpringSecurityDaoConfig;
-import com.centit.workflow.listener.InstantiationServiceBeanPostProcessor;
 import org.springframework.context.annotation.*;
 
 /**

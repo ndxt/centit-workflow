@@ -1,6 +1,5 @@
 package com.centit.workflow.external;
 
-import com.centit.framework.common.SysParametersUtils;
 import com.centit.framework.core.dao.ExtendedQueryPool;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.NumberBaseOpt;
@@ -51,7 +50,7 @@ public abstract class ExternalSystemData {
      wf.external.system.jdbc.password =workflow
      wf.external.system.jdbc.url=jdbc:mysql://192.168.128.32:3306/workflow?characterEncoding=UTF-8
      */
-    public static void loadExternalSystemData(){
+    public static void loadExternalSystemData(String jdbcUrl, String jdbcUser, String jdbcPassword){
         //每小时更新一次
         if(lastLoadDataTime!=null &&
                 DatetimeOpt.currentUtilDate().before(DatetimeOpt.addHours(lastLoadDataTime,1 ) ))
@@ -59,9 +58,9 @@ public abstract class ExternalSystemData {
         lastLoadDataTime = DatetimeOpt.currentUtilDate();
 
         DataSourceDescription dataSourceDesc = new DataSourceDescription();
-        dataSourceDesc.setConnUrl(SysParametersUtils.getStringValue("wf.external.system.jdbc.url"));
-        dataSourceDesc.setUsername(SysParametersUtils.getStringValue("wf.external.system.jdbc.user"));
-        dataSourceDesc.setPassword(SysParametersUtils.getStringValue("wf.external.system.jdbc.password"));
+        dataSourceDesc.setConnUrl(jdbcUrl);//SysParametersUtils.getStringValue("wf.external.system.jdbc.url"));
+        dataSourceDesc.setUsername(jdbcUser);//SysParametersUtils.getStringValue("wf.external.system.jdbc.user"));
+        dataSourceDesc.setPassword(jdbcPassword);//SysParametersUtils.getStringValue("wf.external.system.jdbc.password"));
 
         try(Connection conn = DbcpConnectPools.getDbcpConnect(dataSourceDesc)){
             List<Object[]>  users = DatabaseAccess.findObjectsBySql(conn,
