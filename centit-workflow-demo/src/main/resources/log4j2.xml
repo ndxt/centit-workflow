@@ -16,7 +16,6 @@
              <PatternLayout
                  pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n" />
              <Policies>
-                 <TimeBasedTriggeringPolicy interval="" />
                  <SizeBasedTriggeringPolicy size="10 MB" />
              </Policies>
              <DefaultRolloverStrategy max="20" />
