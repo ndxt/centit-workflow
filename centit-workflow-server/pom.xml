@@ -83,6 +83,12 @@
             <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-core-web</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
