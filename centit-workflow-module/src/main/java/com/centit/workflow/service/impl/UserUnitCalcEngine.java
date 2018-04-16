@@ -1,6 +1,5 @@
 package com.centit.workflow.service.impl;
 
-import com.centit.framework.common.SysParametersUtils;
 import com.centit.framework.components.SysUnitFilterEngine;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitFilterCalcContext;
@@ -21,7 +20,7 @@ import java.util.Set;
  */
 public abstract class UserUnitCalcEngine {
     private static final Logger logger = LoggerFactory.getLogger(SysUserFilterEngine.class);
-
+/*
     public static UserUnitFilterCalcContext createWorkFlowUUFCC(){
         if("system".equalsIgnoreCase(SysParametersUtils.getStringValue("wf.userunit.engine.type"))){
             return new SystemUserUnitFilterCalcContext();
@@ -30,25 +29,27 @@ public abstract class UserUnitCalcEngine {
             uufcc.loadExternalSystemData();
             return uufcc;
         }
-    }
+    }*/
 
-    public static String calcSingleUnitByExp(String unitExp,
+    public static String calcSingleUnitByExp(
+                UserUnitFilterCalcContext ecc, String unitExp,
                 Map<String, Set<String>> unitParams , UserUnitVariableTranslate varTrans) {
         if (unitExp == null)
             return null;
-        UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
+        //UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
         ecc.setFormula(unitExp);
         ecc.setVarTrans(varTrans);
         ecc.addAllUnitParam(unitParams);
         return SysUnitFilterEngine.calcSingleUnitByExp(ecc);
     }
 
-    public static Set<String> calcUnitsByExp(String unitExp,
+    public static Set<String> calcUnitsByExp(
+            UserUnitFilterCalcContext ecc, String unitExp,
                                                    Map<String, Set<String>> unitParams,
                                                    UserUnitVariableTranslate varTrans) {
         if (unitExp == null)
             return null;
-        UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
+        //UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
         ecc.setFormula(unitExp);
         ecc.setVarTrans(varTrans);
         ecc.addAllUnitParam(unitParams);
@@ -60,13 +61,15 @@ public abstract class UserUnitCalcEngine {
         return untis;
     }
 
-    public static Set<String> calcOperators(String roleExp, Map<String, Set<String>> unitParams,
+    public static Set<String> calcOperators(
+            UserUnitFilterCalcContext ecc,
+            String roleExp, Map<String, Set<String>> unitParams,
                                                   Map<String, Set<String>> userParams,
                                                   Map<String, Integer> rankParams,
                                                   UserUnitVariableTranslate varTrans) {
         if (roleExp == null)
             return null;
-        UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
+        //UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
         ecc.setFormula(roleExp);
         ecc.setVarTrans(varTrans);
         // if(lastSameNodeUnit!=null)
