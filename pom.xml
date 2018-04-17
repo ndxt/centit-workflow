@@ -28,7 +28,7 @@
         <jdk.version>1.8</jdk.version>
         <ojdbc6.version>11.2.0.4</ojdbc6.version>
         <junit.version>4.12</junit.version>
-        <mysql.version>5.1.9</mysql.version>
+        <db.migration.mysql.version>5.1.9</db.migration.mysql.version>
     </properties>
 
     <licenses>

@@ -1,4 +1,4 @@
--- mysql -u tfzc -D tfzcpt -p <D:\Projects\j2eews\tfzcpt\src\sqlScript\createSequence.sql
+-- db.migration.mysql -u tfzc -D tfzcpt -p <D:\Projects\j2eews\tfzcpt\src\sqlScript\createSequence.sql
 
 -- use tfzcpt;
 
