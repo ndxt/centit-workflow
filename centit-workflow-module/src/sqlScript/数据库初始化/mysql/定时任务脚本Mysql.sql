@@ -2,15 +2,15 @@
 
 
 CREATE EVENT WF_CONSUME_LIFE
-ON SCHEDULE EVERY 5 MINUTE  -- Ã¿Îå·ÖÖÓÖ´ÐÐÒ»´Î
+ON SCHEDULE EVERY 5 MINUTE  -- Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ò»ï¿½ï¿½
 DO call consumeLifeTime() ;  
 
 
-SHOW VARIABLES LIKE 'event_scheduler'; -- ²é¿´¶¨Ê±Æ÷¹¦ÄÜÊÇ·ñ¿ªÆô
-set GLOBAL event_scheduler = ON; -- ¿ªÆô¶¨Ê±Æ÷¹¦ÄÜ
+SHOW VARIABLES LIKE 'event_scheduler'; -- ï¿½é¿´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½
+set GLOBAL event_scheduler = ON; -- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-drop event if exists WF_CONSUME_LIFE --É¾³ý¶¨Ê±Æ÷
-select * from mysql.event ; -²é¿´¶¨Ê±Æ÷ÏêÇé
-¡¡ALTER EVENT WF_CONSUME_LIFE enABLE;--ÔÝÍ£¶¨Ê±Æ÷
-¡¡ALTER EVENT WF_CONSUME_LIFE DISABLE; -¿ªÊ¼¶¨Ê±Æ÷
+drop event if exists WF_CONSUME_LIFE --É¾ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+select * from db.migration.mysql.event ; -ï¿½é¿´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ALTER EVENT WF_CONSUME_LIFE enABLE;--ï¿½ï¿½Í£ï¿½ï¿½Ê±ï¿½ï¿½
+ï¿½ï¿½ALTER EVENT WF_CONSUME_LIFE DISABLE; -ï¿½ï¿½Ê¼ï¿½ï¿½Ê±ï¿½ï¿½
 
