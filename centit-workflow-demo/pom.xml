@@ -69,13 +69,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>db.migration.mysql</groupId>
-            <artifactId>db.migration.mysql-connector-java</artifactId>
-            <version>${db.migration.mysql.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- server runtime library -->
         <dependency>
             <groupId>com.sun</groupId>

@@ -108,7 +108,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
+            <version>${db.migration.mysql.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -132,6 +132,13 @@
             <artifactId>centit-workflow-module</artifactId>
             <version>4.0.1-SNAPSHOT</version>
         </dependency>
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/com.h2database/h2 &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>com.h2database</groupId>-->
+            <!--<artifactId>h2</artifactId>-->
+            <!--<version>1.4.197</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>
