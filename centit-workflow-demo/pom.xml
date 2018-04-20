@@ -47,17 +47,6 @@
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-ip-app</artifactId>
             <version>${centit.ip.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>com.centit.framework</artifactId>
-                    <groupId>framework-system-static</groupId>
-                </exclusion>
-                <!-- 这个就是我们要加的片断 -->
-                <exclusion>
-                    <artifactId>com.centit.framework</artifactId>
-                    <groupId>framework-system-static-jdbc</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
