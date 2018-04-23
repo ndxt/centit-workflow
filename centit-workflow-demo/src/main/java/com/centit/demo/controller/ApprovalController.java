@@ -1,12 +1,15 @@
-package com.centit.workflow.controller;
+package com.centit.demo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.centit.demo.po.ApprovalAuditor;
+import com.centit.demo.po.ApprovalEvent;
+import com.centit.demo.po.ApprovalProcess;
+import com.centit.demo.service.ApprovalService;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
 import com.centit.workflow.po.*;
-import com.centit.workflow.service.ApprovalService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

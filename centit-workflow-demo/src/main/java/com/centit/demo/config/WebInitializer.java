@@ -1,4 +1,4 @@
-package com.centit.workflow.config;
+package com.centit.demo.config;
 
 import com.centit.framework.config.SystemSpringMvcConfig;
 import com.centit.framework.config.WebConfig;

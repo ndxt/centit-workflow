@@ -1,9 +1,9 @@
-package com.centit.workflow.dao;
+package com.centit.demo.dao;
 
 
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
-import com.centit.workflow.po.ApprovalAuditor;
+import com.centit.demo.po.ApprovalEvent;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,28 +15,28 @@ import java.util.Map;
  * Created by chen_rj on 2017/8/3.
  */
 @Repository
-public class ApprovalAuditorDao extends BaseDaoImpl<ApprovalAuditor,Long> {
+public class ApprovalEventDao extends BaseDaoImpl<ApprovalEvent,Long> {
+
     @Override
     public Map<String, String> getFilterField() {
         return null;
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    private long getNextApprovalAuditorId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_APPROVALAUDITOR");
+    public long getNextApprovalEventId(){
+        return DatabaseOptUtils.getSequenceNextValue(this,"S_APPROVALEVENT");
     }
 
-    @Override
     @Transactional(propagation= Propagation.MANDATORY)
-    public void saveNewObject(ApprovalAuditor o) {
-        if(o.getAuditorId() == null || o.getAuditorId() == 0){
-            o.setAuditorId(getNextApprovalAuditorId());
+    public void saveNewObject(ApprovalEvent o) {
+        if(o.getApprovalId() == null || o.getApprovalId() == 0){
+            o.setApprovalId(getNextApprovalEventId());
         }
         super.saveNewObject(o);
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<ApprovalAuditor> getAuditorsByPhaseNo(String phaseNo){
-        return this.listObjectsByFilter("where phase_No = ?",new Object[]{phaseNo});
+    public List<ApprovalEvent> getApprovalEventByFlowInstId(Long flowInstId){
+        return this.listObjectsByFilter("where flow_Inst_Id = ?",new Object[]{flowInstId});
     }
 }

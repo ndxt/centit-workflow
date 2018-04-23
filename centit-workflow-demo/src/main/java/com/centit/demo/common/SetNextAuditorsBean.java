@@ -1,11 +1,13 @@
-package com.centit.workflow.common;
+package com.centit.demo.common;
 
 
+import com.centit.demo.dao.ApprovalAuditorDao;
+import com.centit.demo.dao.ApprovalEventDao;
+import com.centit.demo.po.ApprovalAuditor;
+import com.centit.demo.po.ApprovalEvent;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
-import com.centit.workflow.dao.ApprovalAuditorDao;
-import com.centit.workflow.dao.ApprovalEventDao;
 import com.centit.workflow.po.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.centit.workflow.po;
+package com.centit.demo.po;
 
 import com.sun.istack.internal.NotNull;
 

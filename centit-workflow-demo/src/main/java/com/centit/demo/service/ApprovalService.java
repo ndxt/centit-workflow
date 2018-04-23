@@ -1,8 +1,8 @@
-package com.centit.workflow.service;
+package com.centit.demo.service;
 
-import com.centit.workflow.po.ApprovalAuditor;
-import com.centit.workflow.po.ApprovalEvent;
-import com.centit.workflow.po.ApprovalProcess;
+import com.centit.demo.po.ApprovalEvent;
+import com.centit.demo.po.ApprovalProcess;
+import com.centit.demo.po.ApprovalAuditor;
 import com.centit.workflow.po.UserTask;
 
 import javax.servlet.ServletContext;
@@ -18,21 +18,19 @@ public interface ApprovalService {
      * @param approvalEvent
      * @param approvalAuditors
      */
-    public Long startProcess(HttpServletRequest request,ApprovalEvent approvalEvent,
-                             List<ApprovalAuditor> approvalAuditors, int phaseNO, String userCode) throws Exception;
+    Long startProcess(HttpServletRequest request, ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors, int phaseNO, String userCode) throws Exception;
 
     /**
      * 审批通过或者不通过  需要保存审批意见，审批结果，如果通过还要设置下一步的审批人
      * @param userCodes
      * @param approvalProcess
      */
-    public void doApproval(List<String> userCodes, ApprovalProcess approvalProcess,
-                           long flowInstId, long nodeInstId,String userCode, ServletContext ctx) throws Exception;
+    void doApproval(List<String> userCodes, ApprovalProcess approvalProcess, long flowInstId, long nodeInstId, String userCode, ServletContext ctx) throws Exception;
 
     /**
      * 根据userCode获取 待办任务
      * @param userCode
      * @throws Exception
      */
-    public  List<UserTask> getUserTasksByUserCode(String userCode) throws Exception;
+    List<UserTask> getUserTasksByUserCode(String userCode) throws Exception;
 }

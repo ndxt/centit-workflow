@@ -17,11 +17,11 @@ import java.util.Set;
  */
 public interface FlowEngineClient {
 
-    public CloseableHttpClient getHttpClient() throws Exception ;
+    CloseableHttpClient getHttpClient() throws Exception ;
 
-    public void releaseHttpClient(CloseableHttpClient httpClient);
+    void releaseHttpClient(CloseableHttpClient httpClient);
 
-    public void setWorkFlowServerUrl(String workFlowServerUrl) ;
+    void setWorkFlowServerUrl(String workFlowServerUrl) ;
 
     //--------------------创建流程实例接口-----------------------------------    
     /**

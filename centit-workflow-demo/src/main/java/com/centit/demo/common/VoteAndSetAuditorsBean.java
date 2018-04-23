@@ -1,11 +1,11 @@
-package com.centit.workflow.common;
+package com.centit.demo.common;
 
+import com.centit.demo.dao.ApprovalEventDao;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
-import com.centit.workflow.dao.ApprovalEventDao;
-import com.centit.workflow.dao.ApprovalProcessDao;
-import com.centit.workflow.po.ApprovalProcess;
+import com.centit.demo.dao.ApprovalProcessDao;
+import com.centit.demo.po.ApprovalProcess;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;

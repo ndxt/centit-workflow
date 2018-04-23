@@ -1,4 +1,4 @@
-package com.centit.workflow.config;
+package com.centit.demo.config;
 
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.model.adapter.MessageSender;
