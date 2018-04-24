@@ -191,11 +191,11 @@ insert into f_optdef (OPTCODE, OPTID, OPTNAME, OPTMETHOD, OPTURL, OPTDESC, ISINW
 values ('1000103', 'USERFLOW', '新建', null, '/', '新建（系统默认）', null, now(), null, 'C', null, null);
 
 insert into f_rolepower (ROLECODE, OPTCODE, UPDATEDATE, CREATEDATE, OPTSCOPECODES,CREATOR,UPDATOR)
-values ('G-SYSADMIN', '1000101', now(), now(), null,'u0000000','u0000000');
+values ('SYSADMIN', '1000101', now(), now(), null,'u0000000','u0000000');
 
 insert into f_rolepower (ROLECODE, OPTCODE, UPDATEDATE, CREATEDATE, OPTSCOPECODES,CREATOR,UPDATOR)
-values ('G-SYSADMIN', '1000102', now(), now(), null,'u0000000','u0000000');
+values ('SYSADMIN', '1000102', now(), now(), null,'u0000000','u0000000');
 
 insert into f_rolepower (ROLECODE, OPTCODE, UPDATEDATE, CREATEDATE, OPTSCOPECODES,CREATOR,UPDATOR)
-values ('G-SYSADMIN', '1000103', now(), now(), null,'u0000000','u0000000');
+values ('SYSADMIN', '1000103', now(), now(), null,'u0000000','u0000000');
 
