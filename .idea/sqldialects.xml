@@ -4,8 +4,11 @@
     <file url="file://$PROJECT_DIR$/centit-workflow-demo/src/main/resources/migration/mysql/V1_1__createDatabase_mysql.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/centit-workflow-module/src/sqlScript/数据库初始化/mysql/工作流定时器Mysql.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/centit-workflow-module/src/sqlScript/数据库初始化/oracle/工作流定时器.pck" dialect="Oracle" />
-    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/db/migration/mysql/V1_1__initSystem_mysql.sql" dialect="MySQL" />
-    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/db/migration/mysql/V1_2__initSystem_mysql.sql" dialect="H2" />
-    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/db/migration/mysql/V1_3__initSystem_mysql.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/db/migration/h2/V1_1__createSysTablesH2.sql" dialect="H2" />
+    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/db/migration/h2/V1_2__initSysDataH2.sql" dialect="H2" />
+    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/db/migration/mysql/V1_1__createSysTablesMysql.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/db/migration/mysql/V1_2__initSysDataMySql.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/db/migration/oracle/V1_1__createSysTablesOracle.sql" dialect="Oracle" />
+    <file url="file://$PROJECT_DIR$/centit-workflow-server/src/main/resources/db/migration/oracle/V1_2__initSysDataOracle.sql" dialect="Oracle" />
   </component>
 </project>
