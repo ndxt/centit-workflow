@@ -95,6 +95,13 @@
             <artifactId>framework-core-web</artifactId>
             <version>${centit.framework.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.9</version>
+        </dependency>
     </dependencies>
 
     <build>
