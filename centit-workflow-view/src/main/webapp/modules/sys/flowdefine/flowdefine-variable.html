@@ -1,0 +1,60 @@
+<form class="form centit">
+    <div class="fields two">
+        <div class="field required">
+            <label>流程代码</label>
+            <input type="text" class="easyui-textbox" name="flowCode"
+                   readonly="true" required />
+        </div>
+
+        <div class="field required">
+            <label>流程名称</label>
+            <input type="text" class="easyui-textbox" name="flowName"
+                   required readonly="true" />
+        </div>
+    </div>
+</form>
+
+
+<table style="width: 99%; margin: 0 auto;"
+       fieldId="stageCode"
+       toolbar="#flowdefine_stage_toolbar"
+       height="300"
+       pageNumber="false" pagination="false"
+       editable="true"
+>
+    <thead>
+    <tr>
+        <th field="stageCode" width="100" align="center"
+            data-options="editor:{type:'textbox', options:{required: true}}">阶段编码</th>
+
+        <th field="stageName" width="160"
+            data-options="editor:{type:'textbox', options:{required: true}}">阶段名称名称</th>
+
+        <th data-options="field:'isAccountTime',editor:{type:'combobox', options:{required: true,
+				url:'system/cp/dictionary/YesOrNo',method:'get',
+				valueField:'dataCode',textField:'dataValue',loadFilter:function(data){return data;}}}" width="60" >是否记入时间</th>
+
+        <th data-options="field:'limitType',editor:{type:'combobox', options:{required: true,
+				url:'system/cp/dictionary/LIMIT_TYPE',method:'get',
+				valueField:'dataCode',textField:'dataValue',loadFilter:function(data){return data;}}}" width="160" >期限类别</th>
+
+        <th field="timeLimit" width="100" align="center"
+            data-options="editor:{type:'textbox'}">期限日期</th>
+
+        <th data-options="field:'expireOpt',editor:{type:'combobox', options:{required: true,
+				url:'system/cp/dictionary/WFExpireOpt',method:'get',
+				valueField:'dataCode',textField:'dataValue',loadFilter:function(data){return data;}}}" width="80" >逾期处理</th>
+    </tr>
+    </thead>
+</table>
+
+<div class="temp-toolbar" id="flowdefine_stage_toolbar">
+    <a rel="flowdefine_stage_add" iconCls="icon-add"
+       target="custom" trigger="none">新增</a>
+
+    <hr>
+
+    <a rel="flowdefine_stage_remove" iconCls="icon-base icon-base-ban"
+       target="confirm" trigger="single" title="是否确定删除 {{stageName}}？">删除</a>
+
+</div>
