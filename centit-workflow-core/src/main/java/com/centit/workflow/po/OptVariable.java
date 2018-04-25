@@ -11,6 +11,9 @@ import java.util.Date;
 
 /**
  * Created by chen_rj on 2017-9-19.
+ * 这个表更名为 WF_FLOW_VARIABLE_DEFINE
+ *
+ * 和这个对应 WF_FLOW_VARIABLE
  */
 @Entity
 @Table(name = "OPT_VARIABLE")
