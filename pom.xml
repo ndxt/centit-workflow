@@ -16,9 +16,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <centit.workflow.version>4.0.1-SNAPSHOT</centit.workflow.version>
-        <centit.framework.version>4.1.1803</centit.framework.version>
-        <centit.persistence.version>1.1.1803</centit.persistence.version>
-        <centit.commons.version>2.2.1803</centit.commons.version>
+        <centit.framework.version>4.1-SNAPSHOT</centit.framework.version>
+        <centit.persistence.version>1.1-SNAPSHOT</centit.persistence.version>
+        <centit.commons.version>2.2-SNAPSHOT</centit.commons.version>
         <centit.ui.version>3.1.0</centit.ui.version>
         <centit.ip.version>1.1-SNAPSHOT</centit.ip.version>
 
