@@ -11,9 +11,11 @@ import java.util.Date;
 
 /**
  * Created by chen_rj on 2017-9-19.
+ * 这个更名为 WF_FLOW_TEAM_ROLE
+ * 和流程关联
  */
 @Entity
-@Table(name = "OPT_TEAM_ROLE")
+@Table(name = "WF_FLOW_TEAM_ROLE")
 public class OptTeamRole implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -21,14 +23,14 @@ public class OptTeamRole implements Serializable {
     @Column(name = "OPT_TEAM_ROLE_ID")
     private String optTeamRoleId;
     @NotNull
-    @Column(name = "OPT_ID")
-    private String optId;
+    @Column(name = "FLOW_CODE")
+    private String flowCode;
     @NotNull
-    @Column(name = "OPT_ROLE_CODE")
-    private String optRoleCode;
+    @Column(name = "ROLE_CODE")
+    private String roleCode;
     @NotNull
     @Column(name = "OPT_ROLE_NAME")
-    private String optRoleName;
+    private String roleName;
     @Column(name = "OPT_TEAM_ROLE_ORDER")
     private Integer optTeamRoleOrder;
     @Column(name = "GMT_CREATE_TIME")

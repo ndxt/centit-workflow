@@ -11,6 +11,9 @@ import java.util.Date;
 
 /**
  * Created by chen_rj on 2017-9-19.
+ * 这个表删除，业务的操作节点 采用系统的业务操作中的定义。
+ *
+ * 用这个方法 CodeRepositoryUtil.getOptMethodByOptID 。 参数为 FlowInfo.optId
  */
 @Entity
 @Table(name = "OPT_NODE")

@@ -11,6 +11,8 @@ import java.util.Date;
 
 /**
  * Created by chen_rj on 2017-9-19.
+ *
+ * 这个删除 ，这个和 FlowStage 重复
  */
 @Entity
 @Table(name = "OPT_STAGE")
