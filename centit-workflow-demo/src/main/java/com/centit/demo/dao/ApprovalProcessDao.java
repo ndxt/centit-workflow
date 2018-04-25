@@ -23,7 +23,7 @@ public class ApprovalProcessDao extends BaseDaoImpl<ApprovalProcess,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    private long getNextApprovalProcessId(){
+    public long getNextApprovalProcessId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_APPROVALPROCESS");
     }
 

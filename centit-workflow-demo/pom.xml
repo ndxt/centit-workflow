@@ -22,11 +22,6 @@
             <artifactId>framework-base-view-easyui</artifactId>
             <version>3.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-view</artifactId>
-            <version>${centit.workflow.version}</version>
-        </dependency>
         <!--<dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-system-module</artifactId>
@@ -99,6 +94,13 @@
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-core-web</artifactId>
             <version>${centit.framework.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.9</version>
         </dependency>
     </dependencies>
 

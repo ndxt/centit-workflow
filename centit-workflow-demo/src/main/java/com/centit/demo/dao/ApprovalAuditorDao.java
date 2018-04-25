@@ -22,7 +22,7 @@ public class ApprovalAuditorDao extends BaseDaoImpl<ApprovalAuditor,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    private long getNextApprovalAuditorId(){
+    public long getNextApprovalAuditorId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_APPROVALAUDITOR");
     }
 
