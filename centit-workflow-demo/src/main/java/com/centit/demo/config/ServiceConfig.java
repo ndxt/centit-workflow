@@ -17,8 +17,7 @@ import org.springframework.context.annotation.*;
 @Configuration
 @ComponentScan(basePackages = "com.centit.*",
         excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
-@Import({DataSourceConfig.class,
-        JdbcConfig.class,
+@Import({JdbcConfig.class,
         IPAppSystemBeanConfig.class,
         SpringSecurityDaoConfig.class,
         SpringSecurityCasConfig.class})
