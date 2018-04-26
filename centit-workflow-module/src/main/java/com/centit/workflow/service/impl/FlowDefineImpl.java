@@ -319,7 +319,37 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
         flowDef.replaceFlowStages(wfDef.getFlowStagesSet());
-        flowDefineDao.mergeObject(flowDef);
+        flowDefineDao.saveObjectReferences(flowDef);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean saveDraftFlowRole(FlowInfo wfDef) {
+        // 将 流程定义格式保存到 版本为 0 的记录中
+        FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(0L,wfDef.getFlowCode()) );
+        if( flowDef == null){
+            return false;
+        }
+        flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
+        flowDef.setFlowClass("R");
+        flowDef.replaceFlowRoles(wfDef.getFlowRolesSet());
+        flowDefineDao.saveObjectReferences(flowDef);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean saveDraftFlowVariableDef(FlowInfo wfDef) {
+        // 将 流程定义格式保存到 版本为 0 的记录中
+        FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(0L,wfDef.getFlowCode()) );
+        if( flowDef == null){
+            return false;
+        }
+        flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
+        flowDef.setFlowClass("R");
+        flowDef.replaceFlowVariableDefs(wfDef.getFlowVariableDefSet());
+        flowDefineDao.saveObjectReferences(flowDef);
         return true;
     }
 
@@ -517,7 +547,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public FlowInfo getFlowDefObject(String flowCode, long version){
         try{
-            return flowDefineDao.getObjectById(new FlowInfoId(version,flowCode));
+            return flowDefineDao.getObjectCascadeById(new FlowInfoId(version,flowCode));
         }
         catch (Exception e) {
             return null;
@@ -589,6 +619,18 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public long getNextStageId(){
         return flowDefineDao.getNextStageId();
+    }
+
+    @Override
+    @Transactional
+    public long getNextRoleId(){
+        return flowDefineDao.getNextRoleId();
+    }
+
+    @Override
+    @Transactional
+    public long getNextVariableDefId(){
+        return flowDefineDao.getNextVariableDefId();
     }
 
     @Override

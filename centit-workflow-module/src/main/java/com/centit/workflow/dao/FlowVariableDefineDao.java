@@ -21,20 +21,20 @@ public class FlowVariableDefineDao extends BaseDaoImpl<FlowVariableDefine,Long> 
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public String getNextOptVariableId(){
-        return String.valueOf(DatabaseOptUtils.getSequenceNextValue(this,"S_OPTVARIABLE"));
+    public Long getNextFlowVariableId(){
+        return DatabaseOptUtils.getSequenceNextValue(this,"S_OPTVARIABLE");
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public void saveNewObject(FlowVariableDefine o) {
         if(o.getFlowVariableId() == null || "".equals(o.getFlowVariableId())){
-            o.setFlowVariableId(getNextOptVariableId());
+            o.setFlowVariableId(getNextFlowVariableId());
         }
         super.saveNewObject(o);
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<FlowVariableDefine> getOptNodeByOptId(String optId){
-        return this.listObjectsByFilter("where opt_id = ?",new Object[]{optId});
+    public List<FlowVariableDefine> getFlowVariableByFlowCode(String flowCode){
+        return this.listObjectsByFilter("where flow_code = ?",new Object[]{flowCode});
     }
 }

@@ -21,20 +21,20 @@ public class FlowTeamRoleDao extends BaseDaoImpl<FlowTeamRole,Long>{
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public String getNextOptTeamRoleId(){
-        return String.valueOf(DatabaseOptUtils.getSequenceNextValue(this,"S_OPTTEAMROLE"));
+    public Long getNextTeamRoleId(){
+        return DatabaseOptUtils.getSequenceNextValue(this,"S_OPTTEAMROLE");
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public void saveNewObject(FlowTeamRole o) {
         if(o.getFlowTeamRoleId() == null || "".equals(o.getFlowTeamRoleId())){
-            o.setFlowTeamRoleId(getNextOptTeamRoleId());
+            o.setFlowTeamRoleId(getNextTeamRoleId());
         }
         super.saveNewObject(o);
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<FlowTeamRole> getOptNodeByOptId(String optId){
-        return this.listObjectsByFilter("where opt_id = ?",new Object[]{optId});
+    public List<FlowTeamRole> getRoleByFlowCode(String flowCode){
+        return this.listObjectsByFilter("where flow_code = ?",new Object[]{flowCode});
     }
 }

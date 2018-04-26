@@ -1,5 +1,8 @@
 package com.centit.workflow.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import org.hibernate.validator.constraints.Range;
+
 import javax.validation.constraints.NotNull;
 
 import javax.persistence.Column;
@@ -21,7 +24,7 @@ public class FlowTeamRole implements Serializable {
     @Id
     @NotNull
     @Column(name = "FLOW_TEAM_ROLE_ID")
-    private String flowTeamRoleId;
+    private Long flowTeamRoleId;
     @NotNull
     @Column(name = "FLOW_CODE")
     private String flowCode;
@@ -38,11 +41,34 @@ public class FlowTeamRole implements Serializable {
     @Column(name = "MODIFY_TIME")
     private Date modifyTime;
 
-    public String getFlowTeamRoleId() {
+    @Column(name = "VERSION")
+    @NotNull(message = "字段不能为空")
+    @Range( max = 9999, message = "版本号不能大于{max}")
+    private Long version;
+
+    @JSONField(serialize=false)
+    private FlowInfo flowDefine;
+
+    public FlowInfo getFlowDefine() {
+        return flowDefine;
+    }
+    public void setFlowDefine(FlowInfo flowDefine) {
+        this.flowDefine = flowDefine;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public Long getFlowTeamRoleId() {
         return flowTeamRoleId;
     }
 
-    public void setFlowTeamRoleId(String flowTeamRoleId) {
+    public void setFlowTeamRoleId(Long flowTeamRoleId) {
         this.flowTeamRoleId = flowTeamRoleId;
     }
 
@@ -92,5 +118,34 @@ public class FlowTeamRole implements Serializable {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public void copyNotNullProperty(FlowTeamRole other){
+
+        if( other.getFlowTeamRoleId() != null)
+            this.setFlowTeamRoleId(other.getFlowTeamRoleId());
+        /*if( other.getFlowDefine() != null)
+            this.flowDefine = other.getFlowDefine();*/
+        if( other.getFlowCode() != null)
+            this.flowCode= other.getFlowCode();
+        if( other.getRoleCode() != null)
+            this.roleCode= other.getRoleCode();
+        if( other.getRoleName() != null)
+            this.roleName= other.getRoleName();
+        if( other.getTeamRoleOrder() != null)
+            this.teamRoleOrder= other.getTeamRoleOrder();
+    }
+
+    public void copy(FlowTeamRole other){
+        this.setFlowTeamRoleId(other.getFlowTeamRoleId());
+        //this.setVersion(other.getVersion());
+        //this.setFlowCode(other.getFlowCode());
+        this.roleName= other.getRoleName();
+        this.roleCode= other.getRoleCode();
+        this.teamRoleOrder= other.getTeamRoleOrder();
+        this.flowCode= other.getFlowCode();
+        this.createTime= other.getCreateTime();
+        this.modifyTime= other.getModifyTime();
+
     }
 }

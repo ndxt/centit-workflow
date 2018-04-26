@@ -4,16 +4,16 @@ define(function(require) {
 
     var FlowDefineAdd = require('../../ctrl/flowdefine.add');
 
-    var FlowDefineStageAdd = require('../../ctrl/flowdefine.stage.add');
-    var FlowDefineStageRemove = require('../../ctrl/flowdefine.stage.remove');
+    var FlowDefineRoleAdd = require('../flowRole/flowdefine.role.add');
+    var FlowDefineRoleRemove = require('../flowRole/flowdefine.role.remove');
 
     // 编辑流程定义
     var FlowDefineRole = FlowDefineAdd.extend(function() {
         var _self = this;
 
         this.injecte([
-            new FlowDefineStageAdd('flowdefine_stage_add'),
-            new FlowDefineStageRemove('flowdefine_stage_remove')
+            new FlowDefineRoleAdd('flowdefine_role_add'),
+            new FlowDefineRoleRemove('flowdefine_role_remove')
         ]);
 
         // @override
@@ -31,7 +31,7 @@ define(function(require) {
                 table.cdatagrid({
                     controller: _self
                 })
-                    .datagrid('loadData', data.wfFlowStages);
+                    .datagrid('loadData', data.flowTeamRoles);
             });
         };
 
@@ -43,10 +43,11 @@ define(function(require) {
             if (form.form('validate') && table.cdatagrid('endEdit')) {
                 var items = table.datagrid('getData').rows;
 
-                data.wfFlowStages = items;
+                data.flowTeamRoles = items;
+                data.flowRoles = null;
                 data._method = 'PUT';
 
-                Core.ajax(Config.ContextPath+'service/flow/define/stage/'+data.flowCode, {
+                Core.ajax(Config.ContextPath+'service/flow/define/role/'+data.flowCode, {
                     data: data,
                     method: 'post'
                 }).then(closeCallback);

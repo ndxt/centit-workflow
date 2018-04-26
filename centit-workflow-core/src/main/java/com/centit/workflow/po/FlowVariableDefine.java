@@ -1,5 +1,8 @@
 package com.centit.workflow.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import org.hibernate.validator.constraints.Range;
+
 import javax.validation.constraints.NotNull;
 
 import javax.persistence.Column;
@@ -22,7 +25,7 @@ public class FlowVariableDefine implements Serializable {
     @Id
     @NotNull
     @Column(name = "FLOW_VARIABLE_ID")
-    private String flowVariableId;
+    private Long flowVariableId;
     @NotNull
     @Column(name = "FLOW_CODE")
     private String flowCode;
@@ -38,11 +41,38 @@ public class FlowVariableDefine implements Serializable {
     @Column(name = "MODIFY_TIME")
     private Date modifyTime;
 
-    public String getFlowVariableId() {
+    @Column(name = "VERSION")
+    @NotNull(message = "字段不能为空")
+    @Range( max = 9999, message = "版本号不能大于{max}")
+    private Long version;
+
+    @JSONField(serialize=false)
+    private FlowInfo flowDefine;
+
+    public FlowInfo getFlowDefine() {
+        return flowDefine;
+    }
+    public void setFlowDefine(FlowInfo flowDefine) {
+        this.flowDefine = flowDefine;
+    }
+
+    public void setFlowVariableId(Long flowVariableId) {
+        this.flowVariableId = flowVariableId;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public Long getFlowVariableId() {
         return flowVariableId;
     }
 
-    public void setFlowVariableId(String flowVariableId) {
+    public void setFlowVariableId(long flowVariableId) {
         this.flowVariableId = flowVariableId;
     }
 
@@ -92,5 +122,34 @@ public class FlowVariableDefine implements Serializable {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public void copyNotNullProperty(FlowVariableDefine other){
+
+        if( other.getFlowVariableId() != null)
+            this.setFlowVariableId(other.getFlowVariableId());
+        /*if( other.getFlowDefine() != null)
+            this.flowDefine = other.getFlowDefine();*/
+        if( other.getFlowCode() != null)
+            this.flowCode= other.getFlowCode();
+        if( other.getVariableName() != null)
+            this.variableName= other.getVariableName();
+        if( other.getVariableType() != null)
+            this.variableType = other.getVariableType();
+        if( other.getVariableOrder() != null)
+            this.variableOrder= other.getVariableOrder();
+    }
+
+    public void copy(FlowVariableDefine other){
+        this.setFlowVariableId(other.getFlowVariableId());
+        //this.setVersion(other.getVersion());
+        //this.setFlowCode(other.getFlowCode());
+        this.variableOrder= other.getVariableOrder();
+        this.variableType= other.getVariableType();
+        this.variableName= other.getVariableName();
+        this.createTime= other.getCreateTime();
+        this.modifyTime= other.modifyTime;
+        this.flowCode= other.getFlowCode();
+
     }
 }

@@ -62,6 +62,14 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     public long getNextStageId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
     }
+    @Transactional(propagation= Propagation.MANDATORY)
+    public long getNextRoleId(){
+        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
+    }
+    @Transactional(propagation= Propagation.MANDATORY)
+    public long getNextVariableDefId(){
+        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
+    }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public FlowInfo getObjectCascadeById(FlowInfoId flowInfoId){
