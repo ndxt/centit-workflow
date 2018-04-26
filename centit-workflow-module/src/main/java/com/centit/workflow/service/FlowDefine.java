@@ -69,6 +69,16 @@ public interface FlowDefine {
     boolean saveDraftFlowStage(FlowInfo wfDef);
 
     /**
+     * 保存流程定义对象,(版本只能为0),并且只流程角色
+     */
+    boolean saveDraftFlowRole(FlowInfo wfDef);
+
+    /**
+     * 保存流程定义对象,(版本只能为0),并且只流程变量
+     */
+    boolean saveDraftFlowVariableDef(FlowInfo wfDef);
+
+    /**
      * 根据节点ID获得节点定义
      * @param nodeId
      * @return
@@ -98,6 +108,18 @@ public interface FlowDefine {
     long getNextStageId();
 
     /**
+     * 生成一个角色主键
+     * @return
+     */
+    long getNextRoleId();
+
+    /**
+     * 生成一个变量主键
+     * @return
+     */
+    long getNextVariableDefId();
+
+    /**
      * 根据已知的流程业务，查询对应的定义流程
      * @param optId
      * @return
@@ -111,5 +133,7 @@ public interface FlowDefine {
      * @return
      */
     Set<String> getUnitExp(String flowCode, Long version);
+
+
    
 }

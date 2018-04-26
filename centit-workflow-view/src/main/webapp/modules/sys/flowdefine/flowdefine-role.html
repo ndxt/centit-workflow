@@ -1,0 +1,45 @@
+<form class="form centit">
+    <div class="fields two">
+        <div class="field required">
+            <label>流程代码</label>
+            <input type="text" class="easyui-textbox" name="flowCode"
+                   readonly="true" required />
+        </div>
+
+        <div class="field required">
+            <label>流程名称</label>
+            <input type="text" class="easyui-textbox" name="flowName"
+                   required readonly="true" />
+        </div>
+    </div>
+</form>
+
+
+<table style="width: 99%; margin: 0 auto;"
+       fieldId="roleCode"
+       toolbar="#flowdefine_role_toolbar"
+       height="300"
+       pageNumber="false" pagination="false"
+       editable="true"
+>
+    <thead>
+    <tr>
+        <th field="roleCode" width="100" align="center"
+            data-options="editor:{type:'textbox', options:{required: true}}">角色编码</th>
+
+        <th field="roleName" width="160"
+            data-options="editor:{type:'textbox', options:{required: true}}">角色名称</th>
+    </tr>
+    </thead>
+</table>
+
+<div class="temp-toolbar" id="flowdefine_role_toolbar">
+    <a rel="flowdefine_role_add" iconCls="icon-add"
+       target="custom" trigger="none">新增</a>
+
+    <hr>
+
+    <a rel="flowdefine_role_remove" iconCls="icon-base icon-base-ban"
+       target="confirm" trigger="single" title="是否确定删除 {{stageName}}？">删除</a>
+
+</div>

@@ -31,7 +31,7 @@ define(function(require) {
 				table.cdatagrid({
 					controller: _self
 				})
-				.datagrid('loadData', data.wfFlowStages);
+				.datagrid('loadData', data.flowStages);
 			});
 		};
 		
@@ -43,7 +43,7 @@ define(function(require) {
 			if (form.form('validate') && table.cdatagrid('endEdit')) {
 				var items = table.datagrid('getData').rows;
 				
-				data.wfFlowStages = items;
+				data.flowStages = items;
 				data._method = 'PUT';
 				
 				Core.ajax(Config.ContextPath+'service/flow/define/stage/'+data.flowCode, {
