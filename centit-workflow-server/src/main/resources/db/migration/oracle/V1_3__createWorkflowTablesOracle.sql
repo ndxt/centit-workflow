@@ -11,6 +11,7 @@ CREATE TABLE wf_flow_variable_define (
   VARIABLE_ORDER smallint DEFAULT NULL,
   CREATE_TIME date  DEFAULT sysdate,
   MODIFY_TIME date   DEFAULT sysdate,
+  VERSION number(4,0) ,
   PRIMARY KEY (FLOW_VARIABLE_ID)
 ) ;
 
@@ -23,6 +24,7 @@ CREATE TABLE wf_flow_team_role (
   TEAM_ROLE_ORDER smallint DEFAULT NULL,
   CREATE_TIME date  DEFAULT sysdate,
   MODIFY_TIME date  DEFAULT sysdate,
+  VERSION number(4,0) ,
   PRIMARY KEY (FLOW_TEAM_ROLE_ID)
 ) ;
 
