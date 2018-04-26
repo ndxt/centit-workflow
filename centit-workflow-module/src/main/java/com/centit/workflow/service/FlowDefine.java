@@ -134,6 +134,12 @@ public interface FlowDefine {
      */
     Set<String> getUnitExp(String flowCode, Long version);
 
-
+    /**
+     * 获取某一流程某一版本号中存在的所有办件角色
+     * @param flowCode
+     * @param version
+     * @return
+     */
+    Map<String,String> getRoleMapByFlowCode(String flowCode,Long version);
    
 }

@@ -2,6 +2,7 @@ package com.centit.workflow.controller;
 
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
+import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
@@ -363,6 +364,8 @@ public class FlowDefineController extends BaseController {
     @RequestMapping(value="/getdatamap/{flowcode}",method=RequestMethod.GET)
     public void getDataMap(@PathVariable String flowcode,HttpServletResponse response) {
         Map<String, Map<String, String>> map = modelData.listAllRole();
+        //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
+        map.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, flowDef.getRoleMapByFlowCode(flowcode,0L));
         // 分配机制
         Map<String, String> map2 = modelData.listAllOptType();
         map.put("OptType", map2);

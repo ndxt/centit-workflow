@@ -6,6 +6,7 @@ import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.network.HtmlFormUtils;
 import com.centit.support.xml.XmlUtils;
 import com.centit.workflow.dao.FlowInfoDao;
+import com.centit.workflow.dao.FlowTeamRoleDao;
 import com.centit.workflow.dao.NodeInfoDao;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
@@ -31,6 +32,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private FlowInfoDao flowDefineDao;
     @Resource
     private NodeInfoDao flowNodeDao;
+
+    @Resource
+    private FlowTeamRoleDao flowTeamRoleDao;
     
     private static Logger logger = LoggerFactory.getLogger(FlowDefineImpl.class);
     public static final String BEGINNODETAG="begin";
@@ -665,5 +669,11 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public Set<String> getUnitExp(String flowCode, Long version) {
         return flowNodeDao.getUnitExp(flowCode, version);
+    }
+
+    @Override
+    @Transactional
+    public Map<String, String> getRoleMapByFlowCode(String flowCode, Long version) {
+        return flowTeamRoleDao.getRoleByFlowCode(flowCode,version);
     }
 }
