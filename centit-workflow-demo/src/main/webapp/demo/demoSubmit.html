@@ -1,0 +1,74 @@
+<style>
+    <!--
+    .left {
+        float: left
+    }
+
+    -->
+</style>
+<div>
+    <div class="easyui-panel" title="基本信息" >
+        <form class="form centit" id="baseInfoForm">
+            <div class="fields three">
+                <div class="field required" >
+                    <label>用户编码</label>
+                    <input  class="easyui-textbox" name="userCode" id="userCode"/>
+                    <input  type="button" value="获取任务" onclick="getTasks()"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="easyui-tabs">
+    <div title="待办列表">
+        <div class="easyui-panel" title="待办列表" style="width:100%;height:400px;" data-options="cls:'left'">
+            <div title="待办列表" style="padding: 10px;">
+                <table url="service/demo/listTasks?_search=true" style="height:auto" id="taskTable"
+                       search=".search"
+                       toolbar=""
+                       layoutH=".search"
+                >
+                    <thead frozen="true">
+                    <tr>
+                        <th data-options="field:'flowOptName'" width="100" align="center">业务名</th>
+                        <th data-options="field:'nodeName'" width="100" align="center">节点名称</th>
+                        <th data-options="field:'timeLimitStr'" width="100" sortable="true" align="center">剩余时间</th>
+                        <th data-options="field:'authDesc'" width="100" align="center">描述</th>
+                        <th data-options="field:'optUrl',formatter:optLink" width="100" align="center">操作</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var Config = require('config');
+    var basePath = Config.ContextPath;
+
+    $.parser.onComplete = function (panel) {
+        $.parser.onComplete = $.noop;
+
+        requirejs(['core/filter/filter.dictionary',
+            '../demo/ctrl/demoSubmit'
+        ], function (FilterDictionary, DemoSubmit) {
+            FilterDictionary.add(['YesOrNo']).then(function () {
+                new DemoSubmit('demoSubmit', panel).load(panel);
+            });
+
+        });
+    };
+
+    //办理按钮URL绑定
+    function optLink(val,row,index) {
+        debugger;
+        var url = basePath + 'service/demo/demoSubmit?nodeInstId='+ row.nodeInstId + '&userCode='+row.userCode;
+        return "<a href='"+ url+"'>办理</a>";
+    }
+
+    function getTasks(){
+        //待办
+        $('#taskTable').datagrid("options").url = 'service/demo/listTasks?userCode=' + $("#userCode").val();
+        $('#taskTable').datagrid('load');
+    }
+</script>
