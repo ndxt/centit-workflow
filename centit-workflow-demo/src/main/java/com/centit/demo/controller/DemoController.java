@@ -5,8 +5,11 @@ import com.centit.demo.po.DemoSubmitPo;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.workflow.client.service.FlowDefineClient;
 import com.centit.workflow.client.service.FlowEngineClient;
+import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
+import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.UserTask;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,16 +30,19 @@ public class DemoController {
     @Resource
     private FlowEngineClient flowEngine;
     @Resource
-    private FlowManagerClientImpl flowManager;
+    private FlowManagerClient flowManager;
+
+    @Resource
+    private FlowDefineClient flowDefineClient;
 
     @Resource
     private PlatformEnvironment platformEnvironment;
 
-    @RequestMapping(value = "/demoStart", method = RequestMethod.PUT)
+    @RequestMapping(value = "/demoStart")
     public void demoStart(DemoStartPo startPo, HttpServletResponse response) throws Exception {
         flowEngine.createInstance(startPo.getFlowCode(),startPo.getFlowOptName(),startPo.getFlowOptTag(),
                 startPo.getUserCode(),startPo.getUnitCode());
-        JsonResultUtils.writeBlankJson(response);
+        JsonResultUtils.writeMessageJson("流程创建成功",response);
     }
 
     @RequestMapping(value = "/demoSubmit")
@@ -56,5 +62,11 @@ public class DemoController {
     public void listAllUser(HttpServletResponse response){
         Object userList = platformEnvironment.listAllUsers();
         JsonResultUtils.writeSingleDataJson(userList,response);
+    }
+
+    @RequestMapping(value = "/listAllFlow", method = RequestMethod.GET)
+    public void listAllFlow(HttpServletResponse response){
+        List<FlowInfo> flowInfos = flowDefineClient.list();
+        JsonResultUtils.writeSingleDataJson(flowInfos,response);
     }
 }

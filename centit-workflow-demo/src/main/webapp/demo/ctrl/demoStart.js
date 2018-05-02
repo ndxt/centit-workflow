@@ -9,13 +9,17 @@ define(function(require) {
     // 工作流定义
     var DemoStart = Page.extend(function() {
         // @override
-        this.load = function(panel) {
-            var table=this.table=panel.find('table');
-            table.cdatagrid({
-                // 必须要加此项!!
-                controller: this
-            });
-        };
+        this.load = function(panel){
+
+            var form = panel.find("form");
+            form.form('ajax', {
+                url: Config.ContextPath+'service/demo/listAllFlow',
+                method: 'get',
+            }).then(function (data) {
+                    $("#flowCode").combobox('loadData',data);
+                }
+            )
+        }
 
         // @override
         this.submit = function(panel, data, closeCallback) {

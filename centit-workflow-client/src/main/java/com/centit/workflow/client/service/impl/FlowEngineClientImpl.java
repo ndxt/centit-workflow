@@ -35,16 +35,17 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
     private AppSession appSession;
 
-
-
+    @Override
     public CloseableHttpClient getHttpClient() throws Exception {
         return appSession.getHttpClient();
     }
 
+    @Override
     public void releaseHttpClient(CloseableHttpClient httpClient) {
         appSession.releaseHttpClient(httpClient);
     }
 
+    @Override
     public void setWorkFlowServerUrl(String workFlowServerUrl) {
         appSession = new AppSession(workFlowServerUrl,false,null,null);
     }

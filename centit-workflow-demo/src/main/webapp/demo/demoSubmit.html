@@ -44,6 +44,7 @@
 </div>
 <script>
     var Config = require('config');
+    var Core = require('core/core');
     var basePath = Config.ContextPath;
 
     $.parser.onComplete = function (panel) {
@@ -63,7 +64,17 @@
     function optLink(val,row,index) {
         debugger;
         var url = basePath + 'service/demo/demoSubmit?nodeInstId='+ row.nodeInstId + '&userCode='+row.userCode;
-        return "<a href='"+ url+"'>办理</a>";
+        return "<a href='#' onclick=submit('"+ url+"')>办理</a>";
+    }
+
+    function submit(url) {
+        debugger;
+        Core.ajax(url, {
+            method: 'get'
+        }).then(function() {
+            $('#taskTable').datagrid('reload');
+           return;
+        });
     }
 
     function getTasks(){

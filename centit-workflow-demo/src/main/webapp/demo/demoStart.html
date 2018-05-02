@@ -2,8 +2,13 @@
 
     <div class="fields two">
         <div class="field">
-            <label>流程编码</label>
-            <input type="text" class="easyui-textbox" name="flowCode" style="width: 300px;"/>
+            <label>流程代码</label>
+            <input type="text" class="easyui-combobox" name="flowCode" id="flowCode"
+                   data-options="
+                   valueField: 'flowCode',
+                   textField: 'flowName',
+                   "
+                   />
         </div>
     </div>
     <div class="fields two">
@@ -52,11 +57,16 @@
 
         });
     };
+
     function submitForm() {
         debugger;
         $("#demoStartForm").form('ajax', {
             url: basePath + 'service/demo/demoStart/',
-            method: 'put'
-        }).then();
+            method: 'post'
+        }).then(
+            function (data) {
+                alert(data);
+            }
+        );
     }
 </script>
