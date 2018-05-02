@@ -9,6 +9,7 @@ import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.UserTask;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,10 @@ import java.util.Set;
 @Service
 @Transactional
 public class FlowEngineClientImpl implements FlowEngineClient {
+
+    @Value("${workflow.server}")
+    private String workFlowServerUrl;
+
     public FlowEngineClientImpl() {
 
     }
@@ -45,7 +50,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
     @PostConstruct
     public void init(){
-        this.setWorkFlowServerUrl("http://localhost:8080/workflow/service");
+        this.setWorkFlowServerUrl(workFlowServerUrl);
     }
 
     @Override
