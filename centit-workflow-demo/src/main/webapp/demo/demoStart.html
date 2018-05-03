@@ -3,7 +3,7 @@
     <div class="fields two">
         <div class="field">
             <label>流程代码</label>
-            <input type="text" class="easyui-combobox" name="flowCode" id="flowCode"
+            <input type="text" class="easyui-combobox" name="flowCode" id="flowCode" style="width: 300px;" required
                    data-options="
                    valueField: 'flowCode',
                    textField: 'flowName',
@@ -60,13 +60,16 @@
 
     function submitForm() {
         debugger;
-        $("#demoStartForm").form('ajax', {
-            url: basePath + 'service/demo/demoStart/',
-            method: 'post'
-        }).then(
-            function (data) {
-                alert(data);
-            }
-        );
+        var form = $("#demoStartForm");
+        if(form.form('validate')){
+            form.form('ajax', {
+                url: basePath + 'service/demo/demoStart/',
+                method: 'post'
+            }).then(
+                function (data) {
+                    alert(data);
+                }
+            );
+        }
     }
 </script>
