@@ -54,6 +54,10 @@ INSERT INTO f_datadictionary(catalog_code, data_code, extra_code, extra_code2, d
 
 INSERT INTO f_mysql_sequence VALUES ('S_FLOWDEFINE', '0', '1');
 INSERT INTO f_mysql_sequence VALUES ('S_FLOWDEFNO', '0', '1');
+INSERT INTO f_mysql_sequence VALUES ('S_ACTIONLOGNO', '0', '1');
+INSERT INTO f_mysql_sequence VALUES ('S_FLOWINSTNO', '0', '1');
+INSERT INTO f_mysql_sequence VALUES ('S_MANAGERACTIONNO', '0', '1');
+INSERT INTO f_mysql_sequence VALUES ('S_NODEINSTNO', '0', '1');
 
 
 

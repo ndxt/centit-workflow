@@ -1,5 +1,9 @@
 create sequence S_FLOWDEFINE;
 create sequence S_FLOWDEFNO;
+create sequence S_ACTIONLOGNO;
+create sequence S_FLOWINSTNO;
+create sequence S_MANAGERACTIONNO;
+create sequence S_NODEINSTNO;
 
 
 
