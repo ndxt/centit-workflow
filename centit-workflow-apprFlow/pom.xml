@@ -9,11 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>centit-workflow-fgw</artifactId>
+    <artifactId>centit-workflow-apprFlow</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>centit-workflow-fgw Maven Webapp</name>
+    <name>centit-workflow-apprFlow Maven Webapp</name>
     <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
 
@@ -26,19 +26,75 @@
     <dependencies>
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>framework-base-view-easyui</artifactId>
-            <version>3.1.0</version>
+            <artifactId>framework-system-view-easyui</artifactId>
+            <version>${centit.framework.version}</version>
         </dependency>
-        <!--<dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-system-module</artifactId>
-            <version>4.0.1-SNAPSHOT</version>
-        </dependency>-->
+
+        <dependency>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-workflow-view</artifactId>
+            <version>${centit.workflow.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>centit-persistence-jdbc</artifactId>
+            <artifactId>framework-system-module</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-persistence-jdbc</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-core-web</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-system-web</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-workflow-module</artifactId>
+            <version>${centit.workflow.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-persistence-jdbc-config</artifactId>
             <version>${centit.persistence.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-system-config</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-config</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-ip-adapter</artifactId>
+            <version>${centit.ip.version}</version>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-ip-app-config</artifactId>
+            <version>${centit.ip.version}</version>
+        </dependency>-->
+
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-jdbc-config</artifactId>
@@ -51,28 +107,16 @@
         </dependency>
 
         <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-app</artifactId>
-            <version>${centit.ip.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-app-config</artifactId>
-            <version>${centit.ip.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-client</artifactId>
-            <version>4.0.1-SNAPSHOT</version>
-        </dependency>
-
-
-        <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
             <version>${ojdbc6.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${db.migration.mysql.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -93,21 +137,15 @@
         </dependency>
         <dependency>
             <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-core</artifactId>
-            <version>${centit.workflow.version}</version>
+            <artifactId>centit-workflow-module</artifactId>
+            <version>4.0.1-SNAPSHOT</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-core-web</artifactId>
-            <version>${centit.framework.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.9</version>
-        </dependency>
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/com.h2database/h2 &ndash;&gt;-->
+        <!--<dependency>-->
+        <!--<groupId>com.h2database</groupId>-->
+        <!--<artifactId>h2</artifactId>-->
+        <!--<version>1.4.197</version>-->
+        <!--<scope>test</scope>-->
+        <!--</dependency>-->
     </dependencies>
 </project>

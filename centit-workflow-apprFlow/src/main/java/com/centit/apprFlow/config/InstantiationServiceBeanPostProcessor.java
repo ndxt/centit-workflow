@@ -17,7 +17,7 @@ public class InstantiationServiceBeanPostProcessor implements ApplicationListene
     @Autowired
     protected NotificationCenter notificationCenter;
 
-    @Autowired(required = false)
+    @Autowired
     private OperationLogWriter optLogManager;
 
     @Autowired(required = false)

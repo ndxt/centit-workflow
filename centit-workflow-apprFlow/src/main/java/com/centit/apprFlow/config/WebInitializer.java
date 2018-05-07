@@ -2,6 +2,7 @@ package com.centit.apprFlow.config;
 
 import com.centit.framework.config.SystemSpringMvcConfig;
 import com.centit.framework.config.WebConfig;
+import com.centit.framework.system.config.SystemBeanConfig;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -24,7 +25,7 @@ public class WebInitializer implements WebApplicationInitializer {
 
         initializeSpringConfig(servletContext);
 
-        initializeSpringMvcConfig(servletContext);
+        initializeSystemServletConfig(servletContext);
 
         initializeNormalServletConfig(servletContext);
 
@@ -51,7 +52,7 @@ public class WebInitializer implements WebApplicationInitializer {
      */
     private void initializeSpringConfig(ServletContext servletContext){
         AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
-        springContext.register(ServiceConfig.class);
+        springContext.register(SystemBeanConfig.class,ServiceConfig.class);
         servletContext.addListener(new ContextLoaderListener(springContext));
     }
 
@@ -59,7 +60,7 @@ public class WebInitializer implements WebApplicationInitializer {
      * 加载Servlet 配置
      * @param servletContext ServletContext
      */
-    private void initializeSpringMvcConfig(ServletContext servletContext) {
+    private void initializeSystemServletConfig(ServletContext servletContext) {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(SystemSpringMvcConfig.class);
         Dynamic system  = servletContext.addServlet("system", new DispatcherServlet(context));
@@ -82,6 +83,4 @@ public class WebInitializer implements WebApplicationInitializer {
         /* javax.servlet.FilterRegistration.Dynamic corsFilter = servletContext.addFilter("hibernateFilter", OpenSessionInViewFilter.class);
         corsFilter.addMappingForUrlPatterns((EnumSet)null, false, new String[]{"*//*"});*/
     }
-
-
 }
