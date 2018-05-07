@@ -95,6 +95,7 @@
         <module>centit-workflow-imbed</module>
         <module>centit-workflow-demo</module>
         <module>centit-workflow-core</module>
+        <module>centit-workflow-apprFlow</module>
     </modules>
 
 
