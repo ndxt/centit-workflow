@@ -39,7 +39,7 @@ public abstract class OperateBeanController extends BaseController{
         return  doCallBack(paramMap);
     }
 
-    @RequestMapping(value = "/callBackFunc", method= RequestMethod.GET)
+    @RequestMapping(value = "/getFlowVariable", method= RequestMethod.GET)
     @ResponseBody
     public ResponseData callFlowVariable(){
         return  getFlowVariable();
