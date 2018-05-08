@@ -14,6 +14,7 @@ import org.springframework.context.annotation.*;
 /**
  * Created by codefan on 17-7-18.
  */
+@PropertySource("classpath:system.properties")
 @Configuration
 @ComponentScan(basePackages = "com.centit.*",
         excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))

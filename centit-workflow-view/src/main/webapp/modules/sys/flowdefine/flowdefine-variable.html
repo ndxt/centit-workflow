@@ -1,0 +1,47 @@
+<form class="form centit">
+    <div class="fields two">
+        <div class="field required">
+            <label>流程代码</label>
+            <input type="text" class="easyui-textbox" name="flowCode"
+                   readonly="true" required />
+        </div>
+
+        <div class="field required">
+            <label>流程名称</label>
+            <input type="text" class="easyui-textbox" name="flowName"
+                   required readonly="true" />
+        </div>
+    </div>
+</form>
+
+
+<table style="width: 99%; margin: 0 auto;"
+       fieldId="flowVariableId"
+       toolbar="#flowdefine_variable_toolbar"
+       height="300"
+       pageNumber="false" pagination="false"
+       editable="true"
+>
+    <thead>
+    <tr>
+        <th field="variableName" width="100" align="center"
+            data-options="editor:{type:'textbox', options:{required: true}}">变量名称</th>
+
+        <th field="variableType" width="160"
+            data-options="editor:{type:'textbox', options:{required: true}}">变量类型</th>
+        <th field="variableOrder" width="160"
+            data-options="editor:{type:'textbox', options:{required: true}}">显示顺序</th>
+    </tr>
+    </thead>
+</table>
+
+<div class="temp-toolbar" id="flowdefine_variable_toolbar">
+    <a rel="flowdefine_variable_add" iconCls="icon-add"
+       target="custom" trigger="none">新增</a>
+
+    <hr>
+
+    <a rel="flowdefine_variable_remove" iconCls="icon-base icon-base-ban"
+       target="confirm" trigger="single" title="是否确定删除 {{variableName}}？">删除</a>
+
+</div>

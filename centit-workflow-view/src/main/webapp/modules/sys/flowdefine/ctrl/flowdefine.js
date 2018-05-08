@@ -11,6 +11,12 @@ define(function(require) {
 	
 	// 编辑流程图阶段
 	var FlowDefineStage = require('../ctrl/flowdefine.stage');
+
+    // 编辑流程角色
+    var FlowDefineRole = require('../ctrl/flowRole/flowdefine.role');
+
+    // 编辑流程变量
+    var FlowDefineVariable = require('../ctrl/flowVariable/flowdefine.variable');
 	
 	// 绘制流程图
 	var FlowDefineDraw = require('../ctrl/flowdefine.draw');
@@ -33,7 +39,9 @@ define(function(require) {
 	        new FlowDefineDraw('flowdefine_draw'),
 	        new FlowDefineRelease('flowdefine_release'),
 	        new FlowDefineVersion('flowdefine_version'),
-	        new FlowDefineCopy('flowdefine_copy')
+	        new FlowDefineCopy('flowdefine_copy'),
+            new FlowDefineRole('flowdefine_role'),
+            new FlowDefineVariable('flowdefine_variable')
 	    ]);
 		
 		// @override

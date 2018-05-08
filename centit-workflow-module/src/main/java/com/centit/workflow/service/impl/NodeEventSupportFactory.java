@@ -10,6 +10,7 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -34,8 +35,11 @@ public class NodeEventSupportFactory {
             JSONObject json = null;
             try {
                 String jsonFile = Thread.currentThread().getContextClassLoader().getResource("").getPath()+"ip_environmen.json";
-                String jsonStr = FileIOOpt.readStringFromFile(jsonFile,"utf-8");
-                json = JSON.parseObject(jsonStr);
+                File ipConfigFile = new File(jsonFile);
+                if(ipConfigFile.exists() && !ipConfigFile.isDirectory()){
+                    String jsonStr = FileIOOpt.readStringFromFile(jsonFile,"utf-8");
+                    json = JSON.parseObject(jsonStr);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

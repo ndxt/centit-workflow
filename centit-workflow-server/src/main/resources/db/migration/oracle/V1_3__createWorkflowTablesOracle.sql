@@ -1,64 +1,36 @@
 create sequence S_FLOWDEFINE;
 create sequence S_FLOWDEFNO;
+create sequence S_ACTIONLOGNO;
+create sequence S_FLOWINSTNO;
+create sequence S_MANAGERACTIONNO;
+create sequence S_NODEINSTNO;
 
 
 
-CREATE TABLE opt_node (
-  OPT_NODE_ID varchar2(32) NOT NULL,
-  OPT_ID varchar2(32) NOT NULL,
+CREATE TABLE wf_flow_variable_define (
+  FLOW_VARIABLE_ID varchar2(32) NOT NULL,
   FLOW_CODE varchar2(32) NOT NULL,
-  OPT_NODE_NAME varchar2(100) NOT NULL,
-  OPT_URL varchar2(100) DEFAULT NULL,
-  OPT_TYPE varchar2(50) DEFAULT NULL,
-  OPT_NODE_ORDER int DEFAULT NULL,
-  GMT_CREATE_TIME date  DEFAULT sysdate,
-  GMT_MODIFY_TIME date  DEFAULT sysdate,
-  PRIMARY KEY (OPT_NODE_ID)
+  VARIABLE_NAME varchar2(100) NOT NULL,
+  VARIABLE_TYPE varchar2(100) DEFAULT NULL,
+  VARIABLE_ORDER smallint DEFAULT NULL,
+  CREATE_TIME date  DEFAULT sysdate,
+  MODIFY_TIME date   DEFAULT sysdate,
+  VERSION number(4,0) ,
+  PRIMARY KEY (FLOW_VARIABLE_ID)
 ) ;
 
 
-
-CREATE TABLE opt_stage (
-  OPT_STAGE_ID varchar2(32) NOT NULL,
-  OPT_ID varchar2(32) NOT NULL,
+CREATE TABLE wf_flow_team_role (
+  FLOW_TEAM_ROLE_ID varchar2(32) NOT NULL,
   FLOW_CODE varchar2(32) NOT NULL,
-  OPT_STAGE_NAME varchar2(100) NOT NULL,
-  OPT_STAGE_CODE varchar2(100) NOT NULL,
-  OPT_STAGE_ORDER int DEFAULT NULL,
-  GMT_CREATE_TIME date DEFAULT sysdate,
-  GMT_MODIFY_TIME date  DEFAULT sysdate,
-  PRIMARY KEY (OPT_STAGE_ID)
+  ROLE_CODE varchar2(100) NOT NULL,
+  ROLE_NAME varchar2(100) NOT NULL,
+  TEAM_ROLE_ORDER smallint DEFAULT NULL,
+  CREATE_TIME date  DEFAULT sysdate,
+  MODIFY_TIME date  DEFAULT sysdate,
+  VERSION number(4,0) ,
+  PRIMARY KEY (FLOW_TEAM_ROLE_ID)
 ) ;
-
-
-
-CREATE TABLE opt_team_role (
-  OPT_TEAM_ROLE_ID varchar2(32) NOT NULL,
-  OPT_ID varchar2(32) NOT NULL,
-  FLOW_CODE varchar2(32) NOT NULL,
-  OPT_ROLE_CODE varchar2(100) NOT NULL,
-  OPT_ROLE_NAME varchar2(100) NOT NULL,
-  OPT_TEAM_ROLE_ORDER int DEFAULT NULL,
-  GMT_CREATE_TIME date  DEFAULT sysdate,
-  GMT_MODIFY_TIME date DEFAULT sysdate,
-  PRIMARY KEY (OPT_TEAM_ROLE_ID)
-) ;
-
-
-
-CREATE TABLE opt_variable (
-  OPT_VARIABLE_ID varchar2(32) NOT NULL,
-  OPT_ID varchar2(32) NOT NULL,
-  FLOW_CODE varchar2(32) NOT NULL,
-  OPT_VARIABLE_NAME varchar2(100) NOT NULL,
-  OPT_VARIABLE_TYPE varchar2(100) DEFAULT NULL,
-  OPT_VARIABLE_ORDER int DEFAULT NULL,
-  GMT_CREATE_TIME date  DEFAULT sysdate,
-  GMT_MODIFY_TIME date  DEFAULT sysdate,
-  PRIMARY KEY (OPT_VARIABLE_ID)
-) ;
-
-
 
 
 

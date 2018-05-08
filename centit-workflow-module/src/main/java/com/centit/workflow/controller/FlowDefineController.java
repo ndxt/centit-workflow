@@ -2,13 +2,13 @@ package com.centit.workflow.controller;
 
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
+import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
-import com.centit.workflow.po.FlowInfo;
-import com.centit.workflow.po.FlowInfoId;
-import com.centit.workflow.po.FlowStage;
+import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowModelData;
+import com.sun.tools.javac.comp.Flow;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -219,6 +219,60 @@ public class FlowDefineController extends BaseController {
         else
             JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
     }
+
+    /**
+     * 编辑流程角色
+     * @param flowdefine
+     * @param flowcode
+     * @param response
+     */
+    @RequestMapping(value = "/role/{flowcode}", method = RequestMethod.PUT)
+    public void editRole(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response){
+        if(null!=flowdefine.getFlowTeamRoles()) {
+            for(FlowTeamRole role:flowdefine.getFlowTeamRoles()){
+                if(null==role.getFlowTeamRoleId()){
+                    role.setFlowTeamRoleId(flowDef.getNextRoleId());
+                }
+                role.setFlowDefine(flowdefine);
+            }
+        }
+        flowdefine.setFlowCode(flowcode);
+        flowdefine.setVersion(0l);
+
+        boolean saveSucced=flowDef.saveDraftFlowRole(flowdefine);
+
+        if(saveSucced)
+            JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
+        else
+            JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
+    }
+
+    /**
+     * 编辑流程变量
+     * @param flowdefine
+     * @param flowcode
+     * @param response
+     */
+    @RequestMapping(value = "/variableDefine/{flowcode}", method = RequestMethod.PUT)
+    public void editVariable(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response){
+        if(null!=flowdefine.getFlowVariableDefines()) {
+            for(FlowVariableDefine variableDefine:flowdefine.getFlowVariableDefines()){
+                if(null==variableDefine.getFlowVariableId()){
+                    variableDefine.setFlowVariableId(flowDef.getNextVariableDefId());
+                }
+                variableDefine.setFlowDefine(flowdefine);
+            }
+        }
+        flowdefine.setFlowCode(flowcode);
+        flowdefine.setVersion(0l);
+
+        boolean saveSucced=flowDef.saveDraftFlowVariableDef(flowdefine);
+
+        if(saveSucced)
+            JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
+        else
+            JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
+    }
     /**
      * 更新流程，默认编辑草稿，版本号为0
      * @param flowdefine
@@ -310,6 +364,8 @@ public class FlowDefineController extends BaseController {
     @RequestMapping(value="/getdatamap/{flowcode}",method=RequestMethod.GET)
     public void getDataMap(@PathVariable String flowcode,HttpServletResponse response) {
         Map<String, Map<String, String>> map = modelData.listAllRole();
+        //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
+        map.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, flowDef.getRoleMapByFlowCode(flowcode,0L));
         // 分配机制
         Map<String, String> map2 = modelData.listAllOptType();
         map.put("OptType", map2);
