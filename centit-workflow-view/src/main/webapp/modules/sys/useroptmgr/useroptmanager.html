@@ -185,10 +185,22 @@
         </div>
     </div>
 </div>
+<div id="dd"></div>
 <script>
     //办理按钮URL绑定
     function optLink(val,row,index) {
-        return "<a href='"+ val+"'>办理</a>";
+        return "<a onclick=openDialog('"+ val+"')>办理</a>";
+    }
+
+    function openDialog(url){
+        $("#dd").dialog({
+            title: "My Dialog",
+            width: 1000,
+            height: 800,
+            closed: false,
+            cache: false,
+            href: url
+        })
     }
 </script>
 <script>
