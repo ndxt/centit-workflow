@@ -2432,10 +2432,28 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         return flowInstances;
     }
 
-
+    @Override
+    public List<FlowInstance> viewAttentionFLowInstanceByOptName(String optName, String userCode, String instState) {
+        List<FlowInstance> flowInstanceList = viewAttentionFLowInstance(userCode,instState);
+        if(StringUtils.isBlank(optName)){
+            return flowInstanceList;
+        }
+        if(flowInstanceList != null && flowInstanceList.size() > 0){
+            Iterator<FlowInstance> iterator = flowInstanceList.iterator();
+            while (iterator.hasNext()){
+                FlowInstance flowInstance = iterator.next();
+                String flowOptName = flowInstance.getFlowOptName();
+                if(StringUtils.isBlank(flowOptName) || !(flowOptName.indexOf(optName) > -1)){
+                    iterator.remove();
+                    continue;
+                }
+            }
+        }
+        return flowInstanceList;
+    }
 
     public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId,
-            String varname) {
+                                                         String varname) {
         List<FlowVariable> lv = flowVariableDao.viewFlowVariablesByVarname(
                 flowInstId, varname);
         if (lv == null)

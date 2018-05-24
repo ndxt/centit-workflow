@@ -779,6 +779,14 @@ public interface FlowEngine {
      * @return
      */
     List<FlowInstance> viewAttentionFLowInstance(String userCode, String instState);
+
+    /**
+     * 返回所有关在的项目
+     * @param userCode 关注人
+     * @param instState  N 正常  C 完成   P 暂停 挂起     F 强行结束  A 所有
+     * @return
+     */
+    List<FlowInstance> viewAttentionFLowInstanceByOptName(String optName,String userCode, String instState);
     //--------------------信息查看相关接口-----------------------------------
     /**
      * 根据流程编号获得流程实例

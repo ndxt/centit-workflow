@@ -1,7 +1,16 @@
+<div class="easyui-panel search-body" cls="search">
+    <form>
+        <div class="search-item">
+            <label>业务名称</label>
+            <input type="text" class="easyui-textbox" name="flowOptName" />
+        </div>
+        <a class="easyui-linkbutton btn-search" iconCls="icon-search">搜索</a>
+    </form>
+</div>
 <div title="关注列表">
     <div class="easyui-panel" style="width:100%;height:400px;" data-options="cls:'left'">
         <div style="padding: 10px;">
-            <table url="service/flow/useroptmgr/getAttentions/A" style="height:auto" id="attTable"
+            <table url="service/flow/useroptmgr/getAttentionsByOptName/A" style="height:auto" id="attTable"
                    search=".search"
                    toolbar=""
                    layoutH=".search"

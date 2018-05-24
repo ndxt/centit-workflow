@@ -285,6 +285,18 @@ public class UserOptController extends BaseController{
         List<FlowInstance> flowInstances = flowEng.viewAttentionFLowInstance(userCode,instState);
         JsonResultUtils.writeSingleDataJson(flowInstances,response);
     }
+
+    /**
+     * 获取当前用户 指定状态的关注流程,并且根据业务名称过滤
+     * @param flowOptName
+     * @param response
+     */
+    @RequestMapping(value = "/getAttentionsByOptName/{instState}",method = RequestMethod.GET)
+    public void getAttentionsByLoginUserAndOptName(String flowOptName,@PathVariable String instState,HttpServletRequest request,HttpServletResponse response){
+        String userCode=super.getLoginUserCode(request);
+        List<FlowInstance> flowInstances = flowEng.viewAttentionFLowInstanceByOptName(flowOptName,userCode,instState);
+        JsonResultUtils.writeSingleDataJson(flowInstances,response);
+    }
     /**
      * 获取指定用户 指定状态的关注流程
      * @param userCode
