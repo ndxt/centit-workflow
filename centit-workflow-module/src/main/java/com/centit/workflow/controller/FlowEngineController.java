@@ -11,6 +11,7 @@ import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.po.UserTask;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -99,8 +100,13 @@ public class FlowEngineController  extends BaseController {
         JsonResultUtils.writeSingleDataJson(nodeInstList,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
     @RequestMapping(value="/listUserTasks",method = RequestMethod.GET)
-    public void  listUserTasks(HttpServletResponse response,String userCode){
-        List<UserTask> userTasks = flowEng.listUserTasks(userCode,new PageDesc(-1,-1));
+    public void  listUserTasks(HttpServletRequest request,HttpServletResponse response,String userCode){
+        Map<String, Object> searchColumn = convertSearchColumn(request);
+        if(StringUtils.isBlank(userCode)){
+            userCode = super.getLoginUserCode(request);
+        }
+        searchColumn.put("userCode",userCode);
+        List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn,new PageDesc(-1,-1));
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
 }

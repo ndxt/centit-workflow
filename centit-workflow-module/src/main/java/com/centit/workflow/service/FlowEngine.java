@@ -206,6 +206,8 @@ public interface FlowEngine {
      */
     List<UserTask> listUserTasks(String userCode, PageDesc pageDesc);
 
+    List<UserTask> listUserTasksByFilter(Map<String, Object> filterMap, PageDesc pageDesc);
+
     /**
      * 这个查看某个用户对用特定流程的待办
      * @param userCode

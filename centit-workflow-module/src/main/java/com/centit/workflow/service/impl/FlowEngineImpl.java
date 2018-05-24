@@ -2450,6 +2450,12 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         return taskList;
     }
 
+    @Override
+    public List<UserTask> listUserTasksByFilter(Map<String, Object> filterMap, PageDesc pageDesc) {
+        List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(filterMap,pageDesc);
+        return taskList;
+    }
+
 
     @Override
     public List<UserTask> listUserTasksByFlowCode(String userCode,
