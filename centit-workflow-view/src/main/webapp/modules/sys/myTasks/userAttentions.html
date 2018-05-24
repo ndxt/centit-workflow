@@ -1,0 +1,38 @@
+<div title="关注列表">
+    <div class="easyui-panel" style="width:100%;height:400px;" data-options="cls:'left'">
+        <div style="padding: 10px;">
+            <table url="service/flow/useroptmgr/getAttentions/A" style="height:auto" id="attTable"
+                   search=".search"
+                   toolbar=""
+                   layoutH=".search"
+            >
+                <thead frozen="true">
+                <tr>
+                    <th data-options="field:'flowInstId'"     sortable="true" align="center">流程实例号</th>
+                    <th data-options="field:'flowOptName'"   sortable="true"align="center">业务名称</th>
+                    <th data-options="field:'flowOptTag'"    sortable="true" align="center">业务号</th>
+                    <th data-options="field:'flowCode'"      align="center">流程代码</th>
+                    <th data-options="field:'userCode'"      align="center">用户代码</th>
+                    <th data-options="field:'unitCode'"      align="center">组织机构代码</th>
+                    <th data-options="field:'instStateText'"      align="center">流程状态</th>
+                    <th data-options="field:'timeLimitStr'"      align="center">剩余时间</th>
+                    <th data-options="field:'createTime'"      align="center">创建时间</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $.parser.onComplete = function (panel) {
+        $.parser.onComplete = $.noop;
+        requirejs(['core/filter/filter.dictionary',
+            'modules/sys/myTasks/ctrl/userAttentions'
+        ], function (FilterDictionary, UserAttentions) {
+            FilterDictionary.add(['YesOrNo']).then(function () {
+                new UserAttentions('userAttentions', panel).load(panel);
+            });
+
+        });
+    };
+</script>
