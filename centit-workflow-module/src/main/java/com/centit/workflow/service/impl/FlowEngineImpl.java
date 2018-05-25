@@ -308,7 +308,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
     @Override
     public FlowInstance getFlowInstById(long flowInstId)
     {
-        return flowInstanceDao.getObjectById(flowInstId);
+        return flowInstanceDao.getObjectCascadeById(flowInstId);
     }
     @Override
     public NodeInstance getNodeInstById(long nodeInstId)
@@ -1229,7 +1229,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInst.getFlowInstId());
         Map<String,List<String>> flowOrganizes = this.viewFlowOrganize(flowInst.getFlowInstId());
         Map<String,List<String>> flowWorkTeam = this.viewFlowWorkTeam(flowInst.getFlowInstId());
-        flushVariables((FlowVariableTranslate) varTrans,flowVariables,flowOrganizes,flowWorkTeam);
+        //flushVariables((FlowVariableTranslate) varTrans,flowVariables,flowOrganizes,flowWorkTeam);
         FlowVariableTranslate  flowVarTrans = new FlowVariableTranslate(varTrans,
                 flowVariables ,nodeInst,flowInst);
         flowVarTrans.setFlowOrganizes(flowOrganizes);
@@ -2585,6 +2585,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         return new ArrayList<FlowWarning>(
                 runtimeWarningDao.listFlowWarningByWarningCode(warningCode,pageDesc));
     }
+    //外部传进来的变量可能不是FlowVariableTranslate类型的，强转可能会失败
     private void flushVariables(FlowVariableTranslate varTrans,List<FlowVariable> flowVariables,
                                 Map<String,List<String>> flowOrganizes,Map<String,List<String>> flowWorkTeam){
         if(varTrans != null){

@@ -51,7 +51,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "LAST_UPDATE_TIME,INST_STATE,OPT_URL " +
             "from V_USER_TASK_LIST " +
             "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
-            "[ :flowOptName| and FLOW_OPT_NAME = :flowOptName] " +
+            "[:(like)flowOptName| and FLOW_OPT_NAME like :flowOptName] " +
             "[ :userCode| and USER_CODE = :userCode] " +
             "[ :nodeCode| and NODE_CODE = :nodeCode] " +
             "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
