@@ -627,6 +627,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                         mangerUserCode, nodeInstId);
                 wfactlog.setActionId(actionLogDao.getNextActionId());
                 nodeInst.addWfActionLog(wfactlog);
+                nodeInstanceDao.mergeObject(nodeInst);
             }
         }
         // 创建新节点
@@ -651,6 +652,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         flow.addWfNodeInstance(nextNodeInst);
         flowInstanceDao.updateObject(flow);
+        nodeInstanceDao.mergeObject(nextNodeInst);
 
         ManageActionLog managerAct = FlowOptUtils.createManagerAction(
                 flow.getFlowInstId(),lastNodeInstId, mangerUserCode, "R");
