@@ -565,7 +565,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (thisnode == null)
             return -1;
 
-        FlowInstance flow = flowInstanceDao.getObjectById(thisnode
+        FlowInstance flow = flowInstanceDao.getObjectCascadeById(thisnode
                 .getFlowInstId());
         if (flow == null)
             return -2;

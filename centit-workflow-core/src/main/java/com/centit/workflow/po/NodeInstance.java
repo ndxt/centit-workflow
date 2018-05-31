@@ -21,8 +21,8 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name="FLOW_INST_ID")
     private Long  flowInstId;
 
-    @ManyToOne()
-    @JoinColumn(name="NODE_ID")
+    @OneToOne(mappedBy = "nodeId",cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInfo.class)
+    @JoinColumn(name="nodeId")
     private NodeInfo node;
 
     @Column(name = "NODE_ID")
@@ -662,6 +662,21 @@ public class NodeInstance implements java.io.Serializable {
            this.isTimer = other.getIsTimer();
        if(other.getFlowStage() != null)
            this.stageCode = other.getFlowStage();
+       if(other.getRoleType() != null){
+           this.roleType = other.getRoleType();
+       }
+       if(other.getRoleCode() != null){
+           this.roleCode = other.getRoleCode();
+       }
+       if(other.getUserCode() != null){
+           this.userCode = other.getUserCode();
+       }
+       if(other.getNodeId() != null){
+           this.nodeId = other.getNodeId();
+       }
+       if(other.getPromiseTime() != null){
+           this.promiseTime = other.getPromiseTime();
+       }
     }
 
     public void clearProperties()

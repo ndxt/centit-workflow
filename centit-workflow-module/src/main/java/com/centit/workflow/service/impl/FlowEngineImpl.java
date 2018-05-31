@@ -1305,14 +1305,14 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
     @Override
     public long rollbackOpt(long nodeInstId, String mangerUserCode) {
         // 添加令牌算法
-        NodeInstance thisNodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        NodeInstance thisNodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
         if (thisNodeInst == null)
             return -1;
         // 当前节点状态必需为正常
         if (!"N".equals(thisNodeInst.getNodeState()))
             return -6;
 
-        FlowInstance flowInst = flowInstanceDao.getObjectById(thisNodeInst
+        FlowInstance flowInst = flowInstanceDao.getObjectCascadeById(thisNodeInst
                 .getFlowInstId());
         if (flowInst == null)
             return -2;
@@ -1380,7 +1380,8 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         }
 
         flowInst.addWfNodeInstance(nextNodeInst);
-        nodeInstanceDao.updateObject(thisNodeInst);
+        nodeInstanceDao.mergeObject(thisNodeInst);
+        nodeInstanceDao.mergeObject(nextNodeInst);
         flowInstanceDao.updateObject(flowInst);
         return lastNodeInstId;
     }

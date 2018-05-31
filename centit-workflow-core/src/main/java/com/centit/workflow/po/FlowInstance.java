@@ -89,13 +89,13 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name="IS_TIMER")
     private String isTimer; //不计时N、计时T(有期限)、暂停P  忽略(无期限) F
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInstance.class)
+    @OneToMany(mappedBy = "flowInstId",cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInstance.class)
     @JoinColumn(name="flowInstId")
     private List<NodeInstance> flowNodeInstances = null;// new ArrayList<WfNodeInstance>();
     @Transient
     @JSONField(serialize=false)
     private List<NodeInstance> activeNodeList;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = StageInstance.class)
+    @OneToMany(mappedBy = "flowInstId",cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = StageInstance.class)
     @JoinColumn(name="flowInstId")
     private List<StageInstance> flowStageInstances = null;// new ArrayList<WfNodeInstance>();
 
