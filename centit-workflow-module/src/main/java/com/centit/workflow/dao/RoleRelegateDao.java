@@ -57,6 +57,6 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate,Long> {
                 || roleRelegate.getRelegateNo() == 0) {
             roleRelegate.setRelegateNo(getNextReleGateId());
         }
-        super.saveNewObject(roleRelegate);
+        super.mergeObject(roleRelegate);
     }
 }

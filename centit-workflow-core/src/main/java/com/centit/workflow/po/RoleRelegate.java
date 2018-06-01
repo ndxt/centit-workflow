@@ -1,9 +1,8 @@
 package com.centit.workflow.po;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.alibaba.fastjson.annotation.JSONField;
+
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -25,8 +24,10 @@ public class RoleRelegate implements java.io.Serializable {
     private String grantee;
     @Column(name = "IS_VALID")
     private String isValid;
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name = "RELEGATE_TIME")
     private Date relegateTime;
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name = "EXPIRE_TIME")
     private Date expireTime;
     @Column(name = "UNIT_CODE")
