@@ -313,7 +313,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
     @Override
     public NodeInstance getNodeInstById(long nodeInstId)
     {
-        return nodeInstanceDao.getObjectById(nodeInstId);
+        return nodeInstanceDao.getObjectCascadeById(nodeInstId);
     }
 
      @Override
