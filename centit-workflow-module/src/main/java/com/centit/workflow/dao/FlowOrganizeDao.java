@@ -34,12 +34,12 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
 
     @Transactional(propagation= Propagation.MANDATORY)
     public void deleteFlowOrganize(long flowInstId, String roleCode) {
-        this.getJdbcTemplate().update("delete WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ?",
+        this.getJdbcTemplate().update("delete from WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ?",
                 new Object[]{flowInstId, roleCode});
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public void deleteFlowOrganize(long flowInstId, String roleCode,String authDesc) {
-        this.getJdbcTemplate().update("delete WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ? " +
+        this.getJdbcTemplate().update("delete from WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ? " +
                 "and AUTH_DESC = ?",new Object[]{flowInstId, roleCode,authDesc});
     }
     @Transactional(propagation= Propagation.REQUIRES_NEW)
