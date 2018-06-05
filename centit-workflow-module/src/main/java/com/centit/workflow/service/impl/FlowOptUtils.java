@@ -170,6 +170,7 @@ public class FlowOptUtils {
         ActionTask actionTask = createActionTask(nodeInst.getNodeInstId(),usercode);
         actionTask.setRoleType(node.getRoleType());
         actionTask.setRoleCode(node.getRoleCode());
+        actionTask.setIsvalid("T");
         //actionTask.setExpireTime(new Date(System.currentTimeMillis()+1000*60*60*480));
         return actionTask;
     }

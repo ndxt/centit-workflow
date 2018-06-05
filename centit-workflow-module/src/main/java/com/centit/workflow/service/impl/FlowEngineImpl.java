@@ -925,6 +925,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                         ActionTask wfactTask = FlowOptUtils.createActionTask(uc, nextNodeInst, nextOptNode);
                         wfactTask.setTaskId(actionTaskDao.getNextTaskId());
                         wfactTask.setAssignTime(currentTime );
+                        actionTaskDao.saveNewObject(wfactTask);
                         nextNodeInst.addWfActionTask(wfactTask);
                     }
                 }else{
