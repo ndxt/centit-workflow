@@ -39,6 +39,10 @@ public abstract class OperateBeanController extends BaseController{
         return  doCallBack(paramMap);
     }
 
+    /**
+     * 获取流程变量
+     * @return
+     */
     @RequestMapping(value = "/getFlowVariable", method= RequestMethod.GET)
     @ResponseBody
     public ResponseData callFlowVariable(){
