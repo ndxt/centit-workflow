@@ -51,6 +51,7 @@ public class FlowManagerController extends BaseController {
     public void list(String[] field, PageDesc pageDesc,
         HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> searchColumn = convertSearchColumn(request);
+        searchColumn.put("ORDER BY ","createTime desc");
         List<FlowInstance> listObjects = flowManager.listFlowInstance(searchColumn,pageDesc);
         resData.addResponseData(OBJLIST, listObjects);
         resData.addResponseData(PAGE_DESC, pageDesc);
