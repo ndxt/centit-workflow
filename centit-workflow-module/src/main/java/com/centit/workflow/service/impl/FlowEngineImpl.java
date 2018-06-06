@@ -523,8 +523,8 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                 String preRunToken = NodeInstance.calcSuperToken(nodeToken);
                 Set<String> nNs =
                         flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
-                //汇聚节点，所有节点都已提交
-                if(nNs==null || nNs.size()==0){
+                //汇聚节点，所有节点都已提交,或者只要当前节点
+                if(nNs==null || nNs.size()==0 || (nNs.size() ==1 && nNs.contains(nodeInst.getRunToken()))){
                     FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
                     long nextNodeId = nodeTran.getEndnodeid();
                     resNodes = submitToNextNode(
@@ -1153,7 +1153,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
              */
             int havnotSubmit=0;
             for(ActionTask task : nodeInst.getWfActionTasks()){
-                if("T".equals(task.getIsvalid()) && "A".equals(task.getTaskState())
+                if("T".equals(task.getIsValid()) && "A".equals(task.getTaskState())
                         //这个可能存在一个问题就是最后一个人没有提交，但是已经过期了，这个需要处理，需要在设置任务列表时注意
                          && ( task.getExpireTime() ==null || task.getExpireTime().after(new Date(System.currentTimeMillis())))){
                     if(/*userCode*/sGrantor.equals(task.getUserCode()) ){
@@ -1163,11 +1163,11 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                         if("C".equals( currNode.getOptType() ))
                             havnotSubmit ++;
                         else//不是多人操作是抢先机制的，其他人任务作废。
-                            task.setIsvalid("F");
+                            task.setIsValid("F");
                     }
                 }else{
                     //其他无效任务作废，提高效率。
-                    task.setIsvalid("F");
+                    task.setIsValid("F");
                 }
             }
             //判断是否是多人操作，如果是多人操作，最后一个人提交才正在提交
@@ -1369,7 +1369,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         nextNodeInst.setLastUpdateTime(updateTime);
 
         for (ActionTask task : prevNodeInst.getWfActionTasks()) {
-            if ("T".equals(task.getIsvalid())) {
+            if ("T".equals(task.getIsValid())) {
                 ActionTask newtask = FlowOptUtils.createActionTask(
                         task.getUserCode(), nextNodeInst, nodedef);
                 newtask.setTaskId(actionTaskDao.getNextTaskId());
@@ -1979,7 +1979,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                         userCode != null && !userCode.equals(taskList.iterator().next().getUserCode()))){
             node.setTaskAssigned("T");
             for (ActionTask task : taskList) {
-                if ("T".equals(task.getIsvalid())
+                if ("T".equals(task.getIsValid())
                         && userCode.equals(task.getUserCode()))
                     return -2;
             }
@@ -2018,7 +2018,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         Set<ActionTask> taskList = node.getWfActionTasks();
         int atc = 0;
         for (ActionTask task : taskList) {
-            if ("T".equals(task.getIsvalid())
+            if ("T".equals(task.getIsValid())
                     && "A".equals(task.getTaskState()))// 只能禁用未完成的任务
             {
                 if (userCode.equals(task.getUserCode()))
@@ -2030,7 +2030,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 
         if (assignedTask == null)
             return -3;
-        assignedTask.setIsvalid("F");
+        assignedTask.setIsValid("F");
         node.setTaskAssigned(atc > 0 ? "T" : "D");
         nodeInstanceDao.updateObject(node);
 
@@ -2056,7 +2056,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         Set<ActionTask> taskList = node.getWfActionTasks();
         int atc = 0;
         for (ActionTask task : taskList) {
-            if ("T".equals(task.getIsvalid())
+            if ("T".equals(task.getIsValid())
                     && "A".equals(task.getTaskState()))// 只能禁用未完成的任务
             {
                 if (userCode.equals(task.getUserCode()))
@@ -2089,7 +2089,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 
         Set<ActionTask> taskList = node.getWfActionTasks();
         for (ActionTask task : taskList) {
-            if ("T".equals(task.getIsvalid())
+            if ("T".equals(task.getIsValid())
                     && "A".equals(task.getTaskState()))// 只能禁用未完成的任务
             {
                 node.removeWfActionTask(task);

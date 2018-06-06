@@ -641,7 +641,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nextNodeInst.setLastUpdateTime(updateTime);
 
         for (ActionTask task : thisnode.getWfActionTasks()) {
-            if ("T".equals(task.getIsvalid())) {
+            if ("T".equals(task.getIsValid())) {
                 ActionTask newtask = FlowOptUtils.createActionTask(
                         task.getUserCode(), nextNodeInst, nodedef);
                 newtask.setTaskId(actionTaskDao.getNextTaskId());
@@ -1166,7 +1166,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         Set<ActionTask> taskList = node.getWfActionTasks();
         for (ActionTask task : taskList) {
-            if ("T".equals(task.getIsvalid())
+            if ("T".equals(task.getIsValid())
                     && userCode.equals(task.getUserCode()))
                 return -2;
         }
@@ -1214,12 +1214,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         for (ActionTask task : taskList) {
             if (task.getTaskId().equals(taskInstId))// 只能禁用未完成的任务
                 assignedTask = task;
-            else if ("T".equals(task.getIsvalid())
+            else if ("T".equals(task.getIsValid())
                     && "A".equals(task.getTaskState()))
                 atc++;
         }
 
-        assignedTask.setIsvalid("F");
+        assignedTask.setIsValid("F");
         node.setTaskAssigned(atc > 0 ? "T" : "F");
         nodeInstanceDao.mergeObject(node);
         node.setLastUpdateUser(mangerUserCode);
@@ -1251,7 +1251,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         for (ActionTask task : taskList) {
             if (task.getTaskId().equals(taskInstId))// 只能禁用未完成的任务
                 assignedTask = task;
-            else if ("T".equals(task.getIsvalid())
+            else if ("T".equals(task.getIsValid())
                     && "A".equals(task.getTaskState()))
                 atc++;
         }

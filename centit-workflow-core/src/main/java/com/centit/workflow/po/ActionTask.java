@@ -153,11 +153,11 @@ public class ActionTask implements java.io.Serializable {
      * T 正常 F 失效
      * @return
      */
-    public String getIsvalid() {
+    public String getIsValid() {
         return this.isValid;
     }
 
-    public void setIsvalid(String isvalid) {
+    public void setIsValid(String isvalid) {
         this.isValid = isvalid;
     }
   
@@ -181,7 +181,7 @@ public class ActionTask implements java.io.Serializable {
         this.roleType = other.getRoleType();
         this.roleCode = other.getRoleCode();
         this.taskState = other.getTaskState();
-        this.isValid = other.getIsvalid();
+        this.isValid = other.getIsValid();
         this.authDesc = other.getAuthDesc();
 
     }
@@ -203,8 +203,8 @@ public class ActionTask implements java.io.Serializable {
             this.roleCode = other.getRoleCode();
         if( other.getTaskState() != null)
             this.taskState = other.getTaskState();
-        if( other.getIsvalid() != null)
-            this.isValid = other.getIsvalid();
+        if( other.getIsValid() != null)
+            this.isValid = other.getIsValid();
         if( other.getAuthDesc() != null)
             this.authDesc = other.getAuthDesc();
     }
