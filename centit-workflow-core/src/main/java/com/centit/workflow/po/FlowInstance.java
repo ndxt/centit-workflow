@@ -58,6 +58,8 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name="FLOW_OPT_TAG")
     private String flowOptTag;
     @Column(name="CREATE_TIME")
+    @OrderBy(value = "DESC")
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @Column(name="PROMISE_TIME")
     private Long  promiseTime;
