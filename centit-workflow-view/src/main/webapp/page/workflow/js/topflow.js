@@ -1065,7 +1065,8 @@ function saveXml(){
                     "name":replaceToXml(lineObj[j].getAttribute("title")),
                     "from":lineObj[j].getAttribute("from"),
                     "to":lineObj[j].getAttribute("to"),
-                    "cond":replaceToXml(lineObj[j].getAttribute("cond")),
+                    "cond":lineObj[j].getAttribute("cond"),
+                    /*"cond":replaceToXml(lineObj[j].getAttribute("cond")),*/
                     "desc":replaceToXml(lineObj[j].getAttribute("desc")),
                     "timeLimit":replaceToXml(lineObj[j].getAttribute("timeLimit")),
                     "timeLimitType":lineObj[j].getAttribute("timeLimitType"),
@@ -1099,7 +1100,7 @@ function saveXml(){
         $.ajax({
         	type:"post",
         	url: path+saveXmlAdd+flowCode,
-        	data:{flowxmldesc:escapeXml(xmlString)},
+        	data:{flowxmldesc:xmlString},
         	success: function (data) {
                 alert(data.data);
                 changeSaveStatus('unsave');
