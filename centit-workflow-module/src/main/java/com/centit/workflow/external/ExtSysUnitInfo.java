@@ -49,6 +49,11 @@ public class ExtSysUnitInfo implements IUnitInfo{
         return this.unitName;
     }
 
+    @Override
+    public String getUnitShortName() {
+        return this.unitName;
+    }
+
     /**
      * 上级机构代码
      *
