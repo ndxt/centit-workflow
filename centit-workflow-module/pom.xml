@@ -19,19 +19,33 @@
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-core</artifactId>
-            <version>${centit.framework.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-jdbc</artifactId>
-            <version>${centit.persistence.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.support</groupId>
             <artifactId>centit-database-datasource</artifactId>
-            <version>${centit.commons.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-adapter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-ip-adapter</artifactId>
+            <version>${centit.ip.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-workflow-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -56,16 +70,8 @@
             <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-adapter</artifactId>
-            <version>${centit.framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-core</artifactId>
-            <version>${centit.workflow.version}</version>
-        </dependency>
+
+
     </dependencies>
 
 </project>
