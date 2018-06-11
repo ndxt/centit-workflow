@@ -1,15 +1,19 @@
 /**
- * 
+ *
  */
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.components.CodeRepositoryUtil;
+import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.dao.ActionTaskDao;
+import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.dao.FlowWarningDao;
 import com.centit.workflow.dao.NodeInstanceDao;
+import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowWarning;
 import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.po.UserTask;
@@ -25,10 +29,9 @@ import java.util.List;
 
 /**
  * 工作流引擎定时检测任务期限，并发出相应的消息
- * 
+ *
  * @author ljy ，codefan
  * @create 2012-2-23
- * @version 
  */
 @Component
 public class FlowTaskImpl {
@@ -37,73 +40,131 @@ public class FlowTaskImpl {
 
     @Resource
     ActionTaskDao actionTaskDao;
-    
+
     @Resource
     NodeInstanceDao nodeInstanceDao;
-    
+
     @Resource
-    private FlowWarningDao wfRuntimeWarningDao ;
+    private FlowWarningDao wfRuntimeWarningDao;
     /**
      * 这个map需要更换会系统的通知中心
      */
     @Resource
     private NotificationCenter notificationCenter;
-  
 
-    public FlowTaskImpl()
-    {
+    @Resource
+    private FlowInstanceDao flowInstanceDao;
+
+    public FlowTaskImpl() {
     }
-    
-    private int sendNotifyMessage(Long nodeInstId){
+
+    private int sendNotifyMessage(Long nodeInstId) {
         List<UserTask> taskList = actionTaskDao
                 .listUserTaskByFilter(
-                        QueryUtils.createSqlParamsMap("nodeInstId",nodeInstId),new PageDesc(-1,-1));
-        int nn=0;
-        for(UserTask task : taskList){
+                        QueryUtils.createSqlParamsMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
+        int nn = 0;
+        for (UserTask task : taskList) {
             notificationCenter.sendMessage("admin",
-                    task.getUserCode(), "节点预报警提示", 
-                    "业务"+task.getFlowOptName()+"的"+
-                    task.getNodeName()+"节点超时预警，请尽快处理。办理链接为"+
-                    task.getNodeOptUrl(),"WF_WARNING", "NOTIFY", String.valueOf(nodeInstId));
+                    task.getUserCode(), "节点预报警提示",
+                    "业务" + task.getFlowOptName() + "的" +
+                            task.getNodeName() + "节点超时预警，请尽快处理。办理链接为" +
+                            task.getNodeOptUrl(), "WF_WARNING", "NOTIFY", String.valueOf(nodeInstId));
             nn++;
         }
         return nn;
     }
+
     /**
      * 根据数据库计算出来的预报警发出对应的通知即可
+     *
      * @param runTime
      */
     @Scheduled(cron = "0 0/5 8-18 * * *")
     @Transactional
-    public void notifyTimeWaring(Date runTime){
+    public void notifyTimeWaring(Date runTime) {
         //直接从  wfRuntimeWarningDao 读取 报警信息，发送通知，设置已通知标志位
         List<FlowWarning> warningList = wfRuntimeWarningDao.listNeedNotifyWarning();
-        int nw = 0; int nn=0;
-        if(warningList!=null){
-            for(FlowWarning warn : warningList){
-                if("N".equals(warn.getObjType())){
+        int nw = 0;
+        int nn = 0;
+        if (warningList != null) {
+            for (FlowWarning warn : warningList) {
+                if ("N".equals(warn.getObjType())) {
                     nn += sendNotifyMessage(warn.getNodeInstId());
-                }else if("F".equals(warn.getObjType())){
+                } else if ("F".equals(warn.getObjType())) {
                     List<NodeInstance> nodelist = nodeInstanceDao.listActiveTimerNodeByFlow(warn.getFlowInstId());
-                    for(NodeInstance node:nodelist){
+                    for (NodeInstance node : nodelist) {
                         nn += sendNotifyMessage(node.getNodeInstId());
                     }
-                }else if("P".equals(warn.getObjType())){
+                } else if ("P".equals(warn.getObjType())) {
                     List<NodeInstance> nodelist = nodeInstanceDao.listActiveTimerNodeByFlowStage(
-                            warn.getFlowInstId(),warn.getFlowStage());
-                    for(NodeInstance node:nodelist){
+                            warn.getFlowInstId(), warn.getFlowStage());
+                    for (NodeInstance node : nodelist) {
                         nn += sendNotifyMessage(node.getNodeInstId());
                     }
                 }
-                
+
                 warn.setSendMsgTime(DatetimeOpt.currentUtilDate());
                 warn.setNoticeState("1");
                 wfRuntimeWarningDao.updateObject(warn);
             }
             nw++;
         }
-        logger.info("通知中心发现 "+nw+"预警信息，并通知了"+nn+"个用户。");
+        logger.info("通知中心发现 " + nw + "预警信息，并通知了" + nn + "个用户。");
     }
-    
- 
+
+    @Scheduled(cron = "0 0/2 8-18 * * *")
+    @Transactional
+    public void runEntity(Date runTime) {
+
+        /**这部分内容 也可以放到后台 通过数据库来执行，在程序中执行 如果服务器停止则计时会不正确，
+         *  并且如果部署到多个应用服务器 会出现重复扣除时间的问题
+         *  在数据库中执行 复杂在要重新实现 当前时间是否是工作时间的问题
+         */
+        if (isWorkTime(runTime)) {
+            long consumeTime =2;
+                consumeLifeTime(consumeTime);
+                //nodeInstanceDao.updateTimeConsume(consumeTime);
+                //flowInstanceDao.updateTimeConsume(consumeTime);
+            logger.info(runTime.toString() + "工作时间，各个在办件减少一个即时周期" + consumeTime + "分钟。");
+        }
+    }
+
+    private void consumeLifeTime(long consumeTime) {
+        List<FlowInstance> activeFlows = flowInstanceDao.listAllActiveTimerFlowInst();
+        if (activeFlows == null || activeFlows.size() < 1)
+            return;
+        for (FlowInstance flowInst : activeFlows) {
+            List<NodeInstance> nodeList = nodeInstanceDao.listActiveTimerNodeByFlow(flowInst.getFlowInstId()) ;
+            if (nodeList == null || nodeList.size() < 1)
+                continue;
+            //boolean consume = true;
+            boolean flowconsume = false;
+            // T 计时、有期限   F 不计时   H仅环节计时  、暂停P
+            for (NodeInstance nodeInst : nodeList) {
+
+                if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer())) &&
+                        (nodeInst.getTimeLimit() != null)) {
+                    nodeInst.setTimeLimit(nodeInst.getTimeLimit() - consumeTime);
+                    nodeInstanceDao.updateObject(nodeInst);
+                }
+
+                if ("T".equals(nodeInst.getIsTimer())
+                        /*&& "T".equals( node.getIsTrunkLine())*/)
+                    flowconsume = true;
+            }
+
+            if (flowconsume && flowInst.getTimeLimit() != null) {
+                flowInst.setTimeLimit(flowInst.getTimeLimit() - consumeTime);
+                flowInstanceDao.updateObject(flowInst);
+            }
+
+        }
+    }
+
+
+    public boolean isWorkTime(Date workTime) {
+        int m = DatetimeOpt.getMinute(workTime) + 100 * DatetimeOpt.getHour(workTime);
+        //默认朝九晚五 codefan@sina.com
+        return (m > 830 && m < 1200) || (m > 1330 && m < 1800);
+    }
 }
