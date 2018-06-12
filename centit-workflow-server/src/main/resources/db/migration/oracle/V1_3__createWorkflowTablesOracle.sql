@@ -357,7 +357,8 @@ CREATE  or replace  VIEW f_v_wf_optdef_url_map AS select concat(c.opt_url,b.OPT_
 
 
 
-CREATE   or replace VIEW v_inner_user_task_list AS select a.FLOW_INST_ID AS FLOW_INST_ID,w.FLOW_CODE AS FLOW_CODE,w.VERSION AS version,w.FLOW_Opt_Name AS FLOW_OPT_NAME,w.FLOW_Opt_Tag AS FLOW_OPT_TAG,a.NODE_INST_ID AS NODE_INST_ID,nvl(a.UNIT_CODE,nvl(w.UNIT_CODE,'0000000')) AS Unit_Code,a.USER_CODE AS user_code,c.ROLE_TYPE AS ROLE_TYPE,c.ROLE_CODE AS ROLE_CODE,'系统指定' AS AUTH_DESC,c.NODE_CODE AS node_code,c.NODE_NAME AS Node_Name,c.NODE_TYPE AS Node_Type,c.OPT_TYPE AS NODE_OPT_TYPE,d.opt_id AS opt_id,d.Opt_Name AS Opt_Name,d.Opt_Name AS Method_Name,d.optdef_url AS Opt_Url,d.opt_Method AS opt_Method,c.OPT_PARAM AS Opt_Param,d.opt_desc AS Opt_Desc,a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT,c.OPT_CODE AS OPT_CODE,c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME,w.INST_STATE AS inst_state from (((wf_node_instance a join wf_flow_instance w on((a.FLOW_INST_ID = w.FLOW_INST_ID))) join wf_node c on((a.NODE_ID = c.NODE_ID))) join f_v_wf_optdef_url_map d on((c.OPT_CODE = d.opt_code))) where ((a.NODE_STATE = 'N') and (w.INST_STATE = 'N') and (a.TASK_ASSIGNED = 'S')) union all 
+CREATE   or replace VIEW v_inner_user_task_list AS
+  select a.FLOW_INST_ID AS FLOW_INST_ID,w.FLOW_CODE AS FLOW_CODE,w.VERSION AS version,w.FLOW_Opt_Name AS FLOW_OPT_NAME,w.FLOW_Opt_Tag AS FLOW_OPT_TAG,a.NODE_INST_ID AS NODE_INST_ID,nvl(a.UNIT_CODE,nvl(w.UNIT_CODE,'0000000')) AS Unit_Code,a.USER_CODE AS user_code,c.ROLE_TYPE AS ROLE_TYPE,c.ROLE_CODE AS ROLE_CODE,'系统指定' AS AUTH_DESC,c.NODE_CODE AS node_code,c.NODE_NAME AS Node_Name,c.NODE_TYPE AS Node_Type,c.OPT_TYPE AS NODE_OPT_TYPE,d.opt_id AS opt_id,d.Opt_Name AS Opt_Name,d.Opt_Name AS Method_Name,d.optdef_url AS Opt_Url,d.opt_Method AS opt_Method,c.OPT_PARAM AS Opt_Param,d.opt_desc AS Opt_Desc,a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT,c.OPT_CODE AS OPT_CODE,c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME,w.INST_STATE AS inst_state from (((wf_node_instance a join wf_flow_instance w on((a.FLOW_INST_ID = w.FLOW_INST_ID))) join wf_node c on((a.NODE_ID = c.NODE_ID))) join f_v_wf_optdef_url_map d on((c.OPT_CODE = d.opt_code))) where ((a.NODE_STATE = 'N') and (w.INST_STATE = 'N') and (a.TASK_ASSIGNED = 'S')) union all
 select a.FLOW_INST_ID AS FLOW_INST_ID,w.FLOW_CODE AS FLOW_CODE,w.VERSION AS version,w.FLOW_Opt_Name AS FLOW_OPT_NAME,w.FLOW_Opt_Tag AS FLOW_OPT_TAG,a.NODE_INST_ID AS NODE_INST_ID,nvl(a.UNIT_CODE,nvl(w.UNIT_CODE,'0000000')) AS UnitCode,b.USER_CODE AS user_code,b.ROLE_TYPE AS ROLE_TYPE,b.ROLE_CODE AS ROLE_CODE,b.AUTH_DESC AS AUTH_DESC,c.NODE_CODE AS node_code,c.NODE_NAME AS Node_Name,c.NODE_TYPE AS Node_Type,c.OPT_TYPE AS NODEOPTTYPE,d.opt_id AS opt_id,d.Opt_Name AS Opt_Name,d.Opt_Name AS MethodName,d.optdef_url AS OptUrl,d.opt_Method AS opt_Method,c.OPT_PARAM AS Opt_Param,d.opt_desc AS Opt_Desc,a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT,c.OPT_CODE AS OPT_CODE,c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME,w.INST_STATE AS inst_state from
 wf_node_instance a join wf_flow_instance w on a.FLOW_INST_ID = w.FLOW_INST_ID
  join wf_action_task b on a.NODE_INST_ID = b.NODE_INST_ID
@@ -380,9 +381,8 @@ where a.NODE_STATE = 'N'
 and w.INST_STATE = 'N'
 and a.TASK_ASSIGNED = 'D'
 and (a.UNIT_CODE is null or a.UNIT_CODE = b.UNIT_CODE)
- and c.ROLE_TYPE = 'gw'
- and (c.ROLE_CODE = b.User_Station or c.ROLE_TYPE = 'xz') 
- and c.ROLE_CODE = b.User_Rank ;
+ and (c.ROLE_CODE = b.User_Station or c.ROLE_TYPE = 'xz')
+ and (c.ROLE_CODE = b.User_Rank or c.ROLE_TYPE = 'gw');
 
 
 
