@@ -77,11 +77,10 @@ public class FlowTaskImpl{
     /**
      * 根据数据库计算出来的预报警发出对应的通知即可
      *
-     * @param runTime
      */
     @Scheduled(cron = "0 0/5 8-18 * * *")
     @Transactional
-    public void notifyTimeWaring(Date runTime) {
+    public void notifyTimeWaring() {
         //直接从  wfRuntimeWarningDao 读取 报警信息，发送通知，设置已通知标志位
         List<FlowWarning> warningList = wfRuntimeWarningDao.listNeedNotifyWarning();
         int nw = 0;
@@ -112,14 +111,14 @@ public class FlowTaskImpl{
         logger.info("通知中心发现 " + nw + "预警信息，并通知了" + nn + "个用户。");
     }
 
-    @Scheduled(cron = "1/2 8-23 * * ?")
+    /*@Scheduled(cron = "1/2 8-23 * * ?")
     @Transactional
     public void runEntity(Date runTime) {
 
-        /**这部分内容 也可以放到后台 通过数据库来执行，在程序中执行 如果服务器停止则计时会不正确，
+        *//**这部分内容 也可以放到后台 通过数据库来执行，在程序中执行 如果服务器停止则计时会不正确，
          *  并且如果部署到多个应用服务器 会出现重复扣除时间的问题
          *  在数据库中执行 复杂在要重新实现 当前时间是否是工作时间的问题
-         */
+         *//*
         if (isWorkTime(runTime)) {
             long consumeTime =2;
                 consumeLifeTime(consumeTime);
@@ -127,7 +126,7 @@ public class FlowTaskImpl{
                 //flowInstanceDao.updateTimeConsume(consumeTime);
             logger.info(runTime.toString() + "工作时间，各个在办件减少一个即时周期" + consumeTime + "分钟。");
         }
-    }
+    }*/
 
     private void consumeLifeTime(long consumeTime) {
         List<FlowInstance> activeFlows = flowInstanceDao.listAllActiveTimerFlowInst();
