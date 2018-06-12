@@ -34,7 +34,7 @@ import java.util.List;
  * @create 2012-2-23
  */
 @Component
-public class FlowTaskImpl {
+public class FlowTaskImpl{
 
     private static final Logger logger = LoggerFactory.getLogger(FlowTaskImpl.class);
 
@@ -112,7 +112,7 @@ public class FlowTaskImpl {
         logger.info("通知中心发现 " + nw + "预警信息，并通知了" + nn + "个用户。");
     }
 
-    @Scheduled(cron = "0 0/2 8-18 * * *")
+    @Scheduled(cron = "1/2 8-23 * * ?")
     @Transactional
     public void runEntity(Date runTime) {
 
