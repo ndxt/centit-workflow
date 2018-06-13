@@ -112,7 +112,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listNearExpireFlowInstance(long leaveLimit) {
         String conditionSql = "where FLOW_INST_ID = ? " +
-                "and expireOptSign<6 and instState='N' and isTimer='T'";
+                " and inst_State='N' and is_Timer='T'";
+        //and expireOptSign<6 暂时没有这个字段
         return  this.listObjectsByFilter(conditionSql,new Object[]{leaveLimit});
     }
 
@@ -134,7 +135,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listAllActiveTimerFlowInst(){
-        String whereSql = "where instState = 'N' and isTimer='T'";
+        String whereSql = "where inst_State = 'N' and is_Timer='T'";
         return this.listObjectsByFilter(whereSql,(Object[]) null);
     }
     @Transactional(propagation= Propagation.MANDATORY)
