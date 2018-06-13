@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-view</artifactId>
-            <version>${centit.workflow.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-module</artifactId>
-            <version>${centit.workflow.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
