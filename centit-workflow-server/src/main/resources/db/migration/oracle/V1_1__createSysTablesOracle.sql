@@ -1,3 +1,6 @@
+/*==============================================================*/
+/* Oracle 数据库脚本                                              */
+/*==============================================================*/
 create sequence S_Filter_No;
 create sequence s_notify_id;
 create sequence s_optdefcode ;
@@ -9,68 +12,6 @@ create sequence S_MSGCODE ;
 create sequence S_RECIPIENT ;
 create sequence S_ADDRESSID ;
 create sequence S_ROLECODE;
-
-create table F_ADDRESS_BOOK
-(
-   ADDRBOOKID           number(10,0) not null,
-   BodyType             varchar2(2) not null ,
-   BodyCode             varchar2(16) not null ,
-   representation       varchar2(200),
-   UnitName             varchar2(200),
-   DeptName             varchar2(100),
-   RankName             varchar2(50),
-   Email                varchar2(60),
-   Email2               varchar2(60),
-   Email3               varchar2(60),
-   HomePage             varchar2(100),
-   QQ                   varchar2(20),
-   MSN                  varchar2(60),
-   wangwang             varchar2(20),
-   buzPhone             varchar2(20),
-   buzphone2            varchar2(20),
-   buzfax               varchar2(20),
-   assiphone            varchar2(20),
-   callbacphone         varchar2(20),
-   carphone             varchar2(20),
-   unitphone            varchar2(20),
-   homephone            varchar2(20),
-   homephone2           varchar2(20),
-   homephone3           varchar2(20),
-   homefax              varchar2(20),
-   mobilephone          varchar2(20),
-   mobilephone2         varchar2(20),
-   mobilephone3         varchar2(20),
-   unitzip              varchar2(8),
-   unitProvince         varchar2(20),
-   unitCity             varchar2(20),
-   unitDistrict         varchar2(20),
-   unitStreet           varchar2(20),
-   unitAddress          varchar2(60),
-   homezip              varchar2(8),
-   homeProvince         varchar2(20),
-   homeCity             varchar2(20),
-   homeDistrict         varchar2(20),
-   homeStreet           varchar2(20),
-   homeAddress          varchar2(60),
-   home2zip             varchar2(8),
-   home2Province        varchar2(20),
-   home2City            varchar2(20),
-   home2District        varchar2(20),
-   home2Street          varchar2(20),
-   home2Address         varchar2(60),
-   inuseAddress         varchar2(1)  ,
-   SearchString         varchar2(1000)  ,
-   memo                 varchar2(500),
-   LastModifyDate       date,
-   CreateDate           date
-);
-comment on column F_ADDRESS_BOOK.BodyType is '用户/个人/单位';
-comment on column F_ADDRESS_BOOK.BodyCode is ' 用户/个人/单位 编号';
-comment on column F_ADDRESS_BOOK.inuseAddress is '单位/住宅/住宅2';
-comment on column F_ADDRESS_BOOK.SearchString is '前面各个字段的中文首字母，数字 连接的串';
-comment on  table F_ADDRESS_BOOK is '系统中维持一个统一的通讯录 模块，主要目的是为了以后做 统一的接口，比如：';
-
-alter table F_ADDRESS_BOOK add primary key (ADDRBOOKID);
 
 create table F_DATACATALOG
 (
@@ -166,28 +107,6 @@ comment on column F_OPT_LOG.Opt_ID is  '模块，或者表';
 comment on column F_OPT_LOG.Opt_ID is  '方法，或者字段';
 comment on column F_OPT_LOG.Opt_ID is  '一般用于关联到业务主体的标识、表的主键等等';
 alter table F_OPT_LOG  add primary key (log_Id);
-
-create table F_OptFlowNoInfo
-(
-   Owner_Code           varchar2(8) not null,
-   Code_Code            varchar2(16) not null,
-   Code_Date            date default sysdate   not null  ,
-   Cur_No               number(6,0) default 1 not null ,
-   Last_Code_Date       date,
-   Create_Date          date,
-   Last_Modify_Date     date
-);
-alter table F_OptFlowNoInfo add primary key (Owner_Code, Code_Date, Code_Code);
-
-create table F_OptFlowNoPool
-(
-   Owner_Code           varchar2(8) not null,
-   Code_Code            varchar2(16) not null,
-   Code_Date            date default sysdate not null ,
-   Cur_No               number(6,0)  default 1 not null,
-   Create_Date          date
-);
-alter table F_OptFlowNoPool add primary key (Owner_Code, Code_Date, Code_Code, Cur_No);
 
 create table F_OptInfo
 (
@@ -289,17 +208,6 @@ create table F_ROLEPOWER
 comment on column F_ROLEPOWER.opt_Scope_Codes is  '用逗号隔开的数据范围结合（空\all 表示全部）';
 alter table F_ROLEPOWER add primary key (ROLE_CODE, OPT_CODE);
 
-create table F_STAT_MONTH
-(
-   YEARMONTH            varchar2(6) not null ,
-   BeginDay             date not null,
-   EendDay              date not null,
-   EndSchedule          char(1) ,
-   BeginSchedule        char(1)
-);
-comment on table F_STAT_MONTH  is'OA业务统计月，可以自定义统计月的起止日期';
-alter table F_STAT_MONTH add primary key (YEARMONTH);
-
 create table F_SYS_NOTIFY
 (
    Notify_ID            number(12,0) not null,
@@ -349,7 +257,6 @@ comment on column F_UNITINFO.UNIT_TYPE   is     '发布任务/ 邮电规划/组�
 comment on column F_UNITINFO.  UNIT_TAG is        '用户第三方系统管理'    ;
 comment on column F_UNITINFO. dep_no  is      '组织机构代码：'      ;
 alter table F_UNITINFO add primary key (UNIT_CODE);
-
 
 create table F_USERINFO
 (
@@ -456,46 +363,13 @@ comment on column F_USER_QUERY_FILTER.  filter_name is   '用户自行定义的�
 comment on column F_USER_QUERY_FILTER. filter_value is  '变量值，json格式，对应一个map' ;
 alter table F_USER_QUERY_FILTER add primary key (FILTER_NO);
 
-create table F_WORK_CLASS
-(
-   CLASS_ID             number(12,0) not null,
-   CLASS_NAME           varchar2(50) not null,
-   SHORT_NAME           varchar2(10) not null,
-   begin_time           varchar2(6)  ,
-   end_time             varchar2(6)  ,
-   has_break            char(1),
-   break_begin_time     varchar2(6) ,
-   break_end_time       varchar2(6) ,
-   class_desc           varchar2(500),
-   record_date          date,
-   recorder             varchar2(8)
-);
-comment on column F_WORK_CLASS. begin_time   is   '9:00'   ;
-comment on column F_WORK_CLASS.   end_time is  '+4:00 ''+''表示第二天'    ;
-comment on table  F_WORK_CLASS is 'CLASS_ID
- 为 0 的表示休息，可以不在这个表中出现
- 为 1 的为默认班次信息';
-alter table F_WORK_CLASS  add primary key (CLASS_ID);
-
-create table F_WORK_DAY
-(
-   WorkDay              date not null,
-   DayType              char(1) not null,
-   WorkTimeType         varchar2(20),
-   WorkDayDesc          varchar2(255)
-);
-comment on column F_WORK_DAY.DayType is '非正常作业时间日
-A:工作日放假 B:周末调休成工作时间  C: 正常上班  D:正常休假
-';
-alter table F_WORK_DAY add primary key (WorkDay);
-
 create table M_InnerMsg
 (
    Msg_Code             varchar2(16) not null ,
    Sender               varchar2(128),
    Send_Date            date,
    Msg_Title            varchar2(128),
-   Msg_Type             char(1) ,
+   Msg_Type             varchar2(16) ,
    Mail_Type            char(1) ,
    Mail_UnDel_Type      char(1),
    Receive_Name         varchar2(2048) ,
@@ -554,43 +428,6 @@ create table M_MsgAnnex
    Msg_Annex_Id         varchar2(16) not null
 );
 alter table M_MsgAnnex  add primary key (Msg_Annex_Id);
-
-create table P_TASK_LIST
-(
-   taskid               number(12,0) not null ,
-   taskowner            varchar2(8) not null ,
-   tasktag              varchar2(1) not null  ,
-   taskrank             varchar2(1) not null  ,
-   taskstatus           varchar2(2) not null  ,
-   tasktitle            varchar2(256) not null,
-   taskmemo             varchar2(1000) ,
-   tasktype             varchar2(8) not null  ,
-   OptID                varchar2(64) not null  ,
-   OPTMethod            varchar2(64)  ,
-   optTag               varchar2(200)  ,
-   creator              varchar2(32) not null,
-   created              date not null,
-   planbegintime        date not null,
-   planendtime          date,
-   begintime            date,
-   endtime              date,
-   finishmemo           varchar2(1000)  ,
-   noticeSign           varchar2(1) ,
-   lastNoticeTime       date  ,
-   taskdeadline         date,
-   taskvalue            varchar2(2048)
-);
-comment on column P_TASK_LIST. tasktag    is   '类似与outlook中的邮件标记，可以用不同的颜色的旗子图表标识' ;
-comment on column P_TASK_LIST.  taskrank   is   '任务的优先级' ;
-comment on column P_TASK_LIST.  taskstatus   is  '处理中、完成、取消、终止'  ;
-comment on column P_TASK_LIST. tasktype    is   '个人、组织活动、领导委派 等等' ;
-comment on column P_TASK_LIST.  OptID   is   '模块，或者表' ;
-comment on column P_TASK_LIST.   OPTMethod  is   '方法，或者字段' ;
-comment on column P_TASK_LIST.optTag     is  '一般用于关联到业务主体'  ;
-comment on column P_TASK_LIST.   finishmemo  is  '简要记录任务的执行过程和结果'  ;
-comment on column P_TASK_LIST.  noticeSign   is    '提醒标志为：禁止提醒、未提醒、已提醒' ;
-comment on column P_TASK_LIST. lastNoticeTime    is  '最后一次提醒时间，根据提醒策略可以提醒多次'  ;
-alter table P_TASK_LIST  add primary key (taskid);
 
 create table F_UNITROLE
 (

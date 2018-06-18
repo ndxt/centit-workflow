@@ -60,9 +60,6 @@ CREATE TABLE wf_flow_team_role (
 
 
 
-
-
-
 CREATE TABLE p_task_list (
   taskid decimal(12,0) NOT NULL COMMENT '自动生成的主键，需要一个序列来配合',
   taskowner varchar(8) NOT NULL COMMENT '谁的任务',

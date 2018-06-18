@@ -1,5 +1,6 @@
-
-drop table if exists F_ADDRESS_BOOK;
+/*==============================================================*/
+/* H2 数据库脚本                                                  */
+/*==============================================================*/
 
 drop table if exists F_DATACATALOG;
 
@@ -11,12 +12,7 @@ drop table if exists F_OPTDEF;
 
 drop table if exists F_OPT_LOG;
 
-drop table if exists F_OptFlowNoInfo;
-
-drop table if exists F_OptFlowNoPool;
-
 drop table if exists F_OptInfo;
-
 
 drop table if exists F_QUERY_FILTER_CONDITION;
 
@@ -25,8 +21,6 @@ drop table if exists F_RANKGRANT;
 drop table if exists F_ROLEINFO;
 
 drop table if exists F_ROLEPOWER;
-
-drop table if exists F_STAT_MONTH;
 
 drop table if exists F_SYS_NOTIFY;
 
@@ -44,78 +38,11 @@ drop table if exists F_USER_FAVORITE;
 
 drop table if exists F_USER_QUERY_FILTER;
 
-drop table if exists F_WORK_CLASS;
-
-drop table if exists F_WORK_DAY;
-
 drop table if exists M_InnerMsg;
 
 drop table if exists M_InnerMsg_Recipient;
 
 drop table if exists M_MsgAnnex;
-
-drop table if exists P_TASK_LIST;
-
-/*==============================================================*/
-/* Table: F_ADDRESS_BOOK                                        */
-/*==============================================================*/
-create table F_ADDRESS_BOOK
-(
-   ADDRBOOKID           numeric(10,0) not null,
-   BodyType             varchar(2) not null comment '用户/个人/单位',
-   BodyCode             varchar(16) not null comment '用户/个人/单位 编号',
-   representation       varchar(200),
-   UnitName             varchar(200),
-   DeptName             varchar(100),
-   RankName             varchar(50),
-   Email                varchar(60),
-   Email2               varchar(60),
-   Email3               varchar(60),
-   HomePage             varchar(100),
-   QQ                   varchar(20),
-   MSN                  varchar(60),
-   wangwang             varchar(20),
-   buzPhone             varchar(20),
-   buzphone2            varchar(20),
-   buzfax               varchar(20),
-   assiphone            varchar(20),
-   callbacphone         varchar(20),
-   carphone             varchar(20),
-   unitphone            varchar(20),
-   homephone            varchar(20),
-   homephone2           varchar(20),
-   homephone3           varchar(20),
-   homefax              varchar(20),
-   mobilephone          varchar(20),
-   mobilephone2         varchar(20),
-   mobilephone3         varchar(20),
-   unitzip              varchar(8),
-   unitProvince         varchar(20),
-   unitCity             varchar(20),
-   unitDistrict         varchar(20),
-   unitStreet           varchar(20),
-   unitAddress          varchar(60),
-   homezip              varchar(8),
-   homeProvince         varchar(20),
-   homeCity             varchar(20),
-   homeDistrict         varchar(20),
-   homeStreet           varchar(20),
-   homeAddress          varchar(60),
-   home2zip             varchar(8),
-   home2Province        varchar(20),
-   home2City            varchar(20),
-   home2District        varchar(20),
-   home2Street          varchar(20),
-   home2Address         varchar(60),
-   inuseAddress         varchar(1) comment '单位/住宅/住宅2',
-   SearchString         varchar(1000) comment '前面各个字段的中文首字母，数字 连接的串',
-   memo                 varchar(500),
-   LastModifyDate       datetime,
-   CreateDate           datetime
-);
-
-alter table F_ADDRESS_BOOK
-   add primary key (ADDRBOOKID);
 
 /*==============================================================*/
 /* Table: F_DATACATALOG                                         */
@@ -221,38 +148,6 @@ create table F_OPT_LOG
 
 alter table F_OPT_LOG
    add primary key (log_Id);
-
-/*==============================================================*/
-/* Table: F_OptFlowNoInfo                                       */
-/*==============================================================*/
-create table F_OptFlowNoInfo
-(
-   Owner_Code           varchar(8) not null,
-   Code_Code            varchar(16) not null,
-   Code_Date            datetime not null default NOW(),
-   Cur_No               numeric(6,0) not null default 1,
-   Last_Code_Date       datetime,
-   Create_Date          datetime,
-   Last_Modify_Date     datetime
-);
-
-alter table F_OptFlowNoInfo
-   add primary key (Owner_Code, Code_Date, Code_Code);
-
-/*==============================================================*/
-/* Table: F_OptFlowNoPool                                       */
-/*==============================================================*/
-create table F_OptFlowNoPool
-(
-   Owner_Code           varchar(8) not null,
-   Code_Code            varchar(16) not null,
-   Code_Date            datetime not null default now(),
-   Cur_No               numeric(6,0) not null default 1,
-   Create_Date          datetime
-);
-
-alter table F_OptFlowNoPool
-   add primary key (Owner_Code, Code_Date, Code_Code, Cur_No);
 
 /*==============================================================*/
 /* Table: F_OptInfo                                             */
@@ -367,22 +262,6 @@ create table F_ROLEPOWER
 
 alter table F_ROLEPOWER
    add primary key (ROLE_CODE, OPT_CODE);
-
-/*==============================================================*/
-/* Table: F_STAT_MONTH                                          */
-/*==============================================================*/
-create table F_STAT_MONTH
-(
-   YEARMONTH            varchar(6) not null comment 'YYYYMM',
-   BeginDay             datetime not null,
-   EendDay              datetime not null,
-   EndSchedule          char(1) comment '这个字段忽略',
-   BeginSchedule        char(1) comment '这个字段忽略'
-);
-
-
-alter table F_STAT_MONTH
-   add primary key (YEARMONTH);
 
 /*==============================================================*/
 /* Table: F_SYS_NOTIFY                                          */
@@ -577,43 +456,6 @@ alter table F_USER_QUERY_FILTER
    add primary key (FILTER_NO);
 
 /*==============================================================*/
-/* Table: F_WORK_CLASS                                          */
-/*==============================================================*/
-create table F_WORK_CLASS
-(
-   CLASS_ID             numeric(12,0) not null,
-   CLASS_NAME           varchar(50) not null,
-   SHORT_NAME           varchar(10) not null,
-   begin_time           varchar(6) comment '9:00',
-   end_time             varchar(6) comment '+4:00 ''+''表示第二天',
-   has_break            char(1),
-   break_begin_time     varchar(6) comment '9:00',
-   break_end_time       varchar(6) comment '+4:00 ''+''表示第二天',
-   class_desc           varchar(500),
-   record_date          datetime,
-   recorder             varchar(8)
-);
-
-
-alter table F_WORK_CLASS
-   add primary key (CLASS_ID);
-
-/*==============================================================*/
-/* Table: F_WORK_DAY                                            */
-/*==============================================================*/
-create table F_WORK_DAY
-(
-   WorkDay              datetime not null,
-   DayType              char(1) not null comment 'A:工作日放假，B:周末调休成工作时间 C 正常上班 D正常休假',
-   WorkTimeType         varchar(20),
-   WorkDayDesc          varchar(255)
-);
-
-
-alter table F_WORK_DAY
-   add primary key (WorkDay);
-
-/*==============================================================*/
 /* Table: M_InnerMsg                                            */
 /*==============================================================*/
 create table M_InnerMsg
@@ -622,7 +464,7 @@ create table M_InnerMsg
    Sender               varchar(128),
    Send_Date            datetime,
    Msg_Title            varchar(128),
-   Msg_Type             char(1) comment 'P= 个人为消息  A= 机构为公告（通知）
+   Msg_Type             varchar(16) comment 'P= 个人为消息  A= 机构为公告（通知）
             M=邮件',
    Mail_Type            char(1) comment 'I=收件箱
             O=发件箱
@@ -689,6 +531,7 @@ alter table M_MsgAnnex
 /*==============================================================*/
 /* Table: P_TASK_LIST                                           */
 /*==============================================================*/
+/*
 create table P_TASK_LIST
 (
    taskid               numeric(12,0) not null comment '自动生成的主键，需要一个序列来配合',
@@ -714,9 +557,7 @@ create table P_TASK_LIST
    taskdeadline         datetime,
    taskvalue            varchar(2048) comment '备用，字段不够时使用'
 );
-
-alter table P_TASK_LIST
-   add primary key (taskid);
+*/
 
 create table simulate_sequence (
 seqname varchar(100) not null primary key,
