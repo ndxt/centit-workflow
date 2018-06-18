@@ -20,7 +20,6 @@
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-base-view-easyui</artifactId>
-            <version>3.1.0</version>
         </dependency>
         <!--<dependency>
             <groupId>com.centit.framework</groupId>
@@ -30,29 +29,24 @@
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-jdbc</artifactId>
-            <version>${centit.persistence.version}</version>
         </dependency>
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-jdbc-config</artifactId>
-            <version>${centit.persistence.version}</version>
         </dependency>
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-config</artifactId>
-            <version>${centit.persistence.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-ip-app</artifactId>
-            <version>${centit.ip.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-ip-app-config</artifactId>
-            <version>${centit.ip.version}</version>
         </dependency>
 
         <dependency>
@@ -80,21 +74,18 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-core-web</artifactId>
-            <version>${centit.framework.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.9</version>
         </dependency>
     </dependencies>
 

@@ -39,7 +39,6 @@
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-ip-adapter</artifactId>
-            <version>${centit.ip.version}</version>
         </dependency>
 
         <dependency>
@@ -51,7 +50,6 @@
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
-            <version>${ojdbc6.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -67,11 +65,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
-
-
     </dependencies>
-
 </project>
