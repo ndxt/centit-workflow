@@ -3,17 +3,23 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>centit-workflow</artifactId>
-        <groupId>com.centit.product</groupId>
-        <version>4.0.1-SNAPSHOT</version>
+        <groupId>com.centit.framework</groupId>
+        <artifactId>framework-release-dependencies</artifactId>
+        <version>1.1.1806</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>centit-workflow-server</artifactId>
     <packaging>war</packaging>
     <name>com.centit.product:centit-workflow-server</name>
-    <description>工作流引擎服务，可以独立运行;这个工程也做为示例工程，业务需要用工作流引擎式可以复制这个工程，并对其进行改造
+    <description>工作流引擎服务，可以独立运行;这个工程也做为示例工程;
+        业务需要用工作流引擎时可以复制这个工程，并对其进行改造。
     </description>
+
+    <properties>
+        <centit.workflow.version>4.0.1-SNAPSHOT</centit.workflow.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -25,7 +31,7 @@
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-view</artifactId>
-            <version>${project.version}</version>
+            <version>${centit.workflow.version}</version>
         </dependency>
 
         <dependency>
@@ -50,7 +56,7 @@
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-module</artifactId>
-            <version>${project.version}</version>
+            <version>${centit.workflow.version}</version>
         </dependency>
 
         <dependency>

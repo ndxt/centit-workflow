@@ -3,32 +3,36 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>centit-workflow</artifactId>
-        <groupId>com.centit.product</groupId>
-        <version>4.0.1-SNAPSHOT</version>
+        <groupId>com.centit.framework</groupId>
+        <artifactId>framework-release-dependencies</artifactId>
+        <version>1.1.1806</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>centit-workflow-imbed</artifactId>
     <packaging>war</packaging>
     <name>com.centit.product:centit-workflow-imbed</name>
-    <description>工作流引擎服务，嵌入到应用中，目前只支持嵌入到以hibernate作为持久化的应用中;
+    <description>工作流引擎服务，嵌入到应用中，目前只支持嵌入到以jdbc作为持久化的应用中;
         这个工程也做为示例工程。
     </description>
 
-    <dependencies>
+    <properties>
+        <centit.workflow.version>4.0.1-SNAPSHOT</centit.workflow.version>
+    </properties>
 
+    <dependencies>
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-module</artifactId>
-            <version>${project.version}</version>
+            <version>${centit.workflow.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-view</artifactId>
-            <version>${project.version}</version>
+            <version>${centit.workflow.version}</version>
         </dependency>
 
         <dependency>

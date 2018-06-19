@@ -1,11 +1,10 @@
 package com.centit.demo.po;
 
-import com.sun.istack.internal.NotNull;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by chen_rj on 2017/8/3.
