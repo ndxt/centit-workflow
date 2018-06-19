@@ -474,7 +474,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
             Map<Long, Set<String>> nodeOptUsers, ServletContext application)
                     throws WorkflowException{
         String sRT = nextRoutertNode.getRouterType();
-        Set<Long> resNodes = new HashSet<Long>();
+        Set<Long> resNodes = new HashSet<>();
         String preTransPath = StringUtils.isBlank(transPath)?
                 String.valueOf(trans.getTransid()): transPath+","+String.valueOf(trans.getTransid());
 
@@ -607,7 +607,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                 if("D".equals(nextRoutertNode.getMultiInstType())){
                     Set<String> nextNodeUnits = null;
                     if(nodeUnits!=null)
-                        nextNodeUnits = nodeUnits.get(nextNode.getNodeId());
+                        nextNodeUnits = nodeUnits.get(nextRoutertNode.getNodeId());
                     if(nextNodeUnits==null){
                         Map<String, Set<String>>  unitParams = UserUnitParamBuilder.createEmptyParamMap();
                         UserUnitParamBuilder.addParamToParamMap(unitParams,"L",unitCode );
@@ -616,7 +616,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                         UserUnitParamBuilder.addParamToParamMap(unitParams,"P",nodeInst.getUnitCode() );
                         UserUnitParamBuilder.addParamToParamMap(unitParams,"F",flowInst.getUnitCode() );
 
-                        nextNodeUnits =  UserUnitCalcEngine.calcUnitsByExp(userUnitFilterCalcContext,nextNode.getUnitExp() ,
+                        nextNodeUnits =  UserUnitCalcEngine.calcUnitsByExp(userUnitFilterCalcContext,nextRoutertNode.getUnitExp() ,
                                 unitParams,flowVarTrans);
                     }
 
@@ -627,6 +627,9 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                     }else{
                         int nRn=1;
                         for(String uc : nextNodeUnits){
+                            //TODO 下一个节点不一定式业务节点，也有可能还是一个路由
+                            this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken+"."+nRn,
+                                    "cd_"+ nextRoutertNode.getNodeCode() , uc);
                             NodeInstance nextNodeInst = submitToSingleNextOptNode(
                                      nextNode,  flowInst ,  flowInfo ,
                                      nodeInst, preTransPath, nodeTran, userCode,  uc, null,nodeToken+"."+nRn,
@@ -640,10 +643,10 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 
                     Set<String> optUsers  = null;
                     if(nodeOptUsers!=null)
-                        optUsers = nodeOptUsers.get(nextNode.getNodeId());
+                        optUsers = nodeOptUsers.get(nextRoutertNode.getNodeId());
                     if(optUsers==null){
                         optUsers = calcNodeOpterators( flowInst , nodeInst, nodeToken,
-                                nextNode, userCode ,  unitCode,
+                                nextRoutertNode, userCode ,  unitCode,
                                 varTrans );
                     }
                     if(optUsers == null || optUsers.size()==0){
@@ -654,6 +657,9 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
                         int nRn=1;
                         //Date currentTime = new Date(System.currentTimeMillis());
                         for(String uc : optUsers){
+                            //TODO 下一个节点不一定式业务节点，也有可能还是一个路由
+                            this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken+"."+nRn,
+                                    "cu_"+ nextRoutertNode.getNodeCode() , uc);
                             NodeInstance nextNodeInst = submitToSingleNextOptNode(
                                      nextNode,  flowInst ,  flowInfo ,
                                      nodeInst,  preTransPath,nodeTran, uc,
