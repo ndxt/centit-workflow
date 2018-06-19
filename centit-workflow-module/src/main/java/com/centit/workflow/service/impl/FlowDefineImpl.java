@@ -229,10 +229,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             long thisTransId = flowDefineDao.getNextTransId();
             flowData.transTagToId.put(sId , thisTransId);
 
-            wfTran.setTransid(thisTransId);
+            wfTran.setTransId(thisTransId);
 
             wfTran.setTransName( getXmlNodeAttrAsStr(baseNode,"name"));
-            wfTran.setTranscondition( getXmlNodeAttrAsStr(baseNode,"cond"));
+            wfTran.setTransCondition( getXmlNodeAttrAsStr(baseNode,"cond"));
 
             wfTran.setLimitType(getXmlNodeAttrAsStr(baseNode,"timeLimitType"));
 
@@ -247,10 +247,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             
             sId = getXmlNodeAttrAsStr(baseNode,"from");
             long fromNodeId = flowData.nodeTagToId.get(sId);
-            wfTran.setStartnodeid(fromNodeId);
+            wfTran.setStartNodeId(fromNodeId);
             sId = getXmlNodeAttrAsStr(baseNode,"to");
             long toNodeId = flowData.nodeTagToId.get(sId);
-            wfTran.setEndnodeid( toNodeId);
+            wfTran.setEndNodeId( toNodeId);
             if (fromNodeId == flowData.beginNodeId)
                 flowData.firstNodeId = toNodeId;
             wfTran.setTransDesc( getXmlNodeAttrAsStr(baseNode,"desc"));
@@ -418,8 +418,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         //检查 流转定义
         for(FlowTransition tran: newFlowDef.getFlowTransitions()){
-            if(tran.getTranscondition()==null || "".equals(tran.getTranscondition())){
-                NodeInfo nd = newFlowDef.getFlowNodeById(tran.getStartnodeid());
+            if(tran.getTransCondition()==null || "".equals(tran.getTransCondition())){
+                NodeInfo nd = newFlowDef.getFlowNodeById(tran.getStartNodeId());
                 if(nd!=null && ! "A".equals(nd.getNodeType()) && ! "C".equals(nd.getNodeType())){
                     throw new Exception("流转："+tran.getTransName()+",没有指定流转条件。");
                 }
@@ -469,7 +469,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         //检查 孤立的节点
         for(FlowTransition tran: newFlowDef.getFlowTransitions()){
-            nodeIsLeaf.put(tran.getStartnodeid(), "F");
+            nodeIsLeaf.put(tran.getStartNodeId(), "F");
         }
 
         // 替换 流程XML格式中的节点、流转编码 对照表在 ndMap 和 trMap 中

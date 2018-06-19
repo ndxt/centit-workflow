@@ -5,7 +5,10 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -121,22 +124,12 @@ public class FlowTransition implements java.io.Serializable {
         this.timeLimit = timelimit;
     }
   
-    public Long getTransid() {
+    public Long getTransId() {
         return this.transId;
     }
 
-    public void setTransid(Long transid) {
+    public void setTransId(Long transid) {
         this.transId = transid;
-    }
-    // Property accessors
-
-
-    public Long getTransId() {
-        return transId;
-    }
-
-    public void setTransId(Long transId) {
-        this.transId = transId;
     }
 
     public Long getStartNodeId() {
@@ -202,30 +195,7 @@ public class FlowTransition implements java.io.Serializable {
     public void setTransDesc(String transDesc) {
         this.transDesc = transDesc;
     }
-  
-    public Long getStartnodeid() {
-        return this.startNodeId;
-    }
 
-    public void setStartnodeid(Long startnodeid) {
-        this.startNodeId = startnodeid;
-    }
-  
-    public Long getEndnodeid() {
-        return this.endNodeId;
-    }
-
-    public void setEndnodeid(Long endnodeid) {
-        this.endNodeId = endnodeid;
-    }
-  
-    public String getTranscondition() {
-        return this.transCondition;
-    }
-
-    public void setTranscondition(String transcondition) {
-        this.transCondition = transcondition;
-    }
     /**
      * 改是否记入时间 T/F  I 忽略
      * @return
@@ -256,14 +226,14 @@ public class FlowTransition implements java.io.Serializable {
     }
 
     public void copy(FlowTransition other){
-        //this.setTransid(other.getTransid());  
+        //this.setTransId(other.getTransId());
         this.setFlowDefine(other.getFlowDefine()); 
         this.transClass = other.getTransClass();
         this.transName = other.getTransName();
         this.transDesc = other.getTransDesc();
-        this.startNodeId = other.getStartnodeid();
-        this.endNodeId = other.getEndnodeid();
-        this.transCondition = other.getTranscondition();
+        this.startNodeId = other.getStartNodeId();
+        this.endNodeId = other.getEndNodeId();
+        this.transCondition = other.getTransCondition();
         this.limitType = other.getLimitType();
         this.timeLimit = other.getTimeLimit();
         
@@ -273,8 +243,8 @@ public class FlowTransition implements java.io.Serializable {
     
     public void copyNotNullProperty(FlowTransition other){
   
-        /*if( other.getTransid() != null)
-            this.setTransid(other.getTransid());*/
+        /*if( other.getTransId() != null)
+            this.setTransId(other.getTransId());*/
       
         if( other.getFlowDefine() != null)
             this.setFlowDefine(other.getFlowDefine()); 
@@ -285,12 +255,12 @@ public class FlowTransition implements java.io.Serializable {
             this.transName = other.getTransName();
         if( other.getTransDesc() != null)
             this.transDesc = other.getTransDesc();
-        if( other.getStartnodeid() != null)
-            this.startNodeId = other.getStartnodeid();
-        if( other.getEndnodeid() != null)
-            this.endNodeId = other.getEndnodeid();
-        if( other.getTranscondition() != null)
-            this.transCondition = other.getTranscondition();
+        if( other.getStartNodeId() != null)
+            this.startNodeId = other.getStartNodeId();
+        if( other.getEndNodeId() != null)
+            this.endNodeId = other.getEndNodeId();
+        if( other.getTransCondition() != null)
+            this.transCondition = other.getTransCondition();
         if( other.getLimitType() != null)
             this.limitType= other.getLimitType();  
         if( other.getTimeLimit() != null)

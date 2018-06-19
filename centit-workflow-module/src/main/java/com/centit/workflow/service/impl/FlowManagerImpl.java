@@ -85,11 +85,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         //flowDefDao.fetchObjectReferences(wfDef);
         Set<FlowTransition> transSet = wfDef.getFlowTransitions();
         for(FlowTransition trans : transSet){
-            if (trans.getStartnodeid().equals(benginNodeId)) {
-                transState.put(String.valueOf(trans.getTransid()), "1");
+            if (trans.getStartNodeId().equals(benginNodeId)) {
+                transState.put(String.valueOf(trans.getTransId()), "1");
             }else
-                transState.put(String.valueOf(trans.getTransid()), "-1");
-            transMap.put(String.valueOf(trans.getTransid()), trans);
+                transState.put(String.valueOf(trans.getTransId()), "-1");
+            transMap.put(String.valueOf(trans.getTransId()), trans);
         }
         //flowInstanceDao.fetchObjectReferences(wfInst);
         List<NodeInstance> nodeInstSet = wfInst.getNodeInstances();
@@ -120,17 +120,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 transState.put(strTransId, "1");
                 FlowTransition trans = transMap.get(strTransId);
                 if(trans!=null){
-                    NodeInfo node = nodeMap.get(trans.getStartnodeid());
+                    NodeInfo node = nodeMap.get(trans.getStartNodeId());
                     if(node!=null && "R".equals(node.getNodeType())){
-                        nodeState.put(trans.getStartnodeid(),  "complete");
-                        //nc = nodeInstCount.get(trans.getStartnodeid());
-                        //nodeInstCount.put(trans.getStartnodeid(), (nc==null)?1:nc+1);
+                        nodeState.put(trans.getStartNodeId(),  "complete");
+                        //nc = nodeInstCount.get(trans.getStartNodeId());
+                        //nodeInstCount.put(trans.getStartNodeId(), (nc==null)?1:nc+1);
                     }
-                    node = nodeMap.get(trans.getEndnodeid());
+                    node = nodeMap.get(trans.getEndNodeId());
                     if(node!=null && "R".equals(node.getNodeType())){
-                        nodeState.put(trans.getEndnodeid(),  "complete");
-                        nc = nodeInstCount.get(trans.getEndnodeid());
-                        nodeInstCount.put(trans.getEndnodeid(), (nc==null)?1:nc+1);
+                        nodeState.put(trans.getEndNodeId(),  "complete");
+                        nc = nodeInstCount.get(trans.getEndNodeId());
+                        nodeInstCount.put(trans.getEndNodeId(), (nc==null)?1:nc+1);
                     }
                 }
             }
@@ -733,7 +733,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return -2;
 
         FlowTransition trans = transList.get(0);
-        long nextCode = transList.get(0).getEndnodeid();
+        long nextCode = transList.get(0).getEndNodeId();
         NodeInfo nextNode = flowNodeDao.getObjectById(nextCode);
         if (nextNode == null)
             return -3;
@@ -759,7 +759,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nextNodeInst.setNodeInstId(nextNodeInstId);
         nextNodeInst.setPrevNodeInstId(nodeInst.getNodeId());
         nextNodeInst.setRunToken(nodeInst.getRunToken());// 添加令牌算法
-        nextNodeInst.setTransPath(String.valueOf(trans.getTransid()));
+        nextNodeInst.setTransPath(String.valueOf(trans.getTransId()));
 
         //创建节点提交日志 S:提交节点
         ActionLog wfactlog = FlowOptUtils.createActionLog("S",mangerUserCode,nodeInst, null );

@@ -394,7 +394,7 @@ public class FlowInfo implements java.io.Serializable {
             FlowTransition odt = it.next();
             found = false;
             for(FlowTransition newdt :newObjs){
-                if(odt.getTransid().equals( newdt.getTransid())){
+                if(odt.getTransId().equals( newdt.getTransId())){
                     found = true;
                     break;
                 }
@@ -409,7 +409,7 @@ public class FlowInfo implements java.io.Serializable {
             for(Iterator<FlowTransition> it = getFlowTransitions().iterator();
                 it.hasNext();){
                 FlowTransition odt = it.next();
-                if(odt.getTransid().equals( newdt.getTransid())){
+                if(odt.getTransId().equals( newdt.getTransId())){
                     odt.copy(newdt);
                     found = true;
                     break;
