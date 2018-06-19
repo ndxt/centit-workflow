@@ -1,0 +1,4 @@
+docs/.vuepress/dist/
+node_modules
+.idea
+/target
