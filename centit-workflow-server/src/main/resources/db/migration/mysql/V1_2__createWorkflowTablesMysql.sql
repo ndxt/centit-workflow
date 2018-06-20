@@ -1,6 +1,5 @@
 DROP TABLE IF EXISTS wf_flow_variable_define;
 DROP TABLE IF EXISTS wf_flow_team_role;
-DROP TABLE IF EXISTS p_task_list;
 DROP TABLE IF EXISTS wf_action_log;
 DROP TABLE IF EXISTS wf_action_task;
 DROP TABLE IF EXISTS wf_flow_define;
@@ -18,9 +17,6 @@ DROP TABLE IF EXISTS wf_runtime_warning;
 DROP TABLE IF EXISTS wf_stage_instance;
 DROP TABLE IF EXISTS wf_team;
 DROP TABLE IF EXISTS wf_transition;
-DROP TABLE IF EXISTS f_opt_variable;
-
-
 
 
 CREATE TABLE wf_flow_variable_define (
@@ -49,37 +45,6 @@ CREATE TABLE wf_flow_team_role (
 ) ;
 
 
-
-
-
-CREATE TABLE p_task_list (
-  taskid decimal(12,0) NOT NULL COMMENT '自动生成的主键，需要一个序列来配合',
-  taskowner varchar(8) NOT NULL COMMENT '谁的任务',
-  tasktag varchar(1) NOT NULL COMMENT '类似与outlook中的邮件标记，可以用不同的颜色的旗子图表标识',
-  taskrank varchar(1) NOT NULL COMMENT '任务的优先级',
-  taskstatus varchar(2) NOT NULL COMMENT '处理中、完成、取消、终止',
-  tasktitle varchar(256) NOT NULL,
-  taskmemo varchar(1000) DEFAULT NULL COMMENT '简要描述任务的具体内容',
-  tasktype varchar(8) NOT NULL COMMENT '个人、组织活动、领导委派 等等',
-  OptID varchar(64) NOT NULL COMMENT '模块，或者表',
-  OPTMethod varchar(64) DEFAULT NULL COMMENT '方法，或者字段',
-  optTag varchar(200) DEFAULT NULL COMMENT '一般用于关联到业务主体',
-  creator varchar(32) NOT NULL,
-  created datetime NOT NULL,
-  planbegintime datetime NOT NULL,
-  planendtime datetime DEFAULT NULL,
-  begintime datetime DEFAULT NULL,
-  endtime datetime DEFAULT NULL,
-  finishmemo varchar(1000) DEFAULT NULL COMMENT '简要记录任务的执行过程和结果',
-  noticeSign varchar(1) DEFAULT NULL COMMENT '提醒标志为：禁止提醒、未提醒、已提醒',
-  lastNoticeTime datetime DEFAULT NULL COMMENT '最后一次提醒时间，根据提醒策略可以提醒多次',
-  taskdeadline datetime DEFAULT NULL,
-  taskvalue varchar(2048) DEFAULT NULL COMMENT '备用，字段不够时使用',
-  PRIMARY KEY (taskid)
-) ;
-
-
-
 CREATE TABLE wf_action_log (
   ACTION_ID decimal(12,0) NOT NULL,
   NODE_INST_ID decimal(12,0) DEFAULT NULL,
@@ -91,7 +56,6 @@ CREATE TABLE wf_action_log (
   GRANTOR varchar(8) DEFAULT NULL,
   PRIMARY KEY (ACTION_ID)
 ) ;
-
 
 
 CREATE TABLE wf_action_task (
@@ -376,17 +340,6 @@ CREATE TABLE wf_transition (
   can_ignore char(1) NOT NULL DEFAULT 'T' ,
   PRIMARY KEY (TRANS_ID)
 ) ;
-
-CREATE TABLE f_opt_variable (
-  OptID varchar(8) NOT NULL,
-  VarName varchar(32) NOT NULL,
-  VarDesc varchar(200) DEFAULT NULL,
-  VarType char(1) DEFAULT NULL ,
-  DefaultValue varchar(200) DEFAULT NULL,
-  ISVALID char(1) NOT NULL DEFAULT 'T' ,
-  PRIMARY KEY (OptID,VarName)
-)  ;
-
 
 DROP VIEW IF EXISTS lastversion;
 CREATE  VIEW lastversion AS select wf_flow_define.FLOW_CODE AS FLOW_CODE,max(wf_flow_define.version) AS version from wf_flow_define group by wf_flow_define.FLOW_CODE ;

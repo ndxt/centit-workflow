@@ -1,5 +1,3 @@
-drop table if exists F_Opt_Variable;
-
 drop table if exists WF_ACTION_LOG;
 
 drop table if exists WF_ACTION_TASK;
@@ -36,31 +34,11 @@ drop table if exists WF_Task_Move;
 
 drop table if exists WF_organize;
 
-create table F_Opt_Variable
-(
-   OptID                varchar(8) not null,
-   VarName              varchar(32) not null,
-   VarDesc              varchar(200),
-   VarType              char(1) comment 'ֻ��3������ N������ S:�ַ��� D:����',
-   DefaultValue         varchar(200),
-   ISVALID              char(1) not null default 'T' comment 'T:��Ч F:��Ч',
-   primary key (OptID, VarName)
-);
-
-alter table F_Opt_Variable comment 'ҵ�����Ϊ���������ҵ��������ݷ��ʵĽӿڣ�
-���������� ��ֻ���ķ�ʽ����';
-
 create table WF_ACTION_LOG
 (
    ACTION_ID            numeric(12,0) not null,
    NODE_INST_ID         numeric(12,0),
-   ACTION_TYPE          varchar(2) not null comment '��������ͬʱ�����׽ڵ�  W
-            �����ڵ� C
-            �������� U
-            �ύ�ڵ� S
-            ����ڵ� A
-            ���ѽڵ� R
-            ��ֹ�ڵ� E',
+   ACTION_TYPE          varchar(2) not null ,
    ACTION_TIME          datetime not null,
    USER_CODE            varchar(8),
    ROLE_TYPE            varchar(8),

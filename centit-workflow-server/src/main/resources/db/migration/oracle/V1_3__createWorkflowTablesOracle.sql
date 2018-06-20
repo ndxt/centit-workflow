@@ -333,18 +333,6 @@ CREATE TABLE wf_transition (
 ) ;
 
 
-
-CREATE TABLE f_opt_variable (
-  OptID varchar2(8) NOT NULL,
-  VarName varchar2(32) NOT NULL,
-  VarDesc varchar2(200) DEFAULT NULL,
-  VarType char(1) DEFAULT NULL ,
-  DefaultValue varchar2(200) DEFAULT NULL,
-  ISVALID char(1) DEFAULT 'T' ,
-  PRIMARY KEY (OptID,VarName)
-)  ;
-
-
 CREATE or replace VIEW lastversion AS select wf_flow_define.FLOW_CODE AS FLOW_CODE,max(wf_flow_define.version) AS version from wf_flow_define group by wf_flow_define.FLOW_CODE ;
 
 

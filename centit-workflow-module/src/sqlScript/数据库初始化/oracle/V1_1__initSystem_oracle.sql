@@ -1,25 +1,4 @@
 
-
-create table F_Opt_Variable  (
-   OptID              VARCHAR2(8)                     not null,
-   VarName            VARCHAR2(32)                    not null,
-   VarDesc            VARCHAR2(200),
-   VarType            CHAR(1),
-   DefaultValue       VARCHAR2(200),
-   ISVALID              CHAR(1)                        default 'T' not null,
-   constraint PK_F_OPT_VARIABLE primary key (OptID, VarName)
-);
-
-comment on table F_Opt_Variable is
-'ÒµÎñ±äÁ¿ÎªÁ÷³ÌÒýÇæºÍÒµÎñ½øÐÐÊý¾Ý·ÃÎÊµÄ½Ó¿Ú£º
-ÓÉÁ÷³ÌÒýÇæ ÒÔÖ»¶ÁµÄ·½Ê½·ÃÎÊ';
-
-comment on column F_Opt_Variable.VarType is
-'Ö»ÓÐ3ÖÖÀàÐÍ N£ºÊý¾Ý S:×Ö·û´® D:ÈÕÆÚ';
-
-comment on column F_Opt_Variable.ISVALID is
-'T:ÉúÐ§ F:ÎÞÐ§';
-
 create table WF_ACTION_LOG  (
    ACTION_ID            NUMBER(12,0)                    not null,
    NODE_INST_ID         NUMBER(12,0),
@@ -33,13 +12,13 @@ create table WF_ACTION_LOG  (
 );
 
 comment on column WF_ACTION_LOG.ACTION_TYPE is
-'´´½¨Á÷³ÌÍ¬Ê±´´½¨Ê×½Úµã  W
-´´½¨½Úµã C
-¸ü¸ÄÊý¾Ý U
-Ìá½»½Úµã S
-¹ÒÆð½Úµã A
-»½ÐÑ½Úµã R
-ÖÕÖ¹½Úµã E';
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½×½Úµï¿½  W
+ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ C
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ U
+ï¿½á½»ï¿½Úµï¿½ S
+ï¿½ï¿½ï¿½ï¿½Úµï¿½ A
+ï¿½ï¿½ï¿½Ñ½Úµï¿½ R
+ï¿½ï¿½Ö¹ï¿½Úµï¿½ E';
 
 create table WF_ACTION_TASK  (
    TASK_ID              NUMBER(12,0)                    not null,
@@ -56,13 +35,13 @@ create table WF_ACTION_TASK  (
 );
 
 comment on column WF_ACTION_TASK.TASK_STATE is
-'A:ÒÑ·ÖÅä  C£ºÒÑÍê³É£¨Ìá½»£©W: ÒÑÎ¯ÍÐ¸ø±ðÈË';
+'A:ï¿½Ñ·ï¿½ï¿½ï¿½  Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½á½»ï¿½ï¿½W: ï¿½ï¿½Î¯ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_ACTION_TASK.IS_VALID is
-'T  F ¿ÉÒÔÉ¾³ý£¬Ò²¿ÉÒÔÊ¹Ê§Ð§£¬¸ù¾ÝÒµÎñÐèÒªÉè¶¨';
+'T  F ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½Ê¹Ê§Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½Òªï¿½è¶¨';
 
 comment on column WF_ACTION_TASK.AUTH_DESC is
-'¿ÉÒÔÊÇÈ¨ÏÞÒýÇæ×Ô¶¯·ÖÅä£¬Ò²¿ÉÒÔÊÇ¹ÜÀíÔ±Ö¸¶¨';
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ä£¬Ò²ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½ï¿½ï¿½Ô±Ö¸ï¿½ï¿½';
 
 create table WF_FLOW_DEFINE  (
    FLOW_CODE            VARCHAR2(32)                    not null,
@@ -81,31 +60,31 @@ create table WF_FLOW_DEFINE  (
 );
 
 comment on table WF_FLOW_DEFINE is
-'ÏÖÓÐ ÒµÎñºóÓÐÁ÷³Ì£¬Ò»¸öÁ÷³Ì±ØÐè°ó¶¨µ½Ò»¸öÒµÎñ£¬·ñÔò£¬ÎÞ·¨ÕÒµ½¶ÔÓ¦µÄÒµÎñ±äÁ¿À´½øÐÐÁ÷×ª';
+'ï¿½ï¿½ï¿½ï¿½ Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì£ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ì±ï¿½ï¿½ï¿½ó¶¨µï¿½Ò»ï¿½ï¿½Òµï¿½ñ£¬·ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½Òµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ª';
 
 comment on column WF_FLOW_DEFINE.FLOW_CODE is
-'Í¬Ò»¸ö´úÂëµÄÁ÷³ÌÓ¦¸ÃÖ»ÓÐÒ»¸öÓÐÐ§µÄ°æ±¾';
+'Í¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ä°æ±¾';
 
 comment on column WF_FLOW_DEFINE.VERSION is
-'°æ±¾ºÅÎª 0 µÄÎª²Ý¸å£¬ ÓÐÐ§°æ±¾ºÅ´Ó 1 ¿ªÊ¼';
+'ï¿½æ±¾ï¿½ï¿½Îª 0 ï¿½ï¿½Îªï¿½Ý¸å£¬ ï¿½ï¿½Ð§ï¿½æ±¾ï¿½Å´ï¿½ 1 ï¿½ï¿½Ê¼';
 
 comment on column WF_FLOW_DEFINE.FLOW_CLASS is
-'ÔÝÎ´Ê¹ÓÃ';
+'ï¿½ï¿½Î´Ê¹ï¿½ï¿½';
 
 comment on column WF_FLOW_DEFINE.FLOW_Publish_Date is
-'·¢²¼Ê±¼ä£¬Ò²ÊÇÆôÓÃÊ±¼ä';
+'ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä£¬Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½';
 
 comment on column WF_FLOW_DEFINE.FLOW_STATE is
-'A ²Ý¸å B Õý³£ C ¹ýÆÚ D ½ûÓÃ E ÒÑ·¢²¼  (A,E½ö¶Ô0°æ±¾ÓÐÐ§)';
+'A ï¿½Ý¸ï¿½ B ï¿½ï¿½ï¿½ï¿½ C ï¿½ï¿½ï¿½ï¿½ D ï¿½ï¿½ï¿½ï¿½ E ï¿½Ñ·ï¿½ï¿½ï¿½  (A,Eï¿½ï¿½ï¿½ï¿½0ï¿½æ±¾ï¿½ï¿½Ð§)';
 
 comment on column WF_FLOW_DEFINE.FLOW_XML_DESC is
-'Í¼ÐÎ¶¨Òå½çÃæÉú³ÉµÄXMLÎÄ¼þ';
+'Í¼ï¿½Î¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éµï¿½XMLï¿½Ä¼ï¿½';
 
 comment on column WF_FLOW_DEFINE.Time_Limit is
-'Ò»Ð¡Ê±¼Æ£¬8Ð¡Ê±ÎªÒ»Ìì£¬Ð¡ÊýµãºóÃæÎª·ÖÖÓ£¬±ÈÈç0.30±íÊ¾30·ÖÖÓ';
+'Ò»Ð¡Ê±ï¿½Æ£ï¿½8Ð¡Ê±ÎªÒ»ï¿½ì£¬Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½0.30ï¿½ï¿½Ê¾30ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_FLOW_DEFINE.Expire_Opt is
-'N£ºÍ¨Öª£¬ O:²»´¦Àí £¬ S£º¹ÒÆð£¬E£ºÖÕÖ¹';
+'Nï¿½ï¿½Í¨Öªï¿½ï¿½ O:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½Ö¹';
 
 create table WF_FLOW_INSTANCE  (
    FLOW_INST_ID         NUMBER(12,0)                    not null,
@@ -129,23 +108,23 @@ create table WF_FLOW_INSTANCE  (
 );
 
 comment on column WF_FLOW_INSTANCE.FLOW_CODE is
-'Í¬Ò»¸ö´úÂëµÄÁ÷³ÌÓ¦¸ÃÖ»ÓÐÒ»¸öÓÐÐ§µÄ°æ±¾';
+'Í¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ä°æ±¾';
 
 comment on column WF_FLOW_INSTANCE.FLOW_Opt_Name is
-'Õâ¸öÃû³ÆÓÃ»§ ²éÕÒÁ÷³ÌÐÅÏ¢';
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢';
 
 comment on column WF_FLOW_INSTANCE.FLOW_Opt_Tag is
-'Õâ¸ö±ê¼ÇÓÃ»§ ²éÕÒÁ÷³ÌÐÅÏ¢£¬±ÈÈç°ì¼þ´úÂë£¬ÓÐÒµÎñÏµÍ³×Ô¼º½âÊÍ';
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½Òµï¿½ï¿½ÏµÍ³ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_FLOW_INSTANCE.promise_Time is
-'³ÐÅµÊ±¼ä 1Ìì8Ð¡Ê±£¬1Ð¡Ê±60 ·ÖÖÓ Õâ¶ù°´ÕÕ·ÖÖÓ¼ÆËã';
+'ï¿½ï¿½ÅµÊ±ï¿½ï¿½ 1ï¿½ï¿½8Ð¡Ê±ï¿½ï¿½1Ð¡Ê±60 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ·ï¿½ï¿½Ó¼ï¿½ï¿½ï¿½';
 
 comment on column WF_FLOW_INSTANCE.INST_STATE is
-' N Õý³£  C Íê³É   P ÔÝÍ£ ¹ÒÆð     F Ç¿ÐÐ½áÊø
+' N ï¿½ï¿½ï¿½ï¿½  C ï¿½ï¿½ï¿½   P ï¿½ï¿½Í£ ï¿½ï¿½ï¿½ï¿½     F Ç¿ï¿½Ð½ï¿½ï¿½ï¿½
 ';
 
 comment on column WF_FLOW_INSTANCE.IS_SUB_INST is
-'Y ÊÇµÄ N  ²»ÊÇ';
+'Y ï¿½Çµï¿½ N  ï¿½ï¿½ï¿½ï¿½';
 
 create table WF_FLOW_STAGE  (
    STAGE_ID             NUMBER(12,0)                    not null,
@@ -161,22 +140,22 @@ create table WF_FLOW_STAGE  (
 );
 
 comment on column WF_FLOW_STAGE.VERSION is
-'°æ±¾ºÅÎª 0 µÄÎª²Ý¸å£¬ ÓÐÐ§°æ±¾ºÅ´Ó 1 ¿ªÊ¼';
+'ï¿½æ±¾ï¿½ï¿½Îª 0 ï¿½ï¿½Îªï¿½Ý¸å£¬ ï¿½ï¿½Ð§ï¿½æ±¾ï¿½Å´ï¿½ 1 ï¿½ï¿½Ê¼';
 
 comment on column WF_FLOW_STAGE.FLOW_CODE is
-'Í¬Ò»¸ö´úÂëµÄÁ÷³ÌÓ¦¸ÃÖ»ÓÐÒ»¸öÓÐÐ§µÄ°æ±¾';
+'Í¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ä°æ±¾';
 
 comment on column WF_FLOW_STAGE.is_Account_Time is
-'¸ÄÊÇ·ñ¼ÇÈë£¨Á÷³Ì£©Ê±¼ä T/F';
+'ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ë£¨ï¿½ï¿½ï¿½Ì£ï¿½Ê±ï¿½ï¿½ T/F';
 
 comment on column WF_FLOW_STAGE.Limit_Type is
-'ÆÚÏÞÀà±ð I £º Î´ÉèÖÃ£¨ignore Ä¬ÈÏ £©¡¢N ÎÞ (ÎÞÆÚÏÞ none ) ¡¢C ¹Ì¶¨ÆÚÏÞ  cycle';
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ I ï¿½ï¿½ Î´ï¿½ï¿½ï¿½Ã£ï¿½ignore Ä¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½N ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ none ) ï¿½ï¿½C ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½  cycle';
 
 comment on column WF_FLOW_STAGE.Time_Limit is
-'5D4H ÕâÑùµÄ±í´ïÊ½';
+'5D4H ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½Ê½';
 
 comment on column WF_FLOW_STAGE.Expire_Opt is
-'N£ºÍ¨Öª£¬ O:²»´¦Àí £¬ S£º¹ÒÆð£¬E£ºÖÕÖ¹£¨Á÷³Ì£©£¬ C£ºÍê³É£¨Ç¿ÖÆÌá½»,Ìá½»Ê§°Ü¾Í¹ÒÆð£©';
+'Nï¿½ï¿½Í¨Öªï¿½ï¿½ O:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½Ì£ï¿½ï¿½ï¿½ Cï¿½ï¿½ï¿½ï¿½É£ï¿½Ç¿ï¿½ï¿½ï¿½á½»,ï¿½á½»Ê§ï¿½Ü¾Í¹ï¿½ï¿½ï¿½';
 
 create table WF_FLOW_VARIABLE  (
    FLOW_INST_ID         NUMBER(12,0)                    not null,
@@ -197,11 +176,11 @@ create table WF_INST_ATTENTION  (
 );
 
 comment on table WF_INST_ATTENTION is
-'¹Ø×¢ÓÐ¸öÎÊÌâ£¬¾ÍÊÇÒ»¸ö¹Ø×¢ÈËÈçºÎ²Å¿ÉÐ´¶àÌõÒâ¼û£¬¿´À´»¹ÊÇÒªÐ´µ½ OPT_IDEA_INFO ÖÐ
+'ï¿½ï¿½×¢ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Î²Å¿ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÐ´ï¿½ï¿½ OPT_IDEA_INFO ï¿½ï¿½
 
 
 
-Õâ¸ö±íÔÝÊ±²»ÓÃ£¬ÓÃ ¹¤×÷Á÷ µÄ¹Ø×¢';
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¹ï¿½×¢';
 
 create table WF_MANAGE_ACTION  (
    ACTION_ID            NUMBER(12,0)                    not null,
@@ -217,16 +196,16 @@ create table WF_MANAGE_ACTION  (
 );
 
 comment on column WF_MANAGE_ACTION.NODE_INST_ID is
-'Èç¹ûÊÇ¶Ô½ÚµãÊµÀýµÄ¹ÜÀí£¬Õâ¸ö¾ÍÓÐÖµ';
+'ï¿½ï¿½ï¿½ï¿½Ç¶Ô½Úµï¿½Êµï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ';
 
 comment on column WF_MANAGE_ACTION.ACTION_TYPE is
-'¶ÔÁ÷³Ì¹ÜÀí²Ù×÷ÓÃ´óÐ´×ÖÄ¸£¬¶Ô½Úµã¹ÜÀí²Ù×÷ÓÃÐ¡Ð´×ÖÄ¸
-  S s: ×´Ì¬±ä¸ü£¬ ³¬Ê±»½ÐÑ¡¢ Ê¹Ê§Ð§¡¢ Ê¹Ò»¸öÕý³£µÄ½Úµã±äÎªÓÎÀë×´Ì¬ ¡¢ ÊÇÓÎÀë½ÚµãÊ§Ð§
-  c: ´´½¨½Úµã  ¡¢´´½¨Ò»¸öÓÎÀë½Úµã ´´½¨£¨ÈÎÒâ£©Ö¸¶¨½Úµã
-  R  : Á÷×ª¹ÜÀí£¬°üÀ¨  Ç¿ÐÐ»ØÍË  ¡¢Ç¿ÐÐÌá½»   
-  T t: ÆÚÏÞ¹ÜÀí ¡¢ ÉèÖÃÆÚÏÞ
-  a: ½ÚµãÈÎÎñ¹ÜÀí  ·ÖÅäÈÎÎñ¡¢  É¾³ýÈÎÎñ ¡¢  ½ûÓÃÈÎÎñ
-  U u: ±ä¸üÊôÐÔ''';
+'ï¿½ï¿½ï¿½ï¿½ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½Ð´ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½Ô½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Ð´ï¿½ï¿½Ä¸
+  S s: ×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ñ¡ï¿½ Ê¹Ê§Ð§ï¿½ï¿½ Ê¹Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½×´Ì¬ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½Ê§Ð§
+  c: ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£©Ö¸ï¿½ï¿½ï¿½Úµï¿½
+  R  : ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  Ç¿ï¿½Ð»ï¿½ï¿½ï¿½  ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½á½»   
+  T t: ï¿½ï¿½ï¿½Þ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  a: ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  U u: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½''';
 
 create table WF_NODE  (
    NODE_ID              NUMBER(12,0)                    not null,
@@ -270,76 +249,76 @@ create table WF_NODE  (
 );
 
 comment on table WF_NODE is
-'2017-6-13 Ìí¼ÓÁË osid  optid ÐÞ¸ÄÁË OPTcode Îª varchar2(32)';
+'2017-6-13 ï¿½ï¿½ï¿½ï¿½ï¿½ osid  optid ï¿½Þ¸ï¿½ï¿½ï¿½ OPTcode Îª varchar2(32)';
 
 comment on column WF_NODE.NODE_ID is
-'ÓÐÒ»¸öÌØÊâµÄ½Úµã´´½¨½Úµã£¨000001£©£¬Ëü¶ÔÓ¦µÄÈ¨ÏÞÓÃÀ´¼ìÑéÊÇ·ñÓÐÉêÇëµÄÈ¨Àû';
+'ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµã´´ï¿½ï¿½ï¿½Úµã£¨000001ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½';
 
 comment on column WF_NODE.FLOW_CODE is
-'Í¬Ò»¸ö´úÂëµÄÁ÷³ÌÓ¦¸ÃÖ»ÓÐÒ»¸öÓÐÐ§µÄ°æ±¾';
+'Í¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ä°æ±¾';
 
 comment on column WF_NODE.NODE_TYPE is
-'A:¿ªÊ¼ B:Ê×½Úµã C:ÒµÎñ½Úµã  F½áÊø  R: Â·ÓÉ½Úµã ¡£
-Õâ¸öÀà±ðÊÇ²»¿ÉÒÔ±ä¸üµÄ£¬ÔÚ»­Í¼Ò³ÃæÉÏ¿ÉÒÔ²»ÏÔÊ¾£¬Ê×½Úµã²»ÐèÒªÉèÖÃ£¬ÔÚÁ÷³Ì·¢²¼Ê±ºÍ¿ªÊ¼½ÚµãÖ±½ÓÏàÁ¬µÄ½Úµã¾ÍÊÇÊ×½Úµã£¬Õâ¸ö½Úµã±ØÐèÊÇÒµÎñ½Úµã¡£';
+'A:ï¿½ï¿½Ê¼ B:ï¿½×½Úµï¿½ C:Òµï¿½ï¿½Úµï¿½  Fï¿½ï¿½ï¿½ï¿½  R: Â·ï¿½É½Úµï¿½ ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½Ä£ï¿½ï¿½Ú»ï¿½Í¼Ò³ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½Ô²ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½×½Úµã²»ï¿½ï¿½Òªï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½Ê±ï¿½Í¿ï¿½Ê¼ï¿½Úµï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµï¿½ï¿½ï¿½ï¿½ï¿½×½Úµã£¬ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½Úµã¡£';
 
 comment on column WF_NODE.OPT_TYPE is
-'A:Ò»°ã B:ÇÀÏÈ»úÖÆ C:¶àÈË²Ù×÷ D: ×Ô¶¯Ö´ÐÐ EÑÆÔª£¨¿ÉÓÃÓÚÇ¶Ì×»ã¾Û£© S:×ÓÁ÷³Ì ';
+'A:Ò»ï¿½ï¿½ B:ï¿½ï¿½ï¿½È»ï¿½ï¿½ï¿½ C:ï¿½ï¿½ï¿½Ë²ï¿½ï¿½ï¿½ D: ï¿½Ô¶ï¿½Ö´ï¿½ï¿½ Eï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½×»ï¿½Û£ï¿½ S:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ';
 
 comment on column WF_NODE.OS_ID is
-'ÒµÎñÏµÍ³ ¿çÒµÎñµÄÁ÷³ÌÐèÒª';
+'Òµï¿½ï¿½ÏµÍ³ ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª';
 
 comment on column WF_NODE.OPT_ID is
-'ÒµÎñÏµÍ³  OPTINFOµÄOPTID';
+'Òµï¿½ï¿½ÏµÍ³  OPTINFOï¿½ï¿½OPTID';
 
 comment on column WF_NODE.OPT_CODE is
-'¶ÔÓ¦ OPT_DEF µÄ OPTCODE £¬OPTMETHOD ²Ù×÷·½·¨';
+'ï¿½ï¿½Ó¦ OPT_DEF ï¿½ï¿½ OPTCODE ï¿½ï¿½OPTMETHOD ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_NODE.OPT_BEAN is
-'×Ô¶¯Ö´ÐÐ½ÚµãÐèÒª,»òÕßÂ·ÓÉÅÐ¶Ïbean';
+'ï¿½Ô¶ï¿½Ö´ï¿½Ð½Úµï¿½ï¿½ï¿½Òª,ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½Ð¶ï¿½bean';
 
 comment on column WF_NODE.SUB_FLOW_CODE is
-'×ÓÁ÷³ÌºÍÒµÎñ²Ù×÷Ö»ÓÐÒ»¸öÓÐÐ§£¬¶¼ÊÇÎªÁËÖ¸¶¨ÒµÎñ½ÚµãµÄ»î¶¯';
+'ï¿½ï¿½ï¿½ï¿½ï¿½Ìºï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ö¸ï¿½ï¿½Òµï¿½ï¿½Úµï¿½Ä»î¶¯';
 
 comment on column WF_NODE.ROUTER_TYPE is
-'D:·ÖÖ§ E:»ã¾Û  G ¶àÊµÀý½Úµã  H²¢ÐÐ  R ÓÎÀë S£ºÍ¬²½';
+'D:ï¿½ï¿½Ö§ E:ï¿½ï¿½ï¿½  G ï¿½ï¿½Êµï¿½ï¿½ï¿½Úµï¿½  Hï¿½ï¿½ï¿½ï¿½  R ï¿½ï¿½ï¿½ï¿½ Sï¿½ï¿½Í¬ï¿½ï¿½';
 
 comment on column WF_NODE.ROLE_TYPE is
 'xz gw bj  en';
 
 comment on column WF_NODE.multiInst_Type is
-'D »ú¹¹£¬ U ÈËÔ± £¬ V ±äÁ¿';
+'D ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ U ï¿½ï¿½Ô± ï¿½ï¿½ V ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_NODE.multiInst_Param is
-'×Ô¶¨Òå±äÁ¿±í´ï£¬ÓÃÓÚ¶àÊµÀý½ÚµãµÄ·ÖÖ§';
+'ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½Ú¶ï¿½Êµï¿½ï¿½ï¿½Úµï¿½Ä·ï¿½Ö§';
 
 comment on column WF_NODE.converge_Type is
-'ËùÓÐ¶¼Íê³É£¬ ÖÁÉÙÓÐXÍê³É£¬ÖÁ¶àÓÐXÎ´Íê³É£¬Íê³É±ÈÂÊ´ïµ½X £¬ Íâ²ºÅÐ¶Ï';
+'ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½É£ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½XÎ´ï¿½ï¿½É£ï¿½ï¿½ï¿½É±ï¿½ï¿½Ê´ïµ½X ï¿½ï¿½ ï¿½â²ºï¿½Ð¶ï¿½';
 
 comment on column WF_NODE.is_Account_Time is
-'¸ÄÊÇ·ñ¼ÇÈëÊ±¼ä T/F';
+'ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ T/F';
 
 comment on column WF_NODE.Limit_Type is
-'ÆÚÏÞÀà±ð I £º Î´ÉèÖÃ£¨ignore Ä¬ÈÏ £©¡¢N ÎÞ (ÎÞÆÚÏÞ none ) ¡¢
- F Ã¿ÊµÀý¹Ì¶¨ÆÚÏÞ fix ¡¢C ½Úµã¹Ì¶¨ÆÚÏÞ  cycle¡¢
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ I ï¿½ï¿½ Î´ï¿½ï¿½ï¿½Ã£ï¿½ignore Ä¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½N ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ none ) ï¿½ï¿½
+ F Ã¿Êµï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½ fix ï¿½ï¿½C ï¿½Úµï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½  cycleï¿½ï¿½
 ';
 
 comment on column WF_NODE.Time_Limit is
-'5D4H ÕâÑùµÄ±í´ïÊ½';
+'5D4H ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½Ê½';
 
 comment on column WF_NODE.inherit_Type is
-'0 ²»¼¯³É 1 ¼Ì³ÐÇ°Ò»¸ö½Úµã 2 ¼Ì³ÐÖ¸¶¨½Úµã';
+'0 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1 ï¿½Ì³ï¿½Ç°Ò»ï¿½ï¿½ï¿½Úµï¿½ 2 ï¿½Ì³ï¿½Ö¸ï¿½ï¿½ï¿½Úµï¿½';
 
 comment on column WF_NODE.inherit_Node_Code is
-'¼Ì³Ð»·½Ú´úÂë';
+'ï¿½Ì³Ð»ï¿½ï¿½Ú´ï¿½ï¿½ï¿½';
 
 comment on column WF_NODE.Expire_Opt is
-'N£ºÍ¨Öª£¬ O:²»´¦Àí £¬ S£º¹ÒÆð£¬E£ºÖÕÖ¹£¨Á÷³Ì£©£¬ C£ºÍê³É£¨Ç¿ÖÆÌá½»,Ìá½»Ê§°Ü¾Í¹ÒÆð£©';
+'Nï¿½ï¿½Í¨Öªï¿½ï¿½ O:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½Ì£ï¿½ï¿½ï¿½ Cï¿½ï¿½ï¿½ï¿½É£ï¿½Ç¿ï¿½ï¿½ï¿½á½»,ï¿½á½»Ê§ï¿½Ü¾Í¹ï¿½ï¿½ï¿½';
 
 comment on column WF_NODE.Warning_Rule is
-'R£ºÔËÐÐÊ±¼ä  L:Ê£ÓàÊ±¼ä P£º±ÈÂÊ';
+'Rï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½  L:Ê£ï¿½ï¿½Ê±ï¿½ï¿½ Pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_NODE.Warning_Param is
-'ÊÇÒ»¸öÊ±¼ä×Ö·û´® »òÕß ÊýÖµ';
+'ï¿½ï¿½Ò»ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Öµ';
 
 comment on column WF_NODE.is_Trunk_Line is
 'T / F';
@@ -372,26 +351,26 @@ create table WF_NODE_INSTANCE  (
 );
 
 comment on column WF_NODE_INSTANCE.NODE_ID is
-'ÓÐÒ»¸öÌØÊâµÄ½Úµã´´½¨½Úµã£¨000001£©£¬Ëü¶ÔÓ¦µÄÈ¨ÏÞÓÃÀ´¼ìÑéÊÇ·ñÓÐÉêÇëµÄÈ¨Àû';
+'ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµã´´ï¿½ï¿½ï¿½Úµã£¨000001ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½';
 
 comment on column WF_NODE_INSTANCE.promise_Time is
-'³ÐÅµÊ±¼ä 1Ìì8Ð¡Ê±£¬1Ð¡Ê±60 ·ÖÖÓ Õâ¶ù°´ÕÕ·ÖÖÓ¼ÆËã';
+'ï¿½ï¿½ÅµÊ±ï¿½ï¿½ 1ï¿½ï¿½8Ð¡Ê±ï¿½ï¿½1Ð¡Ê±60 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ·ï¿½ï¿½Ó¼ï¿½ï¿½ï¿½';
 
 comment on column WF_NODE_INSTANCE.NODE_STATE is
-'     * N Õý³£  B ÒÑ»ØÍË    C Íê³É   F±»Ç¿ÖÆ½áÊø 
-     * P ÔÝÍ£   W µÈ´ý×ÓÁ÷³Ì·µ»Ø   S µÈµÈÇ°ÖÃ½Úµã£¨¿ÉÄÜÊÇ¶à¸ö£©Íê³É';
+'     * N ï¿½ï¿½ï¿½ï¿½  B ï¿½Ñ»ï¿½ï¿½ï¿½    C ï¿½ï¿½ï¿½   Fï¿½ï¿½Ç¿ï¿½Æ½ï¿½ï¿½ï¿½ 
+     * P ï¿½ï¿½Í£   W ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½   S ï¿½Èµï¿½Ç°ï¿½Ã½Úµã£¨ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_NODE_INSTANCE.ROLE_TYPE is
 'xz gw bj  en';
 
 comment on column WF_NODE_INSTANCE.TRANS_ID is
-'ÓÉÄÄÒ»ÌõÂ·¾¶´´½¨µÄ';
+'ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_NODE_INSTANCE.TASK_ASSIGNED is
-'T: Í¨¹ý tasklist ·ÖÅä£¬ D£ºÍ¨¹ý ¸ÚÎ»¡¢ÐÐÕþ½ÇÉ« ×Ô¶¯Æ¥Åä S£º¾²Ì¬´ú°ì£¨usercode)';
+'T: Í¨ï¿½ï¿½ tasklist ï¿½ï¿½ï¿½ä£¬ Dï¿½ï¿½Í¨ï¿½ï¿½ ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É« ï¿½Ô¶ï¿½Æ¥ï¿½ï¿½ Sï¿½ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ì£¨usercode)';
 
 comment on column WF_NODE_INSTANCE.Run_Token is
-'ÁîÅÆ£º T* ±íÊ¾Õý³£ÔËÐÐµÄ½Úµã  R* ±íÊ¾ÓÎÀë½Úµã  L* ±íÊ¾ÁÙÊ±²åÈëµÄ½Úµã';
+'ï¿½ï¿½ï¿½Æ£ï¿½ T* ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ½Úµï¿½  R* ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Úµï¿½  L* ï¿½ï¿½Ê¾ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ä½Úµï¿½';
 
 create table WF_ROLE_RELEGATE  (
    RELEGATE_NO          NUMBER(12,0)                    not null,
@@ -410,7 +389,7 @@ create table WF_ROLE_RELEGATE  (
 );
 
 comment on column WF_ROLE_RELEGATE.IS_VALID is
-'T:ÉúÐ§ F:ÎÞÐ§';
+'T:ï¿½ï¿½Ð§ F:ï¿½ï¿½Ð§';
 
 create table WF_ROUTER_NODE  (
    NODEID               NUMBER(12,0)                    not null,
@@ -431,25 +410,25 @@ create table WF_ROUTER_NODE  (
 );
 
 comment on column WF_ROUTER_NODE.NODEID is
-'ÓÐÒ»¸öÌØÊâµÄ½Úµã´´½¨½Úµã£¨000001£©£¬Ëü¶ÔÓ¦µÄÈ¨ÏÞÓÃÀ´¼ìÑéÊÇ·ñÓÐÉêÇëµÄÈ¨Àû';
+'ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµã´´ï¿½ï¿½ï¿½Úµã£¨000001ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½';
 
 comment on column WF_ROUTER_NODE.WFCODE is
-'Í¬Ò»¸ö´úÂëµÄÁ÷³ÌÓ¦¸ÃÖ»ÓÐÒ»¸öÓÐÐ§µÄ°æ±¾';
+'Í¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ä°æ±¾';
 
 comment on column WF_ROUTER_NODE.ROUTERTYPE is
-'D:·ÖÖ§ E:»ã¾Û  G ¶àÊµÀý½Úµã  H²¢ÐÐ  R ÓÎÀë';
+'D:ï¿½ï¿½Ö§ E:ï¿½ï¿½ï¿½  G ï¿½ï¿½Êµï¿½ï¿½ï¿½Úµï¿½  Hï¿½ï¿½ï¿½ï¿½  R ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_ROUTER_NODE.ROLETYPE is
 'xz gw bj  en';
 
 comment on column WF_ROUTER_NODE.SELFDEFPARAM is
-'×Ô¶¨Òå±äÁ¿±í´ï£¬ÓÃÓÚ¶àÊµÀý½ÚµãµÄ·ÖÖ§';
+'ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½Ú¶ï¿½Êµï¿½ï¿½ï¿½Úµï¿½Ä·ï¿½Ö§';
 
 comment on column WF_ROUTER_NODE.convergeType is
-'ËùÓÐ¶¼Íê³É£¬ ÖÁÉÙÓÐXÍê³É£¬ÖÁ¶àÓÐXÎ´Íê³É£¬Íê³É±ÈÂÊ´ïµ½X £¬ Íâ²ºÅÐ¶Ï';
+'ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½É£ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½XÎ´ï¿½ï¿½É£ï¿½ï¿½ï¿½É±ï¿½ï¿½Ê´ïµ½X ï¿½ï¿½ ï¿½â²ºï¿½Ð¶ï¿½';
 
 comment on column WF_ROUTER_NODE.OPTBEAN is
-'×Ô¶¯Ö´ÐÐ½ÚµãÐèÒª';
+'ï¿½Ô¶ï¿½Ö´ï¿½Ð½Úµï¿½ï¿½ï¿½Òª';
 
 create table WF_RUNTIME_WARNING  (
    WARNING_ID           NUMBER(12,0)                    not null,
@@ -476,23 +455,23 @@ comment on column WF_RUNTIME_WARNING.WARNING_ID is
 'sequence : S_WARNING_NO';
 
 comment on column WF_RUNTIME_WARNING.OBJ_TYPE is
-'F £º ¹¤×÷Á÷ N £º½Úµã P£º½×¶Î';
+'F ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ N ï¿½ï¿½ï¿½Úµï¿½ Pï¿½ï¿½ï¿½×¶ï¿½';
 
 comment on column WF_RUNTIME_WARNING.WARNING_TYPE is
-'W£¬Ô¤¾¯  A  ±¨¾¯ N ÌáÐÑ  O ÆäËû';
+'Wï¿½ï¿½Ô¤ï¿½ï¿½  A  ï¿½ï¿½ï¿½ï¿½ N ï¿½ï¿½ï¿½ï¿½  O ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_RUNTIME_WARNING.WARNING_STATE is
-'D ÕªÅÆ C ¾ÀÕý F ¶½°ì N Î´´¦Àí';
+'D Õªï¿½ï¿½ C ï¿½ï¿½ï¿½ï¿½ F ï¿½ï¿½ï¿½ï¿½ N Î´ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_RUNTIME_WARNING.WARNING_CODE is
-'ALTER_EXPIRED  : Ê±¼ä³¬ÆÚ±¨¾¯ 
-WARN_EXPIRED  : Ê±¼ä³¬ÆÚÔ¤¾¯';
+'ALTER_EXPIRED  : Ê±ï¿½ä³¬ï¿½Ú±ï¿½ï¿½ï¿½ 
+WARN_EXPIRED  : Ê±ï¿½ä³¬ï¿½ï¿½Ô¤ï¿½ï¿½';
 
 comment on column WF_RUNTIME_WARNING.NOTICE_STATE is
-'0 ´ý·¢ËÍ 1 ÒÑ·¢ËÍ 2 ·¢ËÍÏûÏ¢Ê§°Ü';
+'0 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1 ï¿½Ñ·ï¿½ï¿½ï¿½ 2 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢Ê§ï¿½ï¿½';
 
 comment on column WF_RUNTIME_WARNING.SEND_USERS is
-'¿ÉÒÔÊÇ¶à¸öÈËÓÃ¶ººÅ¸ô¿ª';
+'ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½Å¸ï¿½ï¿½ï¿½';
 
 create table WF_STAGE_INSTANCE  (
    FLOW_INST_ID         NUMBER(12,0)                    not null,
@@ -508,13 +487,13 @@ create table WF_STAGE_INSTANCE  (
 );
 
 comment on table WF_STAGE_INSTANCE is
-'ÔÚÁ÷³Ì´´½¨Ê±Í¬Ê±´´½¨Õâ¸öÁ÷³ÌËùÓÐµÄ½×¶Î';
+'ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½Ê±Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ½×¶ï¿½';
 
 comment on column WF_STAGE_INSTANCE.stage_Begin is
-'0 »¹Ã»ÓÐ½øÈë£¬ 1 ÒÑ¾­½øÈë';
+'0 ï¿½ï¿½Ã»ï¿½Ð½ï¿½ï¿½ë£¬ 1 ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_STAGE_INSTANCE.promise_Time is
-'³ÐÅµÊ±¼ä 1Ìì8Ð¡Ê±£¬1Ð¡Ê±60 ·ÖÖÓ Õâ¶ù°´ÕÕ·ÖÖÓ¼ÆËã';
+'ï¿½ï¿½ÅµÊ±ï¿½ï¿½ 1ï¿½ï¿½8Ð¡Ê±ï¿½ï¿½1Ð¡Ê±60 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ·ï¿½ï¿½Ó¼ï¿½ï¿½ï¿½';
 
 create table WF_TEAM  (
    FLOW_INST_ID         NUMBER(12,0)                    not null,
@@ -527,10 +506,10 @@ create table WF_TEAM  (
 );
 
 comment on table WF_TEAM is
-'Õâ¸ö±íÓÐÒµÎñÏµÍ³Ð´Èë£¬Á÷³ÌÒýÇæÖ»¸ºÔð¶ÁÈ¡';
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ÏµÍ³Ð´ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½È¡';
 
 comment on column WF_TEAM.USER_ORDER is
-'Í¬Ò»¸ö½ÇÉ«¶à¸öÓÃ»§ÅÅÐòºÅ';
+'Í¬Ò»ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 create table WF_TRANSITION  (
    TRANS_ID             NUMBER(12,0)                    not null,
@@ -553,39 +532,39 @@ create table WF_TRANSITION  (
 );
 
 comment on column WF_TRANSITION.FLOW_CODE is
-'Í¬Ò»¸ö´úÂëµÄÁ÷³ÌÓ¦¸ÃÖ»ÓÐÒ»¸öÓÐÐ§µÄ°æ±¾';
+'Í¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ä°æ±¾';
 
 comment on column WF_TRANSITION.TRANS_CLASS is
-'ÔÝÎ´Ê¹ÓÃ';
+'ï¿½ï¿½Î´Ê¹ï¿½ï¿½';
 
 comment on column WF_TRANSITION.START_NODE_ID is
-'ÓÐÒ»¸öÌØÊâµÄ½Úµã´´½¨½Úµã£¨000001£©£¬Ëü¶ÔÓ¦µÄÈ¨ÏÞÓÃÀ´¼ìÑéÊÇ·ñÓÐÉêÇëµÄÈ¨Àû';
+'ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµã´´ï¿½ï¿½ï¿½Úµã£¨000001ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½';
 
 comment on column WF_TRANSITION.END_NODE_ID is
-'ÓÐÒ»¸öÌØÊâµÄ½Úµã´´½¨½Úµã£¨000001£©£¬Ëü¶ÔÓ¦µÄÈ¨ÏÞÓÃÀ´¼ìÑéÊÇ·ñÓÐÉêÇëµÄÈ¨Àû';
+'ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµã´´ï¿½ï¿½ï¿½Úµã£¨000001ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½';
 
 comment on column WF_TRANSITION.TRANS_CONDITION is
 'a>500 && b<300';
 
 comment on column WF_TRANSITION.is_Account_Time is
-'¸ÄÊÇ·ñ¼ÇÈëÊ±¼ä T/F  I ºöÂÔ';
+'ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ T/F  I ï¿½ï¿½ï¿½ï¿½';
 
 comment on column WF_TRANSITION.Limit_Type is
-'ÆÚÏÞÀà±ð I £º Î´ÉèÖÃ£¨ignore Ä¬ÈÏ £©¡¢N ÎÞ (ÎÞÆÚÏÞ none ) ¡¢
- F Ã¿ÊµÀý¹Ì¶¨ÆÚÏÞ fix ¡¢C ½Úµã¹Ì¶¨ÆÚÏÞ  cycle¡¢
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ I ï¿½ï¿½ Î´ï¿½ï¿½ï¿½Ã£ï¿½ignore Ä¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½N ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ none ) ï¿½ï¿½
+ F Ã¿Êµï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½ fix ï¿½ï¿½C ï¿½Úµï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½  cycleï¿½ï¿½
 ';
 
 comment on column WF_TRANSITION.Time_Limit is
-'5D4H ÕâÑùµÄ±í´ïÊ½';
+'5D4H ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½Ê½';
 
 comment on column WF_TRANSITION.inherit_Type is
-'0 ²»¼¯³É 1 ¼Ì³ÐÇ°Ò»¸ö½Úµã 2 ¼Ì³ÐÖ¸¶¨½Úµã';
+'0 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1 ï¿½Ì³ï¿½Ç°Ò»ï¿½ï¿½ï¿½Úµï¿½ 2 ï¿½Ì³ï¿½Ö¸ï¿½ï¿½ï¿½Úµï¿½';
 
 comment on column WF_TRANSITION.inherit_Node_Code is
-'¼Ì³Ð»·½Ú´úÂë';
+'ï¿½Ì³Ð»ï¿½ï¿½Ú´ï¿½ï¿½ï¿½';
 
 comment on column WF_TRANSITION.can_ignore is
-'T¿ÉÒÔºöÂÔ F ²»¿ÉÒÔºöÂÔ  ÊÇ·ñ¿ÉÒÔºöÂÔÔËÐÐ';
+'Tï¿½ï¿½ï¿½Ôºï¿½ï¿½ï¿½ F ï¿½ï¿½ï¿½ï¿½ï¿½Ôºï¿½ï¿½ï¿½  ï¿½Ç·ï¿½ï¿½ï¿½Ôºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 
 create table WF_Task_Move  (
    move_no            NUMBER(12,0)                    not null,
@@ -608,9 +587,9 @@ create table WF_organize  (
 );
 
 comment on column WF_organize.UNIT_ORDER is
-'Í¬Ò»¸ö½ÇÉ«¶à¸ö»ú¹¹ÅÅÐòºÅ';
+'Í¬Ò»ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 
---ÒÀÀµµÄ¿ò¼Ü²¿·Ö±í
+--ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½Ü²ï¿½ï¿½Ö±ï¿½
 create table F_OPTDEF  (
   OPTCODE              VARCHAR2(32)                    not null,
   OptID                VARCHAR2(32),
@@ -627,9 +606,9 @@ create table F_OPTDEF  (
   updator              VARCHAR2(32)
 );
 comment on column F_OPTDEF.OPTMETHOD is
-'²Ù×÷²ÎÊý ·½·¨';
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½';
 comment on column F_OPTDEF.IsInWorkflow is
-'ÊÇ·ñÎªÁ÷³Ì²Ù×÷·½·¨ F£º²»ÊÇ  T £º ÊÇ';
+'ï¿½Ç·ï¿½Îªï¿½ï¿½ï¿½Ì²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  T ï¿½ï¿½ ï¿½ï¿½';
 alter table F_OPTDEF
   add constraint PK_F_OPTDEF primary key (OPTCODE);
 
@@ -658,13 +637,13 @@ create table F_OptInfo  (
   updator              VARCHAR2(32)
 );
 comment on column F_OptInfo.optRoute is
-'ÓëangularjsÂ·ÓÉÆ¥Åä';
+'ï¿½ï¿½angularjsÂ·ï¿½ï¿½Æ¥ï¿½ï¿½';
 comment on column F_OptInfo.OptType is
-' S:ÊµÊ©ÒµÎñ, O:ÆÕÍ¨ÒµÎñ, W:Á÷³ÌÒµÎñ, I :ÏîÄ¿ÒµÎñ';
+' S:ÊµÊ©Òµï¿½ï¿½, O:ï¿½ï¿½Í¨Òµï¿½ï¿½, W:ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½, I :ï¿½ï¿½Ä¿Òµï¿½ï¿½';
 comment on column F_OptInfo.OrderInd is
-'Õâ¸öË³ÐòÖ»ÐèÔÚÍ¬Ò»¸ö¸¸ÒµÎñÏÂÅÅÐò';
+'ï¿½ï¿½ï¿½Ë³ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 comment on column F_OptInfo.FLOWCODE is
-'Í¬Ò»¸ö´úÂëµÄÁ÷³ÌÓ¦¸ÃÖ»ÓÐÒ»¸öÓÐÐ§µÄ°æ±¾';
+'Í¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ä°æ±¾';
 comment on column F_OptInfo.PageType is
 'D : DIV I:iFrame';
 alter table F_OptInfo add constraint PK_F_OPTINFO primary key (OptID);
@@ -684,17 +663,17 @@ create table F_USERUNIT  (
   updator              VARCHAR2(32)
 );
 comment on table F_USERUNIT is
-'Í¬Ò»¸öÈË¿ÉÄÜÔÚ¶à¸ö²¿ÃÅµ£ÈÎ²»Í¬µÄÖ°Î»';
+'Í¬Ò»ï¿½ï¿½ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½Åµï¿½ï¿½Î²ï¿½Í¬ï¿½ï¿½Ö°Î»';
 comment on column F_USERUNIT.IsPrimary is
-'T£ºÎªÖ÷£¬ F£º¼æÖ°';
+'Tï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ Fï¿½ï¿½ï¿½ï¿½Ö°';
 comment on column F_USERUNIT.UserRank is
-'RANK ´úÂë²»ÊÇ 0¿ªÍ·µÄ¿ÉÒÔ½øÐÐÊÚÓè';
+'RANK ï¿½ï¿½ï¿½ë²»ï¿½ï¿½ 0ï¿½ï¿½Í·ï¿½Ä¿ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½';
 comment on column F_USERUNIT.RankMemo is
-'ÈÎÖ°±¸×¢';
+'ï¿½ï¿½Ö°ï¿½ï¿½×¢';
 alter table F_USERUNIT
   add constraint PK_F_USERUNIT primary key (USERUNITID);
 
---ÒÀÀµµÄ¿ò¼ÜÊÓÍ¼
+--ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Í¼
 create or replace view f_v_wf_optdef_url_map as
 select c.opturl || b.opturl as optdefurl, b.optreq, b.optcode,
        b.optdesc,b.optMethod , c.optid,b.OptName
@@ -703,7 +682,7 @@ from F_OPTDEF b join f_optinfo c
  where c.OptType = 'W'
    and c.opturl <> '...' and b.optreq is not null;
         
---¹¤×÷Á÷ÊÓÍ¼        
+--ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼        
 create or replace view F_V_LASTVERSIONFLOW(FLOW_CODE, VERSION, FLOW_NAME, FLOW_CLASS, FLOW_STATE, FLOW_DESC, FLOW_XML_DESC, TIME_LIMIT, EXPIRE_OPT, OPT_ID, FLOW_PUBLISH_DATE, AT_PUBLISH_DATE) as
 select a.FLOW_CODE,
    b.version,
@@ -727,14 +706,14 @@ from (select FLOW_CODE, max(version) as version
 
 create or replace view V_INNER_USER_TASK_LIST as
 select a.FLOW_INST_ID,w.FLOW_CODE,w.version, w.FLOW_OPT_NAME,w.FLOW_OPT_TAG,a.NODE_INST_ID, nvl(a.Unit_Code,nvl(w.Unit_Code,'0000000')) as UnitCode, 
-        a.user_code,c.ROLE_TYPE,c.ROLE_CODE,'Ò»°ãÈÎÎñ' as AUTHDESC, c.node_code,
+        a.user_code,c.ROLE_TYPE,c.ROLE_CODE,'Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½' as AUTHDESC, c.node_code,
           c.Node_Name,c.Node_Type,c.Opt_Type as NODEOPTTYPE,d.optid,d.OptName,d.OptName as MethodName,
           d.optdefurl as OptUrl,d.optMethod,c.Opt_Param ,d.OptDesc,a.CREATE_TIME,a.Promise_Time,a.TIME_LIMIT,
           c.OPT_CODE,c.Expire_Opt,c.STAGE_CODE,a.last_update_user,a.LAST_UPDATE_TIME,w.inst_state
 from WF_NODE_INSTANCE a join WF_FLOW_INSTANCE w on (a.FLOW_INST_ID=w.FLOW_INST_ID)
            join WF_NODE c on (a.NODE_ID=c.NODE_ID)
            join f_v_wf_optdef_url_map d on (c.OPT_CODE=d.OPTCODE)
-where /*c.NODETYPE<>'R' and --ÓÎÀë½Úµã²»»á´´½¨Ê±ÊµÀý*/ 
+where /*c.NODETYPE<>'R' and --ï¿½ï¿½ï¿½ï¿½Úµã²»ï¿½á´´ï¿½ï¿½Ê±Êµï¿½ï¿½*/ 
     a.NODE_STATE='N' and w.INST_STATE='N' and a.TASK_ASSIGNED='S'
 union all
 select a.FLOW_INST_ID,w.FLOW_CODE,w.version, w.FLOW_OPT_NAME,w.FLOW_OPT_TAG,a.NODE_INST_ID, nvl(a.Unit_Code,nvl(w.Unit_Code,'0000000')) as UnitCode, 
@@ -750,7 +729,7 @@ where a.NODE_STATE='N' and w.INST_STATE='N' and a.TASK_ASSIGNED='T'
     and b.IS_VALID='T' and  b.TASK_STATE='A' and (b.EXPIRE_TIME is null or b.EXPIRE_TIME>sysdate)
 union all
 select  a.FLOW_INST_ID,w.FLOW_CODE,w.version,w.FLOW_OPT_NAME,w.FLOW_OPT_TAG,a.NODE_INST_ID, b.UnitCode ,
-         b.usercode,c.ROLE_TYPE,c.ROLE_CODE, 'ÏµÍ³Ö¸¶¨' as AUTHDESC, c.node_code,
+         b.usercode,c.ROLE_TYPE,c.ROLE_CODE, 'ÏµÍ³Ö¸ï¿½ï¿½' as AUTHDESC, c.node_code,
           c.Node_Name,c.Node_Type,c.Opt_Type as NODEOPTTYPE,d.optid,d.OptName,d.OptName as MethodName,
           d.optdefurl as OptUrl,d.optMethod,c.Opt_Param ,d.OptDesc,a.CREATE_TIME,a.Promise_Time,a.TIME_LIMIT,
           c.OPT_CODE,c.Expire_Opt,c.STAGE_CODE,a.last_update_user,a.LAST_UPDATE_TIME,w.inst_state
@@ -797,4 +776,4 @@ join f_v_wf_optdef_url_map d on (n.OPT_CODE=d.OPTCODE)
 join wf_flow_instance f on t.FLOW_INST_ID = f.FLOW_INST_ID
 with read only;
  comment on table v_node_instdetail is
-'°üÀ¨Á÷³ÌÐÅÏ¢¡¢²Ù×÷ÐÅÏ¢µÄÊÓÍ¼';
+'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½Í¼';

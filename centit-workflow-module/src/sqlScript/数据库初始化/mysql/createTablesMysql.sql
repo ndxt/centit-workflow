@@ -6,8 +6,6 @@ drop view if exists  V_USER_TASK_LIST;
 
 drop view if exists  v_node_instdetail;
 
-drop table if exists  F_Opt_Variable ;
-
 drop table  if exists WF_ACTION_LOG ;
 
 drop table if exists  WF_ACTION_TASK ;
@@ -91,22 +89,6 @@ INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 
 INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
 ('S_WARNING_NO', 0, 1);
-
-
-create table F_Opt_Variable  (
-   OptID                VARCHAR(8)                     not null,
-   VarName              VARCHAR(32)                    not null,
-   VarDesc              VARCHAR(200),
-   VarType              CHAR(1) comment  '只有3种类型 N：数据 S:字符串 D:日期',
-   DefaultValue         VARCHAR(200),
-   ISVALID              CHAR                           default 'T' not null comment 'T:生效 F:无效',
-   constraint PK_F_OPT_VARIABLE primary key (OptID, VarName)
-);
-
- alter table F_Opt_Variable comment 
-'业务变量为流程引擎和业务进行数据访问的接口：
-由流程引擎 以只读的方式访问';
-
 
 
 create table WF_ACTION_LOG  (

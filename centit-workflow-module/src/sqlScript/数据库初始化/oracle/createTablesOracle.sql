@@ -6,8 +6,6 @@ drop view V_USER_TASK_LIST;
 
 drop view v_node_instdetail;
 
-drop table F_Opt_Variable cascade constraints;
-
 drop table WF_ACTION_LOG cascade constraints;
 
 drop table WF_ACTION_TASK cascade constraints;
@@ -91,26 +89,6 @@ start with 1;
 create sequence S_RELEGATENO;
 
 create sequence S_WARNING_NO;
-
-create table F_Opt_Variable  (
-   OptID                VARCHAR2(8)                     not null,
-   VarName              VARCHAR2(32)                    not null,
-   VarDesc              VARCHAR2(200),
-   VarType              CHAR(1),
-   DefaultValue         VARCHAR2(200),
-   ISVALID              CHAR                           default 'T' not null,
-   constraint PK_F_OPT_VARIABLE primary key (OptID, VarName)
-);
-
-comment on table F_Opt_Variable is
-'业务变量为流程引擎和业务进行数据访问的接口：
-由流程引擎 以只读的方式访问';
-
-comment on column F_Opt_Variable.VarType is
-'只有3种类型 N：数据 S:字符串 D:日期';
-
-comment on column F_Opt_Variable.ISVALID is
-'T:生效 F:无效';
 
 create table WF_ACTION_LOG  (
    ACTIONID             NUMBER(12)                      not null,
