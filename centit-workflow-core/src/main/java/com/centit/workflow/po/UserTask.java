@@ -1,8 +1,10 @@
 package com.centit.workflow.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.support.common.WorkTimeSpan;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.persistence.OrderBy;
 import java.util.Date;
 
 /**
@@ -31,6 +33,7 @@ public class UserTask implements java.io.Serializable {
     private String  nodeOptType;
     private String  optParam;
     private String  optCode;
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date  createTime;
     private String  expireOpt;
     private Date  lastUpdateTime;

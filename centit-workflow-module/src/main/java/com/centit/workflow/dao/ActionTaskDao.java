@@ -56,7 +56,8 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "[ :nodeCode| and NODE_CODE = :nodeCode] " +
             "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
             "[ :flowCode| and FLOW_CODE = :flowCode] " +
-            "[ :stageCode| and STAGE_CODE = :stageCode] ";
+            "[ :stageCode| and STAGE_CODE = :stageCode] " +
+            " order by CREATE_TIME desc ";
 
     private final static String actionTaskBaseSql = "select TASK_ID,NODE_INST_ID," +
             "ASSIGN_TIME,EXPIRE_TIME,USER_CODE,ROLE_TYPE,ROLE_CODE,TASK_STATE,IS_VALID,AUTH_DESC" +
