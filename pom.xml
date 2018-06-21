@@ -15,7 +15,7 @@
 
     <parent>
         <groupId>com.centit.framework</groupId>
-        <artifactId>framework-release-dependencies</artifactId>
+        <artifactId>framework-snapshot-dependencies</artifactId>
         <version>1.1.1806</version>
     </parent>
     <properties>
@@ -103,7 +103,7 @@
         <repository>
             <id>centit-releases</id>
             <name>centit-release</name>
-            <url>http://develop.centit.com:8080/nexus/content/repositories/centit-releases/</url>
+            <url>http://nexus.centit.com:8081/nexus/content/repositories/centit-releases/</url>
         </repository>
         <snapshotRepository>
             <id>centit-snapshots</id>

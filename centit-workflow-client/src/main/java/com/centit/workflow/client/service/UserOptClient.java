@@ -8,7 +8,7 @@ import java.util.List;
  * Created by chen_rj on 2018-5-2.
  */
 public interface UserOptClient {
-    CloseableHttpClient getHttpClient() throws Exception ;
+    CloseableHttpClient allocHttpClient() throws Exception ;
 
     void releaseHttpClient(CloseableHttpClient httpClient);
 

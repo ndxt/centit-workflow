@@ -3,6 +3,7 @@ package com.centit.workflow.client.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.support.network.HttpExecutor;
+import com.centit.support.network.HttpExecutorContext;
 import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.po.NodeInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -31,8 +32,8 @@ public class FlowManagerClientImpl implements FlowManagerClient {
 
 
 
-    public CloseableHttpClient getHttpClient() throws Exception {
-        return appSession.getHttpClient();
+    public CloseableHttpClient allocHttpClient() throws Exception {
+        return appSession.allocHttpClient();
     }
 
     public void releaseHttpClient(CloseableHttpClient httpClient) {
@@ -51,9 +52,10 @@ public class FlowManagerClientImpl implements FlowManagerClient {
     public List<NodeInstance> listFlowInstNodes(Long wfinstid) throws Exception{
         Map<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",String.valueOf(wfinstid));
-        CloseableHttpClient httpClient = appSession.getHttpClient();
+        CloseableHttpClient httpClient = appSession.allocHttpClient();
         appSession.checkAccessToken(httpClient);
-        String result =  HttpExecutor.simpleGet(httpClient,appSession.completeQueryUrl("/flow/engine/listFlowInstNodes"),paramMap);
+        String result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
+            appSession.completeQueryUrl("/flow/engine/listFlowInstNodes"),paramMap);
         JSONObject jsonObject = JSONObject.parseObject(result);
         String dataStr = jsonObject.get("data").toString();
         List<NodeInstance> nodeInstances = JSONObject.parseArray(dataStr,NodeInstance.class);

@@ -24,8 +24,8 @@ public class UserOptClientImpl implements UserOptClient {
     private AppSession appSession;
 
     @Override
-    public CloseableHttpClient getHttpClient() throws Exception {
-        return appSession.getHttpClient();
+    public CloseableHttpClient allocHttpClient() throws Exception {
+        return appSession.allocHttpClient();
     }
 
     @Override

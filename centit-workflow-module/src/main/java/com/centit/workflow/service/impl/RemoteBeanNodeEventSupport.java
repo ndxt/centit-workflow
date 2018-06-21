@@ -3,6 +3,7 @@ package com.centit.workflow.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.centit.framework.appclient.AppSession;
 import com.centit.support.network.HttpExecutor;
+import com.centit.support.network.HttpExecutorContext;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
@@ -16,9 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 
+ *
  * TODO 节点事件接口
- * 
+ *
  * @author codefan
  * @create 2013-7-10
  * @version
@@ -47,12 +48,13 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
         String jsonParam = JSON.toJSONString(paramMap);
         AppSession appSession = null;
         CloseableHttpClient httpClient = null;
-        String result = null;
+        //String result = null;
         try {
             appSession = new AppSession(url,false,null,null);
-            httpClient = appSession.getHttpClient();
+            httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAfterCreate"),jsonParam);
+            /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/service/eventBean/runAfterCreate"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
@@ -77,12 +79,13 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
         String jsonParam = JSON.toJSONString(paramMap);
         AppSession appSession = null;
         CloseableHttpClient httpClient = null;
-        String result = null;
+        //String result = null;
         try {
             appSession = new AppSession(url,false,null,null);
-            httpClient = appSession.getHttpClient();
+            httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runBeforeSubmit"),jsonParam);
+            /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/service/eventBean/runBeforeSubmit"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
@@ -114,12 +117,12 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
         String jsonParam = JSON.toJSONString(paramMap);
         AppSession appSession = null;
         CloseableHttpClient httpClient = null;
-        String result = null;
+        //String result = null;
         try {
             appSession = new AppSession(url,false,null,null);
-            httpClient = appSession.getHttpClient();
+            httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.jsonPost(httpClient,appSession.completeQueryUrl("/service/eventBean/runAutoOperator"),jsonParam);
+            /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),appSession.completeQueryUrl("/service/eventBean/runAutoOperator"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");

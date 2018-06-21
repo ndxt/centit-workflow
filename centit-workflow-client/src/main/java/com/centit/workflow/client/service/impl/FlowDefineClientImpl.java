@@ -2,11 +2,10 @@ package com.centit.workflow.client.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
-import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.HttpExecutor;
+import com.centit.support.network.HttpExecutorContext;
 import com.centit.workflow.client.service.FlowDefineClient;
 import com.centit.workflow.po.FlowInfo;
-import com.centit.workflow.po.UserTask;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,8 +31,8 @@ public class FlowDefineClientImpl implements FlowDefineClient {
     private AppSession appSession;
 
     @Override
-    public CloseableHttpClient getHttpClient() throws Exception {
-        return appSession.getHttpClient();
+    public CloseableHttpClient allocHttpClient() throws Exception {
+        return appSession.allocHttpClient();
     }
 
     @Override
@@ -57,9 +56,10 @@ public class FlowDefineClientImpl implements FlowDefineClient {
         CloseableHttpClient httpClient = null;
         List<FlowInfo> flowInfos = null;
         try {
-            httpClient = appSession.getHttpClient();
+            httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.simpleGet(httpClient,appSession.completeQueryUrl("/flow/define"),paramMap);
+            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/flow/define"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

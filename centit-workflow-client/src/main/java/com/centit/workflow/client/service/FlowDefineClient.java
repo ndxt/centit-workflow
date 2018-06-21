@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by chen_rj on 2018-5-2.
  */
 public interface FlowDefineClient {
-    CloseableHttpClient getHttpClient() throws Exception ;
+    CloseableHttpClient allocHttpClient() throws Exception ;
 
     void releaseHttpClient(CloseableHttpClient httpClient);
 
