@@ -50,6 +50,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
         CloseableHttpClient httpClient = null;
         //String result = null;
         try {
+            //appSession = new AppSession(url,false,null,null);
             appSession = new AppSession(url,false,null,null);
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
