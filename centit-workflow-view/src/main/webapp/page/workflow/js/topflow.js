@@ -361,12 +361,13 @@ function loadXml(xml) {
         //流转对象（线条）名称
         $("#lineCon").append("<div class='step' style='left:"+attrValue(getLine[j],"LabelProperties","x")+";top:"+attrValue(getLine[j],"LabelProperties","y")+";' id='"+attrValue(getLine[j],"LabelProperties","id")+"'>"+attrValue(getLine[j],"BaseProperties","name")+"</div>");
     }
-    if(isbrowser()=="FF"){
-        $("#canvas").height(document.documentElement.scrollHeight +100);//高度适应
-    }
-    else{
-        $("#canvas").height(document.body.scrollHeight +100);//高度适应
-    }
+    // if(isbrowser()=="FF"){
+    //     $("#canvas").height(document.documentElement.scrollHeight +100);//高度适应
+    // }
+    // else{
+    //     $("#canvas").height(document.body.scrollHeight +100);//高度适应
+    // }
+    $("#canvas").height(99999);
     //保存整个流程图的TYPE、CODE、名称、描述
     SVG.get("s0").attr({"flow-type":attrValue(CommitFlow,"Flow","type"),
         "flow-code":attrValue(CommitFlow,"Flow","code"),
