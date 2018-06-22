@@ -28,7 +28,19 @@ var o,//当前选中对象id
     _ZOOM = 1,//缩放比例
     moveflag = 1,//拖动缩放标志
     ptMoveType = "",//拖动点是否是第一个
-    scrollElement = isbrowser()=='FF'?document.documentElement:document.body;
+
+    // 获取scrollTop有问题，为了减少代码改动加入事件
+    scrollElement = getScrollInfo();
+    function getScrollInfo() {
+        return {
+            scrollTop: $(window).scrollTop(),
+            scrollLeft: $(window).scrollLeft()
+        };
+    }
+    $(window).on('scroll', function() {
+        scrollElement = getScrollInfo();
+    });
+
 //放置图片的全局变量
 var startImg = "viewimage/ks.png",           //开始节点
     endImg = "viewimage/js.png",            //结束节点
@@ -1316,8 +1328,9 @@ function textToDiv(){
     var container = $('#textToDiv');
     for(var i = 0;i<text.length;i++){
         var t = text[i];
-        var x = text[i].getAttribute('dx') - text[i].clientWidth/2;
-        var y = text[i].getAttribute('y') - text[i].clientHeight;
+        var box = t.getBBox();
+        var x = box.x;
+        var y = box.y;
         var html = text[i].innerHTML;
         var div = document.createElement('div');
         div.style.position = "absolute";
