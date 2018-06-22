@@ -54,7 +54,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
             /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/service/eventBean/runAfterCreate"),jsonParam);
+                appSession.completeQueryUrl("/service/workflowEventBean/runAfterCreate"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
@@ -85,7 +85,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
             /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/service/eventBean/runBeforeSubmit"),jsonParam);
+                appSession.completeQueryUrl("/service/workflowEventBean/runBeforeSubmit"),jsonParam);//eventBean
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
