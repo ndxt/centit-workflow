@@ -15,16 +15,16 @@ end;
 /
 
 -- 
-create table wf_flow_update (  WFINSTID	NUMBER(12)	Not null primary key,
-	WFCODE	VARCHAR2(8),
-  VERSION	NUMBER(4),
-  NEWVERSION	NUMBER(4))
+create table wf_flow_update (  WFINSTID    NUMBER(12)    Not null primary key,
+    WFCODE    VARCHAR2(8),
+  VERSION    NUMBER(4),
+  NEWVERSION    NUMBER(4))
 /
 
-create table wf_node_update (  NODEINSTID	NUMBER(12)	Not null primary key,
-	NODECODE	VARCHAR2(20),
-  NODEID	NUMBER(12),
-  NEWNODEID	NUMBER(12))
+create table wf_node_update (  NODEINSTID    NUMBER(12)    Not null primary key,
+    NODECODE    VARCHAR2(20),
+  NODEID    NUMBER(12),
+  NEWNODEID    NUMBER(12))
 /
 
 begin
@@ -33,7 +33,7 @@ begin
         where fi.version <> fd.version and fi.inststate <> 'C' and fi.inststate <> 'F' and fi.inststate <> 'I') loop
       
       delete from wf_flow_update where wfinstid = r.wfinstid;
-      insert into wf_flow_update(WFINSTID,WFCODE	, VERSION, NEWVERSION)
+      insert into wf_flow_update(WFINSTID,WFCODE    , VERSION, NEWVERSION)
             values(r.wfinstid,r.wfcode, r.version, r.version);            
       
       update wf_flow_instance set version = r.newversion where wfinstid = r.wfinstid;
@@ -47,7 +47,7 @@ begin
                          /*group by wfni.nodeinstid */) loop         
          
          delete from wf_node_update where  NODEINSTID = node.nodeinstid;
-         insert into wf_node_update(NODEINSTID,NODECODE	, NODEID, NEWNODEID)
+         insert into wf_node_update(NODEINSTID,NODECODE    , NODEID, NEWNODEID)
             values(node.nodeinstid,node.nodecode, node.nodeid,node.newnodeid);
          update wf_node_instance set NODEID = node.newnodeid where NODEINSTID = node.nodeinstid;
       end loop;       

@@ -76,7 +76,7 @@ INSERT INTO f_optinfo(opt_id, opt_name, pre_opt_id, opt_route, opt_url, form_cod
 
 -- 工作流菜单
 insert into F_ROLEPOWER(role_code,opt_code,update_Date,create_date,opt_scope_codes,CREATOR,UPDATOR)
-	select 'sysadmin',opt_code,now(),now(),'',CREATOR,UPDATOR from f_optdef  where opt_code in('10001','10002','10003','10004');
+    select 'sysadmin',opt_code,now(),now(),'',CREATOR,UPDATOR from f_optdef  where opt_code in('10001','10002','10003','10004');
 
 
 

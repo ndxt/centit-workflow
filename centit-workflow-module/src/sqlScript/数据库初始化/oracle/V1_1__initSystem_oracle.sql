@@ -601,7 +601,7 @@ create table F_OPTDEF  (
   updateDate           DATE,
   CreateDate           DATE,
   OPTREQ               VARCHAR2(8),
-  optOrder 			number(4),
+  optOrder             number(4),
   creator              VARCHAR2(32),
   updator              VARCHAR2(32)
 );

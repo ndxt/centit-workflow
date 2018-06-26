@@ -406,19 +406,19 @@ CREATE  VIEW v_user_task_list_temp AS
 
 DROP VIEW IF EXISTS v_user_task_list;
 CREATE VIEW v_user_task_list AS SELECT
-	(
-		SELECT
-			count(0)
-		FROM
-			v_user_task_list_temp
-		WHERE
-			(
-				v_user_task_list_temp.FLOW_INST_ID <= t.FLOW_INST_ID
-			)
-	) AS TASK_ID,
-	t.*
+    (
+        SELECT
+            count(0)
+        FROM
+            v_user_task_list_temp
+        WHERE
+            (
+                v_user_task_list_temp.FLOW_INST_ID <= t.FLOW_INST_ID
+            )
+    ) AS TASK_ID,
+    t.*
 FROM
-	v_user_task_list_temp t;
+    v_user_task_list_temp t;
 
 
 

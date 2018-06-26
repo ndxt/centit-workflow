@@ -103,7 +103,7 @@ create table F_DATACATALOG
    updator              varchar(32)
 );
 
-alter table F_DATACATALOG comment '类别状态	 U:用户 S：系统，G国标
+alter table F_DATACATALOG comment '类别状态     U:用户 S：系统，G国标
 类别形式  T：树状表格 L:列表
 ';
 
@@ -649,7 +649,7 @@ DELIMITER $$
 
 
 CREATE FUNCTION calcUnitPath (chrId varchar(32))
-	RETURNS varchar(1000)
+    RETURNS varchar(1000)
 BEGIN
    DECLARE sTemp VARCHAR(32);
    DECLARE sPreTemp VARCHAR(32);
@@ -658,12 +658,12 @@ BEGIN
    SET  sTemp = trim(chrId);
    SET  path = '';
    REPEAT
-   	  SET  path = concat('/',sTemp, path);
-   	  set sPreTemp = sTemp;
+         SET  path = concat('/',sTemp, path);
+         set sPreTemp = sTemp;
       SELECT unit_code INTO sTemp
          FROM f_unitinfo
          where unit_code =
-         		(select parent_unit FROM f_unitinfo where unit_code = sTemp);
+                 (select parent_unit FROM f_unitinfo where unit_code = sTemp);
       until sTemp is null or sTemp='' or sPreTemp = sTemp
    END REPEAT;
 

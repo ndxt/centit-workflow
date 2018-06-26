@@ -168,12 +168,12 @@ values ('public', '1000080', str_to_date('11-04-2016 10:21:17', '%d-%m-%Y %H:%i:
 
 
 insert into F_ROLEPOWER(role_code,opt_code,update_Date,create_date,opt_scope_codes,CREATOR,UPDATOR)
-	select 'sysadmin',opt_code,now(),now(),'',CREATOR,UPDATOR from f_optdef ;
+    select 'sysadmin',opt_code,now(),now(),'',CREATOR,UPDATOR from f_optdef ;
 
 insert into F_USERROLE (USER_CODE, ROLE_CODE, OBTAIN_DATE,
-			SECEDE_DATE, CHANGE_DESC, UPDATE_DATE, CREATE_DATE,CREATOR,UPDATOR)
+            SECEDE_DATE, CHANGE_DESC, UPDATE_DATE, CREATE_DATE,CREATOR,UPDATOR)
 values ('u0000000', 'sysadmin', STR_TO_DATE('23-05-2012','%d-%m-%Y'),
-	STR_TO_DATE('01-10-2020', '%d-%m-%Y'),'' ,now(), now(),'u0000000','u0000000');
+    STR_TO_DATE('01-10-2020', '%d-%m-%Y'),'' ,now(), now(),'u0000000','u0000000');
 
 
 commit;
