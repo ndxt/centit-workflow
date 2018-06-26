@@ -56,7 +56,8 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "[ :nodeCode| and NODE_CODE = :nodeCode] " +
             "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
             "[ :flowCode| and FLOW_CODE = :flowCode] " +
-            "[ :stageCode| and STAGE_CODE = :stageCode] " ;
+            "[ :stageCode| and STAGE_CODE = :stageCode] " +
+             " order by CREATE_TIME desc " ;
 
 
     private final static String actionTaskBaseSql = "select TASK_ID,NODE_INST_ID," +
@@ -108,9 +109,9 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     public List<UserTask> listUserTaskByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskBaseSql,filter);
-        String querySql = queryAndNamedParams.getQuery()+" order by CREATE_TIME desc ";
+        //String querySql = queryAndNamedParams.getQuery()+" order by CREATE_TIME desc ";
         JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
-            querySql ,queryAndNamedParams.getParams(),pageDesc);
+            queryAndNamedParams.getQuery() ,queryAndNamedParams.getParams(),pageDesc);
 
         return dataList == null? null : dataList.toJavaList(UserTask.class);
     }
