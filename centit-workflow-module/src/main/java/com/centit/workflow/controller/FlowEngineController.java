@@ -128,7 +128,7 @@ public class FlowEngineController  extends BaseController {
             userCode = super.getLoginUserCode(request);
         }
         searchColumn.put("userCode",userCode);
-        List<UserTask> userTasks = platformFlowService.queryTask(userCode);;
+        List<UserTask> userTasks = platformFlowService.queryTask(userCode);
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
 }

@@ -30,7 +30,7 @@ public class PlatformFlowDao {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public List<UserTask> queryDynamicTask(String unitCode,String userStation,String userRank){
-        String sql = "select * from " +
+        String sql = "select *,c.opt_code as optUrl from " +
             "wf_node_instance a " +
             "left join wf_flow_instance w " +
             "on a.flow_inst_id = w.flow_inst_id " +
