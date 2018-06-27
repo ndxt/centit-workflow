@@ -23,4 +23,11 @@ public interface PlatformFlowService {
      * @return
      */
     String getNodeOptUrl(String optCode);
+
+    /**
+     * 获取动态任务
+     * @param userCode
+     * @return
+     */
+    List<UserTask> queryDynamicTask(String userCode);
 }

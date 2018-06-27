@@ -11,6 +11,7 @@ import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.po.UserTask;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
+import com.centit.workflow.service.PlatformFlowService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,10 @@ public class FlowEngineController  extends BaseController {
     private FlowEngine flowEng;
     @Resource
     private FlowManager flowManager;
+    @Resource
+    private PlatformFlowService platformFlowService;
+
+
     private Map<Class<?>, String[]> excludes;
     @RequestMapping(value = "/createFlowInstDefault")
     public void createInstance(String flowCode, String flowOptName,String flowOptTag,String userCode,String unitCode, HttpServletResponse httpResponse) {
@@ -107,6 +112,23 @@ public class FlowEngineController  extends BaseController {
         }
         searchColumn.put("userCode",userCode);
         List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn,new PageDesc(-1,-1));
+        JsonResultUtils.writeSingleDataJson(userTasks,response);
+    }
+
+    /**
+     * 获取用户动态待办
+     * @param request
+     * @param response
+     * @param userCode
+     */
+    @RequestMapping(value="/listUserDynamicTasks",method = RequestMethod.GET)
+    public void  listUserDynamicTasks(HttpServletRequest request,HttpServletResponse response,String userCode){
+        Map<String, Object> searchColumn = convertSearchColumn(request);
+        if(StringUtils.isBlank(userCode)){
+            userCode = super.getLoginUserCode(request);
+        }
+        searchColumn.put("userCode",userCode);
+        List<UserTask> userTasks = platformFlowService.queryTask(userCode);;
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
 }
