@@ -248,7 +248,8 @@ public class UserTask implements java.io.Serializable {
 
     public String getNodeOptUrl(){
         if(this.optUrl==null)
-            return null;
+            this.optUrl=this.optCode;
+            //return null;
         StringBuilder urlBuilder = new StringBuilder(this.optUrl);
         if(!this.optUrl.endsWith("?") && !this.optUrl.endsWith("&")){
             if(this.optUrl.indexOf('?') == -1 )
