@@ -1104,7 +1104,10 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
 
         String sGrantor;
         NodeInfo currNode = flowNodeDao.getObjectById(nodeInst.getNodeId());
-        if( grantorCode == null || grantorCode.equals(userCode)){
+        if("gw".equals(currNode.getRoleType())){
+            //TODO 判断人员岗位吻合
+            sGrantor=userCode;
+        }else if( grantorCode == null || grantorCode.equals(userCode)){
             sGrantor = actionTaskDao.getTaskGrantor(nodeInstId,  userCode);
             //哑元、自动执行以及子流程 不判断
             if(sGrantor==null && !"E".equals(currNode.getOptType())

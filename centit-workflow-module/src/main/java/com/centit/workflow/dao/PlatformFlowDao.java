@@ -29,7 +29,7 @@ public class PlatformFlowDao {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public List<UserTask> queryDynamicTask(String unitCode,String userStation,String userRank){
+    public List<UserTask> queryDynamicTask(String unitCode,String userStation){
         String sql = "select a.*,w.*,c.*,c.opt_code as optUrl from " +
             "wf_node_instance a " +
             "left join wf_flow_instance w " +
@@ -38,7 +38,8 @@ public class PlatformFlowDao {
             "on a.node_Id=c.node_id " +
             "where a.node_state='N' and w.inst_state='N' and a.task_assigned='D' and " +
             "(a.unit_code is null or a.unit_code=?) and " +
-            "((c.role_type='gw' and c.role_code=?) or (c.role_type='xz' and c.role_code=?))";//TODO 字段按需补全。动态任务暂时用不到，没测试过
-        return flowInfoDao.getJdbcTemplate().query(sql,new Object[]{unitCode,userStation,userRank},new BeanPropertyRowMapper(UserTask.class));
+            "(c.role_type='gw' and c.role_code=?)" +
+            " ORDER by a.create_time desc ";//TODO 字段按需补全。动态任务暂时用不到，没测试过
+        return flowInfoDao.getJdbcTemplate().query(sql,new Object[]{unitCode,userStation},new BeanPropertyRowMapper(UserTask.class));
     }
 }

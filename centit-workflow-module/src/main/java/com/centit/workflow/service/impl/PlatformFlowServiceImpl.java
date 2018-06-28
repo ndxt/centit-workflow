@@ -22,22 +22,19 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
     public List<UserTask> queryDynamicTask(String userCode) {
         List<UserTask> taskList = new ArrayList<>();
         //动态任务
-        //1.找到用户主机构下的岗位和职务
+        //1.找到用户所有机构下的岗位和职务
         List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits(userCode);
-        IUserUnit userUnit = null;
-        if(iUserUnits != null && iUserUnits.size() > 0){
-            for(IUserUnit iUserUnit:iUserUnits){
-                if("T".equals(iUserUnit.getIsPrimary())){
-                    userUnit = iUserUnit;
-                    break;
-                }
-            }
-        }
+
         //2.以机构，岗位，职务来查询任务
-        if(userUnit == null){
+        if(iUserUnits == null){
             return taskList;
         }
-        taskList = platformFlowDao.queryDynamicTask(userUnit.getUnitCode(),userUnit.getUserStation(),userUnit.getUserRank());
+        //TODO 需要做成分页查询
+        for(IUserUnit i:iUserUnits){
+            List<UserTask>  dynamicTask = platformFlowDao.queryDynamicTask(i.getUnitCode(),i.getUserStation());
+            taskList.addAll(dynamicTask);
+        }
+
         return taskList;
     }
 
@@ -66,7 +63,7 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
         if(userUnit == null){
             return taskList;
         }
-        List<UserTask> dynamicTaskList = platformFlowDao.queryDynamicTask(userUnit.getUnitCode(),userUnit.getUserStation(),userUnit.getUserRank());
+        List<UserTask> dynamicTaskList = platformFlowDao.queryDynamicTask(userUnit.getUnitCode(),userUnit.getUserStation());
         if(dynamicTaskList != null){
             taskList.addAll(dynamicTaskList);
         }
