@@ -103,12 +103,12 @@
         <repository>
             <id>centit-releases</id>
             <name>centit-release</name>
-            <url>http://nexus.centit.com:8081/nexus/content/repositories/centit-releases/</url>
+            <url>http://www.centit.com/nexus/content/repositories/centit-releases/</url>
         </repository>
         <snapshotRepository>
             <id>centit-snapshots</id>
             <name>centit-snapshots</name>
-            <url>http://nexus.centit.com:8081/nexus/content/repositories/centit-snapshots/</url>
+            <url>http://www.centit.com/nexus/content/repositories/centit-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
