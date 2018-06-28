@@ -15,14 +15,13 @@ import java.io.Serializable;
 import java.util.*;
 
 
-
 /**
  * 实现一个最简单的元数据提供类
  * 实际业务应该从数据库中获取
  */
 @Service
 @Transactional
-public class FlowModelDataImpl implements FlowModelData,Serializable {
+public class FlowModelDataImpl implements FlowModelData, Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
@@ -37,9 +36,9 @@ public class FlowModelDataImpl implements FlowModelData,Serializable {
     }
 
     @Override
-    public Map<String, String> listAllOptType(){
+    public Map<String, String> listAllOptType() {
 
-        Map<String,String> optType = new HashMap<String,String>();
+        Map<String, String> optType = new HashMap<String, String>();
         optType.put("A", "一般");
         optType.put("B", "抢先机制");
         optType.put("C", "多人操作");
@@ -49,13 +48,14 @@ public class FlowModelDataImpl implements FlowModelData,Serializable {
 
         return optType;
     }
+
     /**
      * 例举所有节点类别
      * A:开始 B:首节点 C:一般 D:分支 E:汇聚 F结束
      */
     @Override
-    public Map<String,String> listAllNoteType(){
-        Map<String,String> nodeType = new HashMap<String,String>();
+    public Map<String, String> listAllNoteType() {
+        Map<String, String> nodeType = new HashMap<String, String>();
         //nodeType.put("A", "开始");
         //nodeType.put("B", "首节点");
         nodeType.put("C", "业务");
@@ -65,42 +65,50 @@ public class FlowModelDataImpl implements FlowModelData,Serializable {
         return nodeType;
     }
 
-    public Map<String, String> listAllOptCode(String flowCode,long version){
-        FlowInfo flowDef = flowDefineDao.getFlowDefineByID(flowCode, version);
-        
+    //单机版本获取业务操作方法
+    public Map<String, String> listAllOptCode_old(String flowCode, long version) {
+        FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
         List<? extends IOptMethod> optDefList = CodeRepositoryUtil.getOptMethodByOptID(flowDef.getOptId());
-                //optDefDao.listOptDefByOptID(flowDef.getOptId());       
-        Map<String, String> optmap= new HashMap<String, String>();
-        
-        if(optDefList != null){
+        Map<String, String> optmap = new HashMap<String, String>();
+
+        if (optDefList != null) {
             for (IOptMethod optdef : optDefList) {
                 optmap.put(optdef.getOptCode(), optdef.getOptName());
             }
         }
-        
+
         return optmap;
     }
 
-     /**
+    public Map<String, String> listAllOptCode(String flowCode, long version) {
+        Map<String, String> optMap = new HashMap<String, String>();
+
+        optMap.put("approval/approval.html", "通用审批");
+        optMap.put("approval/zwh.html", "置文号");
+
+        return optMap;
+    }
+
+    /**
      * 列举流程定义对应的操作定义
      */
-    public Map<String, String> listAllOptCode(String flowCode){
-      
+    public Map<String, String> listAllOptCode(String flowCode) {
+
         return listAllOptCode(flowCode, 0L);
     }
 
     @Override
     public Map<String, Map<String, String>> listAllRole() {
 
-        Map<String, Map<String, String>> roleList=new HashMap<>();
+        Map<String, Map<String, String>> roleList = new HashMap<>();
 
-        Map<String,String> map1 = CodeRepositoryUtil.getLabelValueMap("StationType");
+        Map<String, String> map1 = CodeRepositoryUtil.getLabelValueMap("StationType");
         roleList.put(SysUserFilterEngine.ROLE_TYPE_GW.toLowerCase() /*"gw"*/, map1);
 
-        Map<String,String> map2 = CodeRepositoryUtil.getLabelValueMap("RankType");
+        Map<String, String> map2 = CodeRepositoryUtil.getLabelValueMap("RankType");
         roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ.toLowerCase() /*"xz"*/, map2);
 
-        Map<String,String> map3=CodeRepositoryUtil.getLabelValueMap("FlowUserRole");
+        Map<String, String> map3 = CodeRepositoryUtil.getLabelValueMap("FlowUserRole");
         roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, map3);
 
         return roleList;
@@ -125,9 +133,9 @@ public class FlowModelDataImpl implements FlowModelData,Serializable {
 
     @Override
     public Map<String, String> listAllSubFlow() {
-        Map<String,String> subwf=new HashMap<String, String>();
+        Map<String, String> subwf = new HashMap<String, String>();
 
-        List<FlowInfo> listflow= flowDefineDao.getFlowsByState("B");
+        List<FlowInfo> listflow = flowDefineDao.getFlowsByState("B");
         for (FlowInfo wfFlowDefine : listflow) {
             subwf.put(wfFlowDefine.getFlowCode(), wfFlowDefine.getFlowName());
         }
@@ -137,18 +145,19 @@ public class FlowModelDataImpl implements FlowModelData,Serializable {
 
     /**
      * 根据流程代码、流程版本获取流程阶段信息
+     *
      * @param flowCode
      * @return
      */
-    public Map<String, String> listFlowStages(String flowCode){
+    public Map<String, String> listFlowStages(String flowCode) {
         FlowInfo flowDef = flowDefineDao.getFlowDefineByID(flowCode, 0L);//流程0版本读取
         Set<FlowStage> stageSet = flowDef.getFlowStagesSet();
 
-        Map<String, String> optmap= new HashMap<String, String>();
+        Map<String, String> optmap = new HashMap<String, String>();
 
-        if(stageSet != null && !stageSet.isEmpty()){
-            Iterator<? extends FlowStage> it =  stageSet.iterator();
-            while(it.hasNext()){
+        if (stageSet != null && !stageSet.isEmpty()) {
+            Iterator<? extends FlowStage> it = stageSet.iterator();
+            while (it.hasNext()) {
                 FlowStage stage = it.next();
                 optmap.put(stage.getStageCode(), stage.getStageName());
             }
