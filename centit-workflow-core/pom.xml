@@ -15,16 +15,11 @@
     <description>工作流引擎服务的核心类库</description>
 
     <dependencies>
-        <dependency>
-            <groupId>com.centit.support</groupId>
-            <artifactId>centit-utils</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.centit.support</groupId>
             <artifactId>centit-database</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>javax.persistence</groupId>
