@@ -17,11 +17,11 @@ import java.util.List;
  */
 public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcContext {
 
-    @Value("${wf.external.system.jdbc.url}")
+    @Value("${wf.external.system.jdbc.url:}")
     protected String externalJdbcUrl;
-    @Value("${wf.external.system.jdbc.user}")
+    @Value("${wf.external.system.jdbc.user:}")
     protected String externalJdbcUser;
-    @Value("${wf.external.system.jdbc.password}")
+    @Value("${wf.external.system.jdbc.password:}")
     protected String externalJdbcPassword;
 
 
@@ -96,5 +96,17 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
      */
     public void loadExternalSystemData(){
         ExternalSystemData.loadExternalSystemData(externalJdbcUrl, externalJdbcUser, externalJdbcPassword);
+    }
+
+    public void setExternalJdbcUrl(String externalJdbcUrl) {
+        this.externalJdbcUrl = externalJdbcUrl;
+    }
+
+    public void setExternalJdbcUser(String externalJdbcUser) {
+        this.externalJdbcUser = externalJdbcUser;
+    }
+
+    public void setExternalJdbcPassword(String externalJdbcPassword) {
+        this.externalJdbcPassword = externalJdbcPassword;
     }
 }

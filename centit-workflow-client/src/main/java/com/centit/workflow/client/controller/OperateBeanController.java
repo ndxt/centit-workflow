@@ -1,25 +1,12 @@
 package com.centit.workflow.client.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.core.controller.BaseController;
-import com.centit.workflow.commons.NodeEventSupport;
-import com.centit.workflow.commons.WorkflowException;
-import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.NodeInfo;
-import com.centit.workflow.po.NodeInstance;
-import org.springframework.beans.BeansException;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**

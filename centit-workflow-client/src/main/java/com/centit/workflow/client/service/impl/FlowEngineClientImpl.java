@@ -12,7 +12,6 @@ import com.centit.workflow.po.UserTask;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -25,7 +24,6 @@ import java.util.Set;
  * Created by chen_rj on 2017/7/28.
  */
 @Service
-@Transactional
 public class FlowEngineClientImpl implements FlowEngineClient {
 
     @Value("${workflow.server}")
@@ -48,11 +46,18 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     @Override
     public void setWorkFlowServerUrl(String workFlowServerUrl) {
+        this.workFlowServerUrl = workFlowServerUrl;
+    }
+
+    public void makeAppSession() {
         appSession = new AppSession(workFlowServerUrl,false,null,null);
     }
+
+
     @PostConstruct
     public void init(){
-        this.setWorkFlowServerUrl(workFlowServerUrl);
+        //this.setWorkFlowServerUrl(workFlowServerUrl);
+        makeAppSession();
     }
 
     @Override

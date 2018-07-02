@@ -1,11 +1,9 @@
 package com.centit.workflow.client.service;
 
-import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by chen_rj on 2018-5-2.
