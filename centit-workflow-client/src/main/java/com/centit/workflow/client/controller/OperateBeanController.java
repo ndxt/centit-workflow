@@ -1,7 +1,6 @@
 package com.centit.workflow.client.controller;
 
 import com.centit.framework.common.ResponseData;
-import com.centit.framework.core.controller.BaseController;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,7 +12,7 @@ import java.util.Map;
  * Created by chen_rj on 2017/8/3.
  */
 
-public abstract class OperateBeanController extends BaseController{
+public abstract class OperateBeanController {
 
     abstract ResponseData doCallBack(Map<String,Object> paramMap );
 

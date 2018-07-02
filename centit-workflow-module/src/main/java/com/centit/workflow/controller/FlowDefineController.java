@@ -8,7 +8,6 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowModelData;
-import com.sun.tools.javac.comp.Flow;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +33,7 @@ public class FlowDefineController extends BaseController {
     private FlowModelData modelData;
 
     ResponseMapData resData = new ResponseMapData();
-    
+
 
     /**
      * 列举系统中的所有流程，只显示最新版本的
@@ -49,7 +47,7 @@ public class FlowDefineController extends BaseController {
         resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response,JsonPropertyUtils.getIncludePropPreFilter(FlowInfo.class, field));
     }
-    
+
     /**
      * 某个流程的所有版本
      * @param field 过滤域
@@ -65,8 +63,8 @@ public class FlowDefineController extends BaseController {
         resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response,JsonPropertyUtils.getIncludePropPreFilter(FlowInfo.class, field));
     }
-    
-    
+
+
     /**
      * 某个流程的最新版本
      * @param flowcode 流程号
@@ -77,7 +75,7 @@ public class FlowDefineController extends BaseController {
         FlowInfo lastVerOne=flowDef.getFlowDefObject(flowcode);
         JsonResultUtils.writeSingleDataJson(lastVerOne, response);
     }
-    
+
     @RequestMapping(value="/editfromthis/{flowCode}/{version}",method=RequestMethod.POST)
     public void editFromThis(@PathVariable String flowCode,@PathVariable long version,HttpServletRequest request,HttpServletResponse response){
         FlowInfo  flowDefine=flowDef.getFlowDefObject(flowCode,version);
@@ -87,8 +85,8 @@ public class FlowDefineController extends BaseController {
         copy.setFlowXmlDesc(flowDefine.getFlowXmlDesc());
         boolean saveSucced=flowDef.saveDraftFlowDef(copy);
         JsonResultUtils.writeSingleDataJson(saveSucced, response);
-    }  
-    
+    }
+
     /**
      * 查询单个流程草稿
      * @param flowcode
@@ -100,7 +98,7 @@ public class FlowDefineController extends BaseController {
 
         JsonResultUtils.writeSingleDataJson(obj, response);
     }
-    
+
     /**
      * 查询单个流程某个版本
      * @param version
@@ -112,12 +110,12 @@ public class FlowDefineController extends BaseController {
         FlowInfo obj = flowDef.getFlowDefObject(flowcode,version);
         JsonResultUtils.writeSingleDataJson(obj, response);
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     /**
      * 复制单个流程某个版本
      * @param version
@@ -132,10 +130,10 @@ public class FlowDefineController extends BaseController {
         copy.setCid(new FlowInfoId(0L, flowDef.getNextPrimarykey()));
         JsonResultUtils.writeSingleDataJson(copy, response);
     }
-    
-    
-    
-    
+
+
+
+
     /**
      * 编辑流程图
      * @param flowcode
@@ -192,7 +190,7 @@ public class FlowDefineController extends BaseController {
         else
             JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
     }
-    
+
     /**
      * 更新流程，默认编辑草稿，版本号为0
      * @param flowdefine
@@ -211,9 +209,9 @@ public class FlowDefineController extends BaseController {
         }
         flowdefine.setFlowCode(flowcode);
         flowdefine.setVersion(0l);
-   
+
         boolean saveSucced=flowDef.saveDraftFlowStage(flowdefine);
-        
+
         if(saveSucced)
             JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
         else
@@ -287,10 +285,10 @@ public class FlowDefineController extends BaseController {
             flowdefine.setFlowXmlDesc(oldFlowDef.getFlowXmlDesc());
             flowDef.saveDraftFlowDef(flowdefine);
         }
-       
+
     }
-    
-    
+
+
     /**
      * 删除流程
      * @param version
@@ -307,21 +305,21 @@ public class FlowDefineController extends BaseController {
             flowDef.disableFlow(flowcode);
         }
     }
-    
-    
+
+
     /**
      * 发布新版本流程
-     * 
+     *
      * @return String
-     * @throws Exception 
+     * @throws Exception
      */
     @RequestMapping(value = "/publish/{flowcode}", method = RequestMethod.POST)
     public void publishFlow(@PathVariable String flowcode,HttpServletResponse response) throws Exception {
           flowDef.publishFlowDef(flowcode);
           JsonResultUtils.writeSingleDataJson("已发布！", response);
     }
-    
-    
+
+
     /**
      * 更新流程状态
      * @param flowcode
@@ -341,8 +339,8 @@ public class FlowDefineController extends BaseController {
             JsonResultUtils.writeSingleDataJson("已经启用！", response);
         }
     }
-    
-    
+
+
     /**
      * 返回一个带id的空流程
      * @param response
@@ -354,8 +352,8 @@ public class FlowDefineController extends BaseController {
         copy.setCid(new FlowInfoId(0L, flowDef.getNextPrimarykey()));
         JsonResultUtils.writeSingleDataJson(copy, response);
     }
-    
-    
+
+
     /**
      * 编辑流程图页面需要的数据字典及相关数据
      * @param flowcode
@@ -379,5 +377,5 @@ public class FlowDefineController extends BaseController {
         map.put("FlowPhase", stageMap);
         JsonResultUtils.writeSingleDataJson(map, response);
     }
-    
+
 }
