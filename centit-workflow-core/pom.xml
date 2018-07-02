@@ -25,6 +25,10 @@
             <artifactId>centit-database</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-core</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>javax.persistence</groupId>
