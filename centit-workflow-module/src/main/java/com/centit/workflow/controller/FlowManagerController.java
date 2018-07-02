@@ -1,13 +1,13 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
-import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.security.model.CentitUserDetails;
 import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JSONOpt;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.ExtraFlowManager;
@@ -56,7 +56,7 @@ public class FlowManagerController extends BaseController {
         resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response,JsonPropertyUtils.getIncludePropPreFilter(FlowInstance.class, field));
     }
-    
+
     /**
      * 根据id获取流程实例对象
      * @param flowInstId
@@ -77,7 +77,7 @@ public class FlowManagerController extends BaseController {
         result.put("stageList",stageList);
         JsonResultUtils.writeSingleDataJson(result, response,JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
-    
+
     /**
      * 查看流程图
      * @param response
@@ -88,7 +88,7 @@ public class FlowManagerController extends BaseController {
         String  flowCode=flowInst.getFlowCode();
         Long version=flowInst.getVersion();
         if(StringUtils.isNotBlank(flowCode))
-        { 
+        {
             FlowInfo obj = flowDef.getFlowDefObject(flowCode,version);
             String xml=obj.getFlowXmlDesc();
             String viewXml= flowManager.viewFlowInstance(flowInstId);
@@ -97,7 +97,7 @@ public class FlowManagerController extends BaseController {
             result.put("viewXml",viewXml);
         JsonResultUtils.writeSingleDataJson(result, response);}
     }
-    
+
     /**
      * 查看流程图
      * @param response
@@ -109,7 +109,7 @@ public class FlowManagerController extends BaseController {
         result.put("nodesxml",nodesxml);
         JsonResultUtils.writeSingleDataJson(result, response);
     }
-    
+
     /**
      * 获取组织机构列表
      * TODO:flowEng.viewFlowOrganize(flowInstId)要是直接返回unitInfo更方便
@@ -132,7 +132,7 @@ public class FlowManagerController extends BaseController {
         resData.addResponseData(OBJLIST, organizeList);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
-    
+
     /**
      * 删除指定的流程组织机构
      * @return
@@ -142,8 +142,8 @@ public class FlowManagerController extends BaseController {
         flowEng.deleteFlowOrganize(flowInstId, roleCode, unitCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
-    
+
+
     /**
      * 删除指定roleCode下的所有流程工作机构
      * @return
@@ -153,8 +153,8 @@ public class FlowManagerController extends BaseController {
         flowEng.deleteFlowOrganize(flowInstId, roleCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
-    
+
+
     /**
      * 添加流程工作机构
      * @return
@@ -166,9 +166,9 @@ public class FlowManagerController extends BaseController {
                                HttpServletRequest request, HttpServletResponse response){
         flowEng.assignFlowOrganize(flowInstId,roleCode,unitCode,authDesc);
         JsonResultUtils.writeSingleDataJson("", response);
-        
+
     }
-    
+
     /**
      * 给一个节点指定任务、用这个代替系统自动分配任务
      */
@@ -179,7 +179,7 @@ public class FlowManagerController extends BaseController {
                 actionTask.getExpireTime(), actionTask.getAuthDesc());
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
+
     /**
      * 收回一个分配的任务
      * @return
@@ -189,7 +189,7 @@ public class FlowManagerController extends BaseController {
         flowManager.disableTask(taskId, super.getLoginUserCode(request));
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
+
     /**
      * 删除任务
      * @return
@@ -199,9 +199,9 @@ public class FlowManagerController extends BaseController {
         flowManager.deleteTask(taskId, super.getLoginUserCode(request));
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
+
     /*tab：办件角色管理*/
-    
+
     /**
      * 查询办件角色列表
      * @param flowInstId
@@ -224,8 +224,8 @@ public class FlowManagerController extends BaseController {
         resData.addResponseData(OBJLIST, teamList);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
-    
-    
+
+
     /**
      * 删除指定roleCode下的所有流程工作小组
      * @return
@@ -235,7 +235,7 @@ public class FlowManagerController extends BaseController {
         flowEng.deleteFlowWorkTeam(flowInstId, roleCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
+
     /**
      * 删除指定的流程工作小组
      * @return
@@ -245,10 +245,10 @@ public class FlowManagerController extends BaseController {
         flowEng.deleteFlowWorkTeam(flowInstId, roleCode, userCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
-    
+
+
     /*tab：流程变量管理*/
-    
+
     /**
      * 查询变量列表
      * @param flowInstId
@@ -259,8 +259,8 @@ public class FlowManagerController extends BaseController {
         List<FlowVariable> variableList=flowEng.listFlowVariables(flowInstId);
         JsonResultUtils.writeSingleDataJson(variableList, response);
     }
-    
-    
+
+
     /**
      * 保存流程变量
      * @return
@@ -271,8 +271,8 @@ public class FlowManagerController extends BaseController {
        flowEng.saveFlowNodeVariable(flowInstId,runToken, varName, StringUtils.isBlank(varValue) ? null : varValue);
        JsonResultUtils.writeSingleDataJson("", response);
     }
-    
-    
+
+
     /**
      * 新增变量是需要的令牌选择项
      * @param flowInstId
@@ -299,9 +299,9 @@ public class FlowManagerController extends BaseController {
             resData.addResponseData(OBJLIST, tokenLvbList);
             JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
-    
-    
-    
+
+
+
     /**
      * 获取管理日志列表
      * @return
@@ -324,14 +324,14 @@ public class FlowManagerController extends BaseController {
         List<ActionLog> actionLogList = flowManager.listFlowActionLogs(flowInstId);
         JsonResultUtils.writeSingleDataJson(actionLogList,response);
     }
-    
-   
-    
-    
-    
+
+
+
+
+
     /*流程实例管理接口*/
-    
-    
+
+
     /**
      * 暂挂一个流程实例
      * @param wfinstid
@@ -341,14 +341,14 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value="/suspendinst/{wfinstid}",method = RequestMethod.GET)
     public void suspendInstance(@PathVariable Long wfinstid, HttpServletRequest request, HttpServletResponse response) {
         String mangerUserCode = super.getLoginUserCode(request);
-        String  admindesc =  request.getParameter("stopDesc");   
+        String  admindesc =  request.getParameter("stopDesc");
         flowManager.suspendInstance(wfinstid,mangerUserCode, admindesc);
         if(extraFlowManager !=null){
             extraFlowManager.suspendInstance(wfinstid, mangerUserCode, admindesc);
         }
         JsonResultUtils.writeSingleDataJson("已暂挂", response);
     }
-    
+
     /**
      * 更改机构
      * @param wfinstid
@@ -375,7 +375,7 @@ public class FlowManagerController extends BaseController {
         flowManager.stopInstance(flowInstId, super.getLoginUserCode(request), "");
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
+
     /**
      * 激活流程实例
      * @param flowInstId
@@ -387,8 +387,8 @@ public class FlowManagerController extends BaseController {
         flowManager.activizeInstance(flowInstId, super.getLoginUserCode(request), "");
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
-    
+
+
     /*节点状态管理api
      * 1.回滚一个流程节点到上一节点
      * 2.提交，强制一个流程节点前进到下一个节点
@@ -412,7 +412,7 @@ public class FlowManagerController extends BaseController {
         case '2':
             flowManager.forceCommit(nodeInstId, super.getLoginUserCode(request));
             break;
-        case '3':  
+        case '3':
             flowManager.forceDissociateRuning(nodeInstId, super.getLoginUserCode(request));
             break;
         case '6':
@@ -431,7 +431,7 @@ public class FlowManagerController extends BaseController {
         case '8':
             flowManager.suspendNodeInstance(nodeInstId, super.getLoginUserCode(request));
             break;
-         
+
         }
         NodeInstance newNode=flowEng.getNodeInstById(nodeInstId);
         excludes  =new HashMap<Class<?>, String[]>();
@@ -449,7 +449,7 @@ public class FlowManagerController extends BaseController {
         flowManager.resetFlowToThisNode(nodeInstId, user.getUserCode());
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
+
     /**
      * 任务列表查询，查询条件可自助添加
      */
@@ -499,22 +499,22 @@ public class FlowManagerController extends BaseController {
                    int taskInd=0;
                    for(UserTask task:tasks){
                        JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].task["+taskInd+"].usercode", task.getUserCode());
-                       JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].task["+taskInd+"].username", 
+                       JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].task["+taskInd+"].username",
                                CodeRepositoryUtil.getValue("userCode",task.getUserCode()));
                        taskInd++;
                    }
                }else{
-                   JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].state", 
+                   JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].state",
                            CodeRepositoryUtil.getValue("WFInstType", nodeInst.getNodeState()) );
                    List<ActionLog> actions = flowManager.listNodeActionLogs(nodeInst.getNodeInstId());
                    int actionInd=0;
-                   for(ActionLog action:actions){                       
+                   for(ActionLog action:actions){
                        JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].action["+actionInd+"].usercode", action.getUserCode());
-                       JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].action["+actionInd+"].username", 
+                       JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].action["+actionInd+"].username",
                                CodeRepositoryUtil.getValue("userCode",action.getUserCode()));
-                       JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].action["+actionInd+"].actiontime", 
+                       JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].action["+actionInd+"].actiontime",
                                DatetimeOpt.convertDatetimeToString(action.getActionTime()));
-                       JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].action["+actionInd+"].actiontype", 
+                       JSONOpt.setAttribute(nodeOptInfo, "instance["+nodeInstInd+"].action["+actionInd+"].actiontype",
                                CodeRepositoryUtil.getValue("WfActionType",action.getActionType()));
                        actionInd++;
                    }
@@ -528,7 +528,7 @@ public class FlowManagerController extends BaseController {
          e.printStackTrace();
       }
     }
-    
+
     /**
      * 查找所有没有操作用户的节点
      * @return
@@ -538,18 +538,18 @@ public class FlowManagerController extends BaseController {
         List<NodeInstance>nodeList = flowManager.listNodesWithoutOpt();
         JsonResultUtils.writeSingleDataJson(nodeList, response);
     }
-   
+
     /**
      * 查看流程工作小组
      * @return
      */
     @RequestMapping(value="/workteam/{flowInstId}",method=RequestMethod.GET)
     public void viewWorkTeam(@PathVariable Long flowInstId,HttpServletRequest request,HttpServletResponse response){
-        
+
         JsonResultUtils.writeSingleDataJson("", response);
     }
-    
-    
+
+
     /**
      * 查询某节点实例下的任务信息
      * @return String
@@ -559,8 +559,8 @@ public class FlowManagerController extends BaseController {
         List <ActionTask>taskList = flowManager.listNodeInstTasks(nodeInstId);
         resData.addResponseData(OBJLIST, taskList);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
-    } 
-    
+    }
+
     /**
      * 查询某节点实例下的日志信息
      * @return String
@@ -571,8 +571,8 @@ public class FlowManagerController extends BaseController {
         resData.addResponseData(OBJLIST, logList);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
-    
-    
+
+
     /**
      * 当前用户参与的流程
      * @return
@@ -603,7 +603,7 @@ public class FlowManagerController extends BaseController {
         resData.addResponseData(OBJLIST, objList);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
-    
+
     /**
      * 查看用户相关流程
      * @return
@@ -617,13 +617,13 @@ public class FlowManagerController extends BaseController {
             //办结事项
             if( filterMap.get("oper").equals("comp")){
                 filterMap.put("inststate", "C");
-                
+
             }
             if(!filterMap.get("oper").equals("all")){
               //默认当前在办
                 filterMap.put("attachuser", loginUserCode);
             }
-            
+
         }else{
             if(filterMap.get("attachuser") == null || filterMap.get("attachuser").toString().length() == 0){
                 filterMap.put("attachuser",loginUserCode);

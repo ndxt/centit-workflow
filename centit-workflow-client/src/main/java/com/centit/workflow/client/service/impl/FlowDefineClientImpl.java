@@ -9,7 +9,6 @@ import com.centit.workflow.po.FlowInfo;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import java.util.Map;
  * Created by chen_rj on 2018-5-2.
  */
 @Service
-@Transactional
 public class FlowDefineClientImpl implements FlowDefineClient {
     @Value("${workflow.server}")
     private String workFlowServerUrl;
@@ -42,11 +40,18 @@ public class FlowDefineClientImpl implements FlowDefineClient {
 
     @Override
     public void setWorkFlowServerUrl(String workFlowServerUrl) {
+        this.workFlowServerUrl = workFlowServerUrl;
+    }
+
+    public void makeAppSession() {
         appSession = new AppSession(workFlowServerUrl,false,null,null);
     }
+
+
     @PostConstruct
     public void init(){
-        this.setWorkFlowServerUrl(workFlowServerUrl);
+        //this.setWorkFlowServerUrl(workFlowServerUrl);
+        makeAppSession();
     }
 
     @Override
