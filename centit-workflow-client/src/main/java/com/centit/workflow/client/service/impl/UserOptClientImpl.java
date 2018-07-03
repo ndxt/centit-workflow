@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
  */
 @Service
 public class UserOptClientImpl implements UserOptClient {
-    @Value("${workflow.serve:}")
+    @Value("${workflow.server:}")
     private String workFlowServerUrl;
 
     public UserOptClientImpl() {
