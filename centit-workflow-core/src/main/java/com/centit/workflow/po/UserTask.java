@@ -1,11 +1,9 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.support.common.WorkTimeSpan;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.OrderBy;
 import java.util.Date;
 
 /**
@@ -46,7 +44,6 @@ public class UserTask implements java.io.Serializable {
     private String roleCode;
     private String instState;
     private String optUrl;
-    private String unitName;
 
     //流程节点阶段
     private String flowStage;
@@ -68,17 +65,7 @@ public class UserTask implements java.io.Serializable {
     public UserTask() {
     }
 
-    public String getUnitName() {
-        if(StringUtils.isNotBlank(this.unitCode)){
-            return CodeRepositoryUtil.getUnitName(this.getUnitCode());
-        }else{
-            return null;
-        }
-    }
 
-    public void setUnitName(String unitName) {
-        this.unitName = unitName;
-    }
 
     public Long getNodeInstId() {
         return nodeInstId;
