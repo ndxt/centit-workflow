@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.common.WorkTimeSpan;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,6 +17,7 @@ public class UserTask implements java.io.Serializable {
 
 
     private Long nodeInstId;
+    @DictionaryMap(value="unitCode", fieldName="unitName")
     private String unitCode;
     private String userCode;
 
