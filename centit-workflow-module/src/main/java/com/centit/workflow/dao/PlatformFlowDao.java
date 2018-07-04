@@ -30,7 +30,24 @@ public class PlatformFlowDao {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public List<UserTask> queryDynamicTask(String unitCode,String userStation){
-        String sql = "select a.*,w.*,c.*,c.opt_code as optUrl from " +
+        String sql = "select w.flow_inst_id,w.flow_code,w.version,w.flow_opt_name,w.flow_opt_tag," +
+            "  a.node_inst_id,a.unit_code,a.user_code, " +
+            " c.node_name,c.node_type,c.opt_type as NODE_OPT_TYPE,c.opt_param,"+
+            " w.create_time,w.promise_time,a.time_limit,c.opt_code, " +
+            " c.expire_opt,c.stage_code,'' as GRANTOR,a.last_update_user," +
+            " a.last_update_time,w.inst_state,c.opt_code as opt_url "+
+        "from wf_node_instance a " +
+            "left join wf_flow_instance w " +
+            " on a.flow_inst_id = w.flow_inst_id " +
+            "left join wf_node c " +
+            " on a.node_Id = c.node_id " +
+            "where a.node_state = 'N' " +
+            " and w.inst_state = 'N' " +
+            " and a.task_assigned = 'D' " +
+            " and (a.unit_code is null or a.unit_code=?)" +
+            " and (c.role_type='gw' and c.role_code=?)" +
+            " ORDER by a.create_time desc";
+       /* String sql = "select a.*,w.*,c.*,c.opt_code as optUrl from " +
             "wf_node_instance a " +
             "left join wf_flow_instance w " +
             "on a.flow_inst_id = w.flow_inst_id " +
@@ -39,7 +56,7 @@ public class PlatformFlowDao {
             "where a.node_state='N' and w.inst_state='N' and a.task_assigned='D' and " +
             "(a.unit_code is null or a.unit_code=?) and " +
             "(c.role_type='gw' and c.role_code=?)" +
-            " ORDER by a.create_time desc ";//TODO 字段按需补全。动态任务暂时用不到，没测试过
+            " ORDER by a.create_time desc ";*///TODO 字段按需补全。动态任务暂时用不到，没测试过
         return flowInfoDao.getJdbcTemplate().query(sql,new Object[]{unitCode,userStation},new BeanPropertyRowMapper(UserTask.class));
     }
 }
