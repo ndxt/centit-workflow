@@ -6,6 +6,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 /**
@@ -34,6 +36,23 @@ public class UserOptClientImpl implements UserOptClient {
     @Override
     public void setWorkFlowServerUrl(String workFlowServerUrl) {
         this.workFlowServerUrl = workFlowServerUrl;
+    }
+    
+    @Override
+    public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap) {
+        CloseableHttpClient httpClient = null;
+        String result = null;
+        FlowInstance flowInstance = null;
+        try {
+            httpClient = appSession.allocHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/flow/engine/saveOptIdeaForAutoSubmit"),paraMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
     }
 
     public void makeAppSession() {

@@ -131,4 +131,10 @@ public class FlowEngineController  extends BaseController {
         List<UserTask> userTasks = platformFlowService.queryDynamicTask(userCode);
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
+    
+    @RequestMapping(value = "/saveOptIdeaForAutoSubmit",method = {RequestMethod.POST})
+    public void saveOptIdeaForAutoSubmit(HttpServletResponse httpServletResponse, Map<String,Object> paraMap){
+        flowEng.saveOptIdeaForAutoSubmit(paraMap);
+        JsonResultUtils.writeBlankJson(httpServletResponse);
+    }
 }

@@ -1,5 +1,7 @@
 package com.centit.workflow.client.service;
 
+import java.util.Map;
+
 import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
@@ -11,4 +13,6 @@ public interface UserOptClient {
     void releaseHttpClient(CloseableHttpClient httpClient);
 
     void setWorkFlowServerUrl(String workFlowServerUrl);
+    
+    void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap);
 }

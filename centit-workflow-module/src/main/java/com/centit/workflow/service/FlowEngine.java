@@ -824,4 +824,12 @@ public interface FlowEngine {
      * @return
      */
     StageInstance getStageInstByNodeInstId(long nodeInstId);    
+    
+    /**
+     * 保存opt_idea_info表
+     * @param map
+     * @param sVar
+     * @param sValue
+     */
+    void saveFlowVariable( Map<String,Object> paraMap);
 }

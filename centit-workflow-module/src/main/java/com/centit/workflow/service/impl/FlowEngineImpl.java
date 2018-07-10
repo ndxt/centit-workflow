@@ -2509,6 +2509,7 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
             String nodeCode, PageDesc pageDesc) {
         return actionTaskDao.listUserTaskByFilter(
                 QueryUtils.createSqlParamsMap("userCode",userCode,"nodeCode",nodeCode),pageDesc);
+        QueryUtils.
     }
 
     @Override
@@ -2607,5 +2608,10 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         }else{
             return;
         }
+    }
+    
+    @Override
+    public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap) {
+        nodeInstanceDao.saveOptIdeaForAutoSubmit(paraMap);
     }
 }
