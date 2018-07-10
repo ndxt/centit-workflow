@@ -15,12 +15,12 @@ import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.po.StageInstance;
 import com.centit.workflow.po.UserTask;
 
-/** 
- * 流程管理业务接口类 
+/**
+ * 流程管理业务接口类
  *   <流程终止，暂停，唤醒，回退等操作>
  * @author codefan@sina.com
  * @version 2.0 <br>
- *        
+ *
  */
 public interface FlowManager{
     //------------查看流程运行状态图---------------------------------
@@ -31,15 +31,22 @@ public interface FlowManager{
      * @return
    */
    List<FlowInstance> listFlowInstance(Map<String, Object> filterMap, PageDesc pageDesc);
-   
-   
+
+    /**
+     * 根据 示例flowOptTag获得实例
+     * @param flowOptTag
+     * @return
+     */
+    FlowInstance getFlowInstance(String flowOptTag );
+
+
     /**
      * 根据 示例ID获得实例
      * @param flowInstId
      * @return
      */
     FlowInstance getFlowInstance(long flowInstId );
-    
+
     /**
      * 查看工作流程实例状态或进度
      * @param flowInstId
@@ -76,24 +83,24 @@ public interface FlowManager{
      * @return
      */
     List<FlowInstance> listPauseTimerFlowInst(String userCode,PageDesc pageDesc);
-    
+
     /**
      * 暂停流程计时
      * @param flowInstId
      * @param mangerUserCode
      */
     int suspendFlowInstTimer(long flowInstId,String mangerUserCode);
-    
-     
+
+
     /**
      * 唤醒流程计时
      * @param flowInstId
      * @param mangerUserCode
      */
     int activizeFlowInstTimer(long flowInstId,String mangerUserCode);
-    
+
     /**
-     * 设置流程期限 
+     * 设置流程期限
      * @param flowInstId  流程实例编号
      * @param timeLimit   新的流程期限 5D3h
      * @param mangerUserCode 管理人员代码
@@ -109,8 +116,8 @@ public interface FlowManager{
      * @param unitCode 机构代码
      */
     void updateFlowInstUnit(long flowInstId,String unitCode,String optUserCode);
-    
-    
+
+
     //------日志信息查看-----------------
     /**
      * 查询流程实例管理日志
@@ -118,10 +125,10 @@ public interface FlowManager{
      * @return
      */
     List<ManageActionLog> listManageActionLog(long flowInstId, PageDesc pageDesc);
-    
+
 
     //节点实例管理-------------------------------
-    
+
     /**
      * 获取流程实例下的节点实例列表
      * @param wfinstid 流程实例编号
@@ -130,25 +137,25 @@ public interface FlowManager{
     List<NodeInstance> listFlowInstNodes(long wfinstid);
     //-----------节点状态变更-------------------------------
     /*
-     * N 正常  B 已回退    C 完成   F被强制结束 
+     * N 正常  B 已回退    C 完成   F被强制结束
      * P 暂停   W 等待子流程返回   S 等等前置节点（可能是多个）完成
      */
     /**
-     * 暂停流程的一个节点  P 暂停 
+     * 暂停流程的一个节点  P 暂停
      */
     long suspendNodeInstance(long nodeInstId,String mangerUserCode);
-    
+
       /**
      * 使流程的 挂起和失效的节点 正常运行 N 正常
      */
     long activizeNodeInstance(long nodeInstId,String mangerUserCode);
-    
-    /**  
+
+    /**
      * 强制流转到下一结点，这个好像不好搞，主要是无法获得业务数据，只能提交没有分支的节点
      */
     long forceCommit(long nodeInstId,String mangerUserCode);
-    
-    
+
+
    /**
     * 查询某人暂定计时的节点
     * @param userCode
@@ -156,15 +163,15 @@ public interface FlowManager{
     * @return
     */
    List<NodeInstance> listPauseTimerNodeInst(String userCode,PageDesc pageDesc);
-   
+
     /**
      * 暂停节点定时
      * @param nodeInstId
      * @param mangerUserCode
      */
     int suspendNodeInstTimer(long nodeInstId,String mangerUserCode);
-    
-    
+
+
     /**
      * 唤醒节点定时
      * @param nodeInstId
@@ -183,7 +190,7 @@ public interface FlowManager{
      */
     long forceDissociateRuning(long nodeInstId,String mangerUserCode);
 
- 
+
     //------------节点属性修改----------------------------------
     /**
      * 更改节点所属机构
@@ -191,22 +198,22 @@ public interface FlowManager{
      * @param unitCode 机构代码
      */
     void updateNodeInstUnit(long nodeInstId,String unitCode,String optUserCode);
-     
-    
+
+
     /**
      * 更改节点的角色信息
      */
     void updateNodeRoleInfo(long nodeInstId, String roleType,String roleCode, String mangerUserCode);
- 
+
     /**
-     * 设置流程期限 
+     * 设置流程期限
      * @param nodeInstId  流程节点实例编号
      * @param timeLimit   新的流程期限 5D3h
      * @param mangerUserCode 管理人员代码
      * @return
      */
     long resetNodeTimelimt(long nodeInstId,String timeLimit,String mangerUserCode);
-    
+
 
     //----------节点任务管理--------------------------------
     /**
@@ -214,31 +221,31 @@ public interface FlowManager{
      * 这个是返回所有能够操作本节点的人员
      */
     List<UserTask> listNodeTasks(long nodeInstId);
-    
-      
+
+
     /**
      * 获取节点实例的任务列表，这个返回在actionTask中手动分配的工作人员
      * @param nodeinstid
      * @return List<ActionTask>
      */
     List<ActionTask> listNodeActionTasks(long nodeinstid);
-    
-    
 
-    
+
+
+
 
     //------------流程阶段管理-------------------------
-    
+
     /**
      * 获取节点所在阶段信息
      * @param flowInstId
      * @return
      */
     List<StageInstance> listStageInstByFlowInstId(long flowInstId);
-     
-    
+
+
     /**
-     * 设置流程期限 
+     * 设置流程期限
      * @param flowInstId  流程实例编号
      * @param timeLimit   新的流程期限 5D3h
      * @param mangerUserCode 管理人员代码
@@ -253,7 +260,7 @@ public interface FlowManager{
     //------------流程变量管理------接口参见flowEngine---------------------
     //------------流程预警管理------接口参见flowEngine---------------------
     //------查看节点信息-------------------------
-  
+
     /**
      * 获取节点实例的操作日志列表
      * @param nodeinstid
@@ -269,14 +276,14 @@ public interface FlowManager{
      */
     List<ActionLog> listFlowActionLogs(long flowInstId);
     /**
-     * 获取用户所有的操作记录 
+     * 获取用户所有的操作记录
      * @param userCode
      * @param pageDesc 和分页机制结合
      * @param lastTime if null return all
      * @return
      */
     List<ActionLog> listUserActionLogs(String userCode,PageDesc pageDesc ,Date lastTime );
-   
+
 
     /**
      * 查询委托别人做的工作记录
@@ -284,7 +291,7 @@ public interface FlowManager{
      * @return
      */
     List<ActionLog> listGrantorActionLog(String userCode,PageDesc pageDesc);
-    
+
     /**
      * 查询受委托的工作记录
      * @param userCode

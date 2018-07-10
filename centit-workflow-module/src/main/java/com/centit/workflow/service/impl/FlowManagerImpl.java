@@ -363,7 +363,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     public FlowInstance getFlowInstance(long flowInstId) {
         FlowInstance flowInstance = flowInstanceDao.getObjectCascadeById(flowInstId);
-
+        /**
+         * 初始化节点信息
+         */
+        initNodeInstances(flowInstance);
+        return flowInstance;
+    }
+    /**
+     * 初始化节点信息
+     * @param flowInstance
+     */
+    public void initNodeInstances(FlowInstance flowInstance){
         if( flowInstance.getNodeInstances() != null) {
             for( NodeInstance nodeInstance : flowInstance.getNodeInstances()) {
                 NodeInfo node = flowNodeDao.getObjectById(nodeInstance.getNodeId());
@@ -372,6 +382,22 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 nodeInstance.setFlowOptTag( flowInstance.getFlowOptTag());
             }
         }
+    }
+
+    /**
+     * 通过flowOptTag获取流程实例
+     * @param flowOptTag
+     * @return
+     */
+    @Override
+    public FlowInstance getFlowInstance(String flowOptTag) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("flowOptTag",flowOptTag);
+        FlowInstance flowInstance = flowInstanceDao.getObjectByProperties(properties);
+        /**
+         * 初始化节点信息
+         */
+        initNodeInstances(flowInstance);
         return flowInstance;
     }
 

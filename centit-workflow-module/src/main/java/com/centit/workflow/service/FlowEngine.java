@@ -16,8 +16,8 @@ import java.util.Set;
  * 流程运行接口
  */
 public interface FlowEngine {
-    
-    //--------------------创建流程实例接口-----------------------------------    
+
+    //--------------------创建流程实例接口-----------------------------------
     /**
      * 创建流程实例  返回流程实例
      * @param flowCode 流程编码
@@ -43,7 +43,7 @@ public interface FlowEngine {
      */
     FlowInstance createInstance(String  flowCode,long version,String flowOptName,
             String flowOptTag,String userCode,String unitCode);
- 
+
     /**
      * 创建流程实例 返回流程实例
      * @param flowCode 流程编码
@@ -58,8 +58,8 @@ public interface FlowEngine {
     FlowInstance createInstance(String  flowCode,long version,String flowOptName,
             String flowOptTag,String userCode,String unitCode,
             UserUnitVariableTranslate varTrans,ServletContext application);
-  
-    
+
+
     /**
      * 创建流程实例  返回流程实例
      * @param flowCode 流程编码
@@ -74,8 +74,8 @@ public interface FlowEngine {
     FlowInstance createInstance(String  flowCode,String flowOptName,
             String flowOptTag,String userCode,String unitCode,
             UserUnitVariableTranslate varTrans,ServletContext application);
-    
-    
+
+
     /**
      * 创建流程实例并锁定首节点，首节点只能有创建人操作 返回流程实例
      * @param flowCode 流程编码
@@ -112,13 +112,13 @@ public interface FlowEngine {
      */
     FlowInstance createInstanceLockFirstNode(String  flowCode,long version,
             String flowOptName, String flowOptTag, String userCode,String unitCode);
-   
+
     /*
      * 创建子流程实例 返回流程实例号  子流程由内部创建不需要提供接口
        long createInstance(String  flowCode,long nodeInstId,String userCode,String unitCode);
     */
-  
-    
+
+
    //--------------------提交流程业务节点-----------------------------------
     /**
      * 返回下一步节点的节点实例ID
@@ -131,7 +131,7 @@ public interface FlowEngine {
     Set<Long> submitOpt(long nodeInstId,String userCode,
             String unitCode,UserUnitVariableTranslate varTrans,
             ServletContext application) throws WorkflowException;
- 
+
 
     Set<Long> submitOpt(long nodeInstId,String userCode,String grantorCode,
             String unitCode,UserUnitVariableTranslate varTrans,
@@ -151,7 +151,7 @@ public interface FlowEngine {
             String unitCode,UserUnitVariableTranslate varTrans,
             Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
             ServletContext application) throws WorkflowException;
-  
+
     /**
      * 返回下一步节点的节点实例ID
      * @param nodeInstId 当前节点实例编号
@@ -167,7 +167,7 @@ public interface FlowEngine {
             Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
             ServletContext application) throws WorkflowException;
 
-    
+
   //--------------------查看流转信息-----------------------------------
     /**
      * 提交节点工作 是否成功
@@ -180,7 +180,7 @@ public interface FlowEngine {
      */
     Set<NodeInfo> viewNextNode(long nodeInstId, String userCode,
                                String unitCode, UserUnitVariableTranslate varTrans);
-    
+
     /**
      * 查看下一节点可以操作的人员类表
      * @param nextNodeId 下一个节点编号
@@ -191,9 +191,9 @@ public interface FlowEngine {
      * @return
      */
     Set<String> viewNextNodeOperator(long nextNodeId,long curNodeInstId,
-            String userCode,String unitCode,UserUnitVariableTranslate varTrans); 
+            String userCode,String unitCode,UserUnitVariableTranslate varTrans);
 
-    
+
     //-------------------------用户待办接口---------------------------------------
 
     //任务类表查看
@@ -240,7 +240,7 @@ public interface FlowEngine {
      * @return
      */
     List<UserTask> listUserTasksByNodeCode(String userCode,String nodeCode,PageDesc pageDesc);
-  
+
 
     /**
      * 列举用户已办事项
@@ -256,7 +256,7 @@ public interface FlowEngine {
      * @return
      */
     List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap,PageDesc pageDesc);
-  
+
     /**
      * 判断一个用户是否可以处理指定的节点,可以喝submitOpt结合使用，
      * 判断当前操作人员是否可以访问提交后的下一个节点。
@@ -266,8 +266,8 @@ public interface FlowEngine {
      * @return
      */
     boolean canAccess(long nodeInstId,String userCode);
-    
-    
+
+
     /**
      * 获取任务授权人，如果是用户自己的任务，返回自己，否则返回授权人
      * @param nodeInstId
@@ -275,7 +275,7 @@ public interface FlowEngine {
      * @return
      */
     String getTaskGrantor(long nodeInstId ,String userCode);
-    
+
     //预报警列表查看
     /**
      * 自定义预警查询
@@ -284,7 +284,7 @@ public interface FlowEngine {
      * @return
      */
     List<FlowWarning> listFlowWarning(Map<String, Object> filterMap, PageDesc pageDesc);
-  
+
     /**
      * 查询某个流程的预警
      * @param flowInstId
@@ -306,8 +306,8 @@ public interface FlowEngine {
      * @return
      */
     List<FlowWarning> listFlowWarningByWarningCode(String warningCode, PageDesc pageDesc);
-    
-    
+
+
     //--------------------特殊操作和记录日志接口-----------------------------------
     //--------------------更改流程业务相关数据接口-----------------------------------
     /**
@@ -317,24 +317,24 @@ public interface FlowEngine {
      * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，有业务系统自己解释
      */
     void updateFlowInstOptInfo(long flowInstId,String flowOptName,String flowOptTag);
-    
+
     //--------------------人工控制流程流转和任务分配------------------------------------
- 
+
     /**
      * 流程节点操作日志
      * @param nodeInstId 节点实例编号
      * @param userCode 用户编码
      * @param actionType
      *               s: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
-     *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点   
-     *               r: 流转管理，包括  强行回退  、强行提交   
+     *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
+     *               r: 流转管理，包括  强行回退  、强行提交
      *               t: 期限管理 、 设置期限
      *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-     *               u: 变更属性     *             
+     *               u: 变更属性     *
      */
     void recordActionLog(long nodeInstId, String userCode,String actionType);
-    
-    
+
+
     /**
      * 回退操作-回退到上一个节点
      */
@@ -346,11 +346,11 @@ public interface FlowEngine {
      * @return
      */
     boolean nodeCanBeReclaim(long nodeInstId);
-    
-    
+
+
     /**
      * 加签,并指定到人
-     * 
+     *
      * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
      * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
      * @param flowInstId 流程实例号
@@ -362,12 +362,12 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createPrepNodeInstLockUser(long flowInstId,long curNodeInstId,
-            long nodeId,String createUser,String userCode,String unitCode); 
-    
-    
+            long nodeId,String createUser,String userCode,String unitCode);
+
+
     /**
      * 加签,并指定到人
-     * 
+     *
      * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
      * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
      * @param flowInstId 流程实例号
@@ -379,11 +379,11 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createPrepNodeInstLockUser(long flowInstId,long curNodeInstId,
-            String nodeCode,String createUser,String userCode,String unitCode); 
-    
+            String nodeCode,String createUser,String userCode,String unitCode);
+
     /**
      * 加签
-     * 
+     *
      * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
      * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
      * @param flowInstId 流程实例号
@@ -394,13 +394,13 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createPrepNodeInst(long flowInstId,long curNodeInstId,
-            long nodeId,String userCode,String unitCode); 
-    
-    
+            long nodeId,String userCode,String unitCode);
+
+
     /**
-     * 
+     *
      * 加签
-     * 
+     *
      * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
      * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
      * @param flowInstId 流程实例号
@@ -412,11 +412,11 @@ public interface FlowEngine {
      */
     NodeInstance createPrepNodeInst(long flowInstId,long curNodeInstId,
             String nodeCode, String userCode,String unitCode);
-    
+
     /**
      * 创建一个游离节点
      * 知会、关注
-     * 
+     *
      * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
      * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
      * @param flowInstId 流程实例号
@@ -428,13 +428,13 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createIsolatedNodeInst(long flowInstId,long curNodeInstId,
-            String nodeCode,String createUser, String userCode,String unitCode); 
-       
-    
+            String nodeCode,String createUser, String userCode,String unitCode);
+
+
     /**
      * 创建一个游离节点
      * 知会、关注
-     * 
+     *
      * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
      * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
      * @param flowInstId 流程实例号
@@ -446,9 +446,9 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createIsolatedNodeInst(long flowInstId,long curNodeInstId,
-            long nodeId,String createUser, String userCode,String unitCode); 
-    
-   
+            long nodeId,String createUser, String userCode,String unitCode);
+
+
     /**
      * 更改流程的父节点，这个函数只是用来手动的将一个流程作为子流程挂到父流程的节点上，一般不会使用。
      * @param flowInstId   子流程实例id
@@ -472,7 +472,7 @@ public interface FlowEngine {
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 办件角色 不能为空
      * @param userCode 用户代码，添加
-     * @return 
+     * @return
      */
     void assignFlowWorkTeam(long flowInstId,String roleCode,String userCode);
     /**
@@ -480,19 +480,19 @@ public interface FlowEngine {
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 办件角色 不能为空
      * @param userCodeSet 用户代码列表，添加
-     * @return 
+     * @return
      */
     void assignFlowWorkTeam(long flowInstId,String roleCode,
                             List<String> userCodeSet);
 
-   
+
     /**
      * 分配工作小组 --办件角色
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 办件角色 不能为空
      * @param userCode 用户代码，添加
      * @param authdesc 角色描述
-     * @return 
+     * @return
      */
     void assignFlowWorkTeam(long flowInstId,String roleCode,
                             String userCode,String authdesc);
@@ -502,11 +502,11 @@ public interface FlowEngine {
      * @param roleCode 办件角色 不能为空
      * @param userCodeSet 用户代码列表，添加
      * @param authdesc 角色描述
-     * @return 
+     * @return
      */
     void assignFlowWorkTeam(long flowInstId,String roleCode,
                             List<String> userCodeSet,String authdesc);
-    
+
     /**
      * 删除工作小组--办件角色
      * @param flowInstId  流程实例号 不能为空
@@ -520,14 +520,14 @@ public interface FlowEngine {
      * @param roleCode 办件角色 不能为空
      */
     void deleteFlowWorkTeam(long flowInstId,String roleCode);
-    
+
     /**
      * 查看工作小组
      * @param flowInstId
      * @return Map<roleCode,Set<userCode>>
      */
     Map<String,List<String>> viewFlowWorkTeam(long flowInstId);
-    
+
     /**
      * 查看工作小组中某个角色的成员
      * @param flowInstId 工作流实例号
@@ -535,7 +535,7 @@ public interface FlowEngine {
      * @return Set<userCode>
      */
     List<String> viewFlowWorkTeam(long flowInstId,String roleCode);
-    
+
     /**
      * 查看工作小组中某个角色的成员
      * @param flowInstId
@@ -543,7 +543,7 @@ public interface FlowEngine {
      * @return
      */
     List<FlowWorkTeam> viewFlowWorkTeamList(long flowInstId, String roleCode);
-    
+
     /**
      * 查看工作小组中某个角色的成员,并且通过制定的授权说明过滤
      * @param flowInstId
@@ -553,8 +553,8 @@ public interface FlowEngine {
      */
     List<FlowWorkTeam> viewFlowWorkTeamList(long flowInstId, String roleCode,
                                                    String authdesc);
-    
-     
+
+
     /**
      * 分配节点任务
      *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
@@ -574,14 +574,14 @@ public interface FlowEngine {
      * 删除节点任务
      */
     int deleteNodeAllTask(long nodeInstId,String mangerUserCode);
-    
+
 
     /**
      * 分配流程组织机构
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 机构角色 不能为空
      * @param unitCode 机构代码，添加
-     * @return 
+     * @return
      */
     void assignFlowOrganize(long flowInstId,String roleCode,String unitCode);
     /**
@@ -589,16 +589,16 @@ public interface FlowEngine {
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 机构角色 不能为空
      * @param unitCodeSet 机构代码列表，添加
-     * @return 
+     * @return
      */
     void assignFlowOrganize(long flowInstId,String roleCode,List<String> unitCodeSet);
-    
+
     /**
      * 分配流程组织机构
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 机构角色 不能为空
      * @param unitCode 机构代码，添加
-     * @return 
+     * @return
      */
     void assignFlowOrganize(long flowInstId,String roleCode,
             String unitCode,String authdesc);
@@ -607,11 +607,11 @@ public interface FlowEngine {
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 机构角色 不能为空
      * @param unitCodeSet 机构代码列表，添加
-     * @return 
+     * @return
      */
     void assignFlowOrganize(long flowInstId,String roleCode,
                             List<String> unitCodeSet,String authdesc);
-    
+
     /**
      * 删除工作小组--办件角色
      * @param flowInstId  流程实例号 不能为空
@@ -625,7 +625,7 @@ public interface FlowEngine {
      * @param roleCode 机构角色 不能为空
      */
     void deleteFlowOrganize(long flowInstId,String roleCode);
-    
+
     /**
      * 删除工作小组--办件角色
      * @param flowInstId  流程实例号 不能为空
@@ -633,14 +633,14 @@ public interface FlowEngine {
      */
     void deleteFlowOrganizeByAuth(long flowInstId,String roleCode,
             String authDesc);
-    
+
     /**
      * 查看工作小组
      * @param flowInstId
      * @return Map<roleCode,Set<unitCode>>
      */
     Map<String,List<String>> viewFlowOrganize(long flowInstId);
-    
+
     /**
      * 查看工作小组中某个角色的成员
      * @param flowInstId 工作流实例号
@@ -648,24 +648,24 @@ public interface FlowEngine {
      * @return Set<unitCode>
      */
     List<String> viewFlowOrganize(long flowInstId,String roleCode);
-    
+
     /**
-     * 
+     *
      * @param flowInstId
      * @param roleCode
      * @return
      */
     List<FlowOrganize> viewFlowOrganizeList(long flowInstId, String roleCode);
-    
+
     /**
-     * 
+     *
      * @param flowInstId
      * @param roleCode
      * @return
      */
     List<FlowOrganize> viewFlowOrganizeList(long flowInstId, String roleCode,
             String authDesc);
-    
+
     /**
      * 设置流程全局变量
      * @param flowInstId
@@ -681,8 +681,8 @@ public interface FlowEngine {
      * @param sValue
      */
     void saveFlowNodeVariable(long nodeInstId,String sVar, String sValue);
-    
-    
+
+
     /**
      * 设置流程节点上下文变量
      * @param flowInstId
@@ -691,7 +691,7 @@ public interface FlowEngine {
      * @param sValue
      */
     void saveFlowNodeVariable(long flowInstId,String runToken,String sVar, String sValue);
-    
+
     /**
      * 设置流程全局变量
      * @param flowInstId
@@ -720,8 +720,8 @@ public interface FlowEngine {
      * @return
      */
     List<FlowVariable> viewFlowVariablesByVarname(long flowInstId,String varname);
-    
-    
+
+
     /**
      * 查询某个流程节点的变量
      * @param flowInstId
@@ -737,21 +737,21 @@ public interface FlowEngine {
      * @param optUser 设置人员
      */
     void saveFlowAttention(long flowInstId,String attUser,String optUser);
-    
+
     /**
      * 删除流程关注人员
      * @param flowInstId
      * @param attUser 关注人员
      */
     void deleteFlowAttention(long flowInstId,String attUser);
-    
+
     /**
      * 删除流程关注人员
      * @param flowInstId
      * @param optUser 关注设置人员
      */
     void deleteFlowAttentionByOptUser(long flowInstId,String optUser);
-    
+
     /**
      * 删除流程所有关注人员
      * @param flowInstId
@@ -763,7 +763,7 @@ public interface FlowEngine {
      * @return
      */
     List<InstAttention> viewFlowAttention(long flowInstId);
- 
+
     /**
      * @param flowInstId
      * @param userCode 关注人员
@@ -800,7 +800,7 @@ public interface FlowEngine {
      * @return
      */
     NodeInstance getNodeInstById(long nodeInstId);
-    
+
     /**
      * 获取用户操作节点的Url，if ! canAccess rteurn null
      *
@@ -809,7 +809,7 @@ public interface FlowEngine {
      * @return
      */
     String getNodeOptUrl(long nodeInstId,String userCode);
-    
+
     /**
      * 根据节点实例号 获得节点实例
      * @param flowInstId  流程实例id
@@ -817,19 +817,17 @@ public interface FlowEngine {
      * @return
      */
     List<NodeInstance> listNodeInstsByNodecode(long flowInstId,String nodeCode);
-    
+
     /**
      * 获取节点所在阶段信息
      * @param nodeInstId
      * @return
      */
-    StageInstance getStageInstByNodeInstId(long nodeInstId);    
-    
+    StageInstance getStageInstByNodeInstId(long nodeInstId);
+
     /**
      * 保存opt_idea_info表
-     * @param map
-     * @param sVar
-     * @param sValue
+     * @param paraMap
      */
-    void saveFlowVariable( Map<String,Object> paraMap);
+    void saveOptIdeaForAutoSubmit( Map<String,Object> paraMap);
 }
