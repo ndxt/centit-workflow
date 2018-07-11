@@ -62,7 +62,7 @@ public class FlowExtendClientImpl implements FlowExtendClient{
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
             HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/flowExtend/updateFlowInstance"), JSON.toJSON(flowInstance));
+                appSession.completeQueryUrl("/flowExtend/updateFlowInstance"), flowInstance);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
