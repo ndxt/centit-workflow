@@ -45,7 +45,7 @@ public interface FlowManager{
      * @param flowInstId
      * @return
      */
-   // FlowInstance getFlowInstance(long flowInstId );
+    FlowInstance getFlowInstance(long flowInstId );
 
     /**
      * 查看工作流程实例状态或进度

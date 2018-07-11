@@ -361,14 +361,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
 
-/*    public FlowInstance getFlowInstance(long flowInstId) {
+    public FlowInstance getFlowInstance(long flowInstId) {
         FlowInstance flowInstance = flowInstanceDao.getObjectCascadeById(flowInstId);
-        *//**
+        /**
          * 初始化节点信息
-         *//*
+         */
         initNodeInstances(flowInstance);
         return flowInstance;
-    }*/
+    }
     /**
      * 初始化节点信息
      * @param flowInstance
