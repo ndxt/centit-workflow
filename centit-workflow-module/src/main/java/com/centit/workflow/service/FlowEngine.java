@@ -829,5 +829,5 @@ public interface FlowEngine {
      * 保存opt_idea_info表
      * @param paraMap
      */
-    void saveOptIdeaForAutoSubmit( Map<String,Object> paraMap);
+    //void saveOptIdeaForAutoSubmit( Map<String,Object> paraMap);
 }

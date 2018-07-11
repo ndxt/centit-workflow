@@ -140,9 +140,9 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
                 new Object[]{flowInstId,flowStage});
     }
 
-    public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap){
+   /* public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap){
         String sql="insert into opt_idea_info (PROC_ID, NODE_INST_ID, FLOW_INST_ID, UNIT_CODE, UNIT_NAME, USER_CODE,USER_NAME,TRANS_DATE,IDEA_CODE,TRANS_IDEA,FLOW_PHASE,NODE_CODE) values (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
         DatabaseOptUtils.doExecuteSql(this, sql,new Object[]{paraMap.get("procId"),paraMap.get("nodeInstId"),paraMap.get("flowInstId"),paraMap.get("unitCode"),paraMap.get("unitName"),paraMap.get("userCode"),paraMap.get("userName"),
             paraMap.get("transDate"),paraMap.get("ideaCode"),paraMap.get("transIdea"),paraMap.get("flowPhase"),paraMap.get("nodeCode"),});
-    }
+    }*/
 }
