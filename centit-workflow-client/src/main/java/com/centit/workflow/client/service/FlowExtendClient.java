@@ -1,5 +1,6 @@
 package com.centit.workflow.client.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.centit.workflow.po.FlowInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
 
@@ -14,4 +15,6 @@ public interface FlowExtendClient{
     void setWorkFlowServerUrl(String workFlowServerUrl) ;
 
     void updateFlowInstance(FlowInstance flowInstance);
+
+    JSONObject getPorcInfoByNodeInstId(String nodeInstId);
 }

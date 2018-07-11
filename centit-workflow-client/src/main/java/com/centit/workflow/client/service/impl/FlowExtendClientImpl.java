@@ -69,4 +69,29 @@ public class FlowExtendClientImpl implements FlowExtendClient{
             appSession.releaseHttpClient(httpClient);
         }
     }
+
+    @Override
+    public JSONObject getPorcInfoByNodeInstId(String nodeInstId) {
+        Map<String,String> paramMap = new HashMap<>();
+        paramMap.put("nodeInstId",nodeInstId);
+        JSONObject jsonObject = null;
+        String result = null;
+        CloseableHttpClient httpClient = null;
+        try {
+            httpClient = appSession.allocHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/flowExtend/getPorcInfoByNodeInstId"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
+        try {
+            jsonObject = JSONObject.parseObject(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
 }
