@@ -361,14 +361,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
 
-    public FlowInstance getFlowInstance(long flowInstId) {
+/*    public FlowInstance getFlowInstance(long flowInstId) {
         FlowInstance flowInstance = flowInstanceDao.getObjectCascadeById(flowInstId);
-        /**
+        *//**
          * 初始化节点信息
-         */
+         *//*
         initNodeInstances(flowInstance);
         return flowInstance;
-    }
+    }*/
     /**
      * 初始化节点信息
      * @param flowInstance
@@ -389,17 +389,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param flowOptTag
      * @return
      */
-    @Override
+ /*   @Override
     public FlowInstance getFlowInstance(String flowOptTag) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("flowOptTag",flowOptTag);
         FlowInstance flowInstance = flowInstanceDao.getObjectByProperties(properties);
-        /**
+        *//**
          * 初始化节点信息
-         */
+         *//*
         initNodeInstances(flowInstance);
         return flowInstance;
-    }
+    }*/
 
     @Override
     public List<FlowInstance> listUserAttachFlowInstance(String userCode,
