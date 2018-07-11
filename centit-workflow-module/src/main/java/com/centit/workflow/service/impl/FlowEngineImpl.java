@@ -316,7 +316,14 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         return nodeInstanceDao.getObjectCascadeById(nodeInstId);
     }
 
-     @Override
+    @Override
+    public List<FlowInstance> listAllFlowInstByOptTag(String optTag) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("flowOptTag",optTag);
+        return flowInstanceDao.listObjects(map);
+    }
+
+    @Override
     public void updateFlowInstOptInfo(long flowInstId, String flowOptName,
             String flowOptTag) {
         FlowInstance flowInst  = flowInstanceDao.getObjectById(flowInstId);

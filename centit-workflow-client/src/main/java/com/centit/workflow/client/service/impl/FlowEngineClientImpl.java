@@ -285,4 +285,50 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         }
         return userTasks;
     }
+
+    @Override
+    public List<FlowInstance> listAllFlowInstByOptTag(String optTag) {
+        HashMap<String,Object> paramMap = new HashMap<>();
+        paramMap.put("flowOptTag",optTag);
+        CloseableHttpClient httpClient = null;
+        String result = null;
+        List<FlowInstance> flowInstances = null;
+        try {
+            httpClient = appSession.allocHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/flow/engine/listAllFlowInstByOptTag"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            String dataStr = jsonObject.get("data").toString();
+            flowInstances= JSONObject.parseArray(dataStr,FlowInstance.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return flowInstances;
+    }
+
+    @Override
+    public void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag) {
+        HashMap<String,Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId",flowInstId);
+        paramMap.put("flowOptName",flowOptName);
+        paramMap.put("flowOptTag",flowOptTag);
+        CloseableHttpClient httpClient = null;
+        try {
+            httpClient = appSession.allocHttpClient();
+            appSession.checkAccessToken(httpClient);
+            HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/flow/engine/updateFlowInstOptInfo"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
+    }
 }

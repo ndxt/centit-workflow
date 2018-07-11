@@ -309,6 +309,13 @@ public interface FlowEngine {
 
 
     //--------------------特殊操作和记录日志接口-----------------------------------
+
+    /**
+     * 根据业务id获取所有该业务下的流程
+     * @param optTag
+     * @return
+     */
+    List<FlowInstance> listAllFlowInstByOptTag(String optTag);
     //--------------------更改流程业务相关数据接口-----------------------------------
     /**
      * 更改流程业务信息，flowOptName 用来显示业务办件名称，flowOptTag 给业务系统自己解释可以用于反向关联
