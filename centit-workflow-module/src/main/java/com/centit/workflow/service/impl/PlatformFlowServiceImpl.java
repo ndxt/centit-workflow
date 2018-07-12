@@ -26,7 +26,7 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
         List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits(userCode);
 
         //2.以机构，岗位，职务来查询任务
-        if(iUserUnits == null){
+        if(iUserUnits == null||iUserUnits.size()==0){
             return taskList;
         }
         //TODO 需要做成分页查询
