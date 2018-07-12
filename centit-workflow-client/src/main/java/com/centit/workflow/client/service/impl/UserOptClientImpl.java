@@ -42,7 +42,7 @@ public class UserOptClientImpl implements UserOptClient {
     }
 
     @Override
-    public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap) {
+    public void saveOptIdeaForAutoSubmit(Map<String,String> paraMap) {
         CloseableHttpClient httpClient = null;
         String result = null;
         FlowInstance flowInstance = null;
