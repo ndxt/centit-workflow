@@ -123,7 +123,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
             appSession = new AppSession(url,false,null,null);
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),appSession.completeQueryUrl("/service/eventBean/runAutoOperator"),jsonParam);
+            /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),appSession.completeQueryUrl("/service/workflowEventBean/runAutoOperator"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
