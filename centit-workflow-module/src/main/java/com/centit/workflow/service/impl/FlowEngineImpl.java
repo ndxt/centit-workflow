@@ -283,11 +283,14 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         //nodeInstanceDao.saveNewObject(nodeInst);
         flowInstanceDao.saveNewObject(flowInst);
         flowInstanceDao.saveObjectReferences(flowInst);
+
+        //执行节点创建后bean事件
+        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(node);
+        nodeEventExecutor.runAfterCreate(flowInst, nodeInst, node,userCode);
         //如果首节点是哑元 或者自动执行，请运行自动提交
 
         //自动执行
         if("D".equals(node.getOptType()) ){
-            NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(node);
             boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst,nodeInst ,
                     node,userCode);
             if(needSubmit)
