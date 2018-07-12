@@ -42,7 +42,7 @@ public class UserOptClientImpl implements UserOptClient {
     }
 
     @Override
-    public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap) {
+    public void saveOptIdeaForAutoSubmit(Map<String,String> paraMap) {
         CloseableHttpClient httpClient = null;
         String result = null;
         FlowInstance flowInstance = null;
@@ -50,7 +50,7 @@ public class UserOptClientImpl implements UserOptClient {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
             result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("http://localhost/apprFlow/service/appr/saveOptIdeaForAutoSubmit"),paraMap);
+                appSession.completeQueryUrl("/appr/saveOptIdeaForAutoSubmit"),paraMap);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

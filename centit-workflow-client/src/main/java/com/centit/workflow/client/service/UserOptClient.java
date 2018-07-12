@@ -14,5 +14,5 @@ public interface UserOptClient {
 
     void setWorkFlowServerUrl(String workFlowServerUrl);
     
-    void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap);
+    void saveOptIdeaForAutoSubmit(Map<String,String> paraMap);
 }
