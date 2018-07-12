@@ -50,7 +50,7 @@ public class UserOptClientImpl implements UserOptClient {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
             result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("http://localhost/apprFlow/service/appr/saveOptIdeaForAutoSubmit"),paraMap);
+                appSession.completeQueryUrl("/appr/saveOptIdeaForAutoSubmit"),paraMap);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
