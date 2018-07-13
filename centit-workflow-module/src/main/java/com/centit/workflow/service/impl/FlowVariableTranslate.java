@@ -17,10 +17,10 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     private Map<String,List<String>> flowWorkTeam;
     private Map<String,Set<String>> nodeUnits;
     private Map<String,Set<String>> nodeUsers;
- 
+
     private NodeInstance nodeInst;
     private FlowInstance flowInst;
-    
+
     public void collectNodeUnitsAndUsers( FlowInstance flowInst) {
         nodeUnits = new HashMap<>();
         nodeUsers = new HashMap<>();
@@ -32,30 +32,30 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
                     nUnits = new HashSet<>();
                 nUnits.add( nodeInst.getUnitCode());
                 nodeUnits.put(nc, nUnits);
-                
+
                 Set<String> nUsers = nodeUsers.get(nc);
                 if(nUsers == null)
                     nUsers = new HashSet<>();
                 nUsers.add( nodeInst.getUserCode());
                 nodeUsers.put(nc, nUsers);
             }
-        }   
+        }
     }
-    
+
     public FlowVariableTranslate(UserUnitVariableTranslate varTrans, List<FlowVariable> flowVars,
                                  NodeInstance nodeInstance, FlowInstance flowInstance){
         flowVarTrans = varTrans;
         flowVariables = flowVars;
         nodeInst = nodeInstance;
         flowInst = flowInstance;
-        
+
         collectNodeUnitsAndUsers(flowInst);
     }
-    
+
     public void setNodeInst(NodeInstance nodeInst) {
         this.nodeInst = nodeInst;
     }
-    
+
     public void setFlowVarTrans(UserUnitVariableTranslate flowVarTrans) {
         this.flowVarTrans = flowVarTrans;
     }
@@ -63,11 +63,11 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     public void setFlowVariables(List<FlowVariable> flowVariables) {
         this.flowVariables = flowVariables;
     }
-    
+
     public void setFlowOrganizes(Map<String,List<String>> flowOrganizes) {
         this.flowOrganizes = flowOrganizes;
     }
-    
+
     public void setFlowWorkTeam(Map<String,List<String>> flowWorkTeam) {
         this.flowWorkTeam = flowWorkTeam;
     }
@@ -81,15 +81,15 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
         for(FlowVariable variable : flowVariables){
           String currToken = variable.getRunToken();
           int cTL = currToken.length();
-          if( varName.equals(variable.getVarName()) && ( "A".equals(variable.getRunToken()) || thisToken==null 
+          if( varName.equals(variable.getVarName()) && ( "A".equals(variable.getRunToken()) || thisToken==null
                   || currToken.equals(thisToken) || thisToken.startsWith(currToken+'.' )) &&  nTL< cTL){
               nTL = cTL;
               sValue = variable;
           }
         }
-        
+
         return sValue;
-        
+
     }
 
     @Override
@@ -122,26 +122,6 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
         if(unitset != null)
             return unitset;
 
-        return null;
-    }
-
-    
-    @Override
-    public Object getLabelValue(String varName) {
-          /**
-         * 编写的流程变量接口
-         */
-        if(flowVarTrans !=null){
-            Object obj =  flowVarTrans.getGeneralVariable(varName);
-            if(obj!=null)
-                return obj;
-        }
-        /**
-         * 程序设置的流程变量
-         */
-        FlowVariable v = findFlowVariable(varName);
-        if(v !=null)
-            return v.getVarValue();
         /**
          * 系统内置变量
          * flowunit 流程机构
@@ -154,8 +134,14 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
             return flowInst.getUnitCode();
         else if("nodeunit".equalsIgnoreCase(varName))
             return nodeInst.getUnitCode();
-            
+
         return null;
+    }
+
+
+    @Override
+    public Object getLabelValue(String varName) {
+        return this.getGeneralVariable(varName);
     }
 
     @Override
@@ -177,10 +163,10 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
             List<String> sUsers = flowWorkTeam.get(varName);
             if(sUsers != null )
                 return new HashSet<>(sUsers);
-        }        
+        }
         return nodeUsers.get(varName);
     }
-    
+
     /**
      * 返回机构表达式中的自定义变量对应的用户组
      * @param varName 自定义变量
@@ -201,7 +187,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
             if(sUnits != null )
                 return new HashSet<>(sUnits);
         }
-        
+
         return nodeUnits.get(varName);
     }
 

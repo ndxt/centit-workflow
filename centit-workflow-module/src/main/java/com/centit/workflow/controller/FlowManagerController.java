@@ -57,11 +57,11 @@ public class FlowManagerController extends BaseController {
         JsonResultUtils.writeResponseDataAsJson(resData, response,JsonPropertyUtils.getIncludePropPreFilter(FlowInstance.class, field));
     }
 
-/*    *//**
+   /**
      * 根据id获取流程实例对象
      * @param flowInstId
      * @param response
-     *//*
+     */
     @RequestMapping(value = "/{flowInstId}", method = RequestMethod.GET)
     public void getFlowInstance(@PathVariable Long flowInstId,  HttpServletResponse response) {
         FlowInstance flowInst = flowManager.getFlowInstance(flowInstId);
@@ -76,7 +76,7 @@ public class FlowManagerController extends BaseController {
         result.put("viewFlowInst", viewFlowInst);
         result.put("stageList",stageList);
         JsonResultUtils.writeSingleDataJson(result, response,JsonPropertyUtils.getExcludePropPreFilter(excludes));
-    }*/
+    }
 
     /**
      * 查看流程图
