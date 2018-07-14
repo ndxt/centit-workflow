@@ -316,7 +316,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public boolean saveDraftFlowStage(FlowInfo wfDef) {
         // 将 流程定义格式保存到 版本为 0 的记录中
-        FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(0L,wfDef.getFlowCode()) );
+        FlowInfo flowDef = flowDefineDao.getFlowDefineByID(wfDef.getFlowCode(),0L );
         if( flowDef == null){
             return false;
         }
@@ -331,7 +331,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public boolean saveDraftFlowRole(FlowInfo wfDef) {
         // 将 流程定义格式保存到 版本为 0 的记录中
-        FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(0L,wfDef.getFlowCode()) );
+        FlowInfo flowDef = flowDefineDao.getFlowDefineByID(wfDef.getFlowCode(),0L );
         if( flowDef == null){
             return false;
         }
@@ -346,7 +346,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public boolean saveDraftFlowVariableDef(FlowInfo wfDef) {
         // 将 流程定义格式保存到 版本为 0 的记录中
-        FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(0L,wfDef.getFlowCode()) );
+        FlowInfo flowDef = flowDefineDao.getFlowDefineByID(wfDef.getFlowCode(),0L );
         if( flowDef == null){
             return false;
         }
