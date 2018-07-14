@@ -146,7 +146,6 @@ public class ExtSysUserInfo implements IUserInfo {
      *
      * @return 获取用户归属机构关系
      */
-    @Override
     public List<ExtSysUserUnit> getUserUnits() {
         return this.userUnits;
     }

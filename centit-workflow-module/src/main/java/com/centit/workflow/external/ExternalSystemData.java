@@ -26,6 +26,7 @@ public abstract class ExternalSystemData {
     public static List<ExtSysUnitInfo> allunitInfo = new ArrayList<>();
     public static List<ExtSysUserUnit> allUserUnits = new ArrayList<>();
     public static Map<String, Integer > rankMap = new HashMap<>();
+
     private static Date lastLoadDataTime = null;
 
     public static ExtSysUnitInfo getUnitInfoByCode(String unitCode) {
