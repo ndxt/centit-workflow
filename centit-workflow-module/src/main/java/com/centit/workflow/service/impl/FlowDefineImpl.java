@@ -35,7 +35,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Resource
     private FlowTeamRoleDao flowTeamRoleDao;
-    
+
     private static Logger logger = LoggerFactory.getLogger(FlowDefineImpl.class);
     public static final String BEGINNODETAG="begin";
     public static final String ENDNODETAG="end";
@@ -49,7 +49,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
         public FlowDataDetail(){
             nodeTagToId = new HashMap<String ,Long>();
-            transTagToId = new HashMap<String ,Long>(); 
+            transTagToId = new HashMap<String ,Long>();
         }
     }
 
@@ -71,12 +71,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     public List<FlowInfo> getFlowsByOptId(String optId) {
         Map<String, Object> filterMap = new HashMap<String, Object>();
         filterMap.put("optId", optId);
-        
+
         List<FlowInfo> flows = flowDefineDao.getAllLastVertionFlows(filterMap);
         return new ArrayList<>(
                 flows == null ? new ArrayList<>() : flows);
     }
-    
+
     private static String getXmlNodeAttrAsStr(Element xNode,String  attrName){
         Attribute nameAttr = xNode.attribute(attrName);
         if(nameAttr != null){
@@ -156,15 +156,15 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             wfNode.setOptType(getXmlNodeAttrAsStr(baseNode,"opttype"));
             wfNode.setOptCode(getXmlNodeAttrAsStr(baseNode,"optcode"));
             wfNode.setOptBean(getXmlNodeAttrAsStr(baseNode,"optbean"));
-            
+
             String optparam = getXmlNodeAttrAsStr(baseNode,"optparam");
-            
+
             if(optparam !=null && optparam.indexOf("&amp;") > 0){
                 optparam = optparam.replaceAll("&amp;","&");
             }
-            
+
             wfNode.setOptParam(optparam);
-            
+
             wfNode.setRoleType(getXmlNodeAttrAsStr(baseNode,"roletype"));
             wfNode.setRoleCode(getXmlNodeAttrAsStr(baseNode,"rolecode"));
             wfNode.setLimitType(getXmlNodeAttrAsStr(baseNode,"timeLimitType"));
@@ -180,7 +180,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             wfNode.setPowerExp(getXmlNodeAttrAsStr(baseNode,"powerexp"));
             wfNode.setSubFlowCode(getXmlNodeAttrAsStr(baseNode,"subwfcode"));
             wfNode.setIsAccountTime(getXmlNodeAttrAsStr(baseNode,"isaccounttime"));
-            
+
             //codefan@sina.com 2015-4-8 添加路由相关属性
             wfNode.setRouterType(getXmlNodeAttrAsStr(baseNode,"routertype"));
             wfNode.setMultiInstType(getXmlNodeAttrAsStr(baseNode,"multiinsttype"));
@@ -189,7 +189,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             wfNode.setConvergeParam(getXmlNodeAttrAsStr(baseNode,"convergeparam"));
             wfNode.setWarningRule(getXmlNodeAttrAsStr(baseNode,"warningrule"));
             wfNode.setWarningParam(getXmlNodeAttrAsStr(baseNode,"warningparam"));
-            
+
             wfSet.add(wfNode);
         }
         return wfSet;
@@ -207,7 +207,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                     x="119px" y="186px" />
             </Transition>
         </Transitions>
-    * 
+    *
      * @param transList
      * @param flowDef
      * @return wfTranSet
@@ -239,12 +239,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             String timelimit = getXmlNodeAttrAsStr(baseNode,"timeLimit");
             if(timelimit != null && timelimit.length() > 0){
                 wfTran.setTimeLimit( getXmlNodeAttrAsStr(baseNode,"timeLimit"));
-            }   
-            
+            }
+
             //codefan@sina.com 2015-4-8 添加路由计时相关属性
             wfTran.setIsAccountTime(getXmlNodeAttrAsStr(baseNode,"isaccounttime"));
-            wfTran.setCanIgnore(getXmlNodeAttrAsStr(baseNode,"canignore")); 
-            
+            wfTran.setCanIgnore(getXmlNodeAttrAsStr(baseNode,"canignore"));
+
             sId = getXmlNodeAttrAsStr(baseNode,"from");
             long fromNodeId = flowData.nodeTagToId.get(sId);
             wfTran.setStartNodeId(fromNodeId);
@@ -302,7 +302,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             flowDef = new FlowInfo();
             flowDef.setFlowCode(wfDef.getFlowCode());
         }
-        flowDef.copyNotNullProperty(wfDef);        
+        flowDef.copyNotNullProperty(wfDef);
         flowDef.setVersion(0L);//wfDef.getVersion()==null ? 0L : wfDef.getVersion());
 
         flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
@@ -373,9 +373,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
         flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
-        
+
         flowDef.setFlowXmlDesc(flowDefXML);
-        
+
         flowDefineDao.updateObject(flowDef);
         return true;
     }
@@ -460,7 +460,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             newStages.add(newdt);
         }
         newFlowDef.setFlowStages(newStages);
-        
+
         Map<Long ,String>  nodeIsLeaf = new HashMap<Long ,String>();
         for(NodeInfo nd : newFlowDef.getFlowNodes()){
             if(nd.getNodeId().equals(flowData.firstNodeId ))
@@ -520,6 +520,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
         // 保存新版本的流程,状态设置为正常
         newFlowDef.setFlowDesc(flowDef.getFlowDesc());
+        newFlowDef.setOsId(flowDef.getOsId());
         newFlowDef.setFlowName(flowDef.getFlowName());
         newFlowDef.setFlowClass(flowDef.getFlowClass());
         newFlowDef.setOptId(flowDef.getOptId());
@@ -576,7 +577,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     public NodeInfo getNodeInfoById(long nodeId){
         return flowNodeDao.getObjectById(nodeId);
     }
-    
+
 
     @Override
     @Transactional
@@ -615,7 +616,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public String getNextPrimarykey() {        
+    public String getNextPrimarykey() {
         return flowDefineDao.getNextPrimarykey();
     }
 
@@ -645,7 +646,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return new ArrayList<FlowInfo>(
                 flows == null ? new ArrayList<FlowInfo>() : flows);
     }
-    
+
     @Override
     @Transactional
     public List<FlowInfo> listLastVersionFlow(
@@ -664,7 +665,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         return new ArrayList<FlowInfo>(flows);
     }
-    
+
     @Override
     @Transactional
     public Set<String> getUnitExp(String flowCode, Long version) {

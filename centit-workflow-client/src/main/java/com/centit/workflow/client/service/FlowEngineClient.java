@@ -23,7 +23,7 @@ public interface FlowEngineClient {
 
     void setWorkFlowServerUrl(String workFlowServerUrl) ;
 
-    //--------------------创建流程实例接口-----------------------------------    
+    //--------------------创建流程实例接口-----------------------------------
     /**
      * 创建流程实例  返回流程实例
      * @param flowCode 流程编码
@@ -307,7 +307,13 @@ public interface FlowEngineClient {
 //     * @param flowOptName 这个名称用户 查找流程信息
 //     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，有业务系统自己解释
 //     */
-//    void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag);
+        /**
+         * 根据业务id获取所有该业务下的流程
+         * @param optTag
+         * @return
+         */
+        List<FlowInstance> listAllFlowInstByOptTag(String optTag);
+        void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag);
 //
 //    //--------------------人工控制流程流转和任务分配------------------------------------
 //

@@ -283,11 +283,14 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         //nodeInstanceDao.saveNewObject(nodeInst);
         flowInstanceDao.saveNewObject(flowInst);
         flowInstanceDao.saveObjectReferences(flowInst);
+
+        //执行节点创建后bean事件
+        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(node);
+        nodeEventExecutor.runAfterCreate(flowInst, nodeInst, node,userCode);
         //如果首节点是哑元 或者自动执行，请运行自动提交
 
         //自动执行
         if("D".equals(node.getOptType()) ){
-            NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(node);
             boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst,nodeInst ,
                     node,userCode);
             if(needSubmit)
@@ -316,7 +319,14 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
         return nodeInstanceDao.getObjectCascadeById(nodeInstId);
     }
 
-     @Override
+    @Override
+    public List<FlowInstance> listAllFlowInstByOptTag(String optTag) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("flowOptTag",optTag);
+        return flowInstanceDao.listObjects(map);
+    }
+
+    @Override
     public void updateFlowInstOptInfo(long flowInstId, String flowOptName,
             String flowOptTag) {
         FlowInstance flowInst  = flowInstanceDao.getObjectById(flowInstId);
@@ -2608,4 +2618,9 @@ public class FlowEngineImpl implements FlowEngine,Serializable{
             return;
         }
     }
+
+  /*  @Override
+    public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap) {
+        nodeInstanceDao.saveOptIdeaForAutoSubmit(paraMap);
+    }*/
 }

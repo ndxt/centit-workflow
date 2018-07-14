@@ -31,7 +31,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/flow/useroptmgr")
 public class UserOptController extends BaseController{
-  
+
     @Resource
     private FlowEngine flowEng;
     @Resource
@@ -62,8 +62,8 @@ public class UserOptController extends BaseController{
         resData.addResponseData("primaryUnit", primaryUnit);
         JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
-    
-    
+
+
     /**
      * 获取当前登录用户
      * @param request HttpServletReqeust
@@ -81,10 +81,10 @@ public class UserOptController extends BaseController{
         resData.addResponseData("primaryUnit", primaryUnit);
         JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
-    
-    
-    
-    
+
+
+
+
     /**
      * 获取登陆用户机构列表
      * @param pageDesc
@@ -102,7 +102,7 @@ public class UserOptController extends BaseController{
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
-    
+
     /**
      * 登陆用户任务待办
      * @param pageDesc
@@ -135,7 +135,7 @@ public class UserOptController extends BaseController{
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
-    
+
     /**
      * 获取指定用户任务待办
      * @param usercode
@@ -167,7 +167,7 @@ public class UserOptController extends BaseController{
         resData.addResponseData("pageDesc", pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData,response);
     }
-    
+
     /**
      * 获取指定用户委托列表
      * @param usercode
@@ -239,11 +239,11 @@ public class UserOptController extends BaseController{
     @RequestMapping(value="/relegate/{relegateno}",method={RequestMethod.PUT})
     public void saveRelegate(@PathVariable Long relegateno, @Valid RoleRelegate roleRelegate, HttpServletRequest request, HttpServletResponse response){
         flowManager.saveRoleRelegate(roleRelegate);
-        
+
         JsonResultUtils.writeSingleDataJson("",response);
     }
-    
-    
+
+
     /**
      * 委托转移
      * @param relegateno
@@ -258,9 +258,9 @@ public class UserOptController extends BaseController{
         flowManager.saveRoleRelegate(re);
         JsonResultUtils.writeSingleDataJson(re,response);
     }
-    
-    
-    
+
+
+
     /**
      * 根据id删除委托
      * @param relegateno

@@ -131,4 +131,32 @@ public class FlowEngineController  extends BaseController {
         List<UserTask> userTasks = platformFlowService.queryDynamicTask(userCode);
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
+
+/*    @RequestMapping(value = "/saveOptIdeaForAutoSubmit",method = {RequestMethod.POST})
+    public void saveOptIdeaForAutoSubmit(HttpServletResponse httpServletResponse, Map<String,Object> paraMap){
+        flowEng.saveOptIdeaForAutoSubmit(paraMap);
+        JsonResultUtils.writeBlankJson(httpServletResponse);
+    }*/
+    /**
+     * 根据业务id获取所有该业务下的流程
+     * @param optTag
+     * @return
+     */
+    @RequestMapping(value="/listAllFlowInstByOptTag",method = RequestMethod.GET)
+    void listAllFlowInstByOptTag(HttpServletRequest request,HttpServletResponse response,String optTag){
+        JsonResultUtils.writeSingleDataJson(flowEng.listAllFlowInstByOptTag(optTag),response);
+    }
+
+    /**
+     * 更改流程业务信息，flowOptName 用来显示业务办件名称，flowOptTag 给业务系统自己解释可以用于反向关联
+     * @param flowInstId 流程实例ID
+     * @param flowOptName 这个名称用户 查找流程信息
+     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，有业务系统自己解释
+     */
+    @RequestMapping(value="/updateFlowInstOptInfo",method = RequestMethod.POST)
+    void updateFlowInstOptInfo(long flowInstId,String flowOptName,String flowOptTag,
+                               HttpServletRequest request,HttpServletResponse response){
+        flowEng.updateFlowInstOptInfo(flowInstId,flowOptName,flowOptTag);
+        JsonResultUtils.writeSuccessJson(response);
+    }
 }
