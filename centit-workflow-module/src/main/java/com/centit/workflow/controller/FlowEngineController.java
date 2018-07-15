@@ -5,10 +5,7 @@ import com.centit.framework.core.controller.BaseController;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
-import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.FlowVariable;
-import com.centit.workflow.po.NodeInstance;
-import com.centit.workflow.po.UserTask;
+import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
@@ -159,5 +156,11 @@ public class FlowEngineController  extends BaseController {
                                HttpServletRequest request,HttpServletResponse response){
         flowEng.updateFlowInstOptInfo(flowInstId,flowOptName,flowOptTag);
         JsonResultUtils.writeSuccessJson(response);
+    }
+
+    @RequestMapping(value = "/viewFlowWorkTeam",method = {RequestMethod.POST,RequestMethod.PUT})
+    public void viewFlowWorkTeam(HttpServletResponse httpServletResponse, FlowWorkTeam flowWorkTeam){
+        List<String> flowWorkTeams = flowEng.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(),flowWorkTeam.getRoleCode());
+        JsonResultUtils.writeSingleDataJson(flowWorkTeams,httpServletResponse);
     }
 }

@@ -4,6 +4,7 @@ package com.centit.workflow.client.service;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
+import com.centit.workflow.po.FlowWorkTeam;
 import com.centit.workflow.po.UserTask;
 import org.apache.http.impl.client.CloseableHttpClient;
 
@@ -525,13 +526,13 @@ public interface FlowEngineClient {
 //     */
 //    Map<String,List<String>> viewFlowWorkTeam(long flowInstId);
 //
-//    /**
-//     * 查看工作小组中某个角色的成员
-//     * @param flowInstId 工作流实例号
-//     * @param roleCode 办件角色代码
-//     * @return Set<userCode>
-//     */
-//    List<String> viewFlowWorkTeam(long flowInstId, String roleCode);
+    /**
+     * 查看工作小组中某个角色的成员
+     * @param flowInstId 工作流实例号
+     * @param roleCode 办件角色代码
+     * @return Set<userCode>
+     */
+    List<String> viewFlowWorkTeam(long flowInstId, String roleCode);
 //
 //    /**
 //     * 查看工作小组中某个角色的成员

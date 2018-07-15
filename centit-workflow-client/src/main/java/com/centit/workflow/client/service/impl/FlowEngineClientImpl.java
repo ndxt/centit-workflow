@@ -8,6 +8,7 @@ import com.centit.support.network.HttpExecutorContext;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
+import com.centit.workflow.po.FlowWorkTeam;
 import com.centit.workflow.po.UserTask;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -330,5 +331,32 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
+    }
+
+    public List<String> viewFlowWorkTeam(long flowInstId, String roleCode){
+        HashMap<java.lang.String,Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId",flowInstId);
+        paramMap.put("roleCode",roleCode);
+        CloseableHttpClient httpClient = null;
+        java.lang.String result = null;
+        List<String> flowWorkTeams= null;
+        try {
+            httpClient = appSession.allocHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/flow/engine/viewFlowWorkTeam"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            String dataStr = jsonObject.get("data").toString();
+            flowWorkTeams= JSONObject.parseArray(dataStr,String.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return flowWorkTeams;
     }
 }
