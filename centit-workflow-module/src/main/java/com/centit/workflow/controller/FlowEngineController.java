@@ -127,8 +127,9 @@ public class FlowEngineController  extends BaseController {
         if(StringUtils.isBlank(userCode)){
             userCode = super.getLoginUserCode(request);
         }
+        PageDesc pageDesc = new PageDesc(1, 10);
         searchColumn.put("userCode",userCode);
-        List<UserTask> userTasks = platformFlowService.queryDynamicTask(userCode);
+        List<UserTask> userTasks = platformFlowService.queryDynamicTask(searchColumn,pageDesc);
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
 
