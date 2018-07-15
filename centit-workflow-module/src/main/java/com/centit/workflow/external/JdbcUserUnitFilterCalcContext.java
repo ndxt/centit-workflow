@@ -17,6 +17,8 @@ import java.util.List;
  */
 public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcContext {
 
+
+
     @Value("${wf.external.system.jdbc.url:}")
     protected String externalJdbcUrl;
     @Value("${wf.external.system.jdbc.user:}")
@@ -95,7 +97,10 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
      * 读取配置文件中的 JDBC 链接 和 sql语句
      */
     public void loadExternalSystemData(){
-        ExternalSystemData.loadExternalSystemData(externalJdbcUrl, externalJdbcUser, externalJdbcPassword);
+        ExternalSystemData.loadExternalSystemData(
+            externalJdbcUrl,
+            externalJdbcUser,
+            externalJdbcPassword);
     }
 
     public void setExternalJdbcUrl(String externalJdbcUrl) {

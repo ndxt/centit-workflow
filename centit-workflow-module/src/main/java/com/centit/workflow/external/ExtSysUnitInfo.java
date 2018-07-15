@@ -124,7 +124,6 @@ public class ExtSysUnitInfo implements IUnitInfo{
      *
      * @return 获取下级机构
      */
-    @Override
     public List<ExtSysUnitInfo> getSubUnits() {
         return this.subUnits;
     }
@@ -141,7 +140,6 @@ public class ExtSysUnitInfo implements IUnitInfo{
      *
      * @return 获取机构用户下属用户关系
      */
-    @Override
     public List<ExtSysUserUnit> getUnitUsers() {
         return this.unitUsers;
     }
