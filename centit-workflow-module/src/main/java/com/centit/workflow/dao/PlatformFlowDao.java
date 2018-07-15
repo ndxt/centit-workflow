@@ -38,6 +38,9 @@ public class PlatformFlowDao {
         "[:(like) flowOptName| and w.FLOW_OPT_NAME like :flowOptName] " +
         "[ :unitCode| and ( a.unit_code = :unitCode or a.unit_code is null )] " +
         "[ :userStation| and c.role_code = :userStation] " +
+        "[ :stageCode| and STAGE_CODE = :stageCode] "+
+        "[ :flowCode| and FLOW_CODE = :flowCode] " +
+        "[ :nodeCode| and NODE_CODE = :nodeCode] " +
         " ORDER by a.create_time desc";
     @Transactional(propagation = Propagation.MANDATORY)
     public List<UserTask> queryStaticTask(String userCode){
