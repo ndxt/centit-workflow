@@ -14,8 +14,6 @@ public class ExtSysUnitInfo implements IUnitInfo{
     private String unitCode;
     private String unitName;
     private String parentUnit;
-    private List<ExtSysUnitInfo> subUnits;
-    private List<ExtSysUserUnit> unitUsers;
     private Long unitOrder;
     private String unitManager;
     private String unitPath;
@@ -119,37 +117,7 @@ public class ExtSysUnitInfo implements IUnitInfo{
         return null;
     }
 
-    /**
-     * 获取下级机构
-     *
-     * @return 获取下级机构
-     */
-    public List<ExtSysUnitInfo> getSubUnits() {
-        return this.subUnits;
-    }
 
-    public void addSubUnit(ExtSysUnitInfo subUnit){
-        if(this.subUnits==null){
-            this.subUnits = new ArrayList<>(4);
-        }
-        this.subUnits.add(subUnit);
-    }
-
-    /**
-     * 获取机构用户下属用户关系
-     *
-     * @return 获取机构用户下属用户关系
-     */
-    public List<ExtSysUserUnit> getUnitUsers() {
-        return this.unitUsers;
-    }
-
-    public void addUnitUser(ExtSysUserUnit unitUser){
-        if(this.unitUsers==null){
-            this.unitUsers = new ArrayList<>(4);
-        }
-        this.unitUsers.add(unitUser);
-    }
     public void setUnitCode(String unitCode) {
         this.unitCode = unitCode;
     }
@@ -162,13 +130,6 @@ public class ExtSysUnitInfo implements IUnitInfo{
         this.parentUnit = parentUnit;
     }
 
-    public void setSubUnits(List<ExtSysUnitInfo> subUnits) {
-        this.subUnits = subUnits;
-    }
-
-    public void setUnitUsers(List<ExtSysUserUnit> unitUsers) {
-        this.unitUsers = unitUsers;
-    }
 
     public void setUnitOrder(Long unitOrder) {
         this.unitOrder = unitOrder;

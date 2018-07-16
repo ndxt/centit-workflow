@@ -15,7 +15,6 @@ public class ExtSysUserInfo implements IUserInfo {
     private String userName;
     private String primaryUnit;
     private Long userOrder;
-    private List<ExtSysUserUnit> userUnits;
     /**
      * 用户编码，是用户的主键
      *
@@ -141,22 +140,6 @@ public class ExtSysUserInfo implements IUserInfo {
       return this.userName;
     }
 
-  /**
-     * 获取用户归属机构关系
-     *
-     * @return 获取用户归属机构关系
-     */
-    public List<ExtSysUserUnit> getUserUnits() {
-        return this.userUnits;
-    }
-
-    public void addUserUnit(ExtSysUserUnit userUnit){
-        if(this.userUnits==null){
-            this.userUnits = new ArrayList<>(4);
-        }
-        this.userUnits.add(userUnit);
-    }
-
     public void setUserCode(String userCode) {
         this.userCode = userCode;
     }
@@ -173,7 +156,4 @@ public class ExtSysUserInfo implements IUserInfo {
         this.userOrder = userOrder;
     }
 
-    public void setUserUnits(List<ExtSysUserUnit> userUnits) {
-        this.userUnits = userUnits;
-    }
 }

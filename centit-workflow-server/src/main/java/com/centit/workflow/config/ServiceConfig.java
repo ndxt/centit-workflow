@@ -46,9 +46,17 @@ public class ServiceConfig {
 
     @Bean
     public UserUnitFilterCalcContext userUnitFilterCalcContext() {
-        if ("external".equalsIgnoreCase(SysParametersUtils.getStringValue("wf.userunit.engine.type"))){
+        if ("external".equalsIgnoreCase(
+            SysParametersUtils.getStringValue("wf.userunit.engine.type"))){
             JdbcUserUnitFilterCalcContext uufcc = new JdbcUserUnitFilterCalcContext();
-            uufcc.loadExternalSystemData();
+            /* 这个应该可以自动注入
+                @Value("${wf.external.system.jdbc.url:}")
+                protected String externalJdbcUrl;
+                @Value("${wf.external.system.jdbc.user:}")
+                protected String externalJdbcUser;
+                @Value("${wf.external.system.jdbc.password:}")
+                protected String externalJdbcPassword;
+             */
             return uufcc;
         } else {
             return new SystemUserUnitFilterCalcContext();
