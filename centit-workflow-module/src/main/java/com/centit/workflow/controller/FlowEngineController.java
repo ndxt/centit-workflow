@@ -163,4 +163,10 @@ public class FlowEngineController  extends BaseController {
         List<String> flowWorkTeams = flowEng.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(),flowWorkTeam.getRoleCode());
         JsonResultUtils.writeSingleDataJson(flowWorkTeams,httpServletResponse);
     }
+
+    @RequestMapping(value = "/viewFlowOrganize",method = {RequestMethod.POST,RequestMethod.PUT})
+    public void viewFlowOrganize(HttpServletResponse httpServletResponse, FlowOrganize flowOrganize){
+        List<String> orgnaizes = flowEng.viewFlowOrganize(flowOrganize.getFlowInstId(),flowOrganize.getRoleCode());
+        JsonResultUtils.writeSingleDataJson(orgnaizes,httpServletResponse);
+    }
 }

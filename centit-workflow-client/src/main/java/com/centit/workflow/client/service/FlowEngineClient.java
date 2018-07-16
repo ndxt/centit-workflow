@@ -645,7 +645,7 @@ public interface FlowEngineClient {
 //     * @param roleCode 机构角色代码
 //     * @return Set<unitCode>
 //     */
-//    List<String> viewFlowOrganize(long flowInstId, String roleCode);
+    List<String> viewFlowOrganize(long flowInstId, String roleCode);
 //
 //    /**
 //     *
