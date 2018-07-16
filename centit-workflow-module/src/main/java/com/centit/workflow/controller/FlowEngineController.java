@@ -5,10 +5,7 @@ import com.centit.framework.core.controller.BaseController;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
-import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.FlowVariable;
-import com.centit.workflow.po.NodeInstance;
-import com.centit.workflow.po.UserTask;
+import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
@@ -127,8 +124,9 @@ public class FlowEngineController  extends BaseController {
         if(StringUtils.isBlank(userCode)){
             userCode = super.getLoginUserCode(request);
         }
+        PageDesc pageDesc = new PageDesc(1, 10);
         searchColumn.put("userCode",userCode);
-        List<UserTask> userTasks = platformFlowService.queryDynamicTask(userCode);
+        List<UserTask> userTasks = platformFlowService.queryDynamicTask(searchColumn,pageDesc);
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
 
@@ -158,5 +156,17 @@ public class FlowEngineController  extends BaseController {
                                HttpServletRequest request,HttpServletResponse response){
         flowEng.updateFlowInstOptInfo(flowInstId,flowOptName,flowOptTag);
         JsonResultUtils.writeSuccessJson(response);
+    }
+
+    @RequestMapping(value = "/viewFlowWorkTeam",method = {RequestMethod.POST,RequestMethod.PUT})
+    public void viewFlowWorkTeam(HttpServletResponse httpServletResponse, FlowWorkTeam flowWorkTeam){
+        List<String> flowWorkTeams = flowEng.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(),flowWorkTeam.getRoleCode());
+        JsonResultUtils.writeSingleDataJson(flowWorkTeams,httpServletResponse);
+    }
+
+    @RequestMapping(value = "/viewFlowOrganize",method = {RequestMethod.POST,RequestMethod.PUT})
+    public void viewFlowOrganize(HttpServletResponse httpServletResponse, FlowOrganize flowOrganize){
+        List<String> orgnaizes = flowEng.viewFlowOrganize(flowOrganize.getFlowInstId(),flowOrganize.getRoleCode());
+        JsonResultUtils.writeSingleDataJson(orgnaizes,httpServletResponse);
     }
 }

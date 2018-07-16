@@ -463,9 +463,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
         Map<Long ,String>  nodeIsLeaf = new HashMap<Long ,String>();
         for(NodeInfo nd : newFlowDef.getFlowNodes()){
-            if(nd.getNodeId().equals(flowData.firstNodeId ))
+            if(nd.getNodeId().equals(flowData.firstNodeId )) {
                 nd.setNodeType("B");//首届点
-
+            }
+            nd.setOsId(flowDef.getOsId());
         }
         //检查 孤立的节点
         for(FlowTransition tran: newFlowDef.getFlowTransitions()){
