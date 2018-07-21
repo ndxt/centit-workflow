@@ -41,6 +41,7 @@ public class PlatformFlowDao {
         "[ :stageCode| and STAGE_CODE = :stageCode] "+
         "[ :flowCode| and FLOW_CODE = :flowCode] " +
         "[ :nodeCode| and NODE_CODE = :nodeCode] " +
+        "[ :nodeInstId| and node_inst_id = :nodeInstId] " +
         " ORDER by a.create_time desc";
     @Transactional(propagation = Propagation.MANDATORY)
     public List<UserTask> queryStaticTask(String userCode){

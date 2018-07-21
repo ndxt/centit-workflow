@@ -20,7 +20,6 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
     private PlatformFlowDao platformFlowDao;
 
     @Override
-    @Transactional
     public List<UserTask> queryDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
         //动态任务
@@ -31,7 +30,6 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
         if(iUserUnits == null||iUserUnits.size()==0){
             return taskList;
         }
-        //TODO 需要做成分页查询
         for(IUserUnit i:iUserUnits){
             searchColumn.put("unitCode",i.getUnitCode());
             searchColumn.put("userStation",i.getUserStation());
@@ -43,7 +41,33 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
     }
 
     @Override
-    @Transactional
+    public List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<UserTask> taskList = new ArrayList<>();
+
+        String station=searchColumn.get("station").toString();
+        String unitCode=searchColumn.get("unitCode").toString();
+        Long nodeInstId =(Long)searchColumn.get("nodeInstId");
+        List<? extends IUserUnit> userUnits=CodeRepositoryUtil.listUnitUsers(unitCode);
+
+        //2.以机构，岗位，职务来查询任务
+        if(userUnits == null||userUnits.size()==0){
+            return taskList;
+        }
+        for(IUserUnit i:userUnits){
+            if(!station.equals(i.getUserStation()))
+                continue;
+            searchColumn.put("nodeInstId",nodeInstId);
+            searchColumn.put("userCode",i.getUserCode());
+            searchColumn.put("unitCode",i.getUnitCode());
+            searchColumn.put("userStation",i.getUserStation());
+            List<UserTask>  dynamicTask = platformFlowDao.queryDynamicTask(searchColumn,pageDesc);
+            taskList.addAll(dynamicTask);
+        }
+
+        return taskList;
+    }
+
+    @Override
     public List<UserTask> queryTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
         //静态任务

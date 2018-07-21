@@ -34,4 +34,12 @@ public interface PlatformFlowService {
      * @return
      */
     List<UserTask> queryDynamicTask(Map<String, Object> searchColumn,PageDesc pageDesc);
+
+    /**
+     * 获取动态待办
+     * @param searchColumn 包含nodeInstId，unitCode，userStation
+     * @param pageDesc
+     * @return
+     */
+    public List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc);
 }

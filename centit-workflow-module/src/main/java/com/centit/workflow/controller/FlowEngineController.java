@@ -158,7 +158,7 @@ public class FlowEngineController  extends BaseController {
         JsonResultUtils.writeSuccessJson(response);
     }
 
-    @RequestMapping(value = "/viewFlowWorkTeam",method = {RequestMethod.POST,RequestMethod.PUT})
+    @RequestMapping(value = "/viewFlowWorkTeam",method = {RequestMethod.POST,RequestMethod.GET})
     public void viewFlowWorkTeam(HttpServletResponse httpServletResponse, FlowWorkTeam flowWorkTeam){
         List<String> flowWorkTeams = flowEng.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(),flowWorkTeam.getRoleCode());
         JsonResultUtils.writeSingleDataJson(flowWorkTeams,httpServletResponse);

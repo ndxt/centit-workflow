@@ -662,11 +662,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nextNodeInst.copyNotNullProperty(thisnode);
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setNodeState("N");
-        nextNodeInst.setTaskAssigned("D");
+        nextNodeInst.setTaskAssigned(thisnode.getTaskAssigned());
         nextNodeInst.setLastUpdateUser(mangerUserCode);
         nextNodeInst.setLastUpdateTime(updateTime);
 
         for (ActionTask task : thisnode.getWfActionTasks()) {
+            nextNodeInst.setTaskAssigned("T");
             if ("T".equals(task.getIsValid())) {
                 ActionTask newtask = FlowOptUtils.createActionTask(
                         task.getUserCode(), nextNodeInst, nodedef);
