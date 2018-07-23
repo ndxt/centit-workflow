@@ -38,10 +38,10 @@ public class PlatformFlowDao {
         "[:(like) flowOptName| and w.FLOW_OPT_NAME like :flowOptName] " +
         "[ :unitCode| and ( a.unit_code = :unitCode or a.unit_code is null )] " +
         "[ :userStation| and c.role_code = :userStation] " +
-        "[ :stageCode| and STAGE_CODE = :stageCode] "+
-        "[ :flowCode| and FLOW_CODE = :flowCode] " +
-        "[ :nodeCode| and NODE_CODE = :nodeCode] " +
-        "[ :nodeInstId| and node_inst_id = :nodeInstId] " +
+        "[ :stageCode| and c.STAGE_CODE = :stageCode] "+
+        "[ :flowCode| and w.FLOW_CODE = :flowCode] " +
+        "[ :nodeCode| and a.NODE_CODE = :nodeCode] " +
+        "[ :nodeInstId| and a.node_inst_id = :nodeInstId] " +
         " ORDER by a.create_time desc";
     @Transactional(propagation = Propagation.MANDATORY)
     public List<UserTask> queryStaticTask(String userCode){
@@ -56,7 +56,6 @@ public class PlatformFlowDao {
         return flowInfoDao.getJdbcTemplate().query(sql,new Object[]{userCode},new BeanPropertyRowMapper(UserTask.class));
     }
 
-    @Transactional(propagation = Propagation.MANDATORY)
     public List<UserTask> queryDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc){
        /* String sql = "select w.flow_inst_id,w.flow_code,w.version,w.flow_opt_name,w.flow_opt_tag," +
             "  a.node_inst_id,a.unit_code,a.user_code, " +
