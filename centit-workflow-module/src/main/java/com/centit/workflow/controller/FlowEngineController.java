@@ -164,7 +164,7 @@ public class FlowEngineController  extends BaseController {
         JsonResultUtils.writeSingleDataJson(flowWorkTeams,httpServletResponse);
     }
 
-    @RequestMapping(value = "/viewFlowOrganize",method = {RequestMethod.POST,RequestMethod.PUT})
+    @RequestMapping(value = "/viewFlowOrganize",method = {RequestMethod.POST,RequestMethod.GET})
     public void viewFlowOrganize(HttpServletResponse httpServletResponse, FlowOrganize flowOrganize){
         List<String> orgnaizes = flowEng.viewFlowOrganize(flowOrganize.getFlowInstId(),flowOrganize.getRoleCode());
         JsonResultUtils.writeSingleDataJson(orgnaizes,httpServletResponse);
