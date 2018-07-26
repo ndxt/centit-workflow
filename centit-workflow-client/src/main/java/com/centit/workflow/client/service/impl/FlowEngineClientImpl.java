@@ -191,6 +191,26 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
+    public void assignFlowOrganize (long flowInstId, String roleCode,
+                             List<String> orgCodeSet){
+        HashMap<String,Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId",flowInstId);
+        paramMap.put("roleCode",roleCode);
+        paramMap.put("userCodeList", orgCodeSet);
+        CloseableHttpClient httpClient = null;
+        String result = null;
+        try {
+            httpClient = appSession.allocHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/flow/engine/assignFlowOrganize"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
+    }
+    @Override
     public Set<Long> submitOpt(long nodeInstId, String userCode,
                                String unitCode, Map<String,Object> varTrans,
                                ServletContext application) throws  Exception{

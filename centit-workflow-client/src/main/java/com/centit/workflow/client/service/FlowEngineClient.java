@@ -482,6 +482,16 @@ public interface FlowEngineClient {
      */
     void assignFlowWorkTeam(long flowInstId, String roleCode,
                             List<String> userCodeSet) throws Exception;
+
+    /**
+     * 分配主办或者协办处室
+     * @param flowInstId
+     * @param roleCode
+     * @param orgCodeSet
+     * @throws Exception
+     */
+    void assignFlowOrganize (long flowInstId, String roleCode,
+                             List<String> orgCodeSet) throws Exception;
 //
 //
 //    /**
