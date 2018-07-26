@@ -196,7 +196,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         HashMap<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("roleCode",roleCode);
-        paramMap.put("userCodeList", orgCodeSet);
+        paramMap.put("orgCodeSet", orgCodeSet);
         CloseableHttpClient httpClient = null;
         String result = null;
         try {

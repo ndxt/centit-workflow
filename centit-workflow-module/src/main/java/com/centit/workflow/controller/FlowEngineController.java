@@ -170,8 +170,8 @@ public class FlowEngineController  extends BaseController {
     }
 
     @RequestMapping(value = "/assignFlowOrganize",method = {RequestMethod.POST,RequestMethod.GET})
-    public void assignFlowOrganize(HttpServletResponse httpServletResponse, Long flowInstId,String roleCode,String orgList){
-        String[] orgArr = orgList.split(",");
+    public void assignFlowOrganize(HttpServletResponse httpServletResponse, Long flowInstId,String roleCode,String orgCodeSet){
+        String[] orgArr = orgCodeSet.split(",");
         List<String> orgCodes = new ArrayList<>(Arrays.asList(orgArr));
         flowEng.assignFlowOrganize(flowInstId,roleCode,orgCodes);
         JsonResultUtils.writeBlankJson(httpServletResponse);
