@@ -193,9 +193,9 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
         return 0;
     }
 
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName,
-                                      String flowOptTag){
-        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=? where  FLOW_INST_ID=?";
-        this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,flowInstId});
+    @Transactional(propagation= Propagation.MANDATORY)
+    public void updateFlowInstOptInfo(long flowInstId, String flowOptName){
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=? where  FLOW_INST_ID=?";
+        this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowInstId});
     }
 }

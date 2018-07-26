@@ -323,7 +323,7 @@ public interface FlowEngine {
      * @param flowOptName 这个名称用户 查找流程信息
      * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，有业务系统自己解释
      */
-    void updateFlowInstOptInfo(long flowInstId,String flowOptName,String flowOptTag);
+    void updateFlowInstOptInfo(long flowInstId,String flowOptName);
 
     //--------------------人工控制流程流转和任务分配------------------------------------
 

@@ -314,7 +314,7 @@ public interface FlowEngineClient {
          * @return
          */
         List<FlowInstance> listAllFlowInstByOptTag(String optTag);
-        void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag);
+        void updateFlowInstOptInfo(long flowInstId, String flowOptName);
 //
 //    //--------------------人工控制流程流转和任务分配------------------------------------
 //

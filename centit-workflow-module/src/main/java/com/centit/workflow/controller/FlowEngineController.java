@@ -149,12 +149,11 @@ public class FlowEngineController  extends BaseController {
      * 更改流程业务信息，flowOptName 用来显示业务办件名称，flowOptTag 给业务系统自己解释可以用于反向关联
      * @param flowInstId 流程实例ID
      * @param flowOptName 这个名称用户 查找流程信息
-     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，有业务系统自己解释
      */
     @RequestMapping(value="/updateFlowInstOptInfo",method = RequestMethod.POST)
-    void updateFlowInstOptInfo(long flowInstId,String flowOptName,String flowOptTag,
+    void updateFlowInstOptInfo(long flowInstId,String flowOptName,
                                HttpServletRequest request,HttpServletResponse response){
-        flowEng.updateFlowInstOptInfo(flowInstId,flowOptName,flowOptTag);
+        flowEng.updateFlowInstOptInfo(flowInstId,flowOptName);
         JsonResultUtils.writeSuccessJson(response);
     }
 

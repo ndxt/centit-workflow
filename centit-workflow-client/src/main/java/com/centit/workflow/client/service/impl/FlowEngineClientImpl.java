@@ -315,11 +315,10 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag) {
+    public void updateFlowInstOptInfo(long flowInstId, String flowOptName) {
         HashMap<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("flowOptName",flowOptName);
-        paramMap.put("flowOptTag",flowOptTag);
         CloseableHttpClient httpClient = null;
         try {
             httpClient = appSession.allocHttpClient();

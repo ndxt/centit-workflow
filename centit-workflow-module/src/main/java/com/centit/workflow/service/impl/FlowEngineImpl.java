@@ -328,16 +328,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName,
-                                      String flowOptTag) {
+    public void updateFlowInstOptInfo(long flowInstId, String flowOptName) {
         /*FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
             return;
         flowInst.setFlowOptName(flowOptName);
         flowInst.setFlowOptTag(flowOptTag);
         flowInstanceDao.updateObject(flowInst);*/
-        flowInstanceDao.updateFlowInstOptInfo(flowInstId, flowOptName,
-            flowOptTag);
+        flowInstanceDao.updateFlowInstOptInfo(flowInstId, flowOptName);
     }
 
     @Override
