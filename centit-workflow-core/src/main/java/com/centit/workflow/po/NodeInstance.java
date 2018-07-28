@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 @Entity
 @Table(name="WF_NODE_INSTANCE")
 public class NodeInstance implements java.io.Serializable {
@@ -39,8 +39,8 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name="TIME_LIMIT")
     private Long  timeLimit;
     /**
-     * 
-     * N 正常  B 已回退    C 完成   F被强制结束 
+     *
+     * N 正常  B 已回退    C 完成   F被强制结束
      * P 暂停   W 等待子流程返回   S 等等前置节点（可能是多个）完成
      */
     @Column(name="NODE_STATE")
@@ -49,7 +49,7 @@ public class NodeInstance implements java.io.Serializable {
     private Long subFlowInstId;
     @Column(name="UNIT_CODE")
     private String unitCode;
-    
+
     @Column(name="TRANS_PATH")
     private String  transPath;
     //T: 通过 tasklist 分配， D：通过 岗位角色 自动匹配 S：静态代办（usercode)
@@ -73,13 +73,12 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name="NODE_PARAM")
     private String nodeParam;
 
-
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name="NODE_INST_ID")
+    @OneToMany(mappedBy = "nodeInstId",cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = ActionLog.class)
+    @JoinColumn(name="nodeInstId")
     private Set<ActionLog> wfActionLogs = null;// new ArrayList<WfActionLog>();
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name="NODE_INST_ID")
+    @OneToMany(mappedBy = "nodeInstId",cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = ActionTask.class)
+    @JoinColumn(name="nodeInstId")
     private Set<ActionTask> wfActionTasks = null;// new ArrayList<WfActionTask>();
 
     //非持久化属性
@@ -154,7 +153,7 @@ public class NodeInstance implements java.io.Serializable {
         this.nodeInstId = nodeinstid;
     }
     // Property accessors
-  
+
     public Long getFlowInstId() {
         return this.flowInstId;
     }
@@ -193,7 +192,7 @@ public class NodeInstance implements java.io.Serializable {
     public void setCreateTime(Date createtime) {
         this.createTime = createtime;
     }
-  
+
     public Date getLastUpdateTime() {
         return this.lastUpdateTime;
     }
@@ -201,7 +200,7 @@ public class NodeInstance implements java.io.Serializable {
     public void setLastUpdateTime(Date starttime) {
         this.lastUpdateTime = starttime;
     }
-  
+
     public Long getPrevNodeInstId() {
         return this.prevNodeInstId;
     }
@@ -217,15 +216,15 @@ public class NodeInstance implements java.io.Serializable {
         wts.fromNumber(promiseTime);
         return wts.getTimeSpanDesc();
     }
-    
+
     public Long getPromiseTime() {
         return promiseTime;
     }
-    
+
     public void setPromiseTime(Long promiseTime) {
         this.promiseTime = promiseTime;
     }
-  
+
     public String getTimeLimitStr() {
         if(timeLimit==null)
             return "";
@@ -239,24 +238,24 @@ public class NodeInstance implements java.io.Serializable {
     public void setTimeLimit(Long timeLimit) {
         this.timeLimit = timeLimit;
     }
-  
+
     /**
-     * 
-     * N 正常  B 已回退    C 完成   F被强制结束 
+     *
+     * N 正常  B 已回退    C 完成   F被强制结束
      * P 暂停   W 等待子流程返回   S 等等前置节点（可能是多个）完成
      */
     public String getNodeState() {
         return this.nodeState;
     }
     /**
-     * 
-     * N 正常  B 已回退    C 完成   F被强制结束 
+     *
+     * N 正常  B 已回退    C 完成   F被强制结束
      * P 暂停   W 等待子流程返回   S 等等前置节点（可能是多个）完成
      */
     public void setNodeState(String nodestate) {
         this.nodeState = nodestate;
     }
-  
+
     public Long getSubFlowInstId() {
         return this.subFlowInstId;
     }
@@ -264,7 +263,7 @@ public class NodeInstance implements java.io.Serializable {
     public void setSubFlowInstId(Long subwfinstid) {
         this.subFlowInstId = subwfinstid;
     }
-  
+
     public String getUnitCode() {
         return this.unitCode;
     }
@@ -272,7 +271,7 @@ public class NodeInstance implements java.io.Serializable {
     public void setUnitCode(String unitcode) {
         this.unitCode = unitcode;
     }
-  
+
     public String getTransPath() {
         return this.transPath;
     }
@@ -282,7 +281,7 @@ public class NodeInstance implements java.io.Serializable {
     }
 
     public boolean isTaskAssign() {
-        
+
         return "T".equals(taskAssigned);
     }
     /**
@@ -311,7 +310,7 @@ public class NodeInstance implements java.io.Serializable {
             return "";
         return runToken;
     }
-    
+
     /**
      * 计算一个令牌token的上层token
      * @param token
@@ -332,7 +331,7 @@ public class NodeInstance implements java.io.Serializable {
     public String getParentToken() {
         return NodeInstance.calcSuperToken(runToken);
     }
-   
+
     /**
      * 计算一个令牌token的主干token，游离节点去掉前面的R，临时插入节点去掉前面的L
      * @param token
@@ -353,8 +352,8 @@ public class NodeInstance implements java.io.Serializable {
             return "";
         return token.substring(nPos);
     }
-    
-   
+
+
     /**
      * 获取主干令牌
      * @return
@@ -362,7 +361,7 @@ public class NodeInstance implements java.io.Serializable {
     public String getTrunkToken() {
         return NodeInstance.calcTrunkToken(runToken);
     }
-    
+
     /**
      * 计算一个令牌token的层次 （代）
      * @param token
@@ -379,7 +378,7 @@ public class NodeInstance implements java.io.Serializable {
         }
         return g;
     }
-    
+
     /**
      * 获取层次 （代
      * @return
@@ -410,7 +409,7 @@ public class NodeInstance implements java.io.Serializable {
             return token;
         return token.substring(0,nPos);
     }
-    
+
     /**
      * 计算一个令牌token的的祖先
      * @param generation
@@ -426,8 +425,8 @@ public class NodeInstance implements java.io.Serializable {
      */
     public void setRunToken(String runToken) {
         this.runToken = runToken;
-    }    
-    
+    }
+
     public String getFlowStage() {
         return stageCode;
     }
@@ -435,7 +434,7 @@ public class NodeInstance implements java.io.Serializable {
     public void setFlowStage(String flowPhase) {
         this.stageCode = flowPhase;
     }
-    
+
     public String getUserCode() {
         return userCode;
     }
@@ -448,13 +447,13 @@ public class NodeInstance implements java.io.Serializable {
     public void setNodeParam(String nodeParam) {
         this.nodeParam = nodeParam;
     }
-    
+
     public Set<ActionLog> getWfActionLogs(){
         if(this.wfActionLogs==null)
             this.wfActionLogs = new HashSet<ActionLog>();
         return this.wfActionLogs;
     }
-    
+
     public String getNodeName() {
         return this.nodeName;
     }
@@ -462,7 +461,7 @@ public class NodeInstance implements java.io.Serializable {
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
     }
-    
+
     public void setWfActionLogs(Set<ActionLog> wfActionLogs) {
         this.wfActionLogs = wfActionLogs;
     }
@@ -481,7 +480,7 @@ public class NodeInstance implements java.io.Serializable {
 
     public ActionLog newWfActionLog(){
         ActionLog res = new ActionLog();
-  
+
         res.setNodeInstId(this.getNodeInstId());
 
         return res;
@@ -555,7 +554,7 @@ public class NodeInstance implements java.io.Serializable {
 
     public ActionTask newWfActionTask(){
         ActionTask res = new ActionTask();
-  
+
         res.setNodeInstId(this.getNodeInstId());
 
         return res;
@@ -606,9 +605,9 @@ public class NodeInstance implements java.io.Serializable {
     }
 
       public void copy(NodeInstance other){
-  
+
         this.setNodeInstId(other.getNodeInstId());
-  
+
         this.flowInstId= other.getFlowInstId();
         this.node.setNodeId(other.getNodeId());
         this.createTime = other.getCreateTime();
@@ -628,10 +627,10 @@ public class NodeInstance implements java.io.Serializable {
     }
 
     public void copyNotNullProperty(NodeInstance other){
-  
+
     if( other.getNodeInstId() != null)
         this.setNodeInstId(other.getNodeInstId());
-  
+
         if( other.getFlowInstId() != null)
             this.flowInstId= other.getFlowInstId();
         if( other.getNodeId() != null)
@@ -681,12 +680,12 @@ public class NodeInstance implements java.io.Serializable {
 
     public void clearProperties()
     {
-        //this.wfinstid= null;  
+        //this.wfinstid= null;
         this.node.setNodeId(null);
         this.createTime = null;
-        this.lastUpdateTime= null;  
+        this.lastUpdateTime= null;
         this.prevNodeInstId = null;
-        this.nodeState= null;  
+        this.nodeState= null;
         this.subFlowInstId = null;
         this.unitCode = null;
         this.transPath=  null;
@@ -708,7 +707,7 @@ public class NodeInstance implements java.io.Serializable {
     public void setFlowOptTag(String flowOptTag) {
         this.flowOptTag = flowOptTag;
     }
-    
+
     /**
      * xz 行政角色  gw 岗位角色 bj 办件角色  en 工作流引擎
      */
@@ -734,7 +733,7 @@ public class NodeInstance implements java.io.Serializable {
     public void setLastUpdateUser(String lastUpdateUser) {
         this.lastUpdateUser = lastUpdateUser;
     }
-    
+
     public String getGrantor() {
         return grantor;
     }
@@ -742,13 +741,13 @@ public class NodeInstance implements java.io.Serializable {
         this.grantor = grantor;
     }
     /**
-     * 不计时N、计时T 、暂停 P 
+     * 不计时N、计时T 、暂停 P
      */
     public String getIsTimer() {
         return isTimer;
     }
     /**
-     * 不计时N、计时T  、暂停 P 
+     * 不计时N、计时T  、暂停 P
      */
     public void setIsTimer(String isTimer) {
         this.isTimer = isTimer;
@@ -761,7 +760,7 @@ public class NodeInstance implements java.io.Serializable {
     }
 
     public String getNodeOptUrl() {
-        
+
         return null;
     }
     public List<String> getTrainsUsers() {

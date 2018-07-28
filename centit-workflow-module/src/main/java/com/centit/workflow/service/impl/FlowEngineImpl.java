@@ -1164,6 +1164,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         Set<Long> nextNodeInsts = new HashSet<Long>();
 
+
         if ("T".equals(nodeInst.getTaskAssigned())) {
             //多人操作节点 等待所有人都提交才可以提交
             /**这个应该会不需要了，暂时保留
@@ -1187,12 +1188,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     //其他无效任务作废，提高效率。
                     task.setIsValid("F");
                 }
+                //添加actionTask保存
+                actionTaskDao.updateObject(task);
             }
             //判断是否是多人操作，如果是多人操作，最后一个人提交才正在提交
             //前面人提交只更改任务列表中的任务完成状态，多人操作一定要配合 流程活动任务单 工作
             //这个任务可以是业务填写也可以是权限引擎填写
             if ("C".equals(currNode.getOptType()) && havnotSubmit > 0) {
                 nodeInstanceDao.updateObject(nodeInst);
+                nextNodeInsts.clear();
+                nextNodeInsts.add(nodeInstId);
                 return nextNodeInsts;
             }
         }
