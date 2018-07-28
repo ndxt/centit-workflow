@@ -263,7 +263,9 @@ public class UserTask implements java.io.Serializable {
         urlBuilder.append("flowInstId=")
             .append(this.flowInstId)
             .append("&nodeInstId=")
-            .append(this.nodeInstId);
+            .append(this.nodeInstId)
+            .append("&userCode=")
+            .append(this.userCode);
         if(StringUtils.isNoneBlank(this.optParam)){
             urlBuilder.append("&")
             .append(this.optParam);
