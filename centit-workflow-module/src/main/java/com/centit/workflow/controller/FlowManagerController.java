@@ -529,7 +529,21 @@ public class FlowManagerController extends BaseController {
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode", nodeInst.getUnitCode());
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname", CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
                     if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState())) {
-                        List<UserTask> tasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());
+                        List<UserTask> tasks=new ArrayList<>();
+                        List<UserTask> innerTasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());
+                        if(innerTasks!=null)
+                            tasks.addAll(innerTasks);
+                        if("D".equals(nodeInst.getTaskAssigned())){
+                            int page = 1;
+                            int limit = 100;
+                            PageDesc pageDesc = new PageDesc(page, limit);
+                            Map<String, Object> searchColumn = new HashMap<>();
+                            searchColumn.put("nodeInstId",nodeInst.getNodeInstId());
+                            searchColumn.put("unitCode", nodeInst.getUnitCode());
+                            searchColumn.put("userStation", nodeInfo.getRoleCode());
+                            List<UserTask> dynamicTask = platformFlowService.queryDynamicTaskByUnitStation(searchColumn, pageDesc);
+                            tasks.addAll(dynamicTask);
+                        }
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
                         int taskInd = 0;
                         for (UserTask task : tasks) {
@@ -541,6 +555,10 @@ public class FlowManagerController extends BaseController {
                     } else {
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state",
                             CodeRepositoryUtil.getValue("WFInstType", nodeInst.getNodeState()));
+                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updateuser",
+                            CodeRepositoryUtil.getValue("userCode",  nodeInst.getLastUpdateUser()));
+                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
+                            DatetimeOpt.convertDatetimeToString(nodeInst.getLastUpdateTime()));
                         List<ActionLog> actions = flowManager.listNodeActionLogs(nodeInst.getNodeInstId());
                         int actionInd = 0;
                         for (ActionLog action : actions) {

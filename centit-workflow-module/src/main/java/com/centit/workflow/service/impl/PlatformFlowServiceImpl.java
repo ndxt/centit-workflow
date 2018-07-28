@@ -44,7 +44,7 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
     public List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
 
-        String station=searchColumn.get("station").toString();
+        String station=searchColumn.get("userStation").toString();
         String unitCode=searchColumn.get("unitCode").toString();
         Long nodeInstId =(Long)searchColumn.get("nodeInstId");
         List<? extends IUserUnit> userUnits=CodeRepositoryUtil.listUnitUsers(unitCode);

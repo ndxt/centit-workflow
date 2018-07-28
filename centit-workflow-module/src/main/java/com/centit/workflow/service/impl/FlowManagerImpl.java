@@ -852,8 +852,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     public List<NodeInstance> listFlowInstNodes(long wfinstid) {
-        List<NodeInstance> nodeInstList = new ArrayList<NodeInstance>();
-        FlowInstance flowInst = flowInstanceDao.getObjectById(wfinstid);
+        List<NodeInstance> nodeInstList = new ArrayList<>();
+        FlowInstance flowInst = flowInstanceDao.getObjectCascadeById(wfinstid);
         List<NodeInstance> nodeInstsSet = flowInst.getFlowNodeInstances();
         for (NodeInstance nodeInst : nodeInstsSet) {
             NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
@@ -874,7 +874,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
             nodeInstList.add(nodeInst);
         }
-        return new ArrayList<NodeInstance>(nodeInstList);
+        return new ArrayList<>(nodeInstList);
     }
 
     public List<ActionTask> listNodeActionTasks(long nodeinstid) {

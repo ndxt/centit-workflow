@@ -321,12 +321,15 @@ function initEvt(event){
                 $("#nodeContent").empty();//清空内容
                 if(data.instance!=null){
                     //拼接字符串
-                    htmlString = "<ul class='first-menu'>";
+                    htmlString = "<ul>";
                     $("#nodeHeading").html(data.nodename);//设置标题
                     var instances=eval(data.instance);
                     for(var i=0;i<instances.length;i++){
-                        htmlString += "<li><a>当前状态为<span class='red'>"+instances[i].state+"</span>,创建于<span class='blue'>"
-                            +instances[i].createtime+"</span><i></i></a>";
+                        htmlString += "<li><br>当前状态：<span class='red'>"+instances[i].state+"</span><br>创建时间：<span>"
+                            +instances[i].createtime+"</span>";
+                        if(instances[i].updateuser!=null){
+                            htmlString+="<br>办理人："+instances[i].updateuser+"<br>办理时间：<span>"+instances[i].updatetime+"</span>";
+                        }
                         if(instances[i].action!=null){
                             htmlString += "<div class='sort'><div class='sort-bg'></div><ul>";
                             var actions=eval(instances[i].action);
@@ -343,7 +346,7 @@ function initEvt(event){
                             for(var m=0;m<j;m++){
                                 arry.push(tasks[m].username);
                             }
-                            htmlString += "<div class='sort'><ul><li><a>"+arry.join("，")+"</a></li></ul></div>";
+                            htmlString += "<br>当前办理人："+arry.join("，");
                         }
                     }
                     htmlString += "</ul>";
