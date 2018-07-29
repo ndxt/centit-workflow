@@ -317,7 +317,7 @@ function initEvt(event){
             async: false,
             success:function(data){
                 data = data.data || data;
-                $("#nodeInfo").css({"top":top+"px","left":left+"px", "overflow":"scroll"}).show();//显示提示框并设置位置
+                $("#nodeInfo").css({"top":top+"px","left":left+"px", "overflow":"scroll","height":"200px"}).show();//显示提示框并设置位置
                 $("#nodeContent").empty();//清空内容
                 if(data.instance!=null){
                     //拼接字符串
@@ -339,7 +339,7 @@ function initEvt(event){
                             }
                             htmlString += "</ul></div>"
                         }
-                        else if (instances[i].task!=null){
+                        if (instances[i].task!=null){
                             var tasks=eval(instances[i].task);
                             var j=tasks.length;
                             var arry = new Array();
