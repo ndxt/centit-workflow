@@ -24,7 +24,7 @@ public class PlatformFlowDao {
         "  a.node_inst_id,a.unit_code,a.user_code, " +
         " c.node_name,c.node_type,c.opt_type as NODE_OPT_TYPE,c.opt_param,"+
         " w.create_time,w.promise_time,a.time_limit,c.opt_code, " +
-        " c.expire_opt,c.stage_code,'' as GRANTOR,a.last_update_user," +
+        " c.expire_opt,c.stage_code as flowStage,'' as GRANTOR,a.last_update_user," +
         " a.last_update_time,w.inst_state,c.opt_code as opt_url "+
         "from wf_node_instance a " +
         "left join wf_flow_instance w " +

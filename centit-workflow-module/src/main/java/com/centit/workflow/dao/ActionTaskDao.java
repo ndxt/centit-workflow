@@ -47,7 +47,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "FLOW_OPT_TAG,NODE_INST_ID,UNIT_CODE,USER_CODE,ROLE_TYPE," +
             "ROLE_CODE,AUTH_DESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
             "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
-            "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
+            "OPT_CODE,EXPIRE_OPT,STAGE_CODE as flowStage,GRANTOR,LAST_UPDATE_USER," +
             "LAST_UPDATE_TIME,INST_STATE,OPT_URL " +
             "from V_USER_TASK_LIST " +
             "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +

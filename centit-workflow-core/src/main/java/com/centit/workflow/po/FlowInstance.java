@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 @Entity
 @Table(name="WF_FLOW_INSTANCE")
 public class FlowInstance implements java.io.Serializable {
@@ -66,7 +66,7 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name="TIME_LIMIT")
     private Long  timeLimit;
     /**
-     *  流程状态 
+     *  流程状态
      *  N 正常  C 完成   P 暂停 挂起     F 强行结束
      */
     @Column(name="INST_STATE")
@@ -77,13 +77,13 @@ public class FlowInstance implements java.io.Serializable {
     private Long preInstId;
     @Column(name="PRE_NODE_INST_ID")
     private Long preNodeInstId;
-    
+
     @Column(name="UNIT_CODE")
     private String unitCode;
 
     @Column(name="USER_CODE")
     private String userCode;
-    
+
     @Column(name="LAST_UPDATE_TIME")
     private Date  lastUpdateTime;
     @Column(name="LAST_UPDATE_USER")
@@ -149,7 +149,7 @@ public class FlowInstance implements java.io.Serializable {
         this.isTimer = isTimer;
     }
 
- 
+
     public Long getFlowInstId() {
         return this.flowInstId;
     }
@@ -218,9 +218,9 @@ public class FlowInstance implements java.io.Serializable {
     public void setTimeLimit(Long timeLimit) {
         this.timeLimit = timeLimit;
     }
-  
+
     /**
-     *  流程状态 
+     *  流程状态
      *  N 正常  C 完成   P 暂停 挂起     F 强行结束
      */
     public String getInstState() {
@@ -236,9 +236,9 @@ public class FlowInstance implements java.io.Serializable {
     }
 
     public boolean isSubFlow() {
-        
+
         return "Y".equals(isSubInst);
-    } 
+    }
     /**
      * Y 子流程/ N 非子流程
      */
@@ -252,7 +252,7 @@ public class FlowInstance implements java.io.Serializable {
     public void setIsSubInst(String issubinst) {
         this.isSubInst = issubinst;
     }
-  
+
     public Long getPareFlowInstId() {
         return this.preInstId;
     }
@@ -260,7 +260,7 @@ public class FlowInstance implements java.io.Serializable {
     public void setPreInstId(Long preinstid) {
         this.preInstId = preinstid;
     }
-  
+
     public Long getPareNodeInstId() {
         return this.preNodeInstId;
     }
@@ -268,7 +268,7 @@ public class FlowInstance implements java.io.Serializable {
     public void setPreNodeInstId(Long prenodeinstid) {
         this.preNodeInstId = prenodeinstid;
     }
-  
+
     public String getUnitCode() {
         return this.unitCode;
     }
@@ -277,7 +277,7 @@ public class FlowInstance implements java.io.Serializable {
     public void setUnitCode(String unitcode) {
         this.unitCode=unitcode;
     }
-  
+
     public String getUserCode() {
         return this.userCode;
     }
@@ -288,12 +288,12 @@ public class FlowInstance implements java.io.Serializable {
 
 
     public void getOptName(String on) {
-        
+
         optName = on;
     }
-    
+
     public String getOptName() {
-        
+
         return optName;
     }
     public String getFlowOptTag() {
@@ -302,7 +302,7 @@ public class FlowInstance implements java.io.Serializable {
     public void setFlowOptTag(String flowOptTag) {
         this.flowOptTag = flowOptTag;
     }
-  
+
     public Set<NodeInstance> getActiveNodeInstances() {
         Set<NodeInstance> nodeInstSet = new HashSet<NodeInstance>();
         if(this.flowNodeInstances ==null)
@@ -331,7 +331,7 @@ public class FlowInstance implements java.io.Serializable {
         });
          return new ArrayList<>(flowNodeInstances);
     }
-    
+
     public List<NodeInstance> getFlowNodeInstances(){
         if(this.flowNodeInstances ==null)
             this.flowNodeInstances = new ArrayList<>();
@@ -356,7 +356,7 @@ public class FlowInstance implements java.io.Serializable {
 
     public NodeInstance newWfNodeInstance(){
         NodeInstance res = new NodeInstance();
-  
+
         res.setFlowInstId(this.getFlowInstId());
 
         return res;
@@ -365,7 +365,7 @@ public class FlowInstance implements java.io.Serializable {
     public NodeInstance getNodeInstanceById(long nodeInstId){
         if (this.flowNodeInstances ==null)
             return null;
-        
+
         for(NodeInstance nodeInst : flowNodeInstances)
             if(nodeInst.getNodeInstId().equals(nodeInstId))
                 return nodeInst;
@@ -378,22 +378,22 @@ public class FlowInstance implements java.io.Serializable {
             this.flowStageInstances = new ArrayList<StageInstance>();
         return this.flowStageInstances;
     }
-    
+
     public List<StageInstance> getStageInstanceList() {
         List<StageInstance> stageList = new ArrayList<StageInstance>();
         stageList.addAll(getFlowStageInstances());
         return stageList;
     }
-    
+
     public List<StageInstance> getExpiredStageInstanceList() {
         List<StageInstance> stageList = new ArrayList<StageInstance>();
         for(StageInstance stage: getFlowStageInstances()){
             if(stage.getTimeLimit()<0)
                 stageList.add(stage);
-        }        
+        }
         return stageList;
     }
-   
+
 
     public void setFlowStageInstances(List<StageInstance> flowStageInstances) {
         this.flowStageInstances = flowStageInstances;
@@ -404,30 +404,30 @@ public class FlowInstance implements java.io.Serializable {
             this.flowStageInstances = new ArrayList<StageInstance>();
         this.flowStageInstances.add(wfStageInstance);
     }
-    
+
     public void removeFlowStageInstance(StageInstance wfStageInstance ){
         if (this.flowStageInstances ==null)
             return;
         this.flowStageInstances.remove(wfStageInstance);
     }
-    
+
     public StageInstance newFlowStageInstance(){
-        
+
         StageInstance res = new StageInstance();
         res.setFlowInstId(this.getFlowInstId());
         return res;
     }
-    
+
     public StageInstance getStageInstanceByCode(String stageCode){
         if (this.flowStageInstances ==null)
             return null;
-        
+
         for(StageInstance stageInst : this.flowStageInstances)
             if(stageInst.getStageCode().equals(stageCode))
                 return stageInst;
         return null;
     }
-    
+
     public NodeInstance getFirstNodeInstance() {
         if (this.flowNodeInstances ==null)
             return null;
@@ -443,7 +443,7 @@ public class FlowInstance implements java.io.Serializable {
         NodeInstance nodeInst = this.getNodeInstanceById(nodeInstId);
         if(nodeInst==null)
             return null;
-        List<NodeInstance> nodes = new ArrayList<NodeInstance>(); 
+        List<NodeInstance> nodes = new ArrayList<NodeInstance>();
         String thisToken  = nodeInst.getRunToken();
         while(true){
             if(thisToken==null || thisToken.equals(nodeInst.getRunToken()))
@@ -459,7 +459,7 @@ public class FlowInstance implements java.io.Serializable {
         NodeInstance nodeInst = this.getNodeInstanceById(nodeInstId);
         if(nodeInst==null)
             return null;
-        List<NodeInstance> nodes = new ArrayList<NodeInstance>(); 
+        List<NodeInstance> nodes = new ArrayList<NodeInstance>();
         //String thisToken  = nodeInst.getRunToken();
         while(true){
             //if(thisToken==null || thisToken.equals(nodeInst.getRunToken()))
@@ -470,7 +470,7 @@ public class FlowInstance implements java.io.Serializable {
         }
         return nodes;
     }
-    
+
     /**
      * 获取相同Token的最新节点所属机构
      * @param nodeInst
@@ -480,19 +480,19 @@ public class FlowInstance implements java.io.Serializable {
     public String getNearestNodeUnitCode(NodeInstance nodeInst, String thisToken)
     {
         NodeInstance curNode = nodeInst;
-                    
+
         while(curNode!= null){
             if(curNode.getUnitCode() != null && !"".equals(curNode.getUnitCode())){
                 String prevToken = curNode.getRunToken();
                 if( thisToken==null || prevToken==null
-                        || thisToken.equals(prevToken) 
+                        || thisToken.equals(prevToken)
                         || thisToken.startsWith(prevToken+'.'))
                 return curNode.getUnitCode();
             }
-            
+
             if(curNode.getPrevNodeInstId()==null)
                 return null;
-            
+
             curNode = this.getNodeInstanceById(curNode.getPrevNodeInstId());
         }
         return null;
@@ -517,7 +517,7 @@ public class FlowInstance implements java.io.Serializable {
      * @return
      */
     public List<NodeInstance> getAllNodeInstancesByNodeid(long  nodeId){
-        List<NodeInstance> sameNodes = new ArrayList<NodeInstance>(); 
+        List<NodeInstance> sameNodes = new ArrayList<NodeInstance>();
         if (this.flowNodeInstances ==null)
             return sameNodes;
 
@@ -527,9 +527,9 @@ public class FlowInstance implements java.io.Serializable {
 
         return sameNodes;
     }
-    
+
     public List<NodeInstance> findSameNodeInsts(NodeInstance nodeInst){
-        List<NodeInstance> sameNodes = new ArrayList<NodeInstance>(); 
+        List<NodeInstance> sameNodes = new ArrayList<NodeInstance>();
         if (nodeInst==null || this.flowNodeInstances ==null)
             return sameNodes;
         Long nodeId = nodeInst.getNodeId();
@@ -537,7 +537,7 @@ public class FlowInstance implements java.io.Serializable {
         String runToken = nodeInst.getRunToken();
         for(NodeInstance ni : flowNodeInstances)
             if(ni.getNodeId().equals(nodeId) && ! ni.getNodeInstId().equals(thisNodeInstId)
-                    && (runToken==null || ni.getRunToken()==null || runToken.equals(ni.getRunToken()) 
+                    && (runToken==null || ni.getRunToken()==null || runToken.equals(ni.getRunToken())
                             || runToken.startsWith(ni.getRunToken()+".") || ni.getRunToken().startsWith(runToken+".") ))
                 sameNodes.add(ni);
 
@@ -556,15 +556,15 @@ public class FlowInstance implements java.io.Serializable {
             runToken = nodeInst.getRunToken();
         for(NodeInstance ni : flowNodeInstances)
             if(ni.getNodeId().equals(nodeId) && ! ni.getNodeInstId().equals(thisNodeInstId)
-                    && (runToken==null || ni.getRunToken()==null || runToken.equals(ni.getRunToken()) 
+                    && (runToken==null || ni.getRunToken()==null || runToken.equals(ni.getRunToken())
                             || runToken.startsWith(ni.getRunToken()+".") || ni.getRunToken().startsWith(runToken+".") )){
-                
+
                 if(sameInst==null || ni.getNodeInstId() > sameInst.getNodeInstId())
                     sameInst = ni;
             }
         return sameInst;
     }
-    
+
     public Set<NodeInstance> findSubNodeInstByToken(String token){
         Set<NodeInstance> sameNodes = new HashSet<NodeInstance>();
         if (this.flowNodeInstances ==null)
@@ -576,7 +576,7 @@ public class FlowInstance implements java.io.Serializable {
         }
         return sameNodes;
     }
-    
+
     /**
      * 找到所有的活动的分支节点
      * @param token
@@ -613,8 +613,8 @@ public class FlowInstance implements java.io.Serializable {
         }
         return sameNodes;
     }
-    
-    
+
+
     /**
      * 找到汇聚节点所有已经提交的子节点
      * @param token
@@ -624,12 +624,12 @@ public class FlowInstance implements java.io.Serializable {
         Map<String,NodeInstance> sameNodes = new HashMap<String,NodeInstance>();
         if (token==null || this.flowNodeInstances ==null)
             return sameNodes;
-        
+
         NodeInstance sameInst=null;
-     
+
         for(NodeInstance ni : flowNodeInstances){
             if(token.endsWith(ni.getRunToken())){
-               if(sameInst==null) 
+               if(sameInst==null)
                    sameInst = ni;
                else if(ni.getNodeInstId() > sameInst.getNodeInstId())
                    sameInst = ni;
@@ -638,11 +638,11 @@ public class FlowInstance implements java.io.Serializable {
         if (sameInst==null)
             return sameNodes;
         int subg = NodeInstance.calcTokenGeneration(token)+1;
-        
+
         for(NodeInstance nodeInst : flowNodeInstances){
             String thisToken = nodeInst.getTrunkToken();
             if(thisToken !=null && thisToken.startsWith(token+'.') &&
-                    "C".equals(nodeInst.getNodeState()) && 
+                    "C".equals(nodeInst.getNodeState()) &&
                     nodeInst.getTokenGeneration() == subg  &&
                     nodeInst.getNodeInstId() > sameInst.getNodeInstId()){
                 NodeInstance tempInst=sameNodes.get(thisToken);
@@ -652,7 +652,7 @@ public class FlowInstance implements java.io.Serializable {
         }
         return sameNodes;
     }
-    
+
     /**
      * 找到汇聚节点所有已经提交的子节点
      * @param token
@@ -660,7 +660,7 @@ public class FlowInstance implements java.io.Serializable {
      */
     public Set<Long> calcSubmitSubNodeIdByToken(String token){
         Map<String,NodeInstance> subNodes = findSubmitSubNodeInstByToken( token);
-        Set<Long> subTokens = new HashSet<Long>(); 
+        Set<Long> subTokens = new HashSet<Long>();
         for(Map.Entry<String,NodeInstance> ent : subNodes.entrySet())
             subTokens.add(ent.getValue().getNodeId());
         return subTokens;
@@ -672,7 +672,7 @@ public class FlowInstance implements java.io.Serializable {
      */
     public Set<String> calcNoSubmitSubNodeTokensInstByToken(String token){
         Set<NodeInstance> sameNodes = findAllActiveSubNodeInstByToken(token);
-        Set<String> subTokens = new HashSet<String>(); 
+        Set<String> subTokens = new HashSet<String>();
 
         int subg = NodeInstance.calcTokenGeneration(token)+1;
         for(NodeInstance nodeInst : sameNodes){
@@ -681,18 +681,19 @@ public class FlowInstance implements java.io.Serializable {
         }
         return subTokens;
     }
-    
-    
+
+
     public NodeInstance getPareNodeInst(long thisNodeInstId)
     {
         NodeInstance nodeInst = getNodeInstanceById(thisNodeInstId);
         if(nodeInst==null)
             return null;
         String thisToken = nodeInst.getRunToken();
-        
+
         NodeInstance pareNode = null;
         for(NodeInstance ni : flowNodeInstances){
-            String tempToken = ni.getTrunkToken();
+            //一开始写的是String tempToken = ni.getTrunkToken(); 不太明白
+            String tempToken = ni.getRunToken();
             if(thisToken.equals(tempToken) && "C".equals(ni.getNodeState())
                     && ni.getNodeInstId() < thisNodeInstId){
                 if(pareNode==null || pareNode.getNodeInstId() < ni.getNodeInstId() )
@@ -704,20 +705,20 @@ public class FlowInstance implements java.io.Serializable {
             WfNodeInstance prevNodeInst = getNodeInstanceById( nodeInst.getPrevNodeInstId());
             if(prevNodeInst==null)
                 return null;
-            
+
             String prevToken = prevNodeInst.getRunToken();
-            if( (thisToken==null || prevToken==null) 
-                    || thisToken.equals(prevToken) 
+            if( (thisToken==null || prevToken==null)
+                    || thisToken.equals(prevToken)
                     || thisToken.startsWith(prevToken+'.'))
-                
+
                 return prevNodeInst;
-            
+
             nodeInst = prevNodeInst;
         }*/
     }
-    
-    
-    
+
+
+
     public void replaceFlowStageInstances(List<StageInstance> wfStageInstances) {
         List<StageInstance> newObjs = new ArrayList<StageInstance>();
         for(StageInstance p :wfStageInstances){
@@ -731,7 +732,7 @@ public class FlowInstance implements java.io.Serializable {
         boolean found = false;
         Set<StageInstance> oldObjs = new HashSet<StageInstance>();
         oldObjs.addAll(getFlowStageInstances());
-        
+
         for(Iterator<StageInstance> it = oldObjs.iterator(); it.hasNext();){
             StageInstance odt = it.next();
             found = false;
@@ -745,7 +746,7 @@ public class FlowInstance implements java.io.Serializable {
                 removeFlowStageInstance(odt);
         }
         oldObjs.clear();
-        //insert 
+        //insert
         for(StageInstance newdt :newObjs){
             found = false;
             for(Iterator<StageInstance> it = getFlowStageInstances().iterator();
@@ -759,9 +760,9 @@ public class FlowInstance implements java.io.Serializable {
             }
             if(! found)
                 addFlowStageInstance(newdt);
-        }   
-    }   
-    
+        }
+    }
+
     public void replaceFlowNodeInstances(List<NodeInstance> wfNodeInstances) {
         List<NodeInstance> newObjs = new ArrayList<NodeInstance>();
         for(NodeInstance p :wfNodeInstances){
@@ -808,9 +809,9 @@ public class FlowInstance implements java.io.Serializable {
 
 
     public void copy(FlowInstance other){
-  
+
         this.setFlowInstId(other.getFlowInstId());
-  
+
         this.setVersion(other.getVersion());
         this.setFlowCode(other.getFlowCode());
         this.flowOptName = other.getFlowOptName();
@@ -833,10 +834,10 @@ public class FlowInstance implements java.io.Serializable {
     }
 
     public void copyNotNullProperty(FlowInstance other){
-  
+
     if( other.getFlowInstId() != null)
         this.setFlowInstId(other.getFlowInstId());
-  
+
         if( other.getVersion() != null)
             this.setVersion(other.getVersion());
         if( other.getFlowCode() != null)
@@ -871,14 +872,14 @@ public class FlowInstance implements java.io.Serializable {
             this.lastUpdateUser = other.getLastUpdateUser();
         if(other.getIsTimer() !=null)
             this.isTimer = other.getIsTimer();
-        
+
         this.replaceFlowNodeInstances(other.getFlowNodeInstances());
         this.replaceFlowStageInstances(other.getFlowStageInstances());
 
     }
     public void clearProperties()
     {
-        //this.wfinstid= null;  
+        //this.wfinstid= null;
        this.setVersion(null);
        this.setFlowCode(null);
         this.flowOptName = null;
@@ -888,9 +889,9 @@ public class FlowInstance implements java.io.Serializable {
         this.isSubInst = null;
         this.preInstId =null;
         this.preNodeInstId = null;
-        this.setUnitCode(null);   
+        this.setUnitCode(null);
         this.userCode = null;
-        this.timeLimit = null;  
+        this.timeLimit = null;
         this.promiseTime = null;
         this.flowNodeInstances = null;
         this.flowStageInstances = null;
@@ -921,13 +922,13 @@ public class FlowInstance implements java.io.Serializable {
         this.lastUpdateUser = lastUpdateUser;
     }
     /**
-     * 不计时N、计时T(有期限)、暂停P  
+     * 不计时N、计时T(有期限)、暂停P
      */
     public String getIsTimer() {
         return isTimer;
     }
     /**
-     *不计时N、计时T(有期限)、暂停P  
+     *不计时N、计时T(有期限)、暂停P
      * @param isTimer
      */
     public void setIsTimer(String isTimer) {

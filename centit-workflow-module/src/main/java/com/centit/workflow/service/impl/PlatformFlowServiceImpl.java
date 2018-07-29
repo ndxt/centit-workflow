@@ -24,16 +24,16 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
         List<UserTask> taskList = new ArrayList<>();
         //动态任务
         //1.找到用户所有机构下的岗位和职务
-        List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits((String)searchColumn.get("userCode"));
+        List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits((String) searchColumn.get("userCode"));
 
         //2.以机构，岗位，职务来查询任务
-        if(iUserUnits == null||iUserUnits.size()==0){
+        if (iUserUnits == null || iUserUnits.size() == 0) {
             return taskList;
         }
-        for(IUserUnit i:iUserUnits){
-            searchColumn.put("unitCode",i.getUnitCode());
-            searchColumn.put("userStation",i.getUserStation());
-            List<UserTask>  dynamicTask = platformFlowDao.queryDynamicTask(searchColumn,pageDesc);
+        for (IUserUnit i : iUserUnits) {
+            searchColumn.put("unitCode", i.getUnitCode());
+            searchColumn.put("userStation", i.getUserStation());
+            List<UserTask> dynamicTask = platformFlowDao.queryDynamicTask(searchColumn, pageDesc);
             taskList.addAll(dynamicTask);
         }
 
@@ -44,23 +44,25 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
     public List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
 
-        String station=searchColumn.get("userStation").toString();
-        String unitCode=searchColumn.get("unitCode").toString();
-        Long nodeInstId =(Long)searchColumn.get("nodeInstId");
-        List<? extends IUserUnit> userUnits=CodeRepositoryUtil.listUnitUsers(unitCode);
+        String station = searchColumn.get("userStation").toString();
+        String unitCode = searchColumn.get("unitCode").toString();
+        Long nodeInstId = (Long) searchColumn.get("nodeInstId");
+        List<? extends IUserUnit> userUnits = CodeRepositoryUtil.listUnitUsers(unitCode);
 
         //2.以机构，岗位，职务来查询任务
-        if(userUnits == null||userUnits.size()==0){
+        if (userUnits == null || userUnits.size() == 0) {
             return taskList;
         }
-        for(IUserUnit i:userUnits){
-            if(!station.equals(i.getUserStation()))
+        for (IUserUnit i : userUnits) {
+            if (!station.equals(i.getUserStation()))
                 continue;
-            searchColumn.put("nodeInstId",nodeInstId);
-            searchColumn.put("userCode",i.getUserCode());
-            searchColumn.put("unitCode",i.getUnitCode());
-            searchColumn.put("userStation",i.getUserStation());
-            List<UserTask>  dynamicTask = platformFlowDao.queryDynamicTask(searchColumn,pageDesc);
+            searchColumn.put("nodeInstId", nodeInstId);
+            searchColumn.put("unitCode", i.getUnitCode());
+            searchColumn.put("userStation", i.getUserStation());
+            List<UserTask> dynamicTask = platformFlowDao.queryDynamicTask(searchColumn, pageDesc);
+            for (UserTask u : dynamicTask) {
+                u.setUserCode(i.getUserCode());
+            }
             taskList.addAll(dynamicTask);
         }
 
@@ -71,30 +73,30 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
     public List<UserTask> queryTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
         //静态任务
-        List<UserTask> staticTaskList = platformFlowDao.queryStaticTask((String)searchColumn.get("userCode"));
-        if(staticTaskList != null){
+        List<UserTask> staticTaskList = platformFlowDao.queryStaticTask((String) searchColumn.get("userCode"));
+        if (staticTaskList != null) {
             taskList.addAll(staticTaskList);
         }
         //动态任务
         //1.找到用户主机构下的岗位和职务
-        List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits((String)searchColumn.get("userCode"));
+        List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits((String) searchColumn.get("userCode"));
         IUserUnit userUnit = null;
-        if(iUserUnits != null && iUserUnits.size() > 0){
-            for(IUserUnit iUserUnit:iUserUnits){
-                if("T".equals(iUserUnit.getIsPrimary())){
+        if (iUserUnits != null && iUserUnits.size() > 0) {
+            for (IUserUnit iUserUnit : iUserUnits) {
+                if ("T".equals(iUserUnit.getIsPrimary())) {
                     userUnit = iUserUnit;
                     break;
                 }
             }
         }
         //2.以机构，岗位，职务来查询任务
-        if(userUnit == null){
+        if (userUnit == null) {
             return taskList;
         }
-        searchColumn.put("unitCode",userUnit.getUnitCode());
-        searchColumn.put("userStation",userUnit.getUserStation());
-        List<UserTask> dynamicTaskList = platformFlowDao.queryDynamicTask(searchColumn,pageDesc);
-        if(dynamicTaskList != null){
+        searchColumn.put("unitCode", userUnit.getUnitCode());
+        searchColumn.put("userStation", userUnit.getUserStation());
+        List<UserTask> dynamicTaskList = platformFlowDao.queryDynamicTask(searchColumn, pageDesc);
+        if (dynamicTaskList != null) {
             taskList.addAll(dynamicTaskList);
         }
         return taskList;

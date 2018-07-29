@@ -1347,19 +1347,28 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
          * if("E".equals(nodedef.getNodetype())){ //本节点为汇聚节点不允许回退 return -5; }
          */
         // 查找上一个流经节点
-        NodeInstance prevNodeInst = flowInst.getPareNodeInst(nodeInstId);
-        // 不能回退到 自动执行，哑元，和子流程节点
+        NodeInstance prevNodeInst = null;
+        if (thisNodeInst.getPrevNodeInstId() != null) {
+            prevNodeInst = nodeInstanceDao.getObjectCascadeById(thisNodeInst.getPrevNodeInstId());
+        } else {
+            prevNodeInst = flowInst.getPareNodeInst(nodeInstId);
+        }
         if (prevNodeInst == null)
             return -3;
         NodeInfo nodedef = flowNodeDao.getObjectById(prevNodeInst.getNodeId());
         Set<NodeInstance> pns = new HashSet<NodeInstance>();
+        // 不能回退到 自动执行，哑元，和子流程节点
         while (true) {
             if ("D".equals(nodedef.getOptType())
                 || "E".equals(nodedef.getOptType())
                 || "S".equals(nodedef.getOptType())) {
                 pns.add(prevNodeInst);
-                prevNodeInst = flowInst.getPareNodeInst(prevNodeInst
-                    .getNodeInstId());
+                //优先通过节点表中的prenodeinstid来查找上一节点
+                prevNodeInst = nodeInstanceDao.getObjectCascadeById(prevNodeInst.getPrevNodeInstId());
+                if (prevNodeInst == null) {
+                    prevNodeInst = flowInst.getPareNodeInst(prevNodeInst
+                        .getNodeInstId());
+                }
                 if (prevNodeInst == null)
                     return -3;
                 nodedef = flowNodeDao.getObjectById(prevNodeInst.getNodeId());

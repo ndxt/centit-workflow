@@ -4,7 +4,7 @@
 			<label>名称</label>
 			<input type="text" class="easyui-textbox" name="s_wfName" />
 		</div>
-		
+
 		<a class="easyui-linkbutton btn-search" iconCls="icon-search">搜索</a>
 	</form>
 </div>
@@ -13,7 +13,7 @@
 	idField="flowCode"
 	search=".search"
 	toolbar=".temp-toolbar"
-	layoutH=".search"	
+	layoutH=".search"
 	>
 	<thead frozen="true">
 		<tr>
@@ -33,12 +33,12 @@
 <div class="temp-toolbar">
 	<a rel="flowdefine_add" iconCls="icon-add"
 		href="modules/sys/flowdefine/flowdefine-info.html"
-		target="dialog" trigger="none" title="新建工作流定义" btnValue="添加" width="640" height="540">新增</a>
-		
+		target="dialog" trigger="none" title="新建工作流定义" btnValue="添加" width="640" height="500">新增</a>
+
 	<a rel="flowdefine_edit"  iconCls="icon-edit"
 		href="modules/sys/flowdefine/flowdefine-info.html"
-		target="dialog" trigger="single" title="编辑  {{flowName}}" width="640" height="540">编辑</a>
-		
+		target="dialog" trigger="single" title="编辑  {{flowName}}" width="640" height="500">编辑</a>
+
 	<a rel="flowdefine_stage"  iconCls="icon-base icon-base-flag"
 		   href="modules/sys/flowdefine/flowdefine-stage.html"
 		   target="dialog" trigger="single" title="编辑  {{flowName}} 阶段" width="740" height="470">阶段</a>
@@ -54,23 +54,23 @@
 	   target="dialog" trigger="single" title="编辑  {{flowName}} 变量" width="740" height="470">流程变量</a>
 
 	<hr>
-	
+
 	<a rel="flowdefine_version" iconCls="icon-base icon-base-option "
 		href="modules/sys/flowdefine/flowdefine-version.html"
 		target="dialog" trigger="single" title="查看  {{flowName}} 所有版本" width="640" height=470>所有版本</a>
-		
+
 	<a rel="flowdefine_copy" iconCls="icon-base icon-base-copy_in"
 		href="modules/sys/flowdefine/flowdefine-copy.html"
 		target="dialog" trigger="single" title="复制  {{flowName}}" width="640" height="480">复制</a>
-		
+
 	<hr>
-	
+
 	<a rel="flowdefine_release" iconCls="icon-base icon-base-take_out"
 		target="confirm" trigger="single" title="是否确定发布 {{flowName}}">发布</a>
-		
+
 	<hr>
-	
-	<a rel="flowdefine_draw" iconCls="icon-base icon-base-bruch " 
+
+	<a rel="flowdefine_draw" iconCls="icon-base icon-base-bruch "
 		target="custom" trigger="single">编辑流程图</a>
 </div>
 
@@ -83,7 +83,7 @@
 			FilterDictionary.add(['YesOrNo','WFFlowState']).then(function(){
 				new FlowDefine('flowdefine', panel).load(panel);
 			});
-			
+
 		});
 	};
 </script>
