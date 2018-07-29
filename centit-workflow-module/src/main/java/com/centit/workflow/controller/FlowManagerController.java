@@ -523,8 +523,16 @@ public class FlowManagerController extends BaseController {
             JSONObject nodeOptInfo = new JSONObject();
             nodeOptInfo.put("nodename", nodeInfo.getNodeName());
             int nodeInstInd = 0;
+            long nodeInstId=0;
             for (NodeInstance nodeInst : dbobject.getNodeInstances()) {
                 if (nodeInst.getNodeId().equals(nodeId)) {
+                    //暂时保证一个节点保留一条查看信息
+                    if(nodeInstId>nodeInst.getNodeInstId())
+                        continue;
+                    else {
+                        nodeOptInfo.clear();
+                        nodeInstInd=0;
+                    }
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].createtime", DatetimeOpt.convertDatetimeToString(nodeInst.getCreateTime()));
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode", nodeInst.getUnitCode());
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname", CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
@@ -555,24 +563,27 @@ public class FlowManagerController extends BaseController {
                     } else {
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state",
                             CodeRepositoryUtil.getValue("WFInstType", nodeInst.getNodeState()));
+                        //暂时添加当前节点的最后更新人
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updateuser",
                             CodeRepositoryUtil.getValue("userCode",  nodeInst.getLastUpdateUser()));
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
                             DatetimeOpt.convertDatetimeToString(nodeInst.getLastUpdateTime()));
-                        List<ActionLog> actions = flowManager.listNodeActionLogs(nodeInst.getNodeInstId());
-                        int actionInd = 0;
-                        for (ActionLog action : actions) {
-                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].usercode", action.getUserCode());
-                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].username",
-                                CodeRepositoryUtil.getValue("userCode", action.getUserCode()));
-                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].actiontime",
-                                DatetimeOpt.convertDatetimeToString(action.getActionTime()));
-                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].actiontype",
-                                CodeRepositoryUtil.getValue("WfActionType", action.getActionType()));
-                            actionInd++;
-                        }
+                        //ActionLog的获取暂时取消
+//                        List<ActionLog> actions = flowManager.listNodeActionLogs(nodeInst.getNodeInstId());
+//                        int actionInd = 0;
+//                        for (ActionLog action : actions) {
+//                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].usercode", action.getUserCode());
+//                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].username",
+//                                CodeRepositoryUtil.getValue("userCode", action.getUserCode()));
+//                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].actiontime",
+//                                DatetimeOpt.convertDatetimeToString(action.getActionTime()));
+//                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].actiontype",
+//                                CodeRepositoryUtil.getValue("WfActionType", action.getActionType()));
+//                            actionInd++;
+//                        }
                     }
                     nodeInstInd++;
+                    nodeInstId=nodeInst.getNodeInstId();
                 }
             }
             nodeOptInfo.put("count", nodeInstInd);

@@ -184,7 +184,7 @@ function bindAttr(obj) {
                 for (i = 0; i < g("multiinsttype").options.length; i++) {//多实例类别
                     if (g("multiinsttype").options[i].value == SVG.get(o).attr("multiinsttype")) {
                         g("multiinsttype").options[i].selected = "selected";
-                    }       
+                    }
                 }
                 g("route-unitexp").value = SVG.get(o).attr("unitexp");//机构表达式
                 //根据角色类别进行判断
@@ -317,15 +317,15 @@ function initEvt(event){
             async: false,
             success:function(data){
                 data = data.data || data;
-                $("#nodeInfo").css({"top":top+"px","left":left+"px"}).show();//显示提示框并设置位置
+                $("#nodeInfo").css({"top":top+"px","left":left+"px", "overflow":"scroll"}).show();//显示提示框并设置位置
                 $("#nodeContent").empty();//清空内容
                 if(data.instance!=null){
                     //拼接字符串
-                    htmlString = "<ul>";
+                    htmlString = "";
                     $("#nodeHeading").html(data.nodename);//设置标题
                     var instances=eval(data.instance);
                     for(var i=0;i<instances.length;i++){
-                        htmlString += "<li><br>当前状态：<span class='red'>"+instances[i].state+"</span><br>创建时间：<span>"
+                        htmlString += "环节状态：<span class='red'>"+instances[i].state+"</span><br>创建时间：<span>"
                             +instances[i].createtime+"</span>";
                         if(instances[i].updateuser!=null){
                             htmlString+="<br>办理人："+instances[i].updateuser+"<br>办理时间：<span>"+instances[i].updatetime+"</span>";
@@ -349,7 +349,7 @@ function initEvt(event){
                             htmlString += "<br>当前办理人："+arry.join("，");
                         }
                     }
-                    htmlString += "</ul>";
+                    htmlString += "";
                     $("#nodeContent").append(htmlString);
                     $(".first-menu>li").hover(function(){
                         $(this).addClass("hover");

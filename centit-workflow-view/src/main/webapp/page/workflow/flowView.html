@@ -16,11 +16,10 @@
 <div id="nodeInfo" class="row" style="z-index: 9999;">
     <div class="col-md-12">
         <div class="panel">
-            <div id="nodeHeading" class="panel-heading">节点信息</div>
-            <div id="nodeContent" class="panel-content">
+            <div id="nodeHeading" class="panel-heading">节点信息
+               <a class="btn" onclick="javascript:$(this).closest('#nodeInfo').hide();" style="float: right;"> 关闭</a>
             </div>
-            <div class="panel-footer">
-                <a class="btn" onclick="javascript:$(this).closest('#nodeInfo').hide();">关闭</a>
+            <div id="nodeContent" class="panel-content">
             </div>
         </div>
     </div>
