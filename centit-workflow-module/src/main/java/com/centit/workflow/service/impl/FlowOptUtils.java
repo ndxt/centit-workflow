@@ -1,12 +1,17 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
+import com.centit.workflow.commons.NodeMsgSupport;
 import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
 import java.util.Set;
@@ -42,14 +47,14 @@ public class FlowOptUtils {
             flowInst.addFlowStageInstance(stageInst);
         }
 
-        if(! StringBaseOpt.isNvl(timeLimit) ){ 
-            // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F        
+        if(! StringBaseOpt.isNvl(timeLimit) ){
+            // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
             flowInst.setIsTimer("T");
             flowInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
         }else
             flowInst.setTimeLimit(null);
-        
-        flowInst.setPromiseTime(flowInst.getTimeLimit());    
+
+        flowInst.setPromiseTime(flowInst.getTimeLimit());
 //        flowInst.setExpireTime(new Date(System.currentTimeMillis()+1000*60*60*24));
         return flowInst;
     }
@@ -78,7 +83,7 @@ public class FlowOptUtils {
                 nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
             else
                 nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber() + inhertInst.getTimeLimit() );
-        }else 
+        }else
             nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
     }
     /**
@@ -97,7 +102,7 @@ public class FlowOptUtils {
         nodeInst.setUnitCode(unitcode);
         nodeInst.setUserCode(usercode);
         nodeInst.setNodeParam(nodeParam);
-        nodeInst.setNodeState("N");     
+        nodeInst.setNodeState("N");
         //nodeInst.setIsTimer(isTimer);
         nodeInst.setTaskAssigned("S");
         //给一个默认的令牌 T
@@ -107,14 +112,14 @@ public class FlowOptUtils {
         nodeInst.setRoleCode(node.getRoleCode());
         nodeInst.setRoleType(node.getRoleType());
         nodeInst.setFlowStage(node.getStageCode());
-        //计算节点的期限 
+        //计算节点的期限
         nodeInst.setIsTimer(node.getIsAccountTime());
         nodeInst.setTimeLimit(0L);
-        //计算节点的期限 
+        //计算节点的期限
         //I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle。
         if(trans == null || "I".equals( trans.getLimitType())){
-            String timeLimit = node.getTimeLimit();    
-            if("C".equals( node.getLimitType()) ){ 
+            String timeLimit = node.getTimeLimit();
+            if("C".equals( node.getLimitType()) ){
                 NodeInstance sameInst = flowInst.findLastSameNodeInst(nodeInst.getNodeId(), nodeInst ,nodeInst.getNodeInstId());
                 if(sameInst!=null)
                     nodeInst.setTimeLimit( sameInst.getTimeLimit());
@@ -122,14 +127,14 @@ public class FlowOptUtils {
                     setNewNodeInstTimelimit( nodeInst,  timeLimit,
                              flowInst, preNodeInst, flowInfo, node);
                 }
-            }else if("F".equals( node.getLimitType()) ){ 
-                //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() ); 
+            }else if("F".equals( node.getLimitType()) ){
+                //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
                 setNewNodeInstTimelimit( nodeInst,  timeLimit,
                         flowInst, preNodeInst, flowInfo, node);
             }
         }else {
-            String timeLimit = trans.getTimeLimit();    
-            if("C".equals( trans.getLimitType()) ){ 
+            String timeLimit = trans.getTimeLimit();
+            if("C".equals( trans.getLimitType()) ){
                 NodeInstance sameInst = flowInst.findLastSameNodeInst(nodeInst.getNodeId(), nodeInst ,nodeInst.getNodeInstId());
                 if(sameInst!=null)
                     nodeInst.setTimeLimit( sameInst.getTimeLimit());
@@ -138,16 +143,16 @@ public class FlowOptUtils {
                             flowInst, preNodeInst, flowInfo, node);
                     //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
                 }
-            }else if("F".equals( trans.getLimitType()) ){ 
-                //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() ); 
+            }else if("F".equals( trans.getLimitType()) ){
+                //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
                 setNewNodeInstTimelimit( nodeInst,  timeLimit,
                         flowInst, preNodeInst, flowInfo, node);
             }
         }
-       
+
         nodeInst.setPromiseTime( nodeInst.getTimeLimit());
         //nodeInst.setLastUpdateTime(updateTime);
-        return nodeInst;        
+        return nodeInst;
     }
 
     /**
@@ -177,23 +182,22 @@ public class FlowOptUtils {
     /**
      * 流程节点操作日志
      * @param actType s: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
-     *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点   
-     *               r: 流转管理，包括  强行回退  、强行提交   
+     *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
+     *               r: 流转管理，包括  强行回退  、强行提交
      *               t: 期限管理 、 设置期限
      *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-     *               u: 变更属性     *  
-     * @param usercode
+     *               u: 变更属性     *
      * @param nodeInstId
      * @return
      */
-    public static ActionLog createActionLog (String  actType, String  usercode,
+    public static ActionLog createActionLog (String  actType, String  userCode,
                                              long nodeInstId){
         ActionLog actionLog = new ActionLog();
 
         actionLog.setNodeInstId(nodeInstId);
         actionLog.setActionTime(new Date(System.currentTimeMillis()));
         actionLog.setActionType(actType);
-        actionLog.setUserCode(usercode);
+        actionLog.setUserCode(userCode);
         return actionLog;
     }
     /**
@@ -206,7 +210,7 @@ public class FlowOptUtils {
      * 唤醒节点 R
      * 终止节点 E
      * X 唤醒一个超时流程的一个节点
-     */ 
+     */
     public static ActionLog createActionLog (String  actType, String  usercode,
                                              long nodeInstId, NodeInfo node){
         ActionLog actionLog = createActionLog(actType,  usercode, nodeInstId);
@@ -226,7 +230,7 @@ public class FlowOptUtils {
      * 唤醒节点 R
      * 终止节点 E
      * X 唤醒一个超时流程的一个节点
-     */ 
+     */
     public static ActionLog createActionLog (String  actType, String  usercode,
                                              NodeInstance nodeInst, NodeInfo node){
         return createActionLog(actType, usercode,
@@ -291,7 +295,7 @@ public class FlowOptUtils {
      * @param actionType 对流程管理操作用大写字母，对节点管理操作用小写字母
      *             S s: 状态变更， 超时唤醒、 使失效、 使一个正常的节点变为游离状态 、 是游离节点失效
      *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点
-     *             R  : 流转管理，包括  强行回退  、强行提交   
+     *             R  : 流转管理，包括  强行回退  、强行提交
      *             T t: 期限管理 、 设置期限
      *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
      *             U u: 变更属性
@@ -305,9 +309,54 @@ public class FlowOptUtils {
         action.setUserCode(managerCode);
         action.setActionType(actionType);
         action.setActionTime(new Date(System.currentTimeMillis()));
-        
+
         return action;
     }
 
+
+    //是否发送消息中心
+    private static String ifSendMsg;
+    //是否发送短信
+    private static String ifSendSms;
+    //调用bean定义
+    private static String sendMsgBean;
+
+    private static void initStr(){
+        ifSendMsg= CodeRepositoryUtil.getSysConfigValue("workflow.ifSendMsg");
+        ifSendSms= CodeRepositoryUtil.getSysConfigValue("workflow.ifSendSms");
+        sendMsgBean= CodeRepositoryUtil.getSysConfigValue("workflow.sendMsgBean");
+    }
+
+    //调用待办消息推送
+    public static void sendMsg(Long nodeInstId, Set<Long> nextNodeInsts,String userCode){
+        initStr();
+        //如果需要发送待办消息
+        if ("T".equals(ifSendMsg)||"T".equals(ifSendSms)) {
+            WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
+            NodeMsgSupport msgSupport = (NodeMsgSupport) wac.getBean(sendMsgBean);
+            if("T".equals(ifSendMsg)) {
+                msgSupport.sendNodeMsg(nodeInstId, nextNodeInsts, userCode);
+            }
+            if("T".equals(ifSendSms)){
+                msgSupport.sendNodeSms(nextNodeInsts, userCode);
+            }
+        }
+    }
+
+    //强制办结流程之后的调用消息中心接口
+    public static void sendFinishMsg(Long flowInstId,String userCode){
+        initStr();
+        //如果需要发送待办消息
+        if ("T".equals(ifSendMsg)||"T".equals(ifSendSms)) {
+            WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
+            NodeMsgSupport msgSupport = (NodeMsgSupport) wac.getBean(sendMsgBean);
+            if("T".equals(ifSendMsg)) {
+                msgSupport.sendFlowNodeMsg(flowInstId, userCode);
+            }
+            if("T".equals(ifSendSms)){
+                msgSupport.sendFlowNodeSms(flowInstId, userCode);
+            }
+        }
+    }
 
 }

@@ -27,7 +27,7 @@ public class FlowInstance implements java.io.Serializable {
     @ManyToOne
     @JoinColumns({
         @JoinColumn(name="VERSION", referencedColumnName="VERSION"),
-        @JoinColumn(name="FLOW_CODE", referencedColumnName="FLOW_CODE")
+        @JoinColumn(name="flowCode", referencedColumnName="FLOW_CODE")
     })
     private FlowInfo flowDefine;
 

@@ -14,6 +14,7 @@ import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
 import com.centit.workflow.commons.NodeEventSupport;
+import com.centit.workflow.commons.NodeMsgSupport;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
@@ -21,8 +22,12 @@ import com.centit.workflow.service.FlowEngine;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
@@ -85,12 +90,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions) {
-        return createInstInside(newFlowInstanceOptions.getFlowCode(),
+        FlowInstance flowInstance=createInstInside(newFlowInstanceOptions.getFlowCode(),
             flowDefDao.getLastVersion(newFlowInstanceOptions.getFlowCode()),
             newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
             newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstid(),
             null, newFlowInstanceOptions.isLockFirstOpt());
+        FlowOptUtils.sendMsg(null,new HashSet(flowInstance.getFlowNodeInstances()),newFlowInstanceOptions.getUserCode());
+        return flowInstance;
     }
 
     @Override
@@ -1417,6 +1424,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInstanceDao.mergeObject(thisNodeInst);
         nodeInstanceDao.mergeObject(nextNodeInst);
         flowInstanceDao.updateObject(flowInst);
+        //调用发送消息接口
+        Set<Long> nodeInstIds=new HashSet<>();
+        nodeInstIds.add(lastNodeInstId);
+        FlowOptUtils.sendMsg(nodeInstId,nodeInstIds,mangerUserCode);
         return lastNodeInstId;
     }
 
@@ -1446,22 +1457,24 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return nns > 0;
     }
 
-
     @Override
     public Set<Long> submitOpt(long nodeInstId, String userCode, String unitCode,
                                UserUnitVariableTranslate varTrans, ServletContext application)
         throws WorkflowException {
-        return submitOptInside(nodeInstId, userCode, userCode, unitCode,
+        Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, userCode, unitCode,
             varTrans, null, null, application);
+        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts,userCode);
+        return nextNodeInsts;
     }
-
 
     @Override
     public Set<Long> submitOpt(long nodeInstId, String userCode, String grantorCode,
                                String unitCode, UserUnitVariableTranslate varTrans, ServletContext application)
         throws WorkflowException {
-        return submitOptInside(nodeInstId, userCode, grantorCode, unitCode,
+        Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, grantorCode, unitCode,
             varTrans, null, null, application);
+        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts,userCode);
+        return nextNodeInsts;
     }
 
     /**
