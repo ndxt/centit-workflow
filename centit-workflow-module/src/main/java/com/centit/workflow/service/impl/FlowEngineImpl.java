@@ -96,7 +96,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
             newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstid(),
             null, newFlowInstanceOptions.isLockFirstOpt());
-        FlowOptUtils.sendMsg(null,new HashSet(flowInstance.getFlowNodeInstances()),newFlowInstanceOptions.getUserCode());
+        FlowOptUtils.sendMsg(0,new HashSet(flowInstance.getFlowNodeInstances()),newFlowInstanceOptions.getUserCode());
         return flowInstance;
     }
 
