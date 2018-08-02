@@ -90,13 +90,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions) {
-        FlowInstance flowInstance=createInstInside(newFlowInstanceOptions.getFlowCode(),
+        FlowInstance flowInstance = createInstInside(newFlowInstanceOptions.getFlowCode(),
             flowDefDao.getLastVersion(newFlowInstanceOptions.getFlowCode()),
             newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
             newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstid(),
             null, newFlowInstanceOptions.isLockFirstOpt());
-        FlowOptUtils.sendMsg(0,new HashSet(flowInstance.getFlowNodeInstances()),newFlowInstanceOptions.getUserCode());
+        Set<Long> nodes = new HashSet<>();
+        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
+            nodes.add(n.getNodeInstId());
+        }
+        FlowOptUtils.sendMsg(0, nodes, newFlowInstanceOptions.getUserCode());
         return flowInstance;
     }
 
@@ -1425,9 +1429,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInstanceDao.mergeObject(nextNodeInst);
         flowInstanceDao.updateObject(flowInst);
         //调用发送消息接口
-        Set<Long> nodeInstIds=new HashSet<>();
+        Set<Long> nodeInstIds = new HashSet<>();
         nodeInstIds.add(lastNodeInstId);
-        FlowOptUtils.sendMsg(nodeInstId,nodeInstIds,mangerUserCode);
+        FlowOptUtils.sendMsg(nodeInstId, nodeInstIds, mangerUserCode);
         return lastNodeInstId;
     }
 
@@ -1463,7 +1467,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         throws WorkflowException {
         Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, userCode, unitCode,
             varTrans, null, null, application);
-        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts,userCode);
+        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
         return nextNodeInsts;
     }
 
@@ -1473,7 +1477,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         throws WorkflowException {
         Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, grantorCode, unitCode,
             varTrans, null, null, application);
-        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts,userCode);
+        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
         return nextNodeInsts;
     }
 
