@@ -61,6 +61,9 @@
         if(viewXml){
             loadViewXml(viewXml);
         }
+        if(window.ActiveXObject || "ActiveXObject" in window){//IE浏览器作特殊操作
+          $("#textToDiv>div").html("");
+        }
     } else
         alert("您的浏览器不支持SVG，请换其他浏览器");
 </script>
