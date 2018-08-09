@@ -1006,12 +1006,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nextNodeInst,
                 nextOptNode, userCode);
             if (needSubmit)
-                this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
+                this.submitOpt(lastNodeInstId, userCode, unitCode,
                     varTrans, nodeUnits, nodeOptUsers, application);
+                /*this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
+                    varTrans, nodeUnits, nodeOptUsers, application);*/
 
         } else if ("E".equals(nextOptNode.getOptType())) {  //哑元节点 自动提交
             try {
-                this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
+                this.submitOpt(lastNodeInstId, userCode, unitCode,
                     varTrans, nodeUnits, nodeOptUsers, application);
             } catch (WorkflowException e) {
                 logger.error("自动提交哑元节点 " + lastNodeInstId + "后提交出错 。" + e.getMessage());
@@ -1477,6 +1479,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         throws WorkflowException {
         Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, grantorCode, unitCode,
             varTrans, null, null, application);
+        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
+        return nextNodeInsts;
+    }
+
+    private Set<Long> submitOpt(long nodeInstId, String userCode,
+                               String unitCode, UserUnitVariableTranslate varTrans,
+                               Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
+                               ServletContext application)
+        throws WorkflowException {
+        Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, userCode, unitCode,
+            varTrans, nodeUnits, nodeOptUsers, application);
         FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
         return nextNodeInsts;
     }
