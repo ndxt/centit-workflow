@@ -317,14 +317,18 @@ function initEvt(event){
             async: false,
             success:function(data){
                 data = data.data || data;
-                $("#nodeInfo").css({"top":top+"px","left":left+"px", "overflow":"scroll","height":"200px"}).show();//显示提示框并设置位置
+                $("#nodeInfo").css({"top":top+"px","left":left+"px"}).show();//显示提示框并设置位置
                 $("#nodeContent").empty();//清空内容
+                $("#nodeContent").css({"overflow":"scroll","height":"200px"});
                 if(data.instance!=null){
                     //拼接字符串
                     htmlString = "";
-                    $("#nodeHeading").html(data.nodename);//设置标题
+                    //$("#nodeHeading").html(data.nodename);//设置标题
                     var instances=eval(data.instance);
                     for(var i=0;i<instances.length;i++){
+                        if(htmlString!="") {
+                            htmlString +="<br><hr style='height:1px;border:none;border-top:1px dashed #0066CC;'/>";
+                        }
                         htmlString += "环节状态：<span class='red'>"+instances[i].state+"</span><br>创建时间：<span>"
                             +instances[i].createtime+"</span>";
                         if(instances[i].updateuser!=null){

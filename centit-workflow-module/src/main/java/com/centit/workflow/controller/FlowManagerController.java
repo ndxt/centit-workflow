@@ -107,6 +107,20 @@ public class FlowManagerController extends BaseController {
      *
      * @param response
      */
+    @RequestMapping(value = "/viewxml/{flowCode}/{version}", method = RequestMethod.GET)
+    public void viewRuntimeXml(@PathVariable String flowCode, @PathVariable Long version, HttpServletRequest request, HttpServletResponse response) {
+        FlowInfo obj = flowDef.getFlowDefObject(flowCode, version);
+        String xml = obj.getFlowXmlDesc();
+        HashMap<String, String> result = new HashMap<>();
+        result.put("xml", xml);
+        JsonResultUtils.writeSingleDataJson(result, response);
+    }
+
+    /**
+     * 查看流程图
+     *
+     * @param response
+     */
     @RequestMapping(value = "/nodesxml/{flowInstId}", method = RequestMethod.GET)
     public void viewNodeInstancesXml(@PathVariable Long flowInstId, HttpServletRequest request, HttpServletResponse response) {
         String nodesxml = flowManager.viewFlowNodeInstance(flowInstId);
@@ -523,30 +537,30 @@ public class FlowManagerController extends BaseController {
             JSONObject nodeOptInfo = new JSONObject();
             nodeOptInfo.put("nodename", nodeInfo.getNodeName());
             int nodeInstInd = 0;
-            long nodeInstId=0;
+            //long nodeInstId=0;
             for (NodeInstance nodeInst : dbobject.getNodeInstances()) {
                 if (nodeInst.getNodeId().equals(nodeId)) {
                     //暂时保证一个节点保留一条查看信息
-                    if(nodeInstId>nodeInst.getNodeInstId())
+                   /* if(nodeInstId>nodeInst.getNodeInstId())
                         continue;
                     else {
                         nodeOptInfo.clear();
                         nodeInstInd=0;
-                    }
+                    }*/
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].createtime", DatetimeOpt.convertDatetimeToString(nodeInst.getCreateTime()));
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode", nodeInst.getUnitCode());
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname", CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
                     if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState())) {
-                        List<UserTask> tasks=new ArrayList<>();
+                        List<UserTask> tasks = new ArrayList<>();
                         List<UserTask> innerTasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());
-                        if(innerTasks!=null)
+                        if (innerTasks != null)
                             tasks.addAll(innerTasks);
-                        if("D".equals(nodeInst.getTaskAssigned())){
+                        if ("D".equals(nodeInst.getTaskAssigned())) {
                             int page = 1;
                             int limit = 100;
                             PageDesc pageDesc = new PageDesc(page, limit);
                             Map<String, Object> searchColumn = new HashMap<>();
-                            searchColumn.put("nodeInstId",nodeInst.getNodeInstId());
+                            searchColumn.put("nodeInstId", nodeInst.getNodeInstId());
                             searchColumn.put("unitCode", nodeInst.getUnitCode());
                             searchColumn.put("userStation", nodeInfo.getRoleCode());
                             List<UserTask> dynamicTask = platformFlowService.queryDynamicTaskByUnitStation(searchColumn, pageDesc);
@@ -565,7 +579,7 @@ public class FlowManagerController extends BaseController {
                             CodeRepositoryUtil.getValue("WFInstType", nodeInst.getNodeState()));
                         //暂时添加当前节点的最后更新人
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updateuser",
-                            CodeRepositoryUtil.getValue("userCode",  nodeInst.getLastUpdateUser()));
+                            CodeRepositoryUtil.getValue("userCode", nodeInst.getLastUpdateUser()));
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
                             DatetimeOpt.convertDatetimeToString(nodeInst.getLastUpdateTime()));
                         //ActionLog的获取暂时取消
@@ -583,7 +597,7 @@ public class FlowManagerController extends BaseController {
 //                        }
                     }
                     nodeInstInd++;
-                    nodeInstId=nodeInst.getNodeInstId();
+                    //nodeInstId=nodeInst.getNodeInstId();
                 }
             }
             nodeOptInfo.put("count", nodeInstInd);

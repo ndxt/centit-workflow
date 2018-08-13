@@ -44,24 +44,24 @@
 
 
     if (SVG.supported) {
-        var flowInstId = location.search.substr(1).split("&")[0].split("=")[1], xml, viewXml;
+        var flowInstId = location.search.substr(1).split("&")[0].split("=")[1], xml;
+        var flowCode=getQueryString("flowCode");
+        var xml;
+        var version=getQueryString("version");
+        debugger;
         var path = getQueryString('contentPath') || '/'+location.pathname.split("/")[1]+'/';
         $.ajax({
             type: "get",
             async: false,
-            url: path + ViewXml + flowInstId,
+            url: path + ViewXml + flowCode+"/"+version,
             dataType: "json",
             success: function (data) {
                 xml = data.data.xml;
-                viewXml = data.data.viewXml;
             }
         });
         init();
         if (xml)
-            loadXml(xml, viewXml);
-        if(viewXml){
-            loadViewXml(viewXml);
-        }
+            loadXml(xml);
     } else
         alert("您的浏览器不支持SVG，请换其他浏览器");
 </script>
