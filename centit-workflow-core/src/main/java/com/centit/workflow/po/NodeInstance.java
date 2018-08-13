@@ -333,9 +333,10 @@ public class NodeInstance implements java.io.Serializable {
     }
 
     /**
-     * 计算一个令牌token的主干token，游离节点去掉前面的R，临时插入节点去掉前面的L
-     * @param token
-     * @return
+     * 计算一个令牌token的主干token，临时插入节点去掉前面的L
+     * 游离节点 在汇聚式暂不考虑 R 不用管 2018-8-13
+     * @param token 传入的参数
+     * @return 主干token
      */
     public static String calcTrunkToken(String token){
         if(token==null)
@@ -343,7 +344,7 @@ public class NodeInstance implements java.io.Serializable {
         int nPos = 0;
         int nl = token.length();
         while(nPos<nl){
-            if(token.charAt(nPos) =='R' || token.charAt(nPos) == 'L')
+            if(/*token.charAt(nPos) =='R' || */token.charAt(nPos) == 'L')
                 nPos++;
             else
                 break;
