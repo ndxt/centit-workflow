@@ -95,7 +95,7 @@ public class FlowManagerController extends BaseController {
             FlowInfo obj = flowDef.getFlowDefObject(flowCode, version);
             String xml = obj.getFlowXmlDesc();
             String viewXml = flowManager.viewFlowInstance(flowInstId);
-            HashMap<String, String> result = new HashMap<String, String>();
+            HashMap<String, String> result = new HashMap<>();
             result.put("xml", xml);
             result.put("viewXml", viewXml);
             JsonResultUtils.writeSingleDataJson(result, response);

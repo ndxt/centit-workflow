@@ -77,11 +77,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Map<String, FlowTransition> transMap = new HashMap<>();
         Set<NodeInfo> nodeSet = wfDef.getFlowNodes();
         long benginNodeId = -1;
+        long endNodeID = -1;
         for (NodeInfo node : nodeSet) {
             nodeState.put(node.getNodeId(), "ready");
             if (node.getNodeType().equals("A")) {
                 nodeState.put(node.getNodeId(), "complete");
                 benginNodeId = node.getNodeId();
+            } else if (node.getNodeType().equals("F")) {
+                endNodeID = node.getNodeId();
             }
             nodeInstCount.put(node.getNodeId(), 0);
             nodeMap.put(node.getNodeId(), node);
@@ -90,6 +93,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         //flowDefDao.fetchObjectReferences(wfDef);
         Set<FlowTransition> transSet = wfDef.getFlowTransitions();
         for (FlowTransition trans : transSet) {
+            //首节点必然通过
             if (trans.getStartNodeId().equals(benginNodeId)) {
                 transState.put(String.valueOf(trans.getTransId()), "1");
             } else
@@ -137,6 +141,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                         nc = nodeInstCount.get(trans.getEndNodeId());
                         nodeInstCount.put(trans.getEndNodeId(), (nc == null) ? 1 : nc + 1);
                     }
+                }
+            }
+            //由于没有办结节点生成，所以最后一条线需要寻找最后一个节点，根据线的startnodeid来判断
+            for (FlowTransition trans : transSet) {
+                if (nodeInst.getNodeId().equals(trans.getStartNodeId()) && trans.getEndNodeId().equals(endNodeID) && "C".equals(wfInst.getInstState())) {
+                    //如果流程结束那么最后一条线
+                    transState.put(String.valueOf(trans.getTransId()), "1");
+                    break;
                 }
             }
         }
@@ -476,7 +488,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public int stopInstance(long flowInstId, String mangerUserCode,
                             String admindesc) {
-        FlowOptUtils.sendFinishMsg(flowInstId,mangerUserCode);
+        FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
         return updateInstanceState(flowInstId, "F", mangerUserCode, admindesc);
     }
 
