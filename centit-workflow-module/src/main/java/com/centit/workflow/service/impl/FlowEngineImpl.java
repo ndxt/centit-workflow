@@ -2274,7 +2274,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public void saveFlowVariable(long flowInstId, String sVar, String sValue) {
-        if (sValue == null) {
+        if (StringBaseOpt.isNvl(sValue)) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
         } else {
             FlowVariableId cid = new FlowVariableId(flowInstId, "A", sVar);
@@ -2300,7 +2300,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public void saveFlowNodeVariable(long flowInstId, String runToken, String sVar, String sValue) {
 
-        if (sValue == null) {
+        if (StringBaseOpt.isNvl(sValue)) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId,
                 runToken, sVar));
             return;
@@ -2332,7 +2332,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public void saveFlowVariable(long flowInstId, String sVar, Set<String> sValues) {
-        if (sValues == null) {
+        if (sValues == null || sValues.size()==0) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
         } else {
             FlowVariable varO = new FlowVariable(flowInstId, "A", sVar, FlowVariable.stringsetToString(sValues), "E");
@@ -2347,7 +2347,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error("找不到节点实例：" + nodeInstId);
             return;
         }
-        if (sValues == null) {
+        if (sValues == null || sValues.size()==0) {
             flowVariableDao.deleteObjectById(new FlowVariableId(nodeInst.getFlowInstId(),
                 nodeInst.getRunToken(), sVar));
             return;
