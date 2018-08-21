@@ -339,14 +339,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName) {
+    public void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag) {
         /*FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
             return;
         flowInst.setFlowOptName(flowOptName);
         flowInst.setFlowOptTag(flowOptTag);
         flowInstanceDao.updateObject(flowInst);*/
-        flowInstanceDao.updateFlowInstOptInfo(flowInstId, flowOptName);
+        flowInstanceDao.updateFlowInstOptInfo(flowInstId, flowOptName,flowOptTag);
     }
 
     @Override
@@ -1006,14 +1006,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nextNodeInst,
                 nextOptNode, userCode);
             if (needSubmit)
-                this.submitOpt(lastNodeInstId, userCode, unitCode,
+                this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
                     varTrans, nodeUnits, nodeOptUsers, application);
-                /*this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
-                    varTrans, nodeUnits, nodeOptUsers, application);*/
 
         } else if ("E".equals(nextOptNode.getOptType())) {  //哑元节点 自动提交
             try {
-                this.submitOpt(lastNodeInstId, userCode, unitCode,
+                this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
                     varTrans, nodeUnits, nodeOptUsers, application);
             } catch (WorkflowException e) {
                 logger.error("自动提交哑元节点 " + lastNodeInstId + "后提交出错 。" + e.getMessage());
@@ -1479,17 +1477,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         throws WorkflowException {
         Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, grantorCode, unitCode,
             varTrans, null, null, application);
-        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
-        return nextNodeInsts;
-    }
-
-    private Set<Long> submitOpt(long nodeInstId, String userCode,
-                               String unitCode, UserUnitVariableTranslate varTrans,
-                               Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
-                               ServletContext application)
-        throws WorkflowException {
-        Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, userCode, unitCode,
-            varTrans, nodeUnits, nodeOptUsers, application);
         FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
         return nextNodeInsts;
     }
@@ -2274,7 +2261,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public void saveFlowVariable(long flowInstId, String sVar, String sValue) {
-        if (StringBaseOpt.isNvl(sValue)) {
+        if (sValue == null) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
         } else {
             FlowVariableId cid = new FlowVariableId(flowInstId, "A", sVar);
@@ -2300,7 +2287,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public void saveFlowNodeVariable(long flowInstId, String runToken, String sVar, String sValue) {
 
-        if (StringBaseOpt.isNvl(sValue)) {
+        if (sValue == null) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId,
                 runToken, sVar));
             return;
@@ -2332,7 +2319,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public void saveFlowVariable(long flowInstId, String sVar, Set<String> sValues) {
-        if (sValues == null || sValues.size()==0) {
+        if (sValues == null) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
         } else {
             FlowVariable varO = new FlowVariable(flowInstId, "A", sVar, FlowVariable.stringsetToString(sValues), "E");
@@ -2347,7 +2334,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error("找不到节点实例：" + nodeInstId);
             return;
         }
-        if (sValues == null || sValues.size()==0) {
+        if (sValues == null) {
             flowVariableDao.deleteObjectById(new FlowVariableId(nodeInst.getFlowInstId(),
                 nodeInst.getRunToken(), sVar));
             return;

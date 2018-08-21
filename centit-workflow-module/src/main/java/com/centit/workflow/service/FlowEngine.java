@@ -28,7 +28,7 @@ public interface FlowEngine {
      * @return
      */
     FlowInstance createInstance(String  flowCode, String flowOptName,
-                                       String flowOptTag, String userCode, String unitCode);
+                                String flowOptTag, String userCode, String unitCode);
 
 
     /**
@@ -42,7 +42,7 @@ public interface FlowEngine {
      * @return
      */
     FlowInstance createInstance(String  flowCode,long version,String flowOptName,
-            String flowOptTag,String userCode,String unitCode);
+                                String flowOptTag,String userCode,String unitCode);
 
     /**
      * 创建流程实例 返回流程实例
@@ -56,8 +56,8 @@ public interface FlowEngine {
      * @return
      */
     FlowInstance createInstance(String  flowCode,long version,String flowOptName,
-            String flowOptTag,String userCode,String unitCode,
-            UserUnitVariableTranslate varTrans,ServletContext application);
+                                String flowOptTag,String userCode,String unitCode,
+                                UserUnitVariableTranslate varTrans,ServletContext application);
 
 
     /**
@@ -72,8 +72,8 @@ public interface FlowEngine {
      * @return
      */
     FlowInstance createInstance(String  flowCode,String flowOptName,
-            String flowOptTag,String userCode,String unitCode,
-            UserUnitVariableTranslate varTrans,ServletContext application);
+                                String flowOptTag,String userCode,String unitCode,
+                                UserUnitVariableTranslate varTrans,ServletContext application);
 
 
     /**
@@ -86,7 +86,7 @@ public interface FlowEngine {
      * @return
      */
     FlowInstance createInstanceLockFirstNode(String  flowCode,String flowOptName,
-            String flowOptTag,String userCode,String unitCode);
+                                             String flowOptTag,String userCode,String unitCode);
 
     /**
      * 使用 最新版本的流程 创建 流程实例
@@ -111,7 +111,7 @@ public interface FlowEngine {
      * @return
      */
     FlowInstance createInstanceLockFirstNode(String  flowCode,long version,
-            String flowOptName, String flowOptTag, String userCode,String unitCode);
+                                             String flowOptName, String flowOptTag, String userCode,String unitCode);
 
     /*
      * 创建子流程实例 返回流程实例号  子流程由内部创建不需要提供接口
@@ -119,7 +119,7 @@ public interface FlowEngine {
     */
 
 
-   //--------------------提交流程业务节点-----------------------------------
+    //--------------------提交流程业务节点-----------------------------------
     /**
      * 返回下一步节点的节点实例ID
      * @param nodeInstId 当前节点实例编号
@@ -127,15 +127,15 @@ public interface FlowEngine {
      * @param unitCode 用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
      * @param varTrans 变量转换器
      * @return  节点实例编号列表
-        */
+     */
     Set<Long> submitOpt(long nodeInstId,String userCode,
-            String unitCode,UserUnitVariableTranslate varTrans,
-            ServletContext application) throws WorkflowException;
+                        String unitCode,UserUnitVariableTranslate varTrans,
+                        ServletContext application) throws WorkflowException;
 
 
     Set<Long> submitOpt(long nodeInstId,String userCode,String grantorCode,
-            String unitCode,UserUnitVariableTranslate varTrans,
-            ServletContext application) throws WorkflowException;
+                        String unitCode,UserUnitVariableTranslate varTrans,
+                        ServletContext application) throws WorkflowException;
 
     /**
      * 返回下一步节点的节点实例ID
@@ -148,9 +148,9 @@ public interface FlowEngine {
      * @return  节点实例编号列表
      */
     Set<Long> submitOptWithAssignUnitAndUser(long nodeInstId,String userCode,
-            String unitCode,UserUnitVariableTranslate varTrans,
-            Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
-            ServletContext application) throws WorkflowException;
+                                             String unitCode,UserUnitVariableTranslate varTrans,
+                                             Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
+                                             ServletContext application) throws WorkflowException;
 
     /**
      * 返回下一步节点的节点实例ID
@@ -163,12 +163,12 @@ public interface FlowEngine {
      * @return  节点实例编号列表
      */
     Set<Long> submitOptWithAssignUnitAndUser(long nodeInstId,String userCode,
-            String grantorCode,String unitCode,UserUnitVariableTranslate varTrans,
-            Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
-            ServletContext application) throws WorkflowException;
+                                             String grantorCode,String unitCode,UserUnitVariableTranslate varTrans,
+                                             Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
+                                             ServletContext application) throws WorkflowException;
 
 
-  //--------------------查看流转信息-----------------------------------
+    //--------------------查看流转信息-----------------------------------
     /**
      * 提交节点工作 是否成功
      * 预判下一步节点的节点编号
@@ -191,7 +191,7 @@ public interface FlowEngine {
      * @return
      */
     Set<String> viewNextNodeOperator(long nextNodeId,long curNodeInstId,
-            String userCode,String unitCode,UserUnitVariableTranslate varTrans);
+                                     String userCode,String unitCode,UserUnitVariableTranslate varTrans);
 
 
     //-------------------------用户待办接口---------------------------------------
@@ -322,7 +322,7 @@ public interface FlowEngine {
      * @param flowInstId 流程实例ID
      * @param flowOptName 这个名称用户 查找流程信息
      */
-    void updateFlowInstOptInfo(long flowInstId,String flowOptName);
+    void updateFlowInstOptInfo(long flowInstId,String flowOptName,String flowOptTag);
 
     //--------------------人工控制流程流转和任务分配------------------------------------
 
@@ -368,7 +368,7 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createPrepNodeInstLockUser(long flowInstId,long curNodeInstId,
-            long nodeId,String createUser,String userCode,String unitCode);
+                                            long nodeId,String createUser,String userCode,String unitCode);
 
 
     /**
@@ -385,7 +385,7 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createPrepNodeInstLockUser(long flowInstId,long curNodeInstId,
-            String nodeCode,String createUser,String userCode,String unitCode);
+                                            String nodeCode,String createUser,String userCode,String unitCode);
 
     /**
      * 加签
@@ -400,7 +400,7 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createPrepNodeInst(long flowInstId,long curNodeInstId,
-            long nodeId,String userCode,String unitCode);
+                                    long nodeId,String userCode,String unitCode);
 
 
     /**
@@ -417,7 +417,7 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createPrepNodeInst(long flowInstId,long curNodeInstId,
-            String nodeCode, String userCode,String unitCode);
+                                    String nodeCode, String userCode,String unitCode);
 
     /**
      * 创建一个游离节点
@@ -434,7 +434,7 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createIsolatedNodeInst(long flowInstId,long curNodeInstId,
-            String nodeCode,String createUser, String userCode,String unitCode);
+                                        String nodeCode,String createUser, String userCode,String unitCode);
 
 
     /**
@@ -452,7 +452,7 @@ public interface FlowEngine {
      * @return 节点实例
      */
     NodeInstance createIsolatedNodeInst(long flowInstId,long curNodeInstId,
-            long nodeId,String createUser, String userCode,String unitCode);
+                                        long nodeId,String createUser, String userCode,String unitCode);
 
 
     /**
@@ -462,7 +462,7 @@ public interface FlowEngine {
      * @param parentNodeInstId 父流程节点实例id
      */
     void updateFlowInstParentNode(long flowInstId,long parentFlowInstId,
-            long parentNodeInstId);
+                                  long parentNodeInstId);
 
 
     /**
@@ -558,7 +558,7 @@ public interface FlowEngine {
      * @return
      */
     List<FlowWorkTeam> viewFlowWorkTeamList(long flowInstId, String roleCode,
-                                                   String authdesc);
+                                            String authdesc);
 
 
     /**
@@ -607,7 +607,7 @@ public interface FlowEngine {
      * @return
      */
     void assignFlowOrganize(long flowInstId,String roleCode,
-            String unitCode,String authdesc);
+                            String unitCode,String authdesc);
     /**
      * 分配工作小组 --办件角色
      * @param flowInstId  流程实例号 不能为空
@@ -638,7 +638,7 @@ public interface FlowEngine {
      * @param roleCode 机构角色 不能为空
      */
     void deleteFlowOrganizeByAuth(long flowInstId,String roleCode,
-            String authDesc);
+                                  String authDesc);
 
     /**
      * 查看工作小组
@@ -670,7 +670,7 @@ public interface FlowEngine {
      * @return
      */
     List<FlowOrganize> viewFlowOrganizeList(long flowInstId, String roleCode,
-            String authDesc);
+                                            String authDesc);
 
     /**
      * 设置流程全局变量
