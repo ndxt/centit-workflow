@@ -339,14 +339,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag) {
+    public void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag) {
         /*FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
             return;
         flowInst.setFlowOptName(flowOptName);
         flowInst.setFlowOptTag(flowOptTag);
         flowInstanceDao.updateObject(flowInst);*/
-        flowInstanceDao.updateFlowInstOptInfo(flowInstId, flowOptName,flowOptTag);
+        flowInstanceDao.updateFlowInstOptInfo(flowInstId, flowOptName, flowOptTag);
     }
 
     @Override
@@ -685,7 +685,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             NodeInstance nextNodeInst = submitToSingleNextOptNode(
                                 nextNode, flowInst, flowInfo,
                                 nodeInst, preTransPath, nodeTran, uc,
-                                CodeRepositoryUtil.getUserInfoByCode(uc).getPrimaryUnit(),
+                                CodeRepositoryUtil.getUserPrimaryUnit(uc) != null ? CodeRepositoryUtil.getUserPrimaryUnit(uc).getUnitCode() : null,
+                                //CodeRepositoryUtil.getUserInfoByCode(uc).getPrimaryUnit(),
                                 null, nodeToken + "." + nRn,
                                 true, varTrans, nodeUnits, nodeOptUsers,
                                 application);
@@ -2319,7 +2320,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public void saveFlowVariable(long flowInstId, String sVar, Set<String> sValues) {
-        if (sValues == null || sValues.size()==0) {
+        if (sValues == null || sValues.size() == 0) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
         } else {
             FlowVariable varO = new FlowVariable(flowInstId, "A", sVar, FlowVariable.stringsetToString(sValues), "E");
@@ -2334,7 +2335,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error("找不到节点实例：" + nodeInstId);
             return;
         }
-        if (sValues == null || sValues.size()==0) {
+        if (sValues == null || sValues.size() == 0) {
             flowVariableDao.deleteObjectById(new FlowVariableId(nodeInst.getFlowInstId(),
                 nodeInst.getRunToken(), sVar));
             return;

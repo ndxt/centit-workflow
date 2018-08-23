@@ -1,5 +1,6 @@
 package com.centit.workflow.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.support.database.utils.PageDesc;
@@ -11,6 +12,7 @@ import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -42,6 +44,18 @@ public class FlowEngineController  extends BaseController {
         newFlowInstanceOptions.setFlowOptTag(flowOptTag);
         newFlowInstanceOptions.setUserCode(userCode);
         newFlowInstanceOptions.setUnitCode(unitCode);
+        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
+    }
+
+    /**
+     * 新增一个以json作为参数的创建流程接口
+     * @param json
+     * @param httpResponse
+     */
+    @RequestMapping(value = "/createFlowInstDefaultByJson")
+    public void createFlowInstDefaultByJson(@RequestBody String json, HttpServletResponse httpResponse) {
+        NewFlowInstanceOptions newFlowInstanceOptions = JSON.parseObject(json,NewFlowInstanceOptions.class);
         FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
         JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
     }
