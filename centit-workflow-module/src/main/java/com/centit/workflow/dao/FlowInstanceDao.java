@@ -29,9 +29,9 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
             filterField.put("version" , CodeBook.LIKE_HQL_ID);
 
             filterField.put("(date)createTimeBeg",
-                    " createTime>= :createTimeBeg");
+                " createTime>= :createTimeBeg");
             filterField.put("(date)createTimeEnd",
-                    " createTime<= createTimeEnd  ");
+                " createTime<= createTimeEnd  ");
             filterField.put("(date)lastUpdateTime" , "lastUpdateTime = :lastUpdateTime");
 
             filterField.put("instState" , CodeBook.EQUAL_HQL_ID);
@@ -44,7 +44,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
             filterField.put("userCode" , CodeBook.LIKE_HQL_ID);
             filterField.put("(long)nodeId" , "flowInstId in (select flowInstId from NodeInstance where nodeState='N' and nodeId=:nodeId)" );
             filterField.put("optCode", "flowInstId in "+
-               "(select a.flowInstId from NodeInstance a,NodeInfo b where a.nodeId=b.nodeId and a.nodeState='N' and b.optCode=:optCode)" );
+                "(select a.flowInstId from NodeInstance a,NodeInfo b where a.nodeId=b.nodeId and a.nodeState='N' and b.optCode=:optCode)" );
 
             filterField.put("nocom" , "instState <> :nocom");
             filterField.put("NP_warning" , "flowInstId in (select flowInstId from FlowWarning ) ");
@@ -73,9 +73,9 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
 
     @Transactional(propagation= Propagation.MANDATORY)
     public FlowInstance getObjectCascadeById(long instid){
-      return jdbcTemplate.execute(
-        (ConnectionCallback<FlowInstance>) conn ->
-          OrmDaoUtils.getObjectCascadeById(conn, instid, FlowInstance.class));
+        return jdbcTemplate.execute(
+            (ConnectionCallback<FlowInstance>) conn ->
+                OrmDaoUtils.getObjectCascadeById(conn, instid, FlowInstance.class));
 
       /*FlowInstance flowInstance = super.getObjectById(instid);
         return super.fetchObjectReferences(flowInstance);*/
@@ -94,8 +94,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
             whereSql += " )";
         } else {
             whereSql += " where u.user_Code="
-                    + QueryUtils.buildStringForQuery(userCode)
-                    + " and u.flow_Phase in (";
+                + QueryUtils.buildStringForQuery(userCode)
+                + " and u.flow_Phase in (";
 
             if (flowPhase != null && flowPhase.equals("fw")) {
                 whereSql += "'fw','yh','qf','zwh','pb','ysp','gz'";
@@ -112,7 +112,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listNearExpireFlowInstance(long leaveLimit) {
         String conditionSql = "where FLOW_INST_ID = ? " +
-                " and inst_State='N' and is_Timer='T'";
+            " and inst_State='N' and is_Timer='T'";
         //and expireOptSign<6 暂时没有这个字段
         return  this.listObjectsByFilter(conditionSql,new Object[]{leaveLimit});
     }
@@ -121,7 +121,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     public void updateTimeConsume(long consumeTime)
     {
         String baseSql = "update WF_FLOW_INSTANCE set TIME_LIMIT =TIME_LIMIT- ? " +
-                "where inst_State='N' and is_Timer='T' and time_Limit is not null  ";
+            "where inst_State='N' and is_Timer='T' and time_Limit is not null  ";
         this.getJdbcTemplate().update(baseSql,new Object[]{consumeTime});
     }
 
@@ -152,8 +152,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listFlowInstByTimer(String userCode, String isTimer, PageDesc pageDesc){
         return super.listObjectsByFilter(
-                " where last_Update_User = ? and is_Timer =? order by last_Update_Time ",
-                new Object[]{userCode,isTimer},pageDesc);
+            " where last_Update_User = ? and is_Timer =? order by last_Update_Time ",
+            new Object[]{userCode,isTimer},pageDesc);
     }
 
     /**
@@ -179,8 +179,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     @Transactional(propagation= Propagation.MANDATORY)
     public long calcOtherSubflowSum(Long nodeInstId,Long curSubFlowId){
         String baseSql = "select count(1) as otherFlows from WF_FLOW_INSTANCE  "
-                + "where INST_STATE='N' and IS_SUB_INST='Y' "
-                + " and PRE_NODE_INST_ID=? and FLOW_INST_ID <> ?";
+            + "where INST_STATE='N' and IS_SUB_INST='Y' "
+            + " and PRE_NODE_INST_ID=? and FLOW_INST_ID <> ?";
         Object obj = this.getJdbcTemplate().queryForObject(baseSql,new Object[]{nodeInstId,curSubFlowId},Long.class);
         if (obj == null)
             return 0;
@@ -194,8 +194,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName){
-        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=? where  FLOW_INST_ID=?";
-        this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowInstId});
+    public void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag){
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=? where  FLOW_INST_ID=?";
+        this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,flowInstId});
     }
 }

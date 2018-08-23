@@ -151,9 +151,9 @@ public class FlowEngineController  extends BaseController {
      * @param flowOptName 这个名称用户 查找流程信息
      */
     @RequestMapping(value="/updateFlowInstOptInfo",method = RequestMethod.POST)
-    void updateFlowInstOptInfo(long flowInstId,String flowOptName,
+    void updateFlowInstOptInfo(long flowInstId,String flowOptName,String flowOptTag,
                                HttpServletRequest request,HttpServletResponse response){
-        flowEng.updateFlowInstOptInfo(flowInstId,flowOptName);
+        flowEng.updateFlowInstOptInfo(flowInstId,flowOptName,flowOptTag);
         JsonResultUtils.writeSuccessJson(response);
     }
 

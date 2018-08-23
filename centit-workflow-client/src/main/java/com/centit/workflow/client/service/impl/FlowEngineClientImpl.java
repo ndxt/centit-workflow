@@ -114,7 +114,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
                                  String flowOptTag, String userCode, String unitCode,
                                  Map<String, Object> varTrans, ServletContext application) throws Exception{
         return createInstance( flowCode,  version, flowOptName,  flowOptTag,
-             userCode,  unitCode) ;
+            userCode,  unitCode) ;
         // TODO 添加权限和机构引擎计算
     }
 
@@ -192,7 +192,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     @Override
     public void assignFlowOrganize (long flowInstId, String roleCode,
-                             List<String> orgCodeSet){
+                                    List<String> orgCodeSet){
         HashMap<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("roleCode",roleCode);
@@ -335,10 +335,11 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName) {
+    public void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag) {
         HashMap<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("flowOptName",flowOptName);
+        paramMap.put("flowOptTag",flowOptTag);
         CloseableHttpClient httpClient = null;
         try {
             httpClient = appSession.allocHttpClient();

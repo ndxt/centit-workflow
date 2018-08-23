@@ -35,7 +35,7 @@ public interface FlowEngineClient {
      * @return
      */
     String createInstance(String flowCode, String flowOptName,
-                                String flowOptTag, String userCode, String unitCode) throws Exception;
+                          String flowOptTag, String userCode, String unitCode) throws Exception;
 
     /**
      * 创建流程实例 返回流程实例
@@ -48,7 +48,7 @@ public interface FlowEngineClient {
      * @return
      */
     String createInstance(String flowCode, long version, String flowOptName,
-                                String flowOptTag, String userCode, String unitCode) throws Exception;
+                          String flowOptTag, String userCode, String unitCode) throws Exception;
 
     /**
      * 创建流程实例 返回流程实例
@@ -62,8 +62,8 @@ public interface FlowEngineClient {
      * @return
      */
     String createInstance(String flowCode, long version, String flowOptName,
-                                String flowOptTag, String userCode, String unitCode,
-                                Map<String,Object> varTrans, ServletContext application) throws Exception;
+                          String flowOptTag, String userCode, String unitCode,
+                          Map<String,Object> varTrans, ServletContext application) throws Exception;
 
 //    /**
 //     * 创建流程实例  返回流程实例
@@ -121,7 +121,7 @@ public interface FlowEngineClient {
      * @param unitCode 用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
      * @param varTrans 变量转换器
      * @return  节点实例编号列表
-        */
+     */
     Set<Long> submitOpt(long nodeInstId, String userCode,
                         String unitCode, Map<String,Object> varTrans,
                         ServletContext application) throws  Exception;
@@ -308,13 +308,13 @@ public interface FlowEngineClient {
 //     * @param flowOptName 这个名称用户 查找流程信息
 //     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，有业务系统自己解释
 //     */
-        /**
-         * 根据业务id获取所有该业务下的流程
-         * @param optTag
-         * @return
-         */
-        List<FlowInstance> listAllFlowInstByOptTag(String optTag);
-        void updateFlowInstOptInfo(long flowInstId, String flowOptName);
+    /**
+     * 根据业务id获取所有该业务下的流程
+     * @param optTag
+     * @return
+     */
+    List<FlowInstance> listAllFlowInstByOptTag(String optTag);
+    void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag);
 //
 //    //--------------------人工控制流程流转和任务分配------------------------------------
 //
@@ -543,7 +543,7 @@ public interface FlowEngineClient {
      * @return Set<userCode>
      */
     List<String> viewFlowWorkTeam(long flowInstId, String roleCode);
-//
+    //
 //    /**
 //     * 查看工作小组中某个角色的成员
 //     * @param flowInstId
