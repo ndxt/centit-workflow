@@ -151,12 +151,12 @@ public class FlowEngineController  extends BaseController {
     }*/
     /**
      * 根据业务id获取所有该业务下的流程
-     * @param optTag
+     * @param flowOptTag
      * @return
      */
     @RequestMapping(value="/listAllFlowInstByOptTag",method = RequestMethod.GET)
-    void listAllFlowInstByOptTag(HttpServletRequest request,HttpServletResponse response,String optTag){
-        JsonResultUtils.writeSingleDataJson(flowEng.listAllFlowInstByOptTag(optTag),response);
+    void listAllFlowInstByOptTag(HttpServletRequest request,HttpServletResponse response,String flowOptTag){
+        JsonResultUtils.writeSingleDataJson(flowEng.listAllFlowInstByOptTag(flowOptTag),response);
     }
 
     /**

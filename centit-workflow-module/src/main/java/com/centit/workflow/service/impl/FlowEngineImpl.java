@@ -332,10 +332,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<FlowInstance> listAllFlowInstByOptTag(String optTag) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("flowOptTag", optTag);
-        return flowInstanceDao.listObjects(map);
+    public List<FlowInstance> listAllFlowInstByOptTag(String flowOptTag) {
+        return flowInstanceDao.listAllFlowInstByOptTag(flowOptTag);
     }
 
     @Override
