@@ -907,7 +907,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
             }
         }
-
+        //TODO 如果自动执行的节点下一步生成的节点实例有多个，这边的return就不对了
+        //暂时先取第一个节点实例，解决部分问题
+        NodeInstance tempFirstNode = null;
         //判断是否为子流程 A:一般 B:抢先机制 C:多人操作 S:子流程
         if ("S".equals(nextOptNode.getOptType())) {
             //如果是子流程 启动流程
@@ -924,6 +926,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 flowInst.setTimeLimit(nextNodeInst.getTimeLimit());
                 flowInstanceDao.updateObject(flowInst);
             }
+            tempFirstNode = tempFlow.getFirstNodeInstance();
         } else if (!assignedUser) {
             Set<String> optUsers = calcNodeOpterators(flowInst, nodeInst, nodeToken,
                 nextOptNode,
@@ -998,26 +1001,38 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nextOptNode);
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nextOptNode, userCode);
 
-        //检查自动执行节点 并执行相关操作
 
-        //自动执行
+        //检查自动执行节点 并执行相关操作
         if ("D".equals(nextOptNode.getOptType())) {
             boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nextNodeInst,
                 nextOptNode, userCode);
-            if (needSubmit)
-                this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
+            if (needSubmit) {
+                //TODO 如果自动执行的节点下一步生成的节点实例有多个，这边的return就不对了
+                //暂时先取第一个节点实例，解决部分问题
+                Set<Long> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
                     varTrans, nodeUnits, nodeOptUsers, application);
+                for (Long n : nextNodes) {
+                    nextNodeInst = nodeInstanceDao.getObjectById(n);
+                    break;
+                }
+            }
 
         } else if ("E".equals(nextOptNode.getOptType())) {  //哑元节点 自动提交
             try {
-                this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
+                Set<Long> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
                     varTrans, nodeUnits, nodeOptUsers, application);
+                for (Long n : nextNodes) {
+                    nextNodeInst = nodeInstanceDao.getObjectById(n);
+                    break;
+                }
             } catch (WorkflowException e) {
                 logger.error("自动提交哑元节点 " + lastNodeInstId + "后提交出错 。" + e.getMessage());
                 throw e;
             }
         }
-
+        if (tempFirstNode != null) {
+            return tempFirstNode;
+        }
         return nextNodeInst;
     }
 
