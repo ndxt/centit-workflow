@@ -2,10 +2,12 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.model.basedata.IUserUnit;
+import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.PlatformFlowDao;
 import com.centit.workflow.po.UserTask;
 import com.centit.workflow.service.PlatformFlowService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,17 +46,17 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
     public List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
 
-        String station = searchColumn.get("userStation").toString();
-        String unitCode = searchColumn.get("unitCode").toString();
+        String station = StringBaseOpt.castObjectToString(searchColumn.get("userStation"));
+        String unitCode = StringBaseOpt.castObjectToString(searchColumn.get("unitCode"));
         Long nodeInstId = (Long) searchColumn.get("nodeInstId");
-        List<? extends IUserUnit> userUnits = CodeRepositoryUtil.listUnitUsers(unitCode);
-
+        List<? extends IUserUnit> userUnits = unitCode!=null?
+            CodeRepositoryUtil.listUnitUsers(unitCode):null;
         //2.以机构，岗位，职务来查询任务
         if (userUnits == null || userUnits.size() == 0) {
             return taskList;
         }
         for (IUserUnit i : userUnits) {
-            if (!station.equals(i.getUserStation()))
+            if (!StringUtils.equals(station,i.getUserStation()))
                 continue;
             searchColumn.put("nodeInstId", nodeInstId);
             searchColumn.put("unitCode", i.getUnitCode());
