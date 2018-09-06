@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.centit.product</groupId>
@@ -9,15 +10,15 @@
     <packaging>pom</packaging>
     <version>4.0.1-SNAPSHOT</version>
     <name>com.centit.product:centit-workflow</name>
-    <description>基于职能型组织架构的 工作流引擎服务器。
-    </description>
+    <description>基于职能型组织架构的 工作流引擎服务器。</description>
     <url>https://github.com/ndxt/centit-workflow</url>
 
     <parent>
         <groupId>com.centit.framework</groupId>
-        <artifactId>framework-snapshot-dependencies</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <artifactId>framework-release-dependencies</artifactId>
+        <version>1.1.1808</version>
     </parent>
+
     <properties>
         <centit.workflow.version>4.0.1-SNAPSHOT</centit.workflow.version>
     </properties>

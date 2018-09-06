@@ -15,8 +15,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.centit.framework:framework-core:4.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:centit-persistence-core:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.framework:framework-core:4.2.1808" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.framework:centit-persistence-core:1.1.1808" level="project" />
     <orderEntry type="library" name="Maven: javax.validation:validation-api:2.0.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-web:4.3.14.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:4.3.14.RELEASE" level="project" />
@@ -40,16 +40,16 @@
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-web:2.9.1" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.5" level="project" />
     <orderEntry type="library" name="Maven: jstl:jstl:1.2" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:centit-persistence-jdbc:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.framework:centit-persistence-jdbc:1.1.1808" level="project" />
     <orderEntry type="library" name="Maven: javax.persistence:javax.persistence-api:2.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:4.3.14.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:4.3.14.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-database-datasource:2.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-database:2.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.support:centit-database-datasource:2.2.1808" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.support:centit-database:2.2.1808" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2.1808" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-dbcp2:2.1.1" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:framework-adapter:4.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-utils:2.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.framework:framework-adapter:4.2.1808" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.support:centit-utils:2.2.1808" level="project" />
     <orderEntry type="library" name="Maven: org.mnode.ical4j:ical4j:2.2.0" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.1" level="project" />
@@ -69,7 +69,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.sun:rt:1.8">
         <CLASSES>
-          <root url="jar://C:/Program Files (x86)/Java/jdk1.8.0_121/jre/lib/rt.jar!/" />
+          <root url="jar:///opt/develop/jvm/jdk1.8.0_102/jre/lib/rt.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -78,14 +78,14 @@
     <orderEntry type="module-library">
       <library name="Maven: com.sun:jce:1.8">
         <CLASSES>
-          <root url="jar://C:/Program Files (x86)/Java/jdk1.8.0_121/jre/lib/jce.jar!/" />
+          <root url="jar:///opt/develop/jvm/jdk1.8.0_102/jre/lib/jce.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.4.3" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:centit-ip-adapter:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.framework:centit-ip-adapter:1.1.1808" level="project" />
     <orderEntry type="module" module-name="centit-workflow-core" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:5.3.6.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.3.0.Final" level="project" />
@@ -94,7 +94,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.sun:tools:1.8">
         <CLASSES>
-          <root url="jar://C:/Program Files (x86)/Java/jdk1.8.0_121/lib/tools.jar!/" />
+          <root url="jar:///opt/develop/jvm/jdk1.8.0_102/lib/tools.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
