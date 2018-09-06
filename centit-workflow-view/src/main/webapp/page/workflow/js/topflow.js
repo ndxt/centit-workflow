@@ -179,6 +179,7 @@ function loadXml(xml) {
                 nodedesc: attrValue(getShape[i], "BaseProperties", "nodedesc"),//节点描述
                 nodetype: nodeType,//节点类型
                 nodecode: attrValue(getShape[i], "BaseProperties", "nodecode"),//节点代码
+                osid: attrValue(getShape[i], "BaseProperties", "osid"),//osid
                 opttype: attrValue(getShape[i], "BaseProperties", "opttype") == 'B'?'A':attrValue(getShape[i], "BaseProperties", "opttype"),//操作类别
                 optcode: attrValue(getShape[i], "BaseProperties", "optcode"),//业务代码
                 optbean: attrValue(getShape[i], "BaseProperties", "optbean"),//业务注入
@@ -222,6 +223,7 @@ function loadXml(xml) {
                 nodedesc: attrValue(getShape[i], "BaseProperties", "nodedesc"),//节点描述
                 nodetype: nodeType,//节点类型
                 nodecode: attrValue(getShape[i], "BaseProperties", "nodecode"),//节点代码
+                osid: attrValue(getShape[i], "BaseProperties", "osid"),//osid
                 isTrunkLine: attrValue(getShape[i], "BaseProperties", "isTrunkLine"),//是否为主干节点
                 routertype: attrValue(getShape[i], "BaseProperties", "routertype"),//路由类别
                 // filter: "url(#filter)"//阴影过滤器
@@ -246,6 +248,7 @@ function loadXml(xml) {
                 title: attrValue(getShape[i], "BaseProperties", "name"),
                 nodetype: nodeType,
                 nodecode:"",
+                osid:"",
                 nodedesc:"",
                 // filter: "url(#filter)"//阴影过滤器
             }
@@ -480,6 +483,7 @@ function createEmptyXml(){
         "nodedesc": "",
         "nodetype": "A",
         "nodecode": "",
+        "osid": "",
         "filter": "url(#filter)",
         "width": 40,
         "height":40
@@ -491,6 +495,7 @@ function createEmptyXml(){
         "nodedesc": "",
         "nodetype": "F",
         "nodecode": "",
+        "osid": "",
         "filter": "url(#filter)",
         "width": 40,
         "height": 40
@@ -927,6 +932,7 @@ function saveXml(){
             node = xmlDoc.createElement("Node");
             baseProperties = xmlDoc.createElement("BaseProperties");
             VMLProperties = xmlDoc.createElement("VMLProperties");
+debugger
             switch(obj[i].getAttribute("shapetype")){
                 case "double-oval"://开始节点、结束节点
                     addNode(baseProperties,{//属性信息
@@ -951,6 +957,7 @@ function saveXml(){
                         "flowphase":obj[i].getAttribute("flowphase"),//节点阶段
                         "nodedesc":obj[i].getAttribute("nodedesc"),//节点描述
                         "nodecode":obj[i].getAttribute("nodecode"),//节点代码
+                        "osid":obj[i].getAttribute("osid"),//osid
                         "opttype":obj[i].getAttribute("opttype"),//操作类别
                         "optcode":obj[i].getAttribute("optcode"),//业务代码
                         "optbean":obj[i].getAttribute("optbean"),//业务注入
@@ -989,6 +996,7 @@ function saveXml(){
                         "flowphase":obj[i].getAttribute("flowphase"),//节点阶段
                         "nodedesc":obj[i].getAttribute("nodedesc"),//节点描述
                         "nodecode":obj[i].getAttribute("nodecode"),//节点代码
+                        "osid":obj[i].getAttribute("osid"),//osid
                         "roletype":obj[i].getAttribute("roletype"),//角色类别
                         "rolecode":obj[i].getAttribute("rolecode"),//角色代码
                         "isTrunkLine":obj[i].getAttribute("isTrunkLine"),//是否为主干节点
@@ -1014,6 +1022,7 @@ function saveXml(){
                         "flowphase":obj[i].getAttribute("flowphase"),//节点阶段
                         "nodedesc":obj[i].getAttribute("nodedesc"),//节点描述
                         "nodecode":obj[i].getAttribute("nodecode"),//节点代码
+                        "osid":obj[i].getAttribute("osid"),//osid
                         "isTrunkLine":obj[i].getAttribute("isTrunkLine"),//是否为主干节点
                         "convergetype":obj[i].getAttribute("convergetype"),//汇聚条件类别
                         "convergeparam":obj[i].getAttribute("convergeparam"),//汇聚参数
@@ -1039,6 +1048,7 @@ function saveXml(){
                         "flowphase":obj[i].getAttribute("flowphase"),//节点阶段
                         "nodedesc":obj[i].getAttribute("nodedesc"),//节点描述
                         "nodecode":obj[i].getAttribute("nodecode"),//节点代码
+                        "osid":obj[i].getAttribute("osid"),//osid
                         "isTrunkLine":obj[i].getAttribute("isTrunkLine")//是否为主干节点
                     });
                     addNode(VMLProperties,{//位置形状信息
@@ -1098,6 +1108,7 @@ function saveXml(){
         }else{
             xmlString = xmlSer.serializeToString(xmlDoc);
         }
+debugger
         $.ajax({
         	type:"post",
         	url: path+saveXmlAdd+flowCode,

@@ -189,6 +189,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             wfNode.setConvergeParam(getXmlNodeAttrAsStr(baseNode,"convergeparam"));
             wfNode.setWarningRule(getXmlNodeAttrAsStr(baseNode,"warningrule"));
             wfNode.setWarningParam(getXmlNodeAttrAsStr(baseNode,"warningparam"));
+            wfNode.setOsId(getXmlNodeAttrAsStr(baseNode,"osid"));
 
             wfSet.add(wfNode);
         }
@@ -466,7 +467,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             if(nd.getNodeId().equals(flowData.firstNodeId )) {
                 nd.setNodeType("B");//首届点
             }
-            nd.setOsId(flowDef.getOsId());
+            if(StringUtils.isBlank(nd.getOsId())) {
+                nd.setOsId(flowDef.getOsId());
+            }
         }
         //检查 孤立的节点
         for(FlowTransition tran: newFlowDef.getFlowTransitions()){

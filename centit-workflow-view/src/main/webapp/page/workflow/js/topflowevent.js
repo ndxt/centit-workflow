@@ -49,6 +49,7 @@ function bindAttr(obj) {
             $("#flowphase").append("<option  value='" + k + "' >" + Data.FlowPhase[k] + "</option>");
         }
     }
+    g("osid").value = SVG.get(o).attr("osid");//osid
     g("nodedesc").value = SVG.get(o).attr("nodedesc");//节点描述
     //--公共属性结束
     if (SVG.get(o).attr("nodetype") == 'C' || SVG.get(o).attr("nodetype") == 'B') {
@@ -473,6 +474,7 @@ function   drawRect(event) {
                     "shapetype": "roundRect",
                     "flowphase": "",
                     "nodedesc": "",
+                    "osid": "",
                     "nodetype": "C",
                     "nodecode": "",
                     "opttype": "A",
@@ -724,6 +726,7 @@ function drawCircle(event) {
 						"shapetype" : "oval-fen",
 						"routertype" : "D",
 						"flowphase" : "",
+						"osid" : "",
 						"nodedesc" : "",
 						"nodetype" : "R",
 						"nodecode" : "",
@@ -857,6 +860,7 @@ function deletePro(o,operation) {
                                 "shapetype": "roundRect",
                                 "filter": "url(#filter-rect)",
                                 "flowphase": pro.getAttribute('flowphase'),
+                                "osid": pro.getAttribute('osid'),
                                 "nodedesc": pro.getAttribute('nodedesc'),
                                 "nodetype": pro.getAttribute('nodetype'),
                                 "nodecode": pro.getAttribute('nodecode'),
@@ -907,6 +911,7 @@ function deletePro(o,operation) {
                             "shapetype": "roundRect",
                             "filter": "url(#filter-rect)",
                             "flowphase": pro.getAttribute('flowphase'),
+                            "osid": pro.getAttribute('osid'),
                             "nodedesc": pro.getAttribute('nodedesc'),
                             "nodetype": pro.getAttribute('nodetype'),
                             "nodecode": pro.getAttribute('nodecode'),
