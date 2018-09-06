@@ -35,6 +35,7 @@ public class PlatformFlowDao {
         " and w.inst_state = 'N' " +
         " and a.task_assigned = 'D' " +
         " and c.role_type='gw' "+
+        " [ :stageArr | and c.STAGE_CODE in (:stageArr) ] "+
         "[:(like) flowOptName| and w.FLOW_OPT_NAME like :flowOptName] " +
         "[ :unitCode| and ( a.unit_code = :unitCode or a.unit_code is null )] " +
         "[ :userStation| and c.role_code = :userStation] " +
