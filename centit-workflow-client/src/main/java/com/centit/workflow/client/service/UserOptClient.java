@@ -16,10 +16,4 @@ public interface UserOptClient {
 
     void saveOptIdeaForAutoSubmit(Map<String,String> paraMap);
 
-    /**
-     * 保存数据至特定的URL中
-     * @param paraMap
-     * @param url
-     */
-    void saveApprFlowUrl(Map<String,String> paraMap,String url);
 }

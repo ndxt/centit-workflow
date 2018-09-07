@@ -58,21 +58,6 @@ public class UserOptClientImpl implements UserOptClient {
         }
     }
 
-    @Override
-    public void saveApprFlowUrl(Map<String,String> paraMap,String url) {
-        CloseableHttpClient httpClient = null;
-        String result = null;
-        FlowInstance flowInstance = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),url,paraMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-    }
 
     public void makeAppSession() {
         appSession = new AppSession(workFlowServerUrl,false,null,null);
