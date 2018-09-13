@@ -7,6 +7,25 @@ var canvas = g("canvas");
  * 初始化一些SVG参数
  */
 function init() {
+    //修改：2018年9月11日17:41:25
+    //页面加载时执行此方法,加载工作流流程图osid下拉框数据
+    $(document).ready(function () {
+        debugger;
+        $.ajax({
+            type: "GET",
+            url: "/inteligence_workflow/system/cp/dictionary/ptbmxx",
+            type: "GET",
+            contentType:'application/json',
+            dataType:'json',
+            success: function(data){
+                var value = data.data;
+                for(var i=0; i<value.length; i++){
+                    $("#osid").append("<option  value='" + value[i].dataCode + "'  >" + value[i].dataValue + "</option>");
+                }
+            }
+        });
+    });
+
     $("table").hide();
     //创建一个阴影过滤器，用于圆形
     var o_filter = document.createElementNS(SVG.ns, "filter"),
@@ -932,7 +951,6 @@ function saveXml(){
             node = xmlDoc.createElement("Node");
             baseProperties = xmlDoc.createElement("BaseProperties");
             VMLProperties = xmlDoc.createElement("VMLProperties");
-debugger
             switch(obj[i].getAttribute("shapetype")){
                 case "double-oval"://开始节点、结束节点
                     addNode(baseProperties,{//属性信息
@@ -1108,7 +1126,6 @@ debugger
         }else{
             xmlString = xmlSer.serializeToString(xmlDoc);
         }
-debugger
         $.ajax({
         	type:"post",
         	url: path+saveXmlAdd+flowCode,

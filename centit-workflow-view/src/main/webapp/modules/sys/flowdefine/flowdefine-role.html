@@ -15,7 +15,7 @@
 </form>
 
 
-<table style="width: 99%; margin: 0 auto;"
+<table id="dg" style="width: 99%; margin: 0 auto;"
        fieldId="roleCode"
        toolbar="#flowdefine_role_toolbar"
        height="300"
@@ -24,11 +24,25 @@
 >
     <thead>
     <tr>
-        <th field="roleCode" width="100" align="center"
+        <!--<th field="roleCode" width="100" align="center"-->
+            <!--data-options="editor:{type:'textbox', options:{required: true}}">角色编码</th>-->
+
+        <!--<th field="roleName" width="160"-->
+            <!--data-options="editor:{type:'textbox', options:{required: true}}">角色名称</th>-->
+
+        <th data-options="field:'roleName',editor:{type:'combobox', options:{required: true,
+				url:'system/cp/dictionary/teamRoleCode',method:'get',
+				valueField:'dataValue',textField:'dataValue',loadFilter:function(data){return data;},
+				onSelect:function(index, row){
+				    var i=$('.datagrid-row-editing').attr('datagrid-row-index');
+                    var ed = $('#dg').datagrid('getEditor', {index:i,field:'roleCode'});
+                    $(ed.target).textbox('setValue', index.dataCode);
+                    $(ed.target).textbox('disable');
+				}}}" width="160" >角色名称</th>
+
+        <th field="roleCode" width="160" align="center"
             data-options="editor:{type:'textbox', options:{required: true}}">角色编码</th>
 
-        <th field="roleName" width="160"
-            data-options="editor:{type:'textbox', options:{required: true}}">角色名称</th>
     </tr>
     </thead>
 </table>
@@ -43,3 +57,36 @@
        target="confirm" trigger="single" title="是否确定删除 {{stageName}}？">删除</a>
 
 </div>
+
+<script>
+//    $('#dg').datagrid({
+
+//        onDblClickCell: function(index,field,value){
+//            debugger;
+//            $(this).datagrid('beginEdit', index);
+//            var ed = $(this).datagrid('getEditor', {index:index,field:field});
+//            $(ed.target).focus();
+//        }
+//        onSelect: function (rowIndex, rowData) {
+//            debugger;
+//        }
+//    });
+
+//    $('#dg').datagrid({
+//        columns:[[{
+//            field:'roleCode',
+//            title:'角色编码',
+//            width:80,
+//            formatter: function(value,row,index){
+//debugger;
+//                if (row.user){
+//                    return row.user.name;
+//                } else {
+//                    return value;
+//                }
+//            }
+//        }]]
+//    });
+
+
+</script>

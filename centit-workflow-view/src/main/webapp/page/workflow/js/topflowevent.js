@@ -50,6 +50,7 @@ function bindAttr(obj) {
         }
     }
     g("osid").value = SVG.get(o).attr("osid");//osid
+
     g("nodedesc").value = SVG.get(o).attr("nodedesc");//节点描述
     //--公共属性结束
     if (SVG.get(o).attr("nodetype") == 'C' || SVG.get(o).attr("nodetype") == 'B') {

@@ -112,16 +112,31 @@
 							</div>
 						</td>
 					</tr>
+					<!--<tr>-->
+						<!--<td>-->
+							<!--<div>-->
+								<!--<label for="osid">osid</label>-->
+							<!--</div>-->
+						<!--</td>-->
+						<!--<td>-->
+							<!--<div>-->
+								<!--<input type="text" id="osid" value="" style="width: 97%;"-->
+									   <!--oninput="changeValue(this,'osid')" />-->
+							<!--</div>-->
+						<!--</td>-->
+					<!--</tr>-->
 					<tr>
 						<td>
 							<div>
-								<label for="nodecode">osid</label>
+								<label for="osid">osid</label>
 							</div>
 						</td>
 						<td>
 							<div>
-								<input type="text" id="osid" value="" style="width: 97%;"
-									   oninput="changeValue(this,'osid')" />
+								<select style="width: 99%;" id="osid"
+										oninput="changeValue(this,'osid')">
+									<option value="">请选择</option>
+								</select>
 							</div>
 						</td>
 					</tr>
@@ -221,8 +236,8 @@
 							<div>
 								<select style="width: 99%;" id="optcode" oninput="changeValue(this,'optcode')">
 									<!--<option selected='selected'>请选择</option>-->
-                  <option value="approval/approval.html">通用审批</option>
-                  <option value="approval/zwh.html">置文号</option>
+									  <option value="approval/approval.html">通用审批</option>
+									  <option value="approval/zwh.html">置文号</option>
 								</select>
 							</div>
 						</td>
@@ -823,7 +838,7 @@
         });
     });
 
-
 </script>
+
 </body>
 </html>
