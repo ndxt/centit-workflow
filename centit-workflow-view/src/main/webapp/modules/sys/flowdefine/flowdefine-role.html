@@ -31,7 +31,7 @@
             <!--data-options="editor:{type:'textbox', options:{required: true}}">角色名称</th>-->
 
         <th data-options="field:'roleName',editor:{type:'combobox', options:{required: true,
-				url:'system/cp/dictionary/teamRoleCode',method:'get',
+				url:'system/cp/dictionary/FlowUserRole',method:'get',
 				valueField:'dataValue',textField:'dataValue',loadFilter:function(data){return data;},
 				onSelect:function(index, row){
 				    var i=$('.datagrid-row-editing').attr('datagrid-row-index');
