@@ -46,6 +46,7 @@ public class UserTask implements java.io.Serializable {
     private String roleCode;
     private String instState;
     private String optUrl;
+    private String stageCode;
 
     //流程节点阶段
     private String flowStage;
@@ -67,7 +68,13 @@ public class UserTask implements java.io.Serializable {
     public UserTask() {
     }
 
+    public String getStageCode() {
+        return stageCode;
+    }
 
+    public void setStageCode(String stageCode) {
+        this.stageCode = stageCode;
+    }
 
     public Long getNodeInstId() {
         return nodeInstId;
@@ -326,6 +333,7 @@ public class UserTask implements java.io.Serializable {
         this.roleType = other.getRoleType();
         this.roleCode = other.getRoleCode();
         this.optUrl = other.getOptUrl();
+        this.stageCode = other.getStageCode();
     }
 
     public void copyNotNullProperty(UserTask other){
@@ -381,6 +389,9 @@ public class UserTask implements java.io.Serializable {
         if(other.getOptUrl() != null){
             this.optUrl = other.getOptUrl();
         }
+        if(other.getStageCode() !=null){
+            this.stageCode = other.getStageCode();
+        }
     }
 
     public void clearProperties(){
@@ -399,6 +410,7 @@ public class UserTask implements java.io.Serializable {
         this.expireOpt= null;
         this.grantor = null;
         this.flowStage = null;
+        this.stageCode = null;
     }
     public Date getLastUpdateTime() {
         return lastUpdateTime;
