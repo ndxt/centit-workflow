@@ -491,7 +491,7 @@ function   drawRect(event) {
                     "inheritNodeCode": "",
                     "timeLimit": "",
                     "isTrunkLine": "F",
-                    "unitexp": "P",
+                    "unitexp": "D(P)",
                     "powerexp": "",
                     "expireopt": "",
                     "riskinfo": "",
