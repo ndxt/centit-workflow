@@ -1,10 +1,6 @@
 package com.centit.workflow.external;
 
 import com.centit.framework.model.basedata.IUnitInfo;
-import com.centit.framework.model.basedata.IUserUnit;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by codefan on 17-9-12.

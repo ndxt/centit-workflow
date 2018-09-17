@@ -44,7 +44,7 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
 
     private CachedObject<List<ExtSysUserInfo>> allUserInfoCache =
         new CachedObject<>( this::reloadUserInfo,
-            CodeRepositoryCache.CACHE_FRESH_PERIOD_MINITES);
+            CodeRepositoryCache.CACHE_FRESH_PERIOD_SECONDS);
 
     private CachedObject<Map<String,ExtSysUserInfo>> codeToUserMapCache=
         new CachedObject<>( ()-> {
@@ -62,7 +62,7 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
 
     private CachedObject<List<ExtSysUnitInfo>> allunitInfoCache=
         new CachedObject<>( this::reloadUnitInfo,
-            CodeRepositoryCache.CACHE_FRESH_PERIOD_MINITES);
+            CodeRepositoryCache.CACHE_FRESH_PERIOD_SECONDS);
 
     private CachedMap<String, List<ExtSysUnitInfo>> subUnitMapCache=
         new CachedMap<>( this::fetchSubUnit,
@@ -85,7 +85,7 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
 
     private CachedObject<List<ExtSysUserUnit>> allUserUnitCache =
         new CachedObject<>( this::reloadUserUnit,
-            CodeRepositoryCache.CACHE_FRESH_PERIOD_MINITES);
+            CodeRepositoryCache.CACHE_FRESH_PERIOD_SECONDS);
 
     private CachedMap<String, List<ExtSysUserUnit>> userUnitMapCache=
         new CachedMap<>( (userCode) ->{
@@ -119,7 +119,7 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
 
     private CachedObject<Map<String, Integer>> rankMapCache =
         new CachedObject<>( this::reloadRankInfo,
-            CodeRepositoryCache.CACHE_FRESH_PERIOD_MINITES);
+            CodeRepositoryCache.CACHE_FRESH_PERIOD_SECONDS);
 
 
 
