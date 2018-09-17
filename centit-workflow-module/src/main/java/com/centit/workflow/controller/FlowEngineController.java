@@ -48,6 +48,19 @@ public class FlowEngineController  extends BaseController {
         JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
     }
 
+    @RequestMapping(value = "/createTimeLimitFlowInstDefault")
+    public void createInstance(String flowCode, String flowOptName,String flowOptTag,String userCode,String unitCode,String timeLimitStr, HttpServletResponse httpResponse) {
+        NewFlowInstanceOptions newFlowInstanceOptions = new NewFlowInstanceOptions();
+        newFlowInstanceOptions.setFlowCode(flowCode);
+        newFlowInstanceOptions.setFlowOptName(flowOptName);
+        newFlowInstanceOptions.setFlowOptTag(flowOptTag);
+        newFlowInstanceOptions.setUserCode(userCode);
+        newFlowInstanceOptions.setUnitCode(unitCode);
+        newFlowInstanceOptions.setTimeLimitStr(timeLimitStr);
+        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
+    }
+
     /**
      * 新增一个以json作为参数的创建流程接口
      * @param json
@@ -56,7 +69,7 @@ public class FlowEngineController  extends BaseController {
     @RequestMapping(value = "/createFlowInstDefaultByJson")
     public void createFlowInstDefaultByJson(@RequestBody String json, HttpServletResponse httpResponse) {
         NewFlowInstanceOptions newFlowInstanceOptions = JSON.parseObject(json,NewFlowInstanceOptions.class);
-        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        FlowInstance flowInstance=flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
         JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
     }
 
