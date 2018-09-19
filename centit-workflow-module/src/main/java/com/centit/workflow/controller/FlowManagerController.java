@@ -52,7 +52,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     public void list(String[] field, PageDesc pageDesc,
                      HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> searchColumn = convertSearchColumn(request);
+        Map<String, Object> searchColumn = collectRequestParameters(request);
         List<FlowInstance> listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
         resData.addResponseData(OBJLIST, listObjects);
         resData.addResponseData(PAGE_DESC, pageDesc);
