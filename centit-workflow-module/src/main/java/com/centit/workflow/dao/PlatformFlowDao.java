@@ -77,7 +77,7 @@ public class PlatformFlowDao {
             " ORDER by a.create_time desc";*/
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(dynamicSql,searchColumn);
 
-        JSONArray jsonArray = DatabaseOptUtils.listObjectsBySqlAsJson(flowInfoDao,queryAndNamedParams.getQuery(),
+        JSONArray jsonArray = DatabaseOptUtils.listObjectsByNamedSqlAsJson(flowInfoDao,queryAndNamedParams.getQuery(),
             queryAndNamedParams.getParams(),pageDesc);
         return jsonArray == null?null:jsonArray.toJavaList(UserTask.class);
        /* String sql = "select a.*,w.*,c.*,c.opt_code as optUrl from " +
