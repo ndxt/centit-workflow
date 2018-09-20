@@ -85,6 +85,30 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
+    public String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode,String timeLimitStr) throws Exception{
+        Map<String,String> paramMap = new HashMap<>();
+        paramMap.put("flowCode",flowCode);
+        paramMap.put("flowOptName",flowOptName);
+        paramMap.put("flowOptTag",flowOptTag);
+        paramMap.put("userCode",userCode);
+        paramMap.put("unitCode",unitCode);
+        paramMap.put("timeLimitStr",timeLimitStr);
+        String result = null;
+        CloseableHttpClient httpClient = null;
+        try {
+            httpClient = appSession.allocHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/flow/engine/createTimeLimitFlowInstDefault"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
+        return result;
+    }
+
+    @Override
     public String createInstance(String flowCode, long version, String flowOptName, String flowOptTag,
                                  String userCode, String unitCode) throws Exception{
         Map<String,String> paramMap = new HashMap<>();

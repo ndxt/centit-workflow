@@ -7,6 +7,7 @@ import com.centit.support.common.WorkTimeSpan;
 import com.centit.workflow.commons.NodeMsgSupport;
 import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.po.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +23,7 @@ public class FlowOptUtils {
     /**
      * 创建流程实例
      */
-    public static FlowInstance createFlowInst(String unitcode, String usercode, FlowInfo wf, Long flowInstId) {
+    public static FlowInstance createFlowInst(String unitcode, String usercode, FlowInfo wf, Long flowInstId,String timeLimitStr) {
         FlowInstance flowInst = new FlowInstance();
         flowInst.setFlowInstId(flowInstId);
         flowInst.setFlowCode(wf.getFlowCode());
@@ -35,6 +36,9 @@ public class FlowOptUtils {
         flowInst.setInstState("N");
         flowInst.setCreateTime(new Date(System.currentTimeMillis()));
         String timeLimit = wf.getTimeLimit();
+        if(StringUtils.isNotBlank(timeLimitStr)){
+            timeLimit=timeLimitStr;
+        }
         flowInst.setIsTimer("F");
         // 创建 环节实例
         for (FlowStage wfStage : wf.getFlowStages()) {

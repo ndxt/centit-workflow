@@ -38,6 +38,18 @@ public interface FlowEngineClient {
                           String flowOptTag, String userCode, String unitCode) throws Exception;
 
     /**
+     * 创建流程实例  返回流程实例
+     * @param flowCode 流程编码
+     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
+     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
+     * @param userCode 创建用户
+     * @param unitCode 将流程指定一个所属机构
+     * @param timeLimitStr 流程计时 默认单位为天，也可以手动设定为d\h\m
+     * @return
+     */
+    String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode,String timeLimitStr) throws Exception;
+
+    /**
      * 创建流程实例 返回流程实例
      * @param flowCode 流程编码
      * @param version 指定版本号

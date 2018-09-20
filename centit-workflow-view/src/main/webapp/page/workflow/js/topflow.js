@@ -13,7 +13,7 @@ function init() {
         debugger;
         $.ajax({
             type: "GET",
-            url: "/inteligence_workflow/system/cp/dictionary/ptbmxx",
+            url: path+"system/cp/dictionary/ptbmxx",
             type: "GET",
             contentType:'application/json',
             dataType:'json',

@@ -49,6 +49,11 @@ public class NewFlowInstanceOptions {
      */
     private boolean lockFirstOpt;
 
+    /**
+     * 设置流程时限
+     */
+    private String timeLimitStr;
+
     public NewFlowInstanceOptions() {
     }
 
@@ -138,5 +143,13 @@ public class NewFlowInstanceOptions {
 
     public void setLockFirstOpt(boolean lockFirstOpt) {
         this.lockFirstOpt = lockFirstOpt;
+    }
+
+    public String getTimeLimitStr() {
+        return timeLimitStr;
+    }
+
+    public void setTimeLimitStr(String timeLimitStr) {
+        this.timeLimitStr = timeLimitStr;
     }
 }
