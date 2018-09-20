@@ -19,6 +19,7 @@ import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.po.UserTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,7 @@ import java.util.List;
  * @create 2012-2-23
  */
 @Component
-public class FlowTaskImpl{
+public class FlowTaskImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowTaskImpl.class);
 
@@ -55,20 +56,23 @@ public class FlowTaskImpl{
     @Resource
     private FlowInstanceDao flowInstanceDao;
 
+    @Value("${workflow.flowTimeStart:true}")
+    private Boolean flowTimeStart;
+
     public FlowTaskImpl() {
     }
 
     private int sendNotifyMessage(Long nodeInstId) {
         List<UserTask> taskList = actionTaskDao
-                .listUserTaskByFilter(
-                        QueryUtils.createSqlParamsMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
+            .listUserTaskByFilter(
+                QueryUtils.createSqlParamsMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
         int nn = 0;
         for (UserTask task : taskList) {
             notificationCenter.sendMessage("admin",
-                    task.getUserCode(), "节点预报警提示",
-                    "业务" + task.getFlowOptName() + "的" +
-                            task.getNodeName() + "节点超时预警，请尽快处理。办理链接为" +
-                            task.getNodeOptUrl(), "WF_WARNING", "NOTIFY", String.valueOf(nodeInstId));
+                task.getUserCode(), "节点预报警提示",
+                "业务" + task.getFlowOptName() + "的" +
+                    task.getNodeName() + "节点超时预警，请尽快处理。办理链接为" +
+                    task.getNodeOptUrl(), "WF_WARNING", "NOTIFY", String.valueOf(nodeInstId));
             nn++;
         }
         return nn;
@@ -76,7 +80,6 @@ public class FlowTaskImpl{
 
     /**
      * 根据数据库计算出来的预报警发出对应的通知即可
-     *
      */
     @Scheduled(cron = "0 0/5 8-18 * * *")
     @Transactional
@@ -96,7 +99,7 @@ public class FlowTaskImpl{
                     }
                 } else if ("P".equals(warn.getObjType())) {
                     List<NodeInstance> nodelist = nodeInstanceDao.listActiveTimerNodeByFlowStage(
-                            warn.getFlowInstId(), warn.getFlowStage());
+                        warn.getFlowInstId(), warn.getFlowStage());
                     for (NodeInstance node : nodelist) {
                         nn += sendNotifyMessage(node.getNodeInstId());
                     }
@@ -119,12 +122,12 @@ public class FlowTaskImpl{
          *  并且如果部署到多个应用服务器 会出现重复扣除时间的问题
          *  在数据库中执行 复杂在要重新实现 当前时间是否是工作时间的问题
          */
-        Date runTime=new Date();
-        if (isWorkTime(runTime)) {
-            long consumeTime =2;
-                consumeLifeTime(consumeTime);
-                //nodeInstanceDao.updateTimeConsume(consumeTime);
-                //flowInstanceDao.updateTimeConsume(consumeTime);
+        Date runTime = new Date();
+        if (isWorkTime(runTime)&&flowTimeStart) {
+            long consumeTime = 2;
+            consumeLifeTime(consumeTime);
+            //nodeInstanceDao.updateTimeConsume(consumeTime);
+            //flowInstanceDao.updateTimeConsume(consumeTime);
             logger.info(runTime.toString() + "工作时间，各个在办件减少一个即时周期" + consumeTime + "分钟。");
         }
     }
@@ -134,7 +137,7 @@ public class FlowTaskImpl{
         if (activeFlows == null || activeFlows.size() < 1)
             return;
         for (FlowInstance flowInst : activeFlows) {
-            List<NodeInstance> nodeList = nodeInstanceDao.listActiveTimerNodeByFlow(flowInst.getFlowInstId()) ;
+            List<NodeInstance> nodeList = nodeInstanceDao.listActiveTimerNodeByFlow(flowInst.getFlowInstId());
             if (nodeList == null || nodeList.size() < 1)
                 continue;
             //boolean consume = true;
@@ -143,7 +146,7 @@ public class FlowTaskImpl{
             for (NodeInstance nodeInst : nodeList) {
 
                 if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer())) &&
-                        (nodeInst.getTimeLimit() != null)) {
+                    (nodeInst.getTimeLimit() != null)) {
                     nodeInst.setTimeLimit(nodeInst.getTimeLimit() - consumeTime);
                     nodeInstanceDao.updateObject(nodeInst);
                 }
