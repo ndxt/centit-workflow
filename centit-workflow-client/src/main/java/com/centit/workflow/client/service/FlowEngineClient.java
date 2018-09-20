@@ -32,7 +32,7 @@ public interface FlowEngineClient {
      * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
      * @param userCode 创建用户
      * @param unitCode 将流程指定一个所属机构
-     * @return
+     * @return  //FIXME ：这个地方应该返回结构化数据
      */
     String createInstance(String flowCode, String flowOptName,
                           String flowOptTag, String userCode, String unitCode) throws Exception;
@@ -45,7 +45,7 @@ public interface FlowEngineClient {
      * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
      * @param userCode 创建用户
      * @param unitCode 将流程指定一个所属机构
-     * @return
+     * @return //FIXME ：这个地方应该返回结构化数据
      */
     String createInstance(String flowCode, long version, String flowOptName,
                           String flowOptTag, String userCode, String unitCode) throws Exception;
@@ -59,7 +59,7 @@ public interface FlowEngineClient {
      * @param unitCode 将流程指定一个所属机构
      * @param varTrans 变量转换接口，用于表达式计算，可以为null
      * @param application 容器句柄，用于自动执行节点，一般首节点不会为自动执行节点，可以为null
-     * @return
+     * @return //FIXME ：这个地方应该返回结构化数据
      */
     String createInstance(String flowCode, long version, String flowOptName,
                           String flowOptTag, String userCode, String unitCode,
