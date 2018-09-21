@@ -11,6 +11,7 @@ function bindAttr(obj) {
         $("#argumentTool").show();
     }
     $("#route-type").hide();//隐藏路由类别
+    $("#iosid").show();
     $("#flow-phase").show();//显示流程节点阶段
     $("#is-trunkLine").show();//显示是否主干节点
     //！--公共属性开始
@@ -176,6 +177,7 @@ function bindAttr(obj) {
         $("#commonAttr").show();//默认显示公共属性栏
         if(SVG.get(o).attr("nodetype")=="R"){
             $("#route-type").show();//显示路由类别
+            $("#iosid").hide();
         }
         for (i = 0; i < g("routertype").options.length; i++) {//路由类别
             if (g("routertype").options[i].value == SVG.get(o).attr("routertype")) {
