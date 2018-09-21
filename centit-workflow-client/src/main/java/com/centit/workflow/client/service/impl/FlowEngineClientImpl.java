@@ -2,6 +2,7 @@ package com.centit.workflow.client.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
+import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.HttpExecutor;
 import com.centit.support.network.HttpExecutorContext;
@@ -69,8 +70,11 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowOptTag",flowOptTag);
         paramMap.put("userCode",userCode);
         paramMap.put("unitCode",unitCode);
-        String result = null;
-        CloseableHttpClient httpClient = null;
+
+        return RestfulHttpRequest.formPost(appSession,"/flow/engine/createFlowInstDefault",paramMap);
+
+       /* String result = null;
+       CloseableHttpClient httpClient = null;
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
@@ -81,7 +85,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
-        return result;
+        return result;*/
     }
 
     @Override

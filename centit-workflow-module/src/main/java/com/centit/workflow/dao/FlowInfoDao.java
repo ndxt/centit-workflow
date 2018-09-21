@@ -126,7 +126,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
                 "FLOW_PUBLISH_DATE,OPT_ID,TIME_LIMIT " +
                 " from F_V_LASTVERSIONFLOW" ;
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql,filterMap);
-        JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
+        JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
                 queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
         List<LastVersionFlowDefine> ls = new ArrayList<>();
         if(dataList != null) {

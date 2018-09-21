@@ -100,7 +100,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     public List<UserTask> listUserTaskFinByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskFinBaseSql ,filter);
-        JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
+        JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
                 queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
 
         return dataList == null? null : dataList.toJavaList(UserTask.class);
@@ -111,7 +111,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskBaseSql,filter);
         //String querySql = queryAndNamedParams.getQuery()+" order by CREATE_TIME desc ";
-        JSONArray dataList = DatabaseOptUtils.listObjectsBySqlAsJson(this,
+        JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
             queryAndNamedParams.getQuery() ,queryAndNamedParams.getParams(),pageDesc);
 
         return dataList == null? null : dataList.toJavaList(UserTask.class);
