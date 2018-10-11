@@ -66,6 +66,15 @@ public interface FlowManager{
      */
     int stopInstance(long flowInstId,String mangerUserCode,String admindesc);
 
+
+    /**
+     * 终止一个流程
+     * 修改其流程id为负数
+     * 更新所有节点状态为F
+     * F 强行结束
+     */
+    int stopAndChangeInstance(long flowInstId,String mangerUserCode,String admindesc);
+
     /**
      * 暂停一个流程    P 暂停 挂起
      */

@@ -492,6 +492,67 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return updateInstanceState(flowInstId, "F", mangerUserCode, admindesc);
     }
 
+
+    /**
+     * 终止一个流程
+     * 修改其流程id为负数
+     * 更新所有节点状态为F
+     * F 强行结束
+     */
+    public int stopAndChangeInstance(long flowInstId, String mangerUserCode, String admindesc) {
+        FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
+        return stopInstanceState(flowInstId, mangerUserCode, admindesc);
+    }
+
+    /**
+     * 更新流程实例状态，同时需更新所有节点实例状态
+     *
+     * @param instid   实例编号
+     * @param userCode 操作用户
+     */
+    private int stopInstanceState(long instid, String userCode,
+                                  String admindesc) {
+
+        FlowInstance wfFlowInst = flowInstanceDao.getObjectById(instid);
+        if (wfFlowInst == null)
+            return 0;
+        Date updateTime = DatetimeOpt.currentUtilDate();
+        wfFlowInst.setLastUpdateTime(updateTime);
+        wfFlowInst.setLastUpdateUser(userCode);
+        wfFlowInst.setFlowInstId(-instid);
+
+        String actionDesc = "U";
+        // 只能结束未完成的流程
+        if (!"C".equals(wfFlowInst.getInstState())
+            && !"F".equals(wfFlowInst.getInstState()))
+            actionDesc = "强制结束流程；";
+        // 只能挂起正常的流程
+        // 不正确的操作
+        if ("U".equals(actionDesc))
+            return -1;
+
+        // 更新流程实例状态
+        wfFlowInst.setInstState("F");
+        for (NodeInstance nodeInst : wfFlowInst.getFlowNodeInstances()) {
+            if ("N".equals(nodeInst.getNodeState()) || "P".equals(nodeInst.getNodeState()) || "S".equals(nodeInst.getNodeState())) {
+                nodeInst.setNodeState("F");
+                nodeInst.setLastUpdateTime(updateTime);
+                nodeInst.setLastUpdateUser(userCode);
+                nodeInstanceDao.updateObject(nodeInst);
+            }
+        }
+        flowInstanceDao.updateObject(wfFlowInst);
+
+
+        ManageActionLog managerAct = FlowOptUtils.createManagerAction(instid,
+            userCode, "S");
+        managerAct.setActionId(manageActionDao.getNextManageId());
+        managerAct.setAdminDesc(actionDesc + admindesc);
+        manageActionDao.saveNewObject(managerAct);
+
+        return 1;
+    }
+
     /**
      * 挂起一个流程，同时将其所有的活动节点也挂起
      */
