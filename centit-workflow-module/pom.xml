@@ -44,7 +44,13 @@
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-core</artifactId>
-            <version>${project.version}</version>
+            <version>4.0.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.support</groupId>
+            <artifactId>enterprise-calendar</artifactId>
+            <version>1.0-RELEASE</version>
         </dependency>
 
         <dependency>

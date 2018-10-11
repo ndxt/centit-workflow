@@ -4,7 +4,11 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.basedata.IOptMethod;
 import com.centit.workflow.dao.FlowInfoDao;
+import com.centit.workflow.dao.FlowOptDefDao;
+import com.centit.workflow.dao.FlowOptInfoDao;
 import com.centit.workflow.po.FlowInfo;
+import com.centit.workflow.po.FlowOptDef;
+import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.FlowStage;
 import com.centit.workflow.service.FlowModelData;
 import org.springframework.stereotype.Service;
@@ -31,9 +35,12 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
     @Resource
     private FlowInfoDao flowDefineDao;
 
-    public void setFlowDefineDao(FlowInfoDao flowDefineDao) {
-        this.flowDefineDao = flowDefineDao;
-    }
+    @Resource
+    private FlowOptDefDao wfOptDefDao;
+
+    @Resource
+    private FlowOptInfoDao flowOptInfoDao;
+
 
     @Override
     public Map<String, String> listAllOptType() {
@@ -69,7 +76,7 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
     public Map<String, String> listAllOptCode_old(String flowCode, long version) {
         FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
         List<? extends IOptMethod> optDefList = CodeRepositoryUtil.getOptMethodByOptID(flowDef.getOptId());
-        Map<String, String> optmap = new HashMap<String, String>();
+        Map<String, String> optmap = new HashMap<>();
 
         if (optDefList != null) {
             for (IOptMethod optdef : optDefList) {
@@ -80,14 +87,40 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
         return optmap;
     }
 
-    public Map<String, String> listAllOptCode(String flowCode, long version) {
-        Map<String, String> optMap = new HashMap<String, String>();
+    /**
+     * 暂时写死的业务操作
+     *
+     * @param flowCode
+     * @param version
+     * @return
+     */
+    public Map<String, String> listAllOptCode_o(String flowCode, long version) {
+        Map<String, String> optMap = new HashMap<>();
 
         optMap.put("approval/approval.html", "通用审批");
         optMap.put("approval/zwh.html", "置文号");
 
         return optMap;
     }
+
+    /**
+     * 读取工作定义的业务操作
+     *
+     * @param flowCode
+     * @param version
+     * @return
+     */
+    public Map<String, String> listAllOptCode(String flowCode, long version) {
+        FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
+        FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
+        List<FlowOptDef> wfOptDefs = this.wfOptDefDao.listObjectsByProperty("optId", flowDef.getOptId());
+        Map<String, String> optMap = new HashMap<>();
+        for (FlowOptDef f : wfOptDefs) {
+            optMap.put(flowOptInfo.getOptUrl() + f.getOptMethod(), f.getOptName());
+        }
+        return optMap;
+    }
+
 
     /**
      * 列举流程定义对应的操作定义

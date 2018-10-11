@@ -1,0 +1,71 @@
+<div class="easyui-panel search-body" cls="search">
+    <form>
+        <div class="search-item">
+            <label>业务名称</label>
+            <input type="text" class="easyui-textbox" name="optName" />
+        </div>
+        <div class="searchBixBy">
+            <a class="easyui-linkbutton btn-search" iconCls="icon-search">搜索</a>
+        </div>
+    </form>
+</div>
+<div class="easyui-panel" style="width:100%;height:450px;" data-options="cls:'left'">
+    <table url="service/flow/opt/listOptInfo"
+           idField="optId"
+           search=".search"
+           toolbar=".temp-toolbar"
+           layoutH=".search"
+    >
+        <thead frozen="true">
+        <tr>
+            <th data-options="field:'optId'" width="20%" sortable="true" align="center">编码</th>
+            <th data-options="field:'optName'" width="30%" sortable="true">名称</th>
+            <th data-options="field:'optUrl'" width="30%" sortable="true" align="center">opt_url</th>
+            <th data-options="field:'updateDate'" width="20%" sortable="true" formatterDate align="center">修改时间</th>
+            <!--<th data-options="field:'aaaa',formatter:optLink" width="20%" align="center">操作</th>-->
+        </tr>
+        </thead>
+    </table>
+</div>
+<div class="temp-toolbar">
+    <a rel="wfOpt_add" iconCls="icon-add"
+       href="modules/wfopt/wfOptInfo.html"
+       target="dialog" trigger="none" title="新建模块" btnValue="添加" width="600" height="500">新增</a>
+
+    <a rel="wfOpt_edit" iconCls="icon-edit"
+       href="modules/wfopt/wfOptInfo.html"
+       target="dialog" trigger="single" title="编辑  {{optName}}" width="600" height="500">编辑</a>
+
+    <a rel="wfOpt_delete" iconCls="icon-base icon-base-ban"
+       target="confirm" trigger="single" title="是否确定删除 {{optName}}？">删除</a>
+
+    <!--<a rel="wfOpt_def" iconCls="icon-base icon-base-gear"
+       href="flowExtend/wfopt/wfOptDef.html?optId={{optId}}"
+       target="dialog" trigger="single" title="业务明细  {{optName}}" width="1000" height="500">业务明细</a>-->
+
+    <a rel="optinfo_all" iconCls="icon-base icon-base-gear"
+       href="modules/wfopt/wfOptinfo-all.html?optId={{optId}}&optName={{optName}}&optUrl={{optUrl}}"
+       target="dialog" trigger="single" title="业务明细  {{optName}}" width="760" height="580">业务明细</a>
+</div>
+
+<script>
+    var Events = require('core/events');
+    var Config = require('config');
+
+</script>
+
+<script>
+    $.parser.onComplete = function (panel) {
+        $.parser.onComplete = $.noop;
+        requirejs(['core/filter/filter.dictionary',
+            '../modules/wfopt/ctrl/wfOpt'
+        ], function (FilterDictionary, WfOpt) {
+            FilterDictionary.add(['YesOrNo']).then(function () {
+                new WfOpt('WfOpt', panel).load(panel);
+            });
+
+        });
+    };
+    //label宽度
+    $.fn.textbox.defaults.labelWidth = 120;
+</script>

@@ -9,6 +9,8 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.QueryUtils;
+import com.centit.support.workday.po.WorkDay;
+import com.centit.support.workday.service.WorkDayManager;
 import com.centit.workflow.dao.ActionTaskDao;
 import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.dao.FlowWarningDao;
@@ -55,6 +57,9 @@ public class FlowTaskImpl {
 
     @Resource
     private FlowInstanceDao flowInstanceDao;
+
+    @Resource
+    private WorkDayManager workDayManager;
 
     @Value("${workflow.flowTimeStart:true}")
     private Boolean flowTimeStart;
@@ -123,7 +128,7 @@ public class FlowTaskImpl {
          *  在数据库中执行 复杂在要重新实现 当前时间是否是工作时间的问题
          */
         Date runTime = new Date();
-        if (isWorkTime(runTime)&&flowTimeStart) {
+        if (workDayManager.isWorkDay(runTime)&&isWorkTime(runTime)&&flowTimeStart) {
             long consumeTime = 2;
             consumeLifeTime(consumeTime);
             //nodeInstanceDao.updateTimeConsume(consumeTime);

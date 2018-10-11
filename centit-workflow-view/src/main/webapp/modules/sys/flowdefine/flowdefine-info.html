@@ -20,12 +20,18 @@
 				required />
 		</div>
 
-		<div class="field">
+		<!--<div class="field">
 			<label>业务模块</label>
 				<input class="easyui-combobox" name="optId"
 			        url="system/cp/optinfo/W"
 			        data-options="valueField:'optId',textField:'optName'" />
-		</div>
+		</div>-->
+    <div class="field">
+      <label>业务模块</label>
+      <input class="easyui-combobox" name="optId"
+             url="service/flow/opt/flow_listFlowOptInfo"
+             data-options="valueField:'optId',textField:'optName'" />
+    </div>
 	</div>
   <div class="field">
     <label>业务系统（用于工作流和业务系统的bean事件交互使用）</label>
