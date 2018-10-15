@@ -71,7 +71,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
     @Override
     public void stopAndChangeInstance(long flowInstId,String userCode,String desc) throws Exception{
         Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",String.valueOf(flowInstId));
+        paramMap.put("flowInstId",flowInstId);
         paramMap.put("userCode",userCode);
         paramMap.put("desc",desc);
         CloseableHttpClient httpClient = null;
