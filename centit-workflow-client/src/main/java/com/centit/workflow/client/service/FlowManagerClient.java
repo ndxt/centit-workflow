@@ -5,12 +5,12 @@ import com.centit.workflow.po.NodeInstance;
 
 import java.util.List;
 
-/** 
- * 流程管理业务接口类 
+/**
+ * 流程管理业务接口类
  *   <流程终止，暂停，唤醒，回退等操作>
  * @author codefan@sina.com
  * @version 2.0 <br>
- *        
+ *
  */
 public interface FlowManagerClient {
     //------------查看流程运行状态图---------------------------------
@@ -118,6 +118,14 @@ public interface FlowManagerClient {
      * @return List<NodeInstance>
      */
     List<NodeInstance> listFlowInstNodes(Long wfinstid) throws Exception;
+
+    /**
+     * 终止一个流程
+     * 修改其流程id为负数
+     * 更新所有节点状态为F
+     * F 强行结束
+     */
+    void stopAndChangeInstance(long flowInstId, String mangerUserCode, String admindesc) throws Exception;
 //    //-----------节点状态变更-------------------------------
 //    /*
 //     * N 正常  B 已回退    C 完成   F被强制结束

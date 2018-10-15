@@ -769,4 +769,15 @@ public class FlowManagerController extends BaseController {
         resData.addResponseData(OBJLIST, nodeInstList);
         JsonResultUtils.writeSingleDataJson(resData, response);
     }
+
+    /**
+     * 终止一个流程
+     * 修改其流程id为负数
+     * 更新所有节点状态为F
+     * F 强行结束
+     */
+    @RequestMapping(value="/stopAndChangeInstance",method = RequestMethod.POST)
+    public void stopAndChangeInstance(long flowInstId,String userCode,String desc){
+        flowManager.stopAndChangeInstance(flowInstId,userCode,desc);
+    }
 }

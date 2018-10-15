@@ -68,4 +68,24 @@ public class FlowManagerClientImpl implements FlowManagerClient {
         return nodeInstances;
     }
 
+    @Override
+    public void stopAndChangeInstance(long flowInstId,String userCode,String desc) throws Exception{
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId",String.valueOf(flowInstId));
+        paramMap.put("userCode",userCode);
+        paramMap.put("desc",desc);
+        CloseableHttpClient httpClient = null;
+        String result = null;
+        try {
+            httpClient = appSession.allocHttpClient();
+            appSession.checkAccessToken(httpClient);
+            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+                appSession.completeQueryUrl("/flow/manager/stopAndChangeInstance"),paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            appSession.releaseHttpClient(httpClient);
+        }
+    }
+
 }
