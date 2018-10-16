@@ -533,6 +533,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         // 更新流程实例状态
         wfFlowInst.setInstState("F");
+        flowInstanceDao.updtFlowInstInfo(wfFlowInst);
         for (NodeInstance nodeInst : wfFlowInst.getFlowNodeInstances()) {
             if ("N".equals(nodeInst.getNodeState()) || "P".equals(nodeInst.getNodeState()) || "S".equals(nodeInst.getNodeState())) {
                 nodeInst.setNodeState("F");
@@ -541,7 +542,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 nodeInstanceDao.updateObject(nodeInst);
             }
         }
-        flowInstanceDao.updateObject(wfFlowInst);
 
 
         ManageActionLog managerAct = FlowOptUtils.createManagerAction(instid,

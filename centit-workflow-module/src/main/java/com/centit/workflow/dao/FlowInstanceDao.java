@@ -203,4 +203,11 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
         return this.listObjectsByFilter("where FLOW_OPT_TAG=? "
             ,new Object[]{flowOptTag});
     }
+
+    public void updtFlowInstInfo(FlowInstance wfFlowInst) {
+        String sql="update WF_FLOW_INSTANCE set FLOW_INST_ID=?,INST_STATE=?," +
+            "LAST_UPDATE_TIME=?,LAST_UPDATE_USER=? where  FLOW_INST_ID=?";
+        this.getJdbcTemplate().update(sql,new Object[]{wfFlowInst.getFlowInstId(),wfFlowInst.getInstState(),
+            wfFlowInst.getLastUpdateTime(),wfFlowInst.getLastUpdateUser(),-wfFlowInst.getFlowInstId()});
+    }
 }
