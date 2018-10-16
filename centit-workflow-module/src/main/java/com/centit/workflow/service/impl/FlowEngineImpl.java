@@ -18,6 +18,7 @@ import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
+import com.centit.workflow.service.FlowManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private ActionLogDao actionLogDao;
     @Resource
     private FlowInfoDao flowDefDao;
+    @Resource
+    private FlowManager flowManager;
     @Resource
     private FlowWorkTeamDao flowTeamDao;
 
@@ -1557,7 +1560,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error("找不到节点实例：" + nodeInstId);
             return null;
         }
-        FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
+        FlowInstance flowInst = flowManager.getFlowInstance(nodeInst.getFlowInstId());
         if (flowInst == null) {
             logger.error("找不到流程实例：" + nodeInst.getFlowInstId());
             return null;
