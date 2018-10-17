@@ -21,7 +21,7 @@ public class PlatformFlowDao {
     private FlowInfoDao flowInfoDao;
 
     private final static String dynamicSql = "select w.flow_inst_id,w.flow_code,w.version,w.flow_opt_name,w.flow_opt_tag," +
-        "  a.node_inst_id,a.unit_code,a.user_code, " +
+        "  a.node_inst_id,a.unit_code,a.user_code,c.node_code, " +
         " c.node_name,c.node_type,c.opt_type as NODE_OPT_TYPE,c.opt_param,"+
         " w.create_time,w.promise_time,a.time_limit,c.opt_code, " +
         " c.expire_opt,c.stage_code as flowStage,'' as GRANTOR,a.last_update_user," +
