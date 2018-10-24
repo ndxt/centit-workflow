@@ -135,7 +135,7 @@ public interface FlowEngineClient {
      * @return  节点实例编号列表
      */
     Set<Long> submitOpt(long nodeInstId, String userCode,
-                        String unitCode, Map<String,Object> varTrans,
+                        String unitCode, String varTrans,
                         ServletContext application) throws  Exception;
 //
 //

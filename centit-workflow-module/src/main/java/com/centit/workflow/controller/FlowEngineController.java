@@ -2,6 +2,7 @@ package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
@@ -10,6 +11,7 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,8 +94,21 @@ public class FlowEngineController  extends BaseController {
         JsonResultUtils.writeSingleDataJson(flowInstance,httpResponse);
     }
     @RequestMapping(value="submitOpt",method = RequestMethod.POST)
-    public void submitOpt(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse, Long nodeInstId, String userCode, String unitCode){
-        flowEng.submitOpt(nodeInstId,userCode,unitCode,null,httpServletRequest.getServletContext());
+    public void submitOpt(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse, Long nodeInstId, String userCode, String unitCode,String varTrans){
+        if(StringUtils.isNotBlank(varTrans)){
+            Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;","\""));
+            flowEng.submitOpt(nodeInstId,userCode,unitCode,getBusinessVariable(maps),httpServletRequest.getServletContext());
+        }else {
+            flowEng.submitOpt(nodeInstId,userCode,unitCode,null,httpServletRequest.getServletContext());
+        }
+
+    }
+
+    //加载通用po到流程流转中
+    private ObjectUserUnitVariableTranslate getBusinessVariable(Map<String,Object> varTrans) {
+        ObjectUserUnitVariableTranslate<Map<String,Object>> bo = new ObjectUserUnitVariableTranslate<>();
+        bo.setModuleObject(varTrans);
+        return bo;
     }
 
     @RequestMapping(value = "/saveFlowVariable",method = {RequestMethod.POST,RequestMethod.PUT})

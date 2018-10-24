@@ -3,6 +3,7 @@ package com.centit.workflow.client.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.RestfulHttpRequest;
+import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.HttpExecutor;
 import com.centit.support.network.HttpExecutorContext;
@@ -238,14 +239,16 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             appSession.releaseHttpClient(httpClient);
         }
     }
+
     @Override
     public Set<Long> submitOpt(long nodeInstId, String userCode,
-                               String unitCode, Map<String,Object> varTrans,
+                               String unitCode, String varTrans,
                                ServletContext application) throws  Exception{
         HashMap<String,Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId",nodeInstId);
         paramMap.put("userCode",userCode);
         paramMap.put("unitCode",unitCode);
+        paramMap.put("varTrans",varTrans);
         CloseableHttpClient httpClient = null;
         String result = null;
         try {
