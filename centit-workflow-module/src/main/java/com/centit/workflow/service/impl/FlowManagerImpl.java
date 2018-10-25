@@ -11,6 +11,7 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.sun.tools.javac.comp.Flow;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -76,6 +77,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Map<String, String> transState = new HashMap<>();
         Map<String, FlowTransition> transMap = new HashMap<>();
         Set<NodeInfo> nodeSet = wfDef.getFlowNodes();
+        //最后一个办结节点
+        long endStartNode = -1;
+        Boolean findTran = true;
         long benginNodeId = -1;
         long endNodeID = -1;
         for (NodeInfo node : nodeSet) {
@@ -102,6 +106,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
         //flowInstanceDao.fetchObjectReferences(wfInst);
         List<NodeInstance> nodeInstSet = wfInst.getNodeInstances();
+        List<NodeInstance> completeNodeSet = new ArrayList<>();
         for (NodeInstance nodeInst : nodeInstSet) {
             if (nodeInst.getNodeState().equals("N")
                 || nodeInst.getNodeState().equals("W")) {
@@ -114,41 +119,83 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 if ("ready".equals(ns)) {
                     if (nodeInst.getNodeState().equals("F"))
                         nodeState.put(nodeInst.getNodeId(), "suspend");
-                    else if (nodeInst.getNodeState().equals("C"))
+                    else if (nodeInst.getNodeState().equals("C")) {
                         nodeState.put(nodeInst.getNodeId(), "complete");
+                        completeNodeSet.add(nodeInst);
+                    }
                 }
             }
             Integer nc = nodeInstCount.get(nodeInst.getNodeId());
             nodeInstCount.put(nodeInst.getNodeId(), (nc == null) ? 1 : nc + 1);
 
             String transPath = nodeInst.getTransPath();
-            if (transPath == null)
+            if (transPath == null && nodeInstSet.size() > 1)
                 continue;
-            String[] transs = transPath.split(",");
-            for (String strTransId : transs) {
-                transState.put(strTransId, "1");
-                FlowTransition trans = transMap.get(strTransId);
-                if (trans != null) {
-                    NodeInfo node = nodeMap.get(trans.getStartNodeId());
-                    if (node != null && "R".equals(node.getNodeType())) {
-                        nodeState.put(trans.getStartNodeId(), "complete");
-                        //nc = nodeInstCount.get(trans.getStartNodeId());
-                        //nodeInstCount.put(trans.getStartNodeId(), (nc==null)?1:nc+1);
-                    }
-                    node = nodeMap.get(trans.getEndNodeId());
-                    if (node != null && "R".equals(node.getNodeType())) {
-                        nodeState.put(trans.getEndNodeId(), "complete");
-                        nc = nodeInstCount.get(trans.getEndNodeId());
-                        nodeInstCount.put(trans.getEndNodeId(), (nc == null) ? 1 : nc + 1);
+            if (StringUtils.isNotBlank(transPath)) {
+                String[] transs = transPath.split(",");
+                for (String strTransId : transs) {
+                    transState.put(strTransId, "1");
+                    FlowTransition trans = transMap.get(strTransId);
+                    if (trans != null) {
+                        NodeInfo node = nodeMap.get(trans.getStartNodeId());
+                        if (node != null && "R".equals(node.getNodeType())) {
+                            nodeState.put(trans.getStartNodeId(), "complete");
+                            //nc = nodeInstCount.get(trans.getStartNodeId());
+                            //nodeInstCount.put(trans.getStartNodeId(), (nc==null)?1:nc+1);
+                        }
+                        node = nodeMap.get(trans.getEndNodeId());
+                        if (node != null && "R".equals(node.getNodeType())) {
+                            nodeState.put(trans.getEndNodeId(), "complete");
+                            nc = nodeInstCount.get(trans.getEndNodeId());
+                            nodeInstCount.put(trans.getEndNodeId(), (nc == null) ? 1 : nc + 1);
+                        }
                     }
                 }
             }
             //由于没有办结节点生成，所以最后一条线需要寻找最后一个节点，根据线的startnodeid来判断
+            //这里需要判断最后一个节点是路由节点的情况
+            if (findTran) {
+                for (FlowTransition trans : transSet) {
+                    if (endStartNode == -1 && nodeInst.getNodeId().equals(trans.getStartNodeId()) && trans.getEndNodeId().equals(endNodeID) && "C".equals(wfInst.getInstState())) {
+                        //如果流程结束,那么最后一条线要自动画上
+                        transState.put(String.valueOf(trans.getTransId()), "1");
+                        findTran = false;
+                        break;
+                    }
+                }
+            }
+        }
+        if (findTran) {
+            //如果办结节点之前的是路由节点
             for (FlowTransition trans : transSet) {
-                if (nodeInst.getNodeId().equals(trans.getStartNodeId()) && trans.getEndNodeId().equals(endNodeID) && "C".equals(wfInst.getInstState())) {
-                    //如果流程结束那么最后一条线
-                    transState.put(String.valueOf(trans.getTransId()), "1");
-                    break;
+                if (trans.getEndNodeId().equals(endNodeID)
+                    && "C".equals(wfInst.getInstState())) {
+                    //第一次循环找到办结节点前面的路由节点
+                    for (NodeInfo node : nodeSet) {
+                        if (trans.getStartNodeId().equals(node.getNodeId())) {
+                            //如果最后一个节点之前的节点是路由节点
+                            if ("R".equals(node.getNodeType())) {
+                                //最后一条线标记完成
+                                transState.put(String.valueOf(trans.getTransId()), "1");
+                                endStartNode = trans.getStartNodeId();
+                                nodeState.put(trans.getStartNodeId(), "complete");
+                                break;
+                            }
+                        }
+                    }
+                }
+                //找到路由节点之后，寻找路由节点的上一条线
+                if (endStartNode != -1) {
+                    if (trans.getEndNodeId().equals(endStartNode)) {
+                        for (NodeInstance n : completeNodeSet) {
+                            if (n.getNodeId().equals(trans.getStartNodeId())) {
+                                transState.put(String.valueOf(trans.getTransId()), "1");
+                                findTran = false;
+                                break;
+                            }
+                        }
+                        break;
+                    }
                 }
             }
         }
