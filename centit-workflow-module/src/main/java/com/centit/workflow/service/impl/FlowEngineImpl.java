@@ -1185,7 +1185,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInst.setLastUpdateUser(userCode);
         flowInstanceDao.updateObject(flowInst);
 
-        Set<Long> nextNodeInsts = new HashSet<Long>();
+        Set<Long> nextNodeInsts = new HashSet<>();
 
 
         if ("T".equals(nodeInst.getTaskAssigned())) {
@@ -1204,13 +1204,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     } else {
                         if ("C".equals(currNode.getOptType()))
                             havnotSubmit++;
-                        else//不是多人操作是抢先机制的，其他人任务作废。
-                            task.setIsValid("F");
+                        //暂时取消这个任务作废的做法，防止在回退或者回收之后，操作人员与原本定义不符
+//                        else//不是多人操作是抢先机制的，其他人任务作废。
+//                            task.setIsValid("F");
                     }
-                } else {
-                    //其他无效任务作废，提高效率。
-                    task.setIsValid("F");
                 }
+//                else {
+//                    //其他无效任务作废，提高效率。
+//                    task.setIsValid("F");
+//                }
                 //添加actionTask保存
                 actionTaskDao.updateObject(task);
             }
@@ -1376,10 +1378,20 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else {
             prevNodeInst = flowInst.getPareNodeInst(nodeInstId);
         }
-        if (prevNodeInst == null)
-            return -3;
+        //是否子流程退回父流程
+        Boolean subProcess=false;
+        if (prevNodeInst == null) {
+            //找不到上一节点之后，判断是否子流程
+            if(flowInst.getPreNodeInstId()==null) {
+                return -3;
+            }else{
+                //是子流程的话，把流程实例中的prenodeinst取出来找到对应的前一节点
+                subProcess=true;
+                prevNodeInst=nodeInstanceDao.getObjectCascadeById(flowInst.getPreNodeInstId());
+            }
+        }
         NodeInfo nodedef = flowNodeDao.getObjectById(prevNodeInst.getNodeId());
-        Set<NodeInstance> pns = new HashSet<NodeInstance>();
+        Set<NodeInstance> pns = new HashSet<>();
         // 不能回退到 自动执行，哑元，和子流程节点
         while (true) {
             if ("D".equals(nodedef.getOptType())
@@ -1415,6 +1427,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
         NodeInstance nextNodeInst = flowInst.newWfNodeInstance();
+        //如果是子流程退回父流程，把流程id置为父流程的流程id
+        if(subProcess) {
+            nextNodeInst.setFlowInstId(flowInst.getPreInstId());
+            flowInst.setInstState("B");
+        }
         nextNodeInst.copyNotNullProperty(prevNodeInst);
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setCreateTime(updateTime);
@@ -1430,9 +1447,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     task.getUserCode(), nextNodeInst, nodedef);
                 newtask.setTaskId(actionTaskDao.getNextTaskId());
                 // 要判断 过期时间的问题
-                nextNodeInst.addWfActionTask(newtask);
+                //nextNodeInst.addWfActionTask(newtask);
                 nextNodeInst.setTimeLimit(null);
                 nextNodeInst.setTaskAssigned("T");
+                actionTaskDao.saveNewObject(newtask);
             }
         }
 

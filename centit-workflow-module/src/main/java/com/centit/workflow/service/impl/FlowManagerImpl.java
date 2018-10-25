@@ -77,8 +77,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Map<String, String> transState = new HashMap<>();
         Map<String, FlowTransition> transMap = new HashMap<>();
         Set<NodeInfo> nodeSet = wfDef.getFlowNodes();
-        //最后一个办结节点
-        long endStartNode = -1;
         Boolean findTran = true;
         long benginNodeId = -1;
         long endNodeID = -1;
@@ -107,6 +105,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         //flowInstanceDao.fetchObjectReferences(wfInst);
         List<NodeInstance> nodeInstSet = wfInst.getNodeInstances();
         List<NodeInstance> completeNodeSet = new ArrayList<>();
+        List<FlowTransition> completeTrans = new ArrayList<>();
         for (NodeInstance nodeInst : nodeInstSet) {
             if (nodeInst.getNodeState().equals("N")
                 || nodeInst.getNodeState().equals("W")) {
@@ -136,6 +135,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 for (String strTransId : transs) {
                     transState.put(strTransId, "1");
                     FlowTransition trans = transMap.get(strTransId);
+                    completeTrans.add(trans);
                     if (trans != null) {
                         NodeInfo node = nodeMap.get(trans.getStartNodeId());
                         if (node != null && "R".equals(node.getNodeType())) {
@@ -156,7 +156,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             //这里需要判断最后一个节点是路由节点的情况
             if (findTran) {
                 for (FlowTransition trans : transSet) {
-                    if (endStartNode == -1 && nodeInst.getNodeId().equals(trans.getStartNodeId()) && trans.getEndNodeId().equals(endNodeID) && "C".equals(wfInst.getInstState())) {
+                    if (nodeInst.getNodeId().equals(trans.getStartNodeId()) && trans.getEndNodeId().equals(endNodeID) && "C".equals(wfInst.getInstState())) {
                         //如果流程结束,那么最后一条线要自动画上
                         transState.put(String.valueOf(trans.getTransId()), "1");
                         findTran = false;
@@ -166,7 +166,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
         if (findTran) {
-            //如果办结节点之前的是路由节点
+            //如果办结节点之前的是路由节点，找到其节点、线集合
+            List<Map<NodeInfo, FlowTransition>> finalTrans = new ArrayList<>();
             for (FlowTransition trans : transSet) {
                 if (trans.getEndNodeId().equals(endNodeID)
                     && "C".equals(wfInst.getInstState())) {
@@ -175,26 +176,48 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                         if (trans.getStartNodeId().equals(node.getNodeId())) {
                             //如果最后一个节点之前的节点是路由节点
                             if ("R".equals(node.getNodeType())) {
-                                //最后一条线标记完成
-                                transState.put(String.valueOf(trans.getTransId()), "1");
-                                endStartNode = trans.getStartNodeId();
-                                nodeState.put(trans.getStartNodeId(), "complete");
+                                Map<NodeInfo, FlowTransition> map = new HashMap<>();
+                                map.put(node, trans);
+                                finalTrans.add(map);
                                 break;
                             }
                         }
                     }
                 }
-                //找到路由节点之后，寻找路由节点的上一条线
-                if (endStartNode != -1) {
-                    if (trans.getEndNodeId().equals(endStartNode)) {
-                        for (NodeInstance n : completeNodeSet) {
-                            if (n.getNodeId().equals(trans.getStartNodeId())) {
-                                transState.put(String.valueOf(trans.getTransId()), "1");
-                                findTran = false;
-                                break;
+            }
+            //找到路由节点之后，寻找路由节点的上一条线
+            if (!finalTrans.isEmpty()) {
+                //循环路由节点和线
+                loop:
+                for (Map<NodeInfo, FlowTransition> map : finalTrans) {
+                    //循环节点node
+                    for (NodeInfo no : map.keySet()) {
+                        //循环已办结的节点
+                        for (NodeInstance ni : completeNodeSet) {
+                            //判断已办结节点和路由节点的关系,找到已办结节点和路由的连接线，确定哪一个路由是真正完成的
+                            for (FlowTransition trans : transSet) {
+                                //如果连接线的开始等于办结节点，结束等于路由节点，判断这个连接线完成，路由节点完成
+                                if (trans.getStartNodeId().equals(ni.getNodeId()) && trans.getEndNodeId().equals(no.getNodeId())) {
+                                    if(!completeTrans.isEmpty()) {
+                                        for (FlowTransition tr : completeTrans) {
+                                            if (!trans.getStartNodeId().equals(tr.getStartNodeId())) {
+                                                transState.put(String.valueOf(trans.getTransId()), "1");
+                                                transState.put(String.valueOf(map.get(no).getTransId()), "1");
+                                                nodeState.put(no.getNodeId(), "complete");
+                                                findTran = false;
+                                                break loop;
+                                            }
+                                        }
+                                    }else{
+                                        transState.put(String.valueOf(trans.getTransId()), "1");
+                                        transState.put(String.valueOf(map.get(no).getTransId()), "1");
+                                        nodeState.put(no.getNodeId(), "complete");
+                                        findTran = false;
+                                        break loop;
+                                    }
+                                }
                             }
                         }
-                        break;
                     }
                 }
             }
