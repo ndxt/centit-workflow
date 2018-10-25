@@ -198,6 +198,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                             for (FlowTransition trans : transSet) {
                                 //如果连接线的开始等于办结节点，结束等于路由节点，判断这个连接线完成，路由节点完成
                                 if (trans.getStartNodeId().equals(ni.getNodeId()) && trans.getEndNodeId().equals(no.getNodeId())) {
+                                    //如果有已完成的线，查找一下已完成的所有线的开始节点是否有跟我们上面查出来的有重复，有重复的话说明矛盾，并不是我们要的结果
                                     if(!completeTrans.isEmpty()) {
                                         for (FlowTransition tr : completeTrans) {
                                             if (!trans.getStartNodeId().equals(tr.getStartNodeId())) {
@@ -209,6 +210,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                                             }
                                         }
                                     }else{
+                                        //如果没有已完成的线，那么找到的这个线就是需要标记完成的线
                                         transState.put(String.valueOf(trans.getTransId()), "1");
                                         transState.put(String.valueOf(map.get(no).getTransId()), "1");
                                         nodeState.put(no.getNodeId(), "complete");
