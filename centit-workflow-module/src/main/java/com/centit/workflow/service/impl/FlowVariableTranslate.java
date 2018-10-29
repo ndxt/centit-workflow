@@ -167,12 +167,6 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
             if(sUsers != null )
                 return new HashSet<>(sUsers);
         }
-        if("old".equalsIgnoreCase(varName)){
-            Set<String> oldUsers = nodeUsers.get(nodeInst.getNodeCode());
-            if(oldUsers!=null){
-                return oldUsers;
-            }
-        }
         return nodeUsers.get(varName);
     }
 
@@ -195,12 +189,6 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
             List<String> sUnits = flowOrganizes.get(varName);
             if(sUnits != null )
                 return new HashSet<>(sUnits);
-        }
-        if("old".equalsIgnoreCase(varName)){
-            Set<String> oldUnits = nodeUnits.get(nodeInst.getNodeCode());
-            if(oldUnits!=null){
-                return oldUnits;
-            }
         }
         return nodeUnits.get(varName);
     }

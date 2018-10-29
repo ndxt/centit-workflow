@@ -1264,7 +1264,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         synchronized (lockObject) {
             /*WfNodeInstance*/
-            nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+            nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
             if (!"N".equals(nodeInst.getNodeState()) && !"W".equals(nodeInst.getNodeState())) {
                 logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + nodeInstId + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
                 throw new WorkflowException(WorkflowException.FlowExceptionType.IncorrectNodeState,
