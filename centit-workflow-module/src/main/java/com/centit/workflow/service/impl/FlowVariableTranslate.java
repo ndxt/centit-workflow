@@ -24,19 +24,22 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     public void collectNodeUnitsAndUsers( FlowInstance flowInst) {
         nodeUnits = new HashMap<>();
         nodeUsers = new HashMap<>();
-        for(NodeInstance nodeInst : flowInst.getNodeInstances()){
-            String nc = nodeInst.getNodeCode();
-            if(nc!=null){
+
+        String token = nodeInst.getRunToken();
+
+        for(NodeInstance ni : flowInst.getNodeInstances()){
+            String nc = ni.getNodeCode();
+            if(nc != null && (token.equals(ni.getRunToken()) || token.startsWith(ni.getRunToken()+"."))){
                 Set<String> nUnits = nodeUnits.get(nc);
                 if(nUnits == null)
                     nUnits = new HashSet<>();
-                nUnits.add( nodeInst.getUnitCode());
+                nUnits.add( ni.getUnitCode());
                 nodeUnits.put(nc, nUnits);
 
                 Set<String> nUsers = nodeUsers.get(nc);
                 if(nUsers == null)
                     nUsers = new HashSet<>();
-                nUsers.add( nodeInst.getUserCode());
+                nUsers.add( ni.getUserCode());
                 nodeUsers.put(nc, nUsers);
             }
         }
@@ -164,6 +167,12 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
             if(sUsers != null )
                 return new HashSet<>(sUsers);
         }
+        if("old".equalsIgnoreCase(varName)){
+            Set<String> oldUsers = nodeUsers.get(nodeInst.getNodeCode());
+            if(oldUsers!=null){
+                return oldUsers;
+            }
+        }
         return nodeUsers.get(varName);
     }
 
@@ -187,7 +196,12 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
             if(sUnits != null )
                 return new HashSet<>(sUnits);
         }
-
+        if("old".equalsIgnoreCase(varName)){
+            Set<String> oldUnits = nodeUnits.get(nodeInst.getNodeCode());
+            if(oldUnits!=null){
+                return oldUnits;
+            }
+        }
         return nodeUnits.get(varName);
     }
 

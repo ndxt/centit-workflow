@@ -69,7 +69,7 @@ public interface FlowManager{
 
     /**
      * 终止一个流程
-     * 修改其流程id为负数
+     * 修改其流程id为负数 ? FIXME : 为什么要更新为负数？什么目的？
      * 更新所有节点状态为F
      * F 强行结束
      */
