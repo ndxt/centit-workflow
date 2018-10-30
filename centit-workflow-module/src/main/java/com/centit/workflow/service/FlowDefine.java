@@ -12,12 +12,12 @@ import java.util.Set;
  * 流程定义接口
  */
 public interface FlowDefine {
-    
+
     /**
      * 保存流程定义，内容为JS画的流程描述XML文件
      */
     boolean saveDraftFlowDefXML(String  flowCode,String flowDefXML);
-    
+
     /**
      * 获取保存的流程定义文件,就是0版本的草稿
      */
@@ -141,5 +141,10 @@ public interface FlowDefine {
      * @return
      */
     Map<String,String> getRoleMapByFlowCode(String flowCode,Long version);
-   
+
+    /**
+     * 根据流程code删除相关的流程定义，用于删除多余的测试数据
+     * @param flowCode
+     */
+    public void deleteFlowDef(String flowCode);
 }

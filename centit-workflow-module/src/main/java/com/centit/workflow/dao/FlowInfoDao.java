@@ -144,4 +144,10 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
         return all;
     }
 
+    @Transactional(propagation= Propagation.MANDATORY)
+    public void deleteObjectByFlowCode(String flowCode){
+        String sql="delete from wf_flow_define where flow_code=?";
+        this.getJdbcTemplate().update(sql,flowCode);
+    }
+
 }
