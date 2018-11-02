@@ -1351,6 +1351,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      *
      * @return >0：新节点的ID,-1 找不到节点，-2找不到流程 -3 找不到上一个节点 -4 上一个流程为子流程 不允许回退 -5
      * 本节点为汇聚节点不允许回退
+     *
+     * 新增子流程退回父流程的方法
      */
     @Override
     public long rollbackOpt(long nodeInstId, String mangerUserCode) {
@@ -1380,6 +1382,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         //是否子流程退回父流程
         Boolean subProcess=false;
+        // 查找上一个流经节点
+        FlowInstance prevFlowInst = null;
         if (prevNodeInst == null) {
             //找不到上一节点之后，判断是否子流程
             if(flowInst.getPreNodeInstId()==null) {
@@ -1388,6 +1392,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //是子流程的话，把流程实例中的prenodeinst取出来找到对应的前一节点
                 subProcess=true;
                 prevNodeInst=nodeInstanceDao.getObjectCascadeById(flowInst.getPreNodeInstId());
+                prevFlowInst=flowInstanceDao.getObjectCascadeById(flowInst.getPreInstId());
             }
         }
         NodeInfo nodedef = flowNodeDao.getObjectById(prevNodeInst.getNodeId());
@@ -1406,6 +1411,18 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
                 if (prevNodeInst == null)
                     return -3;
+                //判断一下父流程中的节点是否已经被退回，已经被退回之后就不能再次退回
+                if(prevFlowInst!=null){
+                    for(NodeInstance no:prevFlowInst.getFlowNodeInstances()){
+                        //罗列处于正常、暂缓的节点
+                        if("N,S,P".contains(no.getNodeState())){
+                            //如果想要退回的节点处于正常、暂缓，无需退回
+                            if(prevNodeInst.getNodeId().equals(no.getNodeId())){
+                                return -5;
+                            }
+                        }
+                    }
+                }
                 nodedef = flowNodeDao.getObjectById(prevNodeInst.getNodeId());
             } else
                 break;
