@@ -820,6 +820,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 newtask.setTaskId(actionTaskDao.getNextTaskId());
                 // 要判断 过期时间的问题
                 nextNodeInst.addWfActionTask(newtask);
+                actionTaskDao.saveNewObject(newtask);
             }
         }
 
