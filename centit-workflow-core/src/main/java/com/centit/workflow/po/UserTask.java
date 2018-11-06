@@ -37,6 +37,7 @@ public class UserTask implements java.io.Serializable {
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date  createTime;
     private String  expireOpt;
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date  lastUpdateTime;
     private String lastUpdateUser;
     private Long  promiseTime;
