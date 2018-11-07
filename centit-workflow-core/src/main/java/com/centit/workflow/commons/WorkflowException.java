@@ -26,7 +26,11 @@ public class WorkflowException extends ObjectException {
     public static final int BizLogicError       = 612; //业务逻辑异常
     public static final int BizDefinedError     = 613; //业务自定义异常
     //}
-    
+
+    public WorkflowException(String message){
+        super(message);
+    }
+
     public WorkflowException(int exceptionType,String message){
         super(exceptionType, message);
     }
