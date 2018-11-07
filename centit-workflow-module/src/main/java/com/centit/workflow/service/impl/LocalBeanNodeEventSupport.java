@@ -38,7 +38,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
             return;
 
         if(application==null)
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeWithoutApplcationContent,
+            throw new WorkflowException(WorkflowException.AutoRunNodeWithoutApplcationContent,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，传递的参数application为空");
         try{
             WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
@@ -46,7 +46,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
             autoRun.runAfterCreate(flowInst, nodeInst, nodeInfo,optUserCode);
         }catch(BeansException e){
             logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
+            throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
         }
 
@@ -59,7 +59,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
             return;
 
         if(application==null)
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeWithoutApplcationContent,
+            throw new WorkflowException(WorkflowException.AutoRunNodeWithoutApplcationContent,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，传递的参数application为空");
         try{
             WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
@@ -67,7 +67,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
             autoRun.runBeforeSubmit(flowInst, nodeInst, nodeInfo,optUserCode);
         }catch(BeansException e){
             logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
+            throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
         }
 
@@ -86,10 +86,10 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
                                           NodeInfo nodeInfo, String optUserCode )
             throws WorkflowException {
         if( nodeInfo.getOptBean()==null || "".equals(nodeInfo.getOptBean()))
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
+            throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，流程设置时没有设置节点的自动运行bean属性。");
         if(application==null)
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeWithoutApplcationContent,
+            throw new WorkflowException(WorkflowException.AutoRunNodeWithoutApplcationContent,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，传递的参数application为空");
         try{
             WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
@@ -97,7 +97,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
             return autoRun.runAutoOperator(flowInst, nodeInst, nodeInfo,optUserCode);
         }catch(BeansException e){
             logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
+            throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
         }
     }
@@ -107,11 +107,11 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
                                  NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
 
         if( nodeInfo.getOptBean()==null || "".equals(nodeInfo.getOptBean()))
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
+            throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，流程设置时没有设置节点的自动运行bean属性。");
 
         if(application==null)
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeWithoutApplcationContent,
+            throw new WorkflowException(WorkflowException.AutoRunNodeWithoutApplcationContent,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，传递的参数application为空");
         try{
             WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);//获取spring的context
@@ -119,7 +119,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
             return autoRun.canStepToNext(flowInst, nodeInst, nodeInfo,optUserCode);
         }catch(BeansException e){
             logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
-            throw new WorkflowException(WorkflowException.FlowExceptionType.AutoRunNodeBeanNotFound,
+            throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
                     "自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
         }
     }

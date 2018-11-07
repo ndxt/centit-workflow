@@ -508,7 +508,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (nodeToken.startsWith("R")) {
                     return resNodes;
                 } else {
-                    throw new WorkflowException(WorkflowException.FlowExceptionType.NotFoundNextNode,
+                    throw new WorkflowException(WorkflowException.NotFoundNextNode,
                         "找不到后续节点：" + nodeInst.getFlowInstId() +
                             " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                 }
@@ -612,7 +612,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
 
                 if (!"C".equals(nextNode.getNodeType())) { //报错
-                    throw new WorkflowException(WorkflowException.FlowExceptionType.FlowDefineError,
+                    throw new WorkflowException(WorkflowException.FlowDefineError,
                         "多实例路由后面必须是业务节点：" + nodeInst.getFlowInstId() +
                             " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                 }
@@ -640,7 +640,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     }
 
                     if (nextNodeUnits == null || nextNodeUnits.size() == 0) { //报错
-                        throw new WorkflowException(WorkflowException.FlowExceptionType.NoValueForMultiInst,
+                        throw new WorkflowException(WorkflowException.NoValueForMultiInst,
                             "多实例节点对应的机构变量为空：" + nodeInst.getFlowInstId() +
                                 " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                     } else {
@@ -669,7 +669,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             varTrans);
                     }
                     if (optUsers == null || optUsers.size() == 0) {
-                        throw new WorkflowException(WorkflowException.FlowExceptionType.NoValueForMultiInst,
+                        throw new WorkflowException(WorkflowException.NoValueForMultiInst,
                             "多实例节点对应的权限表达式人员为空：" + nodeInst.getFlowInstId() +
                                 " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                     } else {
@@ -1051,7 +1051,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (transList == null || transList.size() < 1)
             return null;
         if (transList.size() > 1) {
-            throw new WorkflowException(WorkflowException.FlowExceptionType.FlowDefineError,
+            throw new WorkflowException(WorkflowException.FlowDefineError,
                 "流程图绘制问题，业务节点流转路径不是有且唯一的一条："
                     + currNode.getFlowCode() + ":" + currNode.getVersion() + ":"
                     + currNode.getNodeId() + ":"
@@ -1104,12 +1104,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
         if (nodeInst == null) {
             logger.error("找不到节点实例：" + nodeInstId);
-            throw new WorkflowException(WorkflowException.FlowExceptionType.NodeInstNotFound, "找不到节点实例：" + nodeInstId);
+            throw new WorkflowException(WorkflowException.NodeInstNotFound, "找不到节点实例：" + nodeInstId);
         }
         FlowInstance flowInst = flowInstanceDao.getObjectCascadeById(nodeInst.getFlowInstId());
         if (flowInst == null) {
             logger.error("找不到流程实例：" + nodeInst.getFlowInstId());
-            throw new WorkflowException(WorkflowException.FlowExceptionType.FlowInstNotFound,
+            throw new WorkflowException(WorkflowException.FlowInstNotFound,
                 "找不到流程实例：" + nodeInst.getFlowInstId());
         }
 
@@ -1118,7 +1118,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if ("P".equals(nodeInst.getIsTimer())) {
             logger.error("流程节点处于暂停计时 状态：" + flowInst.getInstState() +
                 "节点：" + nodeInstId);
-            throw new WorkflowException(WorkflowException.FlowExceptionType.PauseTimerNode,
+            throw new WorkflowException(WorkflowException.PauseTimerNode,
                 "流程节点处于暂停计时 状态：" + flowInst.getInstState() +
                     "节点：" + nodeInstId);
         }
@@ -1130,7 +1130,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             ) {
             logger.error("流程节点状态不正确，流程：" + nodeInst.getFlowInstId() + " 状态：" + flowInst.getInstState() +
                 "节点：" + nodeInstId + " 状态：" + nodeInst.getNodeState());
-            throw new WorkflowException(WorkflowException.FlowExceptionType.IncorrectNodeState,
+            throw new WorkflowException(WorkflowException.IncorrectNodeState,
                 "流程节点状态不正确，流程：" + nodeInst.getFlowInstId() + " 状态：" + flowInst.getInstState() +
                     "节点：" + nodeInstId + " 状态：" + nodeInst.getNodeState());
         }
@@ -1146,7 +1146,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if (sGrantor == null && !"E".equals(currNode.getOptType())
                 && !"D".equals(currNode.getOptType()) && !"S".equals(currNode.getOptType())) {
                 logger.error("用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
-                throw new WorkflowException(WorkflowException.FlowExceptionType.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
+                throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
             }
         } else {
             sGrantor = grantorCode;
@@ -1154,7 +1154,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 && !"S".equals(currNode.getOptType()) &&
                 !actionTaskDao.hasOptPower(nodeInstId, userCode, grantorCode)) {
                 logger.error("用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
-                throw new WorkflowException(WorkflowException.FlowExceptionType.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
+                throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
             }
         }
 
@@ -1258,7 +1258,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 return nextNodeInsts;
             } else {
                 logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + nodeInstId + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
-                throw new WorkflowException(WorkflowException.FlowExceptionType.NotFoundNextNode,
+                throw new WorkflowException(WorkflowException.NotFoundNextNode,
                     "流程：" + nodeInst.getFlowInstId() + "节点：" + nodeInstId + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
             }
         }
@@ -1268,7 +1268,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
             if (!"N".equals(nodeInst.getNodeState()) && !"W".equals(nodeInst.getNodeState())) {
                 logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + nodeInstId + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
-                throw new WorkflowException(WorkflowException.FlowExceptionType.IncorrectNodeState,
+                throw new WorkflowException(WorkflowException.IncorrectNodeState,
                     "流程：" + nodeInst.getFlowInstId() + "节点：" + nodeInstId + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
 
             }
@@ -1684,7 +1684,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String sGrantor = actionTaskDao.getTaskGrantor(nodeInstId, userCode);
         if (sGrantor == null) {
             logger.error("用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
-            throw new WorkflowException(WorkflowException.FlowExceptionType.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
+            throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
         }
 
         if ("C".equals(actionType))
