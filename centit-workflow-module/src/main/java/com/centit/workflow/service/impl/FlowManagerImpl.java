@@ -733,7 +733,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     public long resetFlowToThisNode(long nodeInstId, String mangerUserCode) {
 
-        NodeInstance thisnode = nodeInstanceDao.getObjectById(nodeInstId);
+        NodeInstance thisnode = nodeInstanceDao.getObjectCascadeById(nodeInstId);
         if (thisnode == null)
             return -1;
 
