@@ -994,6 +994,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         }
         nodeInstanceDao.saveNewObject(nextNodeInst);
+        flowInst.setLastUpdateTime(currentTime);
+        flowInst.setLastUpdateUser(userCode);
         flowInstanceDao.updateObject(flowInst);
 
         //执行节点创建后 事件
@@ -1293,11 +1295,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInst, "", nodeTran, userCode, grantorCode, unitCode, nodeToken,
             flowVarTrans, nodeUnits, nodeOptUsers, application);
 
-        flowInst.setLastUpdateTime(updateTime);
-        flowInst.setLastUpdateUser(userCode);
+        //flowInst.setLastUpdateTime(updateTime);
+        //flowInst.setLastUpdateUser(userCode);
 
         nodeInstanceDao.updateObject(nodeInst);
-        flowInstanceDao.updateObject(flowInst);
+        //flowInstanceDao.updateObject(flowInst);
 
         return nextNodeInsts;
     }
