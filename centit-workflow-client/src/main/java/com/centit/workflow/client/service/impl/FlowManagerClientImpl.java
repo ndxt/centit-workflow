@@ -1,6 +1,7 @@
 package com.centit.workflow.client.service.impl;
 
 import com.centit.framework.appclient.AppSession;
+import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.framework.common.ResponseJSON;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowManagerClient;
@@ -66,24 +67,17 @@ public class FlowManagerClientImpl implements FlowManagerClient {
         return result.getDataAsArray(NodeInstance.class);
     }
 
+    /*
+     * FixMe to:郭锐请 安排人将所有 client接口中的调用换成 用 RestfulHttpRequest 工具类方法
+     */
     @Override
     public void stopAndChangeInstance(long flowInstId,String userCode,String desc) throws Exception{
         Map<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("userCode",userCode);
         paramMap.put("desc",desc);
-        CloseableHttpClient httpClient = null;
-        String result = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/manager/stopAndChangeInstance"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
+        RestfulHttpRequest.formPost(appSession,
+                "/flow/manager/stopAndChangeInstance",paramMap);
     }
 
 }
