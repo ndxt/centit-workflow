@@ -13,6 +13,7 @@ public class ExtSysUserInfo implements IUserInfo {
     private String userName;
     private String primaryUnit;
     private Long userOrder;
+    private String topUnit;
     /**
      * 用户编码，是用户的主键
      *
@@ -66,6 +67,17 @@ public class ExtSysUserInfo implements IUserInfo {
     @Override
     public String getLoginName() {
         return getUserName();
+    }
+
+    /**
+     * 用户顶级机构 用户帐套管理，这个属性在创建时指定，并且不能变
+     * 在添加机构的时候，需要校验机构的 unitPath 必须报刊这个机构
+     *
+     * @return 用户顶级机构
+     */
+    @Override
+    public String getTopUnit() {
+        return this.topUnit;
     }
 
     /**
@@ -154,4 +166,7 @@ public class ExtSysUserInfo implements IUserInfo {
         this.userOrder = userOrder;
     }
 
+    public void setTopUnit(String topUnit) {
+        this.topUnit = topUnit;
+    }
 }
