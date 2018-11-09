@@ -1,17 +1,14 @@
 package com.centit.workflow.client.service.impl;
 
 import com.centit.framework.appclient.AppSession;
-import com.centit.support.network.HttpExecutorContext;
 import com.centit.workflow.client.service.UserOptClient;
 import com.centit.workflow.po.FlowInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.centit.support.network.HttpExecutor;
-
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
  * Created by chen_rj on 2018-5-2.
@@ -49,7 +46,7 @@ public class UserOptClientImpl implements UserOptClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/appr/saveOptIdeaForAutoSubmit"),paraMap);
         } catch (Exception e) {
             e.printStackTrace();

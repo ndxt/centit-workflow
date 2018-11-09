@@ -3,14 +3,12 @@ package com.centit.workflow.client.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.RestfulHttpRequest;
-import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
+import com.centit.framework.common.ResponseJSON;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.support.network.HttpExecutor;
-import com.centit.support.network.HttpExecutorContext;
+import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
-import com.centit.workflow.po.FlowWorkTeam;
 import com.centit.workflow.po.UserTask;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,7 +77,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/createFlowInstDefault"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,7 +101,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/createTimeLimitFlowInstDefault"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,7 +126,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/createFlowInstWithVersion"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -162,7 +160,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/createInstanceLockFirstNode"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -190,7 +188,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/saveFlowVariable"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -210,7 +208,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/assignFlowWorkTeam"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -231,7 +229,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/assignFlowOrganize"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -254,7 +252,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/submitOpt"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -270,22 +268,22 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("varName",varName);
         CloseableHttpClient httpClient = null;
-        String result = null;
+        ResponseJSON result = null;
         List<FlowVariable> flowVariables= null;
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/flow/engine/viewFlowVariablesByVarname"),paramMap);
+            result =  appSession.getResponseData(httpClient,
+                UrlOptUtils.appendParamsToUrl(
+                appSession.completeQueryUrl("/flow/engine/viewFlowVariablesByVarname"),
+                    paramMap));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
         try {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            String dataStr = jsonObject.get("data").toString();
-            flowVariables= JSONObject.parseArray(dataStr,FlowVariable.class);
+            flowVariables= result.getDataAsArray(FlowVariable.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -297,12 +295,13 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("roleCode",roleCode);
         CloseableHttpClient httpClient = null;
-        String result = null;
+        ResponseJSON result = null;
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/flow/engine/deleteFlowWorkTeam"),paramMap);
+            result =  appSession.getResponseData(httpClient,
+                UrlOptUtils.appendParamsToUrl(
+                appSession.completeQueryUrl("/flow/engine/deleteFlowWorkTeam"),paramMap));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -316,22 +315,21 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("userCode",userCode);
         paramMap.put("pageDesc",pageDesc);
         CloseableHttpClient httpClient = null;
-        String result = null;
+        ResponseJSON result = null;
         List<UserTask> userTasks = null;
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/flow/engine/listUserTasks"),paramMap);
+            result = appSession.getResponseData(httpClient,
+                UrlOptUtils.appendParamsToUrl(
+                appSession.completeQueryUrl("/flow/engine/listUserTasks"),paramMap));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
         try {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            String dataStr = jsonObject.get("data").toString();
-            userTasks= JSONObject.parseArray(dataStr,UserTask.class);
+            userTasks = result.getDataAsArray(UserTask.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -343,22 +341,21 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         HashMap<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowOptTag",optTag);
         CloseableHttpClient httpClient = null;
-        String result = null;
+        ResponseJSON result = null;
         List<FlowInstance> flowInstances = null;
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/flow/engine/listAllFlowInstByOptTag"),paramMap);
+            result = appSession.getResponseData(httpClient,
+                UrlOptUtils.appendParamsToUrl(
+                appSession.completeQueryUrl("/flow/engine/listAllFlowInstByOptTag"),paramMap));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
         try {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            String dataStr = jsonObject.get("data").toString();
-            flowInstances= JSONObject.parseArray(dataStr,FlowInstance.class);
+            flowInstances= result.getDataAsArray(FlowInstance.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -375,7 +372,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flow/engine/updateFlowInstOptInfo"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -389,22 +386,21 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("roleCode",roleCode);
         CloseableHttpClient httpClient = null;
-        java.lang.String result = null;
+        ResponseJSON result = null;
         List<String> flowWorkTeams= null;
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/flow/engine/viewFlowWorkTeam"),paramMap);
+            result = appSession.getResponseData(httpClient,
+                UrlOptUtils.appendParamsToUrl(
+                appSession.completeQueryUrl("/flow/engine/viewFlowWorkTeam"),paramMap));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
         try {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            String dataStr = jsonObject.get("data").toString();
-            flowWorkTeams= JSONObject.parseArray(dataStr,String.class);
+            flowWorkTeams= result.getDataAsArray(String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -416,22 +412,21 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("roleCode",roleCode);
         CloseableHttpClient httpClient = null;
-        java.lang.String result = null;
+        ResponseJSON result = null;
         List<String> organizes= null;
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/flow/engine/viewFlowOrganize"),paramMap);
+            result = appSession.getResponseData(httpClient,
+                UrlOptUtils.appendParamsToUrl(
+                appSession.completeQueryUrl("/flow/engine/viewFlowOrganize"),paramMap));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
         try {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            String dataStr = jsonObject.get("data").toString();
-            organizes= JSONObject.parseArray(dataStr,String.class);
+            organizes= result.getDataAsArray(String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

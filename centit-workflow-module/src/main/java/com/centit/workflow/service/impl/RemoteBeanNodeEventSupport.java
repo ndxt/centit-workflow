@@ -54,7 +54,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
             appSession = new AppSession(url,false,null,null);
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),
+            /*result =  */appSession.jsonPost(httpClient,
                 appSession.completeQueryUrl("/service/workflowEventBean/runAfterCreate"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,7 +85,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
             appSession = new AppSession(url,false,null,null);
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),
+            /*result =  */appSession.jsonPost(httpClient,
                 appSession.completeQueryUrl("/service/workflowEventBean/runBeforeSubmit"),jsonParam);//eventBean
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,7 +123,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
             appSession = new AppSession(url,false,null,null);
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            /*result =  */HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),appSession.completeQueryUrl("/service/workflowEventBean/runAutoOperator"),jsonParam);
+            /*result =  */appSession.jsonPost(httpClient,appSession.completeQueryUrl("/service/workflowEventBean/runAutoOperator"),jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");

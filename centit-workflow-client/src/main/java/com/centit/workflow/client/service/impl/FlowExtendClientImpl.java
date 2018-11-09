@@ -1,10 +1,7 @@
 package com.centit.workflow.client.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
-import com.centit.support.network.HttpExecutor;
-import com.centit.support.network.HttpExecutorContext;
 import com.centit.workflow.client.service.FlowExtendClient;
 import com.centit.workflow.po.FlowInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -61,7 +58,7 @@ public class FlowExtendClientImpl implements FlowExtendClient{
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            HttpExecutor.jsonPost(HttpExecutorContext.create(httpClient),
+            appSession.jsonPost(httpClient,
                 appSession.completeQueryUrl("/flowExtend/updateFlowInstance"), flowInstance);
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,7 +77,7 @@ public class FlowExtendClientImpl implements FlowExtendClient{
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.formPost(HttpExecutorContext.create(httpClient),
+            result =  appSession.formPost(httpClient,
                 appSession.completeQueryUrl("/flowExtend/getPorcInfoByNodeInstId"),paramMap);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,9 +1,8 @@
 package com.centit.workflow.client.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
-import com.centit.support.network.HttpExecutor;
-import com.centit.support.network.HttpExecutorContext;
+import com.centit.framework.common.ResponseJSON;
+import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowDefineClient;
 import com.centit.workflow.po.FlowInfo;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -57,23 +56,22 @@ public class FlowDefineClientImpl implements FlowDefineClient {
     @Override
     public List<FlowInfo> list() {
         Map<String,Object> paramMap = new HashMap<>();
-        String result = null;
+        ResponseJSON result = null;
         CloseableHttpClient httpClient = null;
         List<FlowInfo> flowInfos = null;
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  HttpExecutor.simpleGet(HttpExecutorContext.create(httpClient),
-                appSession.completeQueryUrl("/flow/define"),paramMap);
+            result =  appSession.getResponseData(httpClient,
+                UrlOptUtils.appendParamsToUrl(
+                    appSession.completeQueryUrl("/flow/define"),paramMap));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             appSession.releaseHttpClient(httpClient);
         }
         try {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            String dataStr = jsonObject.getJSONObject("data").get("objList").toString();
-            flowInfos= JSONObject.parseArray(dataStr,FlowInfo.class);
+            flowInfos= result.getDataAsArray("objList",FlowInfo.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
