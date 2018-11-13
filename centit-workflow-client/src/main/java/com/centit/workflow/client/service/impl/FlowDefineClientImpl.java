@@ -1,6 +1,7 @@
 package com.centit.workflow.client.service.impl;
 
 import com.centit.framework.appclient.AppSession;
+import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.framework.common.ResponseJSON;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowDefineClient;
@@ -55,7 +56,10 @@ public class FlowDefineClientImpl implements FlowDefineClient {
 
     @Override
     public List<FlowInfo> list() {
-        Map<String,Object> paramMap = new HashMap<>();
+        ResponseJSON responseJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/define");
+        return responseJSON.getDataAsArray("objList",FlowInfo.class);
+        /*Map<String,Object> paramMap = new HashMap<>();
         ResponseJSON result = null;
         CloseableHttpClient httpClient = null;
         List<FlowInfo> flowInfos = null;
@@ -75,6 +79,6 @@ public class FlowDefineClientImpl implements FlowDefineClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return flowInfos;
+        return flowInfos;*/
     }
 }

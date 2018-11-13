@@ -58,13 +58,18 @@ public class FlowManagerClientImpl implements FlowManagerClient {
     public List<NodeInstance> listFlowInstNodes(Long wfinstid) throws Exception{
         Map<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",String.valueOf(wfinstid));
-        CloseableHttpClient httpClient = appSession.allocHttpClient();
-        appSession.checkAccessToken(httpClient);
+
+        return RestfulHttpRequest.getResponseObjectList(appSession,
+            "/flow/engine/listFlowInstNodes",
+            paramMap,NodeInstance.class);
+       /*
+       CloseableHttpClient httpClient = appSession.allocHttpClient();
+       appSession.checkAccessToken(httpClient);
         ResponseJSON result = appSession.getResponseData(httpClient,
             UrlOptUtils.appendParamsToUrl(
             appSession.completeQueryUrl("/flow/engine/listFlowInstNodes"),paramMap));
 
-        return result.getDataAsArray(NodeInstance.class);
+        return result.getDataAsArray(NodeInstance.class);*/
     }
 
     /*
