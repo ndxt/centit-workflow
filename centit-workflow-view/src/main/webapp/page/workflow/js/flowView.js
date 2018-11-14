@@ -356,8 +356,12 @@ function initEvt(event){
                                 arry.push(tasks[m].order+","+tasks[m].username);
                             }
                             //降序排列
-                            arry.sort(sortArr)
-                            htmlString += "<br>当前办理人："+arry.join("，");
+                            arry.sort(sortArr);
+                            var nameArr = new Array();
+                            for(var m=0;m<j;m++){
+                              nameArr.push(arry[m].split(",")[1]);
+                            }
+                            htmlString += "<br>当前办理人："+nameArr.join("，");
                         }
                     }
                     htmlString += "";
