@@ -283,6 +283,9 @@ function bindLineAttr(obj) {
  * @param event
  * @returns {boolean}
  */
+function sortArr(a, b) {
+  return b[0] - a[0];
+}
 function initEvt(event){
     var e = window.event || event, target = e.srcElement || e.target, left,top,htmlString;
     var objId;//节点ID
@@ -350,8 +353,10 @@ function initEvt(event){
                             var j=tasks.length;
                             var arry = new Array();
                             for(var m=0;m<j;m++){
-                                arry.push(tasks[m].username);
+                                arry.push(tasks[m].order+","+tasks[m].username);
                             }
+                            //降序排列
+                            arry.sort(sortArr)
                             htmlString += "<br>当前办理人："+arry.join("，");
                         }
                     }
