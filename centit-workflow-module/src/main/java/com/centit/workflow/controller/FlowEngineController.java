@@ -97,7 +97,7 @@ public class FlowEngineController extends BaseController {
         JsonResultUtils.writeSingleDataJson(flowInstance, httpResponse);
     }
 
-    @RequestMapping(value = "submitOpt", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "submitOpt", method = RequestMethod.POST)
     public Set<Long> submitOpt(HttpServletRequest httpServletRequest, Long nodeInstId, String userCode, String unitCode, String varTrans) {
         if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
             Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
@@ -105,7 +105,6 @@ public class FlowEngineController extends BaseController {
         } else {
             return flowEng.submitOpt(nodeInstId, userCode, unitCode, null, httpServletRequest.getServletContext());
         }
-
     }
 
     //加载通用po到流程流转中

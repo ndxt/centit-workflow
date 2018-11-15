@@ -120,7 +120,7 @@ public interface FlowEngineClient {
      * @param varTrans 变量转换器
      * @return  节点实例编号列表
      */
-    Set<Long> submitOpt(long nodeInstId, String userCode,
+    void submitOpt(long nodeInstId, String userCode,
                         String unitCode, String varTrans,
                         ServletContext application) throws  Exception;
 //

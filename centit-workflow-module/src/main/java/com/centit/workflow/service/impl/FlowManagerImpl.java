@@ -155,6 +155,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             //由于没有办结节点生成，所以最后一条线需要寻找最后一个节点，根据线的startnodeid来判断
             //这里需要判断最后一个节点是路由节点的情况
             if (findTran) {
+                //循环所有的线
                 for (FlowTransition trans : transSet) {
                     if (nodeInst.getNodeId().equals(trans.getStartNodeId()) && trans.getEndNodeId().equals(endNodeID) && "C".equals(wfInst.getInstState())) {
                         //如果流程结束,那么最后一条线要自动画上
@@ -173,6 +174,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 if (trans.getEndNodeId().equals(endNodeID)
                     && "C".equals(wfInst.getInstState())) {
                     //第一次循环找到办结节点前面的路由节点
+                    //循环所有的节点定义
                     for (NodeInfo node : nodeSet) {
                         if (trans.getStartNodeId().equals(node.getNodeId())) {
                             //如果最后一个节点之前的节点是路由节点
@@ -188,8 +190,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
             //找到路由节点之后，寻找路由节点的上一条线
             if (!finalTrans.isEmpty()) {
-                //循环路由节点和线
                 loop:
+                //循环路由节点和线
                 for (Map<NodeInfo, FlowTransition> map : finalTrans) {
                     //循环节点node
                     for (NodeInfo no : map.keySet()) {
@@ -201,14 +203,18 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                                 if (trans.getStartNodeId().equals(ni.getNodeId()) && trans.getEndNodeId().equals(no.getNodeId())) {
                                     //如果有已完成的线，查找一下已完成的所有线的开始节点是否有跟我们上面查出来的有重复，有重复的话说明矛盾，并不是我们要的结果
                                     if (!completeTrans.isEmpty()) {
+                                        Boolean trueTrans = true;
                                         for (FlowTransition tr : completeTrans) {
-                                            if (!trans.getStartNodeId().equals(tr.getStartNodeId()) && !no.getNodeId().equals(tr.getStartNodeId())) {
-                                                transState.put(String.valueOf(trans.getTransId()), "1");
-                                                transState.put(String.valueOf(map.get(no).getTransId()), "1");
-                                                nodeState.put(no.getNodeId(), "complete");
-                                                findTran = false;
-                                                break loop;
+                                            if (trans.getStartNodeId().equals(tr.getStartNodeId())) {
+                                                trueTrans = false;
                                             }
+                                        }
+                                        if (trueTrans) {
+                                            transState.put(String.valueOf(trans.getTransId()), "1");
+                                            transState.put(String.valueOf(map.get(no).getTransId()), "1");
+                                            nodeState.put(no.getNodeId(), "complete");
+                                            findTran = false;
+                                            break loop;
                                         }
                                     } else {
                                         //如果没有已完成的线，那么找到的这个线就是需要标记完成的线

@@ -10,7 +10,6 @@ function init() {
     //修改：2018年9月11日17:41:25
     //页面加载时执行此方法,加载工作流流程图osid下拉框数据
     $(document).ready(function () {
-        debugger;
         $.ajax({
             type: "GET",
             url: path+"system/cp/dictionary/ptbmxx",

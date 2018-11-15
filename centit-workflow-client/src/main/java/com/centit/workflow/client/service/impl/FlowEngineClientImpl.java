@@ -144,7 +144,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public Set<Long> submitOpt(long nodeInstId, String userCode,
+    public void submitOpt(long nodeInstId, String userCode,
                                String unitCode, String varTrans,
                                ServletContext application) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
@@ -152,13 +152,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
         paramMap.put("varTrans", varTrans);
-        List<Long> nextNodes = RestfulHttpRequest.getResponseObjectList(appSession,
-            "/flow/engine/submitOpt", paramMap,Long.class);
-        if (nextNodes != null && nextNodes.size() > 0) {
-            return (Set<Long>) nextNodes;
-        } else {
-            return null;
-        }
+        RestfulHttpRequest.formPost(appSession,
+            "/flow/engine/submitOpt", paramMap);
     }
 
     @Override
