@@ -2,26 +2,26 @@
 	<div class="fields three">
 		<div class="field ">
 			<label>流程实例id</label>
-			<input type="text" class="easyui-textbox" name="flowInstId" 
+			<input type="text" class="easyui-textbox" name="flowInstId"
 				readonly="true"  />
 		</div>
 		<div class="field ">
 			<label>流程代码</label>
-			<input type="text" class="easyui-textbox" name="wfCode" 
+			<input type="text" class="easyui-textbox" name="wfCode"
 				readonly="true"  />
 		</div>
 		<div class="field ">
 			<label>业务名称</label>
-			<input type="text" class="easyui-textbox" name="flowOptName" 
+			<input type="text" class="easyui-textbox" name="flowOptName"
 				 readonly="true" />
 		</div>
 	</div>
 
 </form>
-		
+
 
 <table style="width: 99%; margin: 0 auto;"
-	
+
 	toolbar=".node"
 	height="300"
 	pageNumber="false" pagination="false"
@@ -29,6 +29,7 @@
 	>
 	<thead>
 		<tr>
+      <th field="nodeInstId" width="100" align="center">节点名称</th>
 			<th field="nodeName" width="200" align="center">节点名称</th>
 			<th field="nodeState" width="50">状态</th>
 			<th field="lastUpdateTime" align="center" width="200">最后更新时间</th>
@@ -48,7 +49,7 @@
 		target="custom" trigger="single" title="是否确定挂起 --{{nodeName}}">挂起</a>
 		<hr>
 	<a rel="submit" iconCls="icon-base icon-ok"
-		target="custom" trigger="single" title="是否确定提交--{{nodeName}}">提交</a>	
+		target="custom" trigger="single" title="是否确定提交--{{nodeName}}">提交</a>
 		<hr>
 	<a rel="back" iconCls="icon-base icon-base-back"
 		target="custom" trigger="single" title="是否确定回退-- {{nodeName}}">回退</a>

@@ -62,20 +62,6 @@ public interface FlowEngineClient {
     String createInstance(String flowCode, long version, String flowOptName,
                           String flowOptTag, String userCode, String unitCode) throws Exception;
 
-    /**
-     * 创建流程实例 返回流程实例
-     * @param flowCode 流程编码
-     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
-     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
-     * @param userCode 创建用户
-     * @param unitCode 将流程指定一个所属机构
-     * @param varTrans 变量转换接口，用于表达式计算，可以为null
-     * @param application 容器句柄，用于自动执行节点，一般首节点不会为自动执行节点，可以为null
-     * @return //FIXME ：这个地方应该返回结构化数据
-     */
-    String createInstance(String flowCode, long version, String flowOptName,
-                          String flowOptTag, String userCode, String unitCode,
-                          Map<String,Object> varTrans, ServletContext application) throws Exception;
 
 //    /**
 //     * 创建流程实例  返回流程实例
@@ -138,10 +124,6 @@ public interface FlowEngineClient {
                         String unitCode, String varTrans,
                         ServletContext application) throws  Exception;
 //
-//
-//    Set<Long> submitOpt(long nodeInstId, String userCode, String grantorCode,
-//                        String unitCode, Map<String,Object> varTrans,
-//                        ServletContext application);
 //
 //    /**
 //     * 返回下一步节点的节点实例ID
@@ -327,23 +309,6 @@ public interface FlowEngineClient {
      */
     List<FlowInstance> listAllFlowInstByOptTag(String optTag);
     void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag);
-//
-//    //--------------------人工控制流程流转和任务分配------------------------------------
-//
-//    /**
-//     * 流程节点操作日志
-//     * @param nodeInstId 节点实例编号
-//     * @param userCode 用户编码
-//     * @param actionType
-//     *               s: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
-//     *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
-//     *               r: 流转管理，包括  强行回退  、强行提交
-//     *               t: 期限管理 、 设置期限
-//     *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-//     *               u: 变更属性     *
-//     */
-//    void recordActionLog(long nodeInstId, String userCode, String actionType);
-//
 //
 //    /**
 //     * 回退操作-回退到上一个节点

@@ -1,5 +1,7 @@
 package com.centit.workflow.commons;
 
+import com.centit.workflow.po.FlowInfo;
+
 import java.util.Set;
 
 public interface NodeMsgSupport {
@@ -35,4 +37,11 @@ public interface NodeMsgSupport {
      * @throws WorkflowException
      */
     void sendFlowNodeSms(long flowInstId,String userCode) throws WorkflowException;
+
+    /**
+     * 在新增流程定义的时候发送流程信息到业务系统
+     * @param flowInfo 当前节点id
+     * @throws WorkflowException
+     */
+    void sendFlowInfo(FlowInfo flowInfo) throws WorkflowException;
 }

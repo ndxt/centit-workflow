@@ -21,6 +21,7 @@ public class UserOptClientImpl implements UserOptClient {
     public UserOptClientImpl() {
 
     }
+
     private AppSession appSession;
 
     @Override
@@ -39,15 +40,13 @@ public class UserOptClientImpl implements UserOptClient {
     }
 
     @Override
-    public void saveOptIdeaForAutoSubmit(Map<String,String> paraMap) {
+    public void saveOptIdeaForAutoSubmit(Map<String, String> paraMap) {
         CloseableHttpClient httpClient = null;
-        String result = null;
-        FlowInstance flowInstance = null;
         try {
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/appr/saveOptIdeaForAutoSubmit"),paraMap);
+            appSession.formPost(httpClient,
+                appSession.completeQueryUrl("/appr/saveOptIdeaForAutoSubmit"), paraMap);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -57,12 +56,12 @@ public class UserOptClientImpl implements UserOptClient {
 
 
     public void makeAppSession() {
-        appSession = new AppSession(workFlowServerUrl,false,null,null);
+        appSession = new AppSession(workFlowServerUrl, false, null, null);
     }
 
 
     @PostConstruct
-    public void init(){
+    public void init() {
         //this.setWorkFlowServerUrl(workFlowServerUrl);
         makeAppSession();
     }

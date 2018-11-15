@@ -23,7 +23,7 @@ public class FlowOptUtils {
     /**
      * 创建流程实例
      */
-    public static FlowInstance createFlowInst(String unitcode, String usercode, FlowInfo wf, Long flowInstId,String timeLimitStr) {
+    public static FlowInstance createFlowInst(String unitcode, String usercode, FlowInfo wf, Long flowInstId, String timeLimitStr) {
         FlowInstance flowInst = new FlowInstance();
         flowInst.setFlowInstId(flowInstId);
         flowInst.setFlowCode(wf.getFlowCode());
@@ -36,8 +36,8 @@ public class FlowOptUtils {
         flowInst.setInstState("N");
         flowInst.setCreateTime(new Date(System.currentTimeMillis()));
         String timeLimit = wf.getTimeLimit();
-        if(StringUtils.isNotBlank(timeLimitStr)){
-            timeLimit=timeLimitStr;
+        if (StringUtils.isNotBlank(timeLimitStr)) {
+            timeLimit = timeLimitStr;
         }
         flowInst.setIsTimer("F");
         // 创建 环节实例
@@ -334,11 +334,24 @@ public class FlowOptUtils {
     private static String ifSendSms;
     //调用bean定义
     private static String sendMsgBean;
+    //发送流程信息到业务系统
+    private static String ifSendFlow;
 
     private static void initStr() {
         ifSendMsg = CodeRepositoryUtil.getSysConfigValue("workflow.ifSendMsg");
         ifSendSms = CodeRepositoryUtil.getSysConfigValue("workflow.ifSendSms");
         sendMsgBean = CodeRepositoryUtil.getSysConfigValue("workflow.sendMsgBean");
+        ifSendFlow = CodeRepositoryUtil.getSysConfigValue("workflow.ifSendFlow");
+    }
+
+    //流程信息发送给业务
+    public static void sendFlowInfo(FlowInfo flowInfo){
+        initStr();
+        if("T".equals(ifSendFlow)){
+            WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
+            NodeMsgSupport msgSupport = (NodeMsgSupport) wac.getBean(sendMsgBean);
+            msgSupport.sendFlowInfo(flowInfo);
+        }
     }
 
     //调用待办消息推送

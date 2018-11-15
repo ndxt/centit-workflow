@@ -423,6 +423,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         else
             endNodeInst.setTransPath(transPath + "," + String.valueOf(trans.getTransId()));
         flowInst.addWfNodeInstance(endNodeInst);
+        FlowOptUtils.sendFinishMsg(flowInst.getFlowInstId(),userCode);
     }
 
     private Set<String> calcNodeOpterators(FlowInstance flowInst, NodeInstance nodeInst, String nodeToken,

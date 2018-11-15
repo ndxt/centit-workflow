@@ -97,13 +97,13 @@ public class FlowEngineController extends BaseController {
         JsonResultUtils.writeSingleDataJson(flowInstance, httpResponse);
     }
 
-    @RequestMapping(value = "submitOpt", method = RequestMethod.POST)
-    public void submitOpt(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Long nodeInstId, String userCode, String unitCode, String varTrans) {
-        if (StringUtils.isNotBlank(varTrans)) {
+    @RequestMapping(value = "submitOpt", method = {RequestMethod.POST, RequestMethod.GET})
+    public Set<Long> submitOpt(HttpServletRequest httpServletRequest, Long nodeInstId, String userCode, String unitCode, String varTrans) {
+        if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
             Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
-            flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), httpServletRequest.getServletContext());
+            return flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), httpServletRequest.getServletContext());
         } else {
-            flowEng.submitOpt(nodeInstId, userCode, unitCode, null, httpServletRequest.getServletContext());
+            return flowEng.submitOpt(nodeInstId, userCode, unitCode, null, httpServletRequest.getServletContext());
         }
 
     }
@@ -138,7 +138,7 @@ public class FlowEngineController extends BaseController {
         JsonResultUtils.writeBlankJson(httpServletResponse);
     }
 
-    @RequestMapping(value = "deleteFlowWorkTeam", method = RequestMethod.GET)
+    @RequestMapping(value = "deleteFlowWorkTeam", method = RequestMethod.POST)
     public void deleteFlowWorkTeam(HttpServletResponse httpServletResponse, Long flowInstId, String roleCode) {
         flowEng.deleteFlowWorkTeam(flowInstId, roleCode);
         JsonResultUtils.writeBlankJson(httpServletResponse);

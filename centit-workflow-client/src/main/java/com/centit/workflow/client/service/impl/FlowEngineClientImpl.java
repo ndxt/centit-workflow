@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by chen_rj on 2017/7/28.
@@ -33,6 +30,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     public FlowEngineClientImpl() {
 
     }
+
     private AppSession appSession;
 
     @Override
@@ -51,385 +49,176 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     public void makeAppSession() {
-        appSession = new AppSession(workFlowServerUrl,false,null,null);
+        appSession = new AppSession(workFlowServerUrl, false, null, null);
     }
 
 
     @PostConstruct
-    public void init(){
+    public void init() {
         //this.setWorkFlowServerUrl(workFlowServerUrl);
         makeAppSession();
     }
 
     @Override
-    public String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception{
-        Map<String,String> paramMap = new HashMap<>();
-        paramMap.put("flowCode",flowCode);
-        paramMap.put("flowOptName",flowOptName);
-        paramMap.put("flowOptTag",flowOptTag);
-        paramMap.put("userCode",userCode);
-        paramMap.put("unitCode",unitCode);
+    public String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception {
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("flowCode", flowCode);
+        paramMap.put("flowOptName", flowOptName);
+        paramMap.put("flowOptTag", flowOptTag);
+        paramMap.put("userCode", userCode);
+        paramMap.put("unitCode", unitCode);
 
-        return RestfulHttpRequest.formPost(appSession,"/flow/engine/createFlowInstDefault",paramMap);
+        return RestfulHttpRequest.formPost(appSession, "/flow/engine/createFlowInstDefault", paramMap);
 
-       /* String result = null;
-       CloseableHttpClient httpClient = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/engine/createFlowInstDefault"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        return result;*/
     }
 
     @Override
-    public String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode,String timeLimitStr) throws Exception{
-        Map<String,String> paramMap = new HashMap<>();
-        paramMap.put("flowCode",flowCode);
-        paramMap.put("flowOptName",flowOptName);
-        paramMap.put("flowOptTag",flowOptTag);
-        paramMap.put("userCode",userCode);
-        paramMap.put("unitCode",unitCode);
-        paramMap.put("timeLimitStr",timeLimitStr);
-        String result = null;
-        CloseableHttpClient httpClient = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/engine/createTimeLimitFlowInstDefault"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        return result;
+    public String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, String timeLimitStr) throws Exception {
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("flowCode", flowCode);
+        paramMap.put("flowOptName", flowOptName);
+        paramMap.put("flowOptTag", flowOptTag);
+        paramMap.put("userCode", userCode);
+        paramMap.put("unitCode", unitCode);
+        paramMap.put("timeLimitStr", timeLimitStr);
+        return RestfulHttpRequest.formPost(appSession,
+            "/flow/engine/createTimeLimitFlowInstDefault", paramMap);
     }
 
     @Override
     public String createInstance(String flowCode, long version, String flowOptName, String flowOptTag,
-                                 String userCode, String unitCode) throws Exception{
-        Map<String,String> paramMap = new HashMap<>();
-        paramMap.put("flowCode",flowCode);
-        paramMap.put("version",String.valueOf(version));
-        paramMap.put("flowOptName",flowOptName);
-        paramMap.put("flowOptTag",flowOptTag);
-        paramMap.put("userCode",userCode);
-        paramMap.put("unitCode",unitCode);
-        String result = null;
-        CloseableHttpClient httpClient = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/engine/createFlowInstWithVersion"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        return result;
-    }
-
-    @Override
-    public String createInstance(String flowCode, long version, String flowOptName,
-                                 String flowOptTag, String userCode, String unitCode,
-                                 Map<String, Object> varTrans, ServletContext application) throws Exception{
-        return createInstance( flowCode,  version, flowOptName,  flowOptTag,
-            userCode,  unitCode) ;
-        // TODO 添加权限和机构引擎计算
+                                 String userCode, String unitCode) throws Exception {
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("flowCode", flowCode);
+        paramMap.put("version", String.valueOf(version));
+        paramMap.put("flowOptName", flowOptName);
+        paramMap.put("flowOptTag", flowOptTag);
+        paramMap.put("userCode", userCode);
+        paramMap.put("unitCode", unitCode);
+        return RestfulHttpRequest.formPost(appSession,
+            "/flow/engine/createFlowInstWithVersion", paramMap);
     }
 
     @Override
     public FlowInstance createInstanceLockFirstNode(String flowCode, String flowOptName, String flowOptTag,
-                                                    String userCode, String unitCode) throws Exception{
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowCode",flowCode);
-        paramMap.put("flowOptName",flowOptName);
-        paramMap.put("flowOptTag",flowOptTag);
-        paramMap.put("userCode",userCode);
-        paramMap.put("unitCode",unitCode);
-        CloseableHttpClient httpClient = null;
-        String result = null;
-        FlowInstance flowInstance = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/engine/createInstanceLockFirstNode"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        try {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            String dataStr = jsonObject.get("data").toString();
-            flowInstance= JSONObject.parseObject(dataStr,FlowInstance.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return flowInstance;
+                                                    String userCode, String unitCode) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowCode", flowCode);
+        paramMap.put("flowOptName", flowOptName);
+        paramMap.put("flowOptTag", flowOptTag);
+        paramMap.put("userCode", userCode);
+        paramMap.put("unitCode", unitCode);
+        return RestfulHttpRequest.getResponseObject(appSession,
+            "/flow/engine/createInstanceLockFirstNode", paramMap, FlowInstance.class);
     }
 
     @Override
-    public void saveFlowVariable(long flowInstId,String varName,String varValue) throws Exception{
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",flowInstId);
-        paramMap.put("varName",varName);
-        paramMap.put("varValue",varValue);
-        CloseableHttpClient httpClient = null;
-        String result = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/engine/saveFlowVariable"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
+    public void saveFlowVariable(long flowInstId, String varName, String varValue) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("varName", varName);
+        paramMap.put("varValue", varValue);
+        RestfulHttpRequest.formPost(appSession,
+            "/flow/engine/saveFlowVariable", paramMap);
     }
 
     @Override
-    public void assignFlowWorkTeam(long flowInstId, String roleCode, List<String> userCodes) throws Exception{
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",flowInstId);
-        paramMap.put("roleCode",roleCode);
+    public void assignFlowWorkTeam(long flowInstId, String roleCode, List<String> userCodes) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("roleCode", roleCode);
         paramMap.put("userCodeList", userCodes);
-        CloseableHttpClient httpClient = null;
-        String result = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/engine/assignFlowWorkTeam"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
+        RestfulHttpRequest.formPost(appSession,
+            "/flow/engine/assignFlowWorkTeam", paramMap);
     }
 
     @Override
-    public void assignFlowOrganize (long flowInstId, String roleCode,
-                                    List<String> orgCodeSet){
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",flowInstId);
-        paramMap.put("roleCode",roleCode);
+    public void assignFlowOrganize(long flowInstId, String roleCode,
+                                   List<String> orgCodeSet) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("roleCode", roleCode);
         paramMap.put("orgCodeSet", orgCodeSet);
-        CloseableHttpClient httpClient = null;
-        String result = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/engine/assignFlowOrganize"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
+        RestfulHttpRequest.formPost(appSession,
+            "/flow/engine/assignFlowOrganize", paramMap);
     }
 
     @Override
     public Set<Long> submitOpt(long nodeInstId, String userCode,
                                String unitCode, String varTrans,
-                               ServletContext application) throws  Exception{
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("nodeInstId",nodeInstId);
-        paramMap.put("userCode",userCode);
-        paramMap.put("unitCode",unitCode);
-        paramMap.put("varTrans",varTrans);
-        CloseableHttpClient httpClient = null;
-        String result = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/engine/submitOpt"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
+                               ServletContext application) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("nodeInstId", nodeInstId);
+        paramMap.put("userCode", userCode);
+        paramMap.put("unitCode", unitCode);
+        paramMap.put("varTrans", varTrans);
+        List<Long> nextNodes = RestfulHttpRequest.getResponseObjectList(appSession,
+            "/flow/engine/submitOpt", paramMap,Long.class);
+        if (nextNodes != null && nextNodes.size() > 0) {
+            return (Set<Long>) nextNodes;
+        } else {
+            return null;
         }
-        return  null;
     }
 
     @Override
-    public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId, String varName) throws Exception{
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",flowInstId);
-        paramMap.put("varName",varName);
-        CloseableHttpClient httpClient = null;
-        ResponseJSON result = null;
-        List<FlowVariable> flowVariables= null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.getResponseData(httpClient,
-                UrlOptUtils.appendParamsToUrl(
-                appSession.completeQueryUrl("/flow/engine/viewFlowVariablesByVarname"),
-                    paramMap));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        try {
-            flowVariables= result.getDataAsArray(FlowVariable.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return flowVariables;
+    public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId, String varName) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("varName", varName);
+        return RestfulHttpRequest.getResponseObjectList(appSession,
+            "/flow/engine/viewFlowVariablesByVarname",
+            paramMap, FlowVariable.class);
     }
+
     @Override
-    public void deleteFlowWorkTeam(long flowInstId,String roleCode) throws Exception{
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",flowInstId);
-        paramMap.put("roleCode",roleCode);
-        CloseableHttpClient httpClient = null;
-        ResponseJSON result = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.getResponseData(httpClient,
-                UrlOptUtils.appendParamsToUrl(
-                appSession.completeQueryUrl("/flow/engine/deleteFlowWorkTeam"),paramMap));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
+    public void deleteFlowWorkTeam(long flowInstId, String roleCode) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("roleCode", roleCode);
+        RestfulHttpRequest.formPost(appSession,
+            "/flow/engine/deleteFlowWorkTeam", paramMap);
     }
 
     @Override
     public List<UserTask> listUserTasks(String userCode, PageDesc pageDesc) {
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("userCode",userCode);
-        paramMap.put("pageDesc",pageDesc);
-        CloseableHttpClient httpClient = null;
-        ResponseJSON result = null;
-        List<UserTask> userTasks = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result = appSession.getResponseData(httpClient,
-                UrlOptUtils.appendParamsToUrl(
-                appSession.completeQueryUrl("/flow/engine/listUserTasks"),paramMap));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        try {
-            userTasks = result.getDataAsArray(UserTask.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return userTasks;
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userCode", userCode);
+        paramMap.put("pageDesc", pageDesc);
+        return RestfulHttpRequest.getResponseObjectList(appSession,
+            "/flow/engine/listUserTasks", paramMap, UserTask.class);
     }
 
     @Override
     public List<FlowInstance> listAllFlowInstByOptTag(String optTag) {
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowOptTag",optTag);
-        CloseableHttpClient httpClient = null;
-        ResponseJSON result = null;
-        List<FlowInstance> flowInstances = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result = appSession.getResponseData(httpClient,
-                UrlOptUtils.appendParamsToUrl(
-                appSession.completeQueryUrl("/flow/engine/listAllFlowInstByOptTag"),paramMap));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        try {
-            flowInstances= result.getDataAsArray(FlowInstance.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return flowInstances;
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowOptTag", optTag);
+        return RestfulHttpRequest.getResponseObjectList(appSession,
+            "/flow/engine/listAllFlowInstByOptTag", paramMap, FlowInstance.class);
     }
 
     @Override
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag) {
-        HashMap<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",flowInstId);
-        paramMap.put("flowOptName",flowOptName);
-        paramMap.put("flowOptTag",flowOptTag);
-        CloseableHttpClient httpClient = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/flow/engine/updateFlowInstOptInfo"),paramMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
+    public void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("flowOptName", flowOptName);
+        paramMap.put("flowOptTag", flowOptTag);
+        RestfulHttpRequest.formPost(appSession,
+            "/flow/engine/updateFlowInstOptInfo", paramMap);
     }
 
-    public List<String> viewFlowWorkTeam(long flowInstId, String roleCode){
-        HashMap<java.lang.String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",flowInstId);
-        paramMap.put("roleCode",roleCode);
-        CloseableHttpClient httpClient = null;
-        ResponseJSON result = null;
-        List<String> flowWorkTeams= null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result = appSession.getResponseData(httpClient,
-                UrlOptUtils.appendParamsToUrl(
-                appSession.completeQueryUrl("/flow/engine/viewFlowWorkTeam"),paramMap));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        try {
-            flowWorkTeams= result.getDataAsArray(String.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return flowWorkTeams;
+    public List<String> viewFlowWorkTeam(long flowInstId, String roleCode) {
+        HashMap<java.lang.String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("roleCode", roleCode);
+        return RestfulHttpRequest.getResponseObjectList(appSession,
+            "/flow/engine/viewFlowWorkTeam", paramMap, String.class);
     }
 
-    public List<String> viewFlowOrganize(long flowInstId, String roleCode){
-        HashMap<java.lang.String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",flowInstId);
-        paramMap.put("roleCode",roleCode);
-        CloseableHttpClient httpClient = null;
-        ResponseJSON result = null;
-        List<String> organizes= null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result = appSession.getResponseData(httpClient,
-                UrlOptUtils.appendParamsToUrl(
-                appSession.completeQueryUrl("/flow/engine/viewFlowOrganize"),paramMap));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        try {
-            organizes= result.getDataAsArray(String.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return organizes;
+    public List<String> viewFlowOrganize(long flowInstId, String roleCode) {
+        HashMap<java.lang.String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("roleCode", roleCode);
+        return RestfulHttpRequest.getResponseObjectList(appSession, "/flow/engine/viewFlowOrganize", paramMap, String.class);
     }
 }

@@ -8,6 +8,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowModelData;
+import com.centit.workflow.service.impl.FlowOptUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -192,6 +193,8 @@ public class FlowDefineController extends BaseController {
             JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
         else
             JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
+        //新建流程之后，发送流程定义信息到业务系统
+        FlowOptUtils.sendFlowInfo(flowdefine);
     }
 
     /**
@@ -293,6 +296,8 @@ public class FlowDefineController extends BaseController {
             flowdefine.setFlowXmlDesc(oldFlowDef.getFlowXmlDesc());
             flowDef.saveDraftFlowDef(flowdefine);
         }
+        //新建流程之后，发送流程定义信息到业务系统
+        FlowOptUtils.sendFlowInfo(flowdefine);
 
     }
 
