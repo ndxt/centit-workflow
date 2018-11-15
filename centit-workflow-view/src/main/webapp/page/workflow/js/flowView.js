@@ -356,8 +356,19 @@ function initEvt(event){
                                 arry.push(tasks[m].order+","+tasks[m].username);
                             }
                             //降序排列
-                            arry.sort(sortArr);
-                            var nameArr = new Array();
+                            arry.sort(
+                              function(a,b){
+                                var a0 = parseInt(a.split(",")[0]);
+                                var b0 =  parseInt(b.split(",")[0]);
+                                if(b0<a0){
+                                  return -1;
+                                }
+                                if(b0>a0){
+                                  return 1;
+                                }
+                              return 0;
+                            });
+                          var nameArr = new Array();
                             for(var m=0;m<j;m++){
                               nameArr.push(arry[m].split(",")[1]);
                             }
