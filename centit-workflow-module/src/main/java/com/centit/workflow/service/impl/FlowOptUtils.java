@@ -262,7 +262,7 @@ public class FlowOptUtils {
             //||"S".equals(ni.getNodeState())||"W".equals(ni.getNodeState())){
             if ("W".equals(ni.getNodeState())) { //结束子流程
                 FlowInstance subFlowInst = flowInstanceDao.getObjectById(ni.getSubFlowInstId());
-                if (subFlowInst != null) {
+                if (subFlowInst != null && !"F,C".contains(subFlowInst.getInstState())) {
                     endInstance(subFlowInst, "F", userCode, flowInstanceDao);
                     //flowInstanceDao.updateObject(subFlowInst);
                 }
@@ -345,9 +345,9 @@ public class FlowOptUtils {
     }
 
     //流程信息发送给业务
-    public static void sendFlowInfo(FlowInfo flowInfo){
+    public static void sendFlowInfo(FlowInfo flowInfo) {
         initStr();
-        if("T".equals(ifSendFlow)){
+        if ("T".equals(ifSendFlow)) {
             WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
             NodeMsgSupport msgSupport = (NodeMsgSupport) wac.getBean(sendMsgBean);
             msgSupport.sendFlowInfo(flowInfo);
