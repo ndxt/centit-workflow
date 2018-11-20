@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.*;
 import com.centit.workflow.po.*;
@@ -30,7 +31,7 @@ public interface FlowManager{
      * @param pageDesc 分页描述
      * @return
    */
-   List<FlowInstance> listFlowInstance(Map<String, Object> filterMap, PageDesc pageDesc);
+   JSONArray listFlowInstance(Map<String, Object> filterMap, PageDesc pageDesc);
 
     /**
      * 根据 示例flowOptTag获得实例

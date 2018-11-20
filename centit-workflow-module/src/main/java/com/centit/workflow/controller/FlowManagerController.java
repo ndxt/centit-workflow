@@ -1,5 +1,6 @@
 package com.centit.workflow.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
@@ -54,7 +55,7 @@ public class FlowManagerController extends BaseController {
     public void list(String[] field, PageDesc pageDesc,
                      HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
-        List<FlowInstance> listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
+        JSONArray listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
         resData.addResponseData(OBJLIST, listObjects);
         resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response, JsonPropertyUtils.getIncludePropPreFilter(FlowInstance.class, field));

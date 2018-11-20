@@ -1,5 +1,6 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -547,11 +548,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public List<FlowInstance> listFlowInstance(Map<String, Object> filterMap,
-                                               PageDesc pageDesc) {
-        List<FlowInstance> instList = flowInstanceDao.listObjectsByProperties(filterMap,
+    public JSONArray listFlowInstance(Map<String, Object> filterMap,
+                                      PageDesc pageDesc) {
+        return flowInstanceDao.listObjectsAsJson(filterMap,
             pageDesc);
-        return new ArrayList<FlowInstance>(this.convertor(instList));
     }
 
     @Override
