@@ -548,9 +548,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public List<FlowInstance> listFlowInstance(Map<String, Object> filterMap,
+    public JSONArray listFlowInstance(Map<String, Object> filterMap,
                                       PageDesc pageDesc) {
-        return flowInstanceDao.listObjectsByProperties(filterMap,
+        return flowInstanceDao.listObjectsAsJson(filterMap,
             pageDesc);
     }
 
