@@ -609,7 +609,7 @@ public interface FlowEngineClient {
 //     * @param flowInstId  流程实例号 不能为空
 //     * @param roleCode 机构角色 不能为空
 //     */
-//    void deleteFlowOrganize(long flowInstId, String roleCode);
+    void deleteFlowOrganize(long flowInstId, String roleCode) throws Exception;
 //
 //    /**
 //     * 删除工作小组--办件角色

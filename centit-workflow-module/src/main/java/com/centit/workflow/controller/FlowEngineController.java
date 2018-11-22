@@ -143,6 +143,12 @@ public class FlowEngineController extends BaseController {
         JsonResultUtils.writeBlankJson(httpServletResponse);
     }
 
+    @RequestMapping(value = "deleteFlowOrganize", method = RequestMethod.POST)
+    public void deleteFlowOrganize(HttpServletResponse httpServletResponse, Long flowInstId, String roleCode) {
+        flowEng.deleteFlowOrganize(flowInstId, roleCode);
+        JsonResultUtils.writeBlankJson(httpServletResponse);
+    }
+
     @RequestMapping(value = "/listFlowInstNodes", method = RequestMethod.GET)
     public void listFlowInstNodes(HttpServletResponse response, Long flowInstId) {
         List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);

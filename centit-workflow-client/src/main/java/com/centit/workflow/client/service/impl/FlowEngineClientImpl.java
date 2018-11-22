@@ -176,6 +176,15 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
+    public void deleteFlowOrganize(long flowInstId,String roleCode) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("roleCode", roleCode);
+        RestfulHttpRequest.formPost(appSession,
+            "/flow/engine/deleteFlowOrganize", paramMap);
+    }
+
+    @Override
     public List<UserTask> listUserTasks(String userCode, PageDesc pageDesc) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("userCode", userCode);
