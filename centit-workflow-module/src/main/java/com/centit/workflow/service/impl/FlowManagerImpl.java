@@ -458,7 +458,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         /**
          * 初始化节点信息
          */
-        initNodeInstances(flowInstance);
+        if (flowInstance != null) {
+            initNodeInstances(flowInstance);
+        }
         return flowInstance;
     }
 
