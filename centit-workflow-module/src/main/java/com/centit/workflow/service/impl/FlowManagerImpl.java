@@ -786,8 +786,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 && currToken != null
                 && thisToken != null
                 && (currToken.equals(thisToken)
-                || currToken.startsWith(thisToken + '.') || thisToken
-                .startsWith(currToken + '.'))) {
+                || currToken.startsWith(thisToken + '.')
+                || thisToken.startsWith(currToken + '.'))
+                || currToken.startsWith("R"+thisToken + '.')) {
 
                 if ("W".equals(nodeInst.getNodeState())) { // 结束子流程
                     FlowInstance subFlowInst = flowInstanceDao
