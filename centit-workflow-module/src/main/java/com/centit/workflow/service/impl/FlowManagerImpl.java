@@ -779,6 +779,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         // 将所有的下层正常节点都设置为 B 已回退
         String thisToken = thisnode.getRunToken();
         Date updateTime = DatetimeOpt.currentUtilDate();
+        Set<Long> nextNodeInsts=new HashSet<>();
         for (NodeInstance nodeInst : flow.getFlowNodeInstances()) {
             String currToken = nodeInst.getRunToken();
             if (("N".equals(nodeInst.getNodeState())
@@ -809,6 +810,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 wfactlog.setActionId(actionLogDao.getNextActionId());
                 nodeInst.addWfActionLog(wfactlog);
                 nodeInstanceDao.mergeObject(nodeInst);
+                nextNodeInsts.add(nodeInstId);
             }
         }
         // 创建新节点
@@ -836,6 +838,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flow.addWfNodeInstance(nextNodeInst);
         flowInstanceDao.updateObject(flow);
         nodeInstanceDao.mergeObject(nextNodeInst);
+        FlowOptUtils.sendMsg(lastNodeInstId,nextNodeInsts,mangerUserCode);
 
         ManageActionLog managerAct = FlowOptUtils.createManagerAction(
             flow.getFlowInstId(), lastNodeInstId, mangerUserCode, "R");
