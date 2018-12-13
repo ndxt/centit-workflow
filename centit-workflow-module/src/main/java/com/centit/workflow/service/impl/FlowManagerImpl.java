@@ -6,6 +6,7 @@ import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.QueryUtils;
+import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.NodeMsgSupport;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
@@ -779,7 +780,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         // 将所有的下层正常节点都设置为 B 已回退
         String thisToken = thisnode.getRunToken();
         Date updateTime = DatetimeOpt.currentUtilDate();
-        Set<Long> nextNodeInsts=new HashSet<>();
         for (NodeInstance nodeInst : flow.getFlowNodeInstances()) {
             String currToken = nodeInst.getRunToken();
             if (("N".equals(nodeInst.getNodeState())
@@ -799,6 +799,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                             mangerUserCode, flowInstanceDao);
                         subFlowInst.setLastUpdateUser(mangerUserCode);
                         flowInstanceDao.updateObject(subFlowInst);
+                        //更新子流程下的所有消息未已办
+                        FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(),mangerUserCode);
+
                     }
                 }
                 nodeInst.setNodeState("B");
@@ -810,7 +813,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 wfactlog.setActionId(actionLogDao.getNextActionId());
                 nodeInst.addWfActionLog(wfactlog);
                 nodeInstanceDao.mergeObject(nodeInst);
-                nextNodeInsts.add(nodeInstId);
+                //更新消息未已办
+                FlowOptUtils.sendMsg(nodeInst.getNodeInstId(),null,mangerUserCode);
             }
         }
         // 创建新节点
@@ -838,7 +842,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flow.addWfNodeInstance(nextNodeInst);
         flowInstanceDao.updateObject(flow);
         nodeInstanceDao.mergeObject(nextNodeInst);
-        FlowOptUtils.sendMsg(lastNodeInstId,nextNodeInsts,mangerUserCode);
+        Set<Long> nextNodeInsts=new HashSet<>();
+        nextNodeInsts.add(lastNodeInstId);
+        FlowOptUtils.sendMsg(0L,nextNodeInsts,mangerUserCode);
+
+
+        //执行节点创建后 事件
+        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nodedef);
+        nodeEventExecutor.runAfterCreate(flow, nextNodeInst, nodedef, mangerUserCode);
 
         ManageActionLog managerAct = FlowOptUtils.createManagerAction(
             flow.getFlowInstId(), lastNodeInstId, mangerUserCode, "R");

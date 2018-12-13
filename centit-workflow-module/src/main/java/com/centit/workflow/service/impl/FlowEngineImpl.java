@@ -1479,6 +1479,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInstanceDao.mergeObject(thisNodeInst);
         nodeInstanceDao.mergeObject(nextNodeInst);
         flowInstanceDao.updateObject(flowInst);
+
+        //执行节点创建后 事件
+        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nodedef);
+        nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, mangerUserCode);
         //调用发送消息接口
         Set<Long> nodeInstIds = new HashSet<>();
         nodeInstIds.add(lastNodeInstId);
