@@ -832,6 +832,15 @@ public interface FlowEngine {
      */
     StageInstance getStageInstByNodeInstId(long nodeInstId);
 
+
+    /**
+     * 删除流程变量
+     * @param flowInstId 必须
+     * @param runToken 非必须
+     * @param varName 非必须
+     */
+    public void deleteFlowVariable(Long flowInstId,String runToken,String varName);
+
     /**
      * 保存opt_idea_info表
      * @param paraMap

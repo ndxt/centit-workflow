@@ -2704,6 +2704,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
     }
 
+    public void deleteFlowVariable(Long flowInstId,String runToken,String varName){
+        if(flowInstId==null)
+            return;
+        Map<String, Object> filterMap=new HashMap<>();
+        filterMap.put("flowInstId",flowInstId);
+        filterMap.put("runToken",runToken);
+        filterMap.put("varName",varName);
+        flowVariableDao.deleteObjectsByProperties(filterMap);
+    }
+
   /*  @Override
     public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap) {
         nodeInstanceDao.saveOptIdeaForAutoSubmit(paraMap);
