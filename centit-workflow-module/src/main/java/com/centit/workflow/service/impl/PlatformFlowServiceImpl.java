@@ -45,19 +45,20 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
     @Override
     public List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
-
         String station = StringBaseOpt.castObjectToString(searchColumn.get("userStation"));
         String unitCode = StringBaseOpt.castObjectToString(searchColumn.get("unitCode"));
         Long nodeInstId = (Long) searchColumn.get("nodeInstId");
-        List<? extends IUserUnit> userUnits = unitCode!=null?
-            CodeRepositoryUtil.listUnitUsers(unitCode):null;
+        List<? extends IUserUnit> userUnits = CodeRepositoryUtil.listAllUserUnits();
         //2.以机构，岗位，职务来查询任务
-        if (userUnits == null || userUnits.size() == 0) {
-            return taskList;
-        }
         for (IUserUnit i : userUnits) {
-            if (!StringUtils.equals(station,i.getUserStation()))
+            if(StringUtils.isNotBlank(unitCode)){
+                if(!unitCode.equals(i.getUnitCode())){
+                    continue;
+                }
+            }
+            if (!StringUtils.equals(station, i.getUserStation())){
                 continue;
+            }
             searchColumn.put("nodeInstId", nodeInstId);
             searchColumn.put("unitCode", i.getUnitCode());
             searchColumn.put("userStation", i.getUserStation());
