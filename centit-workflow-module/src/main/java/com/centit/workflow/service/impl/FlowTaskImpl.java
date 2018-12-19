@@ -116,7 +116,7 @@ public class FlowTaskImpl {
             }
             nw++;
         }
-        logger.info("通知中心发现 " + nw + "预警信息，并通知了" + nn + "个用户。");
+        //logger.info("通知中心发现 " + nw + "预警信息，并通知了" + nn + "个用户。");
     }
 
     @Scheduled(cron = "0 1/2 8-23 * * ?")
