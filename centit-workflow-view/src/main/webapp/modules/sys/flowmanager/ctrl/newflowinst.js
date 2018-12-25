@@ -11,10 +11,13 @@ define(function(require) {
         this.load = function(panel){
 
             var form = panel.find("form");
-            form.form('ajax', {
-                url: Config.ContextPath+'service/flow/define?_search=true&field=flowCode&field=flowName',
-                method: 'get',
-            }).then(function (data) {
+          /*form.form('ajax', {
+            url: Config.ContextPath+'service/flow/define?_search=true&field=flowCode&field=flowName',
+            method: 'get',
+          })*/
+          Core.ajax(Config.ContextPath+'service/flow/define?_search=true&field=flowCode&field=flowName', {
+            method: 'get'
+          }).then(function (data) {
                     $("#flowCode").combobox('loadData',data.objList);
                 }
             )
