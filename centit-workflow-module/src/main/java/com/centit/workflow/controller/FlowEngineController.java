@@ -11,6 +11,7 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
+import com.centit.workflow.support.HTMLDecoder;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -43,7 +44,7 @@ public class FlowEngineController extends BaseController {
     public void createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, HttpServletResponse httpResponse) {
         NewFlowInstanceOptions newFlowInstanceOptions = new NewFlowInstanceOptions();
         newFlowInstanceOptions.setFlowCode(flowCode);
-        newFlowInstanceOptions.setFlowOptName(flowOptName);
+        newFlowInstanceOptions.setFlowOptName(HTMLDecoder.decode(flowOptName));
         newFlowInstanceOptions.setFlowOptTag(flowOptTag);
         newFlowInstanceOptions.setUserCode(userCode);
         newFlowInstanceOptions.setUnitCode(unitCode);
@@ -55,7 +56,7 @@ public class FlowEngineController extends BaseController {
     public void createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, String timeLimitStr, HttpServletResponse httpResponse) {
         NewFlowInstanceOptions newFlowInstanceOptions = new NewFlowInstanceOptions();
         newFlowInstanceOptions.setFlowCode(flowCode);
-        newFlowInstanceOptions.setFlowOptName(flowOptName);
+        newFlowInstanceOptions.setFlowOptName(HTMLDecoder.decode(flowOptName));
         newFlowInstanceOptions.setFlowOptTag(flowOptTag);
         newFlowInstanceOptions.setUserCode(userCode);
         newFlowInstanceOptions.setUnitCode(unitCode);
@@ -83,7 +84,7 @@ public class FlowEngineController extends BaseController {
         NewFlowInstanceOptions newFlowInstanceOptions = new NewFlowInstanceOptions();
         newFlowInstanceOptions.setFlowCode(flowCode);
         newFlowInstanceOptions.setVersion(version);
-        newFlowInstanceOptions.setFlowOptName(flowOptName);
+        newFlowInstanceOptions.setFlowOptName(HTMLDecoder.decode(flowOptName));
         newFlowInstanceOptions.setFlowOptTag(flowOptTag);
         newFlowInstanceOptions.setUserCode(userCode);
         newFlowInstanceOptions.setUnitCode(unitCode);
@@ -186,12 +187,6 @@ public class FlowEngineController extends BaseController {
         List<UserTask> userTasks = platformFlowService.queryDynamicTask(searchColumn, pageDesc);
         JsonResultUtils.writeSingleDataJson(userTasks, response);
     }
-
-/*    @RequestMapping(value = "/saveOptIdeaForAutoSubmit",method = {RequestMethod.POST})
-    public void saveOptIdeaForAutoSubmit(HttpServletResponse httpServletResponse, Map<String,Object> paraMap){
-        flowEng.saveOptIdeaForAutoSubmit(paraMap);
-        JsonResultUtils.writeBlankJson(httpServletResponse);
-    }*/
 
     /**
      * 根据业务id获取所有该业务下的流程
