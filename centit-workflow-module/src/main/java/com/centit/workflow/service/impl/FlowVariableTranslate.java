@@ -55,6 +55,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
         collectNodeUnitsAndUsers(flowInst);
     }
 
+
     public void setNodeInst(NodeInstance nodeInst) {
         this.nodeInst = nodeInst;
     }
