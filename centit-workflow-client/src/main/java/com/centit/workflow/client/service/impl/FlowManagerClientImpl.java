@@ -2,8 +2,6 @@ package com.centit.workflow.client.service.impl;
 
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.RestfulHttpRequest;
-import com.centit.framework.common.ResponseJSON;
-import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.po.NodeInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -65,7 +63,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
        /*
        CloseableHttpClient httpClient = appSession.allocHttpClient();
        appSession.checkAccessToken(httpClient);
-        ResponseJSON result = appSession.getResponseData(httpClient,
+        HttpReceiveJSON result = appSession.getResponseData(httpClient,
             UrlOptUtils.appendParamsToUrl(
             appSession.completeQueryUrl("/flow/engine/listFlowInstNodes"),paramMap));
 

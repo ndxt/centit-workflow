@@ -1,11 +1,8 @@
 package com.centit.workflow.client.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.RestfulHttpRequest;
-import com.centit.framework.common.ResponseJSON;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
@@ -16,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chen_rj on 2017/7/28.

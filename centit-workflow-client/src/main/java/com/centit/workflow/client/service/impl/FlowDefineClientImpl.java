@@ -1,9 +1,8 @@
 package com.centit.workflow.client.service.impl;
 
 import com.centit.framework.appclient.AppSession;
+import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
-import com.centit.framework.common.ResponseJSON;
-import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowDefineClient;
 import com.centit.workflow.po.FlowInfo;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -11,9 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by chen_rj on 2018-5-2.
@@ -56,11 +53,11 @@ public class FlowDefineClientImpl implements FlowDefineClient {
 
     @Override
     public List<FlowInfo> list() {
-        ResponseJSON responseJSON = RestfulHttpRequest.getResponseData(appSession,
+        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/define");
-        return responseJSON.getDataAsArray("objList",FlowInfo.class);
+        return HttpReceiveJSON.getDataAsArray("objList",FlowInfo.class);
         /*Map<String,Object> paramMap = new HashMap<>();
-        ResponseJSON result = null;
+        HttpReceiveJSON result = null;
         CloseableHttpClient httpClient = null;
         List<FlowInfo> flowInfos = null;
         try {
