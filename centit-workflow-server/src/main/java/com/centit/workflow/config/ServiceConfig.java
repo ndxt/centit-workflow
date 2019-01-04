@@ -29,8 +29,8 @@ import com.centit.framework.security.model.StandardPasswordEncoderImpl;
         excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceConfig {
-    
-    @Bean
+
+    @Bean("passwordEncoder")
     public CentitPasswordEncoder passwordEncoder(){
         return new StandardPasswordEncoderImpl();
     }
