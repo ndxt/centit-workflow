@@ -14,6 +14,7 @@ import com.centit.framework.system.config.SystemBeanConfig;
 import com.centit.workflow.external.JdbcUserUnitFilterCalcContext;
 import org.springframework.context.annotation.*;
 import com.centit.framework.security.model.CentitPasswordEncoder;
+import com.centit.framework.security.model.StandardPasswordEncoderImpl;
 
 
 /**
