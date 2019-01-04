@@ -38,9 +38,16 @@
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-system-module</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-persistence-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-persistence-extend</artifactId>
+            <version>${centit.persistence.version}</version>
         </dependency>
 
         <dependency>
