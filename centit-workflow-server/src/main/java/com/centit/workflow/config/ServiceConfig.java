@@ -13,6 +13,9 @@ import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.system.config.SystemBeanConfig;
 import com.centit.workflow.external.JdbcUserUnitFilterCalcContext;
 import org.springframework.context.annotation.*;
+import com.centit.framework.security.model.CentitPasswordEncoder;
+import com.centit.framework.security.model.StandardPasswordEncoderImpl;
+
 
 /**
  * Created by codefan on 17-7-18.
@@ -26,6 +29,11 @@ import org.springframework.context.annotation.*;
         excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceConfig {
+    
+    @Bean
+    public CentitPasswordEncoder passwordEncoder(){
+        return new StandardPasswordEncoderImpl();
+    }
 
     @Bean
     public NotificationCenter notificationCenter() {
