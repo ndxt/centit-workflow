@@ -26,6 +26,11 @@ import org.springframework.context.annotation.*;
         excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceConfig {
+    
+    @Bean
+    public CentitPasswordEncoder passwordEncoder(){
+        return new StandardPasswordEncoderImpl();
+    }
 
     @Bean
     public NotificationCenter notificationCenter() {
