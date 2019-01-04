@@ -2,13 +2,13 @@ package com.centit.demo.config;
 
 import com.centit.framework.components.impl.NotificationCenterImpl;
 import com.centit.framework.components.impl.TextOperationLogWriterImpl;
-import com.centit.framework.core.config.DataSourceConfig;
+import com.centit.framework.config.SpringSecurityCasConfig;
+import com.centit.framework.config.SpringSecurityDaoConfig;
 import com.centit.framework.ip.app.config.IPAppSystemBeanConfig;
 import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
-import com.centit.framework.config.SpringSecurityCasConfig;
-import com.centit.framework.config.SpringSecurityDaoConfig;
+import com.centit.framework.security.model.StandardPasswordEncoderImpl;
 import org.springframework.context.annotation.*;
 
 /**
@@ -31,6 +31,11 @@ public class ServiceConfig {
         //notificationCenter.initMsgSenders();
         //notificationCenter.registerMessageSender("innerMsg",innerMessageManager);
         return notificationCenter;
+    }
+
+    @Bean("passwordEncoder")
+    public StandardPasswordEncoderImpl passwordEncoder() {
+        return  new StandardPasswordEncoderImpl();
     }
 
     @Bean
