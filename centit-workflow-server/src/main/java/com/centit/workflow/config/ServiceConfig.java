@@ -13,6 +13,8 @@ import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.system.config.SystemBeanConfig;
 import com.centit.workflow.external.JdbcUserUnitFilterCalcContext;
 import org.springframework.context.annotation.*;
+import com.centit.framework.security.model.CentitPasswordEncoder;
+
 
 /**
  * Created by codefan on 17-7-18.
