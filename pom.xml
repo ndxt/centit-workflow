@@ -8,7 +8,7 @@
     <groupId>com.centit.product</groupId>
     <artifactId>centit-workflow</artifactId>
     <packaging>pom</packaging>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
     <name>com.centit.product:centit-workflow</name>
     <description>基于职能型组织架构的 工作流引擎服务器。</description>
     <url>https://github.com/ndxt/centit-workflow</url>
@@ -20,7 +20,7 @@
     </parent>
 
     <properties>
-        <centit.workflow.version>4.0.1-SNAPSHOT</centit.workflow.version>
+        <centit.workflow.version>4.0.2-SNAPSHOT</centit.workflow.version>
     </properties>
 
     <licenses>

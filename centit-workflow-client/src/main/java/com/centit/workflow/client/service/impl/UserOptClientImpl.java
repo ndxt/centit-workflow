@@ -1,6 +1,7 @@
 package com.centit.workflow.client.service.impl;
 
 import com.centit.framework.appclient.AppSession;
+import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.workflow.client.service.UserOptClient;
 import com.centit.workflow.po.FlowInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -41,17 +42,7 @@ public class UserOptClientImpl implements UserOptClient {
 
     @Override
     public void saveOptIdeaForAutoSubmit(Map<String, String> paraMap) {
-        CloseableHttpClient httpClient = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            appSession.formPost(httpClient,
-                appSession.completeQueryUrl("/appr/saveOptIdeaForAutoSubmit"), paraMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
+        RestfulHttpRequest.formPost(appSession,"/appr/saveOptIdeaForAutoSubmit",paraMap);
     }
 
 

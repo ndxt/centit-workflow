@@ -54,7 +54,7 @@ public class FlowDefineClientImpl implements FlowDefineClient {
     @Override
     public List<FlowInfo> list() {
         HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/define");
+            "/flow/define/listFlow");
         return HttpReceiveJSON.getDataAsArray("objList",FlowInfo.class);
         /*Map<String,Object> paramMap = new HashMap<>();
         HttpReceiveJSON result = null;

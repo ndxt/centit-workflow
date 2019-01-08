@@ -9,7 +9,10 @@ import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowModelData;
 import com.centit.workflow.service.impl.FlowOptUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,11 +21,14 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 @Controller
+@Api(value = "流程定义",
+    tags = "流程定义接口类")
 @RequestMapping("/flow/define")
 public class FlowDefineController extends BaseController {
     //public static final Logger logger = LoggerFactory.getLogger(SampleFlowDefineController.class);
@@ -33,6 +39,19 @@ public class FlowDefineController extends BaseController {
     private FlowModelData modelData;
 
     ResponseMapData resData = new ResponseMapData();
+
+    /**
+     * 列举系统中的所有流程，只显示最新版本的
+     */
+    @ApiOperation(value = "流程定义列表", notes = "列出所有的流程定义列表")
+    @GetMapping(value = "/listFlow")
+    public void listFlow(PageDesc pageDesc,HttpServletResponse response) {
+        Map<String, Object> searchColumn = new HashMap<>();
+        List<FlowInfo> listObjects = flowDef.listLastVersionFlow(searchColumn, pageDesc);
+        resData.addResponseData(OBJLIST, listObjects);
+        resData.addResponseData(PAGE_DESC, pageDesc);
+        JsonResultUtils.writeResponseDataAsJson(resData, response, JsonPropertyUtils.getIncludePropPreFilter(FlowInfo.class,new String[]{"flowCode","flowName"}));
+    }
 
 
     /**

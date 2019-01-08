@@ -1,9 +1,11 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
+import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
@@ -11,23 +13,20 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
-import com.centit.workflow.support.HTMLDecoder;
-import org.apache.commons.lang3.StringEscapeUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
-/**
- * Created by chen_rj on 2017/7/28.
- */
 @Controller
+@Api(value = "流程引擎",
+    tags = "流程引擎接口类")
 @RequestMapping("/flow/engine")
 public class FlowEngineController extends BaseController {
     @Resource
@@ -40,72 +39,12 @@ public class FlowEngineController extends BaseController {
 
     private Map<Class<?>, String[]> excludes;
 
-    @RequestMapping(value = "/createFlowInstDefault")
-    public void createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, HttpServletResponse httpResponse) {
-        NewFlowInstanceOptions newFlowInstanceOptions = new NewFlowInstanceOptions();
-        newFlowInstanceOptions.setFlowCode(flowCode);
-        newFlowInstanceOptions.setFlowOptName(HTMLDecoder.decode(flowOptName));
-        newFlowInstanceOptions.setFlowOptTag(flowOptTag);
-        newFlowInstanceOptions.setUserCode(userCode);
-        newFlowInstanceOptions.setUnitCode(unitCode);
-        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
-        JsonResultUtils.writeSingleDataJson(flowInstance, httpResponse);
-    }
 
-    @RequestMapping(value = "/createTimeLimitFlowInstDefault")
-    public void createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, String timeLimitStr, HttpServletResponse httpResponse) {
-        NewFlowInstanceOptions newFlowInstanceOptions = new NewFlowInstanceOptions();
-        newFlowInstanceOptions.setFlowCode(flowCode);
-        newFlowInstanceOptions.setFlowOptName(HTMLDecoder.decode(flowOptName));
-        newFlowInstanceOptions.setFlowOptTag(flowOptTag);
-        newFlowInstanceOptions.setUserCode(userCode);
-        newFlowInstanceOptions.setUnitCode(unitCode);
-        newFlowInstanceOptions.setTimeLimitStr(timeLimitStr);
-        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
-        JsonResultUtils.writeSingleDataJson(flowInstance, httpResponse);
-    }
-
-    /**
-     * 新增一个以json作为参数的创建流程接口
-     *
-     * @param json
-     * @param httpResponse
-     */
-    @RequestMapping(value = "/createFlowInstDefaultByJson")
-    public void createFlowInstDefaultByJson(@RequestBody String json, HttpServletResponse httpResponse) {
-        NewFlowInstanceOptions newFlowInstanceOptions = JSON.parseObject(json, NewFlowInstanceOptions.class);
-        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
-        JsonResultUtils.writeSingleDataJson(flowInstance, httpResponse);
-    }
-
-
-    @RequestMapping(value = "/createFlowInstWithVersion")
-    public void createInstance(String flowCode, long version, String flowOptName, String flowOptTag, String userCode, String unitCode, HttpServletResponse httpResponse) {
-        NewFlowInstanceOptions newFlowInstanceOptions = new NewFlowInstanceOptions();
-        newFlowInstanceOptions.setFlowCode(flowCode);
-        newFlowInstanceOptions.setVersion(version);
-        newFlowInstanceOptions.setFlowOptName(HTMLDecoder.decode(flowOptName));
-        newFlowInstanceOptions.setFlowOptTag(flowOptTag);
-        newFlowInstanceOptions.setUserCode(userCode);
-        newFlowInstanceOptions.setUnitCode(unitCode);
-        FlowInstance flowInstance = flowEng.createInstanceWithSpecifiedVersion(newFlowInstanceOptions);
-        JsonResultUtils.writeSingleDataJson(flowInstance, httpResponse);
-    }
-
-    @RequestMapping(value = "/createInstanceLockFirstNode", method = RequestMethod.POST)
-    public void createInstanceLockFirstNode(HttpServletResponse httpResponse, FlowInstance flowInstanceParam) {
-        FlowInstance flowInstance = flowEng.createInstanceLockFirstNode(flowInstanceParam.getFlowCode(), flowInstanceParam.getOptName(), flowInstanceParam.getFlowOptTag(), flowInstanceParam.getUserCode(), flowInstanceParam.getUnitCode());
-        JsonResultUtils.writeSingleDataJson(flowInstance, httpResponse);
-    }
-
-    @RequestMapping(value = "submitOpt", method = RequestMethod.POST)
-    public Set<Long> submitOpt(HttpServletRequest httpServletRequest, Long nodeInstId, String userCode, String unitCode, String varTrans) {
-        if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
-            Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
-            return flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), httpServletRequest.getServletContext());
-        } else {
-            return flowEng.submitOpt(nodeInstId, userCode, unitCode, null, httpServletRequest.getServletContext());
-        }
+    @ApiOperation(value = "创建流程", notes = "创建流程，锁定首节点")
+    @WrapUpResponseBody
+    @PostMapping(value = "/createInstanceLockFirstNode")
+    public FlowInstance createInstanceLockFirstNode(@RequestBody FlowInstance flowInstanceParam) {
+        return flowEng.createInstanceLockFirstNode(flowInstanceParam.getFlowCode(), flowInstanceParam.getOptName(), flowInstanceParam.getFlowOptTag(), flowInstanceParam.getUserCode(), flowInstanceParam.getUnitCode());
     }
 
     //加载通用po到流程流转中
@@ -115,120 +54,158 @@ public class FlowEngineController extends BaseController {
         return bo;
     }
 
-    @RequestMapping(value = "/saveFlowVariable", method = {RequestMethod.POST, RequestMethod.PUT})
-    public void saveFlowVariable(HttpServletResponse httpServletResponse, FlowVariable flowVariableParam) {
+    @ApiOperation(value = "创建流程", notes = "创建流程，参数为json格式")
+    @WrapUpResponseBody
+    @PostMapping(value = "/createFlowInstDefault")
+    public FlowInstance createFlowInstDefault(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions) {
+        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        return flowInstance;
+    }
+
+    @ApiOperation(value = "提交节点", notes = "提交节点")
+    @WrapUpResponseBody
+    @PostMapping(value = "submitOpt")
+    public Set<Long> submitOpt(HttpServletRequest httpServletRequest, @RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        long nodeInstId = jsonObject.getLong("nodeInstId");
+        String userCode = jsonObject.getString("userCode");
+        String unitCode = jsonObject.getString("unitCode");
+        String varTrans = jsonObject.getString("varTrans");
+        if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
+            Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
+            Set<Long> nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);
+            return nextNodes;
+        } else {
+            Set<Long> nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, null, null);
+            return nextNodes;
+        }
+    }
+
+    @ApiOperation(value = "保存流程变量", notes = "保存流程变量")
+    @WrapUpResponseBody
+    @PostMapping(value = "/saveFlowVariable")
+    public void saveFlowVariable(@RequestBody FlowVariable flowVariableParam) {
         flowEng.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), flowVariableParam.getVarValue());
-        JsonResultUtils.writeBlankJson(httpServletResponse);
     }
 
-    @RequestMapping(value = "/viewFlowVariablesByVarname", method = RequestMethod.GET)
-    public void viewFlowVariablesByVarname(HttpServletResponse httpServletResponse, Long flowInstId, String varName) {
-        List<FlowVariable> flowVariables = flowEng.viewFlowVariablesByVarname(flowInstId, varName);
-        JsonResultUtils.writeSingleDataJson(flowVariables, httpServletResponse);
+    @ApiOperation(value = "保存流程变量", notes = "保存流程变量")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/deleteFlowVariable", method = {RequestMethod.POST, RequestMethod.PUT})
+    public void deleteFlowVariable(@RequestBody FlowVariable flowVariableParam) {
+        flowEng.deleteFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getRunToken(), flowVariableParam.getVarName());
     }
 
-    @RequestMapping(value = "/assignFlowWorkTeam", method = RequestMethod.POST)
-    public void assignFlowWorkTeam(HttpServletResponse httpServletResponse, Long flowInstId, String roleCode, String userCodeList) {
+    @ApiOperation(value = "查看流程变量", notes = "查看流程变量")
+    @WrapUpResponseBody
+    @GetMapping(value = "/viewFlowVariablesByVarname")
+    public List<FlowVariable> viewFlowVariablesByVarname(@RequestBody FlowVariable flowVariableParam) {
+        List<FlowVariable> flowVariables = flowEng.viewFlowVariablesByVarname(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName());
+        return flowVariables;
+    }
+
+    @ApiOperation(value = "新增办件角色", notes = "新增办件角色")
+    @WrapUpResponseBody
+    @PostMapping(value = "/assignFlowWorkTeam")
+    public void assignFlowWorkTeam(@RequestBody FlowWorkTeam flowWorkTeam) {
+        String userCodeList = flowWorkTeam.getUserCode();
         if (userCodeList == null || userCodeList.trim().length() == 0) {
             return;
         }
         String[] userCodeArr = userCodeList.split(",");
         List<String> userCodes = new ArrayList<>(Arrays.asList(userCodeArr));
-        flowEng.assignFlowWorkTeam(flowInstId, roleCode, userCodes);
-        JsonResultUtils.writeBlankJson(httpServletResponse);
+        flowEng.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), userCodes);
     }
 
-    @RequestMapping(value = "deleteFlowWorkTeam", method = RequestMethod.POST)
-    public void deleteFlowWorkTeam(HttpServletResponse httpServletResponse, Long flowInstId, String roleCode) {
-        flowEng.deleteFlowWorkTeam(flowInstId, roleCode);
-        JsonResultUtils.writeBlankJson(httpServletResponse);
+    @ApiOperation(value = "删除办件角色", notes = "删除办件角色")
+    @WrapUpResponseBody
+    @PostMapping(value = "deleteFlowWorkTeam")
+    public void deleteFlowWorkTeam(@RequestBody FlowWorkTeam flowWorkTeam) {
+        flowEng.deleteFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
     }
 
-    @RequestMapping(value = "deleteFlowOrganize", method = RequestMethod.POST)
-    public void deleteFlowOrganize(HttpServletResponse httpServletResponse, Long flowInstId, String roleCode) {
-        flowEng.deleteFlowOrganize(flowInstId, roleCode);
-        JsonResultUtils.writeBlankJson(httpServletResponse);
-    }
 
-    @RequestMapping(value = "/listFlowInstNodes", method = RequestMethod.GET)
+    @ApiOperation(value = "查看流程节点", notes = "查看流程节点")
+    @GetMapping(value = "/listFlowInstNodes")
     public void listFlowInstNodes(HttpServletResponse response, Long flowInstId) {
         List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
-        excludes = new HashMap<Class<?>, String[]>();
+        excludes = new HashMap<>();
         excludes.put(NodeInstance.class, new String[]{"wfActionLogs", "wfActionTasks"});
         JsonResultUtils.writeSingleDataJson(nodeInstList, response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
 
-    @RequestMapping(value = "/listUserTasks", method = RequestMethod.GET)
-    public void listUserTasks(HttpServletRequest request, HttpServletResponse response, String userCode) {
-        Map<String, Object> searchColumn = convertSearchColumn(request);
-        if (StringUtils.isBlank(userCode)) {
-            userCode = super.getLoginUserCode(request);
-        }
+    @ApiOperation(value = "查询用户待办", notes = "查询用户待办")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listUserTasks")
+    public List<UserTask> listUserTasks(String userCode) {
+        Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("userCode", userCode);
         List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
-        JsonResultUtils.writeSingleDataJson(userTasks, response);
+        return userTasks;
     }
 
-    /**
-     * 获取用户动态待办
-     *
-     * @param request
-     * @param response
-     * @param userCode
-     */
-    @RequestMapping(value = "/listUserDynamicTasks", method = RequestMethod.GET)
-    public void listUserDynamicTasks(HttpServletRequest request, HttpServletResponse response, String userCode) {
-        Map<String, Object> searchColumn = convertSearchColumn(request);
-        if (StringUtils.isBlank(userCode)) {
-            userCode = super.getLoginUserCode(request);
-        }
+    @ApiOperation(value = "查询用户岗位待办", notes = "查询用户岗位待办")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listUserDynamicTasks")
+    public List<UserTask> listUserDynamicTasks(String userCode) {
+        Map<String, Object> searchColumn = new HashMap<>();
         PageDesc pageDesc = new PageDesc(1, 10);
         searchColumn.put("userCode", userCode);
         List<UserTask> userTasks = platformFlowService.queryDynamicTask(searchColumn, pageDesc);
-        JsonResultUtils.writeSingleDataJson(userTasks, response);
+        return userTasks;
     }
 
-    /**
-     * 根据业务id获取所有该业务下的流程
-     *
-     * @param flowOptTag
-     * @return
-     */
-    @RequestMapping(value = "/listAllFlowInstByOptTag", method = RequestMethod.GET)
-    void listAllFlowInstByOptTag(HttpServletRequest request, HttpServletResponse response, String flowOptTag) {
-        JsonResultUtils.writeSingleDataJson(flowEng.listAllFlowInstByOptTag(flowOptTag), response);
+    @ApiOperation(value = "业务id关联流程", notes = "根据业务id查询关联流程")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listAllFlowInstByOptTag")
+    public List<FlowInstance> listAllFlowInstByOptTag(@RequestParam(value = "flowOptTag") String flowOptTag) {
+        return flowEng.listAllFlowInstByOptTag(flowOptTag);
     }
 
-    /**
-     * 更改流程业务信息，flowOptName 用来显示业务办件名称，flowOptTag 给业务系统自己解释可以用于反向关联
-     *
-     * @param flowInstId  流程实例ID
-     * @param flowOptName 这个名称用户 查找流程信息
-     */
+    @ApiOperation(value = "更改流程业务信息", notes = "更改流程业务信息程")
+    @WrapUpResponseBody
     @RequestMapping(value = "/updateFlowInstOptInfo", method = RequestMethod.POST)
-    void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag,
-                               HttpServletRequest request, HttpServletResponse response) {
+    public void updateFlowInstOptInfo(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        //流程实例ID
+        long flowInstId = jsonObject.getLong("flowInstId");
+        //流程名称
+        String flowOptName = jsonObject.getString("flowOptName");
+        //流程业务id
+        String flowOptTag = jsonObject.getString("flowOptTag");
         flowEng.updateFlowInstOptInfo(flowInstId, flowOptName, flowOptTag);
-        JsonResultUtils.writeSuccessJson(response);
     }
 
-    @RequestMapping(value = "/viewFlowWorkTeam", method = {RequestMethod.POST, RequestMethod.GET})
-    public void viewFlowWorkTeam(HttpServletResponse httpServletResponse, FlowWorkTeam flowWorkTeam) {
-        List<String> flowWorkTeams = flowEng.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
-        JsonResultUtils.writeSingleDataJson(flowWorkTeams, httpServletResponse);
+    @ApiOperation(value = "查看办件角色", notes = "查看办件角色")
+    @WrapUpResponseBody
+    @GetMapping(value = "/viewFlowWorkTeam")
+    public List<String> viewFlowWorkTeam(@RequestBody FlowWorkTeam flowWorkTeam) {
+        return flowEng.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
     }
 
-    @RequestMapping(value = "/viewFlowOrganize", method = {RequestMethod.POST, RequestMethod.GET})
-    public void viewFlowOrganize(HttpServletResponse httpServletResponse, FlowOrganize flowOrganize) {
-        List<String> orgnaizes = flowEng.viewFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
-        JsonResultUtils.writeSingleDataJson(orgnaizes, httpServletResponse);
+    @ApiOperation(value = "查看流程组织机构", notes = "查看流程组织机构")
+    @WrapUpResponseBody
+    @GetMapping(value = "/viewFlowOrganize")
+    public List<String> viewFlowOrganize(@RequestBody FlowOrganize flowOrganize) {
+        return flowEng.viewFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
 
-    @RequestMapping(value = "/assignFlowOrganize", method = {RequestMethod.POST, RequestMethod.GET})
-    public void assignFlowOrganize(HttpServletResponse httpServletResponse, Long flowInstId, String roleCode, String orgCodeSet) {
+    @ApiOperation(value = "新增流程组织机构", notes = "新增流程组织机构")
+    @WrapUpResponseBody
+    @PostMapping(value = "/assignFlowOrganize")
+    public void assignFlowOrganize(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        Long flowInstId = jsonObject.getLong("flowInstId");
+        String roleCode = jsonObject.getString("roleCode");
+        String orgCodeSet = jsonObject.getString("orgCodeSet");
         String[] orgArr = orgCodeSet.split(",");
         List<String> orgCodes = new ArrayList<>(Arrays.asList(orgArr));
         flowEng.assignFlowOrganize(flowInstId, roleCode, orgCodes);
-        JsonResultUtils.writeBlankJson(httpServletResponse);
+    }
+
+    @ApiOperation(value = "删除流程机构", notes = "删除流程机构")
+    @WrapUpResponseBody
+    @PostMapping(value = "deleteFlowOrganize")
+    public void deleteFlowOrganize(@RequestBody FlowOrganize flowOrganize) {
+        flowEng.deleteFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
 }

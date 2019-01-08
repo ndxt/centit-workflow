@@ -60,19 +60,8 @@ public class FlowManagerClientImpl implements FlowManagerClient {
         return RestfulHttpRequest.getResponseObjectList(appSession,
             "/flow/engine/listFlowInstNodes",
             paramMap,NodeInstance.class);
-       /*
-       CloseableHttpClient httpClient = appSession.allocHttpClient();
-       appSession.checkAccessToken(httpClient);
-        HttpReceiveJSON result = appSession.getResponseData(httpClient,
-            UrlOptUtils.appendParamsToUrl(
-            appSession.completeQueryUrl("/flow/engine/listFlowInstNodes"),paramMap));
-
-        return result.getDataAsArray(NodeInstance.class);*/
     }
 
-    /*
-     * FixMe to:郭锐请 安排人将所有 client接口中的调用换成 用 RestfulHttpRequest 工具类方法
-     */
     @Override
     public void stopAndChangeInstance(long flowInstId,String userCode,String desc) throws Exception{
         Map<String,Object> paramMap = new HashMap<>();

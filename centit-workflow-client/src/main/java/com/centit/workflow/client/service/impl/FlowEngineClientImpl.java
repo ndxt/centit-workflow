@@ -1,5 +1,6 @@
 package com.centit.workflow.client.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.database.utils.PageDesc;
@@ -60,17 +61,29 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     @Override
     public String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception {
-        Map<String, String> paramMap = new HashMap<>();
-        paramMap.put("flowCode", flowCode);
-        paramMap.put("flowOptName", flowOptName);
-        paramMap.put("flowOptTag", flowOptTag);
-        paramMap.put("userCode", userCode);
-        paramMap.put("unitCode", unitCode);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flowCode", flowCode);
+        jsonObject.put("flowOptName", flowOptName);
+        jsonObject.put("flowOptTag", flowOptTag);
+        jsonObject.put("userCode", userCode);
+        jsonObject.put("unitCode", unitCode);
 
-        return RestfulHttpRequest.formPost(appSession, "/flow/engine/createFlowInstDefault", paramMap);
+        return RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/createFlowInstDefault", jsonObject);
 
     }
 
+
+    /**
+     * @param flowCode 流程编码
+     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
+     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
+     * @param userCode 创建用户
+     * @param unitCode 将流程指定一个所属机构
+     * @param timeLimitStr 流程计时 默认单位为天，也可以手动设定为d\h\m
+     * @return
+     * @throws Exception
+     */
     @Override
     public String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, String timeLimitStr) throws Exception {
         Map<String, String> paramMap = new HashMap<>();
@@ -80,8 +93,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
         paramMap.put("timeLimitStr", timeLimitStr);
-        return RestfulHttpRequest.formPost(appSession,
-            "/flow/engine/createTimeLimitFlowInstDefault", paramMap);
+        return RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/createFlowInstDefault", paramMap);
     }
 
     @Override
@@ -95,11 +108,11 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
         return RestfulHttpRequest.formPost(appSession,
-            "/flow/engine/createFlowInstWithVersion", paramMap);
+            "/flow/engine/createFlowInstDefault", paramMap);
     }
 
     @Override
-    public FlowInstance createInstanceLockFirstNode(String flowCode, String flowOptName, String flowOptTag,
+    public String createInstanceLockFirstNode(String flowCode, String flowOptName, String flowOptTag,
                                                     String userCode, String unitCode) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowCode", flowCode);
@@ -107,8 +120,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowOptTag", flowOptTag);
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
-        return RestfulHttpRequest.getResponseObject(appSession,
-            "/flow/engine/createInstanceLockFirstNode", paramMap, FlowInstance.class);
+        return RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/createInstanceLockFirstNode", paramMap);
     }
 
     @Override
@@ -117,7 +130,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("varName", varName);
         paramMap.put("varValue", varValue);
-        RestfulHttpRequest.formPost(appSession,
+        RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/saveFlowVariable", paramMap);
     }
 
@@ -126,8 +139,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
-        paramMap.put("userCodeList", userCodes);
-        RestfulHttpRequest.formPost(appSession,
+        paramMap.put("userCode", userCodes);
+        RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/assignFlowWorkTeam", paramMap);
     }
 
@@ -138,20 +151,20 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
         paramMap.put("orgCodeSet", orgCodeSet);
-        RestfulHttpRequest.formPost(appSession,
+        RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/assignFlowOrganize", paramMap);
     }
 
     @Override
     public void submitOpt(long nodeInstId, String userCode,
-                               String unitCode, String varTrans,
-                               ServletContext application) throws Exception {
+                          String unitCode, String varTrans,
+                          ServletContext application) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
         paramMap.put("varTrans", varTrans);
-        RestfulHttpRequest.formPost(appSession,
+        RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/submitOpt", paramMap);
     }
 
@@ -170,16 +183,16 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
-        RestfulHttpRequest.formPost(appSession,
+        RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/deleteFlowWorkTeam", paramMap);
     }
 
     @Override
-    public void deleteFlowOrganize(long flowInstId,String roleCode) throws Exception {
+    public void deleteFlowOrganize(long flowInstId, String roleCode) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
-        RestfulHttpRequest.formPost(appSession,
+        RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/deleteFlowOrganize", paramMap);
     }
 
@@ -206,7 +219,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("flowOptName", flowOptName);
         paramMap.put("flowOptTag", flowOptTag);
-        RestfulHttpRequest.formPost(appSession,
+        RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/updateFlowInstOptInfo", paramMap);
     }
 
