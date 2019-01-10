@@ -7,6 +7,8 @@ import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
 import com.centit.framework.components.impl.TextOperationLogWriterImpl;
 import com.centit.framework.config.SpringSecurityDaoConfig;
 import com.centit.framework.core.config.DataSourceConfig;
+import com.centit.framework.ip.service.IntegrationEnvironment;
+import com.centit.framework.ip.service.impl.JsonIntegrationEnvironment;
 import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
@@ -33,6 +35,11 @@ public class ServiceConfig {
     @Bean("passwordEncoder")
     public CentitPasswordEncoder passwordEncoder(){
         return new StandardPasswordEncoderImpl();
+    }
+
+    @Bean
+    public IntegrationEnvironment integrationEnvironment(){
+        return new JsonIntegrationEnvironment();
     }
 
     @Bean
