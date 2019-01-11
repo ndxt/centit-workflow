@@ -15,7 +15,7 @@ public interface NodeMsgSupport {
     void sendNodeMsg(long nodeInstId, Set<Long> nextNodeInsts,String userCode) throws WorkflowException;
 
     /**
-     * 在流程强制办结的时候更新节点消息到消息中心
+     * 在流程办结的时候更新节点消息到消息中心
      * @param flowInstId 当前节点id
      * @param userCode 当前操作人
      * @throws WorkflowException

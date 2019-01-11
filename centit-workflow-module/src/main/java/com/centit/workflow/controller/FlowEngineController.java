@@ -88,9 +88,9 @@ public class FlowEngineController extends BaseController {
         flowEng.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), flowVariableParam.getVarValue());
     }
 
-    @ApiOperation(value = "保存流程变量", notes = "保存流程变量")
+    @ApiOperation(value = "删除流程变量", notes = "删除流程变量")
     @WrapUpResponseBody
-    @RequestMapping(value = "/deleteFlowVariable", method = {RequestMethod.POST, RequestMethod.PUT})
+    @PostMapping(value = "/deleteFlowVariable")
     public void deleteFlowVariable(@RequestBody FlowVariable flowVariableParam) {
         flowEng.deleteFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getRunToken(), flowVariableParam.getVarName());
     }
@@ -98,7 +98,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查看流程变量", notes = "查看流程变量")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowVariablesByVarname")
-    public List<FlowVariable> viewFlowVariablesByVarname(@RequestBody FlowVariable flowVariableParam) {
+    public List<FlowVariable> viewFlowVariablesByVarname(FlowVariable flowVariableParam) {
         List<FlowVariable> flowVariables = flowEng.viewFlowVariablesByVarname(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName());
         return flowVariables;
     }
@@ -163,7 +163,7 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "更改流程业务信息", notes = "更改流程业务信息程")
     @WrapUpResponseBody
-    @RequestMapping(value = "/updateFlowInstOptInfo", method = RequestMethod.POST)
+    @PostMapping(value = "/updateFlowInstOptInfo")
     public void updateFlowInstOptInfo(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         //流程实例ID
@@ -178,14 +178,14 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查看办件角色", notes = "查看办件角色")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowWorkTeam")
-    public List<String> viewFlowWorkTeam(@RequestBody FlowWorkTeam flowWorkTeam) {
+    public List<String> viewFlowWorkTeam(FlowWorkTeam flowWorkTeam) {
         return flowEng.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
     }
 
     @ApiOperation(value = "查看流程组织机构", notes = "查看流程组织机构")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowOrganize")
-    public List<String> viewFlowOrganize(@RequestBody FlowOrganize flowOrganize) {
+    public List<String> viewFlowOrganize(FlowOrganize flowOrganize) {
         return flowEng.viewFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
 
