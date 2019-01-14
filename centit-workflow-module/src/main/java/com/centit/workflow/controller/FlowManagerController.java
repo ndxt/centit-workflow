@@ -20,6 +20,7 @@ import com.centit.workflow.service.PlatformFlowService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -389,7 +390,7 @@ public class FlowManagerController extends BaseController {
      * @param request
      * @param response
      */
-    @RequestMapping(value = "/changeunit/{wfinstid}/{unitcode}", method = RequestMethod.GET)
+    @PutMapping(value = "/changeunit/{wfinstid}/{unitcode}")
     public void changeUnit(@PathVariable Long wfinstid, @PathVariable String unitcode, HttpServletRequest request, HttpServletResponse response) {
         flowManager.updateFlowInstUnit(wfinstid, unitcode, super.getLoginUserCode(request));
         JsonResultUtils.writeSingleDataJson("", response);
