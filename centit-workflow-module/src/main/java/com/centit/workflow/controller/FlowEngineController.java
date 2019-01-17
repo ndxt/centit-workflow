@@ -65,7 +65,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "提交节点", notes = "提交节点")
     @WrapUpResponseBody
     @PostMapping(value = "submitOpt")
-    public Set<Long> submitOpt(HttpServletRequest httpServletRequest, @RequestBody String json) {
+    public Set<Long> submitOpt(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         long nodeInstId = jsonObject.getLong("nodeInstId");
         String userCode = jsonObject.getString("userCode");

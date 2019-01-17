@@ -25,8 +25,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
             filterField = new HashMap<String, String>();
 
             filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("flowId" , CodeBook.LIKE_HQL_ID);
-            filterField.put("version" , CodeBook.LIKE_HQL_ID);
+            filterField.put("flowId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("version" , CodeBook.EQUAL_HQL_ID);
 
             filterField.put("(date)createTimeBeg",
                 " createTime>= :createTimeBeg");
@@ -35,13 +35,13 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
             filterField.put("(date)lastUpdateTime" , "lastUpdateTime = :lastUpdateTime");
 
             filterField.put("instState" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("isSubInst" , CodeBook.LIKE_HQL_ID);
+            filterField.put("isSubInst" , CodeBook.EQUAL_HQL_ID);
             filterField.put("flowOptName" , CodeBook.LIKE_HQL_ID);
             filterField.put("flowOptTag" , CodeBook.LIKE_HQL_ID);
-            filterField.put("preInstId" , CodeBook.LIKE_HQL_ID);
-            filterField.put("preNodeInstId" , CodeBook.LIKE_HQL_ID);
-            filterField.put("unitCode" , CodeBook.LIKE_HQL_ID);
-            filterField.put("userCode" , CodeBook.LIKE_HQL_ID);
+            filterField.put("preInstId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("preNodeInstId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("unitCode" , CodeBook.EQUAL_HQL_ID);
+            filterField.put("userCode" , CodeBook.EQUAL_HQL_ID);
             filterField.put("(long)nodeId" , "flowInstId in (select flowInstId from NodeInstance where nodeState='N' and nodeId=:nodeId)" );
             filterField.put("optCode", "flowInstId in "+
                 "(select a.flowInstId from NodeInstance a,NodeInfo b where a.nodeId=b.nodeId and a.nodeState='N' and b.optCode=:optCode)" );
