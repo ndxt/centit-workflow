@@ -35,7 +35,7 @@ define(function(require) {
 				
 				form.form('ajax', {
 					url: Config.ContextPath+'service/flow/manager/changeunit/'+data.flowInstId+'/'+unitCode,
-					method: 'get',
+					method: 'put',
 				}).then(closeCallback);
 			}
 			
