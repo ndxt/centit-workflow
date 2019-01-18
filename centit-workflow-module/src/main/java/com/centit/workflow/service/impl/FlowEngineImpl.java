@@ -546,6 +546,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (nNs == null || nNs.size() == 0 || (nNs.size() == 1 && nNs.contains(nodeInst.getRunToken()))) {
                     FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
                     long nextNodeId = nodeTran.getEndNodeId();
+                    for (FlowTransition f : flowInfo.getFlowTransitions()) {
+                        if (nextRoutertNode.getNodeId().equals(f.getEndNodeId()) && !f.getTransId().equals(trans.getTransId())) {
+                            preTransPath += ","+String.valueOf(f.getTransId());
+                        }
+                    }
                     resNodes = submitToNextNode(
                         nextNodeId, flowInst, flowInfo,
                         nodeInst, preTransPath, nodeTran, userCode, null, unitCode, preRunToken,
@@ -600,6 +605,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
                             FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
                             long nextNodeId = nodeTran.getEndNodeId();
+                            for (FlowTransition f : flowInfo.getFlowTransitions()) {
+                                if (nextRoutertNode.getNodeId().equals(f.getEndNodeId()) && !f.getTransId().equals(trans.getTransId())) {
+                                    preTransPath += ","+String.valueOf(f.getTransId());
+                                }
+                            }
                             resNodes = submitToNextNode(
                                 nextNodeId, flowInst, flowInfo,
                                 nodeInst, preTransPath, nodeTran, userCode, null, unitCode, preRunToken,
@@ -1287,7 +1297,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Map<String, List<String>> flowOrganizes = this.viewFlowOrganize(flowInst.getFlowInstId());
         Map<String, List<String>> flowWorkTeam = this.viewFlowWorkTeam(flowInst.getFlowInstId());
         //flushVariables((FlowVariableTranslate) varTrans,flowVariables,flowOrganizes,flowWorkTeam);
-        FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans,flowVariables,
+        FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans, flowVariables,
             nodeInst, flowInst);
         flowVarTrans.setFlowOrganizes(flowOrganizes);
         flowVarTrans.setFlowWorkTeam(flowWorkTeam);
