@@ -111,7 +111,9 @@ public class FlowEngineController extends BaseController {
         if (userCodeList == null || userCodeList.trim().length() == 0) {
             return;
         }
-        String[] userCodeArr = userCodeList.split(",");
+        //替换形如["1","2"]的字符串，修改为形如"1,2"的字符串
+        String userCodeStr = StringUtils.strip(userCodeList,"[]").replaceAll("\"","");
+        String[] userCodeArr = userCodeStr.split(",");
         List<String> userCodes = new ArrayList<>(Arrays.asList(userCodeArr));
         flowEng.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), userCodes);
     }
