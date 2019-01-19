@@ -199,7 +199,9 @@ public class FlowEngineController extends BaseController {
         Long flowInstId = jsonObject.getLong("flowInstId");
         String roleCode = jsonObject.getString("roleCode");
         String orgCodeSet = jsonObject.getString("orgCodeSet");
-        String[] orgArr = orgCodeSet.split(",");
+        //替换形如["1","2"]的字符串，修改为形如"1,2"的字符串
+        String orgCodeStr = StringUtils.strip(orgCodeSet,"[]").replaceAll("\"","");
+        String[] orgArr = orgCodeStr.split(",");
         List<String> orgCodes = new ArrayList<>(Arrays.asList(orgArr));
         flowEng.assignFlowOrganize(flowInstId, roleCode, orgCodes);
     }
