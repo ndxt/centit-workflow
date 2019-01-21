@@ -104,7 +104,7 @@ public interface FlowEngineClient {
 
     void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag);
     /**
-     * 分配工作小组 --办件角色
+     * 分配办件角色，兼容老业务模块，支持新增多个办件角色
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 办件角色 不能为空
      * @param userCodeSet 用户代码列表，添加
@@ -114,19 +114,39 @@ public interface FlowEngineClient {
                             List<String> userCodeSet) throws Exception;
 
     /**
-     * 分配主办或者协办处室
+     * 新增单个办件角色
+     * @param flowInstId
+     * @param roleCode
+     * @param userCode
+     * @throws Exception
+     */
+    void addFlowWorkTeam(long flowInstId, String roleCode, String userCode) throws Exception ;
+
+    /**
+     * 分配流程机构，兼容老业务模块，支持新增多个流程机构
      * @param flowInstId
      * @param roleCode
      * @param orgCodeSet
      * @throws Exception
      */
-    void assignFlowOrganize (long flowInstId, String roleCode,
+    void assignFlowOrganize(long flowInstId, String roleCode,
                              List<String> orgCodeSet) throws Exception;
+
     /**
-     * 删除工作小组--办件角色
-     * @param flowInstId  流程实例号 不能为空
-     * @param roleCode 办件角色 不能为空
+     * 分配单个流程机构
+     * @param flowInstId
+     * @param roleCode
+     * @param unitCode
      */
+    void addFlowOrganize(long flowInstId, String roleCode,
+                                String unitCode);
+
+
+        /**
+         * 删除工作小组--办件角色
+         * @param flowInstId  流程实例号 不能为空
+         * @param roleCode 办件角色 不能为空
+         */
     void deleteFlowWorkTeam(long flowInstId, String roleCode) throws Exception;
     /**
      * 查看工作小组中某个角色的成员
@@ -136,7 +156,7 @@ public interface FlowEngineClient {
      */
     List<String> viewFlowWorkTeam(long flowInstId, String roleCode);
     /**
-     * 删除工作小组--办件角色
+     * 删除流程机构
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 机构角色 不能为空
      */

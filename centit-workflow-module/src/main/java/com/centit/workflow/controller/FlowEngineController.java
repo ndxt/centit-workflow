@@ -103,10 +103,14 @@ public class FlowEngineController extends BaseController {
         return flowVariables;
     }
 
-    @ApiOperation(value = "新增办件角色", notes = "新增办件角色")
+    /**
+     * 兼容老业务模块，支持新增多个办件角色
+     * @param flowWorkTeam
+     */
+    @ApiOperation(value = "新增多个办件角色", notes = "新增办件角色,userCode传一个数组或者一个list，格式为userCode:[\"1\",\"2\"]")
     @WrapUpResponseBody
     @PostMapping(value = "/assignFlowWorkTeam")
-    public void assignFlowWorkTeam(@RequestBody FlowWorkTeam flowWorkTeam) {
+    public void assignFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
         String userCodeList = flowWorkTeam.getUserCode();
         if (userCodeList == null || userCodeList.trim().length() == 0) {
             return;
@@ -118,10 +122,17 @@ public class FlowEngineController extends BaseController {
         flowEng.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), userCodes);
     }
 
+    @ApiOperation(value = "新增单个办件角色", notes = "新增单个办件角色")
+    @WrapUpResponseBody
+    @PostMapping(value = "/addFlowWorkTeam")
+    public void addFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
+        flowEng.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), flowWorkTeam.getUserCode());
+    }
+
     @ApiOperation(value = "删除办件角色", notes = "删除办件角色")
     @WrapUpResponseBody
     @PostMapping(value = "deleteFlowWorkTeam")
-    public void deleteFlowWorkTeam(@RequestBody FlowWorkTeam flowWorkTeam) {
+    public void deleteFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
         flowEng.deleteFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
     }
 
@@ -191,7 +202,11 @@ public class FlowEngineController extends BaseController {
         return flowEng.viewFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
 
-    @ApiOperation(value = "新增流程组织机构", notes = "新增流程组织机构")
+    /**
+     * 兼容老业务模块，支持新增多个流程机构
+     * @param json
+     */
+    @ApiOperation(value = "新增多个流程机构", notes = "新增流程组织机构，多个组织orgCodeSet传一个数组或者一个list，格式为userCode:[\"1\",\"2\"]")
     @WrapUpResponseBody
     @PostMapping(value = "/assignFlowOrganize")
     public void assignFlowOrganize(@RequestBody String json) {
@@ -206,10 +221,17 @@ public class FlowEngineController extends BaseController {
         flowEng.assignFlowOrganize(flowInstId, roleCode, orgCodes);
     }
 
+    @ApiOperation(value = "新增单个流程机构", notes = "新增流程组织机构")
+    @WrapUpResponseBody
+    @PostMapping(value = "/addFlowOrganize")
+    public void addFlowOrganize(@RequestBody FlowOrganizeId flowOrganize) {
+        flowEng.assignFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode(), flowOrganize.getUnitCode());
+    }
+
     @ApiOperation(value = "删除流程机构", notes = "删除流程机构")
     @WrapUpResponseBody
     @PostMapping(value = "deleteFlowOrganize")
-    public void deleteFlowOrganize(@RequestBody FlowOrganize flowOrganize) {
+    public void deleteFlowOrganize(@RequestBody FlowOrganizeId flowOrganize) {
         flowEng.deleteFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
 }

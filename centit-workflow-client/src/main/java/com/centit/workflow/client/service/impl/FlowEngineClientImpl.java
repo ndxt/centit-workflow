@@ -145,6 +145,16 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
+    public void addFlowWorkTeam(long flowInstId, String roleCode, String userCode) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("roleCode", roleCode);
+        paramMap.put("userCode", userCode);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/addFlowWorkTeam", paramMap);
+    }
+
+    @Override
     public void assignFlowOrganize(long flowInstId, String roleCode,
                                    List<String> orgCodeSet) {
         HashMap<String, Object> paramMap = new HashMap<>();
@@ -153,6 +163,17 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("orgCodeSet", orgCodeSet);
         RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/assignFlowOrganize", paramMap);
+    }
+
+    @Override
+    public void addFlowOrganize(long flowInstId, String roleCode,
+                                   String unitCode) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("roleCode", roleCode);
+        paramMap.put("unitCode", unitCode);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/addFlowOrganize", paramMap);
     }
 
     @Override
