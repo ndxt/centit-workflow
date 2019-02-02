@@ -326,7 +326,9 @@ public class FlowInstance implements java.io.Serializable {
                     return -1;
                 if(o1.getLastUpdateTime().after(o2.getLastUpdateTime()))
                     return 1;
-                return -1;
+                if(o1.getLastUpdateTime().before(o2.getLastUpdateTime()))
+                    return -1;
+                return 0;
             }
         });
          return new ArrayList<>(flowNodeInstances);
