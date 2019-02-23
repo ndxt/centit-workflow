@@ -9,7 +9,7 @@ define(function(require) {
 		// @override
 		this.submit = function(table, data) {
 			var flowCode=data.flowCode;
-			Core.ajax(Config.ContextPath+'service/flow/define/editfromthis/'+data.flowCode+'/'+data.version, {
+			Core.ajax(Config.ContextPath+'workflow/flow/define/editfromthis/'+data.flowCode+'/'+data.version, {
 				method: 'POST'
 			}).then(function(data) {
 				if(data)

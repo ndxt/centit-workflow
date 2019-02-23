@@ -13,7 +13,7 @@
                 <div class="field required" >
                     <label>用户名</label>
                     <input  class="easyui-combobox" name="userName" id="userName"
-                            data-options="valueField:'userCode',textField:'userName',url:'service/flow/useroptmgr/listAllUser'"
+                            data-options="valueField:'userCode',textField:'userName',url:'workflow/flow/useroptmgr/listAllUser'"
                     />
                 </div>
                 <div class="field required">
@@ -51,7 +51,7 @@
     <div title="待办列表">
         <div class="easyui-panel" title="待办列表" style="width:100%;height:400px;" data-options="cls:'left'">
             <div title="待办列表" style="padding: 10px;">
-                <table url="service/flow/useroptmgr/usertasks?_search=true" style="height:auto" id="taskTable"
+                <table url="workflow/flow/useroptmgr/usertasks?_search=true" style="height:auto" id="taskTable"
                        search=".search"
                        toolbar=""
                        layoutH=".search"
@@ -72,7 +72,7 @@
     <div title="已办列表">
         <div class="easyui-panel" title="已办列表" style="width:100%;height:400px;" data-options="cls:'left'">
             <div title="已办列表" style="padding: 10px;">
-                <table url="service/flow/useroptmgr/usertasksfin?_search=true" style="height:auto"  id="finTaskTable"
+                <table url="workflow/flow/useroptmgr/usertasksfin?_search=true" style="height:auto"  id="finTaskTable"
                        search=".search"
                        toolbar=""
                        layoutH=".search"
@@ -94,7 +94,7 @@
             <div title="接受的委托">
                 <div class="easyui-panel" style="width:100%;height:400px;" data-options="cls:'left'">
                     <div style="padding: 10px;height:300px;">
-                        <table url="service/flow/useroptmgr/getrelegates"
+                        <table url="workflow/flow/useroptmgr/getrelegates"
                                 id="relegateTableGet"
                                idField="wfInstId"
                                search=".search"
@@ -127,7 +127,7 @@
             <div title="发起的委托">
                 <div class="easyui-panel" style="width:100%;height:400px;" data-options="cls:'left'">
                     <div style="padding: 10px;height:300px;">
-                        <table url="service/flow/useroptmgr/setrelegates"
+                        <table url="workflow/flow/useroptmgr/setrelegates"
                                 id="relegateTableSet"
                                idField="wfInstId"
                                search=".search"
@@ -162,7 +162,7 @@
     <div title="关注列表">
         <div class="easyui-panel" style="width:100%;height:400px;" data-options="cls:'left'">
             <div style="padding: 10px;">
-                <table url="service/flow/useroptmgr/getAttentions/A" style="height:auto" id="attTable"
+                <table url="workflow/flow/useroptmgr/getAttentions/A" style="height:auto" id="attTable"
                        search=".search"
                        toolbar=""
                        layoutH=".search"

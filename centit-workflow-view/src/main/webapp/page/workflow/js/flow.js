@@ -686,7 +686,7 @@ function drawFenPath(x,y,id){
         });
         return path;
     }
-	
+
 //    var path;
 //    path = gPath.path().attr({"d":"M "+(x-30)+" "+y+" l 30 -30 l 30 30 l -30 30 l -30 -30"})
 //        .fill("none").stroke({color:"#000",width:1.3});
@@ -730,13 +730,13 @@ function initEvt(event){
         objId = target.getAttribute("id");
         $.ajax({
             type:"GET",
-            url: path+"service/flow/manager/viewflownode/"+flowInstId+"/"+objId,
+            url: path+"workflow/flow/manager/viewflownode/"+flowInstId+"/"+objId,
             //url:"package.json",
             dataType:"json",
             async: false,
             success:function(data){
         		data = data.data || data;
-            
+
                 $("#nodeInfo").css({"top":top+"px","left":left+"px"}).show();//显示提示框并设置位置
                 $("#nodeContent").empty();//清空内容
                 if(data.instance!=null){

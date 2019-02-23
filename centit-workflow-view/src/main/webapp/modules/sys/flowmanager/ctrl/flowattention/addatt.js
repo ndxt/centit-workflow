@@ -17,7 +17,7 @@ define(function (require) {
             var flowInstId=this.parent.data.flowInstId;
             if (isValid) {
                 form.form('ajax', {
-                    url: Config.ContextPath + 'service/flow/manager/addAttention/'+flowInstId,
+                    url: Config.ContextPath + 'workflow/flow/manager/addAttention/'+flowInstId,
                     method: 'post',
                 }).then(closeCallback);
             }
@@ -28,7 +28,7 @@ define(function (require) {
         // @override
         this.onClose = function(table) {
             var flowInstId=this.parent.data.flowInstId;
-            Core.ajax(Config.ContextPath+'service/flow/manager/getAttByFlowInstId/'+flowInstId, {
+            Core.ajax(Config.ContextPath+'workflow/flow/manager/getAttByFlowInstId/'+flowInstId, {
                 method: 'get'
             }).then(function(data) {
                 table.cdatagrid({

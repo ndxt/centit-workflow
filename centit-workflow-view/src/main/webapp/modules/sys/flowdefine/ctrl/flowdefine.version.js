@@ -22,7 +22,7 @@ define(function(require) {
 			var table = panel.find('#table_allversion');
 			table.cdatagrid({
 				controller: _self,
-				url:Config.ContextPath+'service/flow/define/allversions/'+data.flowCode
+				url:Config.ContextPath+'workflow/flow/define/allversions/'+data.flowCode
 			});
 			
 			

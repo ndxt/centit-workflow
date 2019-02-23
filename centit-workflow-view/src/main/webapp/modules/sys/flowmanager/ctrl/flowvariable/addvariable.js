@@ -13,7 +13,7 @@ define(function (require) {
         // @override
         // this.submit = function (table, data) {
         //
-        //     Core.ajax(Config.ContextPath + 'service/flow/manager/savevariable/' + '1' + '/a' + '/a?runToken=T', {
+        //     Core.ajax(Config.ContextPath + 'workflow/flow/manager/savevariable/' + '1' + '/a' + '/a?runToken=T', {
         //         method: 'get'
         //     }).then(function (data) {
         //         var index = table.datagrid('getSelectedRowIndex');
@@ -33,7 +33,7 @@ define(function (require) {
             var runToken=value.runToken;
             if (isValid) {
                 form.form('ajax', {
-                    url: Config.ContextPath + 'service/flow/manager/savevariable/' + flowInstId + '/'+ varName+ '/'+varValue+'?runToken='+runToken,
+                    url: Config.ContextPath + 'workflow/flow/manager/savevariable/' + flowInstId + '/'+ varName+ '/'+varValue+'?runToken='+runToken,
                     method: 'get',
                 }).then(closeCallback);
             }
@@ -44,7 +44,7 @@ define(function (require) {
         // @override
         this.onClose = function(table) {
             var flowInstId=this.parent.data.flowInstId;
-            Core.ajax(Config.ContextPath+'service/flow/manager/getvariablelist/'+flowInstId, {
+            Core.ajax(Config.ContextPath+'workflow/flow/manager/getvariablelist/'+flowInstId, {
                 method: 'get'
             }).then(function(data) {
                 table.cdatagrid({

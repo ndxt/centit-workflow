@@ -9,7 +9,7 @@ define(function(require) {
 		this.load = function(panel, data) {
 			var _selt=this;
 			var form = panel.find('form');
-			Core.ajax(Config.ContextPath+'service/flow/manager/'+data.flowInstId, {
+			Core.ajax(Config.ContextPath+'workflow/flow/manager/'+data.flowInstId, {
 				method: 'get'
 			}).then(function(data) {
 				this.data=data.flowInst;
@@ -34,7 +34,7 @@ define(function(require) {
 				this.isSubmit = true;
 				
 				form.form('ajax', {
-					url: Config.ContextPath+'service/flow/manager/changeunit/'+data.flowInstId+'/'+unitCode,
+					url: Config.ContextPath+'workflow/flow/manager/changeunit/'+data.flowInstId+'/'+unitCode,
 					method: 'put',
 				}).then(closeCallback);
 			}

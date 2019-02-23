@@ -21,7 +21,7 @@ define(function (require) {
             var authDesc=value.authDesc;
             if (isValid) {
                 form.form('ajax', {
-                    url: Config.ContextPath + 'service/flow/manager/assignFlowWorkTeam/' + flowInstId + '/'+ userRole+ '/'+userCode+'/'+authDesc,
+                    url: Config.ContextPath + 'workflow/flow/manager/assignFlowWorkTeam/' + flowInstId + '/'+ userRole+ '/'+userCode+'/'+authDesc,
                     method: 'post',
                 }).then(closeCallback);
             }
@@ -32,7 +32,7 @@ define(function (require) {
         // @override
         this.onClose = function(table) {
             var flowInstId=this.parent.data.flowInstId;
-            Core.ajax(Config.ContextPath+'service/flow/manager/getteamlist/'+flowInstId, {
+            Core.ajax(Config.ContextPath+'workflow/flow/manager/getteamlist/'+flowInstId, {
                 method: 'get'
             }).then(function(data) {
                 table.cdatagrid({

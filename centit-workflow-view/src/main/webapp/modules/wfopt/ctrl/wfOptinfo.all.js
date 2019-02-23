@@ -3,13 +3,13 @@ define(function(require) {
 	var Core = require('core/core');
 	var Page = require('core/page');
     var Utils = require('../../../custom/utils');
-	
+
 	var OptInfoPowerAdd = require('../ctrl/optinfo.optdef.add');
     var OptInfoPowerRemove = require('../ctrl/optinfo.optdef.remove');
 
 	var OptInfoAll = Page.extend(function() {
 		var _self = this;
-		
+
 		this.injecte([
               new OptInfoPowerAdd('optinfo_optdef_add'),
               new OptInfoPowerRemove('optinfo_optdef_remove'),
@@ -26,13 +26,13 @@ define(function(require) {
             optId = optId2;
 
 			// Core.ajax(Config.ContextPath + 'system/optinfo/' + 'WFDEFINE', {
-			Core.ajax(Config.ContextPath + 'service/flow/opt/' + optId2, {
+			Core.ajax(Config.ContextPath + 'workflow/flow/opt/' + optId2, {
 				method: 'get'
 			}).then(function(data) {
 				_self.data = data;
 
 				form.form('load', data);
-				
+
 				// 表格数据
 				table_optdef.cdatagrid({
 						controller: _self
@@ -40,7 +40,7 @@ define(function(require) {
 					.datagrid('loadData', data.wfOptDefs);
 			});
 		};
-		
+
 		// @override
 		this.submit = function(panel, data, closeCallback) {
             // var href = panel.panel('options').href;
@@ -58,7 +58,7 @@ define(function(require) {
 				data._method = 'PUT';
 
                 $.ajax({
-                    url: Config.ContextPath + 'service/flow/opt/saveOptDefs',
+                    url: Config.ContextPath + 'workflow/flow/opt/saveOptDefs',
                     type: "POST",
                     data: JSON.stringify(data),
                     contentType: 'application/json',
@@ -69,6 +69,6 @@ define(function(require) {
 			}
 		};
 	});
-	
+
 	return OptInfoAll;
 });

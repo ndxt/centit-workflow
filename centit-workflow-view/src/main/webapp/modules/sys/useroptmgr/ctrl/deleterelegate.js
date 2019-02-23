@@ -10,7 +10,7 @@ define(function(require) {
 		this.submit = function(table, data) {
 			$.messager.confirm("操作提示", "您确定要删除该委托吗？", function (bo) {
 		if(bo){
-			Core.ajax(Config.ContextPath+'service/flow/useroptmgr/relegate/'+data.relegateno, {
+			Core.ajax(Config.ContextPath+'workflow/flow/useroptmgr/relegate/'+data.relegateno, {
 				method: 'delete'
 			}).then(function(data) {
 				table.datagrid('reload');

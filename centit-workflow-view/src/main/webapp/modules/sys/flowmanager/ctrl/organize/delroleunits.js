@@ -13,10 +13,10 @@ define(function (require) {
             var flowInstId=this.parent.data.flowInstId;
             var roleCode=data.roleCode;
             var unitCode=data.unitCode;
-            Core.ajax(Config.ContextPath + 'service/flow/manager/deleteorg/' + flowInstId + '/' + roleCode + '/' + unitCode, {
+            Core.ajax(Config.ContextPath + 'workflow/flow/manager/deleteorg/' + flowInstId + '/' + roleCode + '/' + unitCode, {
                 method: 'get'
             }).then(function() {
-                Core.ajax(Config.ContextPath+'service/flow/manager/getorglist/'+flowInstId, {
+                Core.ajax(Config.ContextPath+'workflow/flow/manager/getorglist/'+flowInstId, {
                     method: 'get'
                 }).then(function(data) {
                     table.datagrid('loadData', data);

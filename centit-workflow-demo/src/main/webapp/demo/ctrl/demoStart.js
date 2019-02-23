@@ -13,7 +13,7 @@ define(function(require) {
 
             var form = panel.find("form");
             form.form('ajax', {
-                url: Config.ContextPath+'service/demo/listAllFlow',
+                url: Config.ContextPath+'workflow/demo/listAllFlow',
                 method: 'get',
             }).then(function (data) {
                     $("#flowCode").combobox('loadData',data);
@@ -31,7 +31,7 @@ define(function(require) {
 
             if (isValid) {
                 form.form('ajax', {
-                    url: Config.ContextPath+'service/flow/define/'+data.flowCode,
+                    url: Config.ContextPath+'workflow/flow/define/'+data.flowCode,
                     method: 'put',
                     data: data
                 }).then(closeCallback);

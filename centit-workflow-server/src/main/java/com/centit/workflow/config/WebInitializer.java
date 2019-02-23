@@ -76,10 +76,10 @@ public class WebInitializer implements WebApplicationInitializer {
         AnnotationConfigWebApplicationContext contextSer = new AnnotationConfigWebApplicationContext();
         contextSer.register(NormalSpringMvcConfig.class);
         contextSer.setServletContext(servletContext);
-        ServletRegistration.Dynamic service  = servletContext.addServlet("service", new DispatcherServlet(contextSer));
-        service.addMapping("/service/*");
-        service.setLoadOnStartup(1);
-        service.setAsyncSupported(true);
+        ServletRegistration.Dynamic workflow  = servletContext.addServlet("workflow", new DispatcherServlet(contextSer));
+        workflow.addMapping("/workflow/*");
+        workflow.setLoadOnStartup(1);
+        workflow.setAsyncSupported(true);
         //这个过滤器保证hibernate懒加载成功
         /* javax.servlet.FilterRegistration.Dynamic corsFilter = servletContext.addFilter("hibernateFilter", OpenSessionInViewFilter.class);
         corsFilter.addMappingForUrlPatterns((EnumSet)null, false, new String[]{"*//*"});*/

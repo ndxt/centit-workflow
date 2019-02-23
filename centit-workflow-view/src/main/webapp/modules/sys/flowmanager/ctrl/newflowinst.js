@@ -12,10 +12,10 @@ define(function(require) {
 
             var form = panel.find("form");
           /*form.form('ajax', {
-            url: Config.ContextPath+'service/flow/define?_search=true&field=flowCode&field=flowName',
+            url: Config.ContextPath+'workflow/flow/define?_search=true&field=flowCode&field=flowName',
             method: 'get',
           })*/
-          Core.ajax(Config.ContextPath+'service/flow/define?_search=true&field=flowCode&field=flowName', {
+          Core.ajax(Config.ContextPath+'workflow/flow/define?_search=true&field=flowCode&field=flowName', {
             method: 'get'
           }).then(function (data) {
                     $("#flowCode").combobox('loadData',data.objList);
@@ -32,7 +32,7 @@ define(function(require) {
 
             if (isValid) {
                 form.form('ajax', {
-                    url: Config.ContextPath+'service/flow/demo/createFlowInstance',
+                    url: Config.ContextPath+'workflow/flow/demo/createFlowInstance',
                     method: 'put',
                     data: data
                 }).then(closeCallback);

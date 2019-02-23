@@ -12,7 +12,7 @@ define(function (require) {
 
             var form = panel.find('form');
 
-            Core.ajax(Config.ContextPath+'service/flow/opt/createOptInfo', {
+            Core.ajax(Config.ContextPath+'workflow/flow/opt/createOptInfo', {
                 method: 'get'
             }).then(function(data) {
                 // data = _self.extendData(data);
@@ -26,7 +26,7 @@ define(function (require) {
         // @override
         this.submit = function (panel, data, closeCallback) {
             $.ajax({
-                url: Config.ContextPath + 'service/flow/opt/saveOpt',
+                url: Config.ContextPath + 'workflow/flow/opt/saveOpt',
                 type: "POST",
                 data: JSON.stringify($("#optForm").serializeJson()),
                 contentType: 'application/json',

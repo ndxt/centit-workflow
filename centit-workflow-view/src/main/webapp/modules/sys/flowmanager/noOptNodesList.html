@@ -1,8 +1,8 @@
-<table url="service/flow/manager/nooptnodes"
+<table url="workflow/flow/manager/nooptnodes"
 	idField="flowInstId"
 	search=".search"
 	toolbar=".temp-toolbar"
-	layoutH=".search"	
+	layoutH=".search"
 	>
 	<thead frozen="true">
 		<tr>
@@ -16,7 +16,7 @@
 </table>
 
 <div class="temp-toolbar">
-	
+
 	<a rel="flowmanager_nodeList" iconCls="icon-base icon-base-option "
 		href="modules/sys/flowmanager/listpages/nodelist/nodeList.html"
 		target="dialog" trigger="single" title="查看  {{wfCode}} 流程实例" width="800" height="480">流程管理</a>
@@ -26,11 +26,11 @@
 <script>
 	$.parser.onComplete = function(panel) {
 		$.parser.onComplete = $.noop;
-		
+
 		requirejs([
 		           'modules/sys/flowmanager/ctrl/nooptnodes'
 		          ], function(FlowManager) {
-			
+
 			new FlowManager('flowmanager', panel).load(panel);
 		});
 	};

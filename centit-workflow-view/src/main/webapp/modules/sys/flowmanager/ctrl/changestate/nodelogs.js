@@ -12,7 +12,7 @@ define(function(require) {
 			var form = panel.find('form');
 			var table = this.table = panel.find('table');
 			form.form('load', data);
-			Core.ajax(Config.ContextPath+'service/flow/manager/nodelogs/'+data.nodeInstId, {
+			Core.ajax(Config.ContextPath+'workflow/flow/manager/nodelogs/'+data.nodeInstId, {
 				method: 'get'  
 			}).then(function(data) {
 				

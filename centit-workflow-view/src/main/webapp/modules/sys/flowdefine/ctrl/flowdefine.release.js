@@ -13,7 +13,7 @@ define(function(require) {
 		this.submit = function(table, data,closeCallback) {
 			// TODO 发布的逻辑\
 			var _self=this;
-			Core.ajax(Config.ContextPath+'service/flow/define/publish/'+data.flowCode, {
+			Core.ajax(Config.ContextPath+'workflow/flow/define/publish/'+data.flowCode, {
 				method: 'POST'
 			}).then(function(data) {
 				var table=_self.parent.table;

@@ -23,7 +23,7 @@
     <div title="待办列表">
         <div class="easyui-panel" title="待办列表" style="width:100%;height:400px;" data-options="cls:'left'">
             <div title="待办列表" style="padding: 10px;">
-                <table url="service/demo/listTasks?_search=true" style="height:auto" id="taskTable"
+                <table url="workflow/demo/listTasks?_search=true" style="height:auto" id="taskTable"
                        search=".search"
                        toolbar=""
                        layoutH=".search"
@@ -63,7 +63,7 @@
     //办理按钮URL绑定
     function optLink(val,row,index) {
         debugger;
-        var url = basePath + 'service/demo/demoSubmit?nodeInstId='+ row.nodeInstId + '&userCode='+row.userCode;
+        var url = basePath + 'workflow/demo/demoSubmit?nodeInstId='+ row.nodeInstId + '&userCode='+row.userCode;
         return "<a href='#' onclick=submit('"+ url+"')>办理</a>";
     }
 
@@ -79,7 +79,7 @@
 
     function getTasks(){
         //待办
-        $('#taskTable').datagrid("options").url = 'service/demo/listTasks?userCode=' + $("#userCode").val();
+        $('#taskTable').datagrid("options").url = 'workflow/demo/listTasks?userCode=' + $("#userCode").val();
         $('#taskTable').datagrid('load');
     }
 </script>

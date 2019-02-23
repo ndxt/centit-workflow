@@ -27,8 +27,8 @@ define(function(require) {
 			table.cdatagrid('beginEdit', index, 'dataCode');
 
 			//为optCode和optId赋值
-            // Core.ajax(Config.ContextPath+'service/flow/opt/createOptDef?optId=' + ioptId, {
-            Core.ajax(Config.ContextPath+'service/flow/opt/createOptDef?optId=' , {
+            // Core.ajax(Config.ContextPath+'workflow/flow/opt/createOptDef?optId=' + ioptId, {
+            Core.ajax(Config.ContextPath+'workflow/flow/opt/createOptDef?optId=' , {
                 method: 'get'
             }).then(function(data) {
 
