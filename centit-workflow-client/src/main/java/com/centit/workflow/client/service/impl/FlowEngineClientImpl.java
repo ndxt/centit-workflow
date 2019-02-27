@@ -258,4 +258,18 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("roleCode", roleCode);
         return RestfulHttpRequest.getResponseObjectList(appSession, "/flow/engine/viewFlowOrganize", paramMap, String.class);
     }
+
+
+    @Override
+    public void createNodeInst(long flowInstId, String createUser,
+                                             String nodeId,List<String> userCodes, String unitCode) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("createUser", createUser);
+        paramMap.put("userCodes", userCodes);
+        paramMap.put("nodeId", nodeId);
+        paramMap.put("unitCode", unitCode);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/createNodeInst", paramMap);
+    }
 }

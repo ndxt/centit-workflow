@@ -1980,6 +1980,53 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeList.get(0).getNodeId(), createUser, userCode, unitCode);
     }
 
+    /**
+     * 手动创建节点实例，暂时不考虑这个节点对流程的整体影响，由调用业务来判断
+     * @param flowInstId    流程实例号
+     * @param createUser  创建人
+     * @param nodeId      节点环节代码，这个节点在这个流程中必需唯一
+     * @param userCodes      指定用户
+     * @param unitCode      指定机构
+     * @return 节点实例
+     */
+    public NodeInstance createNodeInst(long flowInstId, String createUser,
+                                       long nodeId,List<String> userCodes, String unitCode) {
+
+        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+        if (flowInst == null) {
+            logger.error("找不到流程实例：" + flowInstId);
+            return null;
+        }
+
+        FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
+
+        NodeInfo nextNode = flowNodeDao.getObjectById(nodeId);
+        //获取上一个相同节点实例机构
+
+        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
+
+        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, null, flowInst, null, flowInfo, nextNode, null);
+
+        nextNodeInst.setNodeInstId(lastNodeInstId);
+        nextNodeInst.setPrevNodeInstId(0L);
+        nextNodeInst.setRunToken("T");//设置为游离节点
+        nextNodeInst.setTaskAssigned("T");
+        nextNodeInst.setTransPath("");
+        for(String u:userCodes) {
+            ActionTask wfactTask = FlowOptUtils.createActionTask(lastNodeInstId, u);
+            wfactTask.setTaskId(actionTaskDao.getNextTaskId());
+            wfactTask.setAssignTime(new Date());
+            actionTaskDao.saveNewObject(wfactTask);
+        }
+
+        nodeInstanceDao.saveNewObject(nextNodeInst);
+        Set<Long> nextNodeInsts=new HashSet<>();
+        nextNodeInsts.add(lastNodeInstId);
+        FlowOptUtils.sendMsg(0l,nextNodeInsts,createUser);
+
+        return nextNodeInst;
+    }
+
     @Override
     public void assignFlowWorkTeam(long flowInstId, String roleCode, String userCode) {
         Date assignDate = new Date(System.currentTimeMillis());

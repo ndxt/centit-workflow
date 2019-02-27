@@ -176,4 +176,16 @@ public interface FlowEngineClient {
      */
     List<FlowVariable> viewFlowVariablesByVarname(long flowInstId, String varname) throws Exception;
 
+    /**
+     * 手动创建节点实例，暂时不考虑这个节点对流程的整体影响，由调用业务来判断
+     * @param flowInstId    流程实例号
+     * @param createUser  创建人
+     * @param nodeId      节点环节代码，这个节点在这个流程中必需唯一
+     * @param userCodes      指定用户
+     * @param unitCode      指定机构
+     * @return 节点实例
+     */
+    void createNodeInst(long flowInstId, String createUser,
+                               String nodeId,List<String> userCodes, String unitCode) throws Exception;
+
 }

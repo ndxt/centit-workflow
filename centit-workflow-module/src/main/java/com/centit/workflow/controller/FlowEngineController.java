@@ -105,9 +105,10 @@ public class FlowEngineController extends BaseController {
 
     /**
      * 兼容老业务模块，支持新增多个办件角色
+     *
      * @param flowWorkTeam
+     * @ApiOperation(value = "新增多个办件角色", notes = "新增办件角色,userCode传一个数组或者一个list，格式为userCode:[\"1\",\"2\"]")
      */
-    @ApiOperation(value = "新增多个办件角色", notes = "新增办件角色,userCode传一个数组或者一个list，格式为userCode:[\"1\",\"2\"]")
     @WrapUpResponseBody
     @PostMapping(value = "/assignFlowWorkTeam")
     public void assignFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
@@ -116,7 +117,7 @@ public class FlowEngineController extends BaseController {
             return;
         }
         //替换形如["1","2"]的字符串，修改为形如"1,2"的字符串
-        String userCodeStr = StringUtils.strip(userCodeList,"[]").replaceAll("\"","");
+        String userCodeStr = StringUtils.strip(userCodeList, "[]").replaceAll("\"", "");
         String[] userCodeArr = userCodeStr.split(",");
         List<String> userCodes = new ArrayList<>(Arrays.asList(userCodeArr));
         flowEng.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), userCodes);
@@ -204,9 +205,10 @@ public class FlowEngineController extends BaseController {
 
     /**
      * 兼容老业务模块，支持新增多个流程机构
+     *
      * @param json
+     * @ApiOperation(value = "新增多个流程机构", notes = "新增流程组织机构，多个组织orgCodeSet传一个数组或者一个list，格式为userCode:[\"1\",\"2\"]")
      */
-    @ApiOperation(value = "新增多个流程机构", notes = "新增流程组织机构，多个组织orgCodeSet传一个数组或者一个list，格式为userCode:[\"1\",\"2\"]")
     @WrapUpResponseBody
     @PostMapping(value = "/assignFlowOrganize")
     public void assignFlowOrganize(@RequestBody String json) {
@@ -215,7 +217,7 @@ public class FlowEngineController extends BaseController {
         String roleCode = jsonObject.getString("roleCode");
         String orgCodeSet = jsonObject.getString("orgCodeSet");
         //替换形如["1","2"]的字符串，修改为形如"1,2"的字符串
-        String orgCodeStr = StringUtils.strip(orgCodeSet,"[]").replaceAll("\"","");
+        String orgCodeStr = StringUtils.strip(orgCodeSet, "[]").replaceAll("\"", "");
         String[] orgArr = orgCodeStr.split(",");
         List<String> orgCodes = new ArrayList<>(Arrays.asList(orgArr));
         flowEng.assignFlowOrganize(flowInstId, roleCode, orgCodes);
@@ -233,5 +235,23 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "deleteFlowOrganize")
     public void deleteFlowOrganize(@RequestBody FlowOrganizeId flowOrganize) {
         flowEng.deleteFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
+    }
+
+
+    @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
+    @WrapUpResponseBody
+    @PostMapping(value = "createNodeInst")
+    public void createNodeInst(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        long flowInstId = jsonObject.getLong("flowInstId");
+        String createUser = jsonObject.getString("createUser");
+        String userCodes = jsonObject.getString("userCodes");
+        long nodeId = jsonObject.getLong("nodeId");
+        String unitCode = jsonObject.getString("unitCode");
+        //替换形如["1","2"]的字符串，修改为形如"1,2"的字符串
+        String userCodeStr = StringUtils.strip(userCodes, "[]").replaceAll("\"", "");
+        String[] userArr = userCodeStr.split(",");
+        List<String> userList = new ArrayList<>(Arrays.asList(userArr));
+        flowEng.createNodeInst(flowInstId, createUser, nodeId, userList, unitCode);
     }
 }
