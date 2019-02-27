@@ -18,19 +18,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO 节点事件接口
- *
  * @author codefan
- * @create 2013-7-10
+ * 2013-7-10
  */
 public class RemoteBeanNodeEventSupport implements NodeEventSupport {
 
     private static Logger logger = LoggerFactory.getLogger(RemoteBeanNodeEventSupport.class);
-    private String url;
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    private AppSession appSession ;
 
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
@@ -38,23 +32,21 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
         throws WorkflowException {
         if (nodeInfo.getOptBean() == null || "".equals(nodeInfo.getOptBean()))
             return;
-        String optBeanUrl = url + "/" + nodeInfo.getOptBean();
+        //String optBeanUrl = url + "/" + nodeInfo.getOptBean();
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInst", JSON.toJSONString(flowInst));
         paramMap.put("nodeInst", JSON.toJSONString(nodeInst));
         paramMap.put("nodeInfo", JSON.toJSONString(nodeInfo));
         paramMap.put("optUserCode", optUserCode);
         String jsonParam = JSON.toJSONString(paramMap);
-        AppSession appSession = null;
         CloseableHttpClient httpClient = null;
         //String result = null;
         try {
             //appSession = new AppSession(url,false,null,null);
-            appSession = new AppSession(url, false, null, null);
-            httpClient = appSession.allocHttpClient();
+               httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
             appSession.jsonPost(httpClient,
-                appSession.completeQueryUrl("/service/workflowEventBean/runAfterCreate"), jsonParam);
+                appSession.completeQueryUrl("/workflowEventBean/runAfterCreate"), jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
@@ -70,23 +62,21 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
                                 NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
         if (nodeInfo.getOptBean() == null || "".equals(nodeInfo.getOptBean()))
             return;
-        String optBeanUrl = url + "/" + nodeInfo.getOptBean();
+        //String optBeanUrl = url + "/" + nodeInfo.getOptBean();
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInst", JSON.toJSONString(flowInst));
         paramMap.put("nodeInst", JSON.toJSONString(nodeInst));
         paramMap.put("nodeInfo", JSON.toJSONString(nodeInfo));
         paramMap.put("optUserCode", optUserCode);
         String jsonParam = JSON.toJSONString(paramMap);
-        AppSession appSession = null;
         CloseableHttpClient httpClient = null;
         //String result = null;
         try {
-            appSession = new AppSession(url, false, null, null);
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
             /*result =  */
             appSession.jsonPost(httpClient,
-                appSession.completeQueryUrl("/service/workflowEventBean/runBeforeSubmit"), jsonParam);//eventBean
+                appSession.completeQueryUrl("/workflowEventBean/runBeforeSubmit"), jsonParam);//eventBean
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
@@ -98,11 +88,11 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
     }
 
     /**
-     * @param flowInst
-     * @param nodeInst
-     * @param nodeInfo
-     * @param optUserCode
-     * @return
+     * @param flowInst FlowInstance
+     * @param nodeInst NodeInstance
+     * @param nodeInfo NodeInfo
+     * @param optUserCode String
+     * @return boolean
      */
     @Override
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
@@ -115,15 +105,13 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
         paramMap.put("nodeInfo", JSON.toJSONString(nodeInfo));
         paramMap.put("optUserCode", optUserCode);
         String jsonParam = JSON.toJSONString(paramMap);
-        AppSession appSession = null;
         CloseableHttpClient httpClient = null;
         //String result = null;
         try {
-            appSession = new AppSession(url, false, null, null);
             httpClient = appSession.allocHttpClient();
             appSession.checkAccessToken(httpClient);
             /*result =  */
-            appSession.jsonPost(httpClient, appSession.completeQueryUrl("/service/workflowEventBean/runAutoOperator"), jsonParam);
+            appSession.jsonPost(httpClient, appSession.completeQueryUrl("/workflowEventBean/runAutoOperator"), jsonParam);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("远程Bean失败");
@@ -139,5 +127,9 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
     public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
                                  NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
         return false;
+    }
+
+    public void setAppSession(AppSession appSession) {
+        this.appSession = appSession;
     }
 }

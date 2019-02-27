@@ -6,15 +6,15 @@
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
-    <output url="file://$MAVEN_REPOSITORY$/com/centit/framework/framework-release-dependencies/1.1.1812/target/classes" />
-    <output-test url="file://$MAVEN_REPOSITORY$/com/centit/framework/framework-release-dependencies/1.1.1812/target/test-classes" />
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.centit.product:centit-workflow-core:4.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="centit-workflow-core" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-database:2.2.1812" level="project" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2.1812" level="project" />
     <orderEntry type="library" name="Maven: com.centit.framework:framework-core:4.4.1812" level="project" />
