@@ -2009,7 +2009,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(0L);
-        nextNodeInst.setRunToken("T");//设置为游离节点
+        nextNodeInst.setRunToken("RT");//设置为游离节点
         nextNodeInst.setTaskAssigned("T");
         nextNodeInst.setTransPath("");
         for(String u:userCodes) {
