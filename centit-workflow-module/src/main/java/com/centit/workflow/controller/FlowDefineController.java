@@ -203,7 +203,7 @@ public class FlowDefineController extends BaseController {
      * @param flowcode
      * @param response
      */
-    @RequestMapping(value = "/{flowcode}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{flowcode}", method = RequestMethod.POST)
     public void editFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         flowdefine.setFlowCode(flowcode);
         flowdefine.setVersion(0l);
