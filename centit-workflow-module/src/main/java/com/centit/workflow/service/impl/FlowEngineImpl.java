@@ -548,7 +548,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     long nextNodeId = nodeTran.getEndNodeId();
                     for (FlowTransition f : flowInfo.getFlowTransitions()) {
                         if (nextRoutertNode.getNodeId().equals(f.getEndNodeId()) && !f.getTransId().equals(trans.getTransId())) {
-                            preTransPath += ","+String.valueOf(f.getTransId());
+                            preTransPath += "," + String.valueOf(f.getTransId());
                         }
                     }
                     resNodes = submitToNextNode(
@@ -607,7 +607,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             long nextNodeId = nodeTran.getEndNodeId();
                             for (FlowTransition f : flowInfo.getFlowTransitions()) {
                                 if (nextRoutertNode.getNodeId().equals(f.getEndNodeId()) && !f.getTransId().equals(trans.getTransId())) {
-                                    preTransPath += ","+String.valueOf(f.getTransId());
+                                    preTransPath += "," + String.valueOf(f.getTransId());
                                 }
                             }
                             resNodes = submitToNextNode(
@@ -946,6 +946,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //计算人员的分配策略
             if (optUsers != null && optUsers.size() > 0)
                 nextNodeInst.setUserCode(optUsers.iterator().next());
+            else {
+                logger.error("流程"+flowInst.getFlowInstId()+"的下一个节点:"+nextOptNode.getNodeName()+",找不到操作人员");
+                throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程"+flowInst.getFlowInstId()+"的下一个节点:"+nextOptNode.getNodeName()+",找不到操作人员");
+            }
 
             if ("gw".equals(nextOptNode.getRoleType())) {/* &&
                     "A".equals(nextOptNode.getOptType())){*/
@@ -1982,15 +1986,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     /**
      * 手动创建节点实例，暂时不考虑这个节点对流程的整体影响，由调用业务来判断
-     * @param flowInstId    流程实例号
-     * @param createUser  创建人
-     * @param nodeId      节点环节代码，这个节点在这个流程中必需唯一
-     * @param userCodes      指定用户
-     * @param unitCode      指定机构
+     *
+     * @param flowInstId 流程实例号
+     * @param createUser 创建人
+     * @param nodeId     节点环节代码，这个节点在这个流程中必需唯一
+     * @param userCodes  指定用户
+     * @param unitCode   指定机构
      * @return 节点实例
      */
     public NodeInstance createNodeInst(long flowInstId, String createUser,
-                                       long nodeId,List<String> userCodes, String unitCode) {
+                                       long nodeId, List<String> userCodes, String unitCode) {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null) {
@@ -2012,7 +2017,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nextNodeInst.setRunToken("RT");//设置为游离节点
         nextNodeInst.setTaskAssigned("T");
         nextNodeInst.setTransPath("");
-        for(String u:userCodes) {
+        for (String u : userCodes) {
             ActionTask wfactTask = FlowOptUtils.createActionTask(lastNodeInstId, u);
             wfactTask.setTaskId(actionTaskDao.getNextTaskId());
             wfactTask.setAssignTime(new Date());
@@ -2020,9 +2025,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         nodeInstanceDao.saveNewObject(nextNodeInst);
-        Set<Long> nextNodeInsts=new HashSet<>();
+        Set<Long> nextNodeInsts = new HashSet<>();
         nextNodeInsts.add(lastNodeInstId);
-        FlowOptUtils.sendMsg(0l,nextNodeInsts,createUser);
+        FlowOptUtils.sendMsg(0l, nextNodeInsts, createUser);
 
         return nextNodeInst;
     }
