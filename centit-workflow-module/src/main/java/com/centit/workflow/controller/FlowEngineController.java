@@ -3,12 +3,14 @@ package com.centit.workflow.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
@@ -65,19 +67,23 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "提交节点", notes = "提交节点")
     @WrapUpResponseBody
     @PostMapping(value = "submitOpt")
-    public Set<Long> submitOpt(@RequestBody String json) {
+    public ResponseData submitOpt(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         long nodeInstId = jsonObject.getLong("nodeInstId");
         String userCode = jsonObject.getString("userCode");
         String unitCode = jsonObject.getString("unitCode");
         String varTrans = jsonObject.getString("varTrans");
-        if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
-            Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
-            Set<Long> nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);
-            return nextNodes;
-        } else {
-            Set<Long> nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, null, null);
-            return nextNodes;
+        try {
+            Set<Long> nextNodes =new HashSet<>();
+            if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
+                Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
+                nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);
+            } else {
+                nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, null, null);
+            }
+            return ResponseData.makeResponseData(nextNodes);
+        } catch (WorkflowException e) {
+            return ResponseData.makeErrorMessage(e.getExceptionType(),e.getMessage());
         }
     }
 

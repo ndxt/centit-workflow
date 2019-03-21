@@ -85,7 +85,7 @@ public interface FlowEngineClient {
      * @param varTrans 变量转换器
      * @return  节点实例编号列表
      */
-    void submitOpt(long nodeInstId, String userCode,
+    Map<String,Object> submitOpt(long nodeInstId, String userCode,
                         String unitCode, String varTrans,
                         ServletContext application) throws WorkflowException;
     /**

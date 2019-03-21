@@ -1,5 +1,6 @@
 package com.centit.workflow.client.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.RestfulHttpRequest;
@@ -108,7 +109,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowOptTag", flowOptTag);
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
-        return RestfulHttpRequest.formPost(appSession,
+        return RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createFlowInstDefault", paramMap);
     }
 
@@ -180,7 +181,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void submitOpt(long nodeInstId, String userCode,
+    public Map<String,Object> submitOpt(long nodeInstId, String userCode,
                           String unitCode, String varTrans,
                           ServletContext application) throws WorkflowException {
         HashMap<String, Object> paramMap = new HashMap<>();
@@ -188,8 +189,10 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
         paramMap.put("varTrans", varTrans);
-        RestfulHttpRequest.jsonPost(appSession,
+        String returnJson=RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/submitOpt", paramMap);
+        return (Map) JSON.parse(returnJson.replaceAll("&quot;", "\""));
+
     }
 
     @Override
