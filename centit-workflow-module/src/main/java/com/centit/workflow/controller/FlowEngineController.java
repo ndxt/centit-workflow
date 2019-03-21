@@ -44,7 +44,7 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @PostMapping(value = "/createInstanceLockFirstNode")
     public FlowInstance createInstanceLockFirstNode(@RequestBody FlowInstance flowInstanceParam) {
-        return flowEng.createInstanceLockFirstNode(flowInstanceParam.getFlowCode(), flowInstanceParam.getOptName(), flowInstanceParam.getFlowOptTag(), flowInstanceParam.getUserCode(), flowInstanceParam.getUnitCode());
+        return flowEng.createInstanceLockFirstNode(flowInstanceParam.getFlowCode(), flowInstanceParam.getFlowOptName(), flowInstanceParam.getFlowOptTag(), flowInstanceParam.getUserCode(), flowInstanceParam.getUnitCode());
     }
 
     //加载通用po到流程流转中
