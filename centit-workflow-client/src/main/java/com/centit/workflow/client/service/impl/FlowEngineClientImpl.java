@@ -114,14 +114,16 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     @Override
     public String createInstanceLockFirstNode(String flowCode, String flowOptName, String flowOptTag,
                                                     String userCode, String unitCode) throws Exception {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("flowCode", flowCode);
-        paramMap.put("flowOptName", flowOptName);
-        paramMap.put("flowOptTag", flowOptTag);
-        paramMap.put("userCode", userCode);
-        paramMap.put("unitCode", unitCode);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flowCode", flowCode);
+        jsonObject.put("flowOptName", flowOptName);
+        jsonObject.put("flowOptTag", flowOptTag);
+        jsonObject.put("userCode", userCode);
+        jsonObject.put("unitCode", unitCode);
+
         return RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/createInstanceLockFirstNode", paramMap);
+            "/flow/engine/createInstanceLockFirstNode", jsonObject);
     }
 
     @Override

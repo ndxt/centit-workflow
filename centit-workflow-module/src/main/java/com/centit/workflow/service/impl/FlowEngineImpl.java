@@ -124,8 +124,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowInstance createInstanceLockFirstNode(String flowCode, String flowOptName,
                                                     String flowOptTag, String userCode, String unitCode) {
 
-        return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
+        FlowInstance flowInstance = createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
             unitCode, 0, 0, null, true, null);
+        Set<Long> nodes = new HashSet<>();
+        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
+            nodes.add(n.getNodeInstId());
+        }
+        FlowOptUtils.sendMsg(0, nodes, userCode);
+        return flowInstance;
     }
 
 
@@ -1942,7 +1948,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
-        nextNodeInst.setRunToken("R" + nodeInst.getRunToken());//设置为游离节点
+        nextNodeInst.setRunToken("RT" + nodeInst.getRunToken());//设置为游离节点
         nextNodeInst.setUserCode(userCode);
         nextNodeInst.setTaskAssigned("S");
         nextNodeInst.setTransPath("");
