@@ -270,8 +270,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //计算人员的分配策略
             nodeInst.setTaskAssigned("S");
 
-            if (optUsers != null && optUsers.size() > 0)
+            if (optUsers != null && optUsers.size() > 0) {
                 nodeInst.setUserCode(optUsers.iterator().next());
+            } else {
+                logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
+                throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
+            }
 
             if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(nodeInst.getRoleType())) {/* &&
                     "A".equals(nextOptNode.getOptType())){*/
@@ -953,8 +957,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if (optUsers != null && optUsers.size() > 0)
                 nextNodeInst.setUserCode(optUsers.iterator().next());
             else {
-                logger.error("流程"+flowInst.getFlowInstId()+"的下一个节点:"+nextOptNode.getNodeName()+",找不到操作人员");
-                throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程"+flowInst.getFlowInstId()+"的下一个节点:"+nextOptNode.getNodeName()+",找不到操作人员");
+                logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到操作人员");
+                throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到操作人员");
             }
 
             if ("gw".equals(nextOptNode.getRoleType())) {/* &&

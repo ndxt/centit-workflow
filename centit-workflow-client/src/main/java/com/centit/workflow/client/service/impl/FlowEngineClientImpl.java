@@ -5,6 +5,7 @@ import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.client.service.FlowEngineClient;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.UserTask;
@@ -181,7 +182,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     @Override
     public void submitOpt(long nodeInstId, String userCode,
                           String unitCode, String varTrans,
-                          ServletContext application) throws Exception {
+                          ServletContext application) throws WorkflowException {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("userCode", userCode);

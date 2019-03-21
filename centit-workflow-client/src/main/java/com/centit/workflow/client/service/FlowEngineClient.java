@@ -2,6 +2,7 @@ package com.centit.workflow.client.service;
 
 
 import com.centit.support.database.utils.PageDesc;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.FlowWorkTeam;
@@ -86,7 +87,7 @@ public interface FlowEngineClient {
      */
     void submitOpt(long nodeInstId, String userCode,
                         String unitCode, String varTrans,
-                        ServletContext application) throws  Exception;
+                        ServletContext application) throws WorkflowException;
     /**
      * 查看某一个用户所有的待办，并且分页
      * @param userCode
