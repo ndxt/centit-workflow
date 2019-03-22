@@ -26,8 +26,10 @@ import java.util.Map;
 @Service
 public class FlowEngineClientImpl implements FlowEngineClient {
 
-    @Value("${workflow.server}")
+    @Value("${workflow.server:}")
     private String workFlowServerUrl;
+    @Value("${workflow.server.login:}")
+    private String workFlowServerLoginUrl;
 
     public FlowEngineClientImpl() {
 
@@ -52,6 +54,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     public void makeAppSession() {
         appSession = new AppSession(workFlowServerUrl, false, null, null);
+        appSession.setAppLoginUrl(workFlowServerLoginUrl);
     }
 
 

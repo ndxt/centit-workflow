@@ -18,8 +18,11 @@ import java.util.Map;
  */
 @Service
 public class FlowExtendClientImpl implements FlowExtendClient {
-    @Value("${workflow.server}")
+    @Value("${workflow.server:}")
     private String workFlowServerUrl;
+
+    @Value("${workflow.server.login:}")
+    private String workFlowServerLoginUrl;
 
     public FlowExtendClientImpl() {
 
@@ -45,6 +48,7 @@ public class FlowExtendClientImpl implements FlowExtendClient {
 
     public void makeAppSession() {
         appSession = new AppSession(workFlowServerUrl, false, null, null);
+        appSession.setAppLoginUrl(workFlowServerLoginUrl);
     }
 
 
