@@ -207,7 +207,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                                     if (!completeTrans.isEmpty()) {
                                         Boolean trueTrans = true;
                                         for (FlowTransition tr : completeTrans) {
-                                            if (trans.getStartNodeId().equals(tr.getStartNodeId())) {
+                                            //添加结束节点的判断，如果结束节点不重复，那么说明并不冲突矛盾，因为存在同一节点路由经过不同流转得情况
+                                            if (trans.getStartNodeId().equals(tr.getStartNodeId())
+                                                && !trans.getEndNodeId().equals(tr.getEndNodeId())) {
                                                 trueTrans = false;
                                             }
                                         }
@@ -789,7 +791,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 && (currToken.equals(thisToken)
                 || currToken.startsWith(thisToken + '.')
                 || thisToken.startsWith(currToken + '.'))
-                || currToken.startsWith("R"+thisToken + '.')) {
+                || currToken.startsWith("R" + thisToken + '.')) {
 
                 if ("W".equals(nodeInst.getNodeState())) { // 结束子流程
                     FlowInstance subFlowInst = flowInstanceDao
@@ -800,7 +802,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                         subFlowInst.setLastUpdateUser(mangerUserCode);
                         flowInstanceDao.updateObject(subFlowInst);
                         //更新子流程下的所有消息未已办
-                        FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(),mangerUserCode);
+                        FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(), mangerUserCode);
 
                     }
                 }
@@ -814,7 +816,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 nodeInst.addWfActionLog(wfactlog);
                 nodeInstanceDao.mergeObject(nodeInst);
                 //更新消息未已办
-                FlowOptUtils.sendMsg(nodeInst.getNodeInstId(),null,mangerUserCode);
+                FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, mangerUserCode);
             }
         }
         // 创建新节点
@@ -842,9 +844,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flow.addWfNodeInstance(nextNodeInst);
         flowInstanceDao.updateObject(flow);
         nodeInstanceDao.mergeObject(nextNodeInst);
-        Set<Long> nextNodeInsts=new HashSet<>();
+        Set<Long> nextNodeInsts = new HashSet<>();
         nextNodeInsts.add(lastNodeInstId);
-        FlowOptUtils.sendMsg(0L,nextNodeInsts,mangerUserCode);
+        FlowOptUtils.sendMsg(0L, nextNodeInsts, mangerUserCode);
 
 
         //执行节点创建后 事件
