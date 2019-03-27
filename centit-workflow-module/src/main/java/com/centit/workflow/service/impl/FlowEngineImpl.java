@@ -273,8 +273,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if (optUsers != null && optUsers.size() > 0) {
                 nodeInst.setUserCode(optUsers.iterator().next());
             } else {
-                logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
-                throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
+                if (!"D".equals(node.getOptType()) && !"E".equals(node.getOptType())) {
+                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
+                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
+                }
             }
 
             if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(nodeInst.getRoleType())) {/* &&
@@ -2786,6 +2788,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return;
         Map<String, Object> filterMap = new HashMap<>();
         filterMap.put("flowInstId", flowInstId);
+        if(StringUtils.isBlank(runToken))
+            runToken="A";
         filterMap.put("runToken", runToken);
         filterMap.put("varName", varName);
         flowVariableDao.deleteObjectsByProperties(filterMap);

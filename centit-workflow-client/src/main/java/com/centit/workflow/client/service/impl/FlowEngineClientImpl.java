@@ -281,4 +281,14 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createNodeInst", paramMap);
     }
+
+
+    public void deleteFlowVariable(long flowInstId,String runToken,String varName){
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("runToken", runToken);
+        paramMap.put("varName", varName);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/deleteFlowVariable", paramMap);
+    }
 }

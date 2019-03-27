@@ -17,6 +17,11 @@
     <orderEntry type="library" name="Maven: com.centit.support:centit-database:2.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-utils:2.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.framework:framework-core:4.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.framework:framework-adapter:4.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.support:centit-database:2.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.centit.support:centit-utils:2.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.53" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.6" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.10" level="project" />
@@ -28,7 +33,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.sun:rt:1.8">
         <CLASSES>
-          <root url="jar:///opt/develop/jvm/jdk1.8.0_102/jre/lib/rt.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../java/jdk1_8_0_05/jre/lib/rt.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -37,7 +42,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.sun:jce:1.8">
         <CLASSES>
-          <root url="jar:///opt/develop/jvm/jdk1.8.0_102/jre/lib/jce.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../java/jdk1_8_0_05/jre/lib/jce.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -74,7 +79,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.sun:tools:1.8">
         <CLASSES>
-          <root url="jar:///opt/develop/jvm/jdk1.8.0_102/lib/tools.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../java/jdk1_8_0_05/lib/tools.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

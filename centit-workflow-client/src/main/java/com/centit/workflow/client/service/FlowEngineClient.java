@@ -189,4 +189,13 @@ public interface FlowEngineClient {
     void createNodeInst(long flowInstId, String createUser,
                                String nodeId,List<String> userCodes, String unitCode) throws Exception;
 
+    /**
+     * 删除流程变量
+     * @param flowInstId
+     * @param runToken 默认为A
+     * @param varName
+     * @throws Exception
+     */
+    void deleteFlowVariable(long flowInstId,String runToken,String varName) throws Exception;
+
 }
