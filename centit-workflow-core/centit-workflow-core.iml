@@ -17,11 +17,6 @@
     <orderEntry type="library" name="Maven: com.centit.support:centit-database:2.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-utils:2.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:framework-core:4.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:framework-adapter:4.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-database:2.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-utils:2.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.53" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.6" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.10" level="project" />

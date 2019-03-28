@@ -118,9 +118,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     nodeState.put(nodeInst.getNodeId(), "suspend");
                 }
                 if ("ready".equals(ns)) {
-                    if (nodeInst.getNodeState().equals("F"))
+                    if (nodeInst.getNodeState().equals("F")) {
                         nodeState.put(nodeInst.getNodeId(), "suspend");
-                    else if (nodeInst.getNodeState().equals("C")) {
+                    }else if (nodeInst.getNodeState().equals("C")) {
+                        if(nodeInst.getNodeId().equals(endNodeID)){
+                            findTran=false;
+                        }
                         nodeState.put(nodeInst.getNodeId(), "complete");
                         completeNodeSet.add(nodeInst);
                     }
@@ -202,14 +205,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                             //判断已办结节点和路由节点的关系,找到已办结节点和路由的连接线，确定哪一个路由是真正完成的
                             for (FlowTransition trans : transSet) {
                                 //如果连接线的开始等于已完成节点，结束等于路由节点，判断这个连接线完成，路由节点完成
-                                if (trans.getStartNodeId().equals(ni.getNodeId()) && trans.getEndNodeId().equals(no.getNodeId())) {
-                                    //如果有已完成的线，查找一下已完成的所有线的开始节点是否有跟我们上面查出来的有重复，有重复的话说明矛盾，并不是我们要的结果
+                                if (trans.getStartNodeId().equals(ni.getNodeId())
+                                    && trans.getEndNodeId().equals(no.getNodeId())) {
+                                    //如果有已完成的线，查找一下已完成的所有线的开始节点是否有跟我们上面查出来的有重复
+                                    //有重复的话说明矛盾，并不是我们要的结果
                                     if (!completeTrans.isEmpty()) {
                                         Boolean trueTrans = true;
                                         for (FlowTransition tr : completeTrans) {
-                                            //添加结束节点的判断，如果结束节点不重复，那么说明并不冲突矛盾，因为存在同一节点路由经过不同流转得情况
-                                            if (trans.getStartNodeId().equals(tr.getStartNodeId())
-                                                && !trans.getEndNodeId().equals(tr.getEndNodeId())) {
+                                            //添加结束节点的判断，如果结束节点不重复
+                                            //那么说明并不冲突矛盾，因为存在同一节点路由经过不同流转得情况
+                                            //问题在于结束节点没有准确找到，可以根据节点次数来判断
+                                            if (trans.getStartNodeId().equals(tr.getStartNodeId())) {
                                                 trueTrans = false;
                                             }
                                         }
@@ -257,6 +263,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         return viewDoc.asXML();
     }
+
 
     @Override
     public String viewFlowNodeInstance(long flowInstId) {

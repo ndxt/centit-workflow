@@ -16,15 +16,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: com.centit.framework:framework-core:4.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:centit-persistence-jdbc:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:centit-persistence-core:1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-database-datasource:2.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-database:2.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:framework-adapter:4.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.support:centit-utils:2.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:centit-ip-adapter:1.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:framework-core:4.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.2" level="project" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: javax.validation:validation-api:2.0.0.Final" level="project" />

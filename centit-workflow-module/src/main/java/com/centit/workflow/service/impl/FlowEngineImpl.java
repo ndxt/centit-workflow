@@ -435,7 +435,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             endNodeInst.setTransPath(String.valueOf(trans.getTransId()));
         else
             endNodeInst.setTransPath(transPath + "," + String.valueOf(trans.getTransId()));
-        flowInst.addWfNodeInstance(endNodeInst);
+        nodeInstanceDao.saveNewObject(endNodeInst);
         FlowOptUtils.sendFinishMsg(flowInst.getFlowInstId(), userCode);
     }
 
@@ -1327,10 +1327,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInst, "", nodeTran, userCode, grantorCode, unitCode, nodeToken,
             flowVarTrans, nodeUnits, nodeOptUsers, application);
 
-        //flowInst.setLastUpdateTime(updateTime);
-        //flowInst.setLastUpdateUser(userCode);
 
         nodeInstanceDao.updateObject(nodeInst);
+        //放开之后导致流程状态错误，暂时注释，不影响
+        //flowInst.setLastUpdateTime(updateTime);
+        //flowInst.setLastUpdateUser(userCode);
         //flowInstanceDao.updateObject(flowInst);
 
         return nextNodeInsts;
