@@ -215,7 +215,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                                             //添加结束节点的判断，如果结束节点不重复
                                             //那么说明并不冲突矛盾，因为存在同一节点路由经过不同流转得情况
                                             //问题在于结束节点没有准确找到，可以根据节点次数来判断
-                                            if (trans.getStartNodeId().equals(tr.getStartNodeId())) {
+                                            if (trans.getStartNodeId().equals(tr.getStartNodeId())
+                                                &&(!trans.getEndNodeId().equals(tr.getEndNodeId())
+                                                ||trans.getEndNodeId().equals(endNodeID))) {
                                                 trueTrans = false;
                                             }
                                         }
