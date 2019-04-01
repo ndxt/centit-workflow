@@ -120,9 +120,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 if ("ready".equals(ns)) {
                     if (nodeInst.getNodeState().equals("F")) {
                         nodeState.put(nodeInst.getNodeId(), "suspend");
-                    }else if (nodeInst.getNodeState().equals("C")) {
-                        if(nodeInst.getNodeId().equals(endNodeID)){
-                            findTran=false;
+                    } else if (nodeInst.getNodeState().equals("C")) {
+                        if (nodeInst.getNodeId().equals(endNodeID)) {
+                            findTran = false;
                         }
                         nodeState.put(nodeInst.getNodeId(), "complete");
                         completeNodeSet.add(nodeInst);
@@ -216,8 +216,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                                             //那么说明并不冲突矛盾，因为存在同一节点路由经过不同流转得情况
                                             //问题在于结束节点没有准确找到，可以根据节点次数来判断
                                             if (trans.getStartNodeId().equals(tr.getStartNodeId())
-                                                &&(!trans.getEndNodeId().equals(tr.getEndNodeId())
-                                                ||trans.getEndNodeId().equals(endNodeID))) {
+                                                && (!trans.getEndNodeId().equals(tr.getEndNodeId())
+                                                || trans.getEndNodeId().equals(endNodeID))) {
                                                 trueTrans = false;
                                             }
                                         }
@@ -485,7 +485,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (flowInstance.getNodeInstances() != null) {
             for (NodeInstance nodeInstance : flowInstance.getNodeInstances()) {
                 NodeInfo node = flowNodeDao.getObjectById(nodeInstance.getNodeId());
-                nodeInstance.setNodeName(node.getNodeName());
+                if (node != null) {
+                    nodeInstance.setNodeName(node.getNodeName());
+                }
                 nodeInstance.setFlowOptName(flowInstance.getFlowOptName());
                 nodeInstance.setFlowOptTag(flowInstance.getFlowOptTag());
             }
