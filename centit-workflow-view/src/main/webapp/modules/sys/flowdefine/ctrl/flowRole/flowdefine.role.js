@@ -45,7 +45,7 @@ define(function(require) {
 
                 data.flowTeamRoles = items;
                 data.flowRoles = null;
-                data._method = 'PUT';
+                //data._method = 'PUT';
 
                 Core.ajax(Config.ContextPath+'workflow/flow/define/role/'+data.flowCode, {
                     data: data,
