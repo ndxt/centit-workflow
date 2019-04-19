@@ -21,7 +21,7 @@ define(function(require) {
 			var form = panel.find('form');
 			var table = this.table = panel.find('table');
 			
-			Core.ajax(Config.ContextPath+'service/flow/define/draft/'+data.flowCode, {
+			Core.ajax(Config.ContextPath+'workflow/flow/define/draft/'+data.flowCode, {
 				method: 'get'
 			}).then(function(data) {
 				data = _self.extendData(data);
@@ -46,7 +46,7 @@ define(function(require) {
 				data.flowStages = items;
 				data._method = 'PUT';
 				
-				Core.ajax(Config.ContextPath+'service/flow/define/stage/'+data.flowCode, {
+				Core.ajax(Config.ContextPath+'workflow/flow/define/stage/'+data.flowCode, {
 					data: data,
 					method: 'post'
 				}).then(closeCallback);

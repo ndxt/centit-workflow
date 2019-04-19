@@ -118,9 +118,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     nodeState.put(nodeInst.getNodeId(), "suspend");
                 }
                 if ("ready".equals(ns)) {
-                    if (nodeInst.getNodeState().equals("F"))
+                    if (nodeInst.getNodeState().equals("F")) {
                         nodeState.put(nodeInst.getNodeId(), "suspend");
-                    else if (nodeInst.getNodeState().equals("C")) {
+                    } else if (nodeInst.getNodeState().equals("C")) {
+                        if (nodeInst.getNodeId().equals(endNodeID)) {
+                            findTran = false;
+                        }
                         nodeState.put(nodeInst.getNodeId(), "complete");
                         completeNodeSet.add(nodeInst);
                     }
@@ -202,12 +205,19 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                             //判断已办结节点和路由节点的关系,找到已办结节点和路由的连接线，确定哪一个路由是真正完成的
                             for (FlowTransition trans : transSet) {
                                 //如果连接线的开始等于已完成节点，结束等于路由节点，判断这个连接线完成，路由节点完成
-                                if (trans.getStartNodeId().equals(ni.getNodeId()) && trans.getEndNodeId().equals(no.getNodeId())) {
-                                    //如果有已完成的线，查找一下已完成的所有线的开始节点是否有跟我们上面查出来的有重复，有重复的话说明矛盾，并不是我们要的结果
+                                if (trans.getStartNodeId().equals(ni.getNodeId())
+                                    && trans.getEndNodeId().equals(no.getNodeId())) {
+                                    //如果有已完成的线，查找一下已完成的所有线的开始节点是否有跟我们上面查出来的有重复
+                                    //有重复的话说明矛盾，并不是我们要的结果
                                     if (!completeTrans.isEmpty()) {
                                         Boolean trueTrans = true;
                                         for (FlowTransition tr : completeTrans) {
-                                            if (trans.getStartNodeId().equals(tr.getStartNodeId())) {
+                                            //添加结束节点的判断，如果结束节点不重复
+                                            //那么说明并不冲突矛盾，因为存在同一节点路由经过不同流转得情况
+                                            //问题在于结束节点没有准确找到，可以根据节点次数来判断
+                                            if (trans.getStartNodeId().equals(tr.getStartNodeId())
+                                                && (!trans.getEndNodeId().equals(tr.getEndNodeId())
+                                                || trans.getEndNodeId().equals(endNodeID))) {
                                                 trueTrans = false;
                                             }
                                         }
@@ -255,6 +265,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         return viewDoc.asXML();
     }
+
 
     @Override
     public String viewFlowNodeInstance(long flowInstId) {
@@ -474,7 +485,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (flowInstance.getNodeInstances() != null) {
             for (NodeInstance nodeInstance : flowInstance.getNodeInstances()) {
                 NodeInfo node = flowNodeDao.getObjectById(nodeInstance.getNodeId());
-                nodeInstance.setNodeName(node.getNodeName());
+                if (node != null) {
+                    nodeInstance.setNodeName(node.getNodeName());
+                }
                 nodeInstance.setFlowOptName(flowInstance.getFlowOptName());
                 nodeInstance.setFlowOptTag(flowInstance.getFlowOptTag());
             }
@@ -789,7 +802,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 && (currToken.equals(thisToken)
                 || currToken.startsWith(thisToken + '.')
                 || thisToken.startsWith(currToken + '.'))
-                || currToken.startsWith("R"+thisToken + '.')) {
+                || currToken.startsWith("R" + thisToken + '.')) {
 
                 if ("W".equals(nodeInst.getNodeState())) { // 结束子流程
                     FlowInstance subFlowInst = flowInstanceDao
@@ -800,7 +813,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                         subFlowInst.setLastUpdateUser(mangerUserCode);
                         flowInstanceDao.updateObject(subFlowInst);
                         //更新子流程下的所有消息未已办
-                        FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(),mangerUserCode);
+                        FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(), mangerUserCode);
 
                     }
                 }
@@ -814,7 +827,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 nodeInst.addWfActionLog(wfactlog);
                 nodeInstanceDao.mergeObject(nodeInst);
                 //更新消息未已办
-                FlowOptUtils.sendMsg(nodeInst.getNodeInstId(),null,mangerUserCode);
+                FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, mangerUserCode);
             }
         }
         // 创建新节点
@@ -842,9 +855,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flow.addWfNodeInstance(nextNodeInst);
         flowInstanceDao.updateObject(flow);
         nodeInstanceDao.mergeObject(nextNodeInst);
-        Set<Long> nextNodeInsts=new HashSet<>();
+        Set<Long> nextNodeInsts = new HashSet<>();
         nextNodeInsts.add(lastNodeInstId);
-        FlowOptUtils.sendMsg(0L,nextNodeInsts,mangerUserCode);
+        FlowOptUtils.sendMsg(0L, nextNodeInsts, mangerUserCode);
 
 
         //执行节点创建后 事件

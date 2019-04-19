@@ -12,10 +12,7 @@ import com.centit.workflow.service.impl.FlowOptUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -203,7 +200,7 @@ public class FlowDefineController extends BaseController {
      * @param flowcode
      * @param response
      */
-    @RequestMapping(value = "/{flowcode}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{flowcode}", method = RequestMethod.POST)
     public void editFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         flowdefine.setFlowCode(flowcode);
         flowdefine.setVersion(0l);
@@ -217,13 +214,13 @@ public class FlowDefineController extends BaseController {
     }
 
     /**
-     * 更新流程，默认编辑草稿，版本号为0
+     * 新增流程阶段，默认编辑草稿，版本号为0
      *
      * @param flowdefine
      * @param flowcode
      * @param response
      */
-    @RequestMapping(value = "/stage/{flowcode}", method = RequestMethod.PUT)
+    @PostMapping(value = "/stage/{flowcode}")
     public void editFlowStage(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         if (null != flowdefine.getFlowStages()) {
             for (FlowStage stage : flowdefine.getFlowStages()) {
@@ -251,7 +248,7 @@ public class FlowDefineController extends BaseController {
      * @param flowcode
      * @param response
      */
-    @RequestMapping(value = "/role/{flowcode}", method = RequestMethod.PUT)
+    @PostMapping(value = "/role/{flowcode}")
     public void editRole(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         if (null != flowdefine.getFlowTeamRoles()) {
             for (FlowTeamRole role : flowdefine.getFlowTeamRoles()) {
@@ -279,7 +276,7 @@ public class FlowDefineController extends BaseController {
      * @param flowcode
      * @param response
      */
-    @RequestMapping(value = "/variableDefine/{flowcode}", method = RequestMethod.PUT)
+    @PostMapping(value = "/variableDefine/{flowcode}")
     public void editVariable(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         if (null != flowdefine.getFlowVariableDefines()) {
             for (FlowVariableDefine variableDefine : flowdefine.getFlowVariableDefines()) {
@@ -419,7 +416,6 @@ public class FlowDefineController extends BaseController {
         Map<String, String> map4 = modelData.listAllSubFlow();
         map.put("SubWfcode", map4);
         Map<String, String> stageMap = modelData.listFlowStages(flowcode);
-        ;
         map.put("FlowPhase", stageMap);
         JsonResultUtils.writeSingleDataJson(map, response);
     }

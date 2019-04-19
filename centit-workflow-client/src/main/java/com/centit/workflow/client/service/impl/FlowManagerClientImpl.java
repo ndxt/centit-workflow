@@ -22,6 +22,9 @@ public class FlowManagerClientImpl implements FlowManagerClient {
     @Value("${workflow.server:}")
     private String workFlowServerUrl;
 
+    @Value("${workflow.server.login:}")
+    private String workFlowServerLoginUrl;
+
     public FlowManagerClientImpl() {
 
     }
@@ -43,6 +46,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
 
     public void makeAppSession() {
         appSession = new AppSession(workFlowServerUrl,false,null,null);
+        appSession.setAppLoginUrl(workFlowServerLoginUrl);
     }
 
 

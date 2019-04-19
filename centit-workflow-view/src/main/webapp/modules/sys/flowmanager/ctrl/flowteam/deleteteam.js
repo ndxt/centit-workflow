@@ -13,10 +13,10 @@ define(function (require) {
             var flowInstId=this.parent.data.flowInstId;
             var userRole=data.roleCode;
             var userCode=data.userCode;
-            Core.ajax(Config.ContextPath + 'service/flow/manager/deleteteam/' + flowInstId + '/' + userRole + '/' + userCode, {
+            Core.ajax(Config.ContextPath + 'workflow/flow/manager/deleteteam/' + flowInstId + '/' + userRole + '/' + userCode, {
                 method: 'get'
             }).then(function() {
-                Core.ajax(Config.ContextPath+'service/flow/manager/getteamlist/'+flowInstId, {
+                Core.ajax(Config.ContextPath+'workflow/flow/manager/getteamlist/'+flowInstId, {
                     method: 'get'
                 }).then(function(data) {
                     table.datagrid('loadData', data);
@@ -27,7 +27,7 @@ define(function (require) {
         // @override
         // this.onClose = function(table) {
         //     var flowInstId=this.parent.data.flowInstId;
-        //     Core.ajax(Config.ContextPath+'service/flow/manager/getteamlist/'+flowInstId, {
+        //     Core.ajax(Config.ContextPath+'workflow/flow/manager/getteamlist/'+flowInstId, {
         //         method: 'get'
         //     }).then(function(data) {
         //         table.cdatagrid({

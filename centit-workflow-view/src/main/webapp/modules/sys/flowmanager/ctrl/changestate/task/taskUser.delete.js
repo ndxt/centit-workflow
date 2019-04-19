@@ -8,7 +8,7 @@ define(function(require) {
 		
 		// @override
 		this.submit = function(table, data) {
-			Core.ajax(Config.ContextPath+ 'service/flow/manager/deleteTask/'+ data.taskId,{
+			Core.ajax(Config.ContextPath+ 'workflow/flow/manager/deleteTask/'+ data.taskId,{
             	type: 'json',
                 method: 'post'
 			}).then(function() {

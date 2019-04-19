@@ -8,7 +8,7 @@ define(function(require) {
 		
 		// @override
 		this.load = function(panel, data) {
-			var url = Config.ContextPath+'service/flow/manager/listNodeOpers/'+data.nodeInstId;
+			var url = Config.ContextPath+'workflow/flow/manager/listNodeOpers/'+data.nodeInstId;
 			panel.find('#operation').cdatagrid({
 				// 必须要加此项!!
 				controller: this,

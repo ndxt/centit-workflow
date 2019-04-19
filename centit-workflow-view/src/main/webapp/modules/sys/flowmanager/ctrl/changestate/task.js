@@ -18,7 +18,7 @@ define(function(require) {
 		// @override
 		this.load = function(panel, data) {
 			_self.data=data;
-			var url = Config.ContextPath+'service/flow/manager/listusertasks/'+data.nodeInstId;
+			var url = Config.ContextPath+'workflow/flow/manager/listusertasks/'+data.nodeInstId;
 			panel.find('#usertask').cdatagrid({
 				controller: this,
 				url:url

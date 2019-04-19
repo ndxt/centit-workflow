@@ -9,7 +9,7 @@ define(function(require) {
 		// @override
 		this.submit = function(table, data,closeCallback) {
 			var _self=this;
-			Core.ajax(Config.ContextPath+'service/flow/define/deleteFlow/'+data.flowCode, {
+			Core.ajax(Config.ContextPath+'workflow/flow/define/deleteFlow/'+data.flowCode, {
 				method: 'GET'
 			}).then(function(data) {
 				var table=_self.parent.table;

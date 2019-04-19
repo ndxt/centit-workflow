@@ -62,7 +62,7 @@
         }
 
         function _getLoadUrl(code) {
-            return this.contextPath + 'service/flow/define/viewxml/'+ code +'/000';
+            return this.contextPath + 'workflow/flow/define/viewxml/'+ code +'/000';
         }
 
         function _getSaveUrl(code) {}

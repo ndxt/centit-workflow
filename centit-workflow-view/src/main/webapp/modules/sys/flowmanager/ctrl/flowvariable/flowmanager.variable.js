@@ -23,7 +23,7 @@ define(function(require) {
             var form = panel.find('form');
             var table = this.table = panel.find('table');
             form.form('load', data);
-            Core.ajax(Config.ContextPath+'service/flow/manager/getvariablelist/'+data.flowInstId, {
+            Core.ajax(Config.ContextPath+'workflow/flow/manager/getvariablelist/'+data.flowInstId, {
                 method: 'get'
             }).then(function(data) {
                 table.cdatagrid({

@@ -63,7 +63,7 @@
         var form = $("#demoStartForm");
         if(form.form('validate')){
             form.form('ajax', {
-                url: basePath + 'service/demo/demoStart/',
+                url: basePath + 'workflow/demo/demoStart/',
                 method: 'post'
             }).then(
                 function (data) {

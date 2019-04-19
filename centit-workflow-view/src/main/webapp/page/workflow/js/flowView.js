@@ -316,7 +316,7 @@ function initEvt(event){
         }
         $.ajax({
             type:"GET",
-            url: path+"service/flow/manager/viewflownode/"+flowInstId+"/"+objId,
+            url: path+"workflow/flow/manager/viewflownode/"+flowInstId+"/"+objId,
             //url:"package.json",
             dataType:"json",
             async: false,

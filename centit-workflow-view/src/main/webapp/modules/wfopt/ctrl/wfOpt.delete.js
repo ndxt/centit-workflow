@@ -10,7 +10,7 @@ define(function (require) {
         this.submit = function (table, row) {
             var index = table.datagrid('getRowIndex', row);
             table.datagrid('deleteRow', index);
-            Core.ajax(Config.ContextPath + 'service/flow/opt/deleteOptInfoById?optId=' + row.optId, {
+            Core.ajax(Config.ContextPath + 'workflow/flow/opt/deleteOptInfoById?optId=' + row.optId, {
                 method: 'get'
             }).then(function (data) {
                 console.log(data)

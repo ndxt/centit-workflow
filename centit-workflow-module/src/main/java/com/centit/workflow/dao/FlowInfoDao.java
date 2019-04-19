@@ -124,7 +124,8 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
 
         String sql =  "select VERSION,FLOW_CODE,FLOW_NAME,FLOW_CLASS,FLOW_STATE,FLOW_DESC,FLOW_XML_DESC," +
                 "FLOW_PUBLISH_DATE,OPT_ID,TIME_LIMIT " +
-                " from F_V_LASTVERSIONFLOW" ;
+                " from F_V_LASTVERSIONFLOW " +
+            " where 1=1  [:(like)flowName| and FLOW_NAME like :flowName ]  order by OS_ID ,VERSION desc " ;
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql,filterMap);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
                 queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
@@ -132,9 +133,6 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
         if(dataList != null) {
             ls = JSONArray.parseArray(dataList.toJSONString(),LastVersionFlowDefine.class);
         }
-        //List<UserTask>  userTasks = (List<UserTask>)DatabaseOptUtils.findObjectsBySql(this,queryAndNamedParams.getSql(),queryAndNamedParams.getParams(),pageDesc,UserTask.class);
-
-        @SuppressWarnings("unchecked")
         List<FlowInfo>all=new ArrayList<FlowInfo>();
         if(ls != null && ls.size() > 0) {
             for (LastVersionFlowDefine s : ls) {

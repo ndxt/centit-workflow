@@ -26,31 +26,31 @@ define(function(require) {
                 }
 
             })
-			
-			Core.ajax(Config.ContextPath+'service/flow/useroptmgr/loginuser', {
-				method: 'get' 
+
+			Core.ajax(Config.ContextPath+'workflow/flow/useroptmgr/loginuser', {
+				method: 'get'
 			}).then(function(data) {
 				form.form("disableValidation");
 				formdata=$.extend({}, this.object, data.userInfo,data.primaryUnit/*, {
 					unitName: data.primaryUnit.unitCode,
 					userStation:data.primaryUnit.userStation,
 					userRank:data.primaryUnit.userRank
-					
+
 				}*/);
 				form.form('load',formdata);
 			});
-			
+
 			panel.find('table').cdatagrid({
 				// 必须要加此项!!
 				controller: this
 			});
 		};
-		
-		
+
+
 	})
     //加载基本信息表单
 	function loadForm(userCode){
-        Core.ajax(Config.ContextPath+'service/flow/useroptmgr/'+userCode, {
+        Core.ajax(Config.ContextPath+'workflow/flow/useroptmgr/'+userCode, {
             method: 'get'
         }).then(function(data) {
             formdata=$.extend({}, this.object, data.userInfo/*, {
@@ -65,22 +65,22 @@ define(function(require) {
 	//加载标签页
 	function loadSubTabPage(userCode){
         //待办
-        $('#taskTable').datagrid("options").url = 'service/flow/useroptmgr/usertasks/'+userCode;
+        $('#taskTable').datagrid("options").url = 'workflow/flow/useroptmgr/usertasks/'+userCode;
         $('#taskTable').datagrid('load');
         //已办
-        $('#finTaskTable').datagrid("options").url = 'service/flow/useroptmgr/usertasksfin/'+userCode;
+        $('#finTaskTable').datagrid("options").url = 'workflow/flow/useroptmgr/usertasksfin/'+userCode;
         $('#finTaskTable').datagrid('load');
         //接受的委托
-        $('#relegateTableGet').datagrid("options").url = 'service/flow/useroptmgr/getrelegates/'+userCode;
+        $('#relegateTableGet').datagrid("options").url = 'workflow/flow/useroptmgr/getrelegates/'+userCode;
         $('#relegateTableGet').datagrid('load');
         //设置的委托
-        $('#relegateTableSet').datagrid("options").url = 'service/flow/useroptmgr/setrelegates/'+userCode;
+        $('#relegateTableSet').datagrid("options").url = 'workflow/flow/useroptmgr/setrelegates/'+userCode;
         $('#relegateTableSet').datagrid('load');
         // //关注
-        $('#attTable').datagrid("options").url = 'service/flow/useroptmgr/getAttentions/'+userCode+'/A';
+        $('#attTable').datagrid("options").url = 'workflow/flow/useroptmgr/getAttentions/'+userCode+'/A';
         $('#attTable').datagrid('load');
     }
 
-	
+
 	return UserOptMgr;
 });

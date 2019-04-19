@@ -14,7 +14,7 @@ define(function(require) {
             $.messager.confirm("操作提示", "您确定要强制停止流程吗？", function (bo) {
 
                 if(bo){
-                 Core.ajax(Config.ContextPath+'service/flow/manager/stopinst/'+data.flowInstId, {
+                 Core.ajax(Config.ContextPath+'workflow/flow/manager/stopinst/'+data.flowInstId, {
                  method: 'get'
                  }).then(function(data) {
                  // var index=table.datagrid('getSelectedRowIndex');

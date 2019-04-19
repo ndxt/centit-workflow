@@ -28,7 +28,7 @@ define(function(require) {
 			
 			if (isValid) {
 				form.form('ajax', {
-					url: Config.ContextPath+'service/flow/useroptmgr/alignrelegate/'+data.relegateno+'/'+userCode,
+					url: Config.ContextPath+'workflow/flow/useroptmgr/alignrelegate/'+data.relegateno+'/'+userCode,
 					method: 'put',
 				}).then(closeCallback);
 			}

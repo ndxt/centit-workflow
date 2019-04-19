@@ -51,7 +51,7 @@
     <div class="fitem">
         <label>审核人</label>
         <input class="easyui-combobox" name="auditor" id="auditor"
-               data-options="valueField:'userCode',textField:'userName',url:'service/approval/listAllUser'"
+               data-options="valueField:'userCode',textField:'userName',url:'workflow/approval/listAllUser'"
         />
         <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
            onclick="newAuditor()"></a>
@@ -151,7 +151,7 @@
     $(function () {
         var Config = require('config');
         $('#approvalForm').form({
-            url: Config.ContextPath + 'service/approval/startProcess',
+            url: Config.ContextPath + 'workflow/approval/startProcess',
             data:$('#approvalForm').serialize(),
             onSubmit: function () {
             },

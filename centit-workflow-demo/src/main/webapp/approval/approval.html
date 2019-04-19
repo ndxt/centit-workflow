@@ -1,7 +1,7 @@
 <div class="field required" >
     <label>用户名</label>
     <input  class="easyui-combobox" name="userName" id="userName"
-            data-options="valueField:'userCode',textField:'userName',url:'service/approval/listAllUser'"
+            data-options="valueField:'userCode',textField:'userName',url:'workflow/approval/listAllUser'"
     />
 </div>
 <div title="待办列表" style="padding: 10px;width: 600px" >
@@ -37,7 +37,7 @@
             <label style="width: 48px">下一批次的审批人</label>
             <input name="auditorList" id="auditorList" class="easyui-textbox" readonly="true" >
             <input class="easyui-combobox" name="auditor" id="auditor"
-                   data-options="valueField:'userCode',textField:'userName',url:'service/approval/listAllUser'"
+                   data-options="valueField:'userCode',textField:'userName',url:'workflow/approval/listAllUser'"
             />
             <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
                onclick="newAuditor2()"></a>
@@ -77,7 +77,7 @@
 
     $(function () {
         $('#approvalform').form({
-            url: basePath + 'service/approval/doApproval',
+            url: basePath + 'workflow/approval/doApproval',
             data:$('#approvalform').serialize(),
             onSubmit: function () {
             },
@@ -97,7 +97,7 @@
             debugger;
             $.ajax({
                 method: 'GET',
-                url: basePath + 'service/approval/getUserTasksByUserCode/' + rec.userCode,
+                url: basePath + 'workflow/approval/getUserTasksByUserCode/' + rec.userCode,
                 async: false,
                 dataType: 'json',
                 success: function (data) {

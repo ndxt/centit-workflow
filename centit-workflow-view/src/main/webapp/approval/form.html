@@ -51,7 +51,7 @@
     <div class="fitem">
         <label>审核人</label>
         <input class="easyui-combobox" name="auditor" id="auditor"
-               data-options="valueField:'userCode',textField:'userName',url:'service/flow/useroptmgr/listAllUser'"
+               data-options="valueField:'userCode',textField:'userName',url:'workflow/flow/useroptmgr/listAllUser'"
         />
         <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
            onclick="newAuditor()"></a>
@@ -157,7 +157,7 @@
     }
     $(function () {
         $('#approvalForm').form({
-            url: 'http://localhost:8080/workflow/service/approval/startProcess',
+            url: 'http://localhost:8080/workflow/workflow/approval/startProcess',
             data:$('#approvalForm').serialize(),
             onSubmit: function () {
             },

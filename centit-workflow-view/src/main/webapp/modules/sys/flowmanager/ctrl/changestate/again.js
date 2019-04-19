@@ -13,7 +13,7 @@ define(function(require) {
 				if (bo) {
 					Core.ajax(
 							Config.ContextPath
-									+ 'service/flow/manager/resetToCurrent/'+ data.nodeInstId, {
+									+ 'workflow/flow/manager/resetToCurrent/'+ data.nodeInstId, {
 								method : 'get'
 							}).then(function(data) {
 //						var index = table.datagrid('getSelectedRowIndex');

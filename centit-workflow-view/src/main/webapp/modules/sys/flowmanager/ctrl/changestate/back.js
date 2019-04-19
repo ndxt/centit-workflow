@@ -12,7 +12,7 @@ define(function(require) {
 				if (bo) {
 					Core.ajax(
 							Config.ContextPath
-									+ 'service/flow/manager/nodestate/'
+									+ 'workflow/flow/manager/nodestate/'
 									+ data.nodeInstId + '/1', {
 								method : 'get'
 							}).then(function(data) {

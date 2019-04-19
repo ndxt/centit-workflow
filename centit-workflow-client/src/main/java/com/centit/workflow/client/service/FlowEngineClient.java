@@ -2,6 +2,7 @@ package com.centit.workflow.client.service;
 
 
 import com.centit.support.database.utils.PageDesc;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.FlowWorkTeam;
@@ -84,9 +85,9 @@ public interface FlowEngineClient {
      * @param varTrans 变量转换器
      * @return  节点实例编号列表
      */
-    void submitOpt(long nodeInstId, String userCode,
+    Map<String,Object> submitOpt(long nodeInstId, String userCode,
                         String unitCode, String varTrans,
-                        ServletContext application) throws  Exception;
+                        ServletContext application) throws WorkflowException;
     /**
      * 查看某一个用户所有的待办，并且分页
      * @param userCode
@@ -175,5 +176,26 @@ public interface FlowEngineClient {
      * @return
      */
     List<FlowVariable> viewFlowVariablesByVarname(long flowInstId, String varname) throws Exception;
+
+    /**
+     * 手动创建节点实例，暂时不考虑这个节点对流程的整体影响，由调用业务来判断
+     * @param flowInstId    流程实例号
+     * @param createUser  创建人
+     * @param nodeId      节点环节代码，这个节点在这个流程中必需唯一
+     * @param userCodes      指定用户
+     * @param unitCode      指定机构
+     * @return 节点实例
+     */
+    void createNodeInst(long flowInstId, String createUser,
+                               String nodeId,List<String> userCodes, String unitCode) throws Exception;
+
+    /**
+     * 删除流程变量
+     * @param flowInstId
+     * @param runToken 默认为A
+     * @param varName
+     * @throws Exception
+     */
+    void deleteFlowVariable(long flowInstId,String runToken,String varName) throws Exception;
 
 }

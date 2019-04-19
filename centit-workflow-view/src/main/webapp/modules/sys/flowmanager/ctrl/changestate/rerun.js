@@ -16,7 +16,7 @@ define(function(require) {
 				
 				$.messager.confirm("操作提示", "您确定要挂起操作吗？", function (bo) {
 					if(bo){
-			Core.ajax(Config.ContextPath+'service/flow/manager/nodestate/'+data.nodeInstId+'/7', {
+			Core.ajax(Config.ContextPath+'workflow/flow/manager/nodestate/'+data.nodeInstId+'/7', {
 				method: 'get'
 			}).then(function(data) {
 				var index=table.datagrid('getSelectedRowIndex');

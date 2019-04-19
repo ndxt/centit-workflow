@@ -11,7 +11,7 @@ define(function (require) {
 
             var form = panel.find('form');
             var _self = this;
-            Core.ajax(Config.ContextPath + 'service/flow/opt/getOptById?optId=' + data.optId, {
+            Core.ajax(Config.ContextPath + 'workflow/flow/opt/getOptById?optId=' + data.optId, {
                 method: 'get'
             }).then(function (data) {
 
@@ -24,7 +24,7 @@ define(function (require) {
         // @override
         this.submit = function (panel, data, closeCallback) {
             $.ajax({
-                url: Config.ContextPath + 'service/flow/opt/saveOpt',
+                url: Config.ContextPath + 'workflow/flow/opt/saveOpt',
                 type: "POST",
                 data: JSON.stringify($("#optForm").serializeJson()),
                 contentType: 'application/json',

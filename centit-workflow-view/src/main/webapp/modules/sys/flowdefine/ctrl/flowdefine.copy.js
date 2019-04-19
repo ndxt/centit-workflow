@@ -12,7 +12,7 @@ define(function(require) {
 		this.load = function(panel, data) {
 			var form = panel.find('form');
 			var formData={oldFlowCode:data.flowCode,doCopyXML:"F"}
-			Core.ajax(Config.ContextPath+'service/flow/define/copy/'+data.flowCode+"/"+data.version, {
+			Core.ajax(Config.ContextPath+'workflow/flow/define/copy/'+data.flowCode+"/"+data.version, {
 				method: 'post'
 			}).then(function(data) {
 				//data = _self.extendData(data);
@@ -34,7 +34,7 @@ define(function(require) {
 						var value=form.form('value');
 						if (isValid) {
 							form.form('ajax', {
-								url: Config.ContextPath+'service/flow/define/'+value.oldFlowCode+'/'+value.doCopyXML,
+								url: Config.ContextPath+'workflow/flow/define/'+value.oldFlowCode+'/'+value.doCopyXML,
 								method: 'post',
 								data: value
 							}).then(closeCallback);

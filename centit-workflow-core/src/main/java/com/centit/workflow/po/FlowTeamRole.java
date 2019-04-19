@@ -3,12 +3,9 @@ package com.centit.workflow.po;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.hibernate.validator.constraints.Range;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -35,6 +32,7 @@ public class FlowTeamRole implements Serializable {
     @Column(name = "ROLE_NAME")
     private String roleName;
     @Column(name = "TEAM_ROLE_ORDER")
+    @OrderBy(value = "ASC")
     private Integer teamRoleOrder;
     @Column(name = "CREATE_TIME")
     private Date createTime;

@@ -11,7 +11,7 @@ define(function(require) {
         this.load = function(panel) {
             var form = panel.find('form');
 
-            Core.ajax(Config.ContextPath+'service/flow/define/create', {
+            Core.ajax(Config.ContextPath+'workflow/flow/define/create', {
                 method: 'get'
             }).then(function(data) {
                 data = _self.extendData(data);
@@ -31,7 +31,7 @@ define(function(require) {
 
             if (isValid) {
                 form.form('ajax', {
-                    url: Config.ContextPath+'service/flow/define/'+data.flowCode,
+                    url: Config.ContextPath+'workflow/flow/define/'+data.flowCode,
                     method: 'put',
                     data: data
                 }).then(closeCallback);

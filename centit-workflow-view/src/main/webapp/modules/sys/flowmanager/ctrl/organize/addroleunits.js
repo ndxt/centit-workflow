@@ -22,7 +22,7 @@ define(function (require) {
             var authDesc=value.authDesc;
             if (isValid) {
                 form.form('ajax', {
-                    url: Config.ContextPath + 'service/flow/manager/saveorg/' + flowInstId + '/'+ roleCode+ '/'+unitCode+'/'+authDesc,
+                    url: Config.ContextPath + 'workflow/flow/manager/saveorg/' + flowInstId + '/'+ roleCode+ '/'+unitCode+'/'+authDesc,
                     method: 'post',
                 }).then(closeCallback);
             }
@@ -33,7 +33,7 @@ define(function (require) {
         // @override
         this.onClose = function(table) {
             var flowInstId=this.parent.data.flowInstId;
-            Core.ajax(Config.ContextPath+'service/flow/manager/getorglist/'+flowInstId, {
+            Core.ajax(Config.ContextPath+'workflow/flow/manager/getorglist/'+flowInstId, {
                 method: 'get'
             }).then(function(data) {
                 table.cdatagrid({

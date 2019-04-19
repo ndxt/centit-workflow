@@ -23,7 +23,7 @@ define(function(require) {
 			var isValid = form.form('validate');
 			if (isValid) {
 				form.form('ajax', {
-					url: Config.ContextPath	+ 'service/flow/manager/assign/'+ _self.data.nodeInstId,
+					url: Config.ContextPath	+ 'workflow/flow/manager/assign/'+ _self.data.nodeInstId,
 					method: 'post',
 					data: data 
 				}).then(closeCallback);

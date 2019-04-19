@@ -13,7 +13,7 @@ define(function(require) {
 				return;
 			}
 		
-			/*Core.ajax(Config.ContextPath+'service/flow/manager/nodestate/'+data.nodeInstId+'/8', {
+			/*Core.ajax(Config.ContextPath+'workflow/flow/manager/nodestate/'+data.nodeInstId+'/8', {
 				method: 'get'
 			}).then(function(data) {
 				alert("节点已挂起");
