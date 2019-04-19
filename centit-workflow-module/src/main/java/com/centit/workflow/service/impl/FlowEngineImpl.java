@@ -6,6 +6,7 @@ import com.centit.framework.components.UserUnitFilterCalcContext;
 import com.centit.framework.components.UserUnitParamBuilder;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.support.algorithm.BooleanBaseOpt;
+import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -937,18 +938,32 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if ("S".equals(nextOptNode.getOptType())) {
             //如果是子流程 启动流程
             nextNodeInst.setNodeState("W");
+            String tempFlowTimeLimit = "";
+            if ("T".equals(flowInst.getIsTimer()) && flowInst.getTimeLimit() != null) {
+                //子流程实例计时可以继承父流程剩余时间
+                long flowTime = flowInst.getTimeLimit();
+                //天
+                long day = flowTime / 60 / 8;
+                //小时
+                long hour = flowTime / 60 % 8;
+                //分钟
+                long minute = flowTime % 60;
+
+                if ("I".equals(nextOptNode.getIsAccountTime()))
+                    tempFlowTimeLimit = day + "d" + hour + "h" + minute + "m";
+            }
             //子流程的机构 要和 节点的机构一致
             FlowInstance tempFlow = createInstInside(nextOptNode.getSubFlowCode(),
                 flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()),
                 flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName(),
                 flowInst.getFlowOptTag(), userCode, unitCode, lastNodeInstId, nodeInst.getFlowInstId(),
-                varTrans, false, null);
+                varTrans, false, tempFlowTimeLimit);
             nextNodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
             //子流程的时间限制和父流程节点的一致
-            if (nextNodeInst.getTimeLimit() != null) {
+            /*f (nextNodeInst.getTimeLimit() != null) {
                 flowInst.setTimeLimit(nextNodeInst.getTimeLimit());
                 flowInstanceDao.updateObject(flowInst);
-            }
+            }*/
             tempFirstNode = tempFlow.getFirstNodeInstance();
         } else if (!assignedUser) {
             Set<String> optUsers = calcNodeOpterators(flowInst, nodeInst, nodeToken,
@@ -2789,8 +2804,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return;
         Map<String, Object> filterMap = new HashMap<>();
         filterMap.put("flowInstId", flowInstId);
-        if(StringUtils.isBlank(runToken))
-            runToken="A";
+        if (StringUtils.isBlank(runToken))
+            runToken = "A";
         filterMap.put("runToken", runToken);
         filterMap.put("varName", varName);
         flowVariableDao.deleteObjectsByProperties(filterMap);

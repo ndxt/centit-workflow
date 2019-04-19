@@ -15,7 +15,7 @@ define(function(require) {
             url: Config.ContextPath+'workflow/flow/define?_search=true&field=flowCode&field=flowName',
             method: 'get',
           })*/
-          Core.ajax(Config.ContextPath+'workflow/flow/define?_search=true&field=flowCode&field=flowName', {
+          Core.ajax(Config.ContextPath+'workflow/flow/define?_search=true&field=flowCode&field=flowName&rows=100', {
             method: 'get'
           }).then(function (data) {
                     $("#flowCode").combobox('loadData',data.objList);

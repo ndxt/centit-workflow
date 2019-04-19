@@ -416,7 +416,6 @@ public class FlowDefineController extends BaseController {
         Map<String, String> map4 = modelData.listAllSubFlow();
         map.put("SubWfcode", map4);
         Map<String, String> stageMap = modelData.listFlowStages(flowcode);
-        ;
         map.put("FlowPhase", stageMap);
         JsonResultUtils.writeSingleDataJson(map, response);
     }

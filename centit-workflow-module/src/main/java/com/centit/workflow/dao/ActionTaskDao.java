@@ -69,7 +69,9 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
      public Map<String, String> getFilterField() {
         if( filterField == null){
             filterField = new HashMap<>();
-            filterField.put("taskId" , CodeBook.EQUAL_HQL_ID);
+            filterField.put(
+
+                "taskId" , CodeBook.EQUAL_HQL_ID);
             filterField.put("nodeInstId" , CodeBook.EQUAL_HQL_ID);
             filterField.put("assignTime" , CodeBook.EQUAL_HQL_ID);
             filterField.put("expireTime" , CodeBook.EQUAL_HQL_ID);

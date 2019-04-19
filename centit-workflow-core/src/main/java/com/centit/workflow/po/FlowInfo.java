@@ -103,7 +103,8 @@ public class FlowInfo implements java.io.Serializable {
     }
 
     public List<FlowVariableDefine> getFlowVariableDefines() {
-        return flowVariableDefines;
+        return
+            flowVariableDefines;
     }
 
     public void setFlowVariableDefines(List<FlowVariableDefine> flowVariableDefines) {
