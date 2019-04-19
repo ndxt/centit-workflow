@@ -52,13 +52,13 @@ public class UserTask implements java.io.Serializable {
     //流程节点阶段
     private String flowStage;
 
-
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeCreateTime;
-
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeExpireTime;
-
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeLastUpdateTime;
-
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date flowExpireTime;
 
     private Long flowTimeLimit;

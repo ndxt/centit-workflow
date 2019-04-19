@@ -1,5 +1,6 @@
 package com.centit.workflow.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.support.common.WorkTimeSpan;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.util.Date;
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 @Entity
 @Table(name = "WF_STAGE_INSTANCE")
 public class StageInstance implements java.io.Serializable {
@@ -24,15 +25,17 @@ public class StageInstance implements java.io.Serializable {
 
     @Transient
     private String  stageName;
-    
+
     @Column(name = "STAGE_BEGIN")
     private String stageBegin;
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name = "BEGIN_TIME")
     private Date beginTime;
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name = "LAST_UPDATE_TIME")
     private Date  lastUpdateTime;
 
-    
+
     // Constructors
     /** default constructor */
     public StageInstance() {
@@ -55,7 +58,7 @@ public class StageInstance implements java.io.Serializable {
         this.timeLimit= timeLimit;
         this.stageBegin= stageBegin;
         this.beginTime= beginTime;
-        this.lastUpdateTime= lastUpdateTime;  
+        this.lastUpdateTime= lastUpdateTime;
     }
 
     public StageInstanceId getCid() {
@@ -65,7 +68,7 @@ public class StageInstance implements java.io.Serializable {
     public void setCid(StageInstanceId id) {
         this.cid = id;
     }
-  
+
     public Long getFlowInstId() {
         if(this.cid==null)
             this.cid = new StageInstanceId();
@@ -77,7 +80,7 @@ public class StageInstance implements java.io.Serializable {
             this.cid = new StageInstanceId();
         this.cid.setFlowInstId(flowInstId);
     }
-  
+
     public Long getStageId() {
         if(this.cid==null)
             this.cid = new StageInstanceId();
@@ -94,11 +97,11 @@ public class StageInstance implements java.io.Serializable {
     public String getStageCode() {
         return this.stageCode;
     }
-    
+
     public void setStageCode(String stageCode) {
         this.stageCode = stageCode;
     }
-    
+
     public Long getPromiseTime() {
         return this.promiseTime;
     }
@@ -114,7 +117,7 @@ public class StageInstance implements java.io.Serializable {
     public void setPromiseTime(Long promiseTime) {
         this.promiseTime = promiseTime;
     }
-  
+
     public Long getTimeLimit() {
         return this.timeLimit;
     }
@@ -130,7 +133,7 @@ public class StageInstance implements java.io.Serializable {
     public void setTimeLimit(Long timeLimit) {
         this.timeLimit = timeLimit;
     }
-  
+
     public String getStageBegin() {
         return stageBegin;
     }
@@ -155,7 +158,7 @@ public class StageInstance implements java.io.Serializable {
     public void setStageName(String stageName) {
         this.stageName = stageName;
     }
-    
+
     public void copy(StageInstance other){
         this.setFlowInstId(other.getFlowInstId());
         this.setStageId(other.getStageId());
@@ -165,7 +168,7 @@ public class StageInstance implements java.io.Serializable {
 
         this.stageBegin= other.getStageBegin();
         this.beginTime=  other.getBeginTime();
-        this.lastUpdateTime= other.getLastUpdateTime();  
+        this.lastUpdateTime= other.getLastUpdateTime();
     }
 
     public void copyNotNullProperty(StageInstance other){
@@ -195,7 +198,7 @@ public class StageInstance implements java.io.Serializable {
         this.timeLimit= null;
         this.stageBegin= "0";
         this.beginTime=  null;
-        this.lastUpdateTime= null;  
+        this.lastUpdateTime= null;
     }
-    
+
 }
