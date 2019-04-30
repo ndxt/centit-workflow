@@ -141,6 +141,25 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/saveFlowVariable", paramMap);
     }
 
+    /**
+     * TODO: 郭锐这个后台没有喜好,和上面的方法一样,但是这个 varValue 要能够传set
+     * 所以以用应该有四个方法,后台接口可以是两个,因为string 可以转换为一个元素的set传到后台
+     * fixit:
+     * @param nodeInstId
+     * @param varName
+     * @param varValue SET &lt;String&gt;
+     * @throws Exception
+     */
+    @Override
+    public void saveFlowNodeVariable(long nodeInstId, String varName, String varValue) throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("nodeInstId", nodeInstId);
+        paramMap.put("varName", varName);
+        paramMap.put("varValue", varValue);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/saveFlowNodeVariable", paramMap);
+    }
+
     @Override
     public void assignFlowWorkTeam(long flowInstId, String roleCode, List<String> userCodes) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();

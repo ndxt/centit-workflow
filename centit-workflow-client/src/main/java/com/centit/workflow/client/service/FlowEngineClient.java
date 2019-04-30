@@ -170,6 +170,15 @@ public interface FlowEngineClient {
      * @param sValue
      */
     void saveFlowVariable(long flowInstId, String sVar, String sValue) throws Exception;
+
+    /**
+     * 设置流程节点变量
+     * @param nodeInstId
+     * @param sVar
+     * @param sValue
+     */
+    void saveFlowNodeVariable(long nodeInstId, String sVar, String sValue) throws Exception;
+
     /**
      * 查询某个流程变量
      * @param flowInstId
