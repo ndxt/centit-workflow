@@ -66,28 +66,28 @@ public class FlowInfo implements java.io.Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date  atPublishDate;
 
-    @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowStage.class)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowStage.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version")
     })
     private List<FlowStage> flowStages;// new ArrayList<WfFlowStage>();
 
-    @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowTeamRole.class)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowTeamRole.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version")
     })
     private List<FlowTeamRole> flowTeamRoles;// new ArrayList<WfFlowStage>();
 
-    @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowVariableDefine.class)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowVariableDefine.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version"),
     })
     private List<FlowVariableDefine> flowVariableDefines;// new ArrayList<WfFlowStage>();
 
-    @OneToMany(mappedBy = "flowDefine",  cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInfo.class)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInfo.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version")
@@ -111,7 +111,7 @@ public class FlowInfo implements java.io.Serializable {
         this.flowVariableDefines = flowVariableDefines;
     }
 
-    @OneToMany(mappedBy = "flowDefine", cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowTransition.class)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowTransition.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version")
