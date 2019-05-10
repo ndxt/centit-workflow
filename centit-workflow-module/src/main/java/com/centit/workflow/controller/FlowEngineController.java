@@ -15,8 +15,7 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +41,6 @@ public class FlowEngineController extends BaseController {
     private Map<Class<?>, String[]> excludes;
 
 
-    @ApiOperation(value = "创建流程", notes = "创建流程，锁定首节点")
     @WrapUpResponseBody
     @PostMapping(value = "/createInstanceLockFirstNode")
     public FlowInstance createInstanceLockFirstNode(@RequestBody FlowInstance flowInstanceParam) {
@@ -65,6 +63,9 @@ public class FlowEngineController extends BaseController {
     }
 
     @ApiOperation(value = "提交节点", notes = "提交节点")
+    @ApiImplicitParam(name = "json" ,value="{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}", paramType = "body",examples = @Example({
+        @ExampleProperty(value = "{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}", mediaType = "application/json")
+    }))
     @WrapUpResponseBody
     @PostMapping(value = "submitOpt")
     public ResponseData submitOpt(@RequestBody String json) {

@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 
 @Entity
 @Table(name="WF_RUNTIME_WARNING")
@@ -14,7 +14,7 @@ public class FlowWarning implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
     @Id
     @Column(name = "WARNING_ID")
-    @GeneratedValue(generator = "assignedGenerator")
+    //@GeneratedValue(generator = "assignedGenerator")
     //@GenericGenerator(name = "assignedGenerator", strategy = "assigned")
     private Long warningId;
     @Column(name="NODE_INST_ID")
@@ -104,7 +104,7 @@ public class FlowWarning implements java.io.Serializable {
     public void setNoticeState(String noticeState) {
         this.noticeState = noticeState;
     }
-  
+
     public Long getWarningid() {
         return this.warningId;
     }
@@ -113,7 +113,7 @@ public class FlowWarning implements java.io.Serializable {
         this.warningId = warningid;
     }
     // Property accessors
-  
+
     public Long getNodeInstId() {
         return this.nodeInstId;
     }
@@ -121,7 +121,7 @@ public class FlowWarning implements java.io.Serializable {
     public void setNodeInstId(Long nodeInstId) {
         this.nodeInstId = nodeInstId;
     }
-  
+
     public Long getFlowInstId() {
         return this.flowInstId;
     }
@@ -129,7 +129,7 @@ public class FlowWarning implements java.io.Serializable {
     public void setFlowInstId(Long flowInstId) {
         this.flowInstId = flowInstId;
     }
-  
+
     public String getFlowStage() {
         return this.flowStage;
     }
@@ -151,7 +151,7 @@ public class FlowWarning implements java.io.Serializable {
     public void setWarningType(String warningType) {
         this.warningType = warningType;
     }
-  
+
     public String getWarningCode() {
         return this.warningCode;
     }
@@ -159,7 +159,7 @@ public class FlowWarning implements java.io.Serializable {
     public void setWarningCode(String warningCode) {
         this.warningCode = warningCode;
     }
-  
+
     public Date getWarningTime() {
         return this.warningTime;
     }
@@ -167,7 +167,7 @@ public class FlowWarning implements java.io.Serializable {
     public void setWarningTime(Date warningTime) {
         this.warningTime = warningTime;
     }
-  
+
     /**
      * D 摘牌 C 纠正 F 督办 N 未处理
      */
@@ -182,7 +182,7 @@ public class FlowWarning implements java.io.Serializable {
     public void setWarningState(String warningState) {
         this.warningState = warningState;
     }
-  
+
     public String getWarningidMsg() {
         return this.warningidMsg;
     }
@@ -190,7 +190,7 @@ public class FlowWarning implements java.io.Serializable {
     public void setWarningidMsg(String warningidMsg) {
         this.warningidMsg = warningidMsg;
     }
-  
+
     public Date getSendMsgTime() {
         return this.sendMsgTime;
     }
@@ -198,7 +198,7 @@ public class FlowWarning implements java.io.Serializable {
     public void setSendMsgTime(Date sendMsgTime) {
         this.sendMsgTime = sendMsgTime;
     }
-  
+
     public String getSendUsers() {
         return this.sendUsers;
     }
@@ -210,9 +210,9 @@ public class FlowWarning implements java.io.Serializable {
 
 
     public void copy(FlowWarning other){
-  
+
         this.setWarningid(other.getWarningid());
-  
+
         this.nodeInstId= other.getNodeInstId();
         this.flowInstId= other.getFlowInstId();
         this.flowStage= other.getFlowStage();
@@ -227,10 +227,10 @@ public class FlowWarning implements java.io.Serializable {
     }
 
     public void copyNotNullProperty(FlowWarning other){
-  
+
     if( other.getWarningid() != null)
         this.setWarningid(other.getWarningid());
-  
+
         if( other.getNodeInstId() != null)
             this.nodeInstId= other.getNodeInstId();
         if( other.getFlowInstId() != null)
@@ -255,7 +255,7 @@ public class FlowWarning implements java.io.Serializable {
     }
 
     public void clearProperties(){
-  
+
         this.nodeInstId= null;
         this.flowInstId= null;
         this.flowStage= null;
@@ -268,5 +268,5 @@ public class FlowWarning implements java.io.Serializable {
         this.sendUsers= null;
 
     }
-  
+
 }

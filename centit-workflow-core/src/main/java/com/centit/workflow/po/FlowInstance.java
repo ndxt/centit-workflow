@@ -22,7 +22,7 @@ public class FlowInstance implements java.io.Serializable {
 
     @Id
     @Column(name = "FLOW_INST_ID")
-    @GeneratedValue(generator = "assignedGenerator")
+    //@GeneratedValue(generator = "assignedGenerator")
     private Long flowInstId;
 
     @ManyToOne

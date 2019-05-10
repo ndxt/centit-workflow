@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 @Entity
 @Table(name="WF_MANAGE_ACTION")
 public class ManageActionLog implements java.io.Serializable {
@@ -14,7 +14,7 @@ public class ManageActionLog implements java.io.Serializable {
 
     @Id
     @Column(name = "ACTION_ID")
-    @GeneratedValue(generator = "assignedGenerator")
+    //@GeneratedValue(generator = "assignedGenerator")
     //@GenericGenerator(name = "assignedGenerator", strategy = "assigned")
     private Long actionId;
 
@@ -69,7 +69,7 @@ public class ManageActionLog implements java.io.Serializable {
     }
 
 
-  
+
     public Long getActionId() {
         return this.actionId;
     }
@@ -78,7 +78,7 @@ public class ManageActionLog implements java.io.Serializable {
         this.actionId = actionid;
     }
     // Property accessors
-  
+
     public Long getFlowInstId() {
         return this.flowInstId;
     }
@@ -86,19 +86,19 @@ public class ManageActionLog implements java.io.Serializable {
     public void setFlowInstId(Long wfinstid) {
         this.flowInstId = wfinstid;
     }
-  
+
     public Long getNodeInstId() {
         return nodeInstId;
     }
     public void setNodeInstId(Long nodeinstid) {
         this.nodeInstId = nodeinstid;
     }
-    
+
     /**
      *  @return actionType 对流程操作用大写字母，对节点管理操作用小写字母
      *             S s: 状态变更， 超时唤醒、 使失效、 使一个正常的节点变为游离状态 、 是游离节点失效
      *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点
-     *             R r: 流转管理，包括  强行回退  、强行提交   
+     *             R r: 流转管理，包括  强行回退  、强行提交
      *             T t: 期限管理 、 设置期限
      *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
      *             U u: 变更属性
@@ -112,7 +112,7 @@ public class ManageActionLog implements java.io.Serializable {
      *  @param actiontype 对流程操作用大写字母，对节点管理操作用小写字母
      *             S s: 状态变更， 超时唤醒、 使失效、 使一个正常的节点变为游离状态 、 是游离节点失效
      *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点
-     *             R r: 流转管理，包括  强行回退  、强行提交   
+     *             R r: 流转管理，包括  强行回退  、强行提交
      *             T t: 期限管理 、 设置期限
      *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
      *             U u: 变更属性
@@ -120,7 +120,7 @@ public class ManageActionLog implements java.io.Serializable {
     public void setActionType(String actiontype) {
         this.actionType = actiontype;
     }
-  
+
     public Date getActionTime() {
         return this.actionTime;
     }
@@ -128,7 +128,7 @@ public class ManageActionLog implements java.io.Serializable {
     public void setActionTime(Date actiontime) {
         this.actionTime = actiontime;
     }
-  
+
     public String getUserCode() {
         return this.userCode;
     }
@@ -136,7 +136,7 @@ public class ManageActionLog implements java.io.Serializable {
     public void setUserCode(String usercode) {
         this.userCode = usercode;
     }
-  
+
     public String getRoleType() {
         return this.roleType;
     }
@@ -144,7 +144,7 @@ public class ManageActionLog implements java.io.Serializable {
     public void setRoleType(String roletype) {
         this.roleType = roletype;
     }
-  
+
     public String getRoleCode() {
         return this.roleCode;
     }
@@ -152,7 +152,7 @@ public class ManageActionLog implements java.io.Serializable {
     public void setRoleCode(String rolecode) {
         this.roleCode = rolecode;
     }
-  
+
     public String getAdminDesc() {
         return this.adminDesc;
     }
@@ -164,9 +164,9 @@ public class ManageActionLog implements java.io.Serializable {
 
 
     public void copy(ManageActionLog other){
-  
+
         this.setActionId(other.getActionId());
-  
+
         this.flowInstId = other.getFlowInstId();
         this.actionType = other.getActionType();
         this.actionTime = other.getActionTime();
@@ -178,10 +178,10 @@ public class ManageActionLog implements java.io.Serializable {
     }
 
     public void copyNotNullProperty(ManageActionLog other){
-  
+
     if( other.getActionId() != null)
         this.setActionId(other.getActionId());
-  
+
         if( other.getFlowInstId() != null)
             this.flowInstId = other.getFlowInstId();
         if( other.getActionType() != null)

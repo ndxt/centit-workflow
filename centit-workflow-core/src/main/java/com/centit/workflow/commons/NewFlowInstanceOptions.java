@@ -1,5 +1,8 @@
 package com.centit.workflow.commons;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Map;
 
 /**
@@ -11,47 +14,58 @@ public class NewFlowInstanceOptions {
     /**
      * 流程代码
      */
+    @ApiModelProperty(value = "流程定义Code",required = true)
     private String flowCode;
     /**
      * 流程版本号 如果=0 表示用最新版本，
      */
+    @ApiModelProperty("流程版本,可为空")
     private long version;
     /**
      * 流程实例对应的业务名称，用于流程查看式显示
      */
+    @ApiModelProperty(value = "流程名称",required = true)
     private String flowOptName;
     /**
      * 流程实例对应的业务主键，用于反向关联
      */
+    @ApiModelProperty(value ="流程对应的业务id",required = true)
     private String flowOptTag;
     /**
      * 创建流程用户
      */
+    @ApiModelProperty(value ="创建流程用户",required = true)
     private String userCode;
     /**
      * 流程归属单位（机构）
      */
+    @ApiModelProperty(value ="流程所属部门，可用创建流程用户的部门",required = true)
     private String unitCode;
     /**
      * 作为子流程创建式，对应的父流程节点
      */
+    @ApiModelProperty("不填")
     private long nodeInstId;
     /**
      * 作为子流程创建式，对应的父流程
      */
+    @ApiModelProperty("不填")
     private long flowInstid;
     /**
      * 业务变量数据
      */
+    @ApiModelProperty(value = "不填")
     private Map<String,Object> variables ;
     /**
      * 流程首节点是否只能有创建人操作（一般 报销、请假的首节点都是只能由发起人修改）
      */
+    @ApiModelProperty("流程首节点是否只能有创建人操作，如果首节点是办件角色的话可以为true，其余不填")
     private boolean lockFirstOpt;
 
     /**
      * 设置流程时限
      */
+    @ApiModelProperty("设置流程时限，格式为3D4H30M这样的")
     private String timeLimitStr;
 
     public NewFlowInstanceOptions() {
