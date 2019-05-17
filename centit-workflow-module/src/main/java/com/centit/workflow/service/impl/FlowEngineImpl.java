@@ -243,7 +243,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInst.setUserCode(userCode);
             nodeInst.setTaskAssigned("S");
         } else {
-            Set<String> optUsers = null;
+            Set<String> optUsers = new HashSet<>();
             if (SysUserFilterEngine.ROLE_TYPE_ENGINE.equalsIgnoreCase(node.getRoleType())) {
                 //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色
                 //根据权限表达式创建任务列表
@@ -258,12 +258,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (optUsers == null || optUsers.size() == 0)
                     logger.error("权限引擎没有识别出符合表达式的操作人员！");
             } else if ("bj".equalsIgnoreCase(node.getRoleType())) {
-                optUsers = new HashSet<>();
                 List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(nodeInst.getFlowInstId(), node.getRoleCode());
                 for (FlowWorkTeam u : users) {
                     optUsers.add(u.getUserCode());
                 }
-            } else/*gw xz*/ {
+                if (optUsers.isEmpty()) {
+                    optUsers.add(userCode);
+                }
+            } else {
+                /*gw xz*/
                 optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(userUnitFilterCalcContext,
                     node.getRoleType(), node.getRoleCode(), nextNodeUnit);
             }
@@ -275,8 +278,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nodeInst.setUserCode(optUsers.iterator().next());
             } else {
                 if (!"D".equals(node.getOptType()) && !"E".equals(node.getOptType())) {
-                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
-                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
+                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到权限为" + node.getRoleCode() + "的操作人员");
+                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到权限为" + node.getRoleCode() + "的操作人员");
                 }
             }
 
@@ -975,8 +978,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nextNodeInst.setUserCode(optUsers.iterator().next());
             else {
                 if (!"D".equals(nextOptNode.getOptType()) && !"E".equals(nextOptNode.getOptType())) {
-                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到操作人员");
-                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到操作人员");
+                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员");
+                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员");
                 }
             }
 

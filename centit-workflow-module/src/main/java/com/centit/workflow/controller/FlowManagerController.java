@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.model.basedata.IUserInfo;
@@ -55,7 +56,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     public void list(String[] field, PageDesc pageDesc,
                      HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> searchColumn = collectRequestParameters(request);
+        Map<String, Object> searchColumn = convertSearchColumn(request);
         JSONArray listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
         resData.addResponseData(OBJLIST, listObjects);
         resData.addResponseData(PAGE_DESC, pageDesc);
@@ -201,7 +202,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/assign/{nodeInstId}", method = RequestMethod.POST)
     public void assign(@PathVariable Long nodeInstId, ActionTask actionTask, HttpServletRequest request, HttpServletResponse response) {
         flowManager.assignTask(nodeInstId,
-            actionTask.getUserCode(), super.getLoginUserCode(request),
+            actionTask.getUserCode(), WebOptUtils.getCurrentUserCode(request),
             actionTask.getExpireTime(), actionTask.getAuthDesc());
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -213,7 +214,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/disableTask/{taskId}", method = RequestMethod.POST)
     public void disableTask(@PathVariable Long taskId, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.disableTask(taskId, super.getLoginUserCode(request));
+        flowManager.disableTask(taskId, WebOptUtils.getCurrentUserCode(request));
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -224,7 +225,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/deleteTask/{taskId}", method = RequestMethod.POST)
     public void deleteTask(@PathVariable Long taskId, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.deleteTask(taskId, super.getLoginUserCode(request));
+        flowManager.deleteTask(taskId, WebOptUtils.getCurrentUserCode(request));
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -376,7 +377,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/suspendinst/{wfinstid}", method = RequestMethod.GET)
     public void suspendInstance(@PathVariable Long wfinstid, HttpServletRequest request, HttpServletResponse response) {
-        String mangerUserCode = super.getLoginUserCode(request);
+        String mangerUserCode = WebOptUtils.getCurrentUserCode(request);
         String admindesc = request.getParameter("stopDesc");
         flowManager.suspendInstance(wfinstid, mangerUserCode, admindesc);
         JsonResultUtils.writeSingleDataJson("已暂挂", response);
@@ -392,7 +393,7 @@ public class FlowManagerController extends BaseController {
      */
     @PutMapping(value = "/changeunit/{wfinstid}/{unitcode}")
     public void changeUnit(@PathVariable Long wfinstid, @PathVariable String unitcode, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.updateFlowInstUnit(wfinstid, unitcode, super.getLoginUserCode(request));
+        flowManager.updateFlowInstUnit(wfinstid, unitcode, WebOptUtils.getCurrentUserCode(request));
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -407,7 +408,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/stopinst/{flowInstId}", method = RequestMethod.GET)
     public void stopInstance(@PathVariable Long flowInstId, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.stopInstance(flowInstId, super.getLoginUserCode(request), "");
+        flowManager.stopInstance(flowInstId, WebOptUtils.getCurrentUserCode(request), "");
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -420,7 +421,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/activizeinst/{flowInstId}", method = RequestMethod.GET)
     public void activizeInstance(@PathVariable Long flowInstId, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.activizeInstance(flowInstId, super.getLoginUserCode(request), "");
+        flowManager.activizeInstance(flowInstId, WebOptUtils.getCurrentUserCode(request), "");
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -443,16 +444,16 @@ public class FlowManagerController extends BaseController {
     public void changeFlowInstState(@PathVariable Long nodeInstId, HttpServletRequest request, @PathVariable String bo, HttpServletResponse response) {
         switch (bo.charAt(0)) {
             case '1':
-                flowEng.rollbackOpt(nodeInstId, super.getLoginUserCode(request));
+                flowEng.rollbackOpt(nodeInstId, WebOptUtils.getCurrentUserCode(request));
                 break;//这儿必须有break，不然会继续往后执行的。
             case '2':
-                flowManager.forceCommit(nodeInstId, super.getLoginUserCode(request));
+                flowManager.forceCommit(nodeInstId, WebOptUtils.getCurrentUserCode(request));
                 break;
             case '3':
-                flowManager.forceDissociateRuning(nodeInstId, super.getLoginUserCode(request));
+                flowManager.forceDissociateRuning(nodeInstId, WebOptUtils.getCurrentUserCode(request));
                 break;
             case '6':
-                String mangerUserCode = super.getLoginUserCode(request);
+                String mangerUserCode = WebOptUtils.getCurrentUserCode(request);
                 String timeLimit = request.getParameter("timeLimit");
                 if (timeLimit != null) {
                     flowManager.activizeInstance(nodeInstId, timeLimit,
@@ -462,10 +463,10 @@ public class FlowManagerController extends BaseController {
                 }
                 break;
             case '7':
-                flowManager.resetFlowToThisNode(nodeInstId, super.getLoginUserCode(request));
+                flowManager.resetFlowToThisNode(nodeInstId, WebOptUtils.getCurrentUserCode(request));
                 break;
             case '8':
-                flowManager.suspendNodeInstance(nodeInstId, super.getLoginUserCode(request));
+                flowManager.suspendNodeInstance(nodeInstId, WebOptUtils.getCurrentUserCode(request));
                 break;
 
         }
@@ -482,7 +483,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.GET)
     public void resetToCurrent(@PathVariable Long nodeInstId, HttpServletRequest request, HttpServletResponse response) {
-        CentitUserDetails user = getLoginUser(request);
+        CentitUserDetails user = (CentitUserDetails)WebOptUtils.getLoginUser(request);
         flowManager.resetFlowToThisNode(nodeInstId, user.getUserCode());
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -670,7 +671,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/myflowinsts", method = RequestMethod.GET)
     public void listUserAttach(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> filterMap = convertSearchColumn(request);
-        String loginUserCode = super.getLoginUserCode(request);
+        String loginUserCode = WebOptUtils.getCurrentUserCode(request);
         //如果带参数oper,则为过滤当前用户流程，包括在办的或者完成的.
         if (filterMap.get("oper") != null) {
             //办结事项
@@ -702,7 +703,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/relatedflowinsts", method = RequestMethod.GET)
     public void listUserFlow(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> filterMap = convertSearchColumn(request);
-        String loginUserCode = super.getLoginUserCode(request);
+        String loginUserCode = WebOptUtils.getCurrentUserCode(request);
         //如果带参数oper,则为过滤当前用户流程，包括在办的或者完成的
         if (filterMap.get("oper") != null) {
             //办结事项

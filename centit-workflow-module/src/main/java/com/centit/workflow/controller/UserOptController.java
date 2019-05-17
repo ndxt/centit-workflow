@@ -2,6 +2,7 @@ package com.centit.workflow.controller;
 
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.model.adapter.PlatformEnvironment;
@@ -71,7 +72,7 @@ public class UserOptController extends BaseController{
      */
     @RequestMapping(value="/loginuser",method={RequestMethod.GET})
     public void getLoginUserCode(HttpServletResponse response,HttpServletRequest request){
-        String userCode=super.getLoginUserCode(request);
+        String userCode=WebOptUtils.getCurrentUserCode(request);
         IUserUnit primaryUnit=CodeRepositoryUtil.getUserPrimaryUnit(userCode);
         IUserInfo userDetails =  CodeRepositoryUtil.getUserInfoByCode(userCode);
         excludes  =new HashMap<Class<?>, String[]>();
@@ -93,7 +94,7 @@ public class UserOptController extends BaseController{
      */
     @RequestMapping(value="/userunits",method={RequestMethod.GET})
     public void getSysUserUnitsList(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        String usercode=super.getLoginUserCode(request);
+        String usercode=WebOptUtils.getCurrentUserCode(request);
         List<? extends IUserUnit> userUnitList =  CodeRepositoryUtil.listUserUnits(usercode);
         excludes  =new HashMap<Class<?>, String[]>();
         excludes.put(IUserInfo.class,new String[]{"userUnits","userRoles"});
@@ -111,7 +112,7 @@ public class UserOptController extends BaseController{
      */
     @RequestMapping(value="/usertasks",method={RequestMethod.GET})
     public void getSysUserTasksList(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        String usercode=super.getLoginUserCode(request);
+        String usercode=WebOptUtils.getCurrentUserCode(request);
         List<UserTask> taskList=flowEng.listUserTasks(usercode, pageDesc);
         resData = new ResponseMapData();
         resData.addResponseData("objList", taskList);
@@ -191,7 +192,7 @@ public class UserOptController extends BaseController{
      */
     @RequestMapping(value="/getrelegates",method={RequestMethod.GET})
     public void getRelegateListByLoginUser(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        String usercode = super.getLoginUserCode(request);
+        String usercode = WebOptUtils.getCurrentUserCode(request);
         List<RoleRelegate> relegateList=flowManager.listRoleRelegateByUser(usercode);
         resData = new ResponseMapData();
         resData.addResponseData("objList", relegateList);
@@ -222,7 +223,7 @@ public class UserOptController extends BaseController{
      */
     @RequestMapping(value="/setrelegates",method={RequestMethod.GET})
     public void getRelegateSetListByLoginUser(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        String usercode = super.getLoginUserCode(request);
+        String usercode = WebOptUtils.getCurrentUserCode(request);
         List<RoleRelegate> relegateList=flowManager.listRoleRelegateByGrantor(usercode);
         resData = new ResponseMapData();
         resData.addResponseData("objList", relegateList);
@@ -253,7 +254,7 @@ public class UserOptController extends BaseController{
     @RequestMapping(value="/alignrelegate/{relegateno}/{userCode}",method={RequestMethod.PUT})
     public void saveRelegate1(@PathVariable Long relegateno,@PathVariable String userCode,HttpServletRequest request,HttpServletResponse response){
         RoleRelegate re=flowManager.getRoleRelegateById(relegateno);
-        re.setGrantor(super.getLoginUserCode(request));
+        re.setGrantor(WebOptUtils.getCurrentUserCode(request));
         re.setGrantee(userCode);
         flowManager.saveRoleRelegate(re);
         JsonResultUtils.writeSingleDataJson(re,response);
@@ -281,7 +282,7 @@ public class UserOptController extends BaseController{
      */
     @RequestMapping(value = "/getAttentions/{instState}",method = RequestMethod.GET)
     public void getAttentionsByLoginUser(@PathVariable String instState,HttpServletResponse response,HttpServletRequest request){
-        String userCode=super.getLoginUserCode(request);
+        String userCode=WebOptUtils.getCurrentUserCode(request);
         List<FlowInstance> flowInstances = flowEng.viewAttentionFLowInstance(userCode,instState);
         JsonResultUtils.writeSingleDataJson(flowInstances,response);
     }
@@ -293,7 +294,7 @@ public class UserOptController extends BaseController{
      */
     @RequestMapping(value = "/getAttentionsByOptName/{instState}",method = RequestMethod.GET)
     public void getAttentionsByLoginUserAndOptName(String flowOptName,@PathVariable String instState,HttpServletRequest request,HttpServletResponse response){
-        String userCode=super.getLoginUserCode(request);
+        String userCode= WebOptUtils.getCurrentUserCode(request);
         List<FlowInstance> flowInstances = flowEng.viewAttentionFLowInstanceByOptName(flowOptName,userCode,instState);
         JsonResultUtils.writeSingleDataJson(flowInstances,response);
     }
