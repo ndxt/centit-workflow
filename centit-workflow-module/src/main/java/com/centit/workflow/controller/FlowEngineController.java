@@ -63,7 +63,7 @@ public class FlowEngineController extends BaseController {
     }
 
     @ApiOperation(value = "提交节点", notes = "提交节点")
-    @ApiImplicitParam(name = "json" ,value="{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}", paramType = "body",examples = @Example({
+    @ApiImplicitParam(name = "json", value = "{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}", paramType = "body", examples = @Example({
         @ExampleProperty(value = "{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}", mediaType = "application/json")
     }))
     @WrapUpResponseBody
@@ -75,7 +75,7 @@ public class FlowEngineController extends BaseController {
         String unitCode = jsonObject.getString("unitCode");
         String varTrans = jsonObject.getString("varTrans");
         try {
-            Set<Long> nextNodes =new HashSet<>();
+            Set<Long> nextNodes = new HashSet<>();
             if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
                 Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
                 nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);
@@ -84,7 +84,7 @@ public class FlowEngineController extends BaseController {
             }
             return ResponseData.makeResponseData(nextNodes);
         } catch (WorkflowException e) {
-            return ResponseData.makeErrorMessage(e.getExceptionType(),e.getMessage());
+            return ResponseData.makeErrorMessage(e.getExceptionType(), e.getMessage());
         }
     }
 
@@ -92,7 +92,9 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @PostMapping(value = "/saveFlowVariable")
     public void saveFlowVariable(@RequestBody FlowVariable flowVariableParam) {
-        flowEng.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), flowVariableParam.getVarValue());
+        List<String> vars = JSON.parseArray(flowVariableParam.getVarValue(), String.class);
+        if (!vars.isEmpty())
+            flowEng.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), new HashSet<>(vars));
     }
 
     @ApiOperation(value = "删除流程变量", notes = "删除流程变量")
@@ -100,6 +102,18 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/deleteFlowVariable")
     public void deleteFlowVariable(@RequestBody FlowVariable flowVariableParam) {
         flowEng.deleteFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getRunToken(), flowVariableParam.getVarName());
+    }
+
+    @ApiOperation(value = "保存流程节点变量", notes = "保存流程节点变量")
+    @WrapUpResponseBody
+    @PostMapping(value = "/saveFlowNodeVariable")
+    public void saveFlowNodeVariable(@RequestBody String FlowNodeVariable) {
+        JSONObject jsonObject = JSON.parseObject(FlowNodeVariable);
+        long nodeInstId = jsonObject.getLong("nodeInstId");
+        String varName = jsonObject.getString("varName");
+        String varValue = jsonObject.getString("varValue");
+        List<String> vars = JSON.parseArray(varValue, String.class);
+        flowEng.saveFlowNodeVariable(nodeInstId, varName, new HashSet<>(vars));
     }
 
     @ApiOperation(value = "查看流程变量", notes = "查看流程变量")
@@ -111,22 +125,17 @@ public class FlowEngineController extends BaseController {
     }
 
     /**
-     * 兼容老业务模块，支持新增多个办件角色
-     *
      * @param flowWorkTeam
-     * @ApiOperation(value = "新增多个办件角色", notes = "新增办件角色,userCode传一个数组或者一个list，格式为userCode:[\"1\",\"2\"]")
+     * @ApiOperation(value = "新增多个办件角色", notes = "新增办件角色,userCode传一个Stringlist，格式为userCode:[\"1\",\"2\"]")
      */
     @WrapUpResponseBody
     @PostMapping(value = "/assignFlowWorkTeam")
     public void assignFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
         String userCodeList = flowWorkTeam.getUserCode();
-        if (userCodeList == null || userCodeList.trim().length() == 0) {
+        if (StringUtils.isBlank(userCodeList)) {
             return;
         }
-        //替换形如["1","2"]的字符串，修改为形如"1,2"的字符串
-        String userCodeStr = StringUtils.strip(userCodeList, "[]").replaceAll("\"", "");
-        String[] userCodeArr = userCodeStr.split(",");
-        List<String> userCodes = new ArrayList<>(Arrays.asList(userCodeArr));
+        List<String> userCodes = JSON.parseArray(userCodeList, String.class);
         flowEng.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), userCodes);
     }
 
@@ -211,8 +220,6 @@ public class FlowEngineController extends BaseController {
     }
 
     /**
-     * 兼容老业务模块，支持新增多个流程机构
-     *
      * @param json
      * @ApiOperation(value = "新增多个流程机构", notes = "新增流程组织机构，多个组织orgCodeSet传一个数组或者一个list，格式为userCode:[\"1\",\"2\"]")
      */
@@ -223,10 +230,7 @@ public class FlowEngineController extends BaseController {
         Long flowInstId = jsonObject.getLong("flowInstId");
         String roleCode = jsonObject.getString("roleCode");
         String orgCodeSet = jsonObject.getString("orgCodeSet");
-        //替换形如["1","2"]的字符串，修改为形如"1,2"的字符串
-        String orgCodeStr = StringUtils.strip(orgCodeSet, "[]").replaceAll("\"", "");
-        String[] orgArr = orgCodeStr.split(",");
-        List<String> orgCodes = new ArrayList<>(Arrays.asList(orgArr));
+        List<String> orgCodes = JSON.parseArray(orgCodeSet, String.class);
         flowEng.assignFlowOrganize(flowInstId, roleCode, orgCodes);
     }
 
@@ -255,10 +259,7 @@ public class FlowEngineController extends BaseController {
         String userCodes = jsonObject.getString("userCodes");
         long nodeId = jsonObject.getLong("nodeId");
         String unitCode = jsonObject.getString("unitCode");
-        //替换形如["1","2"]的字符串，修改为形如"1,2"的字符串
-        String userCodeStr = StringUtils.strip(userCodes, "[]").replaceAll("\"", "");
-        String[] userArr = userCodeStr.split(",");
-        List<String> userList = new ArrayList<>(Arrays.asList(userArr));
+        List<String> userList = JSON.parseArray(userCodes, String.class);
         flowEng.createNodeInst(flowInstId, createUser, nodeId, userList, unitCode);
     }
 }

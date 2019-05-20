@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by chen_rj on 2017/7/28.
@@ -133,6 +131,12 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     @Override
     public void saveFlowVariable(long flowInstId, String varName, String varValue) throws Exception {
+        Set<String> vars= new HashSet<>(Arrays.asList(varValue));
+        saveFlowVariable(flowInstId,varName,vars);
+    }
+
+    @Override
+    public void saveFlowVariable(long flowInstId, String varName, Set<String> varValue) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("varName", varName);
@@ -142,9 +146,6 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     /**
-     * TODO: 郭锐这个后台没有喜好,和上面的方法一样,但是这个 varValue 要能够传set
-     * 所以以用应该有四个方法,后台接口可以是两个,因为string 可以转换为一个元素的set传到后台
-     * fixit:
      * @param nodeInstId
      * @param varName
      * @param varValue SET &lt;String&gt;
@@ -152,6 +153,18 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public void saveFlowNodeVariable(long nodeInstId, String varName, String varValue) throws Exception {
+        Set<String> vars= new HashSet<>(Arrays.asList(varValue));
+        saveFlowNodeVariable(nodeInstId,varName,vars);
+    }
+
+    /**
+     * @param nodeInstId
+     * @param varName
+     * @param varValue SET &lt;String&gt;
+     * @throws Exception
+     */
+    @Override
+    public void saveFlowNodeVariable(long nodeInstId, String varName, Set<String> varValue) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("varName", varName);

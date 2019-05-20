@@ -54,13 +54,13 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public void list(String[] field, PageDesc pageDesc,
+    public void list(PageDesc pageDesc,
                      HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> searchColumn = convertSearchColumn(request);
         JSONArray listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
         resData.addResponseData(OBJLIST, listObjects);
         resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response, JsonPropertyUtils.getIncludePropPreFilter(FlowInstance.class, field));
+        JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
 
     /**
