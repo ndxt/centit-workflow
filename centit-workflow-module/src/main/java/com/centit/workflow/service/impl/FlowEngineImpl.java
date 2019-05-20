@@ -2501,56 +2501,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public List<FlowVariable> listFlowVariables(long flowInstId) {
         List<FlowVariable> lv = flowVariableDao.listFlowVariables(flowInstId);
         if (lv == null)
-            lv = new ArrayList<FlowVariable>();
-        return new ArrayList<FlowVariable>(lv);
-    }
-
-    public void setFlowInstanceDao(FlowInstanceDao flowInstanceDao) {
-        this.flowInstanceDao = flowInstanceDao;
-    }
-
-    public void setNodeInstanceDao(NodeInstanceDao nodeInstanceDao) {
-        this.nodeInstanceDao = nodeInstanceDao;
-    }
-
-    public void setFlowNodeDao(NodeInfoDao flowNodeDao) {
-        this.flowNodeDao = flowNodeDao;
-    }
-
-    public void setFlowTransitionDao(FlowTransitionDao flowTransitionDao) {
-        this.flowTransitionDao = flowTransitionDao;
-    }
-
-    public void setActionTaskDao(ActionTaskDao actionTaskDao) {
-        this.actionTaskDao = actionTaskDao;
-    }
-
-    public void setActionLogDao(ActionLogDao actionLogDao) {
-        this.actionLogDao = actionLogDao;
-    }
-
-    public void setFlowDefDao(FlowInfoDao flowDefDao) {
-        this.flowDefDao = flowDefDao;
-    }
-
-    public void setFlowTeamDao(FlowWorkTeamDao flowTeamDao) {
-        this.flowTeamDao = flowTeamDao;
-    }
-
-    public void setFlowOrganizeDao(FlowOrganizeDao flowOrganizeDao) {
-        this.flowOrganizeDao = flowOrganizeDao;
-    }
-
-    public void setFlowVariableDao(FlowVariableDao flowVariableDao) {
-        this.flowVariableDao = flowVariableDao;
-    }
-
-    public void setFlowAttentionDao(InstAttentionDao flowAttentionDao) {
-        this.attentionDao = flowAttentionDao;
-    }
-
-    public void setRuntimeWarningDao(FlowWarningDao warningDao) {
-        this.runtimeWarningDao = warningDao;
+            lv = new ArrayList<>();
+        return lv;
     }
 
     @Override
