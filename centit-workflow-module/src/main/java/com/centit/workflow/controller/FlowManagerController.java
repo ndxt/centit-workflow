@@ -58,7 +58,8 @@ public class FlowManagerController extends BaseController {
                      HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> searchColumn = convertSearchColumn(request);
         JSONArray listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
-        resData.addResponseData(OBJLIST, listObjects);
+        List<FlowInstance> flowInstanceList=listObjects.toJavaList(FlowInstance.class);
+        resData.addResponseData(OBJLIST, flowInstanceList);
         resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
