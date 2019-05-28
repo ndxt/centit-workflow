@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -405,7 +406,10 @@ public class FlowDefineController extends BaseController {
     public void getDataMap(@PathVariable String flowcode, HttpServletResponse response) {
         Map<String, Map<String, String>> map = modelData.listAllRole();
         //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
-        map.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, flowDef.getRoleMapByFlowCode(flowcode, 0L));
+        Map<String, String> bjMap=new LinkedHashMap<>();
+        bjMap.put("","请选择");
+        bjMap.putAll(flowDef.getRoleMapByFlowCode(flowcode, 0L));
+        map.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, bjMap);
         // 分配机制
         Map<String, String> map2 = modelData.listAllOptType();
         map.put("OptType", map2);

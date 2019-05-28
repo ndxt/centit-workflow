@@ -2506,8 +2506,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void saveFlowAttention(long flowInstId, String attUser, String optUser) {
-        InstAttention attObj = new InstAttention(attUser, flowInstId, DatetimeOpt.currentUtilDate(), optUser);
+    public void saveFlowAttention(InstAttention attObj) {
+        attObj = new InstAttention(attObj.getUserCode(), attObj.getFlowInstId(), DatetimeOpt.currentUtilDate(), attObj.getAttSetUser(),attObj.getAttSetMemo());
         attentionDao.mergeObject(attObj);
     }
 

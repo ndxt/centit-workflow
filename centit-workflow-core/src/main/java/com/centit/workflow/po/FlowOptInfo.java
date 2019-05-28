@@ -31,6 +31,9 @@ public class FlowOptInfo implements java.io.Serializable {
     @Column(name = "UPDATE_DATE")
     private Date updateDate;
 
+    @Column(name = "VIEW_URL")
+    private String viewUrl;
+
     @Transient
     private List<FlowOptDef> wfOptDefs;
 
@@ -97,5 +100,13 @@ public class FlowOptInfo implements java.io.Serializable {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public String getViewUrl() {
+        return viewUrl;
+    }
+
+    public void setViewUrl(String viewUrl) {
+        this.viewUrl = viewUrl;
     }
 }

@@ -21,8 +21,9 @@
             <th data-options="field:'optId'" width="20%" sortable="true" align="center">编码</th>
             <th data-options="field:'optName'" width="30%" sortable="true">名称</th>
             <th data-options="field:'optUrl'" width="30%" sortable="true" align="center">opt_url</th>
-            <th data-options="field:'updateDate'" width="20%" sortable="true" formatterDate align="center">修改时间</th>
-            <!--<th data-options="field:'aaaa',formatter:optLink" width="20%" align="center">操作</th>-->
+            <th data-options="field:'viewUrl'" width="20%" sortable="true" align="center">已办url</th>
+            <th data-options="field:'updateDate'" width="20%" sortable="true" formatterDate="yyyy-MM-dd HH:mi:ss" align="center">修改时间</th>
+          <!--<th data-options="field:'aaaa',formatter:optLink" width="20%" align="center">操作</th>-->
         </tr>
         </thead>
     </table>
@@ -45,7 +46,7 @@
 
     <a rel="optinfo_all" iconCls="icon-base icon-base-gear"
        href="modules/wfopt/wfOptinfo-all.html?optId={{optId}}&optName={{optName}}&optUrl={{optUrl}}"
-       target="dialog" trigger="single" title="业务明细  {{optName}}" width="760" height="580">业务明细</a>
+       target="dialog" trigger="single" title="业务明细  {{optName}}" width="960" height="550">业务明细</a>
 </div>
 
 <script>

@@ -7,6 +7,7 @@ import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
+import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.framework.security.model.CentitUserDetails;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -20,10 +21,7 @@ import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -142,19 +140,21 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getorglist/{flowInstId}", method = RequestMethod.GET)
-    public void getOrganizeList(@PathVariable Long flowInstId, HttpServletResponse response) {
+    public void getOrganizeList(@PathVariable Long flowInstId,PageDesc pageDesc, HttpServletResponse response) {
         Map<String, List<String>> organizeMap = flowEng.viewFlowOrganize(flowInstId);
-        List<Map<String, String>> organizeList = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> organizeList = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : organizeMap.entrySet()) {
             for (String unitCode : entry.getValue()) {
-                HashMap<String, String> unitTempMap = new HashMap<String, String>();
+                HashMap<String, String> unitTempMap = new HashMap<>();
                 unitTempMap.put("roleCode", entry.getKey());
                 unitTempMap.put("unitCode", unitCode);
                 unitTempMap.put("unitName", CodeRepositoryUtil.getValue("unitcode", unitCode));
                 organizeList.add(unitTempMap);
             }
         }
+        pageDesc.setTotalRows(organizeList.size());
         resData.addResponseData(OBJLIST, organizeList);
+        resData.addResponseData(PAGE_DESC,pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
 
@@ -239,7 +239,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getteamlist/{flowInstId}", method = RequestMethod.GET)
-    public void getTeamList(@PathVariable Long flowInstId, HttpServletResponse response) {
+    public void getTeamList(@PathVariable Long flowInstId,PageDesc pageDesc, HttpServletResponse response) {
         Map<String, List<String>> teamMap = flowEng.viewFlowWorkTeam(flowInstId);
         List<Map<String, String>> teamList = new ArrayList<Map<String, String>>();
         for (Map.Entry<String, List<String>> entry : teamMap.entrySet()) {
@@ -253,6 +253,8 @@ public class FlowManagerController extends BaseController {
             }
         }
         resData.addResponseData(OBJLIST, teamList);
+        pageDesc.setTotalRows(teamList.size());
+        resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
 
@@ -289,9 +291,12 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getvariablelist/{flowInstId}", method = RequestMethod.GET)
-    public void getVariableList(@PathVariable Long flowInstId, HttpServletResponse response) {
+    public void getVariableList(@PathVariable Long flowInstId,PageDesc pageDesc, HttpServletResponse response) {
         List<FlowVariable> variableList = flowEng.listFlowVariables(flowInstId);
-        JsonResultUtils.writeSingleDataJson(variableList, response);
+        pageDesc.setTotalRows(variableList.size());
+        resData.addResponseData(PAGE_DESC, pageDesc);
+        resData.addResponseData(OBJLIST, variableList);
+        JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
 
 
@@ -758,12 +763,11 @@ public class FlowManagerController extends BaseController {
      * 新增流程关注
      *
      * @param instAttention
-     * @param response
      */
-    @RequestMapping(value = "/addAttention/{flowInstId}", method = RequestMethod.POST)
-    public void addAttention(@PathVariable long flowInstId, InstAttention instAttention, HttpServletResponse response) {
-        flowEng.saveFlowAttention(flowInstId, instAttention.getUserCode(), instAttention.getAttSetUser());
-        JsonResultUtils.writeBlankJson(response);
+    @WrapUpResponseBody
+    @RequestMapping(value = "/addAttention", method = RequestMethod.POST)
+    public void addAttention(@RequestBody InstAttention instAttention) {
+        flowEng.saveFlowAttention(instAttention);
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)

@@ -71,15 +71,6 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
         this.updateObject(flowInst);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
-    public FlowInstance getObjectCascadeById(long instid){
-        return jdbcTemplate.execute(
-            (ConnectionCallback<FlowInstance>) conn ->
-                OrmDaoUtils.getObjectCascadeById(conn, instid, FlowInstance.class));
-
-      /*FlowInstance flowInstance = super.getObjectById(instid);
-        return super.fetchObjectReferences(flowInstance);*/
-    }
     /**
      *  获取用户参与 流程实例 按照时间倒序排列
      * @param userCode 用户代码

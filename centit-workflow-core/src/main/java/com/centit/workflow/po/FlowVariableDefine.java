@@ -33,6 +33,7 @@ public class FlowVariableDefine implements Serializable {
     @Column(name = "VARIABLE_NAME")
     private String variableName;
     @Column(name = "VARIABLE_TYPE")
+    //E:集合 S:单个字符串
     private String variableType;
     @Column(name = "VARIABLE_ORDER")
     private Integer variableOrder;

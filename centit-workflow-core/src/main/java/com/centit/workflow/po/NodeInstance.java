@@ -1,5 +1,6 @@
 package com.centit.workflow.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.support.common.WorkTimeSpan;
 
 import javax.persistence.*;
@@ -29,8 +30,10 @@ public class NodeInstance implements java.io.Serializable {
     private Long nodeId;
 
     @Column(name="CREATE_TIME")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @Column(name="LAST_UPDATE_TIME")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date  lastUpdateTime;
     @Column(name="PREV_NODE_INST_ID")
     private Long prevNodeInstId;

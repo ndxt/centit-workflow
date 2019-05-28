@@ -112,11 +112,13 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
      */
     public Map<String, String> listAllOptCode(String flowCode, long version) {
         FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
-        FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
+        //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
         List<FlowOptDef> wfOptDefs = this.wfOptDefDao.listObjectsByProperty("optId", flowDef.getOptId());
         Map<String, String> optMap = new HashMap<>();
+        optMap.put("","请选择");
         for (FlowOptDef f : wfOptDefs) {
-            optMap.put(flowOptInfo.getOptUrl() + f.getOptMethod(), f.getOptName());
+            //optMap.put(flowOptInfo.getOptUrl() + f.getOptMethod(), f.getOptName());
+            optMap.put(f.getOptCode(),f.getOptName());
         }
         return optMap;
     }
@@ -135,14 +137,18 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
 
         Map<String, Map<String, String>> roleList = new HashMap<>();
 
-        Map<String, String> map1 = CodeRepositoryUtil.getLabelValueMap("StationType");
+        Map<String, String> map1 = new LinkedHashMap<>();
+        map1.put("","请选择");
+        map1.putAll(CodeRepositoryUtil.getLabelValueMap("StationType"));
         roleList.put(SysUserFilterEngine.ROLE_TYPE_GW.toLowerCase() /*"gw"*/, map1);
 
-        Map<String, String> map2 = CodeRepositoryUtil.getLabelValueMap("RankType");
+        Map<String, String> map2 = new LinkedHashMap<>();
+        map2.put("","请选择");
+        map2.putAll(CodeRepositoryUtil.getLabelValueMap("RankType"));
         roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ.toLowerCase() /*"xz"*/, map2);
 
-        Map<String, String> map3 = CodeRepositoryUtil.getLabelValueMap("FlowUserRole");
-        roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, map3);
+        /*Map<String, String> map3 = CodeRepositoryUtil.getLabelValueMap("FlowUserRole");
+        roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() *//*"bj"*//*, map3);*/
 
         return roleList;
     }

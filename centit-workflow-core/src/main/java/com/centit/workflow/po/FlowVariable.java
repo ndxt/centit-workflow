@@ -26,6 +26,7 @@ public class FlowVariable implements java.io.Serializable {
     @ApiModelProperty(value = "变量值", required = true)
     private String varValue;
     @Column(name = "VAR_TYPE")
+    //E:集合 S:单个字符串
     @ApiModelProperty(value = "变量类型")
     private String varType;
 
