@@ -43,12 +43,12 @@ public class FlowDefineController extends BaseController {
      */
     @ApiOperation(value = "流程定义列表", notes = "列出所有的流程定义列表")
     @GetMapping(value = "/listFlow")
-    public void listFlow(PageDesc pageDesc,HttpServletResponse response) {
+    public void listFlow(PageDesc pageDesc, HttpServletResponse response) {
         Map<String, Object> searchColumn = new HashMap<>();
         List<FlowInfo> listObjects = flowDef.listLastVersionFlow(searchColumn, pageDesc);
         resData.addResponseData(OBJLIST, listObjects);
         resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response, JsonPropertyUtils.getIncludePropPreFilter(FlowInfo.class,new String[]{"flowCode","flowName"}));
+        JsonResultUtils.writeResponseDataAsJson(resData, response, JsonPropertyUtils.getIncludePropPreFilter(FlowInfo.class, new String[]{"flowCode", "flowName"}));
     }
 
 
@@ -406,15 +406,17 @@ public class FlowDefineController extends BaseController {
     public void getDataMap(@PathVariable String flowcode, HttpServletResponse response) {
         Map<String, Map<String, String>> map = modelData.listAllRole();
         //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
-        Map<String, String> bjMap=new LinkedHashMap<>();
-        bjMap.put("","请选择");
+        Map<String, String> bjMap = new LinkedHashMap<>();
+        bjMap.put("", "请选择");
         bjMap.putAll(flowDef.getRoleMapByFlowCode(flowcode, 0L));
         map.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, bjMap);
         // 分配机制
         Map<String, String> map2 = modelData.listAllOptType();
         map.put("OptType", map2);
         // 操作定义
-        Map<String, String> map3 = modelData.listAllOptCode(flowcode);
+        Map<String, String> map3 = new LinkedHashMap<>();
+        map3.put("", "请选择");
+        map3.putAll(modelData.listAllOptCode(flowcode));
         map.put("OptCode", map3);
         // 子流程
         Map<String, String> map4 = modelData.listAllSubFlow();
