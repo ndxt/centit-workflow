@@ -39,24 +39,24 @@ public class FlowWarningDao extends BaseDaoImpl<FlowWarning,Long>
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowWarning> listFlowWarningByInst(Long flowInstId,
                                                    PageDesc pageDesc) {
-        return this.listObjectsByFilter("where flow_Inst_Id = ?",new Object[]{flowInstId},pageDesc);
+        return this.listObjectsByFilterAsJson("where flow_Inst_Id = ?",new Object[]{flowInstId},pageDesc).toJavaList(FlowWarning.class);
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowWarning> listFlowWarningByNodeInst(Long nodeInstId,
                                                        PageDesc pageDesc) {
-        return this.listObjectsByFilter("where node_Inst_Id = ?",new Object[]{nodeInstId},pageDesc);
+        return this.listObjectsByFilterAsJson("where node_Inst_Id = ?",new Object[]{nodeInstId},pageDesc).toJavaList(FlowWarning.class);
 
     }
 
- 
+
     public List<FlowWarning> listFlowWarningByWarningCode(String warningCode,
                                                           PageDesc pageDesc) {
-        return this.listObjectsByFilter("where warning_Code = ?",new Object[]{warningCode},pageDesc);
+        return this.listObjectsByFilterAsJson("where warning_Code = ?",new Object[]{warningCode},pageDesc).toJavaList(FlowWarning.class);
     }
-    
+
     public List<FlowWarning> listNeedNotifyWarning(){
         return this.listObjectsByFilter("where notice_State = '0'",new Object[]{});
     }
-    
+
 }

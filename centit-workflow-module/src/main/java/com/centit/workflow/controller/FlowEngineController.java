@@ -75,7 +75,7 @@ public class FlowEngineController extends BaseController {
         String unitCode = jsonObject.getString("unitCode");
         String varTrans = jsonObject.getString("varTrans");
         try {
-            Set<Long> nextNodes = new HashSet<>();
+            Set<Long> nextNodes ;
             if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
                 Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
                 nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);

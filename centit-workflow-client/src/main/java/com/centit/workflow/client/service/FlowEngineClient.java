@@ -33,9 +33,9 @@ public interface FlowEngineClient {
      * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
      * @param userCode 创建用户
      * @param unitCode 将流程指定一个所属机构
-     * @return  //FIXME ：这个地方应该返回结构化数据
+     * @return
      */
-    String createInstance(String flowCode, String flowOptName,
+    FlowInstance createInstance(String flowCode, String flowOptName,
                           String flowOptTag, String userCode, String unitCode) throws Exception;
 
     /**
@@ -48,7 +48,7 @@ public interface FlowEngineClient {
      * @param timeLimitStr 流程计时 默认单位为天，也可以手动设定为d\h\m
      * @return
      */
-    String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode,String timeLimitStr) throws Exception;
+    FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode,String timeLimitStr) throws Exception;
 
     /**
      * 创建流程实例 返回流程实例
@@ -60,7 +60,7 @@ public interface FlowEngineClient {
      * @param unitCode 将流程指定一个所属机构
      * @return //FIXME ：这个地方应该返回结构化数据
      */
-    String createInstance(String flowCode, long version, String flowOptName,
+    FlowInstance createInstance(String flowCode, long version, String flowOptName,
                           String flowOptTag, String userCode, String unitCode) throws Exception;
 
 
@@ -73,7 +73,7 @@ public interface FlowEngineClient {
      * @param unitCode 将流程指定一个所属机构
      * @return FlowInstance 流程实例
      */
-    String createInstanceLockFirstNode(String flowCode, String flowOptName,
+    FlowInstance createInstanceLockFirstNode(String flowCode, String flowOptName,
                                              String flowOptTag, String userCode, String unitCode) throws Exception;
 
 //   //--------------------提交流程业务节点-----------------------------------

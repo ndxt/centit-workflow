@@ -112,12 +112,12 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
      */
     public Map<String, String> listAllOptCode(String flowCode, long version) {
         FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
-        FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
+        //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
         List<FlowOptDef> wfOptDefs = this.wfOptDefDao.listObjectsByProperty("optId", flowDef.getOptId());
         Map<String, String> optMap = new HashMap<>();
         for (FlowOptDef f : wfOptDefs) {
-            optMap.put(flowOptInfo.getOptUrl() + f.getOptMethod(), f.getOptName());
-            //optMap.put(f.getOptCode(),f.getOptName());
+            //optMap.put(flowOptInfo.getOptUrl() + f.getOptMethod(), f.getOptName());
+            optMap.put(f.getOptCode(),f.getOptName());
         }
         return optMap;
     }

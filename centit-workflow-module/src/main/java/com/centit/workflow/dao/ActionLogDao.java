@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 /**
- * 
+ *
  * 流程日志操作类
- * 
+ *
  * @author ljy, codefan
  * @version $Rev$ <br>
  *          $Id$
@@ -42,10 +42,10 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long> {
         List<ActionLog> list = new ArrayList<>();
         if(lastTime==null){
             list = this.listObjectsByFilter("where USER_CODE = ? order by action_Time desc",
-                    new Object[]{userCode},pageDesc);
+                    new Object[]{userCode});
         }else{
             list = this.listObjectsByFilter("where USER_CODE = ? and ACTION_TIME >= ?" +
-                    "order by action_Time desc",new Object[]{userCode,lastTime},pageDesc);
+                    "order by action_Time desc",new Object[]{userCode,lastTime});
         }
         return list;
     }
@@ -59,7 +59,7 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long> {
     @Transactional(propagation= Propagation.MANDATORY)
     public List<ActionLog> listGrantedActionLog(String userCode, PageDesc pageDesc){
         return this.listObjectsByFilter("where USER_CODE = ? and  grantor <> null",
-                new Object[]{userCode},pageDesc);
+                new Object[]{userCode});
     }
 
     /**
@@ -71,7 +71,7 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long> {
     @Transactional(propagation= Propagation.MANDATORY)
     public List<ActionLog> listGrantorActionLog(String userCode,
                                                 PageDesc pageDesc) {
-        return this.listObjectsByFilter("where GRANTOR = ?",new Object[]{userCode},pageDesc);
+        return this.listObjectsByFilter("where GRANTOR = ?",new Object[]{userCode});
     }
     /**
      * 生成流程日志操作编号

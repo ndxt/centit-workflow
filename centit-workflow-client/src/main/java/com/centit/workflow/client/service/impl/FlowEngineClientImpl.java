@@ -62,33 +62,39 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         makeAppSession();
     }
 
+    private FlowInstance jsonToFlowInstance(String json) {
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        String flowStr = jsonObject.getString("data");
+        return JSONObject.parseObject(flowStr, FlowInstance.class);
+    }
+
     @Override
-    public String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception {
+    public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("flowCode", flowCode);
         jsonObject.put("flowOptName", flowOptName);
         jsonObject.put("flowOptTag", flowOptTag);
         jsonObject.put("userCode", userCode);
         jsonObject.put("unitCode", unitCode);
-
-        return RestfulHttpRequest.jsonPost(appSession,
+        String flowJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createFlowInstDefault", jsonObject);
+        return jsonToFlowInstance(flowJson);
 
     }
 
 
     /**
-     * @param flowCode 流程编码
-     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
-     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
-     * @param userCode 创建用户
-     * @param unitCode 将流程指定一个所属机构
+     * @param flowCode     流程编码
+     * @param flowOptName  这个名称用户 查找流程信息，用来显示业务办件名称，
+     * @param flowOptTag   这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
+     * @param userCode     创建用户
+     * @param unitCode     将流程指定一个所属机构
      * @param timeLimitStr 流程计时 默认单位为天，也可以手动设定为d\h\m
      * @return
      * @throws Exception
      */
     @Override
-    public String createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, String timeLimitStr) throws Exception {
+    public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, String timeLimitStr) throws Exception {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("flowCode", flowCode);
         paramMap.put("flowOptName", flowOptName);
@@ -96,12 +102,13 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
         paramMap.put("timeLimitStr", timeLimitStr);
-        return RestfulHttpRequest.jsonPost(appSession,
+        String flowJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createFlowInstDefault", paramMap);
+        return jsonToFlowInstance(flowJson);
     }
 
     @Override
-    public String createInstance(String flowCode, long version, String flowOptName, String flowOptTag,
+    public FlowInstance createInstance(String flowCode, long version, String flowOptName, String flowOptTag,
                                  String userCode, String unitCode) throws Exception {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("flowCode", flowCode);
@@ -110,29 +117,29 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowOptTag", flowOptTag);
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
-        return RestfulHttpRequest.jsonPost(appSession,
+        String flowJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createFlowInstDefault", paramMap);
+        return jsonToFlowInstance(flowJson);
     }
 
     @Override
-    public String createInstanceLockFirstNode(String flowCode, String flowOptName, String flowOptTag,
-                                                    String userCode, String unitCode) throws Exception {
-
+    public FlowInstance createInstanceLockFirstNode(String flowCode, String flowOptName, String flowOptTag,
+                                              String userCode, String unitCode) throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("flowCode", flowCode);
         jsonObject.put("flowOptName", flowOptName);
         jsonObject.put("flowOptTag", flowOptTag);
         jsonObject.put("userCode", userCode);
         jsonObject.put("unitCode", unitCode);
-
-        return RestfulHttpRequest.jsonPost(appSession,
+        String flowJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createInstanceLockFirstNode", jsonObject);
+        return jsonToFlowInstance(flowJson);
     }
 
     @Override
     public void saveFlowVariable(long flowInstId, String varName, String varValue) throws Exception {
-        Set<String> vars= new HashSet<>(Arrays.asList(varValue));
-        saveFlowVariable(flowInstId,varName,vars);
+        Set<String> vars = new HashSet<>(Arrays.asList(varValue));
+        saveFlowVariable(flowInstId, varName, vars);
     }
 
     @Override
@@ -148,19 +155,19 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     /**
      * @param nodeInstId
      * @param varName
-     * @param varValue SET &lt;String&gt;
+     * @param varValue   SET &lt;String&gt;
      * @throws Exception
      */
     @Override
     public void saveFlowNodeVariable(long nodeInstId, String varName, String varValue) throws Exception {
-        Set<String> vars= new HashSet<>(Arrays.asList(varValue));
-        saveFlowNodeVariable(nodeInstId,varName,vars);
+        Set<String> vars = new HashSet<>(Arrays.asList(varValue));
+        saveFlowNodeVariable(nodeInstId, varName, vars);
     }
 
     /**
      * @param nodeInstId
      * @param varName
-     * @param varValue SET &lt;String&gt;
+     * @param varValue   SET &lt;String&gt;
      * @throws Exception
      */
     @Override
@@ -206,7 +213,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     @Override
     public void addFlowOrganize(long flowInstId, String roleCode,
-                                   String unitCode) {
+                                String unitCode) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -217,16 +224,17 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     @Override
     public Map<String,Object> submitOpt(long nodeInstId, String userCode,
-                          String unitCode, String varTrans,
-                          ServletContext application) throws WorkflowException {
+                                         String unitCode, String varTrans,
+                                         ServletContext application) throws WorkflowException {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
         paramMap.put("varTrans", varTrans);
-        String returnJson=RestfulHttpRequest.jsonPost(appSession,
+        String returnJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/submitOpt", paramMap);
-        return (Map) JSON.parse(returnJson.replaceAll("&quot;", "\""));
+        Map<String,Object> jsonObject=JSONObject.parseObject(returnJson);
+        return jsonObject;
 
     }
 
@@ -303,7 +311,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     @Override
     public void createNodeInst(long flowInstId, String createUser,
-                                             String nodeId,List<String> userCodes, String unitCode) throws Exception {
+                               String nodeId, List<String> userCodes, String unitCode) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("createUser", createUser);
@@ -315,7 +323,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
 
-    public void deleteFlowVariable(long flowInstId,String runToken,String varName){
+    public void deleteFlowVariable(long flowInstId, String runToken, String varName) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("runToken", runToken);

@@ -1,5 +1,6 @@
 package com.centit.workflow.dao;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
@@ -58,7 +59,8 @@ public class ManageActionDao extends BaseDaoImpl<ManageActionLog,Long>
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public List<ManageActionLog> getFlowManageLogs(long wfinstid, PageDesc pageDesc) {
-        return this.listObjectsByFilter("where flow_Inst_Id = ? order by action_Time desc",
+        JSONArray jsonArray= this.listObjectsByFilterAsJson("where flow_Inst_Id = ? order by action_Time desc",
                 new Object[]{wfinstid},pageDesc);
+        return jsonArray.toJavaList(ManageActionLog.class);
     }
 }
