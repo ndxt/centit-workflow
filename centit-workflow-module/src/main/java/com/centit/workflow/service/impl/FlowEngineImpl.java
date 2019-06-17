@@ -645,8 +645,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                 }
 
-                FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans,
-                    flowVariableDao.listFlowVariables(flowInst.getFlowInstId()), nodeInst, flowInst);
+                List<FlowVariable> flowVariables=flowVariableDao.listFlowVariables(flowInst.getFlowInstId());
+                FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans,flowVariables
+                    , nodeInst, flowInst);
 
                 flowVarTrans.setFlowOrganizes(this.viewFlowOrganize(flowInst.getFlowInstId()));
                 flowVarTrans.setFlowWorkTeam(this.viewFlowWorkTeam(flowInst.getFlowInstId()));
@@ -715,14 +716,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                 null, nodeToken + "." + nRn,
                                 true, varTrans, nodeUnits, nodeOptUsers,
                                 application);
-
                             resNodes.add(nextNodeInst.getNodeInstId());
                             nRn++;
                         }
                     }
-                }//else if("V".equals(nextRoutertNode.getMultiInstType())){
-                // 保留
-                //}
+                }else if("V".equals(nextRoutertNode.getMultiInstType())){
+                    //TODO 实现变量多实例
+                }
 
             } else if ("R".equals(sRT)) {//游离
                 FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
@@ -1175,7 +1175,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     "节点：" + nodeInstId);
         }
         //校验节点状态 流程和节点状态都要为正常
-        if (!"N".equals(flowInst.getInstState()) ||
+        if (!"N,M".contains(flowInst.getInstState()) ||
             (!"N".equals(nodeInst.getNodeState())
                 && !"W".equals(nodeInst.getNodeState()) // 等待子流程返回
             )

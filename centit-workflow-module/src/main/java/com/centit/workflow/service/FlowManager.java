@@ -406,4 +406,7 @@ public interface FlowManager{
      */
     int moveUserTaskTo(String fromUserCode,String toUserCode,
                         String optUserCode,String moveDesc);
+
+
+    void updateFlow(FlowInstance flowInstance);
   }

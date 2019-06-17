@@ -565,7 +565,8 @@ public class FlowManagerController extends BaseController {
                         List<UserTask> innerTasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());
                         if (innerTasks != null)
                             tasks.addAll(innerTasks);
-                        if ("D".equals(nodeInst.getTaskAssigned())) {
+                        //暂时添加一个多余判断，解决相关地方手动修改视图，把岗位待办设置成静态待办的问题
+                        if (tasks.isEmpty()&&"D".equals(nodeInst.getTaskAssigned())) {
                             int page = 1;
                             int limit = 100;
                             PageDesc pageDesc = new PageDesc(page, limit);

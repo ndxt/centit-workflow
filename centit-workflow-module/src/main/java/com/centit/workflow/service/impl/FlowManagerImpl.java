@@ -1523,4 +1523,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public void deleteRoleRelegate(Long relegateno) {
         flowRoleRelegateDao.deleteObjectById(relegateno);
     }
+
+    @Override
+    public void updateFlow(FlowInstance flowInstance){
+        flowInstanceDao.updateObject(flowInstance);
+    }
 }
