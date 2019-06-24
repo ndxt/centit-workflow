@@ -173,6 +173,16 @@ public class FlowEngineController extends BaseController {
         return userTasks;
     }
 
+    @ApiOperation(value = "查询节点待办用户", notes = "查询节点待办用户")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listNodeTaskUsers")
+    public List<UserTask> listNodeTaskUsers(Long nodeInstId) {
+        Map<String, Object> searchColumn = new HashMap<>();
+        searchColumn.put("nodeInstId", nodeInstId);
+        List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
+        return userTasks;
+    }
+
     @ApiOperation(value = "查询用户岗位待办", notes = "查询用户岗位待办")
     @WrapUpResponseBody
     @GetMapping(value = "/listUserDynamicTasks")

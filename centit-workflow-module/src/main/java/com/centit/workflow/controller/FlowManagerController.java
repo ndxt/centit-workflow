@@ -634,18 +634,6 @@ public class FlowManagerController extends BaseController {
     }
 
     /**
-     * 查看流程工作小组
-     *
-     * @return
-     */
-    @RequestMapping(value = "/workteam/{flowInstId}", method = RequestMethod.GET)
-    public void viewWorkTeam(@PathVariable Long flowInstId, HttpServletRequest request, HttpServletResponse response) {
-
-        JsonResultUtils.writeSingleDataJson("", response);
-    }
-
-
-    /**
      * 查询某节点实例下的任务信息
      *
      * @return String

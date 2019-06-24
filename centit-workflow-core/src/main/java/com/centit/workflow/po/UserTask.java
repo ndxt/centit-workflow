@@ -19,6 +19,7 @@ public class UserTask implements java.io.Serializable {
     private Long nodeInstId;
     @DictionaryMap(value="unitCode", fieldName="unitName")
     private String unitCode;
+    @DictionaryMap(value="userCode", fieldName="userName")
     private String userCode;
 
     private Long  flowInstId;

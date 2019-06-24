@@ -276,6 +276,14 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
+    public List<UserTask> listNodeTaskUsers(Long nodeInstId) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("nodeInstId", nodeInstId);
+        return RestfulHttpRequest.getResponseObjectList(appSession,
+            "/flow/engine/listNodeTaskUsers", paramMap, UserTask.class);
+    }
+
+    @Override
     public List<FlowInstance> listAllFlowInstByOptTag(String optTag) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowOptTag", optTag);

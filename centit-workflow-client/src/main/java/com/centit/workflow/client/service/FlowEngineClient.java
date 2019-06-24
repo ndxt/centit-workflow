@@ -95,6 +95,14 @@ public interface FlowEngineClient {
      * @return
      */
     List<UserTask> listUserTasks(String userCode, PageDesc pageDesc);
+
+    /**
+     * 查看某一个节点所有的用户待办
+     * @param nodeInstId
+     * @return
+     */
+    List<UserTask> listNodeTaskUsers(Long nodeInstId);
+
     /**
      * 根据业务id获取所有该业务下的流程
      * @param optTag
