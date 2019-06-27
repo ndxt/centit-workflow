@@ -97,11 +97,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
             newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstid(),
             null, newFlowInstanceOptions.isLockFirstOpt(), newFlowInstanceOptions.getTimeLimitStr());
-        Set<Long> nodes = new HashSet<>();
-        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
-            nodes.add(n.getNodeInstId());
-        }
-        FlowOptUtils.sendMsg(0, nodes, newFlowInstanceOptions.getUserCode());
+//        Set<Long> nodes = new HashSet<>();
+//        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
+//            nodes.add(n.getNodeInstId());
+//        }
+//        FlowOptUtils.sendMsg(0, nodes, newFlowInstanceOptions.getUserCode());
         return flowInstance;
     }
 
@@ -127,11 +127,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         FlowInstance flowInstance = createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
             unitCode, 0, 0, null, true, null);
-        Set<Long> nodes = new HashSet<>();
-        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
-            nodes.add(n.getNodeInstId());
-        }
-        FlowOptUtils.sendMsg(0, nodes, userCode);
+//        Set<Long> nodes = new HashSet<>();
+//        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
+//            nodes.add(n.getNodeInstId());
+//        }
+//        FlowOptUtils.sendMsg(0, nodes, userCode);
         return flowInstance;
     }
 
@@ -2663,49 +2663,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return actionTaskDao.hasOptPower(nodeInstId, userCode, null);
     }
 
-    /**
-     * 这个方法很低效，如果有必要可以通过添加视图来优化这个方法
-     */
-   /* @Override
-    public List<NodeInstance> listUserCompleteTasks(
-            Map<String, Object> filterMap, PageDesc pageDesc, String userCode) {
-        //添加用户参与的过滤条件
-        filterMap.put("lastUpdateUser", userCode);
-
-        List<NodeInstance> tempList = nodeInstanceDao.listObjects(filterMap,
-                pageDesc);
-        List<NodeInstance> temp = new ArrayList<>();
-        if (tempList != null) {
-
-            for (NodeInstance nodeInst : tempList) {
-                FlowInstance flowInst = flowInstanceDao
-                        .getObjectById(nodeInst.getFlowInstId());
-                if (flowInst == null) {
-                    continue;
-                }
-                nodeInst.setFlowOptName(flowInst.getFlowOptName());
-                nodeInst.setFlowOptTag(flowInst.getFlowOptTag());
-
-                NodeInfo wfNode = flowNodeDao.getObjectById(nodeInst.getNodeId());
-                if (wfNode == null) {
-                    continue;
-                }
-                nodeInst.setNodeName(wfNode.getNodeName());
-
-                // 判断节点任务是否提供回收：a.下一步办理人为当前操作人员的;b.下一节点已经被处理过的
-                if (nodeCanBeReclaim(nodeInst.getNodeInstId())
-                        && !canAccess(nodeInst.getNodeInstId(), userCode)) {
-                    nodeInst.setIsRecycle("yes");
-                    temp.add(nodeInst);
-                } else {
-                    nodeInst.setIsRecycle("no");
-                }
-            }
-
-            return temp;
-        }
-        return new ArrayList<>();
-    }*/
     @Override
     public List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap, PageDesc pageDesc) {
         List<UserTask> taskList = actionTaskDao.listUserTaskFinByFilter(filterMap, pageDesc);
@@ -2766,8 +2723,5 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowVariableDao.deleteObjectsByProperties(filterMap);
     }
 
-  /*  @Override
-    public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap) {
-        nodeInstanceDao.saveOptIdeaForAutoSubmit(paraMap);
-    }*/
+
 }

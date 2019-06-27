@@ -89,8 +89,8 @@ public class FlowInfo implements java.io.Serializable {
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInfo.class)
     @JoinColumns({
-            @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
-            @JoinColumn(name="version", referencedColumnName="version")
+            @JoinColumn(name="flowCode"),
+            @JoinColumn(name="version")
     })
     private Set<NodeInfo> flowNodes;// new ArrayList<WfNode>();
 

@@ -807,7 +807,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                             mangerUserCode, flowInstanceDao);
                         subFlowInst.setLastUpdateUser(mangerUserCode);
                         flowInstanceDao.updateObject(subFlowInst);
-                        //更新子流程下的所有消息未已办
+                        //更新子流程下的所有消息为已办
                         FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(), mangerUserCode);
 
                     }
@@ -821,7 +821,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 wfactlog.setActionId(actionLogDao.getNextActionId());
                 nodeInst.addWfActionLog(wfactlog);
                 nodeInstanceDao.mergeObject(nodeInst);
-                //更新消息未已办
+                //更新消息为已办
                 FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, mangerUserCode);
             }
         }
@@ -1525,7 +1525,20 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public void updateFlow(FlowInstance flowInstance){
+    public void updateFlow(FlowInstance flowInstance) {
         flowInstanceDao.updateObject(flowInstance);
+    }
+
+    @Override
+    public Boolean reStartFlow(Long flowInstId, String managerUserCode, Boolean force) {
+        FlowInstance flowInstance = flowInstanceDao.getObjectCascadeById(flowInstId);
+        //如果不是强行拉回，需要判断是否流程最后提交人是自己
+        if (!force) {
+            if (!managerUserCode.equals(flowInstance.getLastUpdateUser())) {
+                return false;
+            }
+        }
+        this.resetFlowToThisNode(flowInstance.getFirstNodeInstance().getNodeInstId(), managerUserCode);
+        return true;
     }
 }

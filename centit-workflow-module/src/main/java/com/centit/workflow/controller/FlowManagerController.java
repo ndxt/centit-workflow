@@ -19,6 +19,8 @@ import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,8 @@ import java.util.*;
 
 
 @Controller
+@Api(value = "流程控制",
+    tags = "流程控制接口类")
 @RequestMapping("/flow/manager")
 public class FlowManagerController extends BaseController {
     //public static final Logger logger = LoggerFactory.getLogger(SampleFlowManagerController.class);
@@ -56,7 +60,7 @@ public class FlowManagerController extends BaseController {
                      HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> searchColumn = convertSearchColumn(request);
         JSONArray listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
-        List<FlowInstance> flowInstanceList=listObjects.toJavaList(FlowInstance.class);
+        List<FlowInstance> flowInstanceList = listObjects.toJavaList(FlowInstance.class);
         resData.addResponseData(OBJLIST, flowInstanceList);
         resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
@@ -140,7 +144,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getorglist/{flowInstId}", method = RequestMethod.GET)
-    public void getOrganizeList(@PathVariable Long flowInstId,PageDesc pageDesc, HttpServletResponse response) {
+    public void getOrganizeList(@PathVariable Long flowInstId, PageDesc pageDesc, HttpServletResponse response) {
         Map<String, List<String>> organizeMap = flowEng.viewFlowOrganize(flowInstId);
         List<Map<String, String>> organizeList = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : organizeMap.entrySet()) {
@@ -154,7 +158,7 @@ public class FlowManagerController extends BaseController {
         }
         pageDesc.setTotalRows(organizeList.size());
         resData.addResponseData(OBJLIST, organizeList);
-        resData.addResponseData(PAGE_DESC,pageDesc);
+        resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
 
@@ -239,7 +243,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getteamlist/{flowInstId}", method = RequestMethod.GET)
-    public void getTeamList(@PathVariable Long flowInstId,PageDesc pageDesc, HttpServletResponse response) {
+    public void getTeamList(@PathVariable Long flowInstId, PageDesc pageDesc, HttpServletResponse response) {
         Map<String, List<String>> teamMap = flowEng.viewFlowWorkTeam(flowInstId);
         List<Map<String, String>> teamList = new ArrayList<Map<String, String>>();
         for (Map.Entry<String, List<String>> entry : teamMap.entrySet()) {
@@ -291,7 +295,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getvariablelist/{flowInstId}", method = RequestMethod.GET)
-    public void getVariableList(@PathVariable Long flowInstId,PageDesc pageDesc, HttpServletResponse response) {
+    public void getVariableList(@PathVariable Long flowInstId, PageDesc pageDesc, HttpServletResponse response) {
         List<FlowVariable> variableList = flowEng.listFlowVariables(flowInstId);
         pageDesc.setTotalRows(variableList.size());
         resData.addResponseData(PAGE_DESC, pageDesc);
@@ -489,7 +493,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.GET)
     public void resetToCurrent(@PathVariable Long nodeInstId, HttpServletRequest request, HttpServletResponse response) {
-        CentitUserDetails user = (CentitUserDetails)WebOptUtils.getLoginUser(request);
+        CentitUserDetails user = (CentitUserDetails) WebOptUtils.getLoginUser(request);
         flowManager.resetFlowToThisNode(nodeInstId, user.getUserCode());
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -566,7 +570,7 @@ public class FlowManagerController extends BaseController {
                         if (innerTasks != null)
                             tasks.addAll(innerTasks);
                         //暂时添加一个多余判断，解决相关地方手动修改视图，把岗位待办设置成静态待办的问题
-                        if (tasks.isEmpty()&&"D".equals(nodeInst.getTaskAssigned())) {
+                        if (tasks.isEmpty() && "D".equals(nodeInst.getTaskAssigned())) {
                             int page = 1;
                             int limit = 100;
                             PageDesc pageDesc = new PageDesc(page, limit);
@@ -583,8 +587,8 @@ public class FlowManagerController extends BaseController {
                             JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
                             JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
                                 CodeRepositoryUtil.getValue("userCode", task.getUserCode()));
-                            IUserInfo user  = CodeRepositoryUtil.getUserInfoByCode(task.getUserCode());
-                            if(user!=null){
+                            IUserInfo user = CodeRepositoryUtil.getUserInfoByCode(task.getUserCode());
+                            if (user != null) {
                                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
                             }
                             taskInd++;
@@ -778,8 +782,42 @@ public class FlowManagerController extends BaseController {
      * 更新所有节点状态为F
      * F 强行结束
      */
-    @RequestMapping(value="/stopAndChangeInstance",method = RequestMethod.POST)
-    public void stopAndChangeInstance(long flowInstId,String userCode,String desc){
-        flowManager.stopAndChangeInstance(flowInstId,userCode,desc);
+    @PostMapping(value = "/stopAndChangeInstance/{flowInstId}/{userCode}")
+    public void stopAndChangeInstance(long flowInstId, String userCode, String desc) {
+        flowManager.stopAndChangeInstance(flowInstId, userCode, desc);
     }
+
+    /**
+     * 终止一个流程
+     * 修改其流程id为负数
+     * 更新所有节点状态为F
+     * F 强行结束
+     */
+    @PutMapping(value = "/stopInstance/{flowInstId}/{userCode}")
+    public void stopInstance(@PathVariable long flowInstId, @PathVariable String userCode, HttpServletResponse response) {
+        try {
+            flowManager.stopInstance(flowInstId, userCode, "");
+            JsonResultUtils.writeSuccessJson(response);
+        } catch (Exception e) {
+            JsonResultUtils.writeErrorMessageJson(1, "流程已经被审批，无法撤回", response);
+
+        }
+    }
+
+    /**
+     * 流程拉回到首节点
+     *
+     * @param flowInstId 流程id
+     * @param userCode   操作人usercode
+     */
+    @ApiOperation(value = "流程拉回到首节点", notes = "流程拉回到首节点")
+    @PutMapping(value = "/reStartFlow/{flowInstId}/{userCode}")
+    public void reStartFlow(@PathVariable Long flowInstId, @PathVariable String userCode, HttpServletResponse response) {
+        Boolean result = flowManager.reStartFlow(flowInstId, userCode, false);
+        if (result)
+            JsonResultUtils.writeSuccessJson(response);
+        else
+            JsonResultUtils.writeErrorMessageJson(1, "流程已经被审批，无法撤回", response);
+    }
+
 }
