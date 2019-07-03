@@ -47,95 +47,6 @@ public class UserOptController extends BaseController{
         Object userList = platformEnvironment.listAllUsers();
         JsonResultUtils.writeSingleDataJson(userList,response);
     }
-    /**
-     * 获取单个用户信息
-     * @param userCode 用户代码
-     * @param response HttpServletResponse
-     */
-    @RequestMapping(value = "/{userCode}", method = RequestMethod.GET)
-    public void getUserInfo(@PathVariable String userCode, HttpServletResponse response) {
-        IUserUnit primaryUnit= CodeRepositoryUtil.getUserPrimaryUnit(userCode);
-        IUserInfo userDetails = CodeRepositoryUtil.getUserInfoByCode(userCode);
-        excludes  =new HashMap<Class<?>, String[]>();
-        excludes.put(IUserInfo.class,new String[]{"userUnits","userRoles"});
-        resData = new ResponseMapData();
-        resData.addResponseData("userInfo", userDetails);
-        resData.addResponseData("primaryUnit", primaryUnit);
-        JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
-    }
-
-
-    /**
-     * 获取当前登录用户
-     * @param request HttpServletReqeust
-     * @param response HttpServletResponse
-     */
-    @RequestMapping(value="/loginuser",method={RequestMethod.GET})
-    public void getLoginUserCode(HttpServletResponse response,HttpServletRequest request){
-        String userCode=WebOptUtils.getCurrentUserCode(request);
-        IUserUnit primaryUnit=CodeRepositoryUtil.getUserPrimaryUnit(userCode);
-        IUserInfo userDetails =  CodeRepositoryUtil.getUserInfoByCode(userCode);
-        excludes  =new HashMap<Class<?>, String[]>();
-        excludes.put(IUserInfo.class,new String[]{"userUnits","userRoles"});
-        resData = new ResponseMapData();
-        resData.addResponseData("userInfo", userDetails);
-        resData.addResponseData("primaryUnit", primaryUnit);
-        JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
-    }
-
-
-
-
-    /**
-     * 获取登陆用户机构列表
-     * @param pageDesc
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value="/userunits",method={RequestMethod.GET})
-    public void getSysUserUnitsList(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        String usercode=WebOptUtils.getCurrentUserCode(request);
-        List<? extends IUserUnit> userUnitList =  CodeRepositoryUtil.listUserUnits(usercode);
-        excludes  =new HashMap<Class<?>, String[]>();
-        excludes.put(IUserInfo.class,new String[]{"userUnits","userRoles"});
-        resData = new ResponseMapData();
-        resData.addResponseData("objList", userUnitList);
-        resData.addResponseData("pageDesc", pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
-    }
-
-    /**
-     * 登陆用户任务待办
-     * @param pageDesc
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value="/usertasks",method={RequestMethod.GET})
-    public void getSysUserTasksList(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        String usercode=WebOptUtils.getCurrentUserCode(request);
-        List<UserTask> taskList=flowEng.listUserTasks(usercode, pageDesc);
-        resData = new ResponseMapData();
-        resData.addResponseData("objList", taskList);
-        resData.addResponseData("pageDesc", pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData,response);
-    }
-    /**
-     * 获取指定用户机构列表
-     * @param pageDesc
-     * @param userCode
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value="/userunits/{userCode}",method={RequestMethod.GET})
-    public void getUserUnitsList(PageDesc pageDesc,@PathVariable String userCode,HttpServletRequest request,HttpServletResponse response){
-        List<? extends IUserUnit> userUnitList =  CodeRepositoryUtil.listUserUnits(userCode);
-        excludes  =new HashMap<Class<?>, String[]>();
-        excludes.put(IUserInfo.class,new String[]{"userUnits","userRoles"});
-        resData = new ResponseMapData();
-        resData.addResponseData("objList", userUnitList);
-        resData.addResponseData("pageDesc", pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData,response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
-    }
 
     /**
      * 获取指定用户任务待办
@@ -171,29 +82,14 @@ public class UserOptController extends BaseController{
 
     /**
      * 获取指定用户委托列表
-     * @param usercode
+     * @param userCode
      * @param pageDesc
      * @param request
      * @param response
      */
-    @RequestMapping(value="/getrelegates/{usercode}",method={RequestMethod.GET})
-    public void getRelegateList(@PathVariable String usercode,PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        List<RoleRelegate> relegateList=flowManager.listRoleRelegateByUser(usercode);
-        resData = new ResponseMapData();
-        resData.addResponseData("objList", relegateList);
-        resData.addResponseData("pageDesc", pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData,response);
-    }
-    /**
-     * 获取当前用户委托列表
-     * @param pageDesc
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value="/getrelegates",method={RequestMethod.GET})
-    public void getRelegateListByLoginUser(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        String usercode = WebOptUtils.getCurrentUserCode(request);
-        List<RoleRelegate> relegateList=flowManager.listRoleRelegateByUser(usercode);
+    @RequestMapping(value="/getrelegates/{userCode}",method={RequestMethod.GET})
+    public void getRelegateList(@PathVariable String userCode,PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
+        List<RoleRelegate> relegateList=flowManager.listRoleRelegateByUser(userCode);
         resData = new ResponseMapData();
         resData.addResponseData("objList", relegateList);
         resData.addResponseData("pageDesc", pageDesc);
@@ -202,29 +98,14 @@ public class UserOptController extends BaseController{
 
     /**
      * 获取指定用户委托列表
-     * @param usercode
+     * @param userCode
      * @param pageDesc
      * @param request
      * @param response
      */
-    @RequestMapping(value="/setrelegates/{usercode}",method={RequestMethod.GET})
-    public void getRelegateSetList(@PathVariable String usercode,PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        List<RoleRelegate> relegateList=flowManager.listRoleRelegateByGrantor(usercode);
-        resData = new ResponseMapData();
-        resData.addResponseData("objList", relegateList);
-        resData.addResponseData("pageDesc", pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData,response);
-    }
-    /**
-     * 获取当前用户委托列表
-     * @param pageDesc
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value="/setrelegates",method={RequestMethod.GET})
-    public void getRelegateSetListByLoginUser(PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
-        String usercode = WebOptUtils.getCurrentUserCode(request);
-        List<RoleRelegate> relegateList=flowManager.listRoleRelegateByGrantor(usercode);
+    @RequestMapping(value="/getRelegateSetList/{userCode}",method={RequestMethod.GET})
+    public void getRelegateSetList(@PathVariable String userCode,PageDesc pageDesc,HttpServletRequest request,HttpServletResponse response){
+        List<RoleRelegate> relegateList=flowManager.listRoleRelegateByGrantor(userCode);
         resData = new ResponseMapData();
         resData.addResponseData("objList", relegateList);
         resData.addResponseData("pageDesc", pageDesc);
@@ -242,22 +123,6 @@ public class UserOptController extends BaseController{
         flowManager.saveRoleRelegate(roleRelegate);
 
         JsonResultUtils.writeSingleDataJson("",response);
-    }
-
-
-    /**
-     * 委托转移
-     * @param relegateno
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value="/alignrelegate/{relegateno}/{userCode}",method={RequestMethod.PUT})
-    public void saveRelegate1(@PathVariable Long relegateno,@PathVariable String userCode,HttpServletRequest request,HttpServletResponse response){
-        RoleRelegate re=flowManager.getRoleRelegateById(relegateno);
-        re.setGrantor(WebOptUtils.getCurrentUserCode(request));
-        re.setGrantee(userCode);
-        flowManager.saveRoleRelegate(re);
-        JsonResultUtils.writeSingleDataJson(re,response);
     }
 
 
@@ -280,9 +145,8 @@ public class UserOptController extends BaseController{
      * @param instState
      * @param response
      */
-    @RequestMapping(value = "/getAttentions/{instState}",method = RequestMethod.GET)
-    public void getAttentionsByLoginUser(@PathVariable String instState,HttpServletResponse response,HttpServletRequest request){
-        String userCode=WebOptUtils.getCurrentUserCode(request);
+    @RequestMapping(value = "/getAttentions/{instState}/{userCode}",method = RequestMethod.GET)
+    public void getAttentionsByLoginUser(@PathVariable String instState,@PathVariable String userCode,HttpServletResponse response,HttpServletRequest request){
         List<FlowInstance> flowInstances = flowEng.viewAttentionFLowInstance(userCode,instState);
         JsonResultUtils.writeSingleDataJson(flowInstances,response);
     }
@@ -292,9 +156,8 @@ public class UserOptController extends BaseController{
      * @param flowOptName
      * @param response
      */
-    @RequestMapping(value = "/getAttentionsByOptName/{instState}",method = RequestMethod.GET)
-    public void getAttentionsByLoginUserAndOptName(String flowOptName,@PathVariable String instState,HttpServletRequest request,HttpServletResponse response){
-        String userCode= WebOptUtils.getCurrentUserCode(request);
+    @RequestMapping(value = "/getAttentionsByOptName/{instState}/{userCode}",method = RequestMethod.GET)
+    public void getAttentionsByLoginUserAndOptName(@PathVariable String userCode,String flowOptName,@PathVariable String instState,HttpServletRequest request,HttpServletResponse response){
         List<FlowInstance> flowInstances = flowEng.viewAttentionFLowInstanceByOptName(flowOptName,userCode,instState);
         JsonResultUtils.writeSingleDataJson(flowInstances,response);
     }

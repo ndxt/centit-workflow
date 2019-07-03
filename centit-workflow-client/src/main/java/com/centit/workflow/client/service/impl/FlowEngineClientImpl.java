@@ -339,4 +339,12 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/deleteFlowVariable", paramMap);
     }
+
+    public void rollBackNode(long nodeInstId,String managerUserCode){
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("nodeInstId", nodeInstId);
+        paramMap.put("managerUserCode", managerUserCode);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/rollBackNode", paramMap);
+    }
 }

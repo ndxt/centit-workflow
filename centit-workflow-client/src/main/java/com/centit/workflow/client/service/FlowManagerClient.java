@@ -27,4 +27,7 @@ public interface FlowManagerClient {
      * F 强行结束
      */
     void stopAndChangeInstance(long flowInstId, String mangerUserCode, String admindesc) throws Exception;
-  }
+
+    String reStartFlow(Long flowInstId,String userCode);
+
+}

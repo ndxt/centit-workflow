@@ -40,6 +40,7 @@ public class UserTask implements java.io.Serializable {
     private String  expireOpt;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date  lastUpdateTime;
+    @DictionaryMap(value="userCode", fieldName="lastUpdateUserName")
     private String lastUpdateUser;
     private Long  promiseTime;
     private Long  timeLimit;
@@ -64,6 +65,11 @@ public class UserTask implements java.io.Serializable {
 
     private Long flowTimeLimit;
 
+    private String optName;
+
+    private String osId;
+
+    private String applyTime;
 
     // Constructors
     /** default constructor */
@@ -480,5 +486,29 @@ public class UserTask implements java.io.Serializable {
     }
     public void setFlowTimeLimit(Long flowTimeLimit) {
         this.flowTimeLimit = flowTimeLimit;
+    }
+
+    public String getOptName() {
+        return optName;
+    }
+
+    public void setOptName(String optName) {
+        this.optName = optName;
+    }
+
+    public String getOsId() {
+        return osId;
+    }
+
+    public void setOsId(String osId) {
+        this.osId = osId;
+    }
+
+    public String getApplyTime() {
+        return applyTime;
+    }
+
+    public void setApplyTime(String applyTime) {
+        this.applyTime = applyTime;
     }
 }

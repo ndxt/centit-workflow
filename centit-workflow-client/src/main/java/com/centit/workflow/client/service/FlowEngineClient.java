@@ -218,4 +218,10 @@ public interface FlowEngineClient {
      */
     void deleteFlowVariable(long flowInstId,String runToken,String varName) throws Exception;
 
-}
+    /**
+     * 回退节点
+     * @param nodeInstId
+     * @param managerUserCode
+     */
+    void rollBackNode(long nodeInstId,String managerUserCode);
+    }

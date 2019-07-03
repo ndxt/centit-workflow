@@ -272,4 +272,14 @@ public class FlowEngineController extends BaseController {
         List<String> userList = JSON.parseArray(userCodes, String.class);
         flowEng.createNodeInst(flowInstId, createUser, nodeId, userList, unitCode);
     }
+
+    @ApiOperation(value = "回退节点", notes = "回退节点")
+    @WrapUpResponseBody
+    @PostMapping(value = "rollBackNode")
+    public void rollBackNode(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        long nodeInstId = jsonObject.getLong("nodeInstId");
+        String managerUserCode = jsonObject.getString("managerUserCode");
+        flowEng.rollbackOpt(nodeInstId, managerUserCode);
+    }
 }
