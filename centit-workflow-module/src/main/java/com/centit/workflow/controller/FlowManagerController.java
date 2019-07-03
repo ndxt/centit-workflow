@@ -493,8 +493,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.GET)
     public void resetToCurrent(@PathVariable Long nodeInstId, HttpServletRequest request, HttpServletResponse response) {
-        CentitUserDetails user = (CentitUserDetails) WebOptUtils.getLoginUser(request);
-        flowManager.resetFlowToThisNode(nodeInstId, user.getUserCode());
+        flowManager.resetFlowToThisNode(nodeInstId, "admin");
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
