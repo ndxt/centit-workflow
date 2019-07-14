@@ -5,6 +5,7 @@ import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitFilterCalcContext;
 import com.centit.framework.components.UserUnitParamBuilder;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
+import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
 import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.PageDesc;
@@ -526,6 +527,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (nodeToken.startsWith("R")) {
                     return resNodes;
                 } else {
+                    logger.error("找不到后续节点：" + nodeInst.getFlowInstId() +
+                        " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                     throw new WorkflowException(WorkflowException.NotFoundNextNode,
                         "找不到后续节点：" + nodeInst.getFlowInstId() +
                             " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
@@ -645,8 +648,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                 }
 
-                List<FlowVariable> flowVariables=flowVariableDao.listFlowVariables(flowInst.getFlowInstId());
-                FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans,flowVariables
+                List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInst.getFlowInstId());
+                FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans, flowVariables
                     , nodeInst, flowInst);
 
                 flowVarTrans.setFlowOrganizes(this.viewFlowOrganize(flowInst.getFlowInstId()));
@@ -720,7 +723,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             nRn++;
                         }
                     }
-                }else if("V".equals(nextRoutertNode.getMultiInstType())){
+                } else if ("V".equals(nextRoutertNode.getMultiInstType())) {
                     //TODO 实现变量多实例
                 }
 
@@ -854,9 +857,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             UserUnitParamBuilder.addParamToParamMap(unitParams, "P",
                 flowInst.getNearestNodeUnitCode(nodeInst, nodeToken));
             UserUnitParamBuilder.addParamToParamMap(unitParams, "F", flowInst.getUnitCode());
-
-            nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext, nextOptNode.getUnitExp(),
-                unitParams, varTrans);
+            nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(new SystemUserUnitFilterCalcContext(), nextOptNode.getUnitExp(), unitParams, varTrans);
+            //nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext, nextOptNode.getUnitExp(),unitParams, varTrans);
         }
 
         //如果用户指定的节点对应的操作人员为空 则不创建这个节点
@@ -2507,7 +2509,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public void saveFlowAttention(InstAttention attObj) {
-        attObj = new InstAttention(attObj.getUserCode(), attObj.getFlowInstId(), DatetimeOpt.currentUtilDate(), attObj.getAttSetUser(),attObj.getAttSetMemo());
+        attObj = new InstAttention(attObj.getUserCode(), attObj.getFlowInstId(), DatetimeOpt.currentUtilDate(), attObj.getAttSetUser(), attObj.getAttSetMemo());
         attentionDao.mergeObject(attObj);
     }
 
@@ -2716,10 +2718,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return;
         Map<String, Object> filterMap = new HashMap<>();
         filterMap.put("flowInstId", flowInstId);
-        if (StringUtils.isBlank(runToken))
-            runToken = "A";
-        filterMap.put("runToken", runToken);
-        filterMap.put("varName", varName);
+        if (StringUtils.isNotBlank(runToken)) {
+            filterMap.put("runToken", runToken);
+        }
+        if (StringUtils.isNotBlank(varName)) {
+            filterMap.put("varName", varName);
+        }
         flowVariableDao.deleteObjectsByProperties(filterMap);
     }
 

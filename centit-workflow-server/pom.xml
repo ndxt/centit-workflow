@@ -18,7 +18,7 @@
     </description>
 
     <properties>
-        <centit.workflow.version>4.0-SNAPSHOT</centit.workflow.version>
+        <centit.workflow.version>4.2-SNAPSHOT</centit.workflow.version>
     </properties>
 
     <dependencies>

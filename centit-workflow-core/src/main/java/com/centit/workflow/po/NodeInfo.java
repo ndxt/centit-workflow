@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * create by scaffold
- * 
+ *
  * @author codefan@hotmail.com
  */
 @Entity
@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 public class NodeInfo implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
-   
+
     @Id
     @Column(name = "NODE_ID")
     private Long nodeId;
@@ -26,7 +26,7 @@ public class NodeInfo implements java.io.Serializable {
     private String flowCode;
     @Column(name = "VERSION")
     private Long version;
-    A:开始 B:首节点 C:业务节点  F结束  R: 路由节点 
+    A:开始 B:首节点 C:业务节点  F结束  R: 路由节点
     */
     @Column(name = "NODE_TYPE")
     private String nodeType;
@@ -79,10 +79,10 @@ public class NodeInfo implements java.io.Serializable {
     private String nodeCode;
     @Column(name = "RISK_INFO")
     private String riskinfo;
-    
+
     @Column(name = "STAGE_CODE")
     private String stageCode;
-    
+
     @Column(name = "ROUTER_TYPE")
     private String routerType;
     @Column(name = "MULTI_INST_TYPE")
@@ -90,7 +90,7 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "MULTI_INST_PARAM")
     private String multiInstParam;
     @Column(name = "CONVERGE_TYPE")
-    private String convergeType;  
+    private String convergeType;
     @Column(name = "CONVERGE_PARAM")
     private String convergeParam;
     @Column(name = "WARNING_RULE")
@@ -106,7 +106,7 @@ public class NodeInfo implements java.io.Serializable {
     private Long version;
 
     @Column(name = "FLOW_CODE")
-    @NotBlank(message = "字段不能为空")
+    @NotNull(message = "字段不能为空")
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String flowCode;
 
@@ -342,7 +342,7 @@ public class NodeInfo implements java.io.Serializable {
         this.inheritType = inheritType;
     }
     /**
-     * 继承节点环节代码 输入框 ，文本输入； XML 属性名 inheritNodeCode 
+     * 继承节点环节代码 输入框 ，文本输入； XML 属性名 inheritNodeCode
      * InheritType == '2' 时有效
      * @return
      */
@@ -496,7 +496,7 @@ public class NodeInfo implements java.io.Serializable {
     public void copy(NodeInfo other) {
         //this.setNodeId(other.getNodeId());
         this.setFlowDefine(other.getFlowDefine());
-        //this.getFlowDefine().setFlowCode(other.getFlowCode());  
+        //this.getFlowDefine().setFlowCode(other.getFlowCode());
         this.nodeType = other.getNodeType();
         this.nodeName = other.getNodeName();
         this.optType = other.getOptType();
@@ -589,12 +589,12 @@ public class NodeInfo implements java.io.Serializable {
             this.warningParam=other.getWarningParam();
 
     }
-    
+
     public void clearProperties()
     {
         this.nodeId = null;
-        this.getFlowDefine().setVersion(null);  
-        this.getFlowDefine().setFlowCode(null);  
+        this.getFlowDefine().setVersion(null);
+        this.getFlowDefine().setFlowCode(null);
         this.nodeType =  null;
         this.nodeName =  null;
         this.optType =  null;
@@ -612,7 +612,7 @@ public class NodeInfo implements java.io.Serializable {
         this.expireOpt =  null;
         this.isAccountTime = "T";
         this.isTrunkLine ="F";
-        
+
         this.routerType=null;
         this.multiInstType=null;
         this.multiInstParam=null;

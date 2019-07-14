@@ -1,6 +1,7 @@
 package com.centit.workflow.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -1032,6 +1033,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         List<NodeInstance> nodeInstsSet = flowInst.getFlowNodeInstances();
         for (NodeInstance nodeInst : nodeInstsSet) {
             NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
+            if (node == null)
+                continue;
             // 不显示 自动执行的节点 codefan@sina.com 2012-7-8
             if ("D".equals(node.getOptType()) || "E".equals(node.getOptType()))
                 continue;
@@ -1053,10 +1056,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     public List<ActionTask> listNodeActionTasks(long nodeinstid) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeinstid);
+        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeinstid);
         if (null == nodeInst)
             nodeInst = new NodeInstance();
-        return new ArrayList<ActionTask>(nodeInst.getWfActionTasks());
+        return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
     public int deleteNodeActionTasks(long nodeinstid, String mangerUserCode) {
@@ -1392,8 +1395,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public List<ActionTask> listNodeInstTasks(Long nodeInstId) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        return new ArrayList<ActionTask>(nodeInst.getWfActionTasks());
+        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
+        return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
 
@@ -1539,6 +1542,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
         this.resetFlowToThisNode(flowInstance.getFirstNodeInstance().getNodeInstId(), managerUserCode);
+        //暂时为联想定制使用，删除加签人
+        flowEngine.deleteFlowVariable(flowInstId, "", "HQJQR");
         return true;
     }
 }

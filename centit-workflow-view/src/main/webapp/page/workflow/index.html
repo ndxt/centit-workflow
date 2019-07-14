@@ -755,13 +755,14 @@
 
     if (SVG.supported) {
     	var flowCode = location.search.substr(1).split("&")[0].split("=")[1];
+      var version = location.search.substr(1).split("&")[1].split("=")[1];
     	var Data;
 
         var xml;
         $.ajax({
 			type: "get",
 			async: false,
-			url: path+loadDefineXml+flowCode + "/000",
+			url: path+loadDefineXml+flowCode + "/" + version,
 			dataType: "json",
 			success: function (data) {
 				xml = data.data;

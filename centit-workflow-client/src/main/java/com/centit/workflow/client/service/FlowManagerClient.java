@@ -30,4 +30,14 @@ public interface FlowManagerClient {
 
     String reStartFlow(Long flowInstId,String userCode);
 
-}
+    /**
+     * 终止一个流程
+     * 更新所有节点状态为F
+     * F 强行结束
+     * @param flowInstId
+     * @param userCode
+     * @return
+     */
+    String stopInstance(Long flowInstId,String userCode) ;
+
+    }

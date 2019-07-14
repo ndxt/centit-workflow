@@ -724,7 +724,6 @@ public class FlowManagerController extends BaseController {
 
     /**
      * 终止一个流程
-     * 修改其流程id为负数
      * 更新所有节点状态为F
      * F 强行结束
      */
@@ -734,7 +733,7 @@ public class FlowManagerController extends BaseController {
             flowManager.stopInstance(flowInstId, userCode, "");
             JsonResultUtils.writeSuccessJson(response);
         } catch (Exception e) {
-            JsonResultUtils.writeErrorMessageJson(1, "流程已经被审批，无法撤回", response);
+            JsonResultUtils.writeErrorMessageJson(1, "流程无法强行结束", response);
 
         }
     }

@@ -41,7 +41,7 @@ public class UserOptClientImpl implements UserOptClient {
     }
 
     @Override
-    public void saveOptIdeaForAutoSubmit(Map<String, String> paraMap) {
+    public void saveOptIdeaForAutoSubmit(Map<String, Object> paraMap) {
         RestfulHttpRequest.jsonPost(appSession,"/appr/saveOptIdeaForAutoSubmit",paraMap);
     }
 
