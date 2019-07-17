@@ -1542,8 +1542,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
         this.resetFlowToThisNode(flowInstance.getFirstNodeInstance().getNodeInstId(), managerUserCode);
-        //暂时为联想定制使用，删除加签人
-        flowEngine.deleteFlowVariable(flowInstId, "", "HQJQR");
+        //退回首节点之后，删除流程变量
+        flowEngine.deleteFlowVariable(flowInstId, "", "");
         return true;
     }
 }

@@ -43,11 +43,10 @@ public class FlowDefineController extends BaseController {
      */
     @ApiOperation(value = "流程定义列表", notes = "列出所有的流程定义列表")
     @GetMapping(value = "/listFlow")
-    public void listFlow(PageDesc pageDesc, HttpServletResponse response) {
-        Map<String, Object> searchColumn = new HashMap<>();
-        List<FlowInfo> listObjects = flowDef.listLastVersionFlow(searchColumn, pageDesc);
+    public void listFlow(HttpServletResponse response,HttpServletRequest request) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<FlowInfo> listObjects = flowDef.listLastVersionFlow(searchColumn, new PageDesc());
         resData.addResponseData(OBJLIST, listObjects);
-        resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response, JsonPropertyUtils.getIncludePropPreFilter(FlowInfo.class, new String[]{"flowCode", "flowName"}));
     }
 
