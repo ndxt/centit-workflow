@@ -743,7 +743,7 @@ public interface FlowEngine {
      * @param attUser 关注人员
      * @param optUser 设置人员
      */
-    void saveFlowAttention(long flowInstId,String attUser,String optUser);
+    void saveFlowAttention(InstAttention attObj);
 
     /**
      * 删除流程关注人员

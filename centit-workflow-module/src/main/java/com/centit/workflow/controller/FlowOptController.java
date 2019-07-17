@@ -46,7 +46,7 @@ public class FlowOptController extends BaseController {
     public void listOptInfo(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
         Map<String, Object> filterMap = convertSearchColumn(request);
 
-        List<FlowOptInfo> objList = wfOptService.listOptInfo(filterMap,pageDesc);
+        JSONArray objList = wfOptService.listOptInfo(filterMap,pageDesc);
         resData.addResponseData(OBJLIST, objList);
         resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response);

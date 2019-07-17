@@ -59,26 +59,5 @@ public class FlowDefineClientImpl implements FlowDefineClient {
         HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/define/listFlow");
         return HttpReceiveJSON.getDataAsArray("objList",FlowInfo.class);
-        /*Map<String,Object> paramMap = new HashMap<>();
-        HttpReceiveJSON result = null;
-        CloseableHttpClient httpClient = null;
-        List<FlowInfo> flowInfos = null;
-        try {
-            httpClient = appSession.allocHttpClient();
-            appSession.checkAccessToken(httpClient);
-            result =  appSession.getResponseData(httpClient,
-                UrlOptUtils.appendParamsToUrl(
-                    appSession.completeQueryUrl("/flow/define"),paramMap));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            appSession.releaseHttpClient(httpClient);
-        }
-        try {
-            flowInfos= result.getDataAsArray("objList",FlowInfo.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return flowInfos;*/
     }
 }

@@ -1,25 +1,30 @@
 package com.centit.workflow.po;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 
 /**
  * FAddressBook entity.
- * 
+ *
  * @author codefan@hotmail.com
- */ 
+ */
 @Embeddable
 public class FlowWorkTeamId implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
 
     @Column(name = "FLOW_INST_ID")
+    @ApiModelProperty(value = "流程实例id",required = true)
     private Long flowInstId;
 
     @Column(name = "USER_CODE")
+    @ApiModelProperty(value = "用户编号",required = true)
     private String userCode;
 
     @Column(name = "ROLE_CODE")
+    @ApiModelProperty(value = "办件角色编码",required = true)
     private String roleCode;
 
     // Constructors
@@ -34,7 +39,7 @@ public class FlowWorkTeamId implements java.io.Serializable {
         this.roleCode = rolecode;
     }
 
-  
+
     public Long getFlowInstId() {
         return this.flowInstId;
     }
@@ -42,7 +47,7 @@ public class FlowWorkTeamId implements java.io.Serializable {
     public void setFlowInstId(Long wfinstid) {
         this.flowInstId = wfinstid;
     }
-  
+
     public String getUserCode() {
         return this.userCode;
     }
@@ -50,7 +55,7 @@ public class FlowWorkTeamId implements java.io.Serializable {
     public void setUserCode(String usercode) {
         this.userCode = usercode;
     }
-  
+
     public String getRoleCode() {
         return this.roleCode;
     }
@@ -70,15 +75,15 @@ public class FlowWorkTeamId implements java.io.Serializable {
 
         FlowWorkTeamId castOther = (FlowWorkTeamId) other;
         boolean ret = true;
-  
+
         ret = ret && ( this.getFlowInstId() == castOther.getFlowInstId() ||
                        (this.getFlowInstId() != null && castOther.getFlowInstId() != null
                                && this.getFlowInstId().equals(castOther.getFlowInstId())));
-  
+
         ret = ret && ( this.getUserCode() == castOther.getUserCode() ||
                        (this.getUserCode() != null && castOther.getUserCode() != null
                                && this.getUserCode().equals(castOther.getUserCode())));
-  
+
         ret = ret && ( this.getRoleCode() == castOther.getRoleCode() ||
                        (this.getRoleCode() != null && castOther.getRoleCode() != null
                                && this.getRoleCode().equals(castOther.getRoleCode())));
@@ -88,13 +93,13 @@ public class FlowWorkTeamId implements java.io.Serializable {
 
     public int hashCode() {
         int result = 17;
-  
+
         result = 37 * result +
              (this.getFlowInstId() == null ? 0 :this.getFlowInstId().hashCode());
-  
+
         result = 37 * result +
              (this.getUserCode() == null ? 0 :this.getUserCode().hashCode());
-  
+
         result = 37 * result +
              (this.getRoleCode() == null ? 0 :this.getRoleCode().hashCode());
 

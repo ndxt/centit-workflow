@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.common.WorkTimeSpan;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -22,13 +23,13 @@ public class FlowInstance implements java.io.Serializable {
 
     @Id
     @Column(name = "FLOW_INST_ID")
-    @GeneratedValue(generator = "assignedGenerator")
+    //@GeneratedValue(generator = "assignedGenerator")
     private Long flowInstId;
 
     @ManyToOne
     @JoinColumns({
-        @JoinColumn(name = "VERSION", referencedColumnName = "VERSION"),
-        @JoinColumn(name = "flowCode", referencedColumnName = "FLOW_CODE")
+        @JoinColumn(name = "version"),
+        @JoinColumn(name = "flowCode")
     })
     private FlowInfo flowDefine;
 
@@ -82,9 +83,11 @@ public class FlowInstance implements java.io.Serializable {
     private Long preNodeInstId;
 
     @Column(name = "UNIT_CODE")
+    @DictionaryMap(value = "unitCode", fieldName = "unitName")
     private String unitCode;
 
     @Column(name = "USER_CODE")
+    @DictionaryMap(value = "userCode", fieldName = "userName")
     private String userCode;
 
     @Column(name = "LAST_UPDATE_TIME")
@@ -94,13 +97,13 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name = "IS_TIMER")
     private String isTimer; //不计时N、计时T(有期限)、暂停P  忽略(无期限) F
 
-    @OneToMany(mappedBy = "flowInstId", cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = NodeInstance.class)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = NodeInstance.class)
     @JoinColumn(name = "flowInstId")
     private List<NodeInstance> flowNodeInstances = null;// new ArrayList<WfNodeInstance>();
     @Transient
     @JSONField(serialize = false)
     private List<NodeInstance> activeNodeList;
-    @OneToMany(mappedBy = "flowInstId", cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)
     @JoinColumn(name = "flowInstId")
     private List<StageInstance> flowStageInstances = null;// new ArrayList<WfNodeInstance>();
 
@@ -459,8 +462,10 @@ public class FlowInstance implements java.io.Serializable {
             return null;
         NodeInstance firstNode = null;
         for (NodeInstance nodeInst : flowNodeInstances)
-            if (firstNode == null || firstNode.getNodeInstId() > nodeInst.getNodeInstId())
+            if (nodeInst.getPrevNodeInstId() == null) {
                 firstNode = nodeInst;
+                continue;
+            }
 
         return firstNode;
     }

@@ -109,9 +109,9 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listNodeInstByTimer(String userCode, String isTimer, PageDesc pageDesc){
-        return this.listObjectsByFilter(" where last_Update_User = ? and is_Timer = ? " +
+        return this.listObjectsByFilterAsJson(" where last_Update_User = ? and is_Timer = ? " +
                         "order by last_Update_Time ",
-                new Object[]{userCode,isTimer},pageDesc);
+                new Object[]{userCode,isTimer},pageDesc).toJavaList(NodeInstance.class);
     }
 
     /**

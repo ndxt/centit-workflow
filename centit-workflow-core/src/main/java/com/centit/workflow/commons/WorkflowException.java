@@ -11,7 +11,7 @@ public class WorkflowException extends ObjectException {
     private static final long serialVersionUID = 1L;
 
     //public enum FlowExceptionType {
-    public static final int NodeUserNotFound    = 650; //找不到节点实例
+    public static final int NodeUserNotFound    = 650; //找不到节点操作人员
     public static final int NodeInstNotFound    = 651; //找不到节点实例
     public static final int FlowInstNotFound    = 652;  //找不到流程实例
     public static final int FlowDefineError     = 653;  //流程图绘制问题

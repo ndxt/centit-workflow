@@ -33,6 +33,9 @@ public class FlowOptDef implements java.io.Serializable {
     @Column(name = "UPDATE_DATE")
     private Date updateDate;
 
+    @Column(name = "EXTEND_METHOD")
+    private String extendMethod;
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -75,5 +78,13 @@ public class FlowOptDef implements java.io.Serializable {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public String getExtendMethod() {
+        return extendMethod;
+    }
+
+    public void setExtendMethod(String extendMethod) {
+        this.extendMethod = extendMethod;
     }
 }

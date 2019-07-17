@@ -1,27 +1,23 @@
 package com.centit.workflow.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.NodeEventSupport;
-import com.centit.workflow.commons.NodeMsgSupport;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
-import com.sun.tools.javac.comp.Flow;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -812,7 +808,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                             mangerUserCode, flowInstanceDao);
                         subFlowInst.setLastUpdateUser(mangerUserCode);
                         flowInstanceDao.updateObject(subFlowInst);
-                        //更新子流程下的所有消息未已办
+                        //更新子流程下的所有消息为已办
                         FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(), mangerUserCode);
 
                     }
@@ -826,7 +822,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 wfactlog.setActionId(actionLogDao.getNextActionId());
                 nodeInst.addWfActionLog(wfactlog);
                 nodeInstanceDao.mergeObject(nodeInst);
-                //更新消息未已办
+                //更新消息为已办
                 FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, mangerUserCode);
             }
         }
@@ -1037,6 +1033,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         List<NodeInstance> nodeInstsSet = flowInst.getFlowNodeInstances();
         for (NodeInstance nodeInst : nodeInstsSet) {
             NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
+            if (node == null)
+                continue;
             // 不显示 自动执行的节点 codefan@sina.com 2012-7-8
             if ("D".equals(node.getOptType()) || "E".equals(node.getOptType()))
                 continue;
@@ -1058,10 +1056,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     public List<ActionTask> listNodeActionTasks(long nodeinstid) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeinstid);
+        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeinstid);
         if (null == nodeInst)
             nodeInst = new NodeInstance();
-        return new ArrayList<ActionTask>(nodeInst.getWfActionTasks());
+        return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
     public int deleteNodeActionTasks(long nodeinstid, String mangerUserCode) {
@@ -1397,8 +1395,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public List<ActionTask> listNodeInstTasks(Long nodeInstId) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        return new ArrayList<ActionTask>(nodeInst.getWfActionTasks());
+        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
+        return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
 
@@ -1527,5 +1525,25 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public void deleteRoleRelegate(Long relegateno) {
         flowRoleRelegateDao.deleteObjectById(relegateno);
+    }
+
+    @Override
+    public void updateFlow(FlowInstance flowInstance) {
+        flowInstanceDao.updateObject(flowInstance);
+    }
+
+    @Override
+    public Boolean reStartFlow(Long flowInstId, String managerUserCode, Boolean force) {
+        FlowInstance flowInstance = flowInstanceDao.getObjectCascadeById(flowInstId);
+        //如果不是强行拉回，需要判断是否流程最后提交人是自己
+        if (!force) {
+            if (!managerUserCode.equals(flowInstance.getLastUpdateUser())) {
+                return false;
+            }
+        }
+        this.resetFlowToThisNode(flowInstance.getFirstNodeInstance().getNodeInstId(), managerUserCode);
+        //暂时为联想定制使用，删除加签人
+        flowEngine.deleteFlowVariable(flowInstId, "", "HQJQR");
+        return true;
     }
 }

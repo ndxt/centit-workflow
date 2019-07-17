@@ -76,4 +76,16 @@ public class FlowManagerClientImpl implements FlowManagerClient {
                 "/flow/manager/stopAndChangeInstance",paramMap);
     }
 
+    @Override
+    public String reStartFlow(Long flowInstId,String userCode) {
+        return RestfulHttpRequest.jsonPut(appSession,
+            "/flow/manager/reStartFlow/"+flowInstId+"/"+userCode,null);
+    }
+
+    @Override
+    public String stopInstance(Long flowInstId,String userCode) {
+        return RestfulHttpRequest.jsonPut(appSession,
+            "/flow/manager/stopInstance/"+flowInstId+"/"+userCode,null);
+    }
+
 }

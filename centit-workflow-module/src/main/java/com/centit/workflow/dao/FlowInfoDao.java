@@ -90,8 +90,8 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInfo> getAllVersionFlowsByCode(String wfCode, PageDesc pageDesc){
-        return this.listObjectsByFilter("where FLOW_CODE = ? order by version desc",
-                new Object[]{wfCode},pageDesc);
+        return this.listObjectsByFilterAsJson("where FLOW_CODE = ? order by version desc",
+                new Object[]{wfCode},pageDesc).toJavaList(FlowInfo.class);
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public FlowInfo getLastVersionFlowByCode(String flowCode){

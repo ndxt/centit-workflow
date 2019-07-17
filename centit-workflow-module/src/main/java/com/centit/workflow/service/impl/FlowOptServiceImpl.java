@@ -1,5 +1,6 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.FlowOptDefDao;
 import com.centit.workflow.dao.FlowOptInfoDao;
@@ -34,8 +35,8 @@ public class FlowOptServiceImpl implements FlowOptService {
 
     @Override
     @Transactional
-    public List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc) {
-        return flowOptInfoDao.listObjectsByProperties(filterMap,pageDesc);
+    public JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc) {
+        return flowOptInfoDao.listObjectsAsJson(filterMap,pageDesc);
     }
 
     @Override

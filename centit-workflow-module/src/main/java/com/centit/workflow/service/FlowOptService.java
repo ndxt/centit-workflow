@@ -1,5 +1,6 @@
 package com.centit.workflow.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowOptDef;
 import com.centit.workflow.po.FlowOptInfo;
@@ -11,9 +12,9 @@ import java.util.Map;
  * 2018年9月12日10:46:54
  */
 public interface FlowOptService {
-    public List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc);
+    JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc);
 
-    public FlowOptInfo getOptById(String optId);
+     FlowOptInfo getOptById(String optId);
 
     void deleteOptInfoById(String optId);
 

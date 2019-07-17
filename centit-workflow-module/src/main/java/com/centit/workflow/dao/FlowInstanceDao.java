@@ -71,15 +71,6 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
         this.updateObject(flowInst);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
-    public FlowInstance getObjectCascadeById(long instid){
-        return jdbcTemplate.execute(
-            (ConnectionCallback<FlowInstance>) conn ->
-                OrmDaoUtils.getObjectCascadeById(conn, instid, FlowInstance.class));
-
-      /*FlowInstance flowInstance = super.getObjectById(instid);
-        return super.fetchObjectReferences(flowInstance);*/
-    }
     /**
      *  获取用户参与 流程实例 按照时间倒序排列
      * @param userCode 用户代码
@@ -104,7 +95,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
             }
             whereSql += " ) )";
         }
-        return this.listObjectsByFilter(whereSql,filterMap,pageDesc);
+        return this.listObjectsByFilterAsJson(whereSql,filterMap,pageDesc).toJavaList(FlowInstance.class);
     }
 
     // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
@@ -131,7 +122,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listAllActiveFlowInst(PageDesc pageDesc){
-        return this.listObjectsByFilter("where inst_State = 'N'",new Object[]{},pageDesc);
+        return this.listObjectsByFilterAsJson("where inst_State = 'N'",new Object[]{},pageDesc).toJavaList(FlowInstance.class);
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listAllActiveTimerFlowInst(){
@@ -140,7 +131,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listAllActiveTimerFlowInst(PageDesc pageDesc){
-        return this.listObjectsByFilter("where inst_State = 'N' and is_Timer='T'",new Object[]{},pageDesc);
+        return this.listObjectsByFilterAsJson("where inst_State = 'N' and is_Timer='T'",new Object[]{},pageDesc).toJavaList(FlowInstance.class);
     }
 
     /**
@@ -151,9 +142,9 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInstance> listFlowInstByTimer(String userCode, String isTimer, PageDesc pageDesc){
-        return super.listObjectsByFilter(
+        return super.listObjectsByFilterAsJson(
             " where last_Update_User = ? and is_Timer =? order by last_Update_Time ",
-            new Object[]{userCode,isTimer},pageDesc);
+            new Object[]{userCode,isTimer},pageDesc).toJavaList(FlowInstance.class);
     }
 
     /**

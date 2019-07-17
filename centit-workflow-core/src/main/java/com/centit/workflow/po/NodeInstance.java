@@ -22,7 +22,7 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name="FLOW_INST_ID")
     private Long  flowInstId;
 
-    @OneToOne(mappedBy = "nodeId",cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInfo.class)
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInfo.class)
     @JoinColumn(name="nodeId")
     private NodeInfo node;
 
@@ -30,9 +30,11 @@ public class NodeInstance implements java.io.Serializable {
     private Long nodeId;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name="CREATE_TIME")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name="LAST_UPDATE_TIME")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date  lastUpdateTime;
     @Column(name="PREV_NODE_INST_ID")
     private Long prevNodeInstId;
@@ -75,11 +77,11 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name="NODE_PARAM")
     private String nodeParam;
 
-    @OneToMany(mappedBy = "nodeInstId",cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = ActionLog.class)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = ActionLog.class)
     @JoinColumn(name="nodeInstId")
     private Set<ActionLog> wfActionLogs = null;// new ArrayList<WfActionLog>();
 
-    @OneToMany(mappedBy = "nodeInstId",cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = ActionTask.class)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = ActionTask.class)
     @JoinColumn(name="nodeInstId")
     private Set<ActionTask> wfActionTasks = null;// new ArrayList<WfActionTask>();
 

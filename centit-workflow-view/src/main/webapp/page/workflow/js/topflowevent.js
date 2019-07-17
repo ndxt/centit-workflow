@@ -619,6 +619,10 @@ function drawLine(event) {
                 pl.remove();
                 pl=null;
                 return false;
+            }else if (SVG.get(target.id).attr("nodetype") == 'R'){
+              SVG.get(target.id).attr({
+                "from" : SVG.get(target.id).attr("from") + ','+pl.attr("id")
+              });
             }
 		} else {//不存在则设置
 			SVG.get(target.id).attr({

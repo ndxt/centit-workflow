@@ -5,6 +5,7 @@ import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitFilterCalcContext;
 import com.centit.framework.components.UserUnitParamBuilder;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
+import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
 import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.PageDesc;
@@ -97,11 +98,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
             newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstid(),
             null, newFlowInstanceOptions.isLockFirstOpt(), newFlowInstanceOptions.getTimeLimitStr());
-        Set<Long> nodes = new HashSet<>();
-        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
-            nodes.add(n.getNodeInstId());
-        }
-        FlowOptUtils.sendMsg(0, nodes, newFlowInstanceOptions.getUserCode());
+//        Set<Long> nodes = new HashSet<>();
+//        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
+//            nodes.add(n.getNodeInstId());
+//        }
+//        FlowOptUtils.sendMsg(0, nodes, newFlowInstanceOptions.getUserCode());
         return flowInstance;
     }
 
@@ -127,11 +128,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         FlowInstance flowInstance = createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
             unitCode, 0, 0, null, true, null);
-        Set<Long> nodes = new HashSet<>();
-        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
-            nodes.add(n.getNodeInstId());
-        }
-        FlowOptUtils.sendMsg(0, nodes, userCode);
+//        Set<Long> nodes = new HashSet<>();
+//        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
+//            nodes.add(n.getNodeInstId());
+//        }
+//        FlowOptUtils.sendMsg(0, nodes, userCode);
         return flowInstance;
     }
 
@@ -243,7 +244,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInst.setUserCode(userCode);
             nodeInst.setTaskAssigned("S");
         } else {
-            Set<String> optUsers = null;
+            Set<String> optUsers = new HashSet<>();
             if (SysUserFilterEngine.ROLE_TYPE_ENGINE.equalsIgnoreCase(node.getRoleType())) {
                 //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色
                 //根据权限表达式创建任务列表
@@ -258,12 +259,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (optUsers == null || optUsers.size() == 0)
                     logger.error("权限引擎没有识别出符合表达式的操作人员！");
             } else if ("bj".equalsIgnoreCase(node.getRoleType())) {
-                optUsers = new HashSet<>();
                 List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(nodeInst.getFlowInstId(), node.getRoleCode());
                 for (FlowWorkTeam u : users) {
                     optUsers.add(u.getUserCode());
                 }
-            } else/*gw xz*/ {
+                if (optUsers.isEmpty()) {
+                    optUsers.add(userCode);
+                }
+            } else {
+                /*gw xz*/
                 optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(userUnitFilterCalcContext,
                     node.getRoleType(), node.getRoleCode(), nextNodeUnit);
             }
@@ -275,8 +279,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nodeInst.setUserCode(optUsers.iterator().next());
             } else {
                 if (!"D".equals(node.getOptType()) && !"E".equals(node.getOptType())) {
-                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
-                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到操作人员");
+                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到权限为" + node.getRoleCode() + "的操作人员");
+                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到权限为" + node.getRoleCode() + "的操作人员");
                 }
             }
 
@@ -523,6 +527,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (nodeToken.startsWith("R")) {
                     return resNodes;
                 } else {
+                    logger.error("找不到后续节点：" + nodeInst.getFlowInstId() +
+                        " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                     throw new WorkflowException(WorkflowException.NotFoundNextNode,
                         "找不到后续节点：" + nodeInst.getFlowInstId() +
                             " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
@@ -642,8 +648,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                 }
 
-                FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans,
-                    flowVariableDao.listFlowVariables(flowInst.getFlowInstId()), nodeInst, flowInst);
+                List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInst.getFlowInstId());
+                FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans, flowVariables
+                    , nodeInst, flowInst);
 
                 flowVarTrans.setFlowOrganizes(this.viewFlowOrganize(flowInst.getFlowInstId()));
                 flowVarTrans.setFlowWorkTeam(this.viewFlowWorkTeam(flowInst.getFlowInstId()));
@@ -712,14 +719,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                 null, nodeToken + "." + nRn,
                                 true, varTrans, nodeUnits, nodeOptUsers,
                                 application);
-
                             resNodes.add(nextNodeInst.getNodeInstId());
                             nRn++;
                         }
                     }
-                }//else if("V".equals(nextRoutertNode.getMultiInstType())){
-                // 保留
-                //}
+                } else if ("V".equals(nextRoutertNode.getMultiInstType())) {
+                    //TODO 实现变量多实例
+                }
 
             } else if ("R".equals(sRT)) {//游离
                 FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
@@ -851,9 +857,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             UserUnitParamBuilder.addParamToParamMap(unitParams, "P",
                 flowInst.getNearestNodeUnitCode(nodeInst, nodeToken));
             UserUnitParamBuilder.addParamToParamMap(unitParams, "F", flowInst.getUnitCode());
-
-            nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext, nextOptNode.getUnitExp(),
-                unitParams, varTrans);
+            nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(new SystemUserUnitFilterCalcContext(), nextOptNode.getUnitExp(), unitParams, varTrans);
+            //nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext, nextOptNode.getUnitExp(),unitParams, varTrans);
         }
 
         //如果用户指定的节点对应的操作人员为空 则不创建这个节点
@@ -975,8 +980,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nextNodeInst.setUserCode(optUsers.iterator().next());
             else {
                 if (!"D".equals(nextOptNode.getOptType()) && !"E".equals(nextOptNode.getOptType())) {
-                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到操作人员");
-                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到操作人员");
+                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员");
+                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员");
                 }
             }
 
@@ -1172,7 +1177,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     "节点：" + nodeInstId);
         }
         //校验节点状态 流程和节点状态都要为正常
-        if (!"N".equals(flowInst.getInstState()) ||
+        if (!"N,M".contains(flowInst.getInstState()) ||
             (!"N".equals(nodeInst.getNodeState())
                 && !"W".equals(nodeInst.getNodeState()) // 等待子流程返回
             )
@@ -2498,61 +2503,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public List<FlowVariable> listFlowVariables(long flowInstId) {
         List<FlowVariable> lv = flowVariableDao.listFlowVariables(flowInstId);
         if (lv == null)
-            lv = new ArrayList<FlowVariable>();
-        return new ArrayList<FlowVariable>(lv);
-    }
-
-    public void setFlowInstanceDao(FlowInstanceDao flowInstanceDao) {
-        this.flowInstanceDao = flowInstanceDao;
-    }
-
-    public void setNodeInstanceDao(NodeInstanceDao nodeInstanceDao) {
-        this.nodeInstanceDao = nodeInstanceDao;
-    }
-
-    public void setFlowNodeDao(NodeInfoDao flowNodeDao) {
-        this.flowNodeDao = flowNodeDao;
-    }
-
-    public void setFlowTransitionDao(FlowTransitionDao flowTransitionDao) {
-        this.flowTransitionDao = flowTransitionDao;
-    }
-
-    public void setActionTaskDao(ActionTaskDao actionTaskDao) {
-        this.actionTaskDao = actionTaskDao;
-    }
-
-    public void setActionLogDao(ActionLogDao actionLogDao) {
-        this.actionLogDao = actionLogDao;
-    }
-
-    public void setFlowDefDao(FlowInfoDao flowDefDao) {
-        this.flowDefDao = flowDefDao;
-    }
-
-    public void setFlowTeamDao(FlowWorkTeamDao flowTeamDao) {
-        this.flowTeamDao = flowTeamDao;
-    }
-
-    public void setFlowOrganizeDao(FlowOrganizeDao flowOrganizeDao) {
-        this.flowOrganizeDao = flowOrganizeDao;
-    }
-
-    public void setFlowVariableDao(FlowVariableDao flowVariableDao) {
-        this.flowVariableDao = flowVariableDao;
-    }
-
-    public void setFlowAttentionDao(InstAttentionDao flowAttentionDao) {
-        this.attentionDao = flowAttentionDao;
-    }
-
-    public void setRuntimeWarningDao(FlowWarningDao warningDao) {
-        this.runtimeWarningDao = warningDao;
+            lv = new ArrayList<>();
+        return lv;
     }
 
     @Override
-    public void saveFlowAttention(long flowInstId, String attUser, String optUser) {
-        InstAttention attObj = new InstAttention(attUser, flowInstId, DatetimeOpt.currentUtilDate(), optUser);
+    public void saveFlowAttention(InstAttention attObj) {
+        attObj = new InstAttention(attObj.getUserCode(), attObj.getFlowInstId(), DatetimeOpt.currentUtilDate(), attObj.getAttSetUser(), attObj.getAttSetMemo());
         attentionDao.mergeObject(attObj);
     }
 
@@ -2708,49 +2665,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return actionTaskDao.hasOptPower(nodeInstId, userCode, null);
     }
 
-    /**
-     * 这个方法很低效，如果有必要可以通过添加视图来优化这个方法
-     */
-   /* @Override
-    public List<NodeInstance> listUserCompleteTasks(
-            Map<String, Object> filterMap, PageDesc pageDesc, String userCode) {
-        //添加用户参与的过滤条件
-        filterMap.put("lastUpdateUser", userCode);
-
-        List<NodeInstance> tempList = nodeInstanceDao.listObjects(filterMap,
-                pageDesc);
-        List<NodeInstance> temp = new ArrayList<>();
-        if (tempList != null) {
-
-            for (NodeInstance nodeInst : tempList) {
-                FlowInstance flowInst = flowInstanceDao
-                        .getObjectById(nodeInst.getFlowInstId());
-                if (flowInst == null) {
-                    continue;
-                }
-                nodeInst.setFlowOptName(flowInst.getFlowOptName());
-                nodeInst.setFlowOptTag(flowInst.getFlowOptTag());
-
-                NodeInfo wfNode = flowNodeDao.getObjectById(nodeInst.getNodeId());
-                if (wfNode == null) {
-                    continue;
-                }
-                nodeInst.setNodeName(wfNode.getNodeName());
-
-                // 判断节点任务是否提供回收：a.下一步办理人为当前操作人员的;b.下一节点已经被处理过的
-                if (nodeCanBeReclaim(nodeInst.getNodeInstId())
-                        && !canAccess(nodeInst.getNodeInstId(), userCode)) {
-                    nodeInst.setIsRecycle("yes");
-                    temp.add(nodeInst);
-                } else {
-                    nodeInst.setIsRecycle("no");
-                }
-            }
-
-            return temp;
-        }
-        return new ArrayList<>();
-    }*/
     @Override
     public List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap, PageDesc pageDesc) {
         List<UserTask> taskList = actionTaskDao.listUserTaskFinByFilter(filterMap, pageDesc);
@@ -2804,15 +2718,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return;
         Map<String, Object> filterMap = new HashMap<>();
         filterMap.put("flowInstId", flowInstId);
-        if (StringUtils.isBlank(runToken))
-            runToken = "A";
-        filterMap.put("runToken", runToken);
-        filterMap.put("varName", varName);
+        if (StringUtils.isNotBlank(runToken)) {
+            filterMap.put("runToken", runToken);
+        }
+        if (StringUtils.isNotBlank(varName)) {
+            filterMap.put("varName", varName);
+        }
         flowVariableDao.deleteObjectsByProperties(filterMap);
     }
 
-  /*  @Override
-    public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap) {
-        nodeInstanceDao.saveOptIdeaForAutoSubmit(paraMap);
-    }*/
+
 }

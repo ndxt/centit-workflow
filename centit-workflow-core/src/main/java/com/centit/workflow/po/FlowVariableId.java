@@ -1,29 +1,40 @@
 package com.centit.workflow.po;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 
 /**
  * FAddressBook entity.
- * 
+ *
  * @author codefan@hotmail.com
- */ 
+ */
 @Embeddable
 public class FlowVariableId implements java.io.Serializable {
-    private static final long serialVersionUID =  1L;
-     @Column(name = "FLOW_INST_ID")
+    private static final long serialVersionUID = 1L;
+    @Column(name = "FLOW_INST_ID")
+    @ApiModelProperty(value = "流程实例编号", required = true)
     private Long flowInstId;
-     @Column(name = "RUN_TOKEN")
+    @Column(name = "RUN_TOKEN")
+    @ApiModelProperty(value = "运行令牌")
     private String runToken;
-     @Column(name = "VAR_NAME")
+    @Column(name = "VAR_NAME")
+    @ApiModelProperty(value = "变量name", required = true)
     private String varName;
 
     // Constructors
-    /** default constructor */
+
+    /**
+     * default constructor
+     */
     public FlowVariableId() {
     }
-    /** full constructor */
+
+    /**
+     * full constructor
+     */
     public FlowVariableId(Long flowInstId, String runToken, String varName) {
 
         this.flowInstId = flowInstId;
@@ -31,7 +42,7 @@ public class FlowVariableId implements java.io.Serializable {
         this.varName = varName;
     }
 
-  
+
     public Long getFlowInstId() {
         return this.flowInstId;
     }
@@ -39,7 +50,7 @@ public class FlowVariableId implements java.io.Serializable {
     public void setFlowInstId(Long flowInstId) {
         this.flowInstId = flowInstId;
     }
-  
+
     public String getRunToken() {
         return this.runToken;
     }
@@ -47,7 +58,7 @@ public class FlowVariableId implements java.io.Serializable {
     public void setRunToken(String runToken) {
         this.runToken = runToken;
     }
-  
+
     public String getVarName() {
         return this.varName;
     }
@@ -67,33 +78,33 @@ public class FlowVariableId implements java.io.Serializable {
 
         FlowVariableId castOther = (FlowVariableId) other;
         boolean ret = true;
-  
-        ret = ret && ( this.getFlowInstId() == castOther.getFlowInstId() ||
-                       (this.getFlowInstId() != null && castOther.getFlowInstId() != null
-                               && this.getFlowInstId().equals(castOther.getFlowInstId())));
-  
-        ret = ret && ( this.getRunToken() == castOther.getRunToken() ||
-                       (this.getRunToken() != null && castOther.getRunToken() != null
-                               && this.getRunToken().equals(castOther.getRunToken())));
-  
-        ret = ret && ( this.getVarName() == castOther.getVarName() ||
-                       (this.getVarName() != null && castOther.getVarName() != null
-                               && this.getVarName().equals(castOther.getVarName())));
+
+        ret = ret && (this.getFlowInstId() == castOther.getFlowInstId() ||
+            (this.getFlowInstId() != null && castOther.getFlowInstId() != null
+                && this.getFlowInstId().equals(castOther.getFlowInstId())));
+
+        ret = ret && (this.getRunToken() == castOther.getRunToken() ||
+            (this.getRunToken() != null && castOther.getRunToken() != null
+                && this.getRunToken().equals(castOther.getRunToken())));
+
+        ret = ret && (this.getVarName() == castOther.getVarName() ||
+            (this.getVarName() != null && castOther.getVarName() != null
+                && this.getVarName().equals(castOther.getVarName())));
 
         return ret;
     }
 
     public int hashCode() {
         int result = 17;
-  
+
         result = 37 * result +
-             (this.getFlowInstId() == null ? 0 :this.getFlowInstId().hashCode());
-  
+            (this.getFlowInstId() == null ? 0 : this.getFlowInstId().hashCode());
+
         result = 37 * result +
-             (this.getRunToken() == null ? 0 :this.getRunToken().hashCode());
-  
+            (this.getRunToken() == null ? 0 : this.getRunToken().hashCode());
+
         result = 37 * result +
-             (this.getVarName() == null ? 0 :this.getVarName().hashCode());
+            (this.getVarName() == null ? 0 : this.getVarName().hashCode());
 
         return result;
     }
