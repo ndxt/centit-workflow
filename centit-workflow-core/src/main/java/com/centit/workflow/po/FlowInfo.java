@@ -288,7 +288,7 @@ public class FlowInfo implements java.io.Serializable {
     }
 
 
-    public NodeInfo getFlowNodeById(long nodeId){
+    public NodeInfo getFlowNodeById(String nodeId){
         if(this.flowNodes ==null)
             return null;
         for(NodeInfo nd : flowNodes)

@@ -83,7 +83,7 @@ public interface FlowDefine {
      * @param nodeId
      * @return
      */
-    NodeInfo getNodeInfoById(long nodeId);
+    NodeInfo getNodeInfoById(String nodeId);
 
     /**
      * 获取全部最新版本流程

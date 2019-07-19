@@ -69,15 +69,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         FlowInfoId id = new FlowInfoId(wfInst
             .getVersion(), wfInst.getFlowCode());
         FlowInfo wfDef = flowDefDao.getObjectCascadeById(id);
-        Map<Long, String> nodeState = new HashMap<>();
-        Map<Long, Integer> nodeInstCount = new HashMap<>();
-        Map<Long, NodeInfo> nodeMap = new HashMap<>();
+        Map<String, String> nodeState = new HashMap<>();
+        Map<String, Integer> nodeInstCount = new HashMap<>();
+        Map<String, NodeInfo> nodeMap = new HashMap<>();
         Map<String, String> transState = new HashMap<>();
         Map<String, FlowTransition> transMap = new HashMap<>();
         Set<NodeInfo> nodeSet = wfDef.getFlowNodes();
         Boolean findTran = true;
-        long benginNodeId = -1;
-        long endNodeID = -1;
+        String benginNodeId = "";
+        String endNodeID = "";
         for (NodeInfo node : nodeSet) {
             nodeState.put(node.getNodeId(), "ready");
             if (node.getNodeType().equals("A")) {
@@ -246,7 +246,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Element procsEle = baseEle.addElement("Procs");
         Element stepsEle = baseEle.addElement("Steps");
 
-        for (Map.Entry<Long, String> ns : nodeState.entrySet()) {
+        for (Map.Entry<String, String> ns : nodeState.entrySet()) {
             Element procEle = procsEle.addElement("Proc");
             procEle.addAttribute("id", ns.getKey().toString());
             procEle.addAttribute("inststate", ns.getValue());
@@ -938,7 +938,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return -2;
 
         FlowTransition trans = transList.get(0);
-        long nextCode = transList.get(0).getEndNodeId();
+        String nextCode = transList.get(0).getEndNodeId();
         NodeInfo nextNode = flowNodeDao.getObjectById(nextCode);
         if (nextNode == null)
             return -3;
@@ -962,7 +962,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             nextNode, trans);
 
         nextNodeInst.setNodeInstId(nextNodeInstId);
-        nextNodeInst.setPrevNodeInstId(nodeInst.getNodeId());
+//        nextNodeInst.setPrevNodeInstId(nodeInst.getNodeId());?
+        nextNodeInst.setPrevNodeInstId(nodeInst.getNodeInstId());
         nextNodeInst.setRunToken(nodeInst.getRunToken());// 添加令牌算法
         nextNodeInst.setTransPath(String.valueOf(trans.getTransId()));
 
@@ -1237,7 +1238,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     @Override
-    public long resetStageTimelimt(long flowInstId, long stageId, String timeLimit,
+    public long resetStageTimelimt(long flowInstId, String stageId, String timeLimit,
                                    String mangerUserCode, String admindesc) {
         FlowInstance wfFlowInst = flowInstanceDao.getObjectById(flowInstId);
         if (wfFlowInst == null)

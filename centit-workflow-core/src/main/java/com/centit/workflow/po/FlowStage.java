@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 @Entity
 @Table(name = "WF_FLOW_STAGE")
 public class FlowStage implements java.io.Serializable {
@@ -19,7 +19,7 @@ public class FlowStage implements java.io.Serializable {
 
     @Id
     @Column(name = "STAGE_ID")
-    private Long stageId;
+    private String stageId;
 
     @Column(name = "STAGE_CODE")
     private String  stageCode;
@@ -62,7 +62,7 @@ public class FlowStage implements java.io.Serializable {
     }
     /** minimal constructor */
     public FlowStage(
-        Long stageId
+        String stageId
         ,String  stageCode) {
         this.stageId = stageId;
         this.stageCode= stageCode;
@@ -70,7 +70,7 @@ public class FlowStage implements java.io.Serializable {
 
 /** full constructor */
     public FlowStage(
-            Long stageId
+            String stageId
     , FlowInfo flowDefine, String  stageCode, String  stageName, String  isAccountTime, String  limitType, String  timeLimit, String  expireOpt) {
 
         this.stageId = stageId;
@@ -84,12 +84,12 @@ public class FlowStage implements java.io.Serializable {
     }
 
 
-  
-    public Long getStageId() {
+
+    public String getStageId() {
         return this.stageId;
     }
 
-    public void setStageId(Long stageId) {
+    public void setStageId(String stageId) {
         this.stageId = stageId;
     }
     // Property accessors
@@ -131,7 +131,7 @@ public class FlowStage implements java.io.Serializable {
     public void setStageCode(String stageCode) {
         this.stageCode = stageCode;
     }
-  
+
     public String getStageName() {
         return this.stageName;
     }
@@ -139,7 +139,7 @@ public class FlowStage implements java.io.Serializable {
     public void setStageName(String stageName) {
         this.stageName = stageName;
     }
-  
+
     public String getIsAccountTime() {
         return this.isAccountTime;
     }
@@ -147,7 +147,7 @@ public class FlowStage implements java.io.Serializable {
     public void setIsAccountTime(String isAccountTime) {
         this.isAccountTime = isAccountTime;
     }
-  
+
     public String getLimitType() {
         return this.limitType;
     }
@@ -155,7 +155,7 @@ public class FlowStage implements java.io.Serializable {
     public void setLimitType(String limitType) {
         this.limitType = limitType;
     }
-  
+
     public String getTimeLimit() {
         return this.timeLimit;
     }
@@ -163,7 +163,7 @@ public class FlowStage implements java.io.Serializable {
     public void setTimeLimit(String timeLimit) {
         this.timeLimit = timeLimit;
     }
-  
+
     public String getExpireOpt() {
         return this.expireOpt;
     }
@@ -208,7 +208,7 @@ public class FlowStage implements java.io.Serializable {
     }
 
     public void clearProperties(){
-  
+
         this.flowDefine=null;
         this.stageCode= null;
         this.stageName= null;
@@ -218,5 +218,5 @@ public class FlowStage implements java.io.Serializable {
         this.expireOpt= null;
 
     }
-    
+
 }

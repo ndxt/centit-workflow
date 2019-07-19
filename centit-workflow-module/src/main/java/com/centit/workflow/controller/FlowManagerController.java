@@ -543,7 +543,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/viewflownode/{flowInstId}/{nodeId}", method = RequestMethod.GET)
-    public void viewFlowNodeInfo(@PathVariable Long flowInstId, @PathVariable Long nodeId, HttpServletResponse response) {
+    public void viewFlowNodeInfo(@PathVariable Long flowInstId, @PathVariable String nodeId, HttpServletResponse response) {
         try {
             FlowInstance dbobject = flowManager.getFlowInstance(flowInstId);
             NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeId);

@@ -5,9 +5,9 @@ import javax.persistence.Embeddable;
 
 /**
  * FAddressBook entity.
- * 
+ *
  * @author codefan@hotmail.com
- */ 
+ */
 @Embeddable
 public class StageInstanceId implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
@@ -17,19 +17,19 @@ public class StageInstanceId implements java.io.Serializable {
     private Long flowInstId;
 
     @Column(name = "STAGE_ID")
-    private Long stageId;
+    private String stageId;
 
     // Constructors
     /** default constructor */
     public StageInstanceId() {
     }
     /** full constructor */
-    public StageInstanceId(Long flowInstId, Long stageId) {
+    public StageInstanceId(Long flowInstId, String stageId) {
 
         this.flowInstId = flowInstId;
         this.stageId = stageId;
     }
-  
+
     public Long getFlowInstId() {
         return this.flowInstId;
     }
@@ -38,11 +38,11 @@ public class StageInstanceId implements java.io.Serializable {
         this.flowInstId = flowInstId;
     }
 
-    public Long getStageId() {
+    public String getStageId() {
         return this.stageId;
     }
 
-    public void setStageId(Long stageId) {
+    public void setStageId(String stageId) {
         this.stageId = stageId;
     }
 
@@ -57,11 +57,11 @@ public class StageInstanceId implements java.io.Serializable {
 
         StageInstanceId castOther = (StageInstanceId) other;
         boolean ret = true;
-  
+
         ret = ret && ( this.getFlowInstId() == castOther.getFlowInstId() ||
                        (this.getFlowInstId() != null && castOther.getFlowInstId() != null
                                && this.getFlowInstId().equals(castOther.getFlowInstId())));
-  
+
         ret = ret && ( this.getStageId() == castOther.getStageId() ||
                        (this.getStageId() != null && castOther.getStageId() != null
                                && this.getStageId().equals(castOther.getStageId())));
@@ -71,10 +71,10 @@ public class StageInstanceId implements java.io.Serializable {
 
     public int hashCode() {
         int result = 17;
-  
+
         result = 37 * result +
              (this.getFlowInstId() == null ? 0 :this.getFlowInstId().hashCode());
-  
+
         result = 37 * result +
              (this.getStageId() == null ? 0 :this.getStageId().hashCode());
 

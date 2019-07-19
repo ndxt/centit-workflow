@@ -25,7 +25,7 @@ public class FlowVariableDefine implements Serializable {
     @Id
     @NotNull
     @Column(name = "FLOW_VARIABLE_ID")
-    private Long flowVariableId;
+    private String flowVariableId;
     @NotNull
     @Column(name = "FLOW_CODE")
     private String flowCode;
@@ -57,7 +57,7 @@ public class FlowVariableDefine implements Serializable {
         this.flowDefine = flowDefine;
     }
 
-    public void setFlowVariableId(Long flowVariableId) {
+    public void setFlowVariableId(String flowVariableId) {
         this.flowVariableId = flowVariableId;
     }
 
@@ -69,13 +69,11 @@ public class FlowVariableDefine implements Serializable {
         this.version = version;
     }
 
-    public Long getFlowVariableId() {
+    public String getFlowVariableId() {
         return flowVariableId;
     }
 
-    public void setFlowVariableId(long flowVariableId) {
-        this.flowVariableId = flowVariableId;
-    }
+
 
     public String getFlowCode() {
         return flowCode;

@@ -27,14 +27,14 @@ public class NodeInstance implements java.io.Serializable {
     private NodeInfo node;
 
     @Column(name = "NODE_ID")
-    private Long nodeId;
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+    private String nodeId;
+//    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name="CREATE_TIME")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name="LAST_UPDATE_TIME")
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+//    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date  lastUpdateTime;
     @Column(name="PREV_NODE_INST_ID")
     private Long prevNodeInstId;
@@ -123,7 +123,7 @@ public class NodeInstance implements java.io.Serializable {
 /** full constructor */
     public NodeInstance(
      Long nodeinstid
-    ,Long  wfinstid,Long  nodeid,Date  createtime,Date  starttime,Long  prevnodeinstid,
+    ,Long  wfinstid,String  nodeid,Date  createtime,Date  starttime,Long  prevnodeinstid,
     Long  promiseTime, Long timeLimit,String  nodestate,Long  subwfinstid,String  unitcode,
     String  transPath,String  taskassigned,String runToken,String lastUpdateUser,
     String isTimer,String flowPhase) {
@@ -166,11 +166,11 @@ public class NodeInstance implements java.io.Serializable {
         this.flowInstId = wfinstid;
     }
 
-    public Long getNodeId() {
+    public String getNodeId() {
         return nodeId;
     }
 
-    public void setNodeId(Long nodeId) {
+    public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
     }
 

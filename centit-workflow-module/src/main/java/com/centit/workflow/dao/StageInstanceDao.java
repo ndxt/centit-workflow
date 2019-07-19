@@ -28,7 +28,7 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
 
             filterField.put("timeLimit", CodeBook.LIKE_HQL_ID);
 
-            
+
         }
         return filterField;
     }
@@ -37,7 +37,7 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
         return this.listObjectsByFilter("where flow_Inst_Id=?",new Object[]{flowInstId});
     }
     @Transactional(propagation= Propagation.MANDATORY)
-    public StageInstance getObject(long flowInstId, long stageId) {
+    public StageInstance getObject(long flowInstId, String stageId) {
         return this.getObjectById(new StageInstanceId(flowInstId,stageId));
     }
 }

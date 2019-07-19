@@ -2,6 +2,7 @@ package com.centit.workflow.dao;
 
 import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
+import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.orm.OrmDaoUtils;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
@@ -69,6 +67,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     @Transactional(propagation= Propagation.MANDATORY)
     public long getNextVariableDefId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
+//        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
@@ -114,7 +113,8 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public String getNextPrimarykey() {
-        return String.valueOf(DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFINE"));
+        return UuidOpt.getUuidAsString32();
+//        return String.valueOf(DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFINE"));
     }
 
     @SuppressWarnings("deprecation")

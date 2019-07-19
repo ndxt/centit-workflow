@@ -2,6 +2,7 @@ package com.centit.workflow.dao;
 
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.algorithm.UuidOpt;
 import com.centit.workflow.po.FlowTeamRole;
 import com.centit.workflow.po.NodeInstance;
 import org.springframework.stereotype.Repository;
@@ -29,7 +30,8 @@ public class FlowTeamRoleDao extends BaseDaoImpl<FlowTeamRole,Long>{
     @Transactional(propagation= Propagation.MANDATORY)
     public void saveNewObject(FlowTeamRole o) {
         if(o.getFlowTeamRoleId() == null || "".equals(o.getFlowTeamRoleId())){
-            o.setFlowTeamRoleId(getNextTeamRoleId());
+            o.setFlowTeamRoleId(UuidOpt.getUuidAsString32());
+//            o.setFlowTeamRoleId(getNextTeamRoleId());
         }
         super.saveNewObject(o);
     }

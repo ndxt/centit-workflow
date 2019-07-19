@@ -21,7 +21,7 @@ public class FlowTeamRole implements Serializable {
     @Id
     @NotNull
     @Column(name = "FLOW_TEAM_ROLE_ID")
-    private Long flowTeamRoleId;
+    private String flowTeamRoleId;
     @NotNull
     @Column(name = "FLOW_CODE")
     private String flowCode;
@@ -62,11 +62,11 @@ public class FlowTeamRole implements Serializable {
         this.version = version;
     }
 
-    public Long getFlowTeamRoleId() {
+    public String getFlowTeamRoleId() {
         return flowTeamRoleId;
     }
 
-    public void setFlowTeamRoleId(Long flowTeamRoleId) {
+    public void setFlowTeamRoleId(String flowTeamRoleId) {
         this.flowTeamRoleId = flowTeamRoleId;
     }
 

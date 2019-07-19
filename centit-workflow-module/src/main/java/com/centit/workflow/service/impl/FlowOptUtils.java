@@ -45,7 +45,7 @@ public class FlowOptUtils {
             StageInstance stageInst = flowInst.newFlowStageInstance();
             stageInst.setFlowInstId(flowInstId);
             stageInst.setStageCode(wfStage.getStageCode());
-            stageInst.setStageId(wfStage.getStageId());
+            stageInst.setStageId( wfStage.getStageId());
             stageInst.setPromiseTime(new WorkTimeSpan(timeLimit).toNumber());
             stageInst.setStageBegin("0");
             stageInst.setTimeLimit(stageInst.getPromiseTime());

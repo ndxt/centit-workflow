@@ -191,7 +191,7 @@ public interface FlowEngine {
      * @param varTrans 变量转换器
      * @return
      */
-    Set<String> viewNextNodeOperator(long nextNodeId,long curNodeInstId,
+    Set<String> viewNextNodeOperator(String nextNodeId,long curNodeInstId,
                                      String userCode,String unitCode,UserUnitVariableTranslate varTrans);
 
 

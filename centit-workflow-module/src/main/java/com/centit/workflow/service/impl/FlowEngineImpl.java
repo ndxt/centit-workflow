@@ -437,7 +437,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         endNodeInst.setLastUpdateUser(userCode);
         endNodeInst.setPrevNodeInstId(preNodeInstId);
         if (StringUtils.isBlank(transPath))
-            endNodeInst.setTransPath(String.valueOf(trans.getTransId()));
+            endNodeInst.setTransPath(trans.getTransId());
         else
             endNodeInst.setTransPath(transPath + "," + String.valueOf(trans.getTransId()));
         nodeInstanceDao.saveNewObject(endNodeInst);
@@ -538,7 +538,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             // D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
             if ("D".equals(sRT)) {
                 FlowTransition nodeTran = selTrans.iterator().next();
-                long nextNodeId = nodeTran.getEndNodeId();
+                String nextNodeId = nodeTran.getEndNodeId();
                 resNodes = submitToNextNode(
                     nextNodeId, flowInst, flowInfo,
                     nodeInst, preTransPath, nodeTran, userCode, null, unitCode, nodeToken,
@@ -546,7 +546,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             } else {
                 int nNo = 1;
                 for (FlowTransition tran : selTrans) {
-                    long nextNodeId = tran.getEndNodeId();
+                    String nextNodeId = tran.getEndNodeId();
                     Set<Long> nNs = submitToNextNode(
                         nextNodeId, flowInst, flowInfo,
                         nodeInst, preTransPath, tran, userCode, null, unitCode, nodeToken + "." + nNo,
@@ -564,7 +564,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //汇聚节点，所有节点都已提交,或者只要当前节点
                 if (nNs == null || nNs.size() == 0 || (nNs.size() == 1 && nNs.contains(nodeInst.getRunToken()))) {
                     FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
-                    long nextNodeId = nodeTran.getEndNodeId();
+                    String nextNodeId = nodeTran.getEndNodeId();
                     for (FlowTransition f : flowInfo.getFlowTransitions()) {
                         if (nextRoutertNode.getNodeId().equals(f.getEndNodeId()) && !f.getTransId().equals(trans.getTransId())) {
                             preTransPath += "," + String.valueOf(f.getTransId());
@@ -578,7 +578,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     //A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X
                     String sCT = nextRoutertNode.getConvergeType();
                     if (!"A".equals(sCT)) {
-                        Set<Long> submitNodeIds = flowInst.calcSubmitSubNodeIdByToken(preRunToken);
+                        Set<String> submitNodeIds = flowInst.calcSubmitSubNodeIdByToken(preRunToken);
                         List<FlowTransition> transList = flowTransitionDao.getNodeInputTrans
                             (nextRoutertNode.getNodeId());
                         boolean canSubmit = true;
@@ -623,7 +623,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             }
 
                             FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
-                            long nextNodeId = nodeTran.getEndNodeId();
+                            String nextNodeId = nodeTran.getEndNodeId();
                             for (FlowTransition f : flowInfo.getFlowTransitions()) {
                                 if (nextRoutertNode.getNodeId().equals(f.getEndNodeId()) && !f.getTransId().equals(trans.getTransId())) {
                                     preTransPath += "," + String.valueOf(f.getTransId());
@@ -639,7 +639,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
             } else if ("G".equals(sRT)) {//多实例
                 FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
-                long nextNodeId = nodeTran.getEndNodeId();
+                String nextNodeId = nodeTran.getEndNodeId();
                 NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
 
                 if (!"C".equals(nextNode.getNodeType())) { //报错
@@ -729,7 +729,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
             } else if ("R".equals(sRT)) {//游离
                 FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
-                long nextNodeId = nodeTran.getEndNodeId();
+                String nextNodeId = nodeTran.getEndNodeId();
                 resNodes = submitToNextNode(
                     nextNodeId, flowInst, flowInfo,
                     nodeInst, preTransPath, nodeTran, userCode, null, unitCode, "R" + nodeToken,
@@ -763,7 +763,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     private Set<Long> submitToNextNode(
-        long nextNodeId, FlowInstance flowInst, FlowInfo flowInfo,
+        String nextNodeId, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance nodeInst, String transPath, FlowTransition nodeTran,
         String userCode, String grantorCode, String unitCode, String nodeToken,
         FlowVariableTranslate varTrans,
@@ -829,7 +829,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         ServletContext application) throws WorkflowException {
 
         //String nodeToken = nodeInst.getRunToken();
-        long nextCode = nextOptNode.getNodeId();
+        String nextCode = nextOptNode.getNodeId();
 
 
         String nextNodeUnit = null;
@@ -1090,7 +1090,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
 
-    private NodeInfo selectNextNodeByNodeId(Long nodeId) {
+    private NodeInfo selectNextNodeByNodeId(String nodeId) {
         List<FlowTransition> transList = flowTransitionDao.getNodeTrans(nodeId);
         if (transList == null || transList.size() < 1)
             return null;
@@ -1340,7 +1340,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowVarTrans.setFlowOrganizes(flowOrganizes);
         flowVarTrans.setFlowWorkTeam(flowWorkTeam);
 
-        long nextNodeId = nodeTran.getEndNodeId();
+        String nextNodeId = nodeTran.getEndNodeId();
         String nodeToken = nodeInst.getRunToken();
         nextNodeInsts = submitToNextNode(
             nextNodeId, flowInst, flowInfo,
@@ -1680,7 +1680,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public Set<String> viewNextNodeOperator(long nextNodeId,
+    public Set<String> viewNextNodeOperator(String nextNodeId,
                                             long curNodeInstId, String userCode, String unitCode, UserUnitVariableTranslate varTrans) {
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);

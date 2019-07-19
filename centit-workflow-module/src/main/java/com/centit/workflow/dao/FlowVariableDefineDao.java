@@ -2,6 +2,7 @@ package com.centit.workflow.dao;
 
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.algorithm.UuidOpt;
 import com.centit.workflow.po.FlowVariableDefine;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,7 +29,8 @@ public class FlowVariableDefineDao extends BaseDaoImpl<FlowVariableDefine,Long> 
     @Transactional(propagation= Propagation.MANDATORY)
     public void saveNewObject(FlowVariableDefine o) {
         if(o.getFlowVariableId() == null || "".equals(o.getFlowVariableId())){
-            o.setFlowVariableId(getNextFlowVariableId());
+            o.setFlowVariableId(UuidOpt.getUuidAsString32());
+//            o.setFlowVariableId(getNextFlowVariableId());
         }
         super.saveNewObject(o);
     }

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 @Entity
 @Table(name = "WF_TRANSITION")
 public class FlowTransition implements java.io.Serializable {
@@ -22,7 +22,7 @@ public class FlowTransition implements java.io.Serializable {
 
     @Id
     @Column(name = "TRANS_ID")
-    private Long transId;
+    private String transId;
 
     @Column(name = "TRANS_CLASS")
     private String transClass;
@@ -31,9 +31,9 @@ public class FlowTransition implements java.io.Serializable {
     @Column(name = "TRANS_DESC")
     private String transDesc;
     @Column(name = "START_NODE_ID")
-    private Long startNodeId;
+    private String startNodeId;
     @Column(name = "END_NODE_ID")
-    private Long endNodeId;
+    private String endNodeId;
     @Column(name = "TRANS_CONDITION")
     private String transCondition;
     @Column(name = "LIMIT_TYPE")
@@ -60,8 +60,8 @@ public class FlowTransition implements java.io.Serializable {
 
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
-    
-    
+
+
     // Constructors
     /** default constructor */
     public FlowTransition() {
@@ -70,7 +70,7 @@ public class FlowTransition implements java.io.Serializable {
     }
     /** minimal constructor */
     public FlowTransition(
-        Long transid
+        String transid
         ) {
         this.canIgnore="T";
         isAccountTime ="I";
@@ -80,9 +80,9 @@ public class FlowTransition implements java.io.Serializable {
 
 /** full constructor */
     public FlowTransition(
-     Long transid
+     String transid
     ,Long  version,String  wfcode,String  transclass,String  transname,String  transdesc,
-     Long  startnodeid,Long  endnodeid,String  transcondition,String limitType,String timelimit) {
+     String  startnodeid,String  endnodeid,String  transcondition,String limitType,String timelimit) {
 
 
         this.transId = transid;
@@ -123,28 +123,28 @@ public class FlowTransition implements java.io.Serializable {
     public void setTimeLimit(String timelimit) {
         this.timeLimit = timelimit;
     }
-  
-    public Long getTransId() {
+
+    public String getTransId() {
         return this.transId;
     }
 
-    public void setTransId(Long transid) {
+    public void setTransId(String transid) {
         this.transId = transid;
     }
 
-    public Long getStartNodeId() {
+    public String getStartNodeId() {
         return startNodeId;
     }
 
-    public void setStartNodeId(Long startNodeId) {
+    public void setStartNodeId(String startNodeId) {
         this.startNodeId = startNodeId;
     }
 
-    public Long getEndNodeId() {
+    public String getEndNodeId() {
         return endNodeId;
     }
 
-    public void setEndNodeId(Long endNodeId) {
+    public void setEndNodeId(String endNodeId) {
         this.endNodeId = endNodeId;
     }
 
@@ -179,7 +179,7 @@ public class FlowTransition implements java.io.Serializable {
     public void setTransClass(String transClass) {
         this.transClass = transClass;
     }
-  
+
     public String getTransName() {
         return this.transName;
     }
@@ -187,7 +187,7 @@ public class FlowTransition implements java.io.Serializable {
     public void setTransName(String transName) {
         this.transName = transName;
     }
-  
+
     public String getTransDesc() {
         return this.transDesc;
     }
@@ -227,7 +227,7 @@ public class FlowTransition implements java.io.Serializable {
 
     public void copy(FlowTransition other){
         //this.setTransId(other.getTransId());
-        this.setFlowDefine(other.getFlowDefine()); 
+        this.setFlowDefine(other.getFlowDefine());
         this.transClass = other.getTransClass();
         this.transName = other.getTransName();
         this.transDesc = other.getTransDesc();
@@ -236,18 +236,18 @@ public class FlowTransition implements java.io.Serializable {
         this.transCondition = other.getTransCondition();
         this.limitType = other.getLimitType();
         this.timeLimit = other.getTimeLimit();
-        
-        this.isAccountTime= other.getIsAccountTime();  
-        this.canIgnore= other.getCanIgnore();  
+
+        this.isAccountTime= other.getIsAccountTime();
+        this.canIgnore= other.getCanIgnore();
     }
-    
+
     public void copyNotNullProperty(FlowTransition other){
-  
+
         /*if( other.getTransId() != null)
             this.setTransId(other.getTransId());*/
-      
+
         if( other.getFlowDefine() != null)
-            this.setFlowDefine(other.getFlowDefine()); 
+            this.setFlowDefine(other.getFlowDefine());
 
         if( other.getTransClass() != null)
             this.transClass = other.getTransClass();
@@ -262,20 +262,20 @@ public class FlowTransition implements java.io.Serializable {
         if( other.getTransCondition() != null)
             this.transCondition = other.getTransCondition();
         if( other.getLimitType() != null)
-            this.limitType= other.getLimitType();  
+            this.limitType= other.getLimitType();
         if( other.getTimeLimit() != null)
-            this.limitType= other.getTimeLimit();  
-        
+            this.limitType= other.getTimeLimit();
+
         if( other.getIsAccountTime() != null)
-            this.isAccountTime= other.getIsAccountTime();  
+            this.isAccountTime= other.getIsAccountTime();
         if( other.getCanIgnore() != null)
-            this.canIgnore= other.getCanIgnore();  
+            this.canIgnore= other.getCanIgnore();
     }
-    
+
   public void clearProperties(){
-        
-       
-        this.flowDefine = null; 
+
+
+        this.flowDefine = null;
         this.transClass =null;
         this.transName = null;
         this.transDesc = null;
@@ -284,16 +284,16 @@ public class FlowTransition implements java.io.Serializable {
         this.transCondition = null;
         this.limitType =null;
         this.timeLimit = null;
-        
-        this.isAccountTime= "I";  
-        this.canIgnore="T";  
+
+        this.isAccountTime= "I";
+        this.canIgnore="T";
     }
-  
+
     public FlowInfo getFlowDefine() {
         return flowDefine;
     }
     public void setFlowDefine(FlowInfo flowDefine) {
         this.flowDefine = flowDefine;
     }
-    
+
 }

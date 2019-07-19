@@ -288,7 +288,7 @@ public interface FlowManager {
      * @param admindesc      流程期限更改原因说明
      * @return
      */
-    long resetStageTimelimt(long flowInstId, long stageId,
+    long resetStageTimelimt(long flowInstId, String stageId,
                             String timeLimit, String mangerUserCode, String admindesc);
 
     //------------流程角色管理-----接口参见flowEngine--------------------

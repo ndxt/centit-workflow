@@ -4,6 +4,7 @@ import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.core.controller.BaseController;
+import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.po.*;
@@ -226,7 +227,8 @@ public class FlowDefineController extends BaseController {
         if (null != flowdefine.getFlowStages()) {
             for (FlowStage stage : flowdefine.getFlowStages()) {
                 if (null == stage.getStageId()) {
-                    stage.setStageId(flowDef.getNextStageId());
+                    stage.setStageId(UuidOpt.getUuidAsString32());
+//                    stage.setStageId(flowDef.getNextStageId());
                 }
                 stage.setFlowDefine(flowdefine);
             }
@@ -254,7 +256,8 @@ public class FlowDefineController extends BaseController {
         if (null != flowdefine.getFlowTeamRoles()) {
             for (FlowTeamRole role : flowdefine.getFlowTeamRoles()) {
                 if (null == role.getFlowTeamRoleId()) {
-                    role.setFlowTeamRoleId(flowDef.getNextRoleId());
+                    role.setFlowTeamRoleId(UuidOpt.getUuidAsString32());
+//                    role.setFlowTeamRoleId(flowDef.getNextRoleId());
                 }
                 role.setFlowDefine(flowdefine);
             }
@@ -282,7 +285,8 @@ public class FlowDefineController extends BaseController {
         if (null != flowdefine.getFlowVariableDefines()) {
             for (FlowVariableDefine variableDefine : flowdefine.getFlowVariableDefines()) {
                 if (null == variableDefine.getFlowVariableId()) {
-                    variableDefine.setFlowVariableId(flowDef.getNextVariableDefId());
+                    variableDefine.setFlowVariableId(UuidOpt.getUuidAsString32());
+//                    variableDefine.setFlowVariableId(flowDef.getNextVariableDefId());
                 }
                 variableDefine.setFlowDefine(flowdefine);
             }

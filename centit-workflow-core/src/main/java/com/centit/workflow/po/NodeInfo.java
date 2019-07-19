@@ -21,7 +21,7 @@ public class NodeInfo implements java.io.Serializable {
 
     @Id
     @Column(name = "NODE_ID")
-    private Long nodeId;
+    private String nodeId;
     /*@Column(name = "FLOWCODE")
     private String flowCode;
     @Column(name = "VERSION")
@@ -143,7 +143,7 @@ public class NodeInfo implements java.io.Serializable {
     }
 
     /** minimal constructor */
-    public NodeInfo(Long nodeid, String nodetype) {
+    public NodeInfo(String nodeid, String nodetype) {
 
         this.nodeId = nodeid;
 
@@ -152,11 +152,11 @@ public class NodeInfo implements java.io.Serializable {
         this.inheritType = "0";
     }
 
-    public Long getNodeId() {
+    public String getNodeId() {
         return this.nodeId;
     }
 
-    public void setNodeId(Long nodeid) {
+    public void setNodeId(String nodeid) {
         this.nodeId = nodeid;
     }
 

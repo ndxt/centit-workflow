@@ -1,5 +1,6 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
@@ -42,14 +43,14 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     private class FlowDataDetail {
         //这个Map放在这儿有一定的耦合性 重构成一个类
-        public Map<String, Long> nodeTagToId;
-        public Map<String, Long> transTagToId;
-        public long beginNodeId;
-        public long firstNodeId;
+        public Map<String, String> nodeTagToId;
+        public Map<String, String> transTagToId;
+        public String beginNodeId;
+        public String firstNodeId;
 
         public FlowDataDetail() {
-            nodeTagToId = new HashMap<String, Long>();
-            transTagToId = new HashMap<String, Long>();
+            nodeTagToId = new HashMap<String, String>();
+            transTagToId = new HashMap<String, String>();
         }
     }
 
@@ -110,13 +111,14 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if (nodeList == null || nodeList.size() == 0) {
             return null;
         }
-        long thisNodeId;
+        String thisNodeId;
         for (Node tmpNode : nodeList) {
             Element baseNode = (Element) tmpNode.selectSingleNode("BaseProperties");
             String sId = getXmlNodeAttrAsStr(baseNode, "id");
             if (sId == null)
                 continue;
-            thisNodeId = flowDefineDao.getNextNodeId();
+            thisNodeId = UuidOpt.getUuidAsString32();
+//            thisNodeId = flowDefineDao.getNextNodeId();
             //这个对应关系 留给下面的 getWfTransitionSet 使用，有一定的耦合性
             flowData.nodeTagToId.put(sId, thisNodeId);
 
@@ -228,7 +230,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             String sId = getXmlNodeAttrAsStr(baseNode, "id");
             if (sId == null)
                 continue;
-            long thisTransId = flowDefineDao.getNextTransId();
+            String thisTransId = UuidOpt.getUuidAsString32();
+//            long thisTransId = flowDefineDao.getNextTransId();
             flowData.transTagToId.put(sId, thisTransId);
 
             wfTran.setTransId(thisTransId);
@@ -248,10 +251,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             wfTran.setCanIgnore(getXmlNodeAttrAsStr(baseNode, "canignore"));
 
             sId = getXmlNodeAttrAsStr(baseNode, "from");
-            long fromNodeId = flowData.nodeTagToId.get(sId);
+            String fromNodeId = flowData.nodeTagToId.get(sId);
             wfTran.setStartNodeId(fromNodeId);
             sId = getXmlNodeAttrAsStr(baseNode, "to");
-            long toNodeId = flowData.nodeTagToId.get(sId);
+            String toNodeId = flowData.nodeTagToId.get(sId);
             wfTran.setEndNodeId(toNodeId);
             if (fromNodeId == flowData.beginNodeId)
                 flowData.firstNodeId = toNodeId;
@@ -456,12 +459,13 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                 continue;
             FlowStage newdt = newFlowDef.newFlowStage();
             newdt.copyNotNullProperty(p);
-            newdt.setStageId(getNextStageId());
+            newdt.setStageId(UuidOpt.getUuidAsString32());
+//            newdt.setStageId(getNextStageId());
             newStages.add(newdt);
         }
         newFlowDef.setFlowStages(newStages);
 
-        Map<Long, String> nodeIsLeaf = new HashMap<Long, String>();
+        Map<String, String> nodeIsLeaf = new HashMap<String, String>();
         for (NodeInfo nd : newFlowDef.getFlowNodes()) {
             if (nd.getNodeId().equals(flowData.firstNodeId)) {
                 nd.setNodeType("B");//首届点
@@ -577,7 +581,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      */
     @Override
     @Transactional
-    public NodeInfo getNodeInfoById(long nodeId) {
+    public NodeInfo getNodeInfoById(String nodeId) {
         return flowNodeDao.getObjectById(nodeId);
     }
 

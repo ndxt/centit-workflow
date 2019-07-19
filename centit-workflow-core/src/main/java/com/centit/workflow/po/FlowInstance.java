@@ -551,7 +551,7 @@ public class FlowInstance implements java.io.Serializable {
      * @param nodeId
      * @return
      */
-    public List<NodeInstance> getAllNodeInstancesByNodeid(long nodeId) {
+    public List<NodeInstance> getAllNodeInstancesByNodeid(String nodeId) {
         List<NodeInstance> sameNodes = new ArrayList<NodeInstance>();
         if (this.flowNodeInstances == null)
             return sameNodes;
@@ -567,7 +567,7 @@ public class FlowInstance implements java.io.Serializable {
         List<NodeInstance> sameNodes = new ArrayList<NodeInstance>();
         if (nodeInst == null || this.flowNodeInstances == null)
             return sameNodes;
-        Long nodeId = nodeInst.getNodeId();
+        String nodeId = nodeInst.getNodeId();
         Long thisNodeInstId = nodeInst.getNodeInstId();
         String runToken = nodeInst.getRunToken();
         for (NodeInstance ni : flowNodeInstances)
@@ -582,7 +582,7 @@ public class FlowInstance implements java.io.Serializable {
     /**
      * 查找在同一条运行路径上的相同节点
      */
-    public NodeInstance findLastSameNodeInst(Long nodeId, NodeInstance nodeInst, Long thisNodeInstId) {
+    public NodeInstance findLastSameNodeInst(String nodeId, NodeInstance nodeInst, Long thisNodeInstId) {
         if (this.flowNodeInstances == null)
             return null;
 
@@ -699,9 +699,9 @@ public class FlowInstance implements java.io.Serializable {
      * @param token
      * @return Nodeid
      */
-    public Set<Long> calcSubmitSubNodeIdByToken(String token) {
+    public Set<String> calcSubmitSubNodeIdByToken(String token) {
         Map<String, NodeInstance> subNodes = findSubmitSubNodeInstByToken(token);
-        Set<Long> subTokens = new HashSet<Long>();
+        Set<String> subTokens = new HashSet<String>();
         for (Map.Entry<String, NodeInstance> ent : subNodes.entrySet())
             subTokens.add(ent.getValue().getNodeId());
         return subTokens;
