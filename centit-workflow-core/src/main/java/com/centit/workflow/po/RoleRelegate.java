@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * create by scaffold
- * 
+ *
  * @author codefan@hotmail.com
  */
 @Entity
@@ -18,13 +18,16 @@ public class RoleRelegate implements java.io.Serializable {
     @Id
     @Column(name = "RELEGATE_NO")
     private Long relegateNo;
+    //委托人
     @Column(name = "GRANTOR")
     private String grantor;
+    //被委托人
     @Column(name = "GRANTEE")
     private String grantee;
     @Column(name = "IS_VALID")
     private String isValid;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
+    //失效时间
     @Column(name = "RELEGATE_TIME")
     private Date relegateTime;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
@@ -38,6 +41,7 @@ public class RoleRelegate implements java.io.Serializable {
     private String roleCode;
     @Column(name = "GRANT_DESC")
     private String grantDesc;
+    //记录人
     @Column(name = "RECORDER")
     private String recorder;
     @Column(name = "RECORD_DATE")

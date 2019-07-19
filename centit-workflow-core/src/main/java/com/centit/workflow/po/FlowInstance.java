@@ -42,7 +42,7 @@ public class FlowInstance implements java.io.Serializable {
     private Long version;
 
     @Column(name = "FLOW_CODE")
-    @NotBlank(message = "字段不能为空")
+    @NotNull(message = "字段不能为空")
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String flowCode;
 

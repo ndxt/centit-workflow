@@ -80,8 +80,13 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private static String getXmlNodeAttrAsStr(Element xNode, String attrName) {
         Attribute nameAttr = xNode.attribute(attrName);
         if (nameAttr != null) {
-            return HtmlFormUtils.htmlString(
+            String xmlNodeString = HtmlFormUtils.htmlString(
                 nameAttr.getValue());
+            //如果是空字符串或者null字符串
+            if (StringUtils.isBlank(xmlNodeString) || "null".equals(xmlNodeString)) {
+                xmlNodeString = "";
+            }
+            return xmlNodeString;
         }
         return null;
     }

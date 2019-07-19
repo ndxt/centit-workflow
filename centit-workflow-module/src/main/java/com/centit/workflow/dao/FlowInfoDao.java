@@ -125,7 +125,8 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
         String sql =  "select VERSION,FLOW_CODE,FLOW_NAME,FLOW_CLASS,FLOW_STATE,FLOW_DESC,FLOW_XML_DESC," +
                 "FLOW_PUBLISH_DATE,OPT_ID,TIME_LIMIT " +
                 " from F_V_LASTVERSIONFLOW " +
-            " where 1=1  [:(like)flowName| and FLOW_NAME like :flowName ]  order by OS_ID ,VERSION desc " ;
+            " where 1=1  [:(like)flowName| and FLOW_NAME like :flowName ] " +
+            " [:flowCode| and FLOW_Code = :flowCode ] order by OS_ID ,VERSION desc " ;
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql,filterMap);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
                 queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
