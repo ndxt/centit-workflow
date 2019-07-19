@@ -279,8 +279,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nodeInst.setUserCode(optUsers.iterator().next());
             } else {
                 if (!"D".equals(node.getOptType()) && !"E".equals(node.getOptType())) {
-                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到权限为" + node.getRoleCode() + "的操作人员");
-                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",找不到权限为" + node.getRoleCode() + "的操作人员");
+                    logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",部门为" + nextNodeUnit + ",找不到权限为" + node.getRoleCode() + "的操作人员");
+                    throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + node.getNodeName() + ",部门为" + nextNodeUnit + ",找不到权限为" + node.getRoleCode() + "的操作人员");
                 }
             }
 
