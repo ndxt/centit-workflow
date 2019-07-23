@@ -14,21 +14,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.centit.framework:framework-core:4.5-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.centit.framework:framework-adapter:4.5-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-web:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-aop:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-core:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-context:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-context-support:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-aspects:5.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.9.2" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-web:5.1.4.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:5.1.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-database:2.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-compiler:2.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.centit.support:centit-utils:2.2-SNAPSHOT" level="project" />
@@ -44,7 +29,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.sun:rt:1.8">
         <CLASSES>
-          <root url="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/rt.jar!/" />
+          <root url="jar:///opt/develop/jvm/jdk11/jre/lib/rt.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -53,7 +38,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.sun:jce:1.8">
         <CLASSES>
-          <root url="jar://C:/Program Files/Java/jdk1.8.0_131/jre/lib/jce.jar!/" />
+          <root url="jar:///opt/develop/jvm/jdk11/jre/lib/jce.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -89,7 +74,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.sun:tools:1.8">
         <CLASSES>
-          <root url="jar://C:/Program Files/Java/jdk1.8.0_131/lib/tools.jar!/" />
+          <root url="jar:///opt/develop/jvm/jdk11/lib/tools.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

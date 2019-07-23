@@ -2,8 +2,8 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.components.SysUnitFilterEngine;
 import com.centit.framework.components.SysUserFilterEngine;
-import com.centit.framework.components.UserUnitFilterCalcContext;
 import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
+import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.workflow.external.JdbcUserUnitFilterCalcContext;
 import org.slf4j.Logger;
@@ -32,8 +32,8 @@ public abstract class UserUnitCalcEngine {
     }*/
 
     public static String calcSingleUnitByExp(
-                UserUnitFilterCalcContext ecc, String unitExp,
-                Map<String, Set<String>> unitParams , UserUnitVariableTranslate varTrans) {
+        UserUnitFilterCalcContext ecc, String unitExp,
+        Map<String, Set<String>> unitParams , UserUnitVariableTranslate varTrans) {
         if (unitExp == null)
             return null;
         //UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
