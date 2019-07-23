@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseData;
+import com.centit.framework.common.ResponseMapData;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
@@ -12,6 +14,7 @@ import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
+import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.PlatformFlowService;
@@ -35,11 +38,58 @@ public class FlowEngineController extends BaseController {
     @Resource
     private FlowManager flowManager;
     @Resource
+    private FlowDefine flowDefine;
+    @Resource
     private PlatformFlowService platformFlowService;
 
 
     private Map<Class<?>, String[]> excludes;
 
+
+    @GetMapping("viewFlowFirstOperUser/{flowCode}")
+    public void viewFlowFirstOperUser(@PathVariable String flowCode, HttpServletResponse response) {
+        FlowInfo flowInfo = flowDefine.getFlowDefObject(flowCode);
+        ResponseMapData data = new ResponseMapData();
+        String nodeId = flowInfo.getFirstNode().getNodeId();
+        Set<FlowTransition> trans = flowInfo.getFlowTransitions();
+        Set<NodeInfo> nodes = flowInfo.getFlowNodes();
+        //第二个节点id
+        String targetNodeId = "";
+        //审批角色
+        String roleCode = "";
+        //循环判断首节点下面得一个节点，暂时默认为首节点下面得节点为单节点
+        for (FlowTransition f : trans) {
+            if (nodeId.equals(f.getStartNodeId())) {
+                targetNodeId = f.getEndNodeId();
+                break;
+            }
+        }
+        //找到节点定义的角色代码
+        for (NodeInfo n : nodes) {
+            if (targetNodeId.equals(n.getNodeId())) {
+                roleCode = n.getRoleCode();
+            }
+        }
+        CodeRepositoryUtil.listUsersByRoleCode("");
+        JsonResultUtils.writeSingleDataJson(data, response);
+
+    }
+
+    @ApiOperation(value = "创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
+    @PostMapping("createAndSubmitFlow")
+    public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions) {
+        List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
+        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        Set<Long> nextNodes = flowEng.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
+            newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
+        for (Long n : nextNodes) {
+            flowManager.deleteTask(n, newFlowInstanceOptions.getUserCode());
+            for (String v : vars) {
+                flowManager.assignTask(n, v, newFlowInstanceOptions.getUserCode(), new Date(), "手动指定审批人");
+            }
+        }
+
+    }
 
     @WrapUpResponseBody
     @PostMapping(value = "/createInstanceLockFirstNode")
@@ -75,7 +125,7 @@ public class FlowEngineController extends BaseController {
         String unitCode = jsonObject.getString("unitCode");
         String varTrans = jsonObject.getString("varTrans");
         try {
-            Set<Long> nextNodes ;
+            Set<Long> nextNodes;
             if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
                 Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
                 nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);

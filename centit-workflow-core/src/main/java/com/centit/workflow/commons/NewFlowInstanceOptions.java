@@ -1,6 +1,5 @@
 package com.centit.workflow.commons;
 
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Map;
@@ -9,7 +8,6 @@ import java.util.Map;
  * Created by codefan on 17-9-11.
  * @author codefan
  */
-@SuppressWarnings("unused")
 public class NewFlowInstanceOptions {
     /**
      * 流程代码
@@ -67,6 +65,9 @@ public class NewFlowInstanceOptions {
      */
     @ApiModelProperty("设置流程时限，格式为3D4H30M这样的")
     private String timeLimitStr;
+
+    @ApiModelProperty("传递的用户code列表，用于下一步人员指定")
+    private String userList;
 
     public NewFlowInstanceOptions() {
     }
@@ -165,5 +166,13 @@ public class NewFlowInstanceOptions {
 
     public void setTimeLimitStr(String timeLimitStr) {
         this.timeLimitStr = timeLimitStr;
+    }
+
+    public String getUserList() {
+        return userList;
+    }
+
+    public void setUserList(String userList) {
+        this.userList = userList;
     }
 }
