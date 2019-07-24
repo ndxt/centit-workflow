@@ -79,9 +79,12 @@ public class FlowEngineController extends BaseController {
     @PostMapping("createAndSubmitFlow")
     public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions) {
         List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
+        //创建流程
         FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        //提交节点
         Set<Long> nextNodes = flowEng.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
+        //更新操作人
         for (Long n : nextNodes) {
             flowManager.deleteTask(n, newFlowInstanceOptions.getUserCode());
             for (String v : vars) {
