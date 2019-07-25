@@ -394,11 +394,19 @@ public interface FlowManager {
     /**
      * 删除任务
      *
-     * @param taskInstId
+     * @param taskId
      * @param mangerUserCode
      * @return
      */
-    public int deleteTask(long taskInstId, String mangerUserCode);
+    public int deleteTask(long taskId, String mangerUserCode);
+
+    /**
+     * 删除节点任务
+     * @param nodeInstId
+     * @param flowInstId
+     * @param mangerUserCode
+     */
+    void deleteNodeActionTasks(long nodeInstId, Long flowInstId, String mangerUserCode);
     // ---------节点任务委托--------------------
 
 

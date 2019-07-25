@@ -2,7 +2,7 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.components.SysUnitFilterEngine;
 import com.centit.framework.components.SysUserFilterEngine;
-import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
+import com.centit.framework.components.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

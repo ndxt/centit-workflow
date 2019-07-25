@@ -1063,23 +1063,18 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
-    public int deleteNodeActionTasks(long nodeinstid, String mangerUserCode) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeinstid);
-        int nTasks = nodeInst.getWfActionTasks().size();
+    public void deleteNodeActionTasks(long nodeInstId, Long flowInstId, String mangerUserCode) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("nodeInstId", nodeInstId);
+        actionTaskDao.deleteObjectsByProperties(map);
 
-        if (nTasks > 0) {
-            nodeInst.getWfActionTasks().clear();
-            nodeInstanceDao.updateObject(nodeInst);
+        ManageActionLog managerAct = FlowOptUtils.createManagerAction(
+            flowInstId, nodeInstId, mangerUserCode, "a");
+        managerAct.setActionId(manageActionDao.getNextManageId());
+        managerAct.setAdminDesc("删除节点任务:"
+            + nodeInstId);
+        manageActionDao.saveNewObject(managerAct);
 
-            ManageActionLog managerAct = FlowOptUtils.createManagerAction(
-                nodeInst.getFlowInstId(), nodeinstid, mangerUserCode, "a");
-            managerAct.setActionId(manageActionDao.getNextManageId());
-            managerAct.setAdminDesc("删除节点任务:"
-                + nodeInst.getNodeInstId());
-            manageActionDao.saveNewObject(managerAct);
-        }
-
-        return nTasks;
     }
 
     public List<ActionLog> listNodeActionLogs(long nodeinstid) {
@@ -1380,9 +1375,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         task.setTaskId(actionTaskDao.getNextTaskId());
         task.setExpireTime(expiretime);
         task.setAuthDesc(authDesc);
-        node.addWfActionTask(task);
+        //node.addWfActionTask(task);
         node.setTaskAssigned("T");
 
+        actionTaskDao.saveNewObject(task);
         nodeInstanceDao.mergeObject(node);
         node.setLastUpdateUser(mangerUserCode);
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());

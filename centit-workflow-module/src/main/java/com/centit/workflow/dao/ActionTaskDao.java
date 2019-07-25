@@ -131,12 +131,12 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<ActionTask> listActionTaskByNode(String userCode){
+    public List<ActionTask> listActionTaskByNode(Long nodeInstId){
        // String baseHQL = "from WfActionTask t join WfNodeInstance i on i.nodeinstid = t.nodeinstid where i.nodestate <> 'C' and t.usercode = ?";
        //return this.listObjects(baseHQL,userCode);
         Map<String,Object> filterMap = new HashMap<>();
-        filterMap.put("userCode",userCode);
-        String baseSQL = "SELECT * FROM WF_ACTION_TASK T JOIN FLOW_NODE_INSTANCE I ON I.NODE_INST_ID = T.NODE_INST_ID WHERE I.NODE_STATE <> 'C' AND T.USER_CODE = ?";
+        filterMap.put("nodeInstId",nodeInstId);
+        String baseSQL = "SELECT t.* FROM WF_ACTION_TASK T where T.node_inst_id = ?";
         return this.listObjectsBySql(baseSQL,filterMap);
     }
 
