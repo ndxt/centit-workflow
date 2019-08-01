@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.po.ActionLog;
 import com.centit.workflow.po.ActionTask;
@@ -461,5 +460,13 @@ public interface FlowManager {
      * @param managerUserCode
      * @param force 是否强制，否的话 需要判断流程最后提交人是否是自己
      */
-    Boolean reStartFlow(Long flowInstId, String managerUserCode,Boolean force);
+    Boolean reStartFlow(Long flowInstId, String managerUserCode, Boolean force);
+
+    public Boolean changeRelegateValid( String json);
+
+    public List<com.alibaba.fastjson.JSONObject> getListRoleRelegateByGrantor(String grantor);
+
+    public void saveRoleRelegateList(RoleRelegate roleRelegate);
+
+    public RoleRelegate getRoleRelegateByPara(String json);
 }

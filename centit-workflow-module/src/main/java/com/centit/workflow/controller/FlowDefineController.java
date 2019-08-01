@@ -35,6 +35,8 @@ public class FlowDefineController extends BaseController {
     @Resource
     private com.centit.workflow.service.FlowDefine flowDef;
     @Resource
+    private com.centit.workflow.service.FlowRoleService flowRoleService;
+    @Resource
     private FlowModelData modelData;
 
     ResponseMapData resData = new ResponseMapData();
@@ -413,6 +415,11 @@ public class FlowDefineController extends BaseController {
         bjMap.put("", "请选择");
         bjMap.putAll(flowDef.getRoleMapByFlowCode(flowcode, 0L));
         map.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, bjMap);
+
+//        Map<String, String> spMap = new LinkedHashMap<>();
+//        spMap.put("", "请选择");
+//        spMap.putAll(flowDef.getRoleMapByFlowCode);
+//        map.put("SP",spMap);
         // 分配机制
         Map<String, String> map2 = modelData.listAllOptType();
         map.put("OptType", map2);

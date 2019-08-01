@@ -6,6 +6,7 @@ import com.centit.framework.model.basedata.IOptMethod;
 import com.centit.workflow.dao.FlowInfoDao;
 import com.centit.workflow.dao.FlowOptDefDao;
 import com.centit.workflow.dao.FlowOptInfoDao;
+import com.centit.workflow.dao.FlowRoleDao;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowOptDef;
 import com.centit.workflow.po.FlowOptInfo;
@@ -37,6 +38,9 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
 
     @Resource
     private FlowOptDefDao wfOptDefDao;
+
+    @Resource
+    private FlowRoleDao flowRoleDao;
 
     @Resource
     private FlowOptInfoDao flowOptInfoDao;
@@ -146,8 +150,11 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
         map2.putAll(CodeRepositoryUtil.getLabelValueMap("RankType"));
         roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ.toLowerCase() /*"xz"*/, map2);
 
-        /*Map<String, String> map3 = CodeRepositoryUtil.getLabelValueMap("FlowUserRole");
-        roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() *//*"bj"*//*, map3);*/
+        //获取所有流程角色
+        Map<String, String> map3 = new LinkedHashMap<>();
+        map3.put("","请选择");
+        map3.putAll(flowRoleDao.listAllRoleMsg());
+        roleList.put("sp".toLowerCase(), map3);
 
         return roleList;
     }

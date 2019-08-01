@@ -1,6 +1,8 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.components.CodeRepositoryUtil;
+import com.centit.framework.model.basedata.IUserInfo;
+import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
@@ -14,12 +16,36 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 public class FlowOptUtils {
     private static final Logger logger = LoggerFactory.getLogger(FlowOptUtils.class);
 
+    /**
+     * 根據角色獲取人
+     */
+    public static Set<String> listUserByRoleDefine(FlowRoleDefine roleDefine,String unitCode) {
+        Set<String> optUsers=new HashSet<>();
+//        Set<IUserInfo> optUsers=new HashSet<>();
+        if("xz".equals(roleDefine.getRelatedType())) {
+            List<? extends IUserUnit> allUserUnits =CodeRepositoryUtil.listAllUserUnits();
+            for(IUserUnit userUnit :allUserUnits){
+                if(userUnit.getUserRank().equals(roleDefine.getRelatedCode())
+                    &&unitCode.equals(userUnit.getUnitCode())){
+                    optUsers.add(CodeRepositoryUtil.getUserInfoByCode(userUnit.getUserCode()).getUserCode());
+                }
+            }
+            System.out.println("");
+        }else if ("js".equals(roleDefine.getRelatedType())) {
+            List<? extends IUserInfo> list =
+                CodeRepositoryUtil.listUsersByRoleCode(roleDefine.getRelatedCode());
+            for (IUserInfo userInfo : list) {
+                optUsers.add(userInfo.getUserCode());
+            }
+//            optUsers.addAll(list);
+        }
+        return optUsers;
+    }
     /**
      * 创建流程实例
      */

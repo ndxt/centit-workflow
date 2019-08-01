@@ -1,7 +1,10 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.centit.framework.components.CodeRepositoryUtil;
+//import net.sf.json.JSONObject;
+//import net.sf.json.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -1543,4 +1546,114 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flowEngine.deleteFlowVariable(flowInstId, "", "");
         return true;
     }
+
+    @Override
+    public Boolean changeRelegateValid(String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        try {
+            HashMap<String, Object> map = new HashMap<>();
+            String valid = jsonObject.getString("valid");
+            map.put("grantor", jsonObject.getString("grantor"));
+            map.put("grantee", jsonObject.getString("grantee"));
+            map.put("role_code", jsonObject.getString("roleCode"));
+            RoleRelegate relegate = flowRoleRelegateDao.getObjectByProperties(map);
+            String isValid = relegate.getIsValid();
+            if (!isValid.equalsIgnoreCase(valid)) {
+                relegate.setIsValid(valid);
+                flowRoleRelegateDao.updateObject(relegate);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+    @Override
+    public RoleRelegate getRoleRelegateByPara(String json) {
+        RoleRelegate relegate = null;
+        JSONObject jsonObject = JSON.parseObject(json);
+        try {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("grantor", jsonObject.getString("grantor"));
+            map.put("grantee", jsonObject.getString("grantee"));
+            map.put("role_code", jsonObject.getString("roleCode"));
+            relegate = flowRoleRelegateDao.getObjectByProperties(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return relegate;
+    }
+
+    @Override
+    public void saveRoleRelegateList(RoleRelegate roleRelegate) {
+        // List<String> roleCodeList = roleRelegate.getRoleCodeList();
+        if (roleRelegate.getRelegateTime() == null) {
+            roleRelegate.setExpireTime(new Date());
+        }
+        String json = roleRelegate.getRoleCode();
+        List<String> roleCodeList = JSONArray.parseArray(json, String.class);
+        for (String roleCode : roleCodeList) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("grantor", roleRelegate.getGrantor());
+            map.put("grantee", roleRelegate.getGrantee());
+            map.put("role_code", roleCode);
+            RoleRelegate objectByProperties = flowRoleRelegateDao.getObjectByProperties(map);
+            if (objectByProperties == null) {
+                RoleRelegate newRoleRelegate = new RoleRelegate();
+                newRoleRelegate.copy(roleRelegate);
+                newRoleRelegate.setRoleCode(roleCode);
+                newRoleRelegate.setRecordDate(DatetimeOpt.currentSqlDate());
+                flowRoleRelegateDao.saveObject(newRoleRelegate);
+            }
+        }
+    }
+
+    @Override
+    public List<JSONObject> getListRoleRelegateByGrantor(String grantor) {
+        Map<String, Object> filterMap = new HashMap<String, Object>();
+        filterMap.put("grantor", grantor);
+        List<RoleRelegate> roleRelegateList = flowRoleRelegateDao.listObjectsByProperties(filterMap, new PageDesc(-1, -1));
+        HashMap<String, Map<String, Object>> hashMap = new HashMap<>();
+        for (RoleRelegate roleRelegate : roleRelegateList) {
+            String grantee = roleRelegate.getGrantee();
+            if (!hashMap.containsKey(grantee)) {
+                List<String> roleCodeList = new ArrayList<>();
+                roleCodeList.add(roleRelegate.getRoleCode());
+                HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+                hashMap.put(grantee, stringObjectHashMap);
+                stringObjectHashMap.put("roleCodeList", roleCodeList);
+                RoleRelegate newRelegate = new RoleRelegate();
+                newRelegate.copy(roleRelegate);
+                newRelegate.setRoleCode(JSON.toJSONString(roleCodeList));
+                stringObjectHashMap.put("newRelegate", newRelegate);
+            } else {
+                List<String> roleCodeList = (List<String>) hashMap.get(grantee).get("roleCodeList");
+                roleCodeList.add(roleRelegate.getRoleCode());
+            }
+        }
+        Set<Map.Entry<String, Map<String, Object>>> entries = hashMap.entrySet();
+        ArrayList<Map.Entry<String, Map<String, Object>>> newList = new ArrayList<>(entries);
+        ArrayList<JSONObject> roleRelegates = new ArrayList<>();
+        for (Map.Entry<String, Map<String, Object>> mapEntry : newList) {
+            RoleRelegate newRelegate = (RoleRelegate) mapEntry.getValue().get("newRelegate");
+            List<String> roleCodeList = (List<String>) mapEntry.getValue().get("roleCodeList");
+//            JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(newRelegate));
+//            jsonObject.put("roleCode", roleCodeList);
+//            jsonObject.remove("relegateNo");
+//            jsonObject.remove("isValid");
+//            jsonObject.remove("relegateTime");
+//            jsonObject.remove("relegateTime");
+//            jsonObject.remove("grantDesc");
+//            jsonObject.remove("relegateTime");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("grantor", newRelegate.getGrantor());
+            jsonObject.put("grantee", newRelegate.getGrantee());
+            jsonObject.put("roleCode", roleCodeList);
+            roleRelegates.add(jsonObject);
+        }
+        return roleRelegates;
+    }
+
 }

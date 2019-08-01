@@ -6,6 +6,8 @@ import com.centit.framework.components.UserUnitFilterCalcContext;
 import com.centit.framework.components.UserUnitParamBuilder;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
+import com.centit.framework.model.basedata.IUserInfo;
+import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
@@ -61,6 +63,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private FlowManager flowManager;
     @Resource
     private FlowWorkTeamDao flowTeamDao;
+    @Resource
+    private FlowRoleDefineDao flowRoleDefineDao;
 
     @Resource
     private FlowOrganizeDao flowOrganizeDao;
@@ -265,7 +269,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (optUsers.isEmpty()) {
                     optUsers.add(userCode);
                     //针对首节点设置得办件角色，但是没有手动保存得情况
-                    FlowWorkTeam flowWorkTeam=new FlowWorkTeam();
+                    FlowWorkTeam flowWorkTeam = new FlowWorkTeam();
                     flowWorkTeam.setFlowInstId(flowInstId);
                     flowWorkTeam.setRoleCode(node.getRoleCode());
                     flowWorkTeam.setUserCode(userCode);
@@ -273,6 +277,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     flowWorkTeam.setAuthDesc("首节点未保存办件角色，自动保存");
                     flowTeamDao.saveNewObject(flowWorkTeam);
                 }
+                //审批待测试
+            } else if ("sp".equalsIgnoreCase(node.getRoleType())) {
+                optUsers=getSpUsers(node,unitCode);
             } else {
                 /*gw xz*/
                 optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(userUnitFilterCalcContext,
@@ -297,7 +304,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             } else if (optUsers != null && optUsers.size() > 0 &&
                 (SysUserFilterEngine.ROLE_TYPE_ENGINE.equalsIgnoreCase(node.getRoleType())
                     || SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(node.getRoleType())
-                            /*行政角色按道理是不能有多个人可以同时做的*/
+                    /*行政角色按道理是不能有多个人可以同时做的*/
                     || SysUserFilterEngine.ROLE_TYPE_XZ.equalsIgnoreCase(node.getRoleType())
                     || "C".equals(node.getOptType()))) {
                 if (optUsers.size() == 1) {
@@ -488,6 +495,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(nodeInst.getFlowInstId(), nextOptNode.getRoleCode());
             for (FlowWorkTeam u : users)
                 optUsers.add(u.getUserCode());
+            //审批待测试
+        } else if ("sp".equalsIgnoreCase(nextOptNode.getRoleType())) {
+            optUsers = getSpUsers(nextOptNode, unitCode);
         } else/*gw xz*/ {
             optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(userUnitFilterCalcContext,
                 nextOptNode.getRoleType(), nextOptNode.getRoleCode(), unitCode);
@@ -496,6 +506,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return optUsers;
     }
 
+    private Set<String> getSpUsers(NodeInfo nodeInfo,String unitCode) {
+        Set<String> optUsers =new HashSet<>();
+        List<FlowRoleDefine> defineByRoleCode =
+            flowRoleDefineDao.getFlowRoleDefineByRoleCode(nodeInfo.getRoleCode());
+        for (FlowRoleDefine roleDefine : defineByRoleCode) {
+            optUsers.addAll(FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode));
+        }
+        return optUsers;
+    }
     /**
      * @param flowInst
      * @param flowInfo
@@ -998,7 +1017,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             } else if (optUsers != null && optUsers.size() > 0 &&
                 ("en".equals(nextOptNode.getRoleType())
                     || "bj".equals(nextOptNode.getRoleType())
-                          /*行政角色按道理是不能有多个人可以同时做的*/
+                    /*行政角色按道理是不能有多个人可以同时做的*/
                     || "xz".equals(nextOptNode.getRoleType())
                     || "C".equals(nextOptNode.getOptType()))) {
                /* if(optUsers.size()==1){

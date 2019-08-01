@@ -1,23 +1,25 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.components.CodeRepositoryUtil;
+import com.centit.framework.components.UserUnitParamBuilder;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
+import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
-import com.centit.workflow.service.FlowDefine;
-import com.centit.workflow.service.FlowEngine;
-import com.centit.workflow.service.FlowManager;
-import com.centit.workflow.service.PlatformFlowService;
+import com.centit.workflow.service.*;
+import com.centit.workflow.service.impl.FlowOptUtils;
+import com.centit.workflow.service.impl.UserUnitCalcEngine;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -40,14 +42,46 @@ public class FlowEngineController extends BaseController {
     @Resource
     private FlowDefine flowDefine;
     @Resource
+    private FlowRoleService flowRoleService;
+    @Resource
     private PlatformFlowService platformFlowService;
 
 
     private Map<Class<?>, String[]> excludes;
 
+//   下一步审批人*/
 
-    @GetMapping("viewFlowFirstOperUser/{flowCode}")
-    public void viewFlowFirstOperUser(@PathVariable String flowCode, HttpServletResponse response) {
+    @PostMapping("/viewNextNodeOperator")
+    public void viewNextNodeOperator(@RequestBody String json, HttpServletResponse response) {
+        ResponseMapData data = new ResponseMapData();
+        Set<String> iUserInfos = new HashSet<>();
+//        Map re = new HashMap();
+
+        JSONObject jsonObject = JSON.parseObject(json);
+        long nodeInstId = jsonObject.getLong("nodeInstId");
+        String userCode = jsonObject.getString("userCode");
+        String unitCode = jsonObject.getString("unitCode");
+        String varTrans = jsonObject.getString("varTrans");
+        Map<String, Object> maps = new HashMap<>();
+        if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
+            maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
+        }
+        Set<NodeInfo> nodeInfoSet = flowEng.viewNextNode(nodeInstId, userCode, unitCode, getBusinessVariable(maps));
+
+        for (NodeInfo nodeInfo : nodeInfoSet) {
+            List<FlowRoleDefine> roleDefines = flowRoleService.getFlowRoleDefineListByCode(nodeInfo.getRoleCode());
+            for (FlowRoleDefine roleDefine : roleDefines) {
+                iUserInfos.addAll(FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode));
+            }
+        }
+
+
+        data.addResponseData("userCodeList", iUserInfos);
+        JsonResultUtils.writeResponseDataAsJson(data, response);
+    }
+
+    @GetMapping("viewFlowFirstOperUser/{flowCode}/{unitCode}")
+    public void viewFlowFirstOperUser(@PathVariable String flowCode,@PathVariable String unitCode, HttpServletResponse response) {
         FlowInfo flowInfo = flowDefine.getFlowDefObject(flowCode);
         ResponseMapData data = new ResponseMapData();
         String nodeId = flowInfo.getFirstNode().getNodeId();
@@ -57,6 +91,8 @@ public class FlowEngineController extends BaseController {
         String targetNodeId = "";
         //审批角色
         String roleCode = "";
+        String roleType = "";
+        Set<String> iUserInfos = null;
         //循环判断首节点下面得一个节点，暂时默认为首节点下面得节点为单节点
         for (FlowTransition f : trans) {
             if (nodeId.equals(f.getStartNodeId())) {
@@ -67,18 +103,32 @@ public class FlowEngineController extends BaseController {
         //找到节点定义的角色代码
         for (NodeInfo n : nodes) {
             if (targetNodeId.equals(n.getNodeId())) {
+                roleType = n.getRoleType();
+
                 roleCode = n.getRoleCode();
+                if ("en".equals(roleType)) {
+                    roleCode = n.getPowerExp();
+                }
+                break;
             }
         }
-        CodeRepositoryUtil.listUsersByRoleCode("");
+
+        List<FlowRoleDefine> roleDefineListByCode =
+            flowRoleService.getFlowRoleDefineListByCode(roleCode);
+        for (FlowRoleDefine roleDefine : roleDefineListByCode) {
+            iUserInfos = FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode);
+        }
+        data.addResponseData("userCode", iUserInfos);
         JsonResultUtils.writeSingleDataJson(data, response);
 
     }
 
     @ApiOperation(value = "创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
     @PostMapping("createAndSubmitFlow")
-    public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions) {
+    public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions,HttpServletResponse response) {
         List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
+//        ResponseMapData data = new ResponseMapData();
+
         //创建流程
         FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
 
@@ -92,6 +142,8 @@ public class FlowEngineController extends BaseController {
                 flowManager.assignTask(n, v, newFlowInstanceOptions.getUserCode(), null, "手动指定审批人");
             }
         }
+//        data.addResponseData("flowInstId",flowInstance);
+        JsonResultUtils.writeSingleDataJson(flowInstance, response);
 
     }
 
@@ -128,6 +180,8 @@ public class FlowEngineController extends BaseController {
         String userCode = jsonObject.getString("userCode");
         String unitCode = jsonObject.getString("unitCode");
         String varTrans = jsonObject.getString("varTrans");
+        JSONArray users = jsonObject.getJSONArray("userList");
+
         try {
             Set<Long> nextNodes;
             if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
@@ -135,6 +189,15 @@ public class FlowEngineController extends BaseController {
                 nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);
             } else {
                 nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, null, null);
+            }
+            //更新操作人
+            if (users != null && users.size() > 0) {
+                for (Long n : nextNodes) {
+                    flowManager.deleteNodeActionTasks(n, flowEng.getNodeInstById(nodeInstId).getFlowInstId(), userCode);
+                    for (Object v : users) {
+                        flowManager.assignTask(n, v.toString(), userCode, null, "手动指定审批人");
+                    }
+                }
             }
             return ResponseData.makeResponseData(nextNodes);
         } catch (WorkflowException e) {
