@@ -119,7 +119,7 @@ public class FlowEngineController extends BaseController {
             iUserInfos = FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode);
         }
         data.addResponseData("userCode", iUserInfos);
-        JsonResultUtils.writeSingleDataJson(data, response);
+        JsonResultUtils.writeResponseDataAsJson(data, response);
 
     }
 
