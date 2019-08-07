@@ -61,7 +61,7 @@ public class FlowVariable implements java.io.Serializable {
      * @param varValue
      * @param varType    E:集合 S:单个字符串
      */
-    public FlowVariable(Long flowInstId, String runToken, String varName, String varValue, String varType) {
+    public FlowVariable(String flowInstId, String runToken, String varName, String varValue, String varType) {
         this.cid = new FlowVariableId(flowInstId, runToken, varName);
         this.varValue = varValue;
         this.varType = varType;
@@ -76,13 +76,13 @@ public class FlowVariable implements java.io.Serializable {
     }
 
     @ApiModelProperty(value = "流程实例编号", required = true)
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         if (this.cid == null)
             this.cid = new FlowVariableId();
         return this.cid.getFlowInstId();
     }
 
-    public void setFlowInstId(Long flowInstId) {
+    public void setFlowInstId(String flowInstId) {
         if (this.cid == null)
             this.cid = new FlowVariableId();
         this.cid.setFlowInstId(flowInstId);

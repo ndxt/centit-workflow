@@ -49,7 +49,7 @@ public class FlowOptUtils {
     /**
      * 创建流程实例
      */
-    public static FlowInstance createFlowInst(String unitcode, String usercode, FlowInfo wf, Long flowInstId, String timeLimitStr) {
+    public static FlowInstance createFlowInst(String unitcode, String usercode, FlowInfo wf, String flowInstId, String timeLimitStr) {
         FlowInstance flowInst = new FlowInstance();
         flowInst.setFlowInstId(flowInstId);
         flowInst.setFlowCode(wf.getFlowCode());
@@ -57,7 +57,7 @@ public class FlowOptUtils {
         flowInst.setUnitCode(unitcode);
         flowInst.setUserCode(usercode);
         flowInst.setPreNodeInstId(0l);
-        flowInst.setPreInstId(0l);
+        flowInst.setPreInstId("");
         flowInst.setIsSubInst("N");
         flowInst.setInstState("N");
         flowInst.setCreateTime(new Date(System.currentTimeMillis()));
@@ -315,7 +315,7 @@ public class FlowOptUtils {
      *                    U u: 变更属性
      * @return
      */
-    public static ManageActionLog createManagerAction(long flowInstId, String managerCode,
+    public static ManageActionLog createManagerAction(String flowInstId, String managerCode,
                                                       String actionType) {
         ManageActionLog action = new ManageActionLog();
         action.setFlowInstId(flowInstId);
@@ -341,7 +341,7 @@ public class FlowOptUtils {
      *                    U u: 变更属性
      * @return
      */
-    public static ManageActionLog createManagerAction(long flowInstId, long nodeInstId,
+    public static ManageActionLog createManagerAction(String flowInstId, long nodeInstId,
                                                       String managerCode, String actionType) {
         ManageActionLog action = new ManageActionLog();
         action.setFlowInstId(flowInstId);
@@ -397,7 +397,7 @@ public class FlowOptUtils {
     }
 
     //强制办结流程之后的调用消息中心接口
-    public static void sendFinishMsg(Long flowInstId, String userCode) {
+    public static void sendFinishMsg(String flowInstId, String userCode) {
         initStr();
         //如果需要发送待办消息
         if ("T".equals(ifSendMsg) || "T".equals(ifSendSms)) {

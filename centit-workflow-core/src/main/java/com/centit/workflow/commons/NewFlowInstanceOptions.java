@@ -48,7 +48,7 @@ public class NewFlowInstanceOptions {
      * 作为子流程创建式，对应的父流程
      */
     @ApiModelProperty("不填")
-    private long flowInstid;
+    private String flowInstId;
     /**
      * 业务变量数据
      */
@@ -136,12 +136,12 @@ public class NewFlowInstanceOptions {
         this.nodeInstId = nodeInstId;
     }
 
-    public long getFlowInstid() {
-        return flowInstid;
+    public String getFlowInstId() {
+        return flowInstId;
     }
 
-    public void setFlowInstid(long flowInstid) {
-        this.flowInstid = flowInstid;
+    public void setFlowInstid(String flowInstId) {
+        this.flowInstId = flowInstId;
     }
 
     public Map<String, Object> getVariables() {

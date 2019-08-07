@@ -8,12 +8,9 @@ import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.framework.model.basedata.IUserUnit;
-import com.centit.support.algorithm.BooleanBaseOpt;
+import com.centit.support.algorithm.*;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
-import com.centit.support.algorithm.DatetimeOpt;
-import com.centit.support.algorithm.StringBaseOpt;
-import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
@@ -90,7 +87,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) {
         return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, 0, 0, null, false, null);
+            unitCode, 0, "", null, false, null);
     }
 
     @Override
@@ -99,7 +96,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             flowDefDao.getLastVersion(newFlowInstanceOptions.getFlowCode()),
             newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
-            newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstid(),
+            newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstId(),
             null, newFlowInstanceOptions.isLockFirstOpt(), newFlowInstanceOptions.getTimeLimitStr());
 //        Set<Long> nodes = new HashSet<>();
 //        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
@@ -113,7 +110,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowInstance createInstance(String flowCode, long version, String flowOptName, String flowOptTag,
                                        String userCode, String unitCode) {
         return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, 0, 0, null, false, null);
+            unitCode, 0, "", null, false, null);
     }
 
     @Override
@@ -121,7 +118,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return createInstInside(newFlowInstanceOptions.getFlowCode(), newFlowInstanceOptions.getVersion(),
             newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
-            newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstid(),
+            newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstId(),
             null, newFlowInstanceOptions.isLockFirstOpt(), null);
     }
 
@@ -130,7 +127,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                                     String flowOptTag, String userCode, String unitCode) {
 
         FlowInstance flowInstance = createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, 0, 0, null, true, null);
+            unitCode, 0, "", null, true, null);
 //        Set<Long> nodes = new HashSet<>();
 //        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
 //            nodes.add(n.getNodeInstId());
@@ -144,7 +141,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowInstance createInstanceLockFirstNode(String flowCode, long version,
                                                     String flowOptName, String flowOptTag, String userCode, String unitCode) {
         return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, 0, 0, null, true, null);
+            unitCode, 0, "", null, true, null);
     }
 
 
@@ -166,7 +163,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                        UserUnitVariableTranslate varTrans, ServletContext application) {
 
         return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, 0, 0, varTrans, false, null);
+            unitCode, 0, "", varTrans, false, null);
 
     }
 
@@ -176,7 +173,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                        UserUnitVariableTranslate varTrans, ServletContext application) {
 
         return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, 0, 0, varTrans, false, null);
+            unitCode, 0, "", varTrans, false, null);
     }
 
 
@@ -190,7 +187,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return
      */
     private FlowInstance createInstInside(String flowCode, long version, String flowOptName, String flowOptTag, String userCode,
-                                          String unitCode, long nodeInstId, long flowInstid, UserUnitVariableTranslate varTrans,
+                                          String unitCode, long nodeInstId, String flowInstid, UserUnitVariableTranslate varTrans,
                                           boolean lockFirstOpt, String timeLimitStr) {
 
         Date createTime = new Date(System.currentTimeMillis());
@@ -199,7 +196,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowInfo wf = flowDefDao.getFlowDefineByID(flowCode, version);
 
         //获取流程实例编号
-        Long flowInstId = flowInstanceDao.getNextFlowInstId();//update by ljy
+//        String flowInstId = flowInstanceDao.getNextFlowInstId();//update by ljy
+        String flowInstId = UuidOpt.getUuidAsString32();//update by ljy
         FlowInstance flowInst = FlowOptUtils.createFlowInst(unitCode, userCode, wf, flowInstId, timeLimitStr);
 //        flowInst.setFlowInstId(flowInstanceDao.getNextFlowInstId());
         flowInst.setCreateTime(createTime);
@@ -353,7 +351,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public FlowInstance getFlowInstById(long flowInstId) {
+    public FlowInstance getFlowInstById(String flowInstId) {
         return flowInstanceDao.getObjectCascadeById(flowInstId);
     }
 
@@ -368,7 +366,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag) {
+    public void updateFlowInstOptInfo(String flowInstId, String flowOptName, String flowOptTag) {
         /*FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
             return;
@@ -379,7 +377,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void updateFlowInstParentNode(long flowInstId, long parentFlowInstId, long parentNodeInstId) {
+    public void updateFlowInstParentNode(String flowInstId, String parentFlowInstId, long parentNodeInstId) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
             return;
@@ -404,7 +402,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<NodeInstance> listNodeInstsByNodecode(long flowInstId, String nodeCode) {
+    public List<NodeInstance> listNodeInstsByNodecode(String flowInstId, String nodeCode) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
             return null;
@@ -1798,7 +1796,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param unitCode      指定机构
      * @return 节点实例
      */
-    public NodeInstance createPrepNodeInstLockUser(long flowInstId, long curNodeInstId,
+    public NodeInstance createPrepNodeInstLockUser(String flowInstId, long curNodeInstId,
                                                    long nodeId, String createUser, String userCode, String unitCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
         //必需存在且状态为正常 或者 暂停
@@ -1856,7 +1854,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param unitCode      指定机构
      * @return 节点实例
      */
-    public NodeInstance createPrepNodeInstLockUser(long flowInstId, long curNodeInstId,
+    public NodeInstance createPrepNodeInstLockUser(String flowInstId, long curNodeInstId,
                                                    String nodeCode, String createUser, String userCode, String unitCode) {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
@@ -1888,7 +1886,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return 节点实例
      */
     @Override
-    public NodeInstance createPrepNodeInst(long flowInstId, long curNodeInstId,
+    public NodeInstance createPrepNodeInst(String flowInstId, long curNodeInstId,
                                            long nodeId, String userCode, String unitCode) {
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
@@ -1940,7 +1938,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param unitCode      指定机构
      * @return 节点实例
      */
-    public NodeInstance createPrepNodeInst(long flowInstId, long curNodeInstId,
+    public NodeInstance createPrepNodeInst(String flowInstId, long curNodeInstId,
                                            String nodeCode, String userCode, String unitCode) {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
@@ -1974,7 +1972,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return 节点实例
      */
     @Override
-    public NodeInstance createIsolatedNodeInst(long flowInstId, long curNodeInstId,
+    public NodeInstance createIsolatedNodeInst(String flowInstId, long curNodeInstId,
                                                long nodeId, String createUser, String userCode, String unitCode) {
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
@@ -2026,7 +2024,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param unitCode      指定机构
      * @return 节点实例
      */
-    public NodeInstance createIsolatedNodeInst(long flowInstId, long curNodeInstId,
+    public NodeInstance createIsolatedNodeInst(String flowInstId, long curNodeInstId,
                                                String nodeCode, String createUser, String userCode, String unitCode) {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
@@ -2055,7 +2053,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param unitCode   指定机构
      * @return 节点实例
      */
-    public NodeInstance createNodeInst(long flowInstId, String createUser,
+    public NodeInstance createNodeInst(String flowInstId, String createUser,
                                        long nodeId, List<String> userCodes, String unitCode) {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
@@ -2094,13 +2092,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void assignFlowWorkTeam(long flowInstId, String roleCode, String userCode) {
+    public void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode) {
         Date assignDate = new Date(System.currentTimeMillis());
         flowTeamDao.mergeObject(new FlowWorkTeam(flowInstId, userCode, roleCode, assignDate));
     }
 
     @Override
-    public void assignFlowWorkTeam(long flowInstId, String roleCode,
+    public void assignFlowWorkTeam(String flowInstId, String roleCode,
                                    List<String> userCodeSet) {
         Date assignDate = new Date(System.currentTimeMillis());
         if (userCodeSet != null)
@@ -2112,7 +2110,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void assignFlowWorkTeam(long flowInstId, String roleCode, String userCode, String authdesc) {
+    public void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode, String authdesc) {
         Date assignDate = new Date(System.currentTimeMillis());
         FlowWorkTeam team = new FlowWorkTeam(flowInstId, userCode, roleCode, assignDate);
         team.setAuthDesc(authdesc);
@@ -2120,7 +2118,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void assignFlowWorkTeam(long flowInstId, String roleCode,
+    public void assignFlowWorkTeam(String flowInstId, String roleCode,
                                    List<String> userCodeSet, String authdesc) {
         Date assignDate = new Date(System.currentTimeMillis());
         if (userCodeSet != null) {
@@ -2134,17 +2132,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
     }
 
-    public void deleteFlowWorkTeam(long flowInstId, String roleCode, String userCode) {
+    public void deleteFlowWorkTeam(String flowInstId, String roleCode, String userCode) {
         flowTeamDao.deleteObjectById(new FlowWorkTeamId(flowInstId, userCode, roleCode));
     }
 
     @Override
-    public void deleteFlowWorkTeam(long flowInstId, String roleCode) {
+    public void deleteFlowWorkTeam(String flowInstId, String roleCode) {
         flowTeamDao.deleteFlowWorkTeam(flowInstId, roleCode);
     }
 
     @Override
-    public Map<String, List<String>> viewFlowWorkTeam(long flowInstId) {
+    public Map<String, List<String>> viewFlowWorkTeam(String flowInstId) {
         List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeam(flowInstId);
         Map<String, List<String>> team = new HashMap<>();
         if (null != users) {
@@ -2160,7 +2158,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<String> viewFlowWorkTeam(long flowInstId, String roleCode) {
+    public List<String> viewFlowWorkTeam(String flowInstId, String roleCode) {
         List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(flowInstId, roleCode);
         List<String> us = new ArrayList<>();
         for (FlowWorkTeam user : users) {
@@ -2170,16 +2168,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Transactional
-    public List<FlowWorkTeam> viewFlowWorkTeamList(long flowInstId, String roleCode) {
+    public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode) {
         List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(flowInstId, roleCode);
         return users;
     }
 
-    public List<FlowWorkTeam> viewFlowWorkTeamList(long flowInstId, String roleCode, String authdesc) {
+    public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode, String authdesc) {
         return flowTeamDao.listFlowWorkTeam(flowInstId, roleCode, authdesc);
     }
 
-    public FlowVariable viewNodeVariable(long flowInstId, String runToken,
+    public FlowVariable viewNodeVariable(String flowInstId, String runToken,
                                          String varname) {
         FlowVariableId id = new FlowVariableId(flowInstId, runToken,
             varname);
@@ -2333,7 +2331,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
 
     @Override
-    public void assignFlowOrganize(long flowInstId, String roleCode,
+    public void assignFlowOrganize(String flowInstId, String roleCode,
                                    String unitCode) {
         Date assignDate = new Date(System.currentTimeMillis());
         FlowOrganize dbObj = flowOrganizeDao.getObjectById(new FlowOrganizeId(flowInstId, unitCode, roleCode));
@@ -2343,7 +2341,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void assignFlowOrganize(long flowInstId, String roleCode,
+    public void assignFlowOrganize(String flowInstId, String roleCode,
                                    List<String> unitCodeSet) {
         Date assignDate = new Date(System.currentTimeMillis());
         if (unitCodeSet != null)
@@ -2356,7 +2354,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void assignFlowOrganize(long flowInstId, String roleCode,
+    public void assignFlowOrganize(String flowInstId, String roleCode,
                                    String unitCode, String authDesc) {
         Date assignDate = new Date(System.currentTimeMillis());
         FlowOrganize dbObj = flowOrganizeDao.getObjectById(new FlowOrganizeId(flowInstId, unitCode, roleCode));
@@ -2368,7 +2366,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void assignFlowOrganize(long flowInstId, String roleCode,
+    public void assignFlowOrganize(String flowInstId, String roleCode,
                                    List<String> unitCodeSet, String authDesc) {
         Date assignDate = new Date(System.currentTimeMillis());
         if (unitCodeSet != null)
@@ -2384,24 +2382,24 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void deleteFlowOrganize(long flowInstId, String roleCode,
+    public void deleteFlowOrganize(String flowInstId, String roleCode,
                                    String unitCode) {
         flowOrganizeDao.deleteObjectById(new FlowOrganizeId(flowInstId, unitCode, roleCode));
 
     }
 
     @Override
-    public void deleteFlowOrganize(long flowInstId, String roleCode) {
+    public void deleteFlowOrganize(String flowInstId, String roleCode) {
         flowOrganizeDao.deleteFlowOrganize(flowInstId, roleCode);
     }
 
     @Override
-    public void deleteFlowOrganizeByAuth(long flowInstId, String roleCode, String authDesc) {
+    public void deleteFlowOrganizeByAuth(String flowInstId, String roleCode, String authDesc) {
         flowOrganizeDao.deleteFlowOrganize(flowInstId, roleCode, authDesc);
     }
 
     @Override
-    public Map<String, List<String>> viewFlowOrganize(long flowInstId) {
+    public Map<String, List<String>> viewFlowOrganize(String flowInstId) {
         List<FlowOrganize> units = flowOrganizeDao.listFlowOrganize(flowInstId);
         Map<String, List<String>> orgs = new HashMap<>();
         if (null != units) {
@@ -2417,7 +2415,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<String> viewFlowOrganize(long flowInstId, String roleCode) {
+    public List<String> viewFlowOrganize(String flowInstId, String roleCode) {
         List<FlowOrganize> units = flowOrganizeDao.listFlowOrganizeByRole(flowInstId, roleCode);
         List<String> orgs = new ArrayList<>();
         if (null != units) {
@@ -2429,19 +2427,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<FlowOrganize> viewFlowOrganizeList(long flowInstId, String roleCode) {
+    public List<FlowOrganize> viewFlowOrganizeList(String flowInstId, String roleCode) {
         return new ArrayList<FlowOrganize>(
             flowOrganizeDao.listFlowOrganizeByRole(flowInstId, roleCode));
     }
 
     @Override
-    public List<FlowOrganize> viewFlowOrganizeList(long flowInstId, String roleCode, String authDesc) {
+    public List<FlowOrganize> viewFlowOrganizeList(String flowInstId, String roleCode, String authDesc) {
         return new ArrayList<FlowOrganize>(
             flowOrganizeDao.listFlowOrganize(flowInstId, roleCode, authDesc));
     }
 
     @Override
-    public void saveFlowVariable(long flowInstId, String sVar, String sValue) {
+    public void saveFlowVariable(String flowInstId, String sVar, String sValue) {
         if (StringBaseOpt.isNvl(sValue)) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
         } else {
@@ -2466,7 +2464,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param sValue
      */
     @Override
-    public void saveFlowNodeVariable(long flowInstId, String runToken, String sVar, String sValue) {
+    public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, String sValue) {
 
         if (StringBaseOpt.isNvl(sValue)) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId,
@@ -2499,7 +2497,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void saveFlowVariable(long flowInstId, String sVar, Set<String> sValues) {
+    public void saveFlowVariable(String flowInstId, String sVar, Set<String> sValues) {
         if (sValues == null || sValues.size() == 0) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
         } else {
@@ -2526,7 +2524,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<FlowVariable> listFlowVariables(long flowInstId) {
+    public List<FlowVariable> listFlowVariables(String flowInstId) {
         List<FlowVariable> lv = flowVariableDao.listFlowVariables(flowInstId);
         if (lv == null)
             lv = new ArrayList<>();
@@ -2540,7 +2538,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void deleteFlowAttention(long flowInstId, String attUser) {
+    public void deleteFlowAttention(String flowInstId, String attUser) {
         attentionDao.deleteObjectById(new InstAttentionId(attUser, flowInstId));
     }
 
@@ -2551,12 +2549,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param flowInstId
      * @param optUser    关注设置人员
      */
-    public void deleteFlowAttentionByOptUser(long flowInstId, String optUser) {
+    public void deleteFlowAttentionByOptUser(String flowInstId, String optUser) {
         attentionDao.deleteFlowAttentionByOptUser(flowInstId, optUser);
     }
 
     @Override
-    public void deleteFlowAttention(long flowInstId) {
+    public void deleteFlowAttention(String flowInstId) {
         attentionDao.deleteFlowAttention(flowInstId);
     }
 
@@ -2568,7 +2566,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return
      */
     @Override
-    public List<InstAttention> viewFlowAttention(long flowInstId) {
+    public List<InstAttention> viewFlowAttention(String flowInstId) {
 
         List<InstAttention> attentions = attentionDao.listAttentionByFlowInstId(flowInstId);
         return attentions;
@@ -2580,7 +2578,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return
      */
     @Override
-    public InstAttention getFlowAttention(long flowInstId, String userCode) {
+    public InstAttention getFlowAttention(String flowInstId, String userCode) {
         return attentionDao.getObjectById(
             new InstAttentionId(userCode, flowInstId));
     }
@@ -2636,7 +2634,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return flowInstanceList;
     }
 
-    public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId,
+    public List<FlowVariable> viewFlowVariablesByVarname(String flowInstId,
                                                          String varname) {
         List<FlowVariable> lv = flowVariableDao.viewFlowVariablesByVarname(
             flowInstId, varname);
@@ -2706,7 +2704,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<FlowWarning> listFlowWarningByInst(Long flowInstId,
+    public List<FlowWarning> listFlowWarningByInst(String flowInstId,
                                                    PageDesc pageDesc) {
         return new ArrayList<FlowWarning>(
             runtimeWarningDao.listFlowWarningByInst(flowInstId, pageDesc));
@@ -2739,7 +2737,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
     }
 
-    public void deleteFlowVariable(Long flowInstId, String runToken, String varName) {
+    public void deleteFlowVariable(String flowInstId, String runToken, String varName) {
         if (flowInstId == null)
             return;
         Map<String, Object> filterMap = new HashMap<>();

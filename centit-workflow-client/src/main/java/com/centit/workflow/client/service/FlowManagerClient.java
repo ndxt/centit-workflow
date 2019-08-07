@@ -26,9 +26,9 @@ public interface FlowManagerClient {
      * 更新所有节点状态为F
      * F 强行结束
      */
-    void stopAndChangeInstance(long flowInstId, String mangerUserCode, String admindesc) throws Exception;
+    void stopAndChangeInstance(String flowInstId, String mangerUserCode, String admindesc) throws Exception;
 
-    String reStartFlow(Long flowInstId,String userCode);
+    String reStartFlow(String flowInstId,String userCode);
 
     /**
      * 终止一个流程
@@ -38,6 +38,6 @@ public interface FlowManagerClient {
      * @param userCode
      * @return
      */
-    String stopInstance(Long flowInstId,String userCode) ;
+    String stopInstance(String flowInstId,String userCode) ;
 
     }

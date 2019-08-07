@@ -73,7 +73,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/{flowInstId}", method = RequestMethod.GET)
-    public void getFlowInstance(@PathVariable Long flowInstId, HttpServletResponse response) {
+    public void getFlowInstance(@PathVariable String flowInstId, HttpServletResponse response) {
         FlowInstance flowInst = flowManager.getFlowInstance(flowInstId);
         Map<String, Object> result = new HashMap<>();
         excludes = new HashMap<>();
@@ -94,7 +94,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/viewxml/{flowInstId}", method = RequestMethod.GET)
-    public void viewRuntimeXml(@PathVariable Long flowInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void viewRuntimeXml(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
         FlowInstance flowInst = flowManager.getFlowInstance(flowInstId);
         String flowCode = flowInst.getFlowCode();
         Long version = flowInst.getVersion();
@@ -129,7 +129,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/nodesxml/{flowInstId}", method = RequestMethod.GET)
-    public void viewNodeInstancesXml(@PathVariable Long flowInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void viewNodeInstancesXml(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
         String nodesxml = flowManager.viewFlowNodeInstance(flowInstId);
         HashMap<String, String> result = new HashMap<String, String>();
         result.put("nodesxml", nodesxml);
@@ -144,7 +144,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getorglist/{flowInstId}", method = RequestMethod.GET)
-    public void getOrganizeList(@PathVariable Long flowInstId, PageDesc pageDesc, HttpServletResponse response) {
+    public void getOrganizeList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
         Map<String, List<String>> organizeMap = flowEng.viewFlowOrganize(flowInstId);
         List<Map<String, String>> organizeList = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : organizeMap.entrySet()) {
@@ -168,7 +168,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteorg/{flowInstId}/{roleCode}/{unitCode}", method = RequestMethod.GET)
-    public void deleteOrg(@PathVariable Long flowInstId, @PathVariable String roleCode, @PathVariable String unitCode, HttpServletResponse response) {
+    public void deleteOrg(@PathVariable String flowInstId, @PathVariable String roleCode, @PathVariable String unitCode, HttpServletResponse response) {
         flowEng.deleteFlowOrganize(flowInstId, roleCode, unitCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -180,7 +180,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteorg/{flowInstId}/{roleCode}", method = RequestMethod.GET)
-    public void deleteOrgAll(@PathVariable Long flowInstId, @PathVariable String roleCode, HttpServletResponse response) {
+    public void deleteOrgAll(@PathVariable String flowInstId, @PathVariable String roleCode, HttpServletResponse response) {
         flowEng.deleteFlowOrganize(flowInstId, roleCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -193,7 +193,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/saveorg/{flowInstId}/{roleCode}/{unitCode}/{authDesc}", method = RequestMethod.POST)
     public void assignOrganize(
-        @PathVariable Long flowInstId, @PathVariable String roleCode,
+        @PathVariable String flowInstId, @PathVariable String roleCode,
         @PathVariable String unitCode, @PathVariable String authDesc,
         HttpServletRequest request, HttpServletResponse response) {
         flowEng.assignFlowOrganize(flowInstId, roleCode, unitCode, authDesc);
@@ -243,7 +243,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getteamlist/{flowInstId}", method = RequestMethod.GET)
-    public void getTeamList(@PathVariable Long flowInstId, PageDesc pageDesc, HttpServletResponse response) {
+    public void getTeamList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
         Map<String, List<String>> teamMap = flowEng.viewFlowWorkTeam(flowInstId);
         List<Map<String, String>> teamList = new ArrayList<Map<String, String>>();
         for (Map.Entry<String, List<String>> entry : teamMap.entrySet()) {
@@ -269,7 +269,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteteam/{flowInstId}/{roleCode}", method = RequestMethod.GET)
-    public void deleteWorkTeam(@PathVariable Long flowInstId, @PathVariable String roleCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
+    public void deleteWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
         flowEng.deleteFlowWorkTeam(flowInstId, roleCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -280,7 +280,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteteam/{flowInstId}/{roleCode}/{userCode}", method = RequestMethod.GET)
-    public void deleteWorkTeamUser(@PathVariable Long flowInstId, @PathVariable String roleCode, @PathVariable String userCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
+    public void deleteWorkTeamUser(@PathVariable String flowInstId, @PathVariable String roleCode, @PathVariable String userCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
         flowEng.deleteFlowWorkTeam(flowInstId, roleCode, userCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -295,7 +295,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getvariablelist/{flowInstId}", method = RequestMethod.GET)
-    public void getVariableList(@PathVariable Long flowInstId, PageDesc pageDesc, HttpServletResponse response) {
+    public void getVariableList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
         List<FlowVariable> variableList = flowEng.listFlowVariables(flowInstId);
         pageDesc.setTotalRows(variableList.size());
         resData.addResponseData(PAGE_DESC, pageDesc);
@@ -310,7 +310,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/savevariable/{flowInstId}/{varName}/{varValue}", method = RequestMethod.GET)
-    public void saveVariable(@PathVariable Long flowInstId, @PathVariable String varName, @PathVariable String varValue, HttpServletRequest request, HttpServletResponse response) {
+    public void saveVariable(@PathVariable String flowInstId, @PathVariable String varName, @PathVariable String varValue, HttpServletRequest request, HttpServletResponse response) {
         String runToken = request.getParameter("runToken");
         flowEng.saveFlowNodeVariable(flowInstId, runToken, varName, StringUtils.isBlank(varValue) ? null : varValue);
         JsonResultUtils.writeSingleDataJson("", response);
@@ -325,7 +325,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/tokens/{flowInstId}", method = RequestMethod.GET)
-    public void editVariable(@PathVariable Long flowInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void editVariable(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
         List<FlowVariable> flowVariableList = flowEng.listFlowVariables(flowInstId);
         Set<String> existTokenSet = new HashSet<String>();
         for (FlowVariable flowVariable : flowVariableList) {
@@ -352,7 +352,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/getmgrloglist/{flowInstId}", method = RequestMethod.GET)
-    public void getMgrLogList(@PathVariable Long flowInstId, PageDesc pageDesc, HttpServletResponse response) {
+    public void getMgrLogList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
         List<ManageActionLog> logList = flowManager.listManageActionLog(flowInstId, pageDesc);
         resData.addResponseData(OBJLIST, logList);
         resData.addResponseData(PAGE_DESC, pageDesc);
@@ -366,7 +366,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getOptLogList/{flowInstId}", method = RequestMethod.GET)
-    public void getOptLogList(@PathVariable Long flowInstId, HttpServletResponse response) {
+    public void getOptLogList(@PathVariable String flowInstId, HttpServletResponse response) {
         List<ActionLog> actionLogList = flowManager.listFlowActionLogs(flowInstId);
         JsonResultUtils.writeSingleDataJson(actionLogList, response);
     }
@@ -386,7 +386,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/suspendinst/{wfinstid}", method = RequestMethod.GET)
-    public void suspendInstance(@PathVariable Long wfinstid, HttpServletRequest request, HttpServletResponse response) {
+    public void suspendInstance(@PathVariable String wfinstid, HttpServletRequest request, HttpServletResponse response) {
         String mangerUserCode = "admin";
         String admindesc = request.getParameter("stopDesc");
         flowManager.suspendInstance(wfinstid, mangerUserCode, admindesc);
@@ -402,7 +402,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @PutMapping(value = "/changeunit/{wfinstid}/{unitcode}")
-    public void changeUnit(@PathVariable Long wfinstid, @PathVariable String unitcode, HttpServletRequest request, HttpServletResponse response) {
+    public void changeUnit(@PathVariable String wfinstid, @PathVariable String unitcode, HttpServletRequest request, HttpServletResponse response) {
         flowManager.updateFlowInstUnit(wfinstid, unitcode, "admin");
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -417,7 +417,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/stopinst/{flowInstId}", method = RequestMethod.GET)
-    public void stopInstance(@PathVariable Long flowInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void stopInstance(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
         flowManager.stopInstance(flowInstId, "admin", "");
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -430,7 +430,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/activizeinst/{flowInstId}", method = RequestMethod.GET)
-    public void activizeInstance(@PathVariable Long flowInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void activizeInstance(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
         flowManager.activizeInstance(flowInstId, "admin", "");
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -465,8 +465,10 @@ public class FlowManagerController extends BaseController {
             case '6':
                 String mangerUserCode = "admin";
                 String timeLimit = request.getParameter("timeLimit");
+
                 if (timeLimit != null) {
-                    flowManager.activizeInstance(nodeInstId, timeLimit,
+                    flowManager.activizeInstance(
+                        flowEng.getNodeInstById(nodeInstId).getFlowInstId(), timeLimit,
                         mangerUserCode);
                 } else {
                     flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
@@ -543,7 +545,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/viewflownode/{flowInstId}/{nodeId}", method = RequestMethod.GET)
-    public void viewFlowNodeInfo(@PathVariable Long flowInstId, @PathVariable String nodeId, HttpServletResponse response) {
+    public void viewFlowNodeInfo(@PathVariable String flowInstId, @PathVariable String nodeId, HttpServletResponse response) {
         try {
             FlowInstance dbobject = flowManager.getFlowInstance(flowInstId);
             NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeId);
@@ -667,7 +669,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/assignFlowWorkTeam/{flowInstId}/{roleCode}/{userCode}/{authdesc}", method = RequestMethod.POST)
     public void assignFlowWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode,
                                    @PathVariable String userCode, @PathVariable String authdesc, HttpServletRequest request, HttpServletResponse response) {
-        flowEng.assignFlowWorkTeam(Long.parseLong(flowInstId), roleCode,
+        flowEng.assignFlowWorkTeam(flowInstId, roleCode,
             userCode, authdesc);
         JsonResultUtils.writeBlankJson(response);
     }
@@ -681,7 +683,7 @@ public class FlowManagerController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/getAttByFlowInstId/{flowInstId}", method = RequestMethod.GET)
-    public void getAttByFlowInstId(@PathVariable long flowInstId, HttpServletResponse response) {
+    public void getAttByFlowInstId(@PathVariable String flowInstId, HttpServletResponse response) {
         List<InstAttention> attentions = flowEng.viewFlowAttention(flowInstId);
         resData.addResponseData(OBJLIST, attentions);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
@@ -705,7 +707,7 @@ public class FlowManagerController extends BaseController {
     }
 
     @RequestMapping(value = "/listFlowInstNodes", method = RequestMethod.GET)
-    public void listFlowInstNodes(HttpServletResponse response, Long flowInstId) {
+    public void listFlowInstNodes(HttpServletResponse response, String flowInstId) {
         List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
         resData.addResponseData(OBJLIST, nodeInstList);
         JsonResultUtils.writeSingleDataJson(resData, response);
@@ -718,7 +720,7 @@ public class FlowManagerController extends BaseController {
      * F 强行结束
      */
     @PostMapping(value = "/stopAndChangeInstance/{flowInstId}/{userCode}")
-    public void stopAndChangeInstance(long flowInstId, String userCode, String desc) {
+    public void stopAndChangeInstance(String flowInstId, String userCode, String desc) {
         flowManager.stopAndChangeInstance(flowInstId, userCode, desc);
     }
 
@@ -728,7 +730,7 @@ public class FlowManagerController extends BaseController {
      * F 强行结束
      */
     @PutMapping(value = "/stopInstance/{flowInstId}/{userCode}")
-    public void stopInstance(@PathVariable long flowInstId, @PathVariable String userCode, HttpServletResponse response) {
+    public void stopInstance(@PathVariable String flowInstId, @PathVariable String userCode, HttpServletResponse response) {
         try {
             flowManager.stopInstance(flowInstId, userCode, "");
             JsonResultUtils.writeSuccessJson(response);
@@ -746,7 +748,7 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "流程拉回到首节点", notes = "流程拉回到首节点")
     @PutMapping(value = "/reStartFlow/{flowInstId}/{userCode}")
-    public void reStartFlow(@PathVariable Long flowInstId, @PathVariable String userCode, HttpServletResponse response) {
+    public void reStartFlow(@PathVariable String flowInstId, @PathVariable String userCode, HttpServletResponse response) {
         Boolean result = flowManager.reStartFlow(flowInstId, userCode, false);
         if (result)
             JsonResultUtils.writeSuccessJson(response);

@@ -19,7 +19,7 @@ public class ManageActionLog implements java.io.Serializable {
     private Long actionId;
 
     @Column(name = "FLOW_INST_ID")
-    private Long flowInstId;
+    private String flowInstId;
     @Column(name = "NODE_INST_ID")
     private Long nodeInstId;
     @Column(name = "ACTION_TYPE")
@@ -54,7 +54,7 @@ public class ManageActionLog implements java.io.Serializable {
 /** full constructor */
     public ManageActionLog(
      Long actionid
-    ,Long  wfinstid,String  actiontype,Date  actiontime,String  usercode,String  roletype,String  rolecode,String  admindesc) {
+    ,String  wfinstid,String  actiontype,Date  actiontime,String  usercode,String  roletype,String  rolecode,String  admindesc) {
 
 
         this.actionId = actionid;
@@ -79,11 +79,11 @@ public class ManageActionLog implements java.io.Serializable {
     }
     // Property accessors
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         return this.flowInstId;
     }
 
-    public void setFlowInstId(Long wfinstid) {
+    public void setFlowInstId(String wfinstid) {
         this.flowInstId = wfinstid;
     }
 

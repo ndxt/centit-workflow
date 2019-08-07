@@ -24,7 +24,7 @@ public class FlowInstance implements java.io.Serializable {
     @Id
     @Column(name = "FLOW_INST_ID")
     //@GeneratedValue(generator = "assignedGenerator")
-    private Long flowInstId;
+    private String flowInstId;
 
     @ManyToOne
     @JoinColumns({
@@ -78,7 +78,7 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name = "IS_SUB_INST")
     private String isSubInst;
     @Column(name = "PRE_INST_ID")
-    private Long preInstId;
+    private String preInstId;
     @Column(name = "PRE_NODE_INST_ID")
     private Long preNodeInstId;
 
@@ -127,7 +127,7 @@ public class FlowInstance implements java.io.Serializable {
      * minimal constructor
      */
     public FlowInstance(
-        Long wfinstid
+        String wfinstid
         , Date createtime) {
         this.timeLimit = null;
         this.flowInstId = wfinstid;
@@ -139,10 +139,10 @@ public class FlowInstance implements java.io.Serializable {
      * full constructor
      */
     public FlowInstance(
-        Long wfinstid
+        String wfinstid
         , Long version, String wfcode, String flowOptName, String flowOptTag, Date createtime,
         Long promiseTime, Long timeLimit, String inststate, String issubinst,
-        Long preinstid, Long prenodeinstid, String unitcode, String usercode,
+        String preinstid, Long prenodeinstid, String unitcode, String usercode,
         Date lastUpdateTime, String lastUpdateUser, String isTimer) {
         this.flowInstId = wfinstid;
         this.getFlowDefine().setVersion(version);
@@ -165,11 +165,11 @@ public class FlowInstance implements java.io.Serializable {
     }
 
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         return this.flowInstId;
     }
 
-    public void setFlowInstId(Long wfinstid) {
+    public void setFlowInstId(String wfinstid) {
         this.flowInstId = wfinstid;
     }
     // Property accessors
@@ -274,11 +274,11 @@ public class FlowInstance implements java.io.Serializable {
         this.isSubInst = issubinst;
     }
 
-    public Long getPareFlowInstId() {
+    public String getPareFlowInstId() {
         return this.preInstId;
     }
 
-    public void setPreInstId(Long preinstid) {
+    public void setPreInstId(String preinstid) {
         this.preInstId = preinstid;
     }
 
@@ -1001,7 +1001,7 @@ public class FlowInstance implements java.io.Serializable {
         this.curStep = curStep;
     }
 
-    public Long getPreInstId() {
+    public String getPreInstId() {
         return preInstId;
     }
 

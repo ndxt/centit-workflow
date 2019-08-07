@@ -54,7 +54,7 @@ public class FlowWorkTeam implements java.io.Serializable {
         this.authTime= authtime;
     }
 
-    public FlowWorkTeam(Long wfinstid, String usercode, String rolecode, Date  authtime) {
+    public FlowWorkTeam(String wfinstid, String usercode, String rolecode, Date  authtime) {
            this.cid = new FlowWorkTeamId(wfinstid,  usercode,  rolecode);
            this.authTime= authtime;
        }
@@ -67,13 +67,13 @@ public class FlowWorkTeam implements java.io.Serializable {
         this.cid = id;
     }
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         if(this.cid==null)
             this.cid = new FlowWorkTeamId();
         return this.cid.getFlowInstId();
     }
 
-    public void setFlowInstId(Long wfinstid) {
+    public void setFlowInstId(String wfinstid) {
         if(this.cid==null)
             this.cid = new FlowWorkTeamId();
         this.cid.setFlowInstId(wfinstid);

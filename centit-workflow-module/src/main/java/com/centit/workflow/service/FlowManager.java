@@ -48,7 +48,7 @@ public interface FlowManager {
      * @param flowInstId
      * @return
      */
-    FlowInstance getFlowInstance(long flowInstId);
+    FlowInstance getFlowInstance(String flowInstId);
 
     /**
      * 查看工作流程实例状态或进度
@@ -56,7 +56,7 @@ public interface FlowManager {
      * @param flowInstId
      * @return XML 描述的流程流转状态图
      */
-    String viewFlowInstance(long flowInstId);
+    String viewFlowInstance(String flowInstId);
 
     /**
      * 查看工作流程节点示例图
@@ -64,14 +64,14 @@ public interface FlowManager {
      * @param flowInstId
      * @return
      */
-    String viewFlowNodeInstance(long flowInstId);
+    String viewFlowNodeInstance(String flowInstId);
     //流程实例管理-------------------------------
     //-----------流程状态变更-----N 正常  C 完成   P 暂停 挂起     F 强行结束---------------------------
 
     /**
      * 终止一个流程  F 强行结束
      */
-    int stopInstance(long flowInstId, String mangerUserCode, String admindesc);
+    int stopInstance(String flowInstId, String mangerUserCode, String admindesc);
 
 
     /**
@@ -80,17 +80,17 @@ public interface FlowManager {
      * 更新所有节点状态为F
      * F 强行结束
      */
-    int stopAndChangeInstance(long flowInstId, String mangerUserCode, String admindesc);
+    int stopAndChangeInstance(String flowInstId, String mangerUserCode, String admindesc);
 
     /**
      * 暂停一个流程    P 暂停 挂起
      */
-    int suspendInstance(long flowInstId, String mangerUserCode, String admindesc);
+    int suspendInstance(String flowInstId, String mangerUserCode, String admindesc);
 
     /**
      * 激活一个 挂起的或者无效的流程  N 正常
      */
-    int activizeInstance(long flowInstId, String mangerUserCode, String admindesc);
+    int activizeInstance(String flowInstId, String mangerUserCode, String admindesc);
 
     /**
      * 查询某人暂停计时的流程
@@ -107,7 +107,7 @@ public interface FlowManager {
      * @param flowInstId
      * @param mangerUserCode
      */
-    int suspendFlowInstTimer(long flowInstId, String mangerUserCode);
+    int suspendFlowInstTimer(String flowInstId, String mangerUserCode);
 
 
     /**
@@ -116,7 +116,7 @@ public interface FlowManager {
      * @param flowInstId
      * @param mangerUserCode
      */
-    int activizeFlowInstTimer(long flowInstId, String mangerUserCode);
+    int activizeFlowInstTimer(String flowInstId, String mangerUserCode);
 
     /**
      * 设置流程期限
@@ -127,7 +127,7 @@ public interface FlowManager {
      * @param admindesc      流程期限更改原因说明
      * @return
      */
-    long resetFlowTimelimt(long flowInstId, String timeLimit, String mangerUserCode, String admindesc);
+    long resetFlowTimelimt(String flowInstId, String timeLimit, String mangerUserCode, String admindesc);
 
     //------------流程属性修改----------------------------------
 
@@ -137,7 +137,7 @@ public interface FlowManager {
      * @param flowInstId 流程实例ID
      * @param unitCode   机构代码
      */
-    void updateFlowInstUnit(long flowInstId, String unitCode, String optUserCode);
+    void updateFlowInstUnit(String flowInstId, String unitCode, String optUserCode);
 
 
     //------日志信息查看-----------------
@@ -148,7 +148,7 @@ public interface FlowManager {
      * @param flowInstId
      * @return
      */
-    List<ManageActionLog> listManageActionLog(long flowInstId, PageDesc pageDesc);
+    List<ManageActionLog> listManageActionLog(String flowInstId, PageDesc pageDesc);
 
 
     //节点实例管理-------------------------------
@@ -159,7 +159,7 @@ public interface FlowManager {
      * @param wfinstid 流程实例编号
      * @return List<NodeInstance>
      */
-    List<NodeInstance> listFlowInstNodes(long wfinstid);
+    List<NodeInstance> listFlowInstNodes(String wfinstid);
     //-----------节点状态变更-------------------------------
     /*
      * N 正常  B 已回退    C 完成   F被强制结束
@@ -275,7 +275,7 @@ public interface FlowManager {
      * @param flowInstId
      * @return
      */
-    List<StageInstance> listStageInstByFlowInstId(long flowInstId);
+    List<StageInstance> listStageInstByFlowInstId(String flowInstId);
 
 
     /**
@@ -287,7 +287,7 @@ public interface FlowManager {
      * @param admindesc      流程期限更改原因说明
      * @return
      */
-    long resetStageTimelimt(long flowInstId, String stageId,
+    long resetStageTimelimt(String flowInstId, String stageId,
                             String timeLimit, String mangerUserCode, String admindesc);
 
     //------------流程角色管理-----接口参见flowEngine--------------------
@@ -311,7 +311,7 @@ public interface FlowManager {
      * @param flowInstId
      * @return List<WfActionLog>
      */
-    List<ActionLog> listFlowActionLogs(long flowInstId);
+    List<ActionLog> listFlowActionLogs(String flowInstId);
 
     /**
      * 获取用户所有的操作记录
@@ -405,7 +405,7 @@ public interface FlowManager {
      * @param flowInstId
      * @param mangerUserCode
      */
-    void deleteNodeActionTasks(long nodeInstId, Long flowInstId, String mangerUserCode);
+    void deleteNodeActionTasks(long nodeInstId, String flowInstId, String mangerUserCode);
     // ---------节点任务委托--------------------
 
 
@@ -460,7 +460,7 @@ public interface FlowManager {
      * @param managerUserCode
      * @param force 是否强制，否的话 需要判断流程最后提交人是否是自己
      */
-    Boolean reStartFlow(Long flowInstId, String managerUserCode, Boolean force);
+    Boolean reStartFlow(String flowInstId, String managerUserCode, Boolean force);
 
     public Boolean changeRelegateValid( String json);
 

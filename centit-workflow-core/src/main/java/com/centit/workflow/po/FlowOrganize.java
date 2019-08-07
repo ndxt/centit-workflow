@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 @Entity
 @Table(name="WF_ORGANIZE")
 public class FlowOrganize implements java.io.Serializable {
@@ -52,9 +52,9 @@ public class FlowOrganize implements java.io.Serializable {
         this.authTime= authTime;
     }
 
-    public FlowOrganize(Long wfinstid, String unitCode, String rolecode, Date  authtime) {
+    public FlowOrganize(String wfinstid, String unitCode, String rolecode, Date  authtime) {
         this.cid = new FlowOrganizeId(wfinstid,  unitCode,  rolecode);
-        this.authTime= authtime;        
+        this.authTime= authtime;
     }
 
     public FlowOrganizeId getCid() {
@@ -64,19 +64,19 @@ public class FlowOrganize implements java.io.Serializable {
     public void setCid(FlowOrganizeId id) {
         this.cid = id;
     }
-  
-    public Long getFlowInstId() {
+
+    public String getFlowInstId() {
         if(this.cid==null)
             this.cid = new FlowOrganizeId();
         return this.cid.getFlowInstId();
     }
 
-    public void setFlowInstId(Long flowInstId) {
+    public void setFlowInstId(String flowInstId) {
         if(this.cid==null)
             this.cid = new FlowOrganizeId();
         this.cid.setFlowInstId(flowInstId);
     }
-  
+
     public String getUnitCode() {
         if(this.cid==null)
             this.cid = new FlowOrganizeId();
@@ -88,7 +88,7 @@ public class FlowOrganize implements java.io.Serializable {
             this.cid = new FlowOrganizeId();
         this.cid.setUnitCode(unitCode);
     }
-  
+
     public String getRoleCode() {
         if(this.cid==null)
             this.cid = new FlowOrganizeId();
@@ -110,7 +110,7 @@ public class FlowOrganize implements java.io.Serializable {
     }
 
     // Property accessors
-  
+
     public String getAuthDesc() {
         return this.authDesc;
     }
@@ -118,7 +118,7 @@ public class FlowOrganize implements java.io.Serializable {
     public void setAuthDesc(String authDesc) {
         this.authDesc = authDesc;
     }
-  
+
     public Date getAuthTime() {
         return this.authTime;
     }
@@ -130,11 +130,11 @@ public class FlowOrganize implements java.io.Serializable {
 
 
     public void copy(FlowOrganize other){
-  
+
         this.setFlowInstId(other.getFlowInstId());
         this.setUnitCode(other.getUnitCode());
         this.setRoleCode(other.getRoleCode());
-  
+
         this.authDesc= other.getAuthDesc();
         this.authTime= other.getAuthTime();
         this.unitOrder = other.getUnitOrder();
@@ -142,7 +142,7 @@ public class FlowOrganize implements java.io.Serializable {
     }
 
     public void copyNotNullProperty(FlowOrganize other){
-  
+
         if( other.getFlowInstId() != null)
             this.setFlowInstId(other.getFlowInstId());
         if( other.getUnitCode() != null)
@@ -159,7 +159,7 @@ public class FlowOrganize implements java.io.Serializable {
     }
 
     public void clearProperties(){
-  
+
         this.authDesc= null;
         this.authTime= null;
 

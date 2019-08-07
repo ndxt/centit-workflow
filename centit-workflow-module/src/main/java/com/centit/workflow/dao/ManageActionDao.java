@@ -58,7 +58,7 @@ public class ManageActionDao extends BaseDaoImpl<ManageActionLog,Long>
      * @return
      */
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<ManageActionLog> getFlowManageLogs(long wfinstid, PageDesc pageDesc) {
+    public List<ManageActionLog> getFlowManageLogs(String wfinstid, PageDesc pageDesc) {
         JSONArray jsonArray= this.listObjectsByFilterAsJson("where flow_Inst_Id = ? order by action_Time desc",
                 new Object[]{wfinstid},pageDesc);
         return jsonArray.toJavaList(ManageActionLog.class);

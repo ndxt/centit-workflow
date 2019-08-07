@@ -153,7 +153,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
      * @param isTimer 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
      */
     @Transactional(propagation= Propagation.MANDATORY)
-    public void updateFlowTimerState(long instid,String isTimer,String mangerUserCode){
+    public void updateFlowTimerState(String instid,String isTimer,String mangerUserCode){
         FlowInstance flowInst = this.getObjectById(instid);
         flowInst.setIsTimer(isTimer);
         flowInst.setLastUpdateUser(mangerUserCode);
@@ -168,10 +168,10 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
      * @return
      */
     @Transactional(propagation= Propagation.MANDATORY)
-    public long calcOtherSubflowSum(Long nodeInstId,Long curSubFlowId){
+    public long calcOtherSubflowSum(Long nodeInstId,String curSubFlowId){
         String baseSql = "select count(1) as otherFlows from WF_FLOW_INSTANCE  "
             + "where INST_STATE='N' and IS_SUB_INST='Y' "
-            + " and PRE_NODE_INST_ID=? and FLOW_INST_ID <> ?";
+            + " and PRE_NODE_INST_ID=? and FLOW_INST_ID <> ?";//大小于
         Object obj = this.getJdbcTemplate().queryForObject(baseSql,new Object[]{nodeInstId,curSubFlowId},Long.class);
         if (obj == null)
             return 0;
@@ -185,7 +185,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag){
+    public void updateFlowInstOptInfo(String flowInstId, String flowOptName,String flowOptTag){
         String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=? where  FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,flowInstId});
     }
@@ -199,6 +199,6 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
         String sql="update WF_FLOW_INSTANCE set FLOW_INST_ID=?,INST_STATE=?," +
             "LAST_UPDATE_TIME=?,LAST_UPDATE_USER=? where  FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{wfFlowInst.getFlowInstId(),wfFlowInst.getInstState(),
-            wfFlowInst.getLastUpdateTime(),wfFlowInst.getLastUpdateUser(),-wfFlowInst.getFlowInstId()});
+            wfFlowInst.getLastUpdateTime(),wfFlowInst.getLastUpdateUser(),wfFlowInst.getFlowInstId()});
     }
 }

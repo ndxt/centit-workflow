@@ -67,7 +67,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @return XML 描述的流程流转状态图
      */
     @Override
-    public String viewFlowInstance(long flowInstId) {
+    public String viewFlowInstance(String flowInstId) {
         FlowInstance wfInst = flowInstanceDao.getObjectCascadeById(flowInstId);
         FlowInfoId id = new FlowInfoId(wfInst
             .getVersion(), wfInst.getFlowCode());
@@ -267,7 +267,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     @Override
-    public String viewFlowNodeInstance(long flowInstId) {
+    public String viewFlowNodeInstance(String flowInstId) {
         FlowInstance wfInst = flowInstanceDao.getObjectById(flowInstId);
         Document viewDoc = DocumentHelper.createDocument();
         Element baseEle = viewDoc.addElement("flow");
@@ -319,7 +319,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param state    N 正常/  C 完成/ P 暂停  挂起  / F 因为流程强行结束二结束 /
      * @param userCode 操作用户
      */
-    private int updateInstanceState(long instid, String state, String userCode,
+    private int updateInstanceState(String instid, String state, String userCode,
                                     String admindesc) {
 
         FlowInstance wfFlowInst = flowInstanceDao.getObjectById(instid);
@@ -464,7 +464,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
 
-    public FlowInstance getFlowInstance(long flowInstId) {
+    public FlowInstance getFlowInstance(String flowInstId) {
         FlowInstance flowInstance = flowInstanceDao.getObjectCascadeById(flowInstId);
         /**
          * 初始化节点信息
@@ -570,7 +570,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public List<ManageActionLog> listManageActionLog(long flowInstId, PageDesc pageDesc) {
+    public List<ManageActionLog> listManageActionLog(String flowInstId, PageDesc pageDesc) {
         List<ManageActionLog> magLogList = manageActionDao.getFlowManageLogs(flowInstId, pageDesc);
         if (null == magLogList) magLogList = new ArrayList<ManageActionLog>();
         return new ArrayList<ManageActionLog>(magLogList);
@@ -580,7 +580,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 强行结束一个流程，同时将其所有的活动节点也强行结束
      */
     @Override
-    public int stopInstance(long flowInstId, String mangerUserCode,
+    public int stopInstance(String flowInstId, String mangerUserCode,
                             String admindesc) {
         FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
         return updateInstanceState(flowInstId, "F", mangerUserCode, admindesc);
@@ -593,7 +593,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 更新所有节点状态为F
      * F 强行结束
      */
-    public int stopAndChangeInstance(long flowInstId, String mangerUserCode, String admindesc) {
+    public int stopAndChangeInstance(String flowInstId, String mangerUserCode, String admindesc) {
         FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
         return stopInstanceState(flowInstId, mangerUserCode, admindesc);
     }
@@ -604,7 +604,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param instid   实例编号
      * @param userCode 操作用户
      */
-    private int stopInstanceState(long instid, String userCode,
+    private int stopInstanceState(String instid, String userCode,
                                   String admindesc) {
 
         FlowInstance wfFlowInst = flowInstanceDao.getObjectById(instid);
@@ -613,7 +613,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Date updateTime = DatetimeOpt.currentUtilDate();
         wfFlowInst.setLastUpdateTime(updateTime);
         wfFlowInst.setLastUpdateUser(userCode);
-        wfFlowInst.setFlowInstId(-instid);
+        wfFlowInst.setFlowInstId(instid);
 
         String actionDesc = "U";
         // 只能结束未完成的流程
@@ -651,7 +651,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 挂起一个流程，同时将其所有的活动节点也挂起
      */
     @Override
-    public int suspendInstance(long flowInstId, String mangerUserCode,
+    public int suspendInstance(String flowInstId, String mangerUserCode,
                                String admindesc) {
         return updateInstanceState(flowInstId, "P", mangerUserCode, admindesc);
     }
@@ -660,13 +660,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 激活一个 挂起的或者无效的流程
      */
     @Override
-    public int activizeInstance(long flowInstId, String mangerUserCode,
+    public int activizeInstance(String flowInstId, String mangerUserCode,
                                 String admindesc) {
         return updateInstanceState(flowInstId, "N", mangerUserCode, admindesc);
     }
 
     @Override
-    public void updateFlowInstUnit(long flowInstId, String unitCode, String optUserCode) {
+    public void updateFlowInstUnit(String flowInstId, String unitCode, String optUserCode) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
             return;
@@ -727,7 +727,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param admindesc      流程期限更改原因说明
      * @return
      */
-    public long resetFlowTimelimt(long flowInstId, String timeLimit,
+    public long resetFlowTimelimt(String flowInstId, String timeLimit,
                                   String mangerUserCode, String admindesc) {
         FlowInstance wfFlowInst = flowInstanceDao.getObjectById(flowInstId);
         if (wfFlowInst == null)
@@ -1031,7 +1031,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     }
 
-    public List<NodeInstance> listFlowInstNodes(long wfinstid) {
+    public List<NodeInstance> listFlowInstNodes(String wfinstid) {
         List<NodeInstance> nodeInstList = new ArrayList<>();
         FlowInstance flowInst = flowInstanceDao.getObjectCascadeById(wfinstid);
         List<NodeInstance> nodeInstsSet = flowInst.getFlowNodeInstances();
@@ -1066,7 +1066,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
-    public void deleteNodeActionTasks(long nodeInstId, Long flowInstId, String mangerUserCode) {
+    public void deleteNodeActionTasks(long nodeInstId, String flowInstId, String mangerUserCode) {
         Map<String, Object> map = new HashMap<>();
         map.put("nodeInstId", nodeInstId);
         actionTaskDao.deleteObjectsByProperties(map);
@@ -1128,7 +1128,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * isTimer 不计时 F、计时T(有期限)、暂停P 忽略(无期限) F
      */
-    public int suspendFlowInstTimer(long flowInstId, String mangerUserCode) {
+    public int suspendFlowInstTimer(String flowInstId, String mangerUserCode) {
         flowInstanceDao.updateFlowTimerState(flowInstId, "P", mangerUserCode);
 
         ManageActionLog managerAct = FlowOptUtils.createManagerAction(
@@ -1143,7 +1143,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * isTimer 不计时N、计时T(有期限)、暂停P 忽略(无期限) F
      */
-    public int activizeFlowInstTimer(long flowInstId, String mangerUserCode) {
+    public int activizeFlowInstTimer(String flowInstId, String mangerUserCode) {
         flowInstanceDao.updateFlowTimerState(flowInstId, "T", mangerUserCode);
 
         ManageActionLog managerAct = FlowOptUtils.createManagerAction(
@@ -1227,7 +1227,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     @Override
-    public List<StageInstance> listStageInstByFlowInstId(long flowInstId) {
+    public List<StageInstance> listStageInstByFlowInstId(String flowInstId) {
 
         return new ArrayList<StageInstance>(
             stageInstanceDao.listStageInstByFlowInstId(flowInstId)
@@ -1236,7 +1236,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     @Override
-    public long resetStageTimelimt(long flowInstId, String stageId, String timeLimit,
+    public long resetStageTimelimt(String flowInstId, String stageId, String timeLimit,
                                    String mangerUserCode, String admindesc) {
         FlowInstance wfFlowInst = flowInstanceDao.getObjectById(flowInstId);
         if (wfFlowInst == null)
@@ -1472,7 +1472,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public List<ActionLog> listFlowActionLogs(long flowInstId) {
+    public List<ActionLog> listFlowActionLogs(String flowInstId) {
         List<ActionLog> actionLogList = new ArrayList<ActionLog>();
         Map<String, Object> filterMap = new HashMap<String, Object>();
         //获取该流程下所有节点
@@ -1533,7 +1533,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public Boolean reStartFlow(Long flowInstId, String managerUserCode, Boolean force) {
+    public Boolean reStartFlow(String flowInstId, String managerUserCode, Boolean force) {
         FlowInstance flowInstance = flowInstanceDao.getObjectCascadeById(flowInstId);
         //如果不是强行拉回，需要判断是否流程最后提交人是自己
         if (!force) {

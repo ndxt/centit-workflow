@@ -33,31 +33,31 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public void deleteFlowOrganize(long flowInstId, String roleCode) {
+    public void deleteFlowOrganize(String flowInstId, String roleCode) {
         this.getJdbcTemplate().update("delete from WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ?",
                 new Object[]{flowInstId, roleCode});
     }
     @Transactional(propagation= Propagation.MANDATORY)
-    public void deleteFlowOrganize(long flowInstId, String roleCode,String authDesc) {
+    public void deleteFlowOrganize(String flowInstId, String roleCode,String authDesc) {
         this.getJdbcTemplate().update("delete from WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ? " +
                 "and AUTH_DESC = ?",new Object[]{flowInstId, roleCode,authDesc});
     }
     @Transactional(propagation= Propagation.REQUIRES_NEW)
-    public List<FlowOrganize> listFlowOrganize(long flowInstId)
+    public List<FlowOrganize> listFlowOrganize(String flowInstId)
     {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? order by unit_Order",
                 new Object[]{flowInstId});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<FlowOrganize> listFlowOrganizeByRole(long flowInstId, String roleCode)
+    public List<FlowOrganize> listFlowOrganizeByRole(String flowInstId, String roleCode)
     {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? and ROLE_CODE = ? order by unit_Order",
                 new Object[]{flowInstId, roleCode});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<FlowOrganize> listFlowOrganize(long flowInstId, String roleCode, String authDesc)
+    public List<FlowOrganize> listFlowOrganize(String flowInstId, String roleCode, String authDesc)
     {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? and ROLE_CODE = ? and auth_Desc = ? " +
                         "order by unit_Order",

@@ -17,7 +17,7 @@ public class FlowWorkTeamId implements java.io.Serializable {
 
     @Column(name = "FLOW_INST_ID")
     @ApiModelProperty(value = "流程实例id",required = true)
-    private Long flowInstId;
+    private String flowInstId;
 
     @Column(name = "USER_CODE")
     @ApiModelProperty(value = "用户编号",required = true)
@@ -32,7 +32,7 @@ public class FlowWorkTeamId implements java.io.Serializable {
     public FlowWorkTeamId() {
     }
     /** full constructor */
-    public FlowWorkTeamId(Long wfinstid, String usercode, String rolecode) {
+    public FlowWorkTeamId(String wfinstid, String usercode, String rolecode) {
 
         this.flowInstId = wfinstid;
         this.userCode = usercode;
@@ -40,11 +40,11 @@ public class FlowWorkTeamId implements java.io.Serializable {
     }
 
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         return this.flowInstId;
     }
 
-    public void setFlowInstId(Long wfinstid) {
+    public void setFlowInstId(String wfinstid) {
         this.flowInstId = wfinstid;
     }
 

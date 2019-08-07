@@ -137,13 +137,13 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void saveFlowVariable(long flowInstId, String varName, String varValue) throws Exception {
+    public void saveFlowVariable(String flowInstId, String varName, String varValue) throws Exception {
         Set<String> vars = new HashSet<>(Arrays.asList(varValue));
         saveFlowVariable(flowInstId, varName, vars);
     }
 
     @Override
-    public void saveFlowVariable(long flowInstId, String varName, Set<String> varValue) throws Exception {
+    public void saveFlowVariable(String flowInstId, String varName, Set<String> varValue) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("varName", varName);
@@ -181,7 +181,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void assignFlowWorkTeam(long flowInstId, String roleCode, List<String> userCodes) throws Exception {
+    public void assignFlowWorkTeam(String flowInstId, String roleCode, List<String> userCodes) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -191,7 +191,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void addFlowWorkTeam(long flowInstId, String roleCode, String userCode) throws Exception {
+    public void addFlowWorkTeam(String flowInstId, String roleCode, String userCode) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -201,7 +201,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void assignFlowOrganize(long flowInstId, String roleCode,
+    public void assignFlowOrganize(String flowInstId, String roleCode,
                                    List<String> orgCodeSet) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
@@ -212,7 +212,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void addFlowOrganize(long flowInstId, String roleCode,
+    public void addFlowOrganize(String flowInstId, String roleCode,
                                 String unitCode) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
@@ -239,7 +239,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public List<FlowVariable> viewFlowVariablesByVarname(long flowInstId, String varName) throws Exception {
+    public List<FlowVariable> viewFlowVariablesByVarname(String flowInstId, String varName) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("varName", varName);
@@ -249,7 +249,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void deleteFlowWorkTeam(long flowInstId, String roleCode) throws Exception {
+    public void deleteFlowWorkTeam(String flowInstId, String roleCode) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -258,7 +258,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void deleteFlowOrganize(long flowInstId, String roleCode) throws Exception {
+    public void deleteFlowOrganize(String flowInstId, String roleCode) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -292,7 +292,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void updateFlowInstOptInfo(long flowInstId, String flowOptName, String flowOptTag) {
+    public void updateFlowInstOptInfo(String flowInstId, String flowOptName, String flowOptTag) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("flowOptName", flowOptName);
@@ -301,7 +301,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/updateFlowInstOptInfo", paramMap);
     }
 
-    public List<String> viewFlowWorkTeam(long flowInstId, String roleCode) {
+    public List<String> viewFlowWorkTeam(String flowInstId, String roleCode) {
         HashMap<java.lang.String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -309,7 +309,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/viewFlowWorkTeam", paramMap, String.class);
     }
 
-    public List<String> viewFlowOrganize(long flowInstId, String roleCode) {
+    public List<String> viewFlowOrganize(String flowInstId, String roleCode) {
         HashMap<java.lang.String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -318,7 +318,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
 
     @Override
-    public void createNodeInst(long flowInstId, String createUser,
+    public void createNodeInst(String flowInstId, String createUser,
                                String nodeId, List<String> userCodes, String unitCode) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
@@ -331,7 +331,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
 
-    public void deleteFlowVariable(long flowInstId, String runToken, String varName) {
+    public void deleteFlowVariable(String flowInstId, String runToken, String varName) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("runToken", runToken);

@@ -67,7 +67,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
     }
 
     @Override
-    public void stopAndChangeInstance(long flowInstId,String userCode,String desc) throws Exception{
+    public void stopAndChangeInstance(String flowInstId,String userCode,String desc) throws Exception{
         Map<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",flowInstId);
         paramMap.put("userCode",userCode);
@@ -77,13 +77,13 @@ public class FlowManagerClientImpl implements FlowManagerClient {
     }
 
     @Override
-    public String reStartFlow(Long flowInstId,String userCode) {
+    public String reStartFlow(String flowInstId,String userCode) {
         return RestfulHttpRequest.jsonPut(appSession,
             "/flow/manager/reStartFlow/"+flowInstId+"/"+userCode,null);
     }
 
     @Override
-    public String stopInstance(Long flowInstId,String userCode) {
+    public String stopInstance(String flowInstId,String userCode) {
         return RestfulHttpRequest.jsonPut(appSession,
             "/flow/manager/stopInstance/"+flowInstId+"/"+userCode,null);
     }

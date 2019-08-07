@@ -111,7 +111,7 @@ public interface FlowEngineClient {
     List<FlowInstance> listAllFlowInstByOptTag(String optTag);
 
 
-    void updateFlowInstOptInfo(long flowInstId, String flowOptName,String flowOptTag);
+    void updateFlowInstOptInfo(String flowInstId, String flowOptName,String flowOptTag);
     /**
      * 分配办件角色，兼容老业务模块，支持新增多个办件角色
      * @param flowInstId  流程实例号 不能为空
@@ -119,7 +119,7 @@ public interface FlowEngineClient {
      * @param userCodeSet 用户代码列表，添加
      * @return
      */
-    void assignFlowWorkTeam(long flowInstId, String roleCode,
+    void assignFlowWorkTeam(String flowInstId, String roleCode,
                             List<String> userCodeSet) throws Exception;
 
     /**
@@ -129,7 +129,7 @@ public interface FlowEngineClient {
      * @param userCode
      * @throws Exception
      */
-    void addFlowWorkTeam(long flowInstId, String roleCode, String userCode) throws Exception ;
+    void addFlowWorkTeam(String flowInstId, String roleCode, String userCode) throws Exception ;
 
     /**
      * 分配流程机构，兼容老业务模块，支持新增多个流程机构
@@ -138,7 +138,7 @@ public interface FlowEngineClient {
      * @param orgCodeSet
      * @throws Exception
      */
-    void assignFlowOrganize(long flowInstId, String roleCode,
+    void assignFlowOrganize(String flowInstId, String roleCode,
                              List<String> orgCodeSet) throws Exception;
 
     /**
@@ -147,7 +147,7 @@ public interface FlowEngineClient {
      * @param roleCode
      * @param unitCode
      */
-    void addFlowOrganize(long flowInstId, String roleCode,
+    void addFlowOrganize(String flowInstId, String roleCode,
                                 String unitCode);
 
 
@@ -156,30 +156,30 @@ public interface FlowEngineClient {
          * @param flowInstId  流程实例号 不能为空
          * @param roleCode 办件角色 不能为空
          */
-    void deleteFlowWorkTeam(long flowInstId, String roleCode) throws Exception;
+    void deleteFlowWorkTeam(String flowInstId, String roleCode) throws Exception;
     /**
      * 查看工作小组中某个角色的成员
      * @param flowInstId 工作流实例号
      * @param roleCode 办件角色代码
      * @return Set<userCode>
      */
-    List<String> viewFlowWorkTeam(long flowInstId, String roleCode);
+    List<String> viewFlowWorkTeam(String flowInstId, String roleCode);
     /**
      * 删除流程机构
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 机构角色 不能为空
      */
-    void deleteFlowOrganize(long flowInstId, String roleCode) throws Exception;
-    List<String> viewFlowOrganize(long flowInstId, String roleCode);
+    void deleteFlowOrganize(String flowInstId, String roleCode) throws Exception;
+    List<String> viewFlowOrganize(String flowInstId, String roleCode);
     /**
      * 设置流程全局变量
      * @param flowInstId
      * @param sVar
      * @param sValue
      */
-    void saveFlowVariable(long flowInstId, String sVar, String sValue) throws Exception;
+    void saveFlowVariable(String flowInstId, String sVar, String sValue) throws Exception;
 
-    void saveFlowVariable(long flowInstId, String varName, Set<String> varValue) throws Exception ;
+    void saveFlowVariable(String flowInstId, String varName, Set<String> varValue) throws Exception ;
 
     /**
      * 设置流程节点变量
@@ -195,7 +195,7 @@ public interface FlowEngineClient {
      * @param flowInstId
      * @return
      */
-    List<FlowVariable> viewFlowVariablesByVarname(long flowInstId, String varname) throws Exception;
+    List<FlowVariable> viewFlowVariablesByVarname(String flowInstId, String varname) throws Exception;
 
     /**
      * 手动创建节点实例，暂时不考虑这个节点对流程的整体影响，由调用业务来判断
@@ -206,7 +206,7 @@ public interface FlowEngineClient {
      * @param unitCode      指定机构
      * @return 节点实例
      */
-    void createNodeInst(long flowInstId, String createUser,
+    void createNodeInst(String flowInstId, String createUser,
                                String nodeId,List<String> userCodes, String unitCode) throws Exception;
 
     /**
@@ -216,7 +216,7 @@ public interface FlowEngineClient {
      * @param varName
      * @throws Exception
      */
-    void deleteFlowVariable(long flowInstId,String runToken,String varName) throws Exception;
+    void deleteFlowVariable(String flowInstId,String runToken,String varName) throws Exception;
 
     /**
      * 回退节点

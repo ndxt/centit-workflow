@@ -61,7 +61,7 @@ public class InstAttention implements java.io.Serializable {
         this.attSetMemo = attSetMemo;
     }
 
-    public InstAttention(String userCode, Long flowInstId, Date attSetTime, String attSetUser, String attSetMemo) {
+    public InstAttention(String userCode, String flowInstId, Date attSetTime, String attSetUser, String attSetMemo) {
         this.cid = new InstAttentionId(userCode, flowInstId);
         this.attSetTime = attSetTime;
         this.attSetUser = attSetUser;
@@ -88,13 +88,13 @@ public class InstAttention implements java.io.Serializable {
         this.cid.setUserCode(userCode);
     }
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         if (this.cid == null)
             this.cid = new InstAttentionId();
         return this.cid.getFlowInstId();
     }
 
-    public void setFlowInstId(Long flowInstId) {
+    public void setFlowInstId(String flowInstId) {
         if (this.cid == null)
             this.cid = new InstAttentionId();
         this.cid.setFlowInstId(flowInstId);

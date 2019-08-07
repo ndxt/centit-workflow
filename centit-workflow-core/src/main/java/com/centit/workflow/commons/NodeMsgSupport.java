@@ -20,7 +20,7 @@ public interface NodeMsgSupport {
      * @param userCode 当前操作人
      * @throws WorkflowException
      */
-    void sendFlowNodeMsg(long flowInstId,String userCode) throws WorkflowException;
+    void sendFlowNodeMsg(String flowInstId,String userCode) throws WorkflowException;
 
     /**
      * 发送节点信息到短信服务
@@ -36,7 +36,7 @@ public interface NodeMsgSupport {
      * @param userCode 当前操作人
      * @throws WorkflowException
      */
-    void sendFlowNodeSms(long flowInstId,String userCode) throws WorkflowException;
+    void sendFlowNodeSms(String flowInstId,String userCode) throws WorkflowException;
 
     /**
      * 在新增流程定义的时候发送流程信息到业务系统

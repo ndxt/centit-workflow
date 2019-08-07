@@ -22,7 +22,7 @@ public class UserTask implements java.io.Serializable {
     @DictionaryMap(value="userCode", fieldName="userName")
     private String userCode;
 
-    private Long  flowInstId;
+    private String flowInstId;
     private String  authDesc;
     private String  flowOptName;
     private String  flowName;
@@ -160,11 +160,11 @@ public class UserTask implements java.io.Serializable {
         this.flowName = flowName;
     }
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         return this.flowInstId;
     }
 
-    public void setFlowInstId(Long flowInstId) {
+    public void setFlowInstId(String flowInstId) {
         this.flowInstId = flowInstId;
     }
 

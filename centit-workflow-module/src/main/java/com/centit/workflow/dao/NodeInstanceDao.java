@@ -60,7 +60,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<NodeInstance> listNodeInstByState(long flowInstId, String nodeState) {
+    public List<NodeInstance> listNodeInstByState(String flowInstId, String nodeState) {
         return this.listObjectsByFilter("where node_State= ? and flow_Inst_Id= ?",
                 new Object[]{nodeState,flowInstId,});
     }
@@ -129,13 +129,13 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<NodeInstance> listActiveTimerNodeByFlow(long flowInstId){
+    public List<NodeInstance> listActiveTimerNodeByFlow(String flowInstId){
         return this.listObjectsByFilter(" where flow_Inst_Id = ? and is_Timer = 'T' ",
                 new Object[]{flowInstId});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<NodeInstance> listActiveTimerNodeByFlowStage(long flowInstId, String flowStage){
+    public List<NodeInstance> listActiveTimerNodeByFlowStage(String flowInstId, String flowStage){
         return this.listObjectsByFilter(" where flow_Inst_Id = ? and flow_Stage = ? and is_Timer = 'T'",
                 new Object[]{flowInstId,flowStage});
     }

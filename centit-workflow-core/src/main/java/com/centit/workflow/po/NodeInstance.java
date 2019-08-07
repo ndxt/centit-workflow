@@ -20,7 +20,7 @@ public class NodeInstance implements java.io.Serializable {
        private Long nodeInstId;
 
     @Column(name="FLOW_INST_ID")
-    private Long  flowInstId;
+    private String  flowInstId;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInfo.class)
     @JoinColumn(name="nodeId")
@@ -50,7 +50,7 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name="NODE_STATE")
     private String  nodeState;
     @Column(name="SUB_FLOW_INST_ID")
-    private Long subFlowInstId;
+    private String subFlowInstId;
     @Column(name="UNIT_CODE")
     private String unitCode;
 
@@ -123,8 +123,8 @@ public class NodeInstance implements java.io.Serializable {
 /** full constructor */
     public NodeInstance(
      Long nodeinstid
-    ,Long  wfinstid,String  nodeid,Date  createtime,Date  starttime,Long  prevnodeinstid,
-    Long  promiseTime, Long timeLimit,String  nodestate,Long  subwfinstid,String  unitcode,
+    ,String  wfinstid,String  nodeid,Date  createtime,Date  starttime,Long  prevnodeinstid,
+    Long  promiseTime, Long timeLimit,String  nodestate,String  subwfinstid,String  unitcode,
     String  transPath,String  taskassigned,String runToken,String lastUpdateUser,
     String isTimer,String flowPhase) {
 
@@ -158,11 +158,11 @@ public class NodeInstance implements java.io.Serializable {
     }
     // Property accessors
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         return this.flowInstId;
     }
 
-    public void setFlowInstId(Long wfinstid) {
+    public void setFlowInstId(String wfinstid) {
         this.flowInstId = wfinstid;
     }
 
@@ -260,11 +260,11 @@ public class NodeInstance implements java.io.Serializable {
         this.nodeState = nodestate;
     }
 
-    public Long getSubFlowInstId() {
+    public String getSubFlowInstId() {
         return this.subFlowInstId;
     }
 
-    public void setSubFlowInstId(Long subwfinstid) {
+    public void setSubFlowInstId(String subwfinstid) {
         this.subFlowInstId = subwfinstid;
     }
 

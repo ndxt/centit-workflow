@@ -30,7 +30,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public void deleteFlowWorkTeam(long flowInstId, String roleCode) {
+    public void deleteFlowWorkTeam(String flowInstId, String roleCode) {
         List<FlowWorkTeam> team = listFlowWorkTeamByRole(flowInstId,  roleCode);
         if(team==null || team.size()==0)
             return ;
@@ -38,13 +38,13 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
             this.deleteObject(t);
         //DatabaseOptUtils.doExecuteHql(this,"delete WfTeam where id.flowInstId=? and id.roleCode=?",new Object[]{flowInstId, roleCode});
     }
-    
+
     @Transactional(propagation= Propagation.REQUIRES_NEW)
-    public List<FlowWorkTeam> listFlowWorkTeam(long flowInstId)
+    public List<FlowWorkTeam> listFlowWorkTeam(String flowInstId)
     {
         return this.listObjectsByFilter("where flow_Inst_Id = ? order by role_Code, user_Order",new Object[]{flowInstId});
     }
-    
+
     /**
      * 链接 F_Userinfo 是为了排序
      * @param flowInstId
@@ -53,11 +53,11 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
      */
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.REQUIRES_NEW)
-    public List<FlowWorkTeam> listFlowWorkTeamByRole(long flowInstId, String roleCode)
+    public List<FlowWorkTeam> listFlowWorkTeamByRole(String flowInstId, String roleCode)
     {
         return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? order by user_Order",new Object[]{flowInstId,roleCode});
     }
-    
+
     /**
      * 链接 F_Userinfo 是为了排序
      * @param flowInstId
@@ -67,7 +67,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
      */
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<FlowWorkTeam> listFlowWorkTeam(long flowInstId, String roleCode, String authdesc)
+    public List<FlowWorkTeam> listFlowWorkTeam(String flowInstId, String roleCode, String authdesc)
     {
         return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? and auth_Desc = ? " +
                 "order by user_Order",new Object[]{flowInstId,roleCode,authdesc});

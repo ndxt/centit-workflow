@@ -39,7 +39,7 @@ public class InstAttentionDao extends BaseDaoImpl<InstAttention,InstAttentionId>
      * @param flowInstId
      */
     @Transactional(propagation= Propagation.MANDATORY)
-    public void deleteFlowAttention(long flowInstId) {
+    public void deleteFlowAttention(String flowInstId) {
         this.getJdbcTemplate().update("delete from WF_INST_ATTENTION where FLOW_INST_ID = ?",
                 new Object[]{flowInstId});
     }
@@ -48,16 +48,16 @@ public class InstAttentionDao extends BaseDaoImpl<InstAttention,InstAttentionId>
      * @param flowInstId
      */
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<InstAttention> listAttentionByFlowInstId(long flowInstId) {
+    public List<InstAttention> listAttentionByFlowInstId(String flowInstId) {
         return this.listObjectsByFilter("where FLOW_INST_ID = ?",new Object[]{flowInstId});
     }
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<InstAttention> listAttentionByFlowInstId(long flowInstId, String optUser) {
+    public List<InstAttention> listAttentionByFlowInstId(String flowInstId, String optUser) {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? and ATT_SET_USER = ? ",new Object[]{flowInstId,optUser});
 
     }
     @Transactional(propagation= Propagation.MANDATORY)
-    public void deleteFlowAttentionByOptUser(long flowInstId,String optUser)
+    public void deleteFlowAttentionByOptUser(String flowInstId,String optUser)
     {
         this.jdbcTemplate.update("delete From WF_INST_ATTENTION where FLOW_INST_ID = ? and ATT_SET_USER = ? ",
                 new Object[]{flowInstId,optUser});

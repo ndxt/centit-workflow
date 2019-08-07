@@ -16,7 +16,7 @@ public class FlowVariableId implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     @Column(name = "FLOW_INST_ID")
     @ApiModelProperty(value = "流程实例编号", required = true)
-    private Long flowInstId;
+    private String flowInstId;
     @Column(name = "RUN_TOKEN")
     @ApiModelProperty(value = "运行令牌")
     private String runToken;
@@ -35,7 +35,7 @@ public class FlowVariableId implements java.io.Serializable {
     /**
      * full constructor
      */
-    public FlowVariableId(Long flowInstId, String runToken, String varName) {
+    public FlowVariableId(String flowInstId, String runToken, String varName) {
 
         this.flowInstId = flowInstId;
         this.runToken = runToken;
@@ -43,11 +43,11 @@ public class FlowVariableId implements java.io.Serializable {
     }
 
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         return this.flowInstId;
     }
 
-    public void setFlowInstId(Long flowInstId) {
+    public void setFlowInstId(String flowInstId) {
         this.flowInstId = flowInstId;
     }
 

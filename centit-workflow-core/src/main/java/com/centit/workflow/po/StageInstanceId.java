@@ -14,7 +14,7 @@ public class StageInstanceId implements java.io.Serializable {
 
 
     @Column(name = "FLOW_INST_ID")
-    private Long flowInstId;
+    private String flowInstId;
 
     @Column(name = "STAGE_ID")
     private String stageId;
@@ -24,17 +24,17 @@ public class StageInstanceId implements java.io.Serializable {
     public StageInstanceId() {
     }
     /** full constructor */
-    public StageInstanceId(Long flowInstId, String stageId) {
+    public StageInstanceId(String flowInstId, String stageId) {
 
         this.flowInstId = flowInstId;
         this.stageId = stageId;
     }
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         return this.flowInstId;
     }
 
-    public void setFlowInstId(Long flowInstId) {
+    public void setFlowInstId(String flowInstId) {
         this.flowInstId = flowInstId;
     }
 

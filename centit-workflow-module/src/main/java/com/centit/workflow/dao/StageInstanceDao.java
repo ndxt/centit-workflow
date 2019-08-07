@@ -33,11 +33,11 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
         return filterField;
     }
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<StageInstance> listStageInstByFlowInstId(long flowInstId) {
+    public List<StageInstance> listStageInstByFlowInstId(String flowInstId) {
         return this.listObjectsByFilter("where flow_Inst_Id=?",new Object[]{flowInstId});
     }
     @Transactional(propagation= Propagation.MANDATORY)
-    public StageInstance getObject(long flowInstId, String stageId) {
+    public StageInstance getObject(String flowInstId, String stageId) {
         return this.getObjectById(new StageInstanceId(flowInstId,stageId));
     }
 }

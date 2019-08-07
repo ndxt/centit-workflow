@@ -69,13 +69,13 @@ public class StageInstance implements java.io.Serializable {
         this.cid = id;
     }
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         if(this.cid==null)
             this.cid = new StageInstanceId();
         return this.cid.getFlowInstId();
     }
 
-    public void setFlowInstId(Long flowInstId) {
+    public void setFlowInstId(String flowInstId) {
         if(this.cid==null)
             this.cid = new StageInstanceId();
         this.cid.setFlowInstId(flowInstId);

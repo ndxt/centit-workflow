@@ -20,7 +20,7 @@ public class FlowWarning implements java.io.Serializable {
     @Column(name="NODE_INST_ID")
     private Long  nodeInstId;
     @Column(name="FLOW_INST_ID")
-    private Long  flowInstId;
+    private String flowInstId;
     @Column(name="FLOW_STAGE")
     private String  flowStage;
     @Column(name="OBJ_TYPE")
@@ -49,7 +49,7 @@ public class FlowWarning implements java.io.Serializable {
     /** minimal constructor */
     public FlowWarning(
         Long warningid
-        ,Long  flowInstId) {
+        ,String flowInstId) {
 
 
         this.warningId = warningid;
@@ -60,7 +60,7 @@ public class FlowWarning implements java.io.Serializable {
 /** full constructor */
     public FlowWarning(
      Long warningid
-    ,Long  nodeInstId,Long  flowInstId,String  flowPhase,String  warningType,String  warningCode,Date  warningTime,String  warningState,String  warningidMsg,Date  sendMsgTime,String  sendUsers) {
+    ,Long  nodeInstId,String flowInstId,String  flowPhase,String  warningType,String  warningCode,Date  warningTime,String  warningState,String  warningidMsg,Date  sendMsgTime,String  sendUsers) {
 
         this.warningId = warningid;
 
@@ -122,11 +122,11 @@ public class FlowWarning implements java.io.Serializable {
         this.nodeInstId = nodeInstId;
     }
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         return this.flowInstId;
     }
 
-    public void setFlowInstId(Long flowInstId) {
+    public void setFlowInstId(String flowInstId) {
         this.flowInstId = flowInstId;
     }
 

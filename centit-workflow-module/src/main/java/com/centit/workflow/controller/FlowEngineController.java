@@ -273,7 +273,7 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "查看流程节点", notes = "查看流程节点")
     @GetMapping(value = "/listFlowInstNodes")
-    public void listFlowInstNodes(HttpServletResponse response, Long flowInstId) {
+    public void listFlowInstNodes(HttpServletResponse response, String flowInstId) {
         List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
         excludes = new HashMap<>();
         excludes.put(NodeInstance.class, new String[]{"wfActionLogs", "wfActionTasks"});
@@ -324,7 +324,7 @@ public class FlowEngineController extends BaseController {
     public void updateFlowInstOptInfo(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         //流程实例ID
-        long flowInstId = jsonObject.getLong("flowInstId");
+        String flowInstId = jsonObject.getString("flowInstId");
         //流程名称
         String flowOptName = jsonObject.getString("flowOptName");
         //流程业务id
@@ -354,7 +354,7 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/assignFlowOrganize")
     public void assignFlowOrganize(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
-        Long flowInstId = jsonObject.getLong("flowInstId");
+        String flowInstId = jsonObject.getString("flowInstId");
         String roleCode = jsonObject.getString("roleCode");
         String orgCodeSet = jsonObject.getString("orgCodeSet");
         List<String> orgCodes = JSON.parseArray(orgCodeSet, String.class);
@@ -381,7 +381,7 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "createNodeInst")
     public void createNodeInst(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
-        long flowInstId = jsonObject.getLong("flowInstId");
+        String flowInstId = jsonObject.getString("flowInstId");
         String createUser = jsonObject.getString("createUser");
         String userCodes = jsonObject.getString("userCodes");
         long nodeId = jsonObject.getLong("nodeId");
