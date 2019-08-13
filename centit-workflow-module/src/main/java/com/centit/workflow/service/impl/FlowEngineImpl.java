@@ -2,12 +2,10 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
-import com.centit.framework.components.UserUnitFilterCalcContext;
 import com.centit.framework.components.UserUnitParamBuilder;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
-import com.centit.framework.model.basedata.IUserInfo;
-import com.centit.framework.model.basedata.IUserUnit;
+import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
@@ -32,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -1070,9 +1067,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         }
         nodeInstanceDao.saveNewObject(nextNodeInst);
-        flowInst.setLastUpdateTime(currentTime);
-        flowInst.setLastUpdateUser(userCode);
-        flowInstanceDao.updateObject(flowInst);
+        //暂时注释掉这边重复的update
+//        flowInst.setLastUpdateTime(currentTime);
+//        flowInst.setLastUpdateUser(userCode);
+//        flowInstanceDao.updateObject(flowInst);
 
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nextOptNode);

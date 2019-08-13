@@ -69,6 +69,20 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
+    public FlowInstance createMetaFormFlowAndSubmit(String modelId, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("modelId", modelId);
+        jsonObject.put("flowOptName", flowOptName);
+        jsonObject.put("flowOptTag", flowOptTag);
+        jsonObject.put("userCode", userCode);
+        jsonObject.put("unitCode", unitCode);
+        String flowJson = RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/createMetaFormFlowAndSubmit", jsonObject);
+        return jsonToFlowInstance(flowJson);
+
+    }
+
+    @Override
     public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("flowCode", flowCode);

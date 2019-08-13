@@ -40,6 +40,14 @@ public class FlowOptServiceImpl implements FlowOptService {
     }
 
     @Override
+    public FlowOptInfo getOptByModelId(String modelId) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("modelId",modelId);
+        FlowOptInfo optInfo = flowOptInfoDao.getObjectByProperties(properties);
+        return optInfo;
+    }
+
+    @Override
     @Transactional
     public FlowOptInfo getOptById(String optId) {
         Map<String, Object> properties = new HashMap<>();

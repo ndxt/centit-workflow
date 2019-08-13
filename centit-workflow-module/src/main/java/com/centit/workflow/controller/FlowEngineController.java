@@ -45,18 +45,17 @@ public class FlowEngineController extends BaseController {
     private FlowRoleService flowRoleService;
     @Resource
     private PlatformFlowService platformFlowService;
+    @Resource
+    private FlowOptService wfOptService;
 
 
     private Map<Class<?>, String[]> excludes;
 
 //   下一步审批人*/
-
     @PostMapping("/viewNextNodeOperator")
     public void viewNextNodeOperator(@RequestBody String json, HttpServletResponse response) {
         ResponseMapData data = new ResponseMapData();
         Set<String> iUserInfos = new HashSet<>();
-//        Map re = new HashMap();
-
         JSONObject jsonObject = JSON.parseObject(json);
         long nodeInstId = jsonObject.getLong("nodeInstId");
         String userCode = jsonObject.getString("userCode");
@@ -74,14 +73,12 @@ public class FlowEngineController extends BaseController {
                 iUserInfos.addAll(FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode));
             }
         }
-
-
         data.addResponseData("userCodeList", iUserInfos);
         JsonResultUtils.writeResponseDataAsJson(data, response);
     }
 
     @GetMapping("viewFlowFirstOperUser/{flowCode}/{unitCode}")
-    public void viewFlowFirstOperUser(@PathVariable String flowCode,@PathVariable String unitCode, HttpServletResponse response) {
+    public void viewFlowFirstOperUser(@PathVariable String flowCode, @PathVariable String unitCode, HttpServletResponse response) {
         FlowInfo flowInfo = flowDefine.getFlowDefObject(flowCode);
         ResponseMapData data = new ResponseMapData();
         String nodeId = flowInfo.getFirstNode().getNodeId();
@@ -125,13 +122,10 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
     @PostMapping("createAndSubmitFlow")
-    public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions,HttpServletResponse response) {
+    public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletResponse response) {
         List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
-//        ResponseMapData data = new ResponseMapData();
-
         //创建流程
         FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
-
         //提交节点
         Set<Long> nextNodes = flowEng.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
@@ -142,9 +136,25 @@ public class FlowEngineController extends BaseController {
                 flowManager.assignTask(n, v, newFlowInstanceOptions.getUserCode(), null, "手动指定审批人");
             }
         }
-//        data.addResponseData("flowInstId",flowInstance);
         JsonResultUtils.writeSingleDataJson(flowInstance, response);
 
+    }
+
+
+    @ApiOperation(value = "自定义表单创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
+    @PostMapping("createMetaFormFlowAndSubmit")
+    public void createMetaFormFlowAndSubmit(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletResponse response) {
+        //暂时这么定义，一个基本业务自定义表单必然只匹配一个流程
+        FlowOptInfo flowOptInfo = wfOptService.getOptByModelId(newFlowInstanceOptions.getModelId());
+        List<FlowInfo> flowInfos = flowDefine.getFlowsByOptId(flowOptInfo.getOptId());
+        FlowInfo flowInfo = flowInfos.get(0);
+        //创建流程
+        newFlowInstanceOptions.setFlowCode(flowInfo.getFlowCode());
+        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        //提交节点
+        flowEng.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
+            newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
+        JsonResultUtils.writeSingleDataJson(flowInstance, response);
     }
 
     @WrapUpResponseBody
@@ -399,4 +409,6 @@ public class FlowEngineController extends BaseController {
         String managerUserCode = jsonObject.getString("managerUserCode");
         flowEng.rollbackOpt(nodeInstId, managerUserCode);
     }
+
+
 }

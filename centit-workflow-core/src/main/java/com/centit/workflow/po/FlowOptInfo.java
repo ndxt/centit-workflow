@@ -34,6 +34,13 @@ public class FlowOptInfo implements java.io.Serializable {
     @Column(name = "VIEW_URL")
     private String viewUrl;
 
+    @Column(name = "FORM_TYPE")
+    private String formType;
+
+    //自定义表单得模板id
+    @Column(name = "MODEL_ID")
+    private String modelId;
+
     @Transient
     private List<FlowOptDef> wfOptDefs;
 
@@ -108,5 +115,21 @@ public class FlowOptInfo implements java.io.Serializable {
 
     public void setViewUrl(String viewUrl) {
         this.viewUrl = viewUrl;
+    }
+
+    public String getFormType() {
+        return formType;
+    }
+
+    public void setFormType(String formType) {
+        this.formType = formType;
+    }
+
+    public String getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(String modelId) {
+        this.modelId = modelId;
     }
 }
