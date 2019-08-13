@@ -168,7 +168,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
      * @return
      */
     @Transactional(propagation= Propagation.MANDATORY)
-    public long calcOtherSubflowSum(Long nodeInstId,String curSubFlowId){
+    public long calcOtherSubflowSum(String nodeInstId,String curSubFlowId){
         String baseSql = "select count(1) as otherFlows from WF_FLOW_INSTANCE  "
             + "where INST_STATE='N' and IS_SUB_INST='Y' "
             + " and PRE_NODE_INST_ID=? and FLOW_INST_ID <> ?";//大小于

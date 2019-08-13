@@ -16,7 +16,7 @@ public class UserTask implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
 
 
-    private Long nodeInstId;
+    private String nodeInstId;
     @DictionaryMap(value="unitCode", fieldName="unitName")
     private String unitCode;
     @DictionaryMap(value="userCode", fieldName="userName")
@@ -84,11 +84,11 @@ public class UserTask implements java.io.Serializable {
         this.stageCode = stageCode;
     }
 
-    public Long getNodeInstId() {
+    public String getNodeInstId() {
         return nodeInstId;
     }
 
-    public void setNodeInstId(Long nodeInstId) {
+    public void setNodeInstId(String nodeInstId) {
         this.nodeInstId = nodeInstId;
     }
 

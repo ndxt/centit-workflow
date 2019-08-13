@@ -205,7 +205,7 @@ public class FlowManagerController extends BaseController {
      * 给一个节点指定任务、用这个代替系统自动分配任务
      */
     @RequestMapping(value = "/assign/{nodeInstId}/{userCode}", method = RequestMethod.POST)
-    public void assign(@PathVariable Long nodeInstId,@PathVariable String userCode, ActionTask actionTask, HttpServletRequest request, HttpServletResponse response) {
+    public void assign(@PathVariable String nodeInstId,@PathVariable String userCode, ActionTask actionTask, HttpServletRequest request, HttpServletResponse response) {
         flowManager.assignTask(nodeInstId,
             actionTask.getUserCode(), "admin",
             actionTask.getExpireTime(), actionTask.getAuthDesc());
@@ -451,7 +451,7 @@ public class FlowManagerController extends BaseController {
      * 回滚一个流程节点到上一节点
      */
     @RequestMapping(value = "/nodestate/{nodeInstId}/{bo}", method = RequestMethod.GET)
-    public void changeFlowInstState(@PathVariable Long nodeInstId, HttpServletRequest request, @PathVariable String bo, HttpServletResponse response) {
+    public void changeFlowInstState(@PathVariable String nodeInstId, HttpServletRequest request, @PathVariable String bo, HttpServletResponse response) {
         switch (bo.charAt(0)) {
             case '1':
                 flowEng.rollbackOpt(nodeInstId, "admin");
@@ -494,7 +494,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.GET)
-    public void resetToCurrent(@PathVariable Long nodeInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void resetToCurrent(@PathVariable String nodeInstId, HttpServletRequest request, HttpServletResponse response) {
         flowManager.resetFlowToThisNode(nodeInstId, "admin");
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -503,7 +503,7 @@ public class FlowManagerController extends BaseController {
      * 任务列表查询，查询条件可自助添加
      */
     @RequestMapping(value = "/listNodeOpers/{nodeInstId}", method = RequestMethod.GET)
-    public void listNodeOpers(@PathVariable Long nodeInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void listNodeOpers(@PathVariable String nodeInstId, HttpServletRequest request, HttpServletResponse response) {
         NodeInstance nodeInstance = flowEng.getNodeInstById(nodeInstId);
         List<UserTask> objList = new ArrayList<>();
         List<UserTask> innerTask = flowManager.listNodeTasks(nodeInstId);
@@ -526,7 +526,7 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/viewnode/{nodeInstId}", method = RequestMethod.GET)
-    public void viewNodeInstanceInfo(@PathVariable Long nodeInstId, HttpServletResponse response) {
+    public void viewNodeInstanceInfo(@PathVariable String nodeInstId, HttpServletResponse response) {
         NodeInstance nodeInst = flowEng.getNodeInstById(nodeInstId);
         NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeInst.getNodeId());
         List<UserTask> tasks = flowManager.listNodeTasks(nodeInstId);
@@ -552,7 +552,7 @@ public class FlowManagerController extends BaseController {
             JSONObject nodeOptInfo = new JSONObject();
             nodeOptInfo.put("nodename", nodeInfo.getNodeName());
             int nodeInstInd = 0;
-            //long nodeInstId=0;
+            //String nodeInstId=0;
             for (NodeInstance nodeInst : dbobject.getNodeInstances()) {
                 if (nodeInst.getNodeId().equals(nodeId)) {
                     //暂时保证一个节点保留一条查看信息
@@ -644,7 +644,7 @@ public class FlowManagerController extends BaseController {
      * @return String
      */
     @RequestMapping(value = "/listusertasks/{nodeInstId}", method = RequestMethod.GET)
-    public void listNodeInstTasks(@PathVariable Long nodeInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void listNodeInstTasks(@PathVariable String nodeInstId, HttpServletRequest request, HttpServletResponse response) {
         List<ActionTask> taskList = flowManager.listNodeInstTasks(nodeInstId);
         resData.addResponseData(OBJLIST, taskList);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
@@ -656,7 +656,7 @@ public class FlowManagerController extends BaseController {
      * @return String
      */
     @RequestMapping(value = "/nodelogs/{nodeInstId}", method = RequestMethod.GET)
-    public void listNodeInstLogs(@PathVariable Long nodeInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void listNodeInstLogs(@PathVariable String nodeInstId, HttpServletRequest request, HttpServletResponse response) {
         List<ActionLog> logList = flowManager.listNodeActionLogs(nodeInstId);
         resData.addResponseData(OBJLIST, logList);
         JsonResultUtils.writeResponseDataAsJson(resData, response);

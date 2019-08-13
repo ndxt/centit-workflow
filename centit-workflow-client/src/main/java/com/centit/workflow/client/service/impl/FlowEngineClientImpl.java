@@ -159,7 +159,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @throws Exception
      */
     @Override
-    public void saveFlowNodeVariable(long nodeInstId, String varName, String varValue) throws Exception {
+    public void saveFlowNodeVariable(String nodeInstId, String varName, String varValue) throws Exception {
         Set<String> vars = new HashSet<>(Arrays.asList(varValue));
         saveFlowNodeVariable(nodeInstId, varName, vars);
     }
@@ -171,7 +171,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @throws Exception
      */
     @Override
-    public void saveFlowNodeVariable(long nodeInstId, String varName, Set<String> varValue) throws Exception {
+    public void saveFlowNodeVariable(String nodeInstId, String varName, Set<String> varValue) throws Exception {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("varName", varName);
@@ -223,7 +223,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public Map<String,Object> submitOpt(long nodeInstId, String userCode,
+    public Map<String,Object> submitOpt(String nodeInstId, String userCode,
                                          String unitCode, String varTrans,
                                          ServletContext application) throws WorkflowException {
         HashMap<String, Object> paramMap = new HashMap<>();
@@ -276,7 +276,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public List<UserTask> listNodeTaskUsers(Long nodeInstId) {
+    public List<UserTask> listNodeTaskUsers(String nodeInstId) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         return RestfulHttpRequest.getResponseObjectList(appSession,
@@ -340,7 +340,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/deleteFlowVariable", paramMap);
     }
 
-    public void rollBackNode(long nodeInstId,String managerUserCode){
+    public void rollBackNode(String nodeInstId,String managerUserCode){
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("managerUserCode", managerUserCode);

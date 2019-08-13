@@ -87,7 +87,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) {
         return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, 0, "", null, false, null);
+            unitCode, "", "", null, false, null);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowInstance createInstance(String flowCode, long version, String flowOptName, String flowOptTag,
                                        String userCode, String unitCode) {
         return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, 0, "", null, false, null);
+            unitCode, "", "", null, false, null);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                                     String flowOptTag, String userCode, String unitCode) {
 
         FlowInstance flowInstance = createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, 0, "", null, true, null);
+            unitCode, "", "", null, true, null);
 //        Set<Long> nodes = new HashSet<>();
 //        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
 //            nodes.add(n.getNodeInstId());
@@ -141,7 +141,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowInstance createInstanceLockFirstNode(String flowCode, long version,
                                                     String flowOptName, String flowOptTag, String userCode, String unitCode) {
         return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, 0, "", null, true, null);
+            unitCode, "", "", null, true, null);
     }
 
 
@@ -163,7 +163,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                        UserUnitVariableTranslate varTrans, ServletContext application) {
 
         return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, 0, "", varTrans, false, null);
+            unitCode, "", "", varTrans, false, null);
 
     }
 
@@ -173,7 +173,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                        UserUnitVariableTranslate varTrans, ServletContext application) {
 
         return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, 0, "", varTrans, false, null);
+            unitCode, "", "", varTrans, false, null);
     }
 
 
@@ -187,7 +187,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return
      */
     private FlowInstance createInstInside(String flowCode, long version, String flowOptName, String flowOptTag, String userCode,
-                                          String unitCode, long nodeInstId, String flowInstid, UserUnitVariableTranslate varTrans,
+                                          String unitCode, String nodeInstId, String flowInstid, UserUnitVariableTranslate varTrans,
                                           boolean lockFirstOpt, String timeLimitStr) {
 
         Date createTime = new Date(System.currentTimeMillis());
@@ -203,7 +203,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInst.setCreateTime(createTime);
 
         //节点实例编号不为空，为子流程，创建子流程时要给父节点的状态设置为 W：等待子流程返回
-        if (nodeInstId != 0) {
+        if (nodeInstId != "") {
             flowInst.setPreNodeInstId(nodeInstId);
             flowInst.setPreInstId(flowInstid);
             flowInst.setIsSubInst("Y");
@@ -219,7 +219,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //添加令牌算法 首节点的令牌为初始值 系统默认值
         // nodeInst.setRunToken("T");
         //同步创建时间
-        nodeInst.setNodeInstId(nodeInstanceDao.getNextNodeInstId());
+        nodeInst.setNodeInstId(UuidOpt.getUuidAsString32());
+//        nodeInst.setNodeInstId(nodeInstanceDao.getNextNodeInstId());
         nodeInst.setCreateTime(createTime);
         flowInst.addWfNodeInstance(nodeInst);
         //创建节点操作日志 W:创建首节点
@@ -356,7 +357,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public NodeInstance getNodeInstById(long nodeInstId) {
+    public NodeInstance getNodeInstById(String nodeInstId) {
         return nodeInstanceDao.getObjectCascadeById(nodeInstId);
     }
 
@@ -377,7 +378,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void updateFlowInstParentNode(String flowInstId, String parentFlowInstId, long parentNodeInstId) {
+    public void updateFlowInstParentNode(String flowInstId, String parentFlowInstId, String parentNodeInstId) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
             return;
@@ -387,7 +388,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public String getNodeOptUrl(long nodeInstId, String userCode) {
+    public String getNodeOptUrl(String nodeInstId, String userCode) {
 
         List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(
             QueryUtils.createSqlParamsMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
@@ -419,7 +420,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public StageInstance getStageInstByNodeInstId(long nodeInstId) {
+    public StageInstance getStageInstByNodeInstId(String nodeInstId) {
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
@@ -437,12 +438,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
 
     private void endFlowInstance(FlowInstance flowInst, FlowInfo flowInfo, NodeInfo endNode,
-                                 String transPath, FlowTransition trans, long preNodeInstId, String userCode, String unitCode) {
+                                 String transPath, FlowTransition trans, String preNodeInstId, String userCode, String unitCode) {
         FlowOptUtils.endInstance(flowInst, "C", userCode, flowInstanceDao);
 
         NodeInstance endNodeInst =
             FlowOptUtils.createNodeInst(unitCode, userCode, null, flowInst, null, flowInfo, endNode, trans);
-        endNodeInst.setNodeInstId(nodeInstanceDao.getNextNodeInstId());
+        endNodeInst.setNodeInstId(UuidOpt.getUuidAsString32());
+//        endNodeInst.setNodeInstId(nodeInstanceDao.getNextNodeInstId());
         endNodeInst.setNodeState("C");
         Date updateTime = DatetimeOpt.currentUtilDate();
         endNodeInst.setLastUpdateTime(updateTime);
@@ -467,7 +469,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色
             //根据权限表达式创建任务列表
             String oldNodeInstUnitCode = null;
-            NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(nextOptNode.getNodeId(), nodeInst, 0l);
+            NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(nextOptNode.getNodeId(), nodeInst, "");
             if (oldNodeInst != null)
                 oldNodeInstUnitCode = oldNodeInst.getUnitCode();
 
@@ -527,14 +529,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return
      * @throws WorkflowException
      */
-    private Set<Long> submitToNextRouterNode(
+    private Set<String> submitToNextRouterNode(
         NodeInfo nextRoutertNode, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance nodeInst, String transPath, FlowTransition trans, String userCode, String unitCode, String nodeToken,
         FlowVariableTranslate varTrans, Map<Long, Set<String>> nodeUnits,
         Map<Long, Set<String>> nodeOptUsers, ServletContext application)
         throws WorkflowException {
         String sRT = nextRoutertNode.getRouterType();
-        Set<Long> resNodes = new HashSet<>();
+        Set<String> resNodes = new HashSet<>();
         String preTransPath = StringUtils.isBlank(transPath) ?
             String.valueOf(trans.getTransId()) : transPath + "," + String.valueOf(trans.getTransId());
 
@@ -571,7 +573,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 int nNo = 1;
                 for (FlowTransition tran : selTrans) {
                     String nextNodeId = tran.getEndNodeId();
-                    Set<Long> nNs = submitToNextNode(
+                    Set<String> nNs = submitToNextNode(
                         nextNodeId, flowInst, flowInfo,
                         nodeInst, preTransPath, tran, userCode, null, unitCode, nodeToken + "." + nNo,
                         varTrans, nodeUnits, nodeOptUsers, application);
@@ -771,7 +773,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         NodeInfo rtN = selectNextNodeByNodeId(ent.getValue().getNodeId());
                         if ("R".equals(rtN.getNodeType()) && "S".equals(rtN.getRouterType())) {
                             FlowTransition nextTran = selectOptNodeTransition(rtN);
-                            Set<Long> sN = submitToNextNode(
+                            Set<String> sN = submitToNextNode(
                                 nextTran.getEndNodeId(), flowInst, flowInfo,
                                 ent.getValue(), preTransPath, nextTran, ent.getValue().getLastUpdateUser(),
                                 null, ent.getValue().getUnitCode(), ent.getValue().getRunToken(),
@@ -786,7 +788,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return resNodes;
     }
 
-    private Set<Long> submitToNextNode(
+    private Set<String> submitToNextNode(
         String nextNodeId, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance nodeInst, String transPath, FlowTransition nodeTran,
         String userCode, String grantorCode, String unitCode, String nodeToken,
@@ -794,7 +796,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
         ServletContext application) throws WorkflowException {
 
-        Set<Long> resNodes = new HashSet<Long>();
+        Set<String> resNodes = new HashSet<String>();
         NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
         if ("R".equals(nextNode.getNodeType())) { // 后续节点为路由节点
 
@@ -868,7 +870,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (nextNodeUnit == null) {
             //获取上一个相同节点实例机构
             String oldNodeInstUnitCode = null;
-            NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(nextCode, nodeInst, 0l);
+            NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(nextCode, nodeInst, "");
             if (oldNodeInst != null)
                 oldNodeInstUnitCode = oldNodeInst.getUnitCode();
 
@@ -936,7 +938,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Date currentTime = new Date(System.currentTimeMillis());
 
         //long nextCode = nextOptNode.getNodeId();
-        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
+//        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
+        String lastNodeInstId = UuidOpt.getUuidAsString32();
 
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, userCode, nodeParam,
             flowInst, nodeInst, flowInfo, nextOptNode, trans);
@@ -1085,9 +1088,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //TODO 如果自动执行的节点下一步生成的节点实例有多个，这边的return就不对了
                 //暂时先取第一个节点实例，解决部分问题
                 //varTrans改为一个空的
-                Set<Long> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
+                Set<String> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
                     new ObjectUserUnitVariableTranslate<>(), nodeUnits, nodeOptUsers, application);
-                for (Long n : nextNodes) {
+                for (String n : nextNodes) {
                     nextNodeInst = nodeInstanceDao.getObjectById(n);
                     break;
                 }
@@ -1096,9 +1099,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else if ("E".equals(nextOptNode.getOptType())) {  //哑元节点 自动提交
             try {
                 //varTrans改为一个空的
-                Set<Long> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
+                Set<String> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
                     new ObjectUserUnitVariableTranslate<>(), nodeUnits, nodeOptUsers, application);
-                for (Long n : nextNodes) {
+                for (String n : nextNodes) {
                     nextNodeInst = nodeInstanceDao.getObjectById(n);
                     break;
                 }
@@ -1172,7 +1175,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      *        如果下一个节点是介绍节点则介绍整个流程
      * 记录提交日志，节点创建情况
      */
-    private Set<Long> submitOptInside(long nodeInstId, String userCode, String grantorCode,
+    private Set<String> submitOptInside(String nodeInstId, String userCode, String grantorCode,
                                       String unitCode, UserUnitVariableTranslate varTrans,
                                       Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
                                       ServletContext application) throws WorkflowException {
@@ -1264,7 +1267,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInst.setLastUpdateUser(userCode);
         flowInstanceDao.updateObject(flowInst);
 
-        Set<Long> nextNodeInsts = new HashSet<>();
+        Set<String> nextNodeInsts = new HashSet<>();
 
 
         if ("T".equals(nodeInst.getTaskAssigned())) {
@@ -1387,7 +1390,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param nodeInstId  当前活动节点
      * @param optUserCode 操作人员
      */
-    public void disableOtherBranchNodes(long nodeInstId, String optUserCode) {
+    public void disableOtherBranchNodes(String nodeInstId, String optUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null || !"N".equals(nodeInst.getNodeState())) {
             logger.error("找不到节点实例：" + nodeInstId + "，或者实例不是正常状态的节点。");
@@ -1435,19 +1438,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * 新增子流程退回父流程的方法
      */
     @Override
-    public long rollbackOpt(long nodeInstId, String mangerUserCode) {
+    public String rollbackOpt(String nodeInstId, String mangerUserCode) {
         // 添加令牌算法
         NodeInstance thisNodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
         if (thisNodeInst == null)
-            return -1;
+            return null;
         // 当前节点状态必需为正常
         if (!"N".equals(thisNodeInst.getNodeState()))
-            return -6;
+            return null;
 
         FlowInstance flowInst = flowInstanceDao.getObjectCascadeById(thisNodeInst
             .getFlowInstId());
         if (flowInst == null)
-            return -2;
+            return null;
 
         /*
          * WfNode nodedef = flowNodeDao.getObjectById( thisnode.getNodeId());
@@ -1467,7 +1470,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (prevNodeInst == null) {
             //找不到上一节点之后，判断是否子流程
             if (flowInst.getPreNodeInstId() == null) {
-                return -3;
+                return null;
             } else {
                 //是子流程的话，把流程实例中的prenodeinst取出来找到对应的前一节点
                 subProcess = true;
@@ -1490,7 +1493,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         .getNodeInstId());
                 }
                 if (prevNodeInst == null)
-                    return -3;
+                    return null;
                 //判断一下父流程中的节点是否已经被退回，已经被退回之后就不能再次退回
                 if (prevFlowInst != null) {
                     for (NodeInstance no : prevFlowInst.getFlowNodeInstances()) {
@@ -1498,7 +1501,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         if ("N,S,P".contains(no.getNodeState())) {
                             //如果想要退回的节点处于正常、暂缓，无需退回
                             if (prevNodeInst.getNodeId().equals(no.getNodeId())) {
-                                return -5;
+                                return null;
                             }
                         }
                     }
@@ -1522,7 +1525,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         thisNodeInst.setLastUpdateUser(mangerUserCode);
         thisNodeInst.setLastUpdateTime(updateTime);
 
-        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
+        String lastNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nextNodeInst = flowInst.newWfNodeInstance();
         //如果是子流程退回父流程，把流程id置为父流程的流程id
         if (subProcess) {
@@ -1560,7 +1563,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nodedef);
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, mangerUserCode);
         //调用发送消息接口
-        Set<Long> nodeInstIds = new HashSet<>();
+        Set<String> nodeInstIds = new HashSet<>();
         nodeInstIds.add(lastNodeInstId);
         FlowOptUtils.sendMsg(nodeInstId, nodeInstIds, mangerUserCode);
         return lastNodeInstId;
@@ -1569,7 +1572,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     /**
      * 如果后续节点是 自动运行 和哑元 节点，节点被操作的判断将会误判
      */
-    public boolean nodeCanBeReclaim(long nodeInstId) {
+    public boolean nodeCanBeReclaim(String nodeInstId) {
         NodeInstance thisnode = nodeInstanceDao.getObjectById(nodeInstId);
         if (thisnode == null)
             return false;
@@ -1593,20 +1596,20 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public Set<Long> submitOpt(long nodeInstId, String userCode, String unitCode,
+    public Set<String> submitOpt(String nodeInstId, String userCode, String unitCode,
                                UserUnitVariableTranslate varTrans, ServletContext application)
         throws WorkflowException {
-        Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, userCode, unitCode,
+        Set<String> nextNodeInsts = submitOptInside(nodeInstId, userCode, userCode, unitCode,
             varTrans, null, null, application);
         FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
         return nextNodeInsts;
     }
 
     @Override
-    public Set<Long> submitOpt(long nodeInstId, String userCode, String grantorCode,
+    public Set<String> submitOpt(String nodeInstId, String userCode, String grantorCode,
                                String unitCode, UserUnitVariableTranslate varTrans, ServletContext application)
         throws WorkflowException {
-        Set<Long> nextNodeInsts = submitOptInside(nodeInstId, userCode, grantorCode, unitCode,
+        Set<String> nextNodeInsts = submitOptInside(nodeInstId, userCode, grantorCode, unitCode,
             varTrans, null, null, application);
         FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
         return nextNodeInsts;
@@ -1624,7 +1627,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return 节点实例编号列表
      */
     @Override
-    public Set<Long> submitOptWithAssignUnitAndUser(long nodeInstId, String userCode,
+    public Set<String> submitOptWithAssignUnitAndUser(String nodeInstId, String userCode,
                                                     String unitCode, UserUnitVariableTranslate varTrans,
                                                     Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
                                                     ServletContext application) throws WorkflowException {
@@ -1645,7 +1648,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return 节点实例编号列表
      */
     @Override
-    public Set<Long> submitOptWithAssignUnitAndUser(long nodeInstId, String userCode,
+    public Set<String> submitOptWithAssignUnitAndUser(String nodeInstId, String userCode,
                                                     String grantorCode, String unitCode, UserUnitVariableTranslate varTrans,
                                                     Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
                                                     ServletContext application) throws WorkflowException {
@@ -1671,7 +1674,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public Set<NodeInfo> viewNextNode(long nodeInstId, String userCode,
+    public Set<NodeInfo> viewNextNode(String nodeInstId, String userCode,
                                       String unitCode, UserUnitVariableTranslate varTrans) {
         //根据上级节点实例编号获取节点所在父流程实例信息
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
@@ -1722,7 +1725,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
         //获取上一个相同节点实例机构
         String oldNodeInstUnitCode = null;
-        NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(nextNodeId, nodeInst, -1l);
+        NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(nextNodeId, nodeInst, "");
         if (oldNodeInst != null)
             oldNodeInstUnitCode = oldNodeInst.getUnitCode();
 
@@ -1752,12 +1755,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public String getTaskGrantor(long nodeInstId, String userCode) {
+    public String getTaskGrantor(String nodeInstId, String userCode) {
         return actionTaskDao.getTaskGrantor(nodeInstId, userCode);
     }
 
     @Override
-    public void recordActionLog(long nodeInstId, String userCode,
+    public void recordActionLog(String nodeInstId, String userCode,
                                 String actionType) {
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
@@ -1796,8 +1799,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param unitCode      指定机构
      * @return 节点实例
      */
-    public NodeInstance createPrepNodeInstLockUser(String flowInstId, long curNodeInstId,
-                                                   long nodeId, String createUser, String userCode, String unitCode) {
+    public NodeInstance createPrepNodeInstLockUser(String flowInstId, String curNodeInstId,
+                                                   String nodeId, String createUser, String userCode, String unitCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
         //必需存在且状态为正常 或者 暂停
         if (nodeInst == null || (!"N".equals(nodeInst.getNodeState()) && !"S".equals(nodeInst.getNodeState()))) {
@@ -1819,7 +1822,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInfo nextNode = flowNodeDao.getObjectById(nodeId);
         //获取上一个相同节点实例机构
 
-        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
+        String lastNodeInstId = UuidOpt.getUuidAsString32();
+//        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
 
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(
             unitCode, createUser, null, flowInst, nodeInst, flowInfo, nextNode, null);
@@ -1854,7 +1858,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param unitCode      指定机构
      * @return 节点实例
      */
-    public NodeInstance createPrepNodeInstLockUser(String flowInstId, long curNodeInstId,
+    public NodeInstance createPrepNodeInstLockUserWithNodeCode(String flowInstId, String curNodeInstId,
                                                    String nodeCode, String createUser, String userCode, String unitCode) {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
@@ -1886,7 +1890,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return 节点实例
      */
     @Override
-    public NodeInstance createPrepNodeInst(String flowInstId, long curNodeInstId,
+    public NodeInstance createPrepNodeInst(String flowInstId, String curNodeInstId,
                                            long nodeId, String userCode, String unitCode) {
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
@@ -1910,7 +1914,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInfo nextNode = flowNodeDao.getObjectById(nodeId);
         //获取上一个相同节点实例机构
 
-        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
+        String lastNodeInstId = UuidOpt.getUuidAsString32();
+//        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
 
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, userCode, null, flowInst, nodeInst, flowInfo, nextNode, null);
 
@@ -1972,8 +1977,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return 节点实例
      */
     @Override
-    public NodeInstance createIsolatedNodeInst(String flowInstId, long curNodeInstId,
-                                               long nodeId, String createUser, String userCode, String unitCode) {
+    public NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId,
+                                               String nodeId, String createUser, String userCode, String unitCode) {
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
         //必需存在且状态为正常 或者 暂停
@@ -1995,7 +2000,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInfo nextNode = flowNodeDao.getObjectById(nodeId);
         //获取上一个相同节点实例机构
 
-        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
+        String lastNodeInstId = UuidOpt.getUuidAsString32();
+//        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
 
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, null, flowInst, nodeInst, flowInfo, nextNode, null);
 
@@ -2024,7 +2030,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param unitCode      指定机构
      * @return 节点实例
      */
-    public NodeInstance createIsolatedNodeInst(String flowInstId, long curNodeInstId,
+    public NodeInstance createIsolatedNodeInstWithNodeCode(String flowInstId, String curNodeInstId,
                                                String nodeCode, String createUser, String userCode, String unitCode) {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
@@ -2067,12 +2073,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInfo nextNode = flowNodeDao.getObjectById(nodeId);
         //获取上一个相同节点实例机构
 
-        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
+        String lastNodeInstId = UuidOpt.getUuidAsString32();
 
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, null, flowInst, null, flowInfo, nextNode, null);
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
-        nextNodeInst.setPrevNodeInstId(0L);
+        nextNodeInst.setPrevNodeInstId("");
         nextNodeInst.setRunToken("RT");//设置为游离节点
         nextNodeInst.setTaskAssigned("T");
         nextNodeInst.setTransPath("");
@@ -2084,9 +2090,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         nodeInstanceDao.saveNewObject(nextNodeInst);
-        Set<Long> nextNodeInsts = new HashSet<>();
+        Set<String> nextNodeInsts = new HashSet<>();
         nextNodeInsts.add(lastNodeInstId);
-        FlowOptUtils.sendMsg(0l, nextNodeInsts, createUser);
+        FlowOptUtils.sendMsg("", nextNodeInsts, createUser);
 
         return nextNodeInst;
     }
@@ -2189,7 +2195,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * 在任务列表中指定工作人员，这样就屏蔽了按照角色自动查找符合权限的人员
      */
     @Override
-    public long assignNodeTask(long nodeInstId, String userCode,
+    public long assignNodeTask(String nodeInstId, String userCode,
                                String mangerUserCode, Date expiretime, String authDesc) {
         NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
         if (node == null)
@@ -2231,7 +2237,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * 收回任务分配
      */
     @Override
-    public int disableNodeTask(long nodeInstId, String userCode,
+    public int disableNodeTask(String nodeInstId, String userCode,
                                String mangerUserCode) {
 
         NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
@@ -2270,7 +2276,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * 删除任务节点
      */
     @Override
-    public int deleteNodeTask(long nodeInstId, String userCode,
+    public int deleteNodeTask(String nodeInstId, String userCode,
                               String mangerUserCode) {
         NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
         if (node == null)
@@ -2305,7 +2311,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public int deleteNodeAllTask(long nodeInstId, String mangerUserCode) {
+    public int deleteNodeAllTask(String nodeInstId, String mangerUserCode) {
         NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
         if (node == null)
             return -1;
@@ -2486,7 +2492,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
 
     @Override
-    public void saveFlowNodeVariable(long nodeInstId, String sVar, String sValue) {
+    public void saveFlowNodeVariable(String nodeInstId, String sVar, String sValue) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null) {
             logger.error("找不到节点实例：" + nodeInstId);
@@ -2507,7 +2513,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void saveFlowNodeVariable(long nodeInstId, String sVar, Set<String> sValues) {
+    public void saveFlowNodeVariable(String nodeInstId, String sVar, Set<String> sValues) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null) {
             logger.error("找不到节点实例：" + nodeInstId);
@@ -2683,7 +2689,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public boolean canAccess(long nodeInstId, String userCode) {
+    public boolean canAccess(String nodeInstId, String userCode) {
         if (userCode == null)
             return false;
         return actionTaskDao.hasOptPower(nodeInstId, userCode, null);
@@ -2711,7 +2717,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<FlowWarning> listFlowWarningByNodeInst(Long nodeInstId,
+    public List<FlowWarning> listFlowWarningByNodeInst(String nodeInstId,
                                                        PageDesc pageDesc) {
         return new ArrayList<FlowWarning>(
             runtimeWarningDao.listFlowWarningByNodeInst(nodeInstId, pageDesc));

@@ -17,7 +17,7 @@ public class NodeInstance implements java.io.Serializable {
 
     @Id
     @Column(name = "NODE_INST_ID")
-       private Long nodeInstId;
+       private String nodeInstId;
 
     @Column(name="FLOW_INST_ID")
     private String  flowInstId;
@@ -37,7 +37,7 @@ public class NodeInstance implements java.io.Serializable {
 //    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date  lastUpdateTime;
     @Column(name="PREV_NODE_INST_ID")
-    private Long prevNodeInstId;
+    private String prevNodeInstId;
     @Column(name="PROMISE_TIME")
     private Long  promiseTime;
     @Column(name="TIME_LIMIT")
@@ -112,23 +112,23 @@ public class NodeInstance implements java.io.Serializable {
     }
     /** minimal constructor */
     public NodeInstance(
-        Long nodeinstid
+        String nodeInstId
         ) {
         this.timeLimit = null;
-        this.nodeInstId = nodeinstid;
+        this.nodeInstId = nodeInstId;
         this.taskAssigned = "D";
         this.node=new NodeInfo();
     }
 
 /** full constructor */
     public NodeInstance(
-     Long nodeinstid
-    ,String  wfinstid,String  nodeid,Date  createtime,Date  starttime,Long  prevnodeinstid,
+     String nodeInstId
+    ,String  wfinstid,String  nodeid,Date  createtime,Date  starttime,String  prevnodeinstid,
     Long  promiseTime, Long timeLimit,String  nodestate,String  subwfinstid,String  unitcode,
     String  transPath,String  taskassigned,String runToken,String lastUpdateUser,
     String isTimer,String flowPhase) {
 
-        this.nodeInstId = nodeinstid;
+        this.nodeInstId = nodeInstId;
 
         this.flowInstId= wfinstid;
         this.node.setNodeId(nodeid);
@@ -149,12 +149,12 @@ public class NodeInstance implements java.io.Serializable {
     }
 
 
-    public Long getNodeInstId() {
+    public String getNodeInstId() {
         return this.nodeInstId;
     }
 
-    public void setNodeInstId(Long nodeinstid) {
-        this.nodeInstId = nodeinstid;
+    public void setNodeInstId(String nodeInstId) {
+        this.nodeInstId = nodeInstId;
     }
     // Property accessors
 
@@ -205,11 +205,11 @@ public class NodeInstance implements java.io.Serializable {
         this.lastUpdateTime = starttime;
     }
 
-    public Long getPrevNodeInstId() {
+    public String getPrevNodeInstId() {
         return this.prevNodeInstId;
     }
 
-    public void setPrevNodeInstId(Long prevnodeinstid) {
+    public void setPrevNodeInstId(String prevnodeinstid) {
         this.prevNodeInstId = prevnodeinstid;
     }
 

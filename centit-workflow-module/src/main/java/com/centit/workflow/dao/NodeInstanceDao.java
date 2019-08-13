@@ -49,12 +49,12 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
 
     /**
      * 根据节点实例编号，更新当前节点运行状态，
-     * @param nodeinstid 节点实例编号
+     * @param nodeInstId 节点实例编号
      * @param state 状态代码
     */
     @Transactional(propagation= Propagation.MANDATORY)
-    public void updtNodeInstState(long nodeinstid, String state) {
-        NodeInstance nodeInst = this.getObjectById(nodeinstid);
+    public void updtNodeInstState(String nodeInstId, String state) {
+        NodeInstance nodeInst = this.getObjectById(nodeInstId);
         nodeInst.setNodeState(state);
         this.updateObject(nodeInst);
     }
@@ -66,10 +66,10 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public NodeInstance getObjectCascadeById(long nodeInstid){
+    public NodeInstance getObjectCascadeById(String nodeInstId){
         return jdbcTemplate.execute(
             (ConnectionCallback<NodeInstance>) conn ->
-                OrmDaoUtils.getObjectCascadeById(conn, nodeInstid, NodeInstance.class));
+                OrmDaoUtils.getObjectCascadeById(conn, nodeInstId, NodeInstance.class));
         /*NodeInstance flowInstance = super.getObjectById(nodeInstid);
         return super.fetchObjectReferences(flowInstance);*/
     }
@@ -120,7 +120,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
      * @param isTimer 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
      */
     @Transactional(propagation= Propagation.MANDATORY)
-    public void updateNodeTimerState(long instid,String isTimer,String mangerUserCode){
+    public void updateNodeTimerState(String instid,String isTimer,String mangerUserCode){
         NodeInstance nodeInst = this.getObjectById(instid);
         nodeInst.setIsTimer(isTimer);
         nodeInst.setLastUpdateUser(mangerUserCode);

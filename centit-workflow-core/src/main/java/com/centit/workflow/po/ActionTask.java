@@ -9,17 +9,17 @@ import java.util.Date;
 /**
  * create by scaffold
  * @author codefan@hotmail.com
- */ 
+ */
 @Entity
 @Table(name="WF_ACTION_TASK")
 public class ActionTask implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
-    
+
     @Id
     @Column(name = "TASK_ID")
     private Long taskId;
     @Column(name="NODE_INST_ID")
-    private Long nodeInstId;
+    private String nodeInstId;
     @Column(name="ASSIGN_TIME")
     private Date assignTime;
     @Column(name="EXPIRE_TIME")
@@ -56,7 +56,7 @@ public class ActionTask implements java.io.Serializable {
 /** full constructor */
     public ActionTask(
      Long taskid
-    ,Long  nodeinstid,Date  assigntime,Date  expiretime,String  usercode,String  roletype,String  rolecode,String  taskstate,String  isvalid,String  authdesc) {
+    ,String  nodeinstid,Date  assigntime,Date  expiretime,String  usercode,String  roletype,String  rolecode,String  taskstate,String  isvalid,String  authdesc) {
 
 
         this.taskId = taskid;
@@ -73,7 +73,7 @@ public class ActionTask implements java.io.Serializable {
     }
 
 
-  
+
     public Long getTaskId() {
         return this.taskId;
     }
@@ -82,15 +82,15 @@ public class ActionTask implements java.io.Serializable {
         this.taskId = taskid;
     }
     // Property accessors
-  
-    public Long getNodeInstId() {
+
+    public String getNodeInstId() {
         return this.nodeInstId;
     }
 
-    public void setNodeInstId(Long nodeinstid) {
-        this.nodeInstId = nodeinstid;
+    public void setNodeInstId(String nodeInstId) {
+        this.nodeInstId = nodeInstId;
     }
-  
+
     public Date getAssignTime() {
         return this.assignTime;
     }
@@ -98,7 +98,7 @@ public class ActionTask implements java.io.Serializable {
     public void setAssignTime(Date assigntime) {
         this.assignTime = assigntime;
     }
-  
+
     public Date getExpireTime() {
         return this.expireTime;
     }
@@ -106,7 +106,7 @@ public class ActionTask implements java.io.Serializable {
     public void setExpireTime(Date expiretime) {
         this.expireTime = expiretime;
     }
-  
+
     public String getUserCode() {
         return this.userCode;
     }
@@ -114,7 +114,7 @@ public class ActionTask implements java.io.Serializable {
     public void setUserCode(String usercode) {
         this.userCode = usercode;
     }
-  
+
     public String getRoleType() {
         return this.roleType;
     }
@@ -122,7 +122,7 @@ public class ActionTask implements java.io.Serializable {
     public void setRoleType(String roletype) {
         this.roleType = roletype;
     }
-  
+
     public String getRoleCode() {
         return this.roleCode;
     }
@@ -130,7 +130,7 @@ public class ActionTask implements java.io.Serializable {
     public void setRoleCode(String rolecode) {
         this.roleCode = rolecode;
     }
-  
+
     /**
      * @return A:已分配  C：已完成（提交）
      */
@@ -145,7 +145,7 @@ public class ActionTask implements java.io.Serializable {
     public void setTaskState(String taskstate) {
         this.taskState = taskstate;
     }
-  
+
     public boolean isValid() {
         return "T".equals(isValid);
     }
@@ -160,7 +160,7 @@ public class ActionTask implements java.io.Serializable {
     public void setIsValid(String isvalid) {
         this.isValid = isvalid;
     }
-  
+
     public String getAuthDesc() {
         return this.authDesc;
     }
@@ -172,7 +172,7 @@ public class ActionTask implements java.io.Serializable {
 
 
     public void copy(ActionTask other){
-  
+
         this.setTaskId(other.getTaskId());
         this.nodeInstId = other.getNodeInstId();
         this.assignTime = other.getAssignTime();

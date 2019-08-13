@@ -47,7 +47,7 @@ public class PlatformFlowServiceImpl implements PlatformFlowService {
         List<UserTask> taskList = new ArrayList<>();
         String station = StringBaseOpt.castObjectToString(searchColumn.get("userStation"));
         String unitCode = StringBaseOpt.castObjectToString(searchColumn.get("unitCode"));
-        Long nodeInstId = (Long) searchColumn.get("nodeInstId");
+        String nodeInstId = (String) searchColumn.get("nodeInstId");
         List<? extends IUserUnit> userUnits = CodeRepositoryUtil.listAllUserUnits();
         //2.以机构，岗位，职务来查询任务
         for (IUserUnit i : userUnits) {

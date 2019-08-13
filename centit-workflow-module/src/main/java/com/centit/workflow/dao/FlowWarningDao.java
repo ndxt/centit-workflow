@@ -43,7 +43,7 @@ public class FlowWarningDao extends BaseDaoImpl<FlowWarning,Long>
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<FlowWarning> listFlowWarningByNodeInst(Long nodeInstId,
+    public List<FlowWarning> listFlowWarningByNodeInst(String nodeInstId,
                                                        PageDesc pageDesc) {
         return this.listObjectsByFilterAsJson("where node_Inst_Id = ?",new Object[]{nodeInstId},pageDesc).toJavaList(FlowWarning.class);
 

@@ -25,7 +25,7 @@ public interface ApprovalService {
      * @param userCodes
      * @param approvalProcess
      */
-    void doApproval(List<String> userCodes, ApprovalProcess approvalProcess, long flowInstId, long nodeInstId, String userCode, ServletContext ctx) throws Exception;
+    void doApproval(List<String> userCodes, ApprovalProcess approvalProcess, long flowInstId, String nodeInstId, String userCode, ServletContext ctx) throws Exception;
 
     /**
      * 根据userCode获取 待办任务

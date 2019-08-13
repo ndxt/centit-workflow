@@ -43,7 +43,7 @@ public class NewFlowInstanceOptions {
      * 作为子流程创建式，对应的父流程节点
      */
     @ApiModelProperty("不填")
-    private long nodeInstId;
+    private String nodeInstId;
     /**
      * 作为子流程创建式，对应的父流程
      */
@@ -128,11 +128,11 @@ public class NewFlowInstanceOptions {
         this.unitCode = unitCode;
     }
 
-    public long getNodeInstId() {
+    public String getNodeInstId() {
         return nodeInstId;
     }
 
-    public void setNodeInstId(long nodeInstId) {
+    public void setNodeInstId(String nodeInstId) {
         this.nodeInstId = nodeInstId;
     }
 

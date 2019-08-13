@@ -58,7 +58,7 @@ public class FlowEngineController extends BaseController {
 //        Map re = new HashMap();
 
         JSONObject jsonObject = JSON.parseObject(json);
-        long nodeInstId = jsonObject.getLong("nodeInstId");
+        String nodeInstId = jsonObject.getString("nodeInstId");
         String userCode = jsonObject.getString("userCode");
         String unitCode = jsonObject.getString("unitCode");
         String varTrans = jsonObject.getString("varTrans");
@@ -133,10 +133,10 @@ public class FlowEngineController extends BaseController {
         FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
 
         //提交节点
-        Set<Long> nextNodes = flowEng.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
+        Set<String> nextNodes = flowEng.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
         //更新操作人
-        for (Long n : nextNodes) {
+        for (String n : nextNodes) {
             flowManager.deleteNodeActionTasks(n, flowInstance.getFlowInstId(), newFlowInstanceOptions.getUserCode());
             for (String v : vars) {
                 flowManager.assignTask(n, v, newFlowInstanceOptions.getUserCode(), null, "手动指定审批人");
@@ -176,14 +176,14 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "submitOpt")
     public ResponseData submitOpt(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
-        long nodeInstId = jsonObject.getLong("nodeInstId");
+        String nodeInstId = jsonObject.getString("nodeInstId");
         String userCode = jsonObject.getString("userCode");
         String unitCode = jsonObject.getString("unitCode");
         String varTrans = jsonObject.getString("varTrans");
         JSONArray users = jsonObject.getJSONArray("userList");
 
         try {
-            Set<Long> nextNodes;
+            Set<String> nextNodes;
             if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
                 Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
                 nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);
@@ -192,7 +192,7 @@ public class FlowEngineController extends BaseController {
             }
             //更新操作人
             if (users != null && users.size() > 0) {
-                for (Long n : nextNodes) {
+                for (String n : nextNodes) {
                     flowManager.deleteNodeActionTasks(n, flowEng.getNodeInstById(nodeInstId).getFlowInstId(), userCode);
                     for (Object v : users) {
                         flowManager.assignTask(n, v.toString(), userCode, null, "手动指定审批人");
@@ -226,7 +226,7 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/saveFlowNodeVariable")
     public void saveFlowNodeVariable(@RequestBody String FlowNodeVariable) {
         JSONObject jsonObject = JSON.parseObject(FlowNodeVariable);
-        long nodeInstId = jsonObject.getLong("nodeInstId");
+        String nodeInstId = jsonObject.getString("nodeInstId");
         String varName = jsonObject.getString("varName");
         String varValue = jsonObject.getString("varValue");
         List<String> vars = JSON.parseArray(varValue, String.class);
@@ -293,7 +293,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查询节点待办用户", notes = "查询节点待办用户")
     @WrapUpResponseBody
     @GetMapping(value = "/listNodeTaskUsers")
-    public List<UserTask> listNodeTaskUsers(Long nodeInstId) {
+    public List<UserTask> listNodeTaskUsers(String nodeInstId) {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("nodeInstId", nodeInstId);
         List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
@@ -395,7 +395,7 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "rollBackNode")
     public void rollBackNode(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
-        long nodeInstId = jsonObject.getLong("nodeInstId");
+        String nodeInstId = jsonObject.getString("nodeInstId");
         String managerUserCode = jsonObject.getString("managerUserCode");
         flowEng.rollbackOpt(nodeInstId, managerUserCode);
     }

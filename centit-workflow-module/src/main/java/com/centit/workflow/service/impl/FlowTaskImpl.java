@@ -67,7 +67,7 @@ public class FlowTaskImpl {
     public FlowTaskImpl() {
     }
 
-    private int sendNotifyMessage(Long nodeInstId) {
+    private int sendNotifyMessage(String nodeInstId) {
         List<UserTask> taskList = actionTaskDao
             .listUserTaskByFilter(
                 QueryUtils.createSqlParamsMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));

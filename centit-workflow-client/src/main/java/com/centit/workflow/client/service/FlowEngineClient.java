@@ -85,7 +85,7 @@ public interface FlowEngineClient {
      * @param varTrans 变量转换器
      * @return  节点实例编号列表
      */
-    Map<String,Object> submitOpt(long nodeInstId, String userCode,
+    Map<String,Object> submitOpt(String nodeInstId, String userCode,
                         String unitCode, String varTrans,
                         ServletContext application) throws WorkflowException;
     /**
@@ -101,7 +101,7 @@ public interface FlowEngineClient {
      * @param nodeInstId
      * @return
      */
-    List<UserTask> listNodeTaskUsers(Long nodeInstId);
+    List<UserTask> listNodeTaskUsers(String nodeInstId);
 
     /**
      * 根据业务id获取所有该业务下的流程
@@ -187,9 +187,9 @@ public interface FlowEngineClient {
      * @param sVar
      * @param sValue
      */
-    void saveFlowNodeVariable(long nodeInstId, String sVar, String sValue) throws Exception;
+    void saveFlowNodeVariable(String nodeInstId, String sVar, String sValue) throws Exception;
 
-    void saveFlowNodeVariable(long nodeInstId, String varName, Set<String> varValue) throws Exception;
+    void saveFlowNodeVariable(String nodeInstId, String varName, Set<String> varValue) throws Exception;
     /**
      * 查询某个流程变量
      * @param flowInstId
@@ -223,5 +223,5 @@ public interface FlowEngineClient {
      * @param nodeInstId
      * @param managerUserCode
      */
-    void rollBackNode(long nodeInstId,String managerUserCode);
+    void rollBackNode(String nodeInstId,String managerUserCode);
     }

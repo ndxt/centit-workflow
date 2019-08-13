@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 //import net.sf.json.JSONObject;
 //import net.sf.json.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -301,7 +302,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 根据节点ID查询能够操作该节点的所有人员，如果为空，则需要分配工作任务单
      */
     @Override
-    public List<UserTask> listNodeTasks(long nodeInstId) {
+    public List<UserTask> listNodeTasks(String nodeInstId) {
         List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(
             QueryUtils.createSqlParamsMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
         if (taskList == null)
@@ -374,7 +375,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return 1;
     }
 
-    public long updateNodeInstState(long nodeInstId, String newState,
+    public long updateNodeInstState(String nodeInstId, String newState,
                                     String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null) {
@@ -417,12 +418,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
 
-    public long suspendNodeInstance(long nodeInstId, String mangerUserCode) {
+    public long suspendNodeInstance(String nodeInstId, String mangerUserCode) {
         FlowOptUtils.sendMsg(nodeInstId, null, mangerUserCode);
         return updateNodeInstState(nodeInstId, "P", mangerUserCode);
     }
 
-    public long activizeNodeInstance(long nodeInstId, String mangerUserCode) {
+    public long activizeNodeInstance(String nodeInstId, String mangerUserCode) {
         return updateNodeInstState(nodeInstId, "N", mangerUserCode);
     }
 
@@ -434,7 +435,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param mangerUserCode 管理人员代码
      * @return
      */
-    public long resetNodeTimelimt(long nodeInstId, String timeLimit,
+    public long resetNodeTimelimt(String nodeInstId, String timeLimit,
                                   String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null) {
@@ -682,7 +683,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public void updateNodeInstUnit(long nodeInstId, String unitCode, String optUserCode) {
+    public void updateNodeInstUnit(String nodeInstId, String unitCode, String optUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
             return;
@@ -701,7 +702,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 更改节点的角色信息
      */
     @Override
-    public void updateNodeRoleInfo(long nodeInstId, String roleType, String roleCode, String mangerUserCode) {
+    public void updateNodeRoleInfo(String nodeInstId, String roleType, String roleCode, String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
             return;
@@ -752,28 +753,32 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * 从这个节点重新运行该流程，包括已经结束的流程
      */
-    public long resetFlowToThisNode(long nodeInstId, String mangerUserCode) {
+    public String resetFlowToThisNode(String nodeInstId, String mangerUserCode) {
 
         NodeInstance thisnode = nodeInstanceDao.getObjectCascadeById(nodeInstId);
         if (thisnode == null)
-            return -1;
+            return null;
+//            return -1;//d大小于
 
         FlowInstance flow = flowInstanceDao.getObjectCascadeById(thisnode
             .getFlowInstId());
         if (flow == null)
-            return -2;
+            return null;
+//            return -2;//d大小于
         // 当前节点状态必需不能为正常，如果是正常则没有必要重置
         if ("N".equals(thisnode.getNodeState())) {
             //先将流程实例的状态变为正常
             flow.setInstState("N");
             flowInstanceDao.updateObject(flow);
-            return -6;
+            return null;
+//            return -6;
         }
         NodeInfo nodedef = flowNodeDao.getObjectById(thisnode.getNodeId());
         if ("A".equals(nodedef.getNodeType())
             || "F".equals(nodedef.getNodeType())) {
             // 不能设定到开始或者结束节点
-            return -5;
+            return null;
+//            return -5;//大小于
         }
 
         for (NodeInstance nodeInst : flow.getFlowNodeInstances()) {
@@ -782,7 +787,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 && (nodeInst.getNodeId().equals(thisnode.getNodeId()))
                 && nodeInst.getRunToken().equals(thisnode.getRunToken())) {
                 // 已经有一个正在运行的相同节点实例，不能重置到该节点
-                return -6;
+//                return -6;//大小于
+                return null;
+
             }
         }
 
@@ -830,7 +837,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
         // 创建新节点
-        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
+        String lastNodeInstId = UuidOpt.getUuidAsString32();
+//        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
         NodeInstance nextNodeInst = flow.newWfNodeInstance();
         nextNodeInst.copyNotNullProperty(thisnode);
         nextNodeInst.setNodeInstId(lastNodeInstId);
@@ -854,9 +862,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flow.addWfNodeInstance(nextNodeInst);
         flowInstanceDao.updateObject(flow);
         nodeInstanceDao.mergeObject(nextNodeInst);
-        Set<Long> nextNodeInsts = new HashSet<>();
+        Set<String> nextNodeInsts = new HashSet<>();
         nextNodeInsts.add(lastNodeInstId);
-        FlowOptUtils.sendMsg(0L, nextNodeInsts, mangerUserCode);
+        FlowOptUtils.sendMsg("", nextNodeInsts, mangerUserCode);
 
 
         //执行节点创建后 事件
@@ -874,14 +882,16 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     @Override
-    public long forceDissociateRuning(long nodeInstId, String mangerUserCode) {
+    public String forceDissociateRuning(String nodeInstId, String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null || (!"N".equals(nodeInst.getNodeState())))
-            return -1;
+            return null;//大小于
+//            return -1;
         FlowInstance flowinst = flowInstanceDao.getObjectById(nodeInst
             .getFlowInstId());
         if (flowinst == null)
-            return -2;
+            return null;//大小于
+//            return -2;
         int otherRunNode = 0;
         for (NodeInstance tNode : flowinst.getFlowNodeInstances()) {
             if (!tNode.getNodeInstId().equals(nodeInstId)
@@ -889,7 +899,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 otherRunNode++;
         }
         if (otherRunNode == 0)
-            return -3;
+            return null;//大小于
+//            return -3;
 
         nodeInst.setRunToken("R" + nodeInst.getRunToken());
         // 设置最后更新时间和更新人
@@ -910,11 +921,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 机构和权限表达式，所以新的节点可能没有人能够对其进行操作，必需要配合任务管理来指定到具体的人
      */
     @Override
-    public long forceCommit(long nodeInstId, String mangerUserCode) {
+    public String forceCommit(String nodeInstId, String mangerUserCode) {
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
-            return -1;
+            return null;//大小于
+//            return -1;
 
         List<FlowTransition> transList = flowTransitionDao.getNodeTrans(nodeInst
             .getNodeId());
@@ -934,19 +946,23 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             nodeInst.addWfActionLog(wfactlog);
             nodeInst.setNodeState("F");
             nodeInstanceDao.updateObject(nodeInst);
-            return nodeInst.getRunToken().startsWith("R") ? 0 : -2;
+            return nodeInst.getRunToken().startsWith("R") ? "": null;
+//            return nodeInst.getRunToken().startsWith("R") ? 0 : -2;
         }
 
         if (transList.size() != 1)
-            return -2;
+            return null;//大小于
+//            return -2;
 
         FlowTransition trans = transList.get(0);
         String nextCode = transList.get(0).getEndNodeId();
         NodeInfo nextNode = flowNodeDao.getObjectById(nextCode);
         if (nextNode == null)
-            return -3;
+            return null;//大小于
+//            return -3;
         if (!"C".equals(nextNode.getNodeType()))
-            return -4;
+            return null;//大小于
+//            return -4;
 
         Date commitTime = DatetimeOpt.currentUtilDate();
         FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst
@@ -959,7 +975,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInst.setLastUpdateUser(mangerUserCode);
         nodeInst.setLastUpdateTime(commitTime);
 
-        long nextNodeInstId = nodeInstanceDao.getNextNodeInstId();
+//        long nextNodeInstId = nodeInstanceDao.getNextNodeInstId();
+        String nextNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(
             nodeInst.getUnitCode(), mangerUserCode, null, flowInst, nodeInst, flowInfo,
             nextNode, trans);
@@ -1059,14 +1076,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return new ArrayList<>(nodeInstList);
     }
 
-    public List<ActionTask> listNodeActionTasks(long nodeinstid) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeinstid);
+    public List<ActionTask> listNodeActionTasks(String nodeInstId) {
+        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
         if (null == nodeInst)
             nodeInst = new NodeInstance();
         return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
-    public void deleteNodeActionTasks(long nodeInstId, String flowInstId, String mangerUserCode) {
+    public void deleteNodeActionTasks(String nodeInstId, String flowInstId, String mangerUserCode) {
         Map<String, Object> map = new HashMap<>();
         map.put("nodeInstId", nodeInstId);
         actionTaskDao.deleteObjectsByProperties(map);
@@ -1080,15 +1097,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     }
 
-    public List<ActionLog> listNodeActionLogs(long nodeinstid) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeinstid);
+    public List<ActionLog> listNodeActionLogs(String nodeInstId) {
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         return new ArrayList<ActionLog>(nodeInst.getWfActionLogs());
     }
 
     /**
      * isTimer T 计时、 F 不计时 H仅环节计时 、暂停P
      */
-    public int suspendNodeInstTimer(long nodeInstId, String mangerUserCode) {
+    public int suspendNodeInstTimer(String nodeInstId, String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
             return -1;
@@ -1108,7 +1125,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * isTimer 不计时F 、计时T(有期限)、暂停P H 仅环节计时 唤醒时要根据 wf_node 的计时类别进行修改 T 计时、有期限 F
      * 不计时 H仅环节计时
      */
-    public int activizeNodeInstTimer(long nodeInstId, String mangerUserCode) {
+    public int activizeNodeInstTimer(String nodeInstId, String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
             return 0;
@@ -1360,7 +1377,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 在任务列表中指定工作人员，这样就屏蔽了按照角色自动查找符合权限的人员
      */
     @Override
-    public long assignTask(long nodeInstId, String userCode,
+    public long assignTask(String nodeInstId, String userCode,
                            String mangerUserCode, Date expiretime, String authDesc) {
         NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
         if (node == null)
@@ -1394,7 +1411,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     @Override
-    public List<ActionTask> listNodeInstTasks(Long nodeInstId) {
+    public List<ActionTask> listNodeInstTasks(String nodeInstId) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
         return new ArrayList<>(nodeInst.getWfActionTasks());
     }

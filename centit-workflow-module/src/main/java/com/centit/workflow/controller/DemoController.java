@@ -35,7 +35,7 @@ public class DemoController extends BaseController {
     //提交节点
     @RequestMapping(value="/submitOpt/{nodeInstId}")
     public void submitOpt(@PathVariable String nodeInstId, HttpServletRequest request, HttpServletResponse response){
-        flowEng.submitOpt(Long.parseLong(nodeInstId),"u0000000",null,null,null);
+        flowEng.submitOpt(nodeInstId,"u0000000",null,null,null);
         JsonResultUtils.writeResponseDataAsJson(resData,response);
     }
 }

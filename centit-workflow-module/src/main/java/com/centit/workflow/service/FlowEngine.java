@@ -116,7 +116,7 @@ public interface FlowEngine {
 
     /*
      * 创建子流程实例 返回流程实例号  子流程由内部创建不需要提供接口
-       long createInstance(String  flowCode,long nodeInstId,String userCode,String unitCode);
+       long createInstance(String  flowCode,String nodeInstId,String userCode,String unitCode);
     */
 
 
@@ -129,12 +129,12 @@ public interface FlowEngine {
      * @param varTrans 变量转换器
      * @return  节点实例编号列表
      */
-    Set<Long> submitOpt(long nodeInstId,String userCode,
+    Set<String> submitOpt(String nodeInstId,String userCode,
                         String unitCode,UserUnitVariableTranslate varTrans,
                         ServletContext application) throws WorkflowException;
 
 
-    Set<Long> submitOpt(long nodeInstId,String userCode,String grantorCode,
+    Set<String> submitOpt(String nodeInstId,String userCode,String grantorCode,
                         String unitCode,UserUnitVariableTranslate varTrans,
                         ServletContext application) throws WorkflowException;
 
@@ -148,7 +148,7 @@ public interface FlowEngine {
      * @param nodeUnits 预设的节点机构 给程序自行判断用户和机构用的
      * @return  节点实例编号列表
      */
-    Set<Long> submitOptWithAssignUnitAndUser(long nodeInstId,String userCode,
+    Set<String> submitOptWithAssignUnitAndUser(String nodeInstId,String userCode,
                                              String unitCode,UserUnitVariableTranslate varTrans,
                                              Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
                                              ServletContext application) throws WorkflowException;
@@ -163,7 +163,7 @@ public interface FlowEngine {
      * @param nodeUnits 预设的节点机构 给程序自行判断用户和机构用的
      * @return  节点实例编号列表
      */
-    Set<Long> submitOptWithAssignUnitAndUser(long nodeInstId,String userCode,
+    Set<String> submitOptWithAssignUnitAndUser(String nodeInstId,String userCode,
                                              String grantorCode,String unitCode,UserUnitVariableTranslate varTrans,
                                              Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
                                              ServletContext application) throws WorkflowException;
@@ -179,7 +179,7 @@ public interface FlowEngine {
      * @param varTrans 变量转换器
      * @return 节点信息列表
      */
-    Set<NodeInfo> viewNextNode(long nodeInstId, String userCode,
+    Set<NodeInfo> viewNextNode(String nodeInstId, String userCode,
                                String unitCode, UserUnitVariableTranslate varTrans);
 
     /**
@@ -266,7 +266,7 @@ public interface FlowEngine {
      * @param userCode 用户代码
      * @return
      */
-    boolean canAccess(long nodeInstId,String userCode);
+    boolean canAccess(String nodeInstId,String userCode);
 
 
     /**
@@ -275,7 +275,7 @@ public interface FlowEngine {
      * @param userCode
      * @return
      */
-    String getTaskGrantor(long nodeInstId ,String userCode);
+    String getTaskGrantor(String nodeInstId ,String userCode);
 
     //预报警列表查看
     /**
@@ -299,7 +299,7 @@ public interface FlowEngine {
      * @param pageDesc
      * @return
      */
-    List<FlowWarning> listFlowWarningByNodeInst(Long nodeInstId, PageDesc pageDesc);
+    List<FlowWarning> listFlowWarningByNodeInst(String nodeInstId, PageDesc pageDesc);
     /**
      * 查询某一个类别的预警
      * @param warningCode
@@ -339,20 +339,20 @@ public interface FlowEngine {
      *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
      *               u: 变更属性     *
      */
-    void recordActionLog(long nodeInstId, String userCode,String actionType);
+    void recordActionLog(String nodeInstId, String userCode,String actionType);
 
 
     /**
      * 回退操作-回退到上一个节点
      */
-    long rollbackOpt(long nodeInstId,String mangerUserCode);
+    String rollbackOpt(String nodeInstId,String mangerUserCode);
     /**
      * 检查后续的节点是否被操作过，包括更新和提交
      * 只有后续节点没有处理的才可以收回。true表示可以撤回，false表示不可以撤回，
      * @param nodeInstId
      * @return
      */
-    boolean nodeCanBeReclaim(long nodeInstId);
+    boolean nodeCanBeReclaim(String nodeInstId);
 
 
     /**
@@ -368,8 +368,8 @@ public interface FlowEngine {
      * @param unitCode 指定机构
      * @return 节点实例
      */
-    NodeInstance createPrepNodeInstLockUser(String flowInstId,long curNodeInstId,
-                                            long nodeId,String createUser,String userCode,String unitCode);
+    NodeInstance createPrepNodeInstLockUser(String flowInstId,String curNodeInstId,
+                                            String nodeId,String createUser,String userCode,String unitCode);
 
 
     /**
@@ -385,7 +385,7 @@ public interface FlowEngine {
      * @param unitCode 指定机构
      * @return 节点实例
      */
-    NodeInstance createPrepNodeInstLockUser(String flowInstId,long curNodeInstId,
+    NodeInstance createPrepNodeInstLockUserWithNodeCode(String flowInstId,String curNodeInstId,
                                             String nodeCode,String createUser,String userCode,String unitCode);
 
     /**
@@ -400,7 +400,7 @@ public interface FlowEngine {
      * @param unitCode 指定机构
      * @return 节点实例
      */
-    NodeInstance createPrepNodeInst(String flowInstId,long curNodeInstId,
+    NodeInstance createPrepNodeInst(String flowInstId,String curNodeInstId,
                                     long nodeId,String userCode,String unitCode);
 
 
@@ -434,7 +434,7 @@ public interface FlowEngine {
      * @param unitCode 指定机构
      * @return 节点实例
      */
-    NodeInstance createIsolatedNodeInst(String flowInstId,long curNodeInstId,
+    NodeInstance createIsolatedNodeInstWithNodeCode(String flowInstId,String curNodeInstId,
                                         String nodeCode,String createUser, String userCode,String unitCode);
 
 
@@ -452,8 +452,8 @@ public interface FlowEngine {
      * @param unitCode 指定机构
      * @return 节点实例
      */
-    NodeInstance createIsolatedNodeInst(String flowInstId,long curNodeInstId,
-                                        long nodeId,String createUser, String userCode,String unitCode);
+    NodeInstance createIsolatedNodeInst(String flowInstId,String curNodeInstId,
+                                        String nodeId,String createUser, String userCode,String unitCode);
 
 
     /**
@@ -463,7 +463,7 @@ public interface FlowEngine {
      * @param parentNodeInstId 父流程节点实例id
      */
     void updateFlowInstParentNode(String flowInstId,String parentFlowInstId,
-                                  long parentNodeInstId);
+                                  String parentNodeInstId);
 
 
     /**
@@ -471,7 +471,7 @@ public interface FlowEngine {
      * @param nodeInstId 当前活动节点
      * @param optUserCode 操作人员
      */
-    void disableOtherBranchNodes(long nodeInstId,String optUserCode);
+    void disableOtherBranchNodes(String nodeInstId,String optUserCode);
     //--------------------任务分配和查看相关接口-----------------------------------
 
     /**
@@ -566,21 +566,21 @@ public interface FlowEngine {
      * 分配节点任务
      *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      */
-    long assignNodeTask(long nodeInstId, String userCode,
+    long assignNodeTask(String nodeInstId, String userCode,
                         String mangerUserCode,Date expiretime,String authDesc);
     /**
      * 取消节点任务
      */
-    int disableNodeTask(long nodeInstId, String userCode, String mangerUserCode);
+    int disableNodeTask(String nodeInstId, String userCode, String mangerUserCode);
     /**
      * 删除节点任务
      */
-    int deleteNodeTask(long nodeInstId, String userCode, String mangerUserCode);
+    int deleteNodeTask(String nodeInstId, String userCode, String mangerUserCode);
 
     /**
      * 删除节点任务
      */
-    int deleteNodeAllTask(long nodeInstId,String mangerUserCode);
+    int deleteNodeAllTask(String nodeInstId,String mangerUserCode);
 
 
     /**
@@ -687,7 +687,7 @@ public interface FlowEngine {
      * @param sVar
      * @param sValue
      */
-    void saveFlowNodeVariable(long nodeInstId,String sVar, String sValue);
+    void saveFlowNodeVariable(String nodeInstId,String sVar, String sValue);
 
 
     /**
@@ -713,7 +713,7 @@ public interface FlowEngine {
      * @param sVar
      * @param sValues Set<String> 中的值不能有 分号 ;
      */
-    void saveFlowNodeVariable(long nodeInstId,String sVar, Set<String> sValues);
+    void saveFlowNodeVariable(String nodeInstId,String sVar, Set<String> sValues);
 
     /**
      * 查询流程变量
@@ -806,7 +806,7 @@ public interface FlowEngine {
      * @param nodeInstId
      * @return
      */
-    NodeInstance getNodeInstById(long nodeInstId);
+    NodeInstance getNodeInstById(String nodeInstId);
 
     /**
      * 获取用户操作节点的Url，if ! canAccess rteurn null
@@ -815,7 +815,7 @@ public interface FlowEngine {
      * @param userCode 用户代码
      * @return
      */
-    String getNodeOptUrl(long nodeInstId,String userCode);
+    String getNodeOptUrl(String nodeInstId,String userCode);
 
     /**
      * 根据节点实例号 获得节点实例
@@ -830,7 +830,7 @@ public interface FlowEngine {
      * @param nodeInstId
      * @return
      */
-    StageInstance getStageInstByNodeInstId(long nodeInstId);
+    StageInstance getStageInstByNodeInstId(String nodeInstId);
 
 
     /**

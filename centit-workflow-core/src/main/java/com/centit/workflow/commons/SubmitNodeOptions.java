@@ -13,7 +13,7 @@ public class SubmitNodeOptions {
     /**
      * 提交的业务（流程）节点
      */
-    private long nodeInstId;
+    private String nodeInstId;
     /**
      * 操作流程的用户
      */
@@ -44,17 +44,17 @@ public class SubmitNodeOptions {
     public SubmitNodeOptions(){
     }
 
-    public SubmitNodeOptions(long nodeInstId, String userCode, String unitCode) {
+    public SubmitNodeOptions(String nodeInstId, String userCode, String unitCode) {
         this.nodeInstId = nodeInstId;
         this.userCode = userCode;
         this.unitCode = unitCode;
     }
 
-    public long getNodeInstId() {
+    public String getNodeInstId() {
         return nodeInstId;
     }
 
-    public void setNodeInstId(long nodeInstId) {
+    public void setNodeInstId(String nodeInstId) {
         this.nodeInstId = nodeInstId;
     }
 

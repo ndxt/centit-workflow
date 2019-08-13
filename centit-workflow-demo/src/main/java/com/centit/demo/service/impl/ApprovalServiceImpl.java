@@ -72,7 +72,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     }
     @Override
     public void doApproval(List<String> userCodes, ApprovalProcess approvalProcess,
-                           long flowInstId , long nodeInstId,String userCode, ServletContext ctx) throws Exception{
+                           long flowInstId , String nodeInstId,String userCode, ServletContext ctx) throws Exception{
         List<ApprovalEvent> approvalEvents = approvalEventDao.getApprovalEventByFlowInstId(flowInstId);
         if(approvalEvents != null && approvalEvents.size()>0){
             approvalProcess.setPhraseNo(approvalEvents.get(0).getCurrentPhase());

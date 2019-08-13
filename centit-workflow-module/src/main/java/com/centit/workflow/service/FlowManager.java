@@ -169,17 +169,17 @@ public interface FlowManager {
     /**
      * 暂停流程的一个节点  P 暂停
      */
-    long suspendNodeInstance(long nodeInstId, String mangerUserCode);
+    long suspendNodeInstance(String nodeInstId, String mangerUserCode);
 
     /**
      * 使流程的 挂起和失效的节点 正常运行 N 正常
      */
-    long activizeNodeInstance(long nodeInstId, String mangerUserCode);
+    long activizeNodeInstance(String nodeInstId, String mangerUserCode);
 
     /**
      * 强制流转到下一结点，这个好像不好搞，主要是无法获得业务数据，只能提交没有分支的节点
      */
-    long forceCommit(long nodeInstId, String mangerUserCode);
+    String forceCommit(String nodeInstId, String mangerUserCode);
 
 
     /**
@@ -197,7 +197,7 @@ public interface FlowManager {
      * @param nodeInstId
      * @param mangerUserCode
      */
-    int suspendNodeInstTimer(long nodeInstId, String mangerUserCode);
+    int suspendNodeInstTimer(String nodeInstId, String mangerUserCode);
 
 
     /**
@@ -206,7 +206,7 @@ public interface FlowManager {
      * @param nodeInstId
      * @param mangerUserCode
      */
-    int activizeNodeInstTimer(long nodeInstId, String mangerUserCode);
+    int activizeNodeInstTimer(String nodeInstId, String mangerUserCode);
 
 
     //----------流程分支管理-------------------------------
@@ -214,12 +214,12 @@ public interface FlowManager {
     /**
      * 从这个节点重新运行该流程，包括已经结束的流程
      */
-    long resetFlowToThisNode(long nodeInstId, String mangerUserCode);
+    String resetFlowToThisNode(String nodeInstId, String mangerUserCode);
 
     /**
      * 强制一个并行分支的节点为游离状态，在提交其他并行分支前调用
      */
-    long forceDissociateRuning(long nodeInstId, String mangerUserCode);
+    String forceDissociateRuning(String nodeInstId, String mangerUserCode);
 
 
     //------------节点属性修改----------------------------------
@@ -230,13 +230,13 @@ public interface FlowManager {
      * @param nodeInstId 节点实例ID
      * @param unitCode   机构代码
      */
-    void updateNodeInstUnit(long nodeInstId, String unitCode, String optUserCode);
+    void updateNodeInstUnit(String nodeInstId, String unitCode, String optUserCode);
 
 
     /**
      * 更改节点的角色信息
      */
-    void updateNodeRoleInfo(long nodeInstId, String roleType, String roleCode, String mangerUserCode);
+    void updateNodeRoleInfo(String nodeInstId, String roleType, String roleCode, String mangerUserCode);
 
     /**
      * 设置流程期限
@@ -246,7 +246,7 @@ public interface FlowManager {
      * @param mangerUserCode 管理人员代码
      * @return
      */
-    long resetNodeTimelimt(long nodeInstId, String timeLimit, String mangerUserCode);
+    long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode);
 
 
     //----------节点任务管理--------------------------------
@@ -255,7 +255,7 @@ public interface FlowManager {
      * 根据节点ID查询能够操作该节点的所有人员，如果为空，则需要分配工作任务单
      * 这个是返回所有能够操作本节点的人员
      */
-    List<UserTask> listNodeTasks(long nodeInstId);
+    List<UserTask> listNodeTasks(String nodeInstId);
 
 
     /**
@@ -264,7 +264,7 @@ public interface FlowManager {
      * @param nodeinstid
      * @return List<ActionTask>
      */
-    List<ActionTask> listNodeActionTasks(long nodeinstid);
+    List<ActionTask> listNodeActionTasks(String nodeInstId);
 
 
     //------------流程阶段管理-------------------------
@@ -302,7 +302,7 @@ public interface FlowManager {
      * @param nodeinstid
      * @return List<WfActionLog>
      */
-    List<ActionLog> listNodeActionLogs(long nodeinstid);
+    List<ActionLog> listNodeActionLogs(String nodeInstId);
 
 
     /**
@@ -370,7 +370,7 @@ public interface FlowManager {
      * @Description:分配任务
      * @Date:8:54 2017/7/14
      */
-    public long assignTask(long nodeInstId, String userCode,
+    public long assignTask(String nodeInstId, String userCode,
                            String mangerUserCode, Date expiretime, String authDesc);
 
     /**
@@ -379,7 +379,7 @@ public interface FlowManager {
      * @Description:获取节点任务
      * @Date:8:51 2017/7/14
      */
-    public List<ActionTask> listNodeInstTasks(Long nodeInstId);
+    public List<ActionTask> listNodeInstTasks(String nodeInstId);
 
     /**
      * @param taskInstId
@@ -405,7 +405,7 @@ public interface FlowManager {
      * @param flowInstId
      * @param mangerUserCode
      */
-    void deleteNodeActionTasks(long nodeInstId, String flowInstId, String mangerUserCode);
+    void deleteNodeActionTasks(String nodeInstId, String flowInstId, String mangerUserCode);
     // ---------节点任务委托--------------------
 
 

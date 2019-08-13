@@ -21,7 +21,7 @@ public class ManageActionLog implements java.io.Serializable {
     @Column(name = "FLOW_INST_ID")
     private String flowInstId;
     @Column(name = "NODE_INST_ID")
-    private Long nodeInstId;
+    private String nodeInstId;
     @Column(name = "ACTION_TYPE")
     private String actionType;
     @Column(name = "ACTION_TIME")
@@ -87,11 +87,11 @@ public class ManageActionLog implements java.io.Serializable {
         this.flowInstId = wfinstid;
     }
 
-    public Long getNodeInstId() {
+    public String getNodeInstId() {
         return nodeInstId;
     }
-    public void setNodeInstId(Long nodeinstid) {
-        this.nodeInstId = nodeinstid;
+    public void setNodeInstId(String nodeInstId) {
+        this.nodeInstId = nodeInstId;
     }
 
     /**

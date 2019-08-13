@@ -37,7 +37,7 @@ public class ApprovalProcessDao extends BaseDaoImpl<ApprovalProcess,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<ApprovalProcess> getApprovalProcessByNodeInstId(Long nodeInstId){
+    public List<ApprovalProcess> getApprovalProcessByNodeInstId(String nodeInstId){
         return this.listObjectsByFilter("where node_Inst_Id = ?",new Object[]{nodeInstId});
     }
 }

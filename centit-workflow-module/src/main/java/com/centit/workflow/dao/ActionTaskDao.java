@@ -124,7 +124,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<ActionTask> getActionTaskByNodeidAndUser(long nodeInstId , String userCode){
+    public List<ActionTask> getActionTaskByNodeidAndUser(String nodeInstId , String userCode){
         String whereSql = "where NODE_INST_ID=? and USER_CODE=? and IS_VALID='T'";
 
         return this.listObjectsByFilter(whereSql, new Object[]{nodeInstId,userCode});
@@ -132,7 +132,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<ActionTask> listActionTaskByNode(Long nodeInstId){
+    public List<ActionTask> listActionTaskByNode(String nodeInstId){
        // String baseHQL = "from WfActionTask t join WfNodeInstance i on i.nodeinstid = t.nodeinstid where i.nodestate <> 'C' and t.usercode = ?";
        //return this.listObjects(baseHQL,userCode);
         Map<String,Object> filterMap = new HashMap<>();
@@ -143,7 +143,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
-    public String getTaskGrantor(long nodeInstId ,String userCode){
+    public String getTaskGrantor(String nodeInstId ,String userCode){
         String baseSQL = "select GRANTOR  from V_USER_TASK_LIST where NODE_INST_ID = ? and USER_CODE =? ";
         List<String> utl = this.getJdbcTemplate().queryForList(baseSQL,
                 new Object[]{nodeInstId,userCode} ,String.class);
@@ -164,7 +164,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
     @SuppressWarnings("unchecked")
     @Transactional(propagation= Propagation.MANDATORY)
-    public boolean hasOptPower(long nodeInstId ,String userCode,String grantorCode){
+    public boolean hasOptPower(String nodeInstId ,String userCode,String grantorCode){
 
         String baseSQL = "select GRANTOR  from V_USER_TASK_LIST where NODE_INST_ID = ? and USER_CODE =? ";
         List<String> utl = this.getJdbcTemplate().queryForList(baseSQL,

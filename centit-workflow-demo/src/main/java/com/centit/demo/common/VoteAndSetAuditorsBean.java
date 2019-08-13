@@ -44,7 +44,7 @@ public class VoteAndSetAuditorsBean implements NodeEventSupport {
     @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
                                 NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
-        Long nodeInstId = nodeInst.getNodeInstId();
+        String nodeInstId = nodeInst.getNodeInstId();
         List<ApprovalProcess> approvalProcesses = null;
         try {
             approvalProcesses = approvalProcessDao.getApprovalProcessByNodeInstId(nodeInst.getNodeInstId());

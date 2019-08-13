@@ -76,7 +76,7 @@ public class ApprovalController {
         JsonResultUtils.writeBlankJson(response);
     }
     @RequestMapping("/doApproval")
-    public void doApproval(HttpServletRequest request, HttpServletResponse response,Long flowInstId,Long nodeInstId,
+    public void doApproval(HttpServletRequest request, HttpServletResponse response,Long flowInstId,String nodeInstId,
                            String userCodes,String auditResult, String pass,String optUserCode) throws Exception{
         //将前台传过来的usercode 字符串 拆分
         List<String> userCodeList  = new ArrayList<>();

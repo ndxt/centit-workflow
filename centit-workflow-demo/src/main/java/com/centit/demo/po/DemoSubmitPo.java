@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class DemoSubmitPo {
 
-    private Long nodeInstId;
+    private String nodeInstId;
 
     private String userCode;
 
@@ -16,11 +16,11 @@ public class DemoSubmitPo {
 
     private Map<String,Object> varTrans;
 
-    public Long getNodeInstId() {
+    public String getNodeInstId() {
         return nodeInstId;
     }
 
-    public void setNodeInstId(Long nodeInstId) {
+    public void setNodeInstId(String nodeInstId) {
         this.nodeInstId = nodeInstId;
     }
 

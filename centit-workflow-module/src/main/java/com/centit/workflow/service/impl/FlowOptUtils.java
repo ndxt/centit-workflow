@@ -56,7 +56,7 @@ public class FlowOptUtils {
         flowInst.setVersion(wf.getVersion());
         flowInst.setUnitCode(unitcode);
         flowInst.setUserCode(usercode);
-        flowInst.setPreNodeInstId(0l);
+        flowInst.setPreNodeInstId("");
         flowInst.setPreInstId("");
         flowInst.setIsSubInst("N");
         flowInst.setInstState("N");
@@ -106,7 +106,7 @@ public class FlowOptUtils {
             for (NodeInfo thisNode : nodes) {
                 NodeInstance tempInst = flowInst.findLastSameNodeInst
                     (thisNode.getNodeId(), nodeInst, nodeInst.getNodeInstId());
-                if (inhertInst == null || inhertInst.getNodeInstId() < tempInst.getNodeInstId())
+                if (inhertInst == null || inhertInst.getCreateTime().before(tempInst.getCreateTime()))//大小于
                     inhertInst = tempInst;
             }
 
@@ -190,7 +190,7 @@ public class FlowOptUtils {
     /**
      * 创建任务实例
      */
-    public static ActionTask createActionTask(Long nodeInstId, String usercode) {
+    public static ActionTask createActionTask(String nodeInstId, String usercode) {
         ActionTask task = new ActionTask();
         task.setNodeInstId(nodeInstId);
         task.setIsValid("T");
@@ -226,7 +226,7 @@ public class FlowOptUtils {
      * @return
      */
     public static ActionLog createActionLog(String actType, String userCode,
-                                            long nodeInstId) {
+                                            String nodeInstId) {
         ActionLog actionLog = new ActionLog();
 
         actionLog.setNodeInstId(nodeInstId);
@@ -248,7 +248,7 @@ public class FlowOptUtils {
      * X 唤醒一个超时流程的一个节点
      */
     public static ActionLog createActionLog(String actType, String usercode,
-                                            long nodeInstId, NodeInfo node) {
+                                            String nodeInstId, NodeInfo node) {
         ActionLog actionLog = createActionLog(actType, usercode, nodeInstId);
         if (node != null) {
             actionLog.setRoleType(node.getRoleType());
@@ -341,7 +341,7 @@ public class FlowOptUtils {
      *                    U u: 变更属性
      * @return
      */
-    public static ManageActionLog createManagerAction(String flowInstId, long nodeInstId,
+    public static ManageActionLog createManagerAction(String flowInstId, String nodeInstId,
                                                       String managerCode, String actionType) {
         ManageActionLog action = new ManageActionLog();
         action.setFlowInstId(flowInstId);
@@ -381,7 +381,7 @@ public class FlowOptUtils {
     }
 
     //调用待办消息推送
-    public static void sendMsg(long nodeInstId, Set<Long> nextNodeInsts, String userCode) {
+    public static void sendMsg(String nodeInstId, Set<String> nextNodeInsts, String userCode) {
         initStr();
         //如果需要发送待办消息
         if ("T".equals(ifSendMsg) || "T".equals(ifSendSms)) {

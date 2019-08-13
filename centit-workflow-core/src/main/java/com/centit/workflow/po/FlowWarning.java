@@ -18,7 +18,7 @@ public class FlowWarning implements java.io.Serializable {
     //@GenericGenerator(name = "assignedGenerator", strategy = "assigned")
     private Long warningId;
     @Column(name="NODE_INST_ID")
-    private Long  nodeInstId;
+    private String  nodeInstId;
     @Column(name="FLOW_INST_ID")
     private String flowInstId;
     @Column(name="FLOW_STAGE")
@@ -60,7 +60,7 @@ public class FlowWarning implements java.io.Serializable {
 /** full constructor */
     public FlowWarning(
      Long warningid
-    ,Long  nodeInstId,String flowInstId,String  flowPhase,String  warningType,String  warningCode,Date  warningTime,String  warningState,String  warningidMsg,Date  sendMsgTime,String  sendUsers) {
+    ,String  nodeInstId,String flowInstId,String  flowPhase,String  warningType,String  warningCode,Date  warningTime,String  warningState,String  warningidMsg,Date  sendMsgTime,String  sendUsers) {
 
         this.warningId = warningid;
 
@@ -114,11 +114,11 @@ public class FlowWarning implements java.io.Serializable {
     }
     // Property accessors
 
-    public Long getNodeInstId() {
+    public String getNodeInstId() {
         return this.nodeInstId;
     }
 
-    public void setNodeInstId(Long nodeInstId) {
+    public void setNodeInstId(String nodeInstId) {
         this.nodeInstId = nodeInstId;
     }
 
