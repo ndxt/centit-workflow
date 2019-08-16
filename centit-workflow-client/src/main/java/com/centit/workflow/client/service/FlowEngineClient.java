@@ -224,4 +224,7 @@ public interface FlowEngineClient {
      * @param managerUserCode
      */
     void rollBackNode(String nodeInstId,String managerUserCode);
-    }
+
+    FlowInstance createMetaFormFlowAndSubmit(String modelId, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception;
+
+}
