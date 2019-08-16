@@ -300,6 +300,15 @@ public class FlowEngineController extends BaseController {
         return userTasks;
     }
 
+    @ApiOperation(value = "根据条件查询待办", notes = "根据条件查询待办")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listTasks")
+    public List<UserTask> listTasks(HttpServletRequest request) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
+        return userTasks;
+    }
+
     @ApiOperation(value = "查询节点待办用户", notes = "查询节点待办用户")
     @WrapUpResponseBody
     @GetMapping(value = "/listNodeTaskUsers")

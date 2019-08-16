@@ -361,4 +361,11 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/rollBackNode", paramMap);
     }
+
+    @Override
+    public List<UserTask> listTasks(Map<String, Object> paramMap) {
+        return RestfulHttpRequest.getResponseObjectList(appSession,
+            "/flow/engine/listTasks", paramMap, UserTask.class);
+    }
+
 }
