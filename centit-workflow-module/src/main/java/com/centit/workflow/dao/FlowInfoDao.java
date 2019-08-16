@@ -83,7 +83,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInfo> getAllLastVertionFlows(Map<String,Object> filterMap){
 
-        String sql =  "SELECT * FROM F_V_LASTVERSIONFLOW WHERE 1=1 " ;
+        String sql =  "SELECT * FROM F_V_LASTVERSIONFLOW WHERE 1=1 [:optId| and opt_id = :optId ] " ;
         QueryAndNamedParams sqlAndParams = QueryUtils.translateQuery(sql,filterMap);
         return this.listObjectsBySql(sqlAndParams.getQuery(),sqlAndParams.getParams());
     }

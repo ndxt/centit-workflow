@@ -37,4 +37,6 @@ public interface FlowOptService {
     FlowOptInfo getFlowOptInfoById(String optId);
 
     List<FlowOptInfo> getListOptInfo();
-}
+
+    FlowOptInfo getOptByModelId(String modelId) ;
+    }

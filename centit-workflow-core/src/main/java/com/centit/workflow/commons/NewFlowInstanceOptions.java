@@ -14,6 +14,10 @@ public class NewFlowInstanceOptions {
      */
     @ApiModelProperty(value = "流程定义Code",required = true)
     private String flowCode;
+
+    @ApiModelProperty("自定义表单得模板id")
+    private String modelId;
+
     /**
      * 流程版本号 如果=0 表示用最新版本，
      */
@@ -174,5 +178,13 @@ public class NewFlowInstanceOptions {
 
     public void setUserList(String userList) {
         this.userList = userList;
+    }
+
+    public String getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(String modelId) {
+        this.modelId = modelId;
     }
 }
