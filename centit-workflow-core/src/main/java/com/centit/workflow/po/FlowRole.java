@@ -1,10 +1,13 @@
 package com.centit.workflow.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,6 +26,27 @@ public class FlowRole implements Serializable {
 
     @Column(name = "ROLE_NAME")
     private String roleName;
+    @Column(name = "role_level")
+    private String roleLevel;
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "create_time")
+    private Date createTime;
+
+    public String getRoleLevel() {
+        return roleLevel;
+    }
+
+    public void setRoleLevel(String roleLevel) {
+        this.roleLevel = roleLevel;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
     private List<FlowRoleDefine> flowRoleDefineList;
 
