@@ -48,6 +48,12 @@ public class FlowRole implements Serializable {
         this.createTime = createTime;
     }
 
+    @Column(name = "ROLE_LEVEL")
+    private Integer roleLevel;
+
+    @Column(name = "CREATE_TIME")
+    private Date createTime;
+
     private List<FlowRoleDefine> flowRoleDefineList;
 
     public List<FlowRoleDefine> getFlowRoleDefineList() {
@@ -72,5 +78,21 @@ public class FlowRole implements Serializable {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public Integer getRoleLevel() {
+        return roleLevel;
+    }
+
+    public void setRoleLevel(Integer roleLevel) {
+        this.roleLevel = roleLevel;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

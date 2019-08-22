@@ -227,4 +227,10 @@ public interface FlowEngineClient {
 
     FlowInstance createMetaFormFlowAndSubmit(String modelId, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception;
 
+    /**
+     * 根据条件查询待办，包括flowInstId，flowOptTag
+     * @param paramMap
+     * @return
+     */
+    List<UserTask> listTasks(Map<String, Object> paramMap);
 }

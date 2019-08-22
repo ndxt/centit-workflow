@@ -126,6 +126,10 @@ public class FlowEngineController extends BaseController {
         List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
         //创建流程
         FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        //找到创建人得审批角色级别
+
+        //把这个审批角色级别固化到变量createrLevel
+        //flowEng.saveFlowVariable(flowInstance.getFlowInstId(),"createrLevel","");
         //提交节点
         Set<String> nextNodes = flowEng.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
@@ -296,6 +300,15 @@ public class FlowEngineController extends BaseController {
     public List<UserTask> listUserTasks(String userCode) {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("userCode", userCode);
+        List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
+        return userTasks;
+    }
+
+    @ApiOperation(value = "根据条件查询待办", notes = "根据条件查询待办")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listTasks")
+    public List<UserTask> listTasks(HttpServletRequest request) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
         List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
         return userTasks;
     }
