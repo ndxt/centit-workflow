@@ -1,6 +1,10 @@
 package com.centit.workflow.dao;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.database.utils.QueryAndNamedParams;
+import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.FlowOptDef;
 import com.centit.workflow.po.FlowRole;
 import org.springframework.stereotype.Repository;
@@ -24,8 +28,6 @@ public class FlowRoleDao extends BaseDaoImpl<FlowRole,String> {
 
     /**
      * 读取工作定义的业务操作
-     *
-     *
      * @return
      */
     public Map<String, String> listAllRoleMsg() {
@@ -36,7 +38,18 @@ public class FlowRoleDao extends BaseDaoImpl<FlowRole,String> {
         for (FlowRole flowRole : flowRoles) {
             roleMap.put(flowRole.getRoleCode(),flowRole.getRoleName());
         }
-
         return roleMap;
+    }
+
+    public List<FlowRole> listUserFlowRoles(Map<String,Object> map){
+        String sql="select t.role_code,t.role_name,t.role_level from wf_flow_role t join wf_flow_role_define r " +
+            "on r.role_code=t.role_code where 1=1 " +
+            "[ :enCode| and (r.related_type='en' and r.related_code in (:enCode)) ] " +
+            "[ :jsCode| or (r.related_type='js' and r.related_code in (:jsCode)) ] " ;
+        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql,map);
+        JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
+            queryAndNamedParams.getQuery(),queryAndNamedParams.getParams());
+        return dataList.toJavaList(FlowRole.class);
+
     }
 }

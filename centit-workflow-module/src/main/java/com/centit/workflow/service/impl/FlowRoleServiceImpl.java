@@ -1,6 +1,9 @@
 package com.centit.workflow.service.impl;
 
 
+import com.centit.framework.components.CodeRepositoryUtil;
+import com.centit.framework.model.basedata.IUserRole;
+import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.FlowRoleDao;
@@ -12,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @ClassName FlowRoleServiceImpl
@@ -43,6 +44,30 @@ public class FlowRoleServiceImpl implements FlowRoleService {
         return flowRoleDao.getObjectById(roleCode);
     }
 
+    /**
+     * 获取用户审批角色
+     *
+     * @param userCode
+     * @return
+     */
+    public Set<String> listUserFlowRole(String userCode) {
+        Set<String> flowRoles = new HashSet<>();
+        Set<String> roles = new HashSet<>();
+        Set<String> units = new HashSet<>();
+        List<? extends IUserRole> userRoles = CodeRepositoryUtil.listUserRoles(userCode);
+        for (IUserRole i : userRoles) {
+            roles.add(i.getRoleCode());
+        }
+        List<? extends IUserUnit> userUnits = CodeRepositoryUtil.listUserUnits(userCode);
+        for (IUserUnit u : userUnits) {
+            units.add(u.getUserRank());
+        }
+        Map<String,Object> searchMap=new HashMap<>();
+        searchMap.put("jsRole",roles);
+        searchMap.put("enCode",units);
+        return flowRoles;
+    }
+
     @Override
     @Transactional
     public void saveFlowRole(FlowRole flowRole) {
@@ -51,6 +76,7 @@ public class FlowRoleServiceImpl implements FlowRoleService {
         }
         if(flowRole.getRoleCode() == null || flowRole.getRoleCode().isEmpty()){
             flowRole.setRoleCode(UuidOpt.getUuidAsString32());
+            flowRole.setCreateTime(new Date());
         }
         flowRoleDao.mergeObject(flowRole);
     }

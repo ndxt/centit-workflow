@@ -51,12 +51,17 @@ public class FlowEngineController extends BaseController {
 
     private Map<Class<?>, String[]> excludes;
 
-//   下一步审批人*/
+    /**
+     * 下一步审批人
+     * @param json
+     * @param response
+     */
     @PostMapping("/viewNextNodeOperator")
     public void viewNextNodeOperator(@RequestBody String json, HttpServletResponse response) {
         ResponseMapData data = new ResponseMapData();
         Set<String> iUserInfos = new HashSet<>();
         JSONObject jsonObject = JSON.parseObject(json);
+        //解析
         String nodeInstId = jsonObject.getString("nodeInstId");
         String userCode = jsonObject.getString("userCode");
         String unitCode = jsonObject.getString("unitCode");
@@ -66,7 +71,6 @@ public class FlowEngineController extends BaseController {
             maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
         }
         Set<NodeInfo> nodeInfoSet = flowEng.viewNextNode(nodeInstId, userCode, unitCode, getBusinessVariable(maps));
-
         for (NodeInfo nodeInfo : nodeInfoSet) {
             List<FlowRoleDefine> roleDefines = flowRoleService.getFlowRoleDefineListByCode(nodeInfo.getRoleCode());
             for (FlowRoleDefine roleDefine : roleDefines) {
@@ -77,8 +81,15 @@ public class FlowEngineController extends BaseController {
         JsonResultUtils.writeResponseDataAsJson(data, response);
     }
 
+    /**
+     * 获取第一步的操作人员
+     * @param flowCode 流程定义code
+     * @param unitCode 部门编码
+     * @param response
+     */
     @GetMapping("viewFlowFirstOperUser/{flowCode}/{unitCode}")
     public void viewFlowFirstOperUser(@PathVariable String flowCode, @PathVariable String unitCode, HttpServletResponse response) {
+        //获取流程定义信息
         FlowInfo flowInfo = flowDefine.getFlowDefObject(flowCode);
         ResponseMapData data = new ResponseMapData();
         String nodeId = flowInfo.getFirstNode().getNodeId();
@@ -101,7 +112,6 @@ public class FlowEngineController extends BaseController {
         for (NodeInfo n : nodes) {
             if (targetNodeId.equals(n.getNodeId())) {
                 roleType = n.getRoleType();
-
                 roleCode = n.getRoleCode();
                 if ("en".equals(roleType)) {
                     roleCode = n.getPowerExp();
