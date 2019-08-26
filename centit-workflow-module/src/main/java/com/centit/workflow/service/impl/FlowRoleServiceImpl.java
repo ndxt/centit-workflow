@@ -1,7 +1,6 @@
 package com.centit.workflow.service.impl;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.model.basedata.IUserRole;
 import com.centit.framework.model.basedata.IUserUnit;
@@ -51,8 +50,7 @@ public class FlowRoleServiceImpl implements FlowRoleService {
      * @param userCode
      * @return
      */
-    public JSONObject listUserFlowRole(String userCode) {
-        JSONObject flowRole = new JSONObject();
+    public List<FlowRole> listUserFlowRoles(String userCode) {
         Set<String> roles = new HashSet<>();
         Set<String> units = new HashSet<>();
         //查询用户所有的角色
@@ -69,8 +67,22 @@ public class FlowRoleServiceImpl implements FlowRoleService {
         searchMap.put("jsRole",roles);
         searchMap.put("enCode",units);
         //根据部门职务来查询所有的审批角色
-        flowRoleDao.listUserFlowRoles(searchMap);
-        return flowRole;
+        return flowRoleDao.listUserFlowRoles(searchMap);
+    }
+
+    /**
+     * 获取用户审批角色中的最高审批级别
+     * @param userCode
+     * @return
+     */
+    public int getUserMaxRoleLevel(String userCode) {
+        int result = -1;
+        for (FlowRole flowRole : listUserFlowRoles(userCode)) {
+            if (flowRole.getRoleLevel() > result) {
+                result = flowRole.getRoleLevel();
+            }
+        }
+        return result;
     }
 
     @Override
@@ -94,8 +106,25 @@ public class FlowRoleServiceImpl implements FlowRoleService {
 
     @Override
     public List<FlowRoleDefine> getFlowRoleDefineListByCode(String roleCode) {
-        return flowRoleDefineDao.listObjectsByProperty("roleCode", roleCode);
+        return translateFlowRoleDefineRelatedCode(flowRoleDefineDao.listObjectsByProperty("roleCode", roleCode));
 //        return flowRoleDefineDao.getFlowRoleDefineByRoleCode(roleCode);
+    }
+
+    /**
+     * 将审批角色明细FlowRoleDefine中的关联编码转换成文字
+     * @param flowRoleDefineList
+     * @return
+     */
+    private List<FlowRoleDefine> translateFlowRoleDefineRelatedCode(List<FlowRoleDefine> flowRoleDefineList) {
+        for (FlowRoleDefine flowRoleDefine : flowRoleDefineList) {
+            // 职务
+            if ("xz".equals(flowRoleDefine.getRelatedType())) {
+                flowRoleDefine.setRelatedCode(CodeRepositoryUtil.getValue("RankType", flowRoleDefine.getRelatedCode()));
+            } else { // 角色
+                flowRoleDefine.setRelatedCode(CodeRepositoryUtil.getRoleByRoleCode(flowRoleDefine.getRelatedCode()).getRoleName());
+            }
+        }
+        return flowRoleDefineList;
     }
 
     @Override
