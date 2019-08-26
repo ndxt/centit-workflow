@@ -87,7 +87,7 @@ public class FlowEngineController extends BaseController {
      * @param unitCode 部门编码
      * @param response
      */
-    @GetMapping("viewFlowFirstOperUser/{flowCode}/{unitCode}")
+    @GetMapping("/viewFlowFirstOperUser/{flowCode}/{unitCode}")
     public void viewFlowFirstOperUser(@PathVariable String flowCode, @PathVariable String unitCode, HttpServletResponse response) {
         //获取流程定义信息
         FlowInfo flowInfo = flowDefine.getFlowDefObject(flowCode);
@@ -131,7 +131,7 @@ public class FlowEngineController extends BaseController {
     }
 
     @ApiOperation(value = "创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
-    @PostMapping("createAndSubmitFlow")
+    @PostMapping("/createAndSubmitFlow")
     public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletResponse response) {
         List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
         //创建流程
@@ -156,7 +156,7 @@ public class FlowEngineController extends BaseController {
 
 
     @ApiOperation(value = "自定义表单创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
-    @PostMapping("createMetaFormFlowAndSubmit")
+    @PostMapping("/createMetaFormFlowAndSubmit")
     public void createMetaFormFlowAndSubmit(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletResponse response) {
         //暂时这么定义，一个基本业务自定义表单必然只匹配一个流程
         FlowOptInfo flowOptInfo = wfOptService.getOptByModelId(newFlowInstanceOptions.getModelId());
@@ -197,7 +197,7 @@ public class FlowEngineController extends BaseController {
         @ExampleProperty(value = "{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}", mediaType = "application/json")
     }))
     @WrapUpResponseBody
-    @PostMapping(value = "submitOpt")
+    @PostMapping(value = "/submitOpt")
     public ResponseData submitOpt(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         String nodeInstId = jsonObject.getString("nodeInstId");
