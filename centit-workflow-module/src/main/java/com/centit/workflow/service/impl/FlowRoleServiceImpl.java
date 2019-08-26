@@ -1,6 +1,7 @@
 package com.centit.workflow.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.model.basedata.IUserRole;
 import com.centit.framework.model.basedata.IUserUnit;
@@ -50,14 +51,16 @@ public class FlowRoleServiceImpl implements FlowRoleService {
      * @param userCode
      * @return
      */
-    public Set<String> listUserFlowRole(String userCode) {
-        Set<String> flowRoles = new HashSet<>();
+    public JSONObject listUserFlowRole(String userCode) {
+        JSONObject flowRole = new JSONObject();
         Set<String> roles = new HashSet<>();
         Set<String> units = new HashSet<>();
+        //查询用户所有的角色
         List<? extends IUserRole> userRoles = CodeRepositoryUtil.listUserRoles(userCode);
         for (IUserRole i : userRoles) {
             roles.add(i.getRoleCode());
         }
+        //查询用户所有的部门职务
         List<? extends IUserUnit> userUnits = CodeRepositoryUtil.listUserUnits(userCode);
         for (IUserUnit u : userUnits) {
             units.add(u.getUserRank());
@@ -65,7 +68,9 @@ public class FlowRoleServiceImpl implements FlowRoleService {
         Map<String,Object> searchMap=new HashMap<>();
         searchMap.put("jsRole",roles);
         searchMap.put("enCode",units);
-        return flowRoles;
+        //根据部门职务来查询所有的审批角色
+        flowRoleDao.listUserFlowRoles(searchMap);
+        return flowRole;
     }
 
     @Override
