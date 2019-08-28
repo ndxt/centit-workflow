@@ -439,7 +439,12 @@
 						</td>
 						<td>
 							<div>
-								<input style="width: 97%;" id="expireopt" value="预警" readonly />
+                <select id="expireopt" style="width: 99%;"
+                        oninput="changeValue(this,'expireopt')">
+                  <option value="Y" selected>预警</option>
+                  <option value="E">结束流程</option>
+                </select>
+								<!--<input style="width: 97%;" id="expireopt" value="预警" readonly />-->
 							</div>
 						</td>
 					</tr>
