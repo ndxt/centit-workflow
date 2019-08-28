@@ -3,22 +3,13 @@
  */
 package com.centit.workflow.service.impl;
 
-import com.centit.framework.components.CodeRepositoryUtil;
-import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.QueryUtils;
-import com.centit.support.workday.po.WorkDay;
 import com.centit.support.workday.service.WorkDayManager;
-import com.centit.workflow.dao.ActionTaskDao;
-import com.centit.workflow.dao.FlowInstanceDao;
-import com.centit.workflow.dao.FlowWarningDao;
-import com.centit.workflow.dao.NodeInstanceDao;
-import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.FlowWarning;
-import com.centit.workflow.po.NodeInstance;
-import com.centit.workflow.po.UserTask;
+import com.centit.workflow.dao.*;
+import com.centit.workflow.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +24,7 @@ import java.util.List;
 /**
  * 工作流引擎定时检测任务期限，并发出相应的消息
  *
- * @author ljy ，codefan
+ * @author codefan
  * @create 2012-2-23
  */
 @Component
@@ -46,6 +37,9 @@ public class FlowTaskImpl {
 
     @Resource
     NodeInstanceDao nodeInstanceDao;
+
+    @Resource
+    private NodeInfoDao nodeInfoDao;
 
     @Resource
     private FlowWarningDao wfRuntimeWarningDao;
@@ -63,9 +57,6 @@ public class FlowTaskImpl {
 
     @Value("${workflow.flowTimeStart:true}")
     private Boolean flowTimeStart;
-
-    public FlowTaskImpl() {
-    }
 
     private int sendNotifyMessage(String nodeInstId) {
         List<UserTask> taskList = actionTaskDao
@@ -128,7 +119,8 @@ public class FlowTaskImpl {
          *  在数据库中执行 复杂在要重新实现 当前时间是否是工作时间的问题
          */
         Date runTime = new Date();
-        if (workDayManager.isWorkDay(runTime)&&isWorkTime(runTime)&&flowTimeStart) {
+        //workDayManager.isWorkDay(runTime) &&
+        if (isWorkTime(runTime) && flowTimeStart) {
             long consumeTime = 2;
             consumeLifeTime(consumeTime);
             //nodeInstanceDao.updateTimeConsume(consumeTime);
@@ -146,10 +138,20 @@ public class FlowTaskImpl {
             if (nodeList == null || nodeList.size() < 1)
                 continue;
             //boolean consume = true;
-            boolean flowconsume = false;
+            Boolean flowconsume = false;
+            Boolean stopFlow = false;
             // T 计时、有期限   F 不计时   H仅环节计时  、暂停P
             for (NodeInstance nodeInst : nodeList) {
-
+                NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeId());
+                if (nodeInfo != null) {
+                    //如果超期结束流程
+                    if ("E".equals(nodeInfo.getExpireOpt())) {
+                        if (nodeInst.getTimeLimit() <= 0) {
+                            stopFlow = true;
+                            break;
+                        }
+                    }
+                }
                 if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer())) &&
                     (nodeInst.getTimeLimit() != null)) {
                     nodeInst.setTimeLimit(nodeInst.getTimeLimit() - consumeTime);
@@ -161,6 +163,12 @@ public class FlowTaskImpl {
                     flowconsume = true;
             }
 
+            //如果关闭流程，流程状态置为C
+            if (stopFlow) {
+                flowInst.setInstState("C");
+                flowInstanceDao.updateObject(flowInst);
+                continue;
+            }
             if (flowconsume && flowInst.getTimeLimit() != null) {
                 flowInst.setTimeLimit(flowInst.getTimeLimit() - consumeTime);
                 flowInstanceDao.updateObject(flowInst);
