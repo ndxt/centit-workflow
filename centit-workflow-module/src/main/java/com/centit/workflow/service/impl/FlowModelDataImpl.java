@@ -3,14 +3,8 @@ package com.centit.workflow.service.impl;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.basedata.IOptMethod;
-import com.centit.workflow.dao.FlowInfoDao;
-import com.centit.workflow.dao.FlowOptDefDao;
-import com.centit.workflow.dao.FlowOptInfoDao;
-import com.centit.workflow.dao.FlowRoleDao;
-import com.centit.workflow.po.FlowInfo;
-import com.centit.workflow.po.FlowOptDef;
-import com.centit.workflow.po.FlowOptInfo;
-import com.centit.workflow.po.FlowStage;
+import com.centit.workflow.dao.*;
+import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowModelData;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +38,9 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
 
     @Resource
     private FlowOptInfoDao flowOptInfoDao;
+
+    @Resource
+    private FlowVariableDefineDao flowVariableDefineDao;
 
 
     @Override
@@ -208,6 +205,20 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
             }
         }
         return optmap;
+    }
+
+    /**
+     * 根据流程代码获取流程变量信息
+     * @param flowCode
+     * @return
+     */
+    public Map<String, String> listFlowVariableDefines(String flowCode) {
+        List<FlowVariableDefine> flowVariableDefines = flowVariableDefineDao.getFlowVariableByFlowCode(flowCode);
+        Map<String, String> variableDefineMap = new HashMap<>();
+        for (FlowVariableDefine flowVariableDefine : flowVariableDefines) {
+            variableDefineMap.put(flowVariableDefine.getFlowVariableId(), flowVariableDefine.getVariableName());
+        }
+        return variableDefineMap;
     }
 
 }

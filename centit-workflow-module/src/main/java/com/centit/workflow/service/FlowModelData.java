@@ -55,4 +55,11 @@ public interface FlowModelData {
      */
     Map<String, String> listFlowStages(String flowCode);
 
+    /**
+     * 根据流程代码获取流程变量信息
+     * @param flowCode
+     * @return
+     */
+    Map<String, String> listFlowVariableDefines(String flowCode);
+
 }

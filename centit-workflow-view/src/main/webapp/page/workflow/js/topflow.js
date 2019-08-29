@@ -622,6 +622,24 @@ function setLineName(obj){
     SVG.get(o).attr({"title":obj.value});
     g("lab"+o).innerHTML = obj.value;
 }
+
+/**
+ * 设置流程变量
+ * @param obj
+ */
+function setFlowVariable(obj) {
+  if (obj.FlowVariableDefine) {
+    var flowVariableDefineText = '';
+    var separator = ';'
+    for (v in obj.FlowVariableDefine) {
+      flowVariableDefineText += obj.FlowVariableDefine[v] + separator;
+    }
+    flowVariableDefineText = flowVariableDefineText.slice(0, flowVariableDefineText.lastIndexOf(separator));
+    $(document).ready(function () {
+      $("#flowvariabledefine").attr('value', flowVariableDefineText)
+    });
+  }
+}
 /**
  * 设置多实例节点角色类别
  * @param obj

@@ -605,6 +605,18 @@
 							</div></td>
 					</tr>
 					<tr>
+						<td>
+							<div>
+								<label for="flowvariabledefine">流程变量</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input type="text" style="width: 97%;" id="flowvariabledefine" readonly />
+							</div>
+						</td>
+					</tr>
+					<tr>
 						<td><div>
 								<label for="cond">条件表达式</label>
 							</div></td>
@@ -612,6 +624,15 @@
 								<input id="cond" type="text" style="width: 97%;"
 									oninput="changeValue(this,'cond')">
 							</div></td>
+					</tr>
+					<tr>
+						<td><div>
+							<label for="line-desc">描述</label>
+						</div></td>
+						<td><div>
+							<input id="line-desc" type="text" style="width: 97%;"
+								oninput="changeValue(this,'desc')">
+						</div></td>
 					</tr>
 				</table>
 				<table id="constraintAttr" width="100%" cellpadding="0" cellspacing="10">
@@ -707,15 +728,6 @@
 							</div>
 						</td>
 					</tr>
-					<tr>
-						<td><div>
-								<label for="line-desc">描述</label>
-							</div></td>
-						<td><div>
-								<input id="line-desc" type="text" style="width: 97%;"
-									oninput="changeValue(this,'desc')">
-							</div></td>
-					</tr>
 				</table>
 			</div>
 		</div>
@@ -789,6 +801,7 @@
         	url:path+loadDefineData+flowCode,
         	success:function(data){
         		Data = data.data;
+        		setFlowVariable(Data)
         	},
         	error:function(data){
         		alert("请求失败");
