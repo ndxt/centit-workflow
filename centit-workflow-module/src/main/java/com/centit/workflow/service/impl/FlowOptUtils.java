@@ -8,6 +8,7 @@ import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.workflow.commons.NodeMsgSupport;
 import com.centit.workflow.dao.FlowInstanceDao;
+import com.centit.workflow.dao.FlowVariableDao;
 import com.centit.workflow.po.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -409,6 +410,37 @@ public class FlowOptUtils {
                 msgSupport.sendFlowNodeSms(flowInstId, userCode);
             }
         }
+    }
+
+    public static FlowVariableTranslate createVariableTranslate(
+            NodeInstance nodeInstance, FlowInstance flowInstance,
+            FlowVariableDao flowVariableDao, FlowEngineImpl flowEngine) {
+
+        FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(nodeInstance, flowInstance);
+        boolean hasFlowGroup = StringUtils.isNotBlank(flowInstance.getFlowGroupId());
+        List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInstance.getFlowInstId());
+        if(hasFlowGroup) {
+            flowVariables.addAll(flowVariableDao.listFlowVariables(flowInstance.getFlowGroupId()));
+        }
+        flowVarTrans.setFlowVariables(flowVariables);
+
+        Map<String, List<String>> flowOrgs = flowEngine.viewFlowOrganize(flowInstance.getFlowInstId());
+        if(hasFlowGroup) {
+            Map<String, List<String>> tempOrgs = flowEngine.viewFlowOrganize(flowInstance.getFlowGroupId());
+            tempOrgs.putAll(flowOrgs);
+            flowOrgs = tempOrgs;
+        }
+        flowVarTrans.setFlowOrganizes(flowOrgs);
+
+        Map<String, List<String>> flowTeams = flowEngine.viewFlowWorkTeam(flowInstance.getFlowInstId());
+        if(hasFlowGroup) {
+            Map<String, List<String>> tempTeams = flowEngine.viewFlowWorkTeam(flowInstance.getFlowGroupId());
+            tempTeams.putAll(flowTeams);
+            flowTeams = tempTeams;
+        }
+        flowVarTrans.setFlowWorkTeam(flowTeams);
+
+        return flowVarTrans;
     }
 
 }

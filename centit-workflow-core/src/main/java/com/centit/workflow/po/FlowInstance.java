@@ -3,8 +3,9 @@ package com.centit.workflow.po;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.common.WorkTimeSpan;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -23,8 +24,13 @@ public class FlowInstance implements java.io.Serializable {
 
     @Id
     @Column(name = "FLOW_INST_ID")
-    //@GeneratedValue(generator = "assignedGenerator")
+    @ValueGenerator(strategy = GeneratorType.UUID22)
     private String flowInstId;
+
+
+    /** 流程分组id 可以为空 **/
+    @Column(name = "FLOW_GROUP_ID")
+    private String  flowGroupId;
 
     @ManyToOne
     @JoinColumns({
@@ -939,6 +945,14 @@ public class FlowInstance implements java.io.Serializable {
         this.lastUpdateTime = null;
         this.lastUpdateUser = null;
         this.isTimer = null;
+    }
+
+    public String getFlowGroupId() {
+        return flowGroupId;
+    }
+
+    public void setFlowGroupId(String flowGroupId) {
+        this.flowGroupId = flowGroupId;
     }
 
     public String getFlowName() {

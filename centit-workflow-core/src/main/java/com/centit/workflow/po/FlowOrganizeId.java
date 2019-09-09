@@ -12,6 +12,7 @@ import javax.persistence.Embeddable;
 public class FlowOrganizeId implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
 
+    /**flowInstId 或者 flowGroupId */
     @Column(name = "FLOW_INST_ID")
     private String flowInstId;
 

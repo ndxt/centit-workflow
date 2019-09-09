@@ -84,7 +84,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) {
         return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, "", "", null, false, null);
+            unitCode, "", "", "", null, false, null);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
             newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstId(),
-            null, newFlowInstanceOptions.isLockFirstOpt(), newFlowInstanceOptions.getTimeLimitStr());
+            "", null, newFlowInstanceOptions.isLockFirstOpt(), newFlowInstanceOptions.getTimeLimitStr());
 //        Set<Long> nodes = new HashSet<>();
 //        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
 //            nodes.add(n.getNodeInstId());
@@ -107,7 +107,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowInstance createInstance(String flowCode, long version, String flowOptName, String flowOptTag,
                                        String userCode, String unitCode) {
         return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, "", "", null, false, null);
+            unitCode, "", "", "", null, false, null);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
             newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstId(),
-            null, newFlowInstanceOptions.isLockFirstOpt(), null);
+            "", null, newFlowInstanceOptions.isLockFirstOpt(), null);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                                     String flowOptTag, String userCode, String unitCode) {
 
         FlowInstance flowInstance = createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, "", "", null, true, null);
+            unitCode, "", "", "", null, true, null);
 //        Set<Long> nodes = new HashSet<>();
 //        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
 //            nodes.add(n.getNodeInstId());
@@ -138,7 +138,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowInstance createInstanceLockFirstNode(String flowCode, long version,
                                                     String flowOptName, String flowOptTag, String userCode, String unitCode) {
         return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, "", "", null, true, null);
+            unitCode, "", "", "", null, true, null);
     }
 
 
@@ -160,7 +160,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                        UserUnitVariableTranslate varTrans, ServletContext application) {
 
         return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, "", "", varTrans, false, null);
+            unitCode, "", "", "", varTrans, false, null);
 
     }
 
@@ -170,7 +170,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                        UserUnitVariableTranslate varTrans, ServletContext application) {
 
         return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, "", "", varTrans, false, null);
+            unitCode, "", "", "", varTrans, false, null);
     }
 
 
@@ -184,7 +184,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return
      */
     private FlowInstance createInstInside(String flowCode, long version, String flowOptName, String flowOptTag, String userCode,
-                                          String unitCode, String nodeInstId, String flowInstid, UserUnitVariableTranslate varTrans,
+                                          String unitCode, String nodeInstId, String flowInstid,
+                                          String flowGroupId, UserUnitVariableTranslate varTrans,
                                           boolean lockFirstOpt, String timeLimitStr) {
 
         Date createTime = new Date(System.currentTimeMillis());
@@ -198,7 +199,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowInstance flowInst = FlowOptUtils.createFlowInst(unitCode, userCode, wf, flowInstId, timeLimitStr);
 //        flowInst.setFlowInstId(flowInstanceDao.getNextFlowInstId());
         flowInst.setCreateTime(createTime);
-
+        flowInst.setFlowGroupId(flowGroupId);
         //节点实例编号不为空，为子流程，创建子流程时要给父节点的状态设置为 W：等待子流程返回
         if (nodeInstId != "") {
             flowInst.setPreNodeInstId(nodeInstId);
@@ -226,7 +227,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         wfactlog.setActionTime(createTime);
         nodeInst.addWfActionLog(wfactlog);
 
-        UserUnitVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans, null, nodeInst, flowInst);
+        FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
+            nodeInst, flowInst,flowVariableDao,this);
 
         Map<String, Set<String>> unitParams = UserUnitParamBuilder.createEmptyParamMap();
         UserUnitParamBuilder.addParamToParamMap(unitParams, "U",
@@ -539,11 +541,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         if ("H".equals(sRT) || "D".equals(sRT)) {//D 分支和 H 并行
             //提交游离分支上的叶子节点 将不会向后流转
-            /*FlowVariableTranslate  flowVarTrans = new FlowVariableTranslate(varTrans,
-                      flowVariableDao.listFlowVariables(flowInst.getFlowInstId()),nodeInst,flowInst);
-
-            flowVarTrans.setFlowOrganizes( this.viewFlowOrganize(flowInst.getFlowInstId()));
-            flowVarTrans.setFlowWorkTeam( this.viewFlowWorkTeam(flowInst.getFlowInstId()));*/
             //获取下一批流转节点
             Set<FlowTransition> selTrans = selectTransitions(nextRoutertNode, varTrans);
             if (selTrans == null || selTrans.size() < 1) {
@@ -671,12 +668,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             " 节点：" + nodeInst.getNodeInstId() + " 路由：" + nextRoutertNode.getNodeId());
                 }
 
-                List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInst.getFlowInstId());
-                FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans, flowVariables
-                    , nodeInst, flowInst);
+                FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
+                    nodeInst, flowInst,flowVariableDao,this);
 
-                flowVarTrans.setFlowOrganizes(this.viewFlowOrganize(flowInst.getFlowInstId()));
-                flowVarTrans.setFlowWorkTeam(this.viewFlowWorkTeam(flowInst.getFlowInstId()));
                 //D 机构， U  人员（权限表达式） V 变量
                 if ("D".equals(nextRoutertNode.getMultiInstType())) {
                     Set<String> nextNodeUnits = null;
@@ -986,7 +980,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()),
                 flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName(),
                 flowInst.getFlowOptTag(), userCode, unitCode, lastNodeInstId, nodeInst.getFlowInstId(),
-                varTrans, false, tempFlowTimeLimit);
+                "",  varTrans, false, tempFlowTimeLimit);
             nextNodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
             //子流程的时间限制和父流程节点的一致
             /*f (nextNodeInst.getTimeLimit() != null) {
@@ -1355,14 +1349,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //DatabaseOptUtils.flush(nodeInstanceDao.getCurrentSession());
         }
         //刷新 变量接口 里面的变量
-        List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInst.getFlowInstId());
-        Map<String, List<String>> flowOrganizes = this.viewFlowOrganize(flowInst.getFlowInstId());
-        Map<String, List<String>> flowWorkTeam = this.viewFlowWorkTeam(flowInst.getFlowInstId());
-        //flushVariables((FlowVariableTranslate) varTrans,flowVariables,flowOrganizes,flowWorkTeam);
-        FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans, flowVariables,
-            nodeInst, flowInst);
-        flowVarTrans.setFlowOrganizes(flowOrganizes);
-        flowVarTrans.setFlowWorkTeam(flowWorkTeam);
+        FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
+            nodeInst, flowInst,flowVariableDao,this);
 
         String nextNodeId = nodeTran.getEndNodeId();
         String nodeToken = nodeInst.getRunToken();
@@ -1693,11 +1681,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if ("C".equals(nextNode.getNodeType())) {
             nextNodes.add(nextNode);
         } else if ("R".equals(nextNode.getNodeType())) {
-            FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans,
-                flowVariableDao.listFlowVariables(flowInst.getFlowInstId()), nodeInst, flowInst);
-
-            flowVarTrans.setFlowOrganizes(this.viewFlowOrganize(flowInst.getFlowInstId()));
-            flowVarTrans.setFlowWorkTeam(this.viewFlowWorkTeam(flowInst.getFlowInstId()));
+            FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
+                nodeInst, flowInst,flowVariableDao,this);
             nextNodes = viewRouterNextNodeInside(nextNode, flowVarTrans);
         }
         return nextNodes;
@@ -1737,9 +1722,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String nextNodeUnit =
             UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext, nextNode.getUnitExp(), unitParams, null);
 
-
-        FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(varTrans,
-            flowVariableDao.listFlowVariables(flowInst.getFlowInstId()), nodeInst, flowInst);
+        FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
+            nodeInst, flowInst, flowVariableDao,this);
 
         //判断是否为子流程 A:一般 B:抢先机制 C:多人操作 S:子流程
         if (!"S".equals(nextNode.getOptType())) {

@@ -21,7 +21,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     private NodeInstance nodeInst;
     private FlowInstance flowInst;
 
-    public void collectNodeUnitsAndUsers( FlowInstance flowInst) {
+    public void collectNodeUnitsAndUsers(FlowInstance flowInst) {
         nodeUnits = new HashMap<>();
         nodeUsers = new HashMap<>();
 
@@ -45,15 +45,12 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
         }
     }
 
-    public FlowVariableTranslate(UserUnitVariableTranslate varTrans, List<FlowVariable> flowVars,
-                                 NodeInstance nodeInstance, FlowInstance flowInstance){
-        flowVarTrans = varTrans;
-        flowVariables = flowVars;
+    public FlowVariableTranslate(NodeInstance nodeInstance, FlowInstance flowInstance){
         nodeInst = nodeInstance;
         flowInst = flowInstance;
-
         collectNodeUnitsAndUsers(flowInst);
     }
+
 
 
     public void setNodeInst(NodeInstance nodeInst) {

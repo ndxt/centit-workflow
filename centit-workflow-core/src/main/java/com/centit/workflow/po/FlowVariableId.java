@@ -14,6 +14,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class FlowVariableId implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
+    /**flowInstId 或者 flowGroupId */
     @Column(name = "FLOW_INST_ID")
     @ApiModelProperty(value = "流程实例编号", required = true)
     private String flowInstId;

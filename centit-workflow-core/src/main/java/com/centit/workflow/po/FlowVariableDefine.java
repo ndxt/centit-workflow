@@ -3,12 +3,11 @@ package com.centit.workflow.po;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.NotNull;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 

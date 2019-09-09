@@ -36,8 +36,7 @@ public class FlowVariableDao extends BaseDaoImpl<FlowVariable,FlowVariableId>
     }
 
     @Transactional(propagation= Propagation.REQUIRES_NEW)
-    public List<FlowVariable> listFlowVariables(String flowInstId)
-    {
+    public List<FlowVariable> listFlowVariables(String flowInstId){
         return this.listObjectsByFilter("where FLOW_INST_ID = ? order by run_Token",new Object[]{flowInstId});
     }
 
