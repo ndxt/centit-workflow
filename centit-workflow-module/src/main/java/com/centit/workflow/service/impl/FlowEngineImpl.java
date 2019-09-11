@@ -68,6 +68,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private InstAttentionDao attentionDao;
     @Resource
     private FlowWarningDao runtimeWarningDao;
+    @Resource
+    private FlowInstanceGroupDao flowInstanceGroupDao;
 
     private final static Object lockObject = new Object();
 
@@ -2738,5 +2740,20 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowVariableDao.deleteObjectsByProperties(filterMap);
     }
 
+    public FlowInstanceGroup createFlowInstGroup(String name, String desc) {
+        String flowInstGroupId = UuidOpt.getUuidAsString32();
+        FlowInstanceGroup flowInstGroup = new FlowInstanceGroup();
+        flowInstGroup.setFlowGroupId(flowInstGroupId);
+        flowInstGroup.setFlowGroupName(name);
+        flowInstGroup.setFlowGroupDesc(desc);
+        flowInstanceGroupDao.saveNewObject(flowInstGroup);
+        return flowInstGroup;
+    }
+
+    public FlowInstance createInstanceInGroup(String flowGroupId, String flowCode, String flowOptName,
+                                       String flowOptTag, String userCode, String unitCode) {
+        return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
+            unitCode, "", "", flowGroupId, null, false, null);
+    }
 
 }

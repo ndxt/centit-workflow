@@ -433,5 +433,15 @@ public class FlowEngineController extends BaseController {
         flowEng.rollbackOpt(nodeInstId, managerUserCode);
     }
 
+    @ApiOperation(value = "创建流程实例分组", notes = "创建流程实例分组")
+    @WrapUpResponseBody
+    @PostMapping(value = "/createFlowInstGroupDefault")
+    public FlowInstanceGroup createFlowInstGroupDefault(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        String flowGroupName = jsonObject.getString("flowGroupName");
+        String flowGroupDesc = jsonObject.getString("flowGroupDesc");
+        FlowInstanceGroup flowInstanceGroup = flowEng.createFlowInstGroup(flowGroupName, flowGroupDesc);
+        return flowInstanceGroup;
+    }
 
 }

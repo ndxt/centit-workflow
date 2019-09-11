@@ -261,7 +261,7 @@ public interface FlowManager {
     /**
      * 获取节点实例的任务列表，这个返回在actionTask中手动分配的工作人员
      *
-     * @param nodeinstid
+     * @param nodeInstId
      * @return List<ActionTask>
      */
     List<ActionTask> listNodeActionTasks(String nodeInstId);
@@ -299,7 +299,7 @@ public interface FlowManager {
     /**
      * 获取节点实例的操作日志列表
      *
-     * @param nodeinstid
+     * @param nodeInstId
      * @return List<WfActionLog>
      */
     List<ActionLog> listNodeActionLogs(String nodeInstId);
@@ -469,4 +469,20 @@ public interface FlowManager {
     public void saveRoleRelegateList(RoleRelegate roleRelegate);
 
     public RoleRelegate getRoleRelegateByPara(String json);
+
+    /**
+     * 获取所有流程分组
+     * @param filterMap
+     * @param pageDesc
+     * @return
+     */
+    JSONArray listFlowInstGroup(Map<String, Object> filterMap, PageDesc pageDesc);
+
+    /**
+     * 根据ID获得流程分组
+     *
+     * @param flowInstGroupId
+     * @return
+     */
+    FlowInstanceGroup getFlowInstanceGroup(String flowInstGroupId);
 }

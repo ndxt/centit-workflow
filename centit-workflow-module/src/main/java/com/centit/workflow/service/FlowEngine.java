@@ -849,4 +849,25 @@ public interface FlowEngine {
      */
     NodeInstance createNodeInst(String flowInstId, String createUser,
                                        long nodeId,List<String> userCodes, String unitCode);
+
+    /**
+     * 创建 流程分组
+     * @param name 分组名称
+     * @param desc 分组描述
+     * @return 流程分组
+     */
+    FlowInstanceGroup createFlowInstGroup(String name, String desc);
+
+    /**
+     * 创建 流程组中的 流程实例  返回流程实例
+     * @param flowGroupId 流程组ID
+     * @param flowCode 流程编码
+     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
+     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
+     * @param userCode 创建用户
+     * @param unitCode 将流程指定一个所属机构
+     * @return 流程实例
+     */
+    FlowInstance createInstanceInGroup(String flowGroupId, String flowCode, String flowOptName,
+                                String flowOptTag, String userCode, String unitCode);
 }

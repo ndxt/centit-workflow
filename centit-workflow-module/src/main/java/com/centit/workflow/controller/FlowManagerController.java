@@ -756,4 +756,32 @@ public class FlowManagerController extends BaseController {
             JsonResultUtils.writeErrorMessageJson(1, "流程已经被审批，无法撤回", response);
     }
 
+    /**
+     * 查询所有流程分组
+     *
+     * @return
+     */
+    @RequestMapping(value = "/group", method = RequestMethod.GET)
+    public void listFlowInstGroup(PageDesc pageDesc,
+                     HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> searchColumn = convertSearchColumn(request);
+        JSONArray listObjects = flowManager.listFlowInstGroup(searchColumn, pageDesc);
+        List<FlowInstanceGroup> flowInstanceGroupList = listObjects.toJavaList(FlowInstanceGroup.class);
+        resData.addResponseData(OBJLIST, flowInstanceGroupList);
+        resData.addResponseData(PAGE_DESC, pageDesc);
+        JsonResultUtils.writeResponseDataAsJson(resData, response);
+    }
+
+    /**
+     * 根据id获取流程分组对象
+     *
+     * @param flowInstGroupId
+     * @param response
+     */
+    @RequestMapping(value = "/group/{flowInstGroupId}", method = RequestMethod.GET)
+    public void getFlowInstanceGroup(@PathVariable String flowInstGroupId, HttpServletResponse response) {
+        FlowInstanceGroup flowInstGroup = flowManager.getFlowInstanceGroup(flowInstGroupId);
+        JsonResultUtils.writeSingleDataJson(flowInstGroup, response);
+    }
+
 }
