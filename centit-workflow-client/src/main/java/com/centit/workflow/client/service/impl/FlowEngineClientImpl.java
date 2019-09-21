@@ -4,12 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.RestfulHttpRequest;
+import com.centit.framework.common.ObjectException;
+import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.UserTask;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -65,6 +68,12 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     private FlowInstance jsonToFlowInstance(String json) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         String flowStr = jsonObject.getString("data");
+        if(StringUtils.isBlank(flowStr)){
+            throw new ObjectException(
+                NumberBaseOpt.castObjectToInteger(jsonObject.get("code")),
+                jsonObject.getString("message")
+            );
+        }
         return JSONObject.parseObject(flowStr, FlowInstance.class);
     }
 
@@ -76,6 +85,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         jsonObject.put("flowOptTag", flowOptTag);
         jsonObject.put("userCode", userCode);
         jsonObject.put("unitCode", unitCode);
+
         String flowJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createMetaFormFlowAndSubmit", jsonObject);
         return jsonToFlowInstance(flowJson);
@@ -93,7 +103,6 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         String flowJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createFlowInstDefault", jsonObject);
         return jsonToFlowInstance(flowJson);
-
     }
 
 
