@@ -3,6 +3,7 @@ package com.centit.workflow.client.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
+import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.framework.common.ObjectException;
 import com.centit.support.algorithm.NumberBaseOpt;
@@ -66,15 +67,12 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     private FlowInstance jsonToFlowInstance(String json) {
-        JSONObject jsonObject = JSONObject.parseObject(json);
-        String flowStr = jsonObject.getString("data");
-        if(StringUtils.isBlank(flowStr)){
-            throw new ObjectException(
-                NumberBaseOpt.castObjectToInteger(jsonObject.get("code")),
-                jsonObject.getString("message")
-            );
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        if(receiveJSON.getCode() != 0){
+            throw new ObjectException(receiveJSON.getCode(),
+                receiveJSON.getMessage());
         }
-        return JSONObject.parseObject(flowStr, FlowInstance.class);
+        return receiveJSON.getDataAsObject(FlowInstance.class);
     }
 
     @Override
