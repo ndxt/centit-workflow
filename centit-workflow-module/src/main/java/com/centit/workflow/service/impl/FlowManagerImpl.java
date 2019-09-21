@@ -61,6 +61,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     RoleRelegateDao flowRoleRelegateDao;
     @Resource
     FlowEngine flowEngine;
+    @Resource
+    FlowInstanceGroupDao flowInstanceGroupDao;
 
     /**
      * 查看工作流程实例状态或进度
@@ -1671,6 +1673,16 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             roleRelegates.add(jsonObject);
         }
         return roleRelegates;
+    }
+
+    @Override
+    public JSONArray listFlowInstGroup(Map<String, Object> filterMap, PageDesc pageDesc) {
+        return flowInstanceGroupDao.listObjectsAsJson(filterMap, pageDesc);
+    }
+
+    @Override
+    public FlowInstanceGroup getFlowInstanceGroup(String flowInstGroupId) {
+        return flowInstanceGroupDao.getObjectById(flowInstGroupId);
     }
 
 }
