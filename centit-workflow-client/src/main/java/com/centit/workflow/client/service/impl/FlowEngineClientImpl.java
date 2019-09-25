@@ -67,6 +67,9 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     private FlowInstance jsonToFlowInstance(String json) {
+        if(StringUtils.isBlank(json)){
+            return null;
+        }
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
         if(receiveJSON.getCode() != 0){
             throw new ObjectException(receiveJSON.getCode(),
