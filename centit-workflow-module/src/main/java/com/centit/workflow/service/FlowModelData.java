@@ -44,21 +44,24 @@ public interface FlowModelData {
      */
     //List<String> getRightUsers(String unitCode,String roleCode,int instID);
     /**
+     * TODO 这个方法应该迁移到 FlowDefine中
      * 列举所有的子流程
      */
     Map<String, String> listAllSubFlow();
 
     /**
+     * TODO 这个方法应该迁移到 FlowDefine中
      * 获取流程阶段信息
      * @param flowCode 流程代码和名称对应表
-     * @return
+     * @return 流程阶段
      */
     Map<String, String> listFlowStages(String flowCode);
 
     /**
+     * TODO 这个方法应该迁移到 FlowDefine中
      * 根据流程代码获取流程变量信息
      * @param flowCode
-     * @return
+     * @return 流程变量信息
      */
     Map<String, String> listFlowVariableDefines(String flowCode);
 

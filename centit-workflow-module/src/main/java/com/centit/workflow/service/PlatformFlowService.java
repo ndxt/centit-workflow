@@ -41,5 +41,5 @@ public interface PlatformFlowService {
      * @param pageDesc
      * @return
      */
-    public List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc);
+    List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc);
 }

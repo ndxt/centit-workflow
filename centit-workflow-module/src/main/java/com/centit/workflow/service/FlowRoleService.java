@@ -10,13 +10,13 @@ import java.util.Map;
 
 public interface FlowRoleService {
 
-    public List<FlowRole> listFlowRoles(Map<String, Object> filterMap, PageDesc pageDesc);
+    List<FlowRole> listFlowRoles(Map<String, Object> filterMap, PageDesc pageDesc);
 
-    public FlowRole getFlowRoleByCode(String roleCode);
+    FlowRole getFlowRoleByCode(String roleCode);
 
-    public void saveFlowRole(FlowRole flowRole);
+    void saveFlowRole(FlowRole flowRole);
 
-    public void deleteFlowRoleByCode(String roleCode);
+    void deleteFlowRoleByCode(String roleCode);
 
     List<FlowRoleDefine> getFlowRoleDefineListByCode(String roleCode);
 

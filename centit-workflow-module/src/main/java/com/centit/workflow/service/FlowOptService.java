@@ -14,7 +14,7 @@ import java.util.Map;
 public interface FlowOptService {
     JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc);
 
-     FlowOptInfo getOptById(String optId);
+    FlowOptInfo getOptById(String optId);
 
     void deleteOptInfoById(String optId);
 
@@ -38,5 +38,6 @@ public interface FlowOptService {
 
     List<FlowOptInfo> getListOptInfo();
 
-    FlowOptInfo getOptByModelId(String modelId) ;
-    }
+    FlowOptInfo getOptByModelId(String modelId);
+
+}
