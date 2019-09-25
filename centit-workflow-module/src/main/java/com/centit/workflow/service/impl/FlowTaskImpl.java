@@ -3,9 +3,9 @@
  */
 package com.centit.workflow.service.impl;
 
-import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.support.workday.service.WorkDayManager;
 import com.centit.workflow.dao.*;
@@ -32,6 +32,9 @@ public class FlowTaskImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowTaskImpl.class);
 
+    /*@Resource
+    private FlowEngine flowEngine;
+*/
     @Resource
     ActionTaskDao actionTaskDao;
 
@@ -76,6 +79,7 @@ public class FlowTaskImpl {
 
     /**
      * 根据数据库计算出来的预报警发出对应的通知即可
+     * TODO 添加自动提交节点
      */
     @Scheduled(cron = "0 0/5 8-18 * * *")
     @Transactional
@@ -88,6 +92,7 @@ public class FlowTaskImpl {
             for (FlowWarning warn : warningList) {
                 if ("N".equals(warn.getObjType())) {
                     nn += sendNotifyMessage(warn.getNodeInstId());
+                    //
                 } else if ("F".equals(warn.getObjType())) {
                     List<NodeInstance> nodelist = nodeInstanceDao.listActiveTimerNodeByFlow(warn.getFlowInstId());
                     for (NodeInstance node : nodelist) {
@@ -144,12 +149,17 @@ public class FlowTaskImpl {
             for (NodeInstance nodeInst : nodeList) {
                 NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeId());
                 if (nodeInfo != null) {
+                    //* N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
                     //如果超期结束流程
-                    if ("E".equals(nodeInfo.getExpireOpt())) {
-                        if (nodeInst.getTimeLimit() <= 0) {
+                    if (nodeInst.getTimeLimit() <= 0){
+                        if ("E".equals(nodeInfo.getExpireOpt())) {
                             stopFlow = true;
                             break;
-                        }
+                        } /*else if ("C".equals(nodeInfo.getExpireOpt())) {
+                            flowEngine.f
+                        } else if ("X".equals(nodeInfo.getExpireOpt())) {
+
+                        }*/
                     }
                 }
                 if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer())) &&

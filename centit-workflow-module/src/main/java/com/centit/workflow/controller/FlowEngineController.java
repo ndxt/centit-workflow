@@ -6,12 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.ResponseMapData;
-import com.centit.framework.components.CodeRepositoryUtil;
-import com.centit.framework.components.UserUnitParamBuilder;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
-import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.NewFlowInstanceOptions;
@@ -19,7 +16,6 @@ import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.*;
 import com.centit.workflow.service.impl.FlowOptUtils;
-import com.centit.workflow.service.impl.UserUnitCalcEngine;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -36,7 +32,7 @@ import java.util.*;
 @RequestMapping("/flow/engine")
 public class FlowEngineController extends BaseController {
     @Resource
-    private FlowEngine flowEng;
+    private FlowEngine flowEngine;
     @Resource
     private FlowManager flowManager;
     @Resource
@@ -70,7 +66,7 @@ public class FlowEngineController extends BaseController {
         if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
             maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
         }
-        Set<NodeInfo> nodeInfoSet = flowEng.viewNextNode(nodeInstId, userCode, unitCode, getBusinessVariable(maps));
+        Set<NodeInfo> nodeInfoSet = flowEngine.viewNextNode(nodeInstId, userCode, unitCode, getBusinessVariable(maps));
         for (NodeInfo nodeInfo : nodeInfoSet) {
             List<FlowRoleDefine> roleDefines = flowRoleService.getFlowRoleDefineListByCode(nodeInfo.getRoleCode());
             for (FlowRoleDefine roleDefine : roleDefines) {
@@ -135,13 +131,13 @@ public class FlowEngineController extends BaseController {
     public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletResponse response) {
         List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
         //创建流程
-        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions);
         //找到创建人得审批角色级别
 
         //把这个审批角色级别固化到变量createrLevel
-        //flowEng.saveFlowVariable(flowInstance.getFlowInstId(),"createrLevel","");
+        //flowEngine.saveFlowVariable(flowInstance.getFlowInstId(),"createrLevel","");
         //提交节点
-        Set<String> nextNodes = flowEng.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
+        Set<String> nextNodes = flowEngine.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
         //更新操作人
         for (String n : nextNodes) {
@@ -164,9 +160,9 @@ public class FlowEngineController extends BaseController {
         FlowInfo flowInfo = flowInfos.get(0);
         //创建流程
         newFlowInstanceOptions.setFlowCode(flowInfo.getFlowCode());
-        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions);
         //提交节点
-        flowEng.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
+        flowEngine.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
         JsonResultUtils.writeSingleDataJson(flowInstance, response);
     }
@@ -174,7 +170,7 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @PostMapping(value = "/createInstanceLockFirstNode")
     public FlowInstance createInstanceLockFirstNode(@RequestBody FlowInstance flowInstanceParam) {
-        return flowEng.createInstanceLockFirstNode(flowInstanceParam.getFlowCode(), flowInstanceParam.getFlowOptName(), flowInstanceParam.getFlowOptTag(), flowInstanceParam.getUserCode(), flowInstanceParam.getUnitCode());
+        return flowEngine.createInstanceLockFirstNode(flowInstanceParam.getFlowCode(), flowInstanceParam.getFlowOptName(), flowInstanceParam.getFlowOptTag(), flowInstanceParam.getUserCode(), flowInstanceParam.getUnitCode());
     }
 
     //加载通用po到流程流转中
@@ -188,7 +184,7 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @PostMapping(value = "/createFlowInstDefault")
     public FlowInstance createFlowInstDefault(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions) {
-        FlowInstance flowInstance = flowEng.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions);
         return flowInstance;
     }
 
@@ -210,14 +206,14 @@ public class FlowEngineController extends BaseController {
             Set<String> nextNodes;
             if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
                 Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
-                nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);
+                nextNodes = flowEngine.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);
             } else {
-                nextNodes = flowEng.submitOpt(nodeInstId, userCode, unitCode, null, null);
+                nextNodes = flowEngine.submitOpt(nodeInstId, userCode, unitCode, null, null);
             }
             //更新操作人
             if (users != null && users.size() > 0) {
                 for (String n : nextNodes) {
-                    flowManager.deleteNodeActionTasks(n, flowEng.getNodeInstById(nodeInstId).getFlowInstId(), userCode);
+                    flowManager.deleteNodeActionTasks(n, flowEngine.getNodeInstById(nodeInstId).getFlowInstId(), userCode);
                     for (Object v : users) {
                         flowManager.assignTask(n, v.toString(), userCode, null, "手动指定审批人");
                     }
@@ -235,14 +231,14 @@ public class FlowEngineController extends BaseController {
     public void saveFlowVariable(@RequestBody FlowVariable flowVariableParam) {
         List<String> vars = JSON.parseArray(flowVariableParam.getVarValue(), String.class);
         if (!vars.isEmpty())
-            flowEng.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), new HashSet<>(vars));
+            flowEngine.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), new HashSet<>(vars));
     }
 
     @ApiOperation(value = "删除流程变量", notes = "删除流程变量")
     @WrapUpResponseBody
     @PostMapping(value = "/deleteFlowVariable")
     public void deleteFlowVariable(@RequestBody FlowVariable flowVariableParam) {
-        flowEng.deleteFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getRunToken(), flowVariableParam.getVarName());
+        flowEngine.deleteFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getRunToken(), flowVariableParam.getVarName());
     }
 
     @ApiOperation(value = "保存流程节点变量", notes = "保存流程节点变量")
@@ -254,14 +250,14 @@ public class FlowEngineController extends BaseController {
         String varName = jsonObject.getString("varName");
         String varValue = jsonObject.getString("varValue");
         List<String> vars = JSON.parseArray(varValue, String.class);
-        flowEng.saveFlowNodeVariable(nodeInstId, varName, new HashSet<>(vars));
+        flowEngine.saveFlowNodeVariable(nodeInstId, varName, new HashSet<>(vars));
     }
 
     @ApiOperation(value = "查看流程变量", notes = "查看流程变量")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowVariablesByVarname")
     public List<FlowVariable> viewFlowVariablesByVarname(FlowVariable flowVariableParam) {
-        List<FlowVariable> flowVariables = flowEng.viewFlowVariablesByVarname(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName());
+        List<FlowVariable> flowVariables = flowEngine.viewFlowVariablesByVarname(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName());
         return flowVariables;
     }
 
@@ -277,21 +273,21 @@ public class FlowEngineController extends BaseController {
             return;
         }
         List<String> userCodes = JSON.parseArray(userCodeList, String.class);
-        flowEng.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), userCodes);
+        flowEngine.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), userCodes);
     }
 
     @ApiOperation(value = "新增单个办件角色", notes = "新增单个办件角色")
     @WrapUpResponseBody
     @PostMapping(value = "/addFlowWorkTeam")
     public void addFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
-        flowEng.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), flowWorkTeam.getUserCode());
+        flowEngine.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), flowWorkTeam.getUserCode());
     }
 
     @ApiOperation(value = "删除办件角色", notes = "删除办件角色")
     @WrapUpResponseBody
     @PostMapping(value = "deleteFlowWorkTeam")
     public void deleteFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
-        flowEng.deleteFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
+        flowEngine.deleteFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
     }
 
 
@@ -310,7 +306,7 @@ public class FlowEngineController extends BaseController {
     public List<UserTask> listUserTasks(String userCode) {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("userCode", userCode);
-        List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
+        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
         return userTasks;
     }
 
@@ -319,7 +315,7 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/listTasks")
     public List<UserTask> listTasks(HttpServletRequest request) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
-        List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
+        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
         return userTasks;
     }
 
@@ -329,7 +325,7 @@ public class FlowEngineController extends BaseController {
     public List<UserTask> listNodeTaskUsers(String nodeInstId) {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("nodeInstId", nodeInstId);
-        List<UserTask> userTasks = flowEng.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
+        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
         return userTasks;
     }
 
@@ -348,7 +344,7 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @GetMapping(value = "/listAllFlowInstByOptTag")
     public List<FlowInstance> listAllFlowInstByOptTag(@RequestParam(value = "flowOptTag") String flowOptTag) {
-        return flowEng.listAllFlowInstByOptTag(flowOptTag);
+        return flowEngine.listAllFlowInstByOptTag(flowOptTag);
     }
 
     @ApiOperation(value = "更改流程业务信息", notes = "更改流程业务信息程")
@@ -362,21 +358,21 @@ public class FlowEngineController extends BaseController {
         String flowOptName = jsonObject.getString("flowOptName");
         //流程业务id
         String flowOptTag = jsonObject.getString("flowOptTag");
-        flowEng.updateFlowInstOptInfo(flowInstId, flowOptName, flowOptTag);
+        flowEngine.updateFlowInstOptInfo(flowInstId, flowOptName, flowOptTag);
     }
 
     @ApiOperation(value = "查看办件角色", notes = "查看办件角色")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowWorkTeam")
     public List<String> viewFlowWorkTeam(FlowWorkTeam flowWorkTeam) {
-        return flowEng.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
+        return flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
     }
 
     @ApiOperation(value = "查看流程组织机构", notes = "查看流程组织机构")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowOrganize")
     public List<String> viewFlowOrganize(FlowOrganize flowOrganize) {
-        return flowEng.viewFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
+        return flowEngine.viewFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
 
     /**
@@ -391,21 +387,21 @@ public class FlowEngineController extends BaseController {
         String roleCode = jsonObject.getString("roleCode");
         String orgCodeSet = jsonObject.getString("orgCodeSet");
         List<String> orgCodes = JSON.parseArray(orgCodeSet, String.class);
-        flowEng.assignFlowOrganize(flowInstId, roleCode, orgCodes);
+        flowEngine.assignFlowOrganize(flowInstId, roleCode, orgCodes);
     }
 
     @ApiOperation(value = "新增单个流程机构", notes = "新增流程组织机构")
     @WrapUpResponseBody
     @PostMapping(value = "/addFlowOrganize")
     public void addFlowOrganize(@RequestBody FlowOrganizeId flowOrganize) {
-        flowEng.assignFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode(), flowOrganize.getUnitCode());
+        flowEngine.assignFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode(), flowOrganize.getUnitCode());
     }
 
     @ApiOperation(value = "删除流程机构", notes = "删除流程机构")
     @WrapUpResponseBody
     @PostMapping(value = "deleteFlowOrganize")
     public void deleteFlowOrganize(@RequestBody FlowOrganizeId flowOrganize) {
-        flowEng.deleteFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
+        flowEngine.deleteFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
 
 
@@ -420,7 +416,7 @@ public class FlowEngineController extends BaseController {
         long nodeId = jsonObject.getLong("nodeId");
         String unitCode = jsonObject.getString("unitCode");
         List<String> userList = JSON.parseArray(userCodes, String.class);
-        flowEng.createNodeInst(flowInstId, createUser, nodeId, userList, unitCode);
+        flowEngine.createNodeInst(flowInstId, createUser, nodeId, userList, unitCode);
     }
 
     @ApiOperation(value = "回退节点", notes = "回退节点")
@@ -430,7 +426,7 @@ public class FlowEngineController extends BaseController {
         JSONObject jsonObject = JSON.parseObject(json);
         String nodeInstId = jsonObject.getString("nodeInstId");
         String managerUserCode = jsonObject.getString("managerUserCode");
-        flowEng.rollbackOpt(nodeInstId, managerUserCode);
+        flowEngine.rollbackOpt(nodeInstId, managerUserCode);
     }
 
     @ApiOperation(value = "创建流程实例分组", notes = "创建流程实例分组")
@@ -440,7 +436,7 @@ public class FlowEngineController extends BaseController {
         JSONObject jsonObject = JSON.parseObject(json);
         String flowGroupName = jsonObject.getString("flowGroupName");
         String flowGroupDesc = jsonObject.getString("flowGroupDesc");
-        FlowInstanceGroup flowInstanceGroup = flowEng.createFlowInstGroup(flowGroupName, flowGroupDesc);
+        FlowInstanceGroup flowInstanceGroup = flowEngine.createFlowInstGroup(flowGroupName, flowGroupDesc);
         return flowInstanceGroup;
     }
 
