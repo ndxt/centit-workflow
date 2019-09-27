@@ -1,13 +1,16 @@
 package com.centit.workflow.commons;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by codefan on 17-9-11.
  * @author codefan
  */
+@Data
 public class NewFlowInstanceOptions {
     /**
      * 流程代码
@@ -46,12 +49,12 @@ public class NewFlowInstanceOptions {
     /**
      * 作为子流程创建式，对应的父流程节点
      */
-    @ApiModelProperty("不填")
+    @ApiModelProperty("返回值，不填")
     private String nodeInstId;
     /**
      * 作为子流程创建式，对应的父流程
      */
-    @ApiModelProperty("不填")
+    @ApiModelProperty("返回值，不填")
     private String flowInstId;
     /**
      * 业务变量数据
@@ -76,115 +79,51 @@ public class NewFlowInstanceOptions {
     public NewFlowInstanceOptions() {
     }
 
-    public NewFlowInstanceOptions(String flowCode, String flowOptName,
-                                  String flowOptTag, String userCode) {
+    public NewFlowInstanceOptions flow(String flowCode){
         this.flowCode = flowCode;
-        this.flowOptName = flowOptName;
-        this.flowOptTag = flowOptTag;
-        this.userCode = userCode;
+        return this;
     }
 
-    public String getFlowCode() {
-        return flowCode;
-    }
-
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
-    }
-
-    public String getFlowOptName() {
-        return flowOptName;
-    }
-
-    public void setFlowOptName(String flowOptName) {
-        this.flowOptName = flowOptName;
-    }
-
-    public String getFlowOptTag() {
-        return flowOptTag;
-    }
-
-    public void setFlowOptTag(String flowOptTag) {
-        this.flowOptTag = flowOptTag;
-    }
-
-    public String getUserCode() {
-        return userCode;
-    }
-
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
-    }
-
-    public String getUnitCode() {
-        return unitCode;
-    }
-
-    public void setUnitCode(String unitCode) {
-        this.unitCode = unitCode;
-    }
-
-    public String getNodeInstId() {
-        return nodeInstId;
-    }
-
-    public void setNodeInstId(String nodeInstId) {
-        this.nodeInstId = nodeInstId;
-    }
-
-    public String getFlowInstId() {
-        return flowInstId;
-    }
-
-    public void setFlowInstid(String flowInstId) {
-        this.flowInstId = flowInstId;
-    }
-
-    public Map<String, Object> getVariables() {
-        return variables;
-    }
-
-    public void setVariables(Map<String, Object> variables) {
-        this.variables = variables;
-    }
-
-    public boolean isLockFirstOpt() {
-        return lockFirstOpt;
-    }
-
-    public void setLockFirstOpt(boolean lockFirstOpt) {
-        this.lockFirstOpt = lockFirstOpt;
-    }
-
-    public String getTimeLimitStr() {
-        return timeLimitStr;
-    }
-
-    public void setTimeLimitStr(String timeLimitStr) {
-        this.timeLimitStr = timeLimitStr;
-    }
-
-    public String getUserList() {
-        return userList;
-    }
-
-    public void setUserList(String userList) {
-        this.userList = userList;
-    }
-
-    public String getModelId() {
-        return modelId;
-    }
-
-    public void setModelId(String modelId) {
+    public NewFlowInstanceOptions model(String modelId){
         this.modelId = modelId;
+        return this;
+    }
+
+    public NewFlowInstanceOptions assignVersion(int version){
+        this.version = version;
+        return this;
+    }
+
+    public NewFlowInstanceOptions optName(String flowOptName){
+        this.flowOptName = flowOptName;
+        return this;
+    }
+
+    public NewFlowInstanceOptions optTag(String flowOptTag){
+        this.flowOptTag = flowOptTag;
+        return this;
+    }
+
+    public NewFlowInstanceOptions user(String userCode){
+        this.userCode = userCode;
+        return this;
+    }
+
+    public NewFlowInstanceOptions unit(String unitCode){
+        this.unitCode = unitCode;
+        return this;
+    }
+
+    public NewFlowInstanceOptions addVariable(String name, String value){
+        if(this.variables == null){
+            this.variables = new HashMap<>();
+        }
+        this.variables.put(name, value);
+        return this;
+    }
+
+    public NewFlowInstanceOptions lockFirst(boolean lockFirstOpt){
+        this.lockFirstOpt = lockFirstOpt;
+        return this;
     }
 }
