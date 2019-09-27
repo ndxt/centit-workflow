@@ -9,7 +9,7 @@ import com.centit.support.algorithm.*;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
-import com.centit.workflow.commons.NewFlowInstanceOptions;
+import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.*;
@@ -76,145 +76,53 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //lockObject = new Object();
     }
 
-    /**
-     * 创建一个新的流程
-     * 同时创建第一个节点，并在活动日志中记录创建活动
-     * 判断创建权限可以在应用系统中做，如果在流程引擎中做就用开始节点的权限代替
-     */
-
-    @Override
-    public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) {
-        return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, "", "", "", null, false, null);
-    }
-
-    @Override
-    public FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions,UserUnitVariableTranslate varTrans) {
-        FlowInstance flowInstance = createInstInside(newFlowInstanceOptions.getFlowCode(),
-            flowDefDao.getLastVersion(newFlowInstanceOptions.getFlowCode()),
-            newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
-            newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
-            newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstId(),
-            "", varTrans , newFlowInstanceOptions.isLockFirstOpt(), newFlowInstanceOptions.getTimeLimitStr());
-//        Set<Long> nodes = new HashSet<>();
-//        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
-//            nodes.add(n.getNodeInstId());
-//        }
-//        FlowOptUtils.sendMsg(0, nodes, newFlowInstanceOptions.getUserCode());
-        return flowInstance;
-    }
-
-    @Override
-    public FlowInstance createInstance(String flowCode, long version, String flowOptName, String flowOptTag,
-                                       String userCode, String unitCode) {
-        return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, "", "", "", null, false, null);
-    }
-
-    @Override
-    public FlowInstance createInstanceWithSpecifiedVersion(NewFlowInstanceOptions newFlowInstanceOptions, UserUnitVariableTranslate varTrans) {
-        return createInstInside(newFlowInstanceOptions.getFlowCode(), newFlowInstanceOptions.getVersion(),
-            newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
-            newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
-            newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstId(),
-            "", varTrans, newFlowInstanceOptions.isLockFirstOpt(), null);
-    }
-
-    @Override
-    public FlowInstance createInstanceLockFirstNode(String flowCode, String flowOptName,
-                                                    String flowOptTag, String userCode, String unitCode) {
-
-        FlowInstance flowInstance = createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, "", "", "", null, true, null);
-//        Set<Long> nodes = new HashSet<>();
-//        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
-//            nodes.add(n.getNodeInstId());
-//        }
-//        FlowOptUtils.sendMsg(0, nodes, userCode);
-        return flowInstance;
-    }
-
-
-    @Override
-    public FlowInstance createInstanceLockFirstNode(String flowCode, long version,
-                                                    String flowOptName, String flowOptTag, String userCode, String unitCode) {
-        return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, "", "", "", null, true, null);
-    }
-
-
-    /**
-     * 创建流程实例  返回流程实例
-     *
-     * @param flowCode    流程编码
-     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
-     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
-     * @param userCode    创建用户
-     * @param unitCode    将流程指定一个所属机构
-     * @param varTrans    变量转换接口，用于表达式计算，可以为null
-     * @param application 容器句柄，用于自动执行节点，一般首节点不会为自动执行节点，可以为null
-     * @return
-     */
-    @Override
-    public FlowInstance createInstance(String flowCode, String flowOptName,
-                                       String flowOptTag, String userCode, String unitCode,
-                                       UserUnitVariableTranslate varTrans, ServletContext application) {
-
-        return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, "", "", "", varTrans, false, null);
-
-    }
-
-    @Override
-    public FlowInstance createInstance(String flowCode, long version, String flowOptName,
-                                       String flowOptTag, String userCode, String unitCode,
-                                       UserUnitVariableTranslate varTrans, ServletContext application) {
-
-        return createInstInside(flowCode, version, flowOptName, flowOptTag, userCode,
-            unitCode, "", "", "", varTrans, false, null);
-    }
 
 
     /**
      * 创建流程实例或子流程实例
      *
-     * @param flowCode   流程编码
-     * @param nodeInstId 节点实例编号 ,节点编号不为0表示为子流程
-     * @param userCode   用户编码
-     * @param unitCode   机构编码
-     * @return
+     * @param options NewFlowInstanceOptions   流程编码
+     * param nodeInstId 节点实例编号 ,节点编号不为0表示为子流程
+     * param userCode   用户编码
+     * param unitCode   机构编码
+     * @param varTrans UserUnitVariableTranslate 机构执行环境
+     * @param application spring上下文环境。作为独立服务后这个应该不需要了
+     * @return FlowInstance
      */
-    private FlowInstance createInstInside(String flowCode, long version, String flowOptName, String flowOptTag, String userCode,
-                                          String unitCode, String nodeInstId, String flowInstid,
-                                          String flowGroupId, UserUnitVariableTranslate varTrans,
-                                          boolean lockFirstOpt, String timeLimitStr) {
+    public FlowInstance createInstance(CreateFlowOptions options,
+                                       UserUnitVariableTranslate varTrans, ServletContext application) {
 
         Date createTime = new Date(System.currentTimeMillis());
-
+        if(options.getFlowVersion()<1) {
+            options.setFlowVersion(flowDefDao.getLastVersion(options.getFlowCode()));
+        }
         //获取流程信息
-        FlowInfo wf = flowDefDao.getFlowDefineByID(flowCode, version);
+        FlowInfo wf = flowDefDao.getFlowDefineByID(options.getFlowCode(), options.getFlowVersion());
 
         //获取流程实例编号
 //        String flowInstId = flowInstanceDao.getNextFlowInstId();//update by ljy
         String flowInstId = UuidOpt.getUuidAsString32();//update by ljy
-        FlowInstance flowInst = FlowOptUtils.createFlowInst(unitCode, userCode, wf, flowInstId, timeLimitStr);
+        FlowInstance flowInst = FlowOptUtils.createFlowInst(
+            options.getUnitCode(), options.getUserCode(), wf, flowInstId, options.getTimeLimitStr());
 //        flowInst.setFlowInstId(flowInstanceDao.getNextFlowInstId());
         flowInst.setCreateTime(createTime);
-        flowInst.setFlowGroupId(flowGroupId);
+        flowInst.setFlowGroupId(options.getFlowGroupId());
         //节点实例编号不为空，为子流程，创建子流程时要给父节点的状态设置为 W：等待子流程返回
-        if (nodeInstId != "") {
-            flowInst.setPreNodeInstId(nodeInstId);
-            flowInst.setPreInstId(flowInstid);
+        if (StringUtils.isNotBlank(options.getParentNodeInstId())) {
+            flowInst.setPreNodeInstId(options.getParentNodeInstId());
+            flowInst.setPreInstId(options.getParentFlowInstId());
             flowInst.setIsSubInst("Y");
         }
-        flowInst.setFlowOptName(flowOptName);
-        flowInst.setFlowOptTag(flowOptTag);
+        flowInst.setFlowOptName(options.getFlowOptName());
+        flowInst.setFlowOptTag(options.getFlowOptTag());
         //生成首节点实例编号
         NodeInfo node = wf.getFirstNode();
         if (node == null)
             return null;
 
-        NodeInstance nodeInst = FlowOptUtils.createNodeInst(unitCode, userCode, null, flowInst, null, wf, node, null);
+        NodeInstance nodeInst = FlowOptUtils.createNodeInst(
+            options.getUnitCode(),
+            options.getUserCode(), null, flowInst, null, wf, node, null);
         //添加令牌算法 首节点的令牌为初始值 系统默认值
         // nodeInst.setRunToken("T");
         //同步创建时间
@@ -223,7 +131,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInst.setCreateTime(createTime);
         flowInst.addWfNodeInstance(nodeInst);
         //创建节点操作日志 W:创建首节点
-        ActionLog wfactlog = FlowOptUtils.createActionLog("W", userCode, nodeInst, node);
+        ActionLog wfactlog = FlowOptUtils.createActionLog("W", options.getUserCode(), nodeInst, node);
         wfactlog.setActionId(actionLogDao.getNextActionId());
         wfactlog.setActionTime(createTime);
         nodeInst.addWfActionLog(wfactlog);
@@ -233,8 +141,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         Map<String, Set<String>> unitParams = UserUnitParamBuilder.createEmptyParamMap();
         UserUnitParamBuilder.addParamToParamMap(unitParams, "U",
-            unitCode == null ? CodeRepositoryUtil.getUserInfoByCode(userCode).getPrimaryUnit() : unitCode);
-        UserUnitParamBuilder.addParamToParamMap(unitParams, "P", unitCode);
+            options.getUnitCode() == null ? CodeRepositoryUtil.getUserInfoByCode(options.getUserCode()).getPrimaryUnit() : options.getUnitCode());
+        UserUnitParamBuilder.addParamToParamMap(unitParams, "P", options.getUnitCode());
         UserUnitParamBuilder.addParamToParamMap(unitParams, "F", flowInst.getUnitCode());
         //计算节点机构
         String nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterFactory.createCalcContext(),
@@ -242,8 +150,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             unitParams, flowVarTrans);
         nodeInst.setUnitCode(nextNodeUnit);
         //如果锁定首节点只能有本人操作，则要在任务表中添加一条记录
-        if (lockFirstOpt) {
-            nodeInst.setUserCode(userCode);
+        if (options.isLockFirstOpt()) {
+            nodeInst.setUserCode(options.getUserCode());
             nodeInst.setTaskAssigned("S");
         } else {
             Set<String> optUsers = new HashSet<>();
@@ -254,7 +162,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
                 Map<String, Set<String>> userParams = UserUnitParamBuilder.createEmptyParamMap();
                 UserUnitParamBuilder.addParamToParamMap(userParams, "C", flowInst.getUserCode());
-                UserUnitParamBuilder.addParamToParamMap(userParams, "O", userCode);
+                UserUnitParamBuilder.addParamToParamMap(userParams, "O", options.getUserCode());
                 optUsers = UserUnitCalcEngine.calcOperators(userUnitFilterFactory.createCalcContext(), node.getPowerExp(),
                     unitParams, userParams, null, flowVarTrans);
 
@@ -266,19 +174,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     optUsers.add(u.getUserCode());
                 }
                 if (optUsers.isEmpty()) {
-                    optUsers.add(userCode);
+                    optUsers.add(options.getUserCode());
                     //针对首节点设置得办件角色，但是没有手动保存得情况
                     FlowWorkTeam flowWorkTeam = new FlowWorkTeam();
                     flowWorkTeam.setFlowInstId(flowInstId);
                     flowWorkTeam.setRoleCode(node.getRoleCode());
-                    flowWorkTeam.setUserCode(userCode);
+                    flowWorkTeam.setUserCode(options.getUserCode());
                     flowWorkTeam.setAuthTime(new Date());
                     flowWorkTeam.setAuthDesc("首节点未保存办件角色，自动保存");
                     flowTeamDao.saveNewObject(flowWorkTeam);
                 }
                 //审批待测试
             } else if ("sp".equalsIgnoreCase(node.getRoleType())) {
-                optUsers=getSpUsers(node,unitCode);
+                optUsers=getSpUsers(node,options.getUnitCode());
             } else {
                 /*gw xz*/
                 optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(userUnitFilterFactory.createCalcContext(),
@@ -329,19 +237,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         //执行节点创建后bean事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(node);
-        nodeEventExecutor.runAfterCreate(flowInst, nodeInst, node, userCode);
+        nodeEventExecutor.runAfterCreate(flowInst, nodeInst, node, options.getUserCode());
         //如果首节点是哑元 或者自动执行，请运行自动提交
 
         //自动执行
         if ("D".equals(node.getOptType())) {
             boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
-                node, userCode);
+                node, options.getUserCode());
             if (needSubmit)
-                this.submitOpt(nodeInst.getNodeInstId(), userCode, unitCode, varTrans, null);
+                this.submitOpt(nodeInst.getNodeInstId(), options.getUserCode(), options.getUnitCode(), varTrans, application);
 
         } else if ("E".equals(node.getOptType())) {  //哑元节点 自动提交
             try {
-                this.submitOpt(nodeInst.getNodeInstId(), userCode, unitCode, varTrans, null);
+                this.submitOpt(nodeInst.getNodeInstId(), options.getUserCode(), options.getUnitCode(), varTrans, application);
             } catch (WorkflowException e) {
                 logger.error("自动提交哑元节点 " + nodeInst.getNodeInstId() + "后提交出错 。" + e.getMessage());
                 throw e;
@@ -977,11 +885,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     tempFlowTimeLimit = day + "d" + hour + "h" + minute + "m";
             }
             //子流程的机构 要和 节点的机构一致
-            FlowInstance tempFlow = createInstInside(nextOptNode.getSubFlowCode(),
-                flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()),
-                flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName(),
-                flowInst.getFlowOptTag(), userCode, unitCode, lastNodeInstId, nodeInst.getFlowInstId(),
-                "",  varTrans, false, tempFlowTimeLimit);
+            FlowInstance tempFlow = createInstance(
+                CreateFlowOptions.create().flow(
+                    nextOptNode.getSubFlowCode())
+                    .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
+                        .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
+                .optTag(flowInst.getFlowOptTag())
+                .user(userCode).unit(unitCode).parentFlow(nodeInst.getFlowInstId(), lastNodeInstId)
+                .timeLimit(tempFlowTimeLimit), varTrans, application);
+
             nextNodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
             //子流程的时间限制和父流程节点的一致
             /*f (nextNodeInst.getTimeLimit() != null) {
@@ -2737,13 +2649,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInstGroup.setFlowGroupDesc(desc);
         flowInstanceGroupDao.saveNewObject(flowInstGroup);
         return flowInstGroup;
-    }
-
-    @Override
-    public FlowInstance createInstanceInGroup(String flowGroupId, String flowCode, String flowOptName,
-                                       String flowOptTag, String userCode, String unitCode) {
-        return createInstInside(flowCode, flowDefDao.getLastVersion(flowCode), flowOptName, flowOptTag, userCode,
-            unitCode, "", "", flowGroupId, null, false, null);
     }
 
 }

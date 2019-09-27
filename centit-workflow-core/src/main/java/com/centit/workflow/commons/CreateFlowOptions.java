@@ -11,7 +11,7 @@ import java.util.Map;
  * @author codefan
  */
 @Data
-public class NewFlowInstanceOptions {
+public class CreateFlowOptions {
     /**
      * 流程代码
      */
@@ -25,7 +25,7 @@ public class NewFlowInstanceOptions {
      * 流程版本号 如果=0 表示用最新版本，
      */
     @ApiModelProperty("流程版本,可为空")
-    private long version;
+    private long flowVersion;
     /**
      * 流程实例对应的业务名称，用于流程查看式显示
      */
@@ -49,17 +49,20 @@ public class NewFlowInstanceOptions {
     /**
      * 作为子流程创建式，对应的父流程节点
      */
-    @ApiModelProperty("返回值，不填")
-    private String nodeInstId;
+    @ApiModelProperty("父节点ID，作为子流程时有效")
+    private String parentNodeInstId;
     /**
      * 作为子流程创建式，对应的父流程
      */
-    @ApiModelProperty("返回值，不填")
-    private String flowInstId;
+    @ApiModelProperty("父流程ID，作为子流程时有效")
+    private String parentFlowInstId;
+
+    @ApiModelProperty("流程组ID")
+    private String flowGroupId;
     /**
      * 业务变量数据
      */
-    @ApiModelProperty(value = "不填")
+    @ApiModelProperty("流程变量")
     private Map<String,Object> variables ;
     /**
      * 流程首节点是否只能有创建人操作（一般 报销、请假的首节点都是只能由发起人修改）
@@ -74,47 +77,63 @@ public class NewFlowInstanceOptions {
     private String timeLimitStr;
 
     @ApiModelProperty("传递的用户code列表，用于下一步人员指定")
-    private String userList;
+    private String workUserCode;
 
-    public NewFlowInstanceOptions() {
+    private CreateFlowOptions() {
+        this.flowVersion = -1;
+        this.lockFirstOpt = false;
     }
 
-    public NewFlowInstanceOptions flow(String flowCode){
+    public static CreateFlowOptions create(){
+        return new CreateFlowOptions();
+    }
+    public CreateFlowOptions flow(String flowCode){
         this.flowCode = flowCode;
         return this;
     }
 
-    public NewFlowInstanceOptions model(String modelId){
+    public CreateFlowOptions parentFlow(String flowInstId, String nodeInstId){
+        this.parentFlowInstId = flowInstId;
+        this.parentNodeInstId = nodeInstId;
+        return this;
+    }
+
+    public CreateFlowOptions group(String flowGroupId){
+        this.flowGroupId = flowGroupId;
+        return this;
+    }
+
+    public CreateFlowOptions model(String modelId){
         this.modelId = modelId;
         return this;
     }
 
-    public NewFlowInstanceOptions assignVersion(int version){
-        this.version = version;
+    public CreateFlowOptions version(long version){
+        this.flowVersion = version;
         return this;
     }
 
-    public NewFlowInstanceOptions optName(String flowOptName){
+    public CreateFlowOptions optName(String flowOptName){
         this.flowOptName = flowOptName;
         return this;
     }
 
-    public NewFlowInstanceOptions optTag(String flowOptTag){
+    public CreateFlowOptions optTag(String flowOptTag){
         this.flowOptTag = flowOptTag;
         return this;
     }
 
-    public NewFlowInstanceOptions user(String userCode){
+    public CreateFlowOptions user(String userCode){
         this.userCode = userCode;
         return this;
     }
 
-    public NewFlowInstanceOptions unit(String unitCode){
+    public CreateFlowOptions unit(String unitCode){
         this.unitCode = unitCode;
         return this;
     }
 
-    public NewFlowInstanceOptions addVariable(String name, String value){
+    public CreateFlowOptions addVariable(String name, String value){
         if(this.variables == null){
             this.variables = new HashMap<>();
         }
@@ -122,8 +141,18 @@ public class NewFlowInstanceOptions {
         return this;
     }
 
-    public NewFlowInstanceOptions lockFirst(boolean lockFirstOpt){
+    public CreateFlowOptions lockFirst(boolean lockFirstOpt){
         this.lockFirstOpt = lockFirstOpt;
+        return this;
+    }
+
+    public CreateFlowOptions timeLimit(String timeLimitStr) {
+        this.timeLimitStr = timeLimitStr;
+        return this;
+    }
+
+    public CreateFlowOptions workUser(String workUserCode){
+        this.workUserCode = workUserCode;
         return this;
     }
 }

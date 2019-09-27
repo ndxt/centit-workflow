@@ -27,7 +27,6 @@ public class FlowInstance implements java.io.Serializable {
     @ValueGenerator(strategy = GeneratorType.UUID22)
     private String flowInstId;
 
-
     /** 流程分组id 可以为空 **/
     @Column(name = "FLOW_GROUP_ID")
     private String  flowGroupId;
@@ -83,8 +82,15 @@ public class FlowInstance implements java.io.Serializable {
     private String instState;
     @Column(name = "IS_SUB_INST")
     private String isSubInst;
+
+    /**
+     * 作为子流程时，其父流程 ID
+     */
     @Column(name = "PRE_INST_ID")
     private String preInstId;
+    /**
+     * 作为子流程时，其父节点 ID
+     */
     @Column(name = "PRE_NODE_INST_ID")
     private String preNodeInstId;
 
@@ -311,12 +317,6 @@ public class FlowInstance implements java.io.Serializable {
 
     public void setUserCode(String usercode) {
         this.userCode = usercode;
-    }
-
-
-    public void getOptName(String on) {
-
-        optName = on;
     }
 
     public String getOptName() {

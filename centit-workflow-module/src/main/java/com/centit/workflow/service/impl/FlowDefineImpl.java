@@ -55,7 +55,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     }
 
     public FlowDefineImpl() {
-
     }
 
     public void setFlowNodeDao(NodeInfoDao flowNodeDao) {

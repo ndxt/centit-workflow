@@ -75,6 +75,8 @@ public interface FlowEngineClient {
     FlowInstance createInstanceLockFirstNode(String flowCode, String flowOptName,
                                              String flowOptTag, String userCode, String unitCode) throws Exception;
 
+    FlowInstance createMetaFormFlowAndSubmit(String modelId, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception;
+
 //   //--------------------提交流程业务节点-----------------------------------
     /**
      * 返回下一步节点的节点实例ID
@@ -223,7 +225,6 @@ public interface FlowEngineClient {
      */
     void rollBackNode(String nodeInstId,String managerUserCode);
 
-    FlowInstance createMetaFormFlowAndSubmit(String modelId, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception;
 
     /**
      * 根据条件查询待办，包括flowInstId，flowOptTag

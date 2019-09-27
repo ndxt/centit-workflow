@@ -2,7 +2,7 @@ package com.centit.workflow.service;
 
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
-import com.centit.workflow.commons.NewFlowInstanceOptions;
+import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 
@@ -17,6 +17,16 @@ import java.util.Set;
  */
 public interface FlowEngine {
 
+    /**
+     * 创建流程实例或子流程实例
+     *
+     * @param options NewFlowInstanceOptions 流程创建选项编码
+     * @param varTrans UserUnitVariableTranslate 机构执行环境
+     * @param application spring上下文环境。作为独立服务后这个应该不需要了
+     * @return FlowInstance
+     */
+    FlowInstance createInstance(CreateFlowOptions options,
+                                UserUnitVariableTranslate varTrans, ServletContext application) ;
     //--------------------创建流程实例接口-----------------------------------
     /**
      * 创建流程实例  返回流程实例
@@ -27,8 +37,13 @@ public interface FlowEngine {
      * @param unitCode 将流程指定一个所属机构
      * @return 流程实例
      */
-    FlowInstance createInstance(String  flowCode, String flowOptName,
-                                String flowOptTag, String userCode, String unitCode);
+    default FlowInstance createInstance(String flowCode, String flowOptName,
+                                String flowOptTag, String userCode, String unitCode){
+        return createInstance(
+            CreateFlowOptions.create().flow(flowCode).optName(flowOptName)
+            .optTag(flowOptTag).user(userCode).unit(unitCode),
+            null,null);
+    }
 
 
     /**
@@ -41,8 +56,13 @@ public interface FlowEngine {
      * @param unitCode 将流程指定一个所属机构
      * @return 流程实例
      */
-    FlowInstance createInstance(String  flowCode,long version,String flowOptName,
-                                String flowOptTag,String userCode,String unitCode);
+    default FlowInstance createInstance(String  flowCode,long version,String flowOptName,
+                                String flowOptTag,String userCode,String unitCode){
+        return createInstance(
+            CreateFlowOptions.create().flow(flowCode).version(version).optName(flowOptName)
+                .optTag(flowOptTag).user(userCode).unit(unitCode),
+            null,null);
+    }
 
     /**
      * 创建流程实例 返回流程实例
@@ -55,9 +75,14 @@ public interface FlowEngine {
      * @param application 容器句柄，用于自动执行节点，一般首节点不会为自动执行节点，可以为null
      * @return 流程实例
      */
-    FlowInstance createInstance(String  flowCode,long version,String flowOptName,
+    default FlowInstance createInstance(String  flowCode,long version,String flowOptName,
                                 String flowOptTag,String userCode,String unitCode,
-                                UserUnitVariableTranslate varTrans,ServletContext application);
+                                UserUnitVariableTranslate varTrans,ServletContext application){
+        return createInstance(
+            CreateFlowOptions.create().flow(flowCode).version(version).optName(flowOptName)
+                .optTag(flowOptTag).user(userCode).unit(unitCode),
+            varTrans,application);
+    }
 
 
     /**
@@ -71,9 +96,14 @@ public interface FlowEngine {
      * @param application 容器句柄，用于自动执行节点，一般首节点不会为自动执行节点，可以为null
      * @return 流程实例
      */
-    FlowInstance createInstance(String  flowCode,String flowOptName,
+    default FlowInstance createInstance(String  flowCode,String flowOptName,
                                 String flowOptTag,String userCode,String unitCode,
-                                UserUnitVariableTranslate varTrans,ServletContext application);
+                                UserUnitVariableTranslate varTrans,ServletContext application){
+        return createInstance(
+            CreateFlowOptions.create().flow(flowCode).optName(flowOptName)
+                .optTag(flowOptTag).user(userCode).unit(unitCode),
+            varTrans,application);
+    }
 
 
     /**
@@ -85,28 +115,16 @@ public interface FlowEngine {
      * @param unitCode 将流程指定一个所属机构
      * @return 流程实例
      */
-    FlowInstance createInstanceLockFirstNode(String  flowCode,String flowOptName,
-                                             String flowOptTag,String userCode,String unitCode);
+    default FlowInstance createInstanceLockFirstNode(String  flowCode,String flowOptName,
+                                             String flowOptTag,String userCode,String unitCode){
+        return createInstance(
+            CreateFlowOptions.create().flow(flowCode).optName(flowOptName)
+                .optTag(flowOptTag).user(userCode).unit(unitCode).lockFirst(true),
+            null, null);
+    }
 
 
-    /**
-     * 使用 最新版本的流程 创建 流程实例
-     * @param newFlowInstanceOptions 新建流程实例选项
-     * @param varTrans 变量转换接口，用于表达式计算，可以为null
-     * @return 流程实例
-     */
-    FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions,
-             UserUnitVariableTranslate varTrans);
-
-    /**
-     * 使用 指定版本的流程 创建 流程实例
-     * @param newFlowInstanceOptions  新建流程实例选项
-     * @param varTrans 变量转换接口，用于表达式计算，可以为null
-     * @return 流程实例
-     */
-    FlowInstance createInstanceWithSpecifiedVersion(NewFlowInstanceOptions newFlowInstanceOptions,
-                                                    UserUnitVariableTranslate varTrans);
-    /**
+     /**
      * 创建流程实例并锁定首节点，首节点只能有创建人操作 返回流程实例
      * @param flowCode 流程编码
      * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
@@ -115,9 +133,31 @@ public interface FlowEngine {
      * @param unitCode 将流程指定一个所属机构
      * @return
      */
-    FlowInstance createInstanceLockFirstNode(String  flowCode,long version,
-                                             String flowOptName, String flowOptTag, String userCode,String unitCode);
+    default FlowInstance createInstanceLockFirstNode(String  flowCode,long version,
+                                             String flowOptName, String flowOptTag, String userCode,String unitCode){
+        return createInstance(
+            CreateFlowOptions.create().flow(flowCode).version(version).optName(flowOptName)
+                .optTag(flowOptTag).user(userCode).unit(unitCode).lockFirst(true),
+            null,null);
+    }
 
+    /**
+     * 创建 流程组中的 流程实例  返回流程实例
+     * @param flowGroupId 流程组ID
+     * @param flowCode 流程编码
+     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
+     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
+     * @param userCode 创建用户
+     * @param unitCode 将流程指定一个所属机构
+     * @return 流程实例
+     */
+    default FlowInstance createInstanceInGroup(String flowGroupId, String flowCode, String flowOptName,
+                                       String flowOptTag, String userCode, String unitCode){
+        return createInstance(
+            CreateFlowOptions.create().flow(flowCode).group(flowGroupId).optName(flowOptName)
+                .optTag(flowOptTag).user(userCode).unit(unitCode),
+            null,null);
+    }
     /*
      * 创建子流程实例 返回流程实例号  子流程由内部创建不需要提供接口
        long createInstance(String  flowCode,String nodeInstId,String userCode,String unitCode);
@@ -862,16 +902,5 @@ public interface FlowEngine {
      */
     FlowInstanceGroup createFlowInstGroup(String name, String desc);
 
-    /**
-     * 创建 流程组中的 流程实例  返回流程实例
-     * @param flowGroupId 流程组ID
-     * @param flowCode 流程编码
-     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
-     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
-     * @param userCode 创建用户
-     * @param unitCode 将流程指定一个所属机构
-     * @return 流程实例
-     */
-    FlowInstance createInstanceInGroup(String flowGroupId, String flowCode, String flowOptName,
-                                String flowOptTag, String userCode, String unitCode);
+
 }

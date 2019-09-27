@@ -11,7 +11,7 @@ import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
-import com.centit.workflow.commons.NewFlowInstanceOptions;
+import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.*;
@@ -131,12 +131,12 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
     @PostMapping("/createAndSubmitFlow")
-    public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions,
+    public void createAndSubmitFlow(@RequestBody CreateFlowOptions newFlowInstanceOptions,
                                     HttpServletRequest request, HttpServletResponse response) {
-        List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
+        //List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
         //创建流程
-        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions,
-            new ObjectUserUnitVariableTranslate(BaseController.collectRequestParameters(request)));
+        FlowInstance flowInstance = flowEngine.createInstance(newFlowInstanceOptions,
+            new ObjectUserUnitVariableTranslate(BaseController.collectRequestParameters(request)), null);
         //找到创建人得审批角色级别
 
         //把这个审批角色级别固化到变量createrLevel
@@ -147,9 +147,10 @@ public class FlowEngineController extends BaseController {
         //更新操作人
         for (String n : nextNodes) {
             flowManager.deleteNodeActionTasks(n, flowInstance.getFlowInstId(), newFlowInstanceOptions.getUserCode());
-            for (String v : vars) {
-                flowManager.assignTask(n, v, newFlowInstanceOptions.getUserCode(), null, "手动指定审批人");
-            }
+            //for (String v : vars) {
+            flowManager.assignTask(n, newFlowInstanceOptions.getWorkUserCode(),
+                newFlowInstanceOptions.getUserCode(), null, "手动指定审批人");
+            //}
         }
         JsonResultUtils.writeSingleDataJson(flowInstance, response);
 
@@ -159,17 +160,17 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "自定义表单创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
     @PostMapping("/createMetaFormFlowAndSubmit")
     @WrapUpResponseBody
-    public FlowInstance createMetaFormFlowAndSubmit(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletRequest request) {
+    public FlowInstance createMetaFormFlowAndSubmit(@RequestBody CreateFlowOptions newFlowInstanceOptions, HttpServletRequest request) {
         //暂时这么定义，一个基本业务自定义表单必然只匹配一个流程
         FlowOptInfo flowOptInfo = wfOptService.getOptByModelId(newFlowInstanceOptions.getModelId());
         List<FlowInfo> flowInfos = flowDefine.getFlowsByOptId(flowOptInfo.getOptId());
         FlowInfo flowInfo = flowInfos.get(0);
         //创建流程
         newFlowInstanceOptions.setFlowCode(flowInfo.getFlowCode());
-        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(
+        FlowInstance flowInstance = flowEngine.createInstance(
             newFlowInstanceOptions, new ObjectUserUnitVariableTranslate(
-                BaseController.collectRequestParameters(request)));
-        //提交节点
+                BaseController.collectRequestParameters(request)), null);
+        //提交节点 :: TODO 为什么已创建就提交
         flowEngine.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
         return flowInstance;
@@ -191,11 +192,11 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "创建流程", notes = "创建流程，参数为json格式")
     @WrapUpResponseBody
     @PostMapping(value = "/createFlowInstDefault")
-    public FlowInstance createFlowInstDefault(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletRequest request) {
+    public FlowInstance createFlowInstDefault(@RequestBody CreateFlowOptions newFlowInstanceOptions, HttpServletRequest request) {
         FlowInstance flowInstance =
-            flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions,
+            flowEngine.createInstance(newFlowInstanceOptions,
                 new ObjectUserUnitVariableTranslate(
-                    BaseController.collectRequestParameters(request)));
+                    BaseController.collectRequestParameters(request)),null);
         return flowInstance;
     }
 
