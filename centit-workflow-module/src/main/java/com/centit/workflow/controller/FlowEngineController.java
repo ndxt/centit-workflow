@@ -53,7 +53,7 @@ public class FlowEngineController extends BaseController {
      * @param response
      */
     @PostMapping("/viewNextNodeOperator")
-    public void viewNextNodeOperator(@RequestBody String json, HttpServletResponse response) {
+    public void viewNextNodeOperator(@RequestBody String json,HttpServletRequest request, HttpServletResponse response) {
         ResponseMapData data = new ResponseMapData();
         Set<String> iUserInfos = new HashSet<>();
         JSONObject jsonObject = JSON.parseObject(json);
@@ -62,11 +62,14 @@ public class FlowEngineController extends BaseController {
         String userCode = jsonObject.getString("userCode");
         String unitCode = jsonObject.getString("unitCode");
         String varTrans = jsonObject.getString("varTrans");
-        Map<String, Object> maps = new HashMap<>();
+        Map<String, Object> extParams =
+            BaseController.collectRequestParameters(request);
         if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
-            maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
+            Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
+            extParams.putAll(maps);
         }
-        Set<NodeInfo> nodeInfoSet = flowEngine.viewNextNode(nodeInstId, userCode, unitCode, getBusinessVariable(maps));
+        Set<NodeInfo> nodeInfoSet = flowEngine.viewNextNode(nodeInstId, userCode, unitCode,
+            new ObjectUserUnitVariableTranslate(extParams));
         for (NodeInfo nodeInfo : nodeInfoSet) {
             List<FlowRoleDefine> roleDefines = flowRoleService.getFlowRoleDefineListByCode(nodeInfo.getRoleCode());
             for (FlowRoleDefine roleDefine : roleDefines) {
@@ -128,10 +131,12 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
     @PostMapping("/createAndSubmitFlow")
-    public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletResponse response) {
+    public void createAndSubmitFlow(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions,
+                                    HttpServletRequest request, HttpServletResponse response) {
         List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
         //创建流程
-        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions,
+            new ObjectUserUnitVariableTranslate(BaseController.collectRequestParameters(request)));
         //找到创建人得审批角色级别
 
         //把这个审批角色级别固化到变量createrLevel
@@ -153,38 +158,44 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "自定义表单创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
     @PostMapping("/createMetaFormFlowAndSubmit")
-    public void createMetaFormFlowAndSubmit(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletResponse response) {
+    @WrapUpResponseBody
+    public FlowInstance createMetaFormFlowAndSubmit(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletRequest request) {
         //暂时这么定义，一个基本业务自定义表单必然只匹配一个流程
         FlowOptInfo flowOptInfo = wfOptService.getOptByModelId(newFlowInstanceOptions.getModelId());
         List<FlowInfo> flowInfos = flowDefine.getFlowsByOptId(flowOptInfo.getOptId());
         FlowInfo flowInfo = flowInfos.get(0);
         //创建流程
         newFlowInstanceOptions.setFlowCode(flowInfo.getFlowCode());
-        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(
+            newFlowInstanceOptions, new ObjectUserUnitVariableTranslate(
+                BaseController.collectRequestParameters(request)));
         //提交节点
         flowEngine.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
-        JsonResultUtils.writeSingleDataJson(flowInstance, response);
+        return flowInstance;
     }
 
     @WrapUpResponseBody
     @PostMapping(value = "/createInstanceLockFirstNode")
     public FlowInstance createInstanceLockFirstNode(@RequestBody FlowInstance flowInstanceParam) {
-        return flowEngine.createInstanceLockFirstNode(flowInstanceParam.getFlowCode(), flowInstanceParam.getFlowOptName(), flowInstanceParam.getFlowOptTag(), flowInstanceParam.getUserCode(), flowInstanceParam.getUnitCode());
+
+        return flowEngine.createInstanceLockFirstNode(
+            flowInstanceParam.getFlowCode(),
+            flowInstanceParam.getFlowOptName(),
+            flowInstanceParam.getFlowOptTag(),
+            flowInstanceParam.getUserCode(),
+            flowInstanceParam.getUnitCode());
     }
 
-    //加载通用po到流程流转中
-    private ObjectUserUnitVariableTranslate getBusinessVariable(Map<String, Object> varTrans) {
-        ObjectUserUnitVariableTranslate<Map<String, Object>> bo = new ObjectUserUnitVariableTranslate<>();
-        bo.setModuleObject(varTrans);
-        return bo;
-    }
 
     @ApiOperation(value = "创建流程", notes = "创建流程，参数为json格式")
     @WrapUpResponseBody
     @PostMapping(value = "/createFlowInstDefault")
-    public FlowInstance createFlowInstDefault(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions) {
-        FlowInstance flowInstance = flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions);
+    public FlowInstance createFlowInstDefault(@RequestBody NewFlowInstanceOptions newFlowInstanceOptions, HttpServletRequest request) {
+        FlowInstance flowInstance =
+            flowEngine.createInstanceWithDefaultVersion(newFlowInstanceOptions,
+                new ObjectUserUnitVariableTranslate(
+                    BaseController.collectRequestParameters(request)));
         return flowInstance;
     }
 
@@ -194,7 +205,7 @@ public class FlowEngineController extends BaseController {
     }))
     @WrapUpResponseBody
     @PostMapping(value = "/submitOpt")
-    public ResponseData submitOpt(@RequestBody String json) {
+    public ResponseData submitOpt(@RequestBody String json, HttpServletRequest request) {
         JSONObject jsonObject = JSON.parseObject(json);
         String nodeInstId = jsonObject.getString("nodeInstId");
         String userCode = jsonObject.getString("userCode");
@@ -205,8 +216,10 @@ public class FlowEngineController extends BaseController {
         try {
             Set<String> nextNodes;
             if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
-                Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
-                nextNodes = flowEngine.submitOpt(nodeInstId, userCode, unitCode, getBusinessVariable(maps), null);
+                Map<String, Object> maps = BaseController.collectRequestParameters(request);
+                maps.putAll((Map)JSON.parse(varTrans.replaceAll("&quot;", "\"")));
+                nextNodes = flowEngine.submitOpt(nodeInstId, userCode, unitCode,
+                    new ObjectUserUnitVariableTranslate(maps), null);
             } else {
                 nextNodes = flowEngine.submitOpt(nodeInstId, userCode, unitCode, null, null);
             }

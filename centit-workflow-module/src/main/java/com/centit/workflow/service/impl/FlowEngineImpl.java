@@ -3,7 +3,6 @@ package com.centit.workflow.service.impl;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitParamBuilder;
-import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.algorithm.*;
@@ -90,13 +89,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions) {
+    public FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions,UserUnitVariableTranslate varTrans) {
         FlowInstance flowInstance = createInstInside(newFlowInstanceOptions.getFlowCode(),
             flowDefDao.getLastVersion(newFlowInstanceOptions.getFlowCode()),
             newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
             newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstId(),
-            "", null, newFlowInstanceOptions.isLockFirstOpt(), newFlowInstanceOptions.getTimeLimitStr());
+            "", varTrans , newFlowInstanceOptions.isLockFirstOpt(), newFlowInstanceOptions.getTimeLimitStr());
 //        Set<Long> nodes = new HashSet<>();
 //        for (NodeInstance n : flowInstance.getFlowNodeInstances()) {
 //            nodes.add(n.getNodeInstId());
@@ -113,12 +112,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public FlowInstance createInstanceWithSpecifiedVersion(NewFlowInstanceOptions newFlowInstanceOptions) {
+    public FlowInstance createInstanceWithSpecifiedVersion(NewFlowInstanceOptions newFlowInstanceOptions, UserUnitVariableTranslate varTrans) {
         return createInstInside(newFlowInstanceOptions.getFlowCode(), newFlowInstanceOptions.getVersion(),
             newFlowInstanceOptions.getFlowOptName(), newFlowInstanceOptions.getFlowOptTag(),
             newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(),
             newFlowInstanceOptions.getNodeInstId(), newFlowInstanceOptions.getFlowInstId(),
-            "", null, newFlowInstanceOptions.isLockFirstOpt(), null);
+            "", varTrans, newFlowInstanceOptions.isLockFirstOpt(), null);
     }
 
     @Override
@@ -1073,36 +1072,25 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nextOptNode, userCode);
 
 
+        boolean needSubmit = false;
+
         //检查自动执行节点 并执行相关操作
         if ("D".equals(nextOptNode.getOptType())) {
-            boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nextNodeInst,
+            needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nextNodeInst,
                 nextOptNode, userCode);
-            if (needSubmit) {
-                //TODO 如果自动执行的节点下一步生成的节点实例有多个，这边的return就不对了
-                //暂时先取第一个节点实例，解决部分问题
-                //varTrans改为一个空的
-                Set<String> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
-                    new ObjectUserUnitVariableTranslate<>(), nodeUnits, nodeOptUsers, application);
-                for (String n : nextNodes) {
-                    nextNodeInst = nodeInstanceDao.getObjectById(n);
-                    break;
-                }
-            }
-
-        } else if ("E".equals(nextOptNode.getOptType())) {  //哑元节点 自动提交
-            try {
-                //varTrans改为一个空的
-                Set<String> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
-                    new ObjectUserUnitVariableTranslate<>(), nodeUnits, nodeOptUsers, application);
-                for (String n : nextNodes) {
-                    nextNodeInst = nodeInstanceDao.getObjectById(n);
-                    break;
-                }
-            } catch (WorkflowException e) {
-                logger.error("自动提交哑元节点 " + lastNodeInstId + "后提交出错 。" + e.getMessage());
-                throw e;
+        }
+        if (needSubmit || "E".equals(nextOptNode.getOptType())) {
+            //TODO 如果自动执行的节点下一步生成的节点实例有多个，这边的return就不对了
+            //暂时先取第一个节点实例，解决部分问题
+            //varTrans改为一个空的
+            Set<String> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
+                varTrans, nodeUnits, nodeOptUsers, application);
+            for (String n : nextNodes) {
+                nextNodeInst = nodeInstanceDao.getObjectById(n);
+                break;
             }
         }
+
         if (tempFirstNode != null) {
             return tempFirstNode;
         }

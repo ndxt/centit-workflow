@@ -92,16 +92,20 @@ public interface FlowEngine {
     /**
      * 使用 最新版本的流程 创建 流程实例
      * @param newFlowInstanceOptions 新建流程实例选项
+     * @param varTrans 变量转换接口，用于表达式计算，可以为null
      * @return 流程实例
      */
-    FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions);
+    FlowInstance createInstanceWithDefaultVersion(NewFlowInstanceOptions newFlowInstanceOptions,
+             UserUnitVariableTranslate varTrans);
 
     /**
      * 使用 指定版本的流程 创建 流程实例
      * @param newFlowInstanceOptions  新建流程实例选项
+     * @param varTrans 变量转换接口，用于表达式计算，可以为null
      * @return 流程实例
      */
-    FlowInstance createInstanceWithSpecifiedVersion(NewFlowInstanceOptions newFlowInstanceOptions);
+    FlowInstance createInstanceWithSpecifiedVersion(NewFlowInstanceOptions newFlowInstanceOptions,
+                                                    UserUnitVariableTranslate varTrans);
     /**
      * 创建流程实例并锁定首节点，首节点只能有创建人操作 返回流程实例
      * @param flowCode 流程编码

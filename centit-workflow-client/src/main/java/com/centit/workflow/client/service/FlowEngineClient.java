@@ -5,11 +5,9 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
-import com.centit.workflow.po.FlowWorkTeam;
 import com.centit.workflow.po.UserTask;
 import org.apache.http.impl.client.CloseableHttpClient;
 
-import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +34,8 @@ public interface FlowEngineClient {
      * @return
      */
     FlowInstance createInstance(String flowCode, String flowOptName,
-                          String flowOptTag, String userCode, String unitCode) throws Exception;
+                          String flowOptTag, String userCode, String unitCode,
+                                Map<String,Object> flowVariables) throws Exception;
 
     /**
      * 创建流程实例  返回流程实例
@@ -86,8 +85,7 @@ public interface FlowEngineClient {
      * @return  节点实例编号列表
      */
     Map<String,Object> submitOpt(String nodeInstId, String userCode,
-                        String unitCode, String varTrans,
-                        ServletContext application) throws WorkflowException;
+                        String unitCode, Map<String, Object> varTrans) throws WorkflowException;
     /**
      * 查看某一个用户所有的待办，并且分页
      * @param userCode

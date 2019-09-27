@@ -1,13 +1,12 @@
 package com.centit.workflow.client.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.framework.common.ObjectException;
-import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
 import java.util.*;
 
 /**
@@ -94,7 +92,9 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception {
+    public FlowInstance createInstance(String flowCode, String flowOptName,
+                                       String flowOptTag, String userCode, String unitCode,
+                                       Map<String,Object> flowVariables) throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("flowCode", flowCode);
         jsonObject.put("flowOptName", flowOptName);
@@ -102,7 +102,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         jsonObject.put("userCode", userCode);
         jsonObject.put("unitCode", unitCode);
         String flowJson = RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/createFlowInstDefault", jsonObject);
+            UrlOptUtils.appendParamsToUrl(
+            "/flow/engine/createFlowInstDefault", flowVariables), jsonObject);
         return jsonToFlowInstance(flowJson);
     }
 
@@ -248,8 +249,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     @Override
     public Map<String,Object> submitOpt(String nodeInstId, String userCode,
-                                         String unitCode, String varTrans,
-                                         ServletContext application) throws WorkflowException {
+                                         String unitCode, Map<String, Object> varTrans) throws WorkflowException {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("userCode", userCode);

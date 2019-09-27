@@ -3,7 +3,6 @@ package com.centit.workflow.client.service.impl;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.workflow.client.service.UserOptClient;
-import com.centit.workflow.po.FlowInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
