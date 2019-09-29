@@ -1374,10 +1374,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 || "S".equals(nodedef.getOptType())) {
                 pns.add(prevNodeInst);
                 //优先通过节点表中的prenodeinstid来查找上一节点
-                prevNodeInst = nodeInstanceDao.getObjectCascadeById(prevNodeInst.getPrevNodeInstId());
+                String currnetNodeInstId = prevNodeInst.getPrevNodeInstId();
+                prevNodeInst = nodeInstanceDao.getObjectCascadeById(currnetNodeInstId);
                 if (prevNodeInst == null) {
-                    prevNodeInst = flowInst.getPareNodeInst(prevNodeInst
-                        .getNodeInstId());
+                    prevNodeInst = flowInst.getPareNodeInst(currnetNodeInstId);
                 }
                 if (prevNodeInst == null)
                     return null;

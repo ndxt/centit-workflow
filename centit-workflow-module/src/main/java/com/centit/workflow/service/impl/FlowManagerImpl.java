@@ -343,9 +343,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             && !"F".equals(wfFlowInst.getInstState()))
             actionDesc = "强制结束流程；";
             // 只能挂起正常的流程
-        else if ("P".equals(state) && "N".equals(wfFlowInst.getInstState()))
-            actionDesc = "挂起流程；";
-            // 只能唤醒挂起、失效、超时 的流程
         else if ("N".equals(state)
             && "P".equals(wfFlowInst.getInstState())) {
             actionDesc = "换新流程；";
@@ -803,14 +800,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Date updateTime = DatetimeOpt.currentUtilDate();
         for (NodeInstance nodeInst : flow.getFlowNodeInstances()) {
             String currToken = nodeInst.getRunToken();
-            if (("N".equals(nodeInst.getNodeState())
-                || "W".equals(nodeInst.getNodeState()))
+            if ("N,W".contains(nodeInst.getNodeState())
                 && currToken != null
                 && thisToken != null
                 && (currToken.equals(thisToken)
-                || currToken.startsWith(thisToken + '.')
-                || thisToken.startsWith(currToken + '.'))
-                || currToken.startsWith("R" + thisToken + '.')) {
+                    || currToken.startsWith(thisToken + '.')
+                    || thisToken.startsWith(currToken + '.')
+                    || currToken.startsWith("R" + thisToken + '.')
+                    )) {
 
                 if ("W".equals(nodeInst.getNodeState())) { // 结束子流程
                     FlowInstance subFlowInst = flowInstanceDao
