@@ -22,7 +22,6 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
         this.extFrameworkBean = extFrameworkBean;
     }
 
-
     @Override
     public List<ExtSysUserInfo> listAllUserInfo() {
         return this.extFrameworkBean.allUserInfoCache.getCachedTarget();

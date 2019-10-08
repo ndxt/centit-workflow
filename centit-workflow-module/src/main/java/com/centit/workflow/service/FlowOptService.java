@@ -10,6 +10,8 @@ import java.util.Map;
 
 /**
  * 2018年9月12日10:46:54
+ * 流程业务服务 —— 业务数据接口
+ *
  */
 public interface FlowOptService {
     JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc);

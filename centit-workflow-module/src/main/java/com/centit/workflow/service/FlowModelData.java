@@ -2,8 +2,11 @@ package com.centit.workflow.service;
 
 import java.util.Map;
 /**
- * 模型基础数据接口
+ * 模型基础数据接口; 这个接口 不需要了，
+ * 和 业务相关的 迁移到 FlowOptService 中
+ * 和 流程定义相关的 迁移到 FlowDefine 中
  */
+@Deprecated
 public interface FlowModelData {
     /**
      * 例举所有节点操作类别
@@ -30,14 +33,17 @@ public interface FlowModelData {
     /**
      * 根据工号显示用户名
      */
+    @Deprecated
     String getUserNameByCode(String userCode);
     /**
      * 根据机构代码显示机构名
      */
+    @Deprecated
     String getUnitNameByCode(String unitCode);
     /**
      * 根据角色代码显示角色名
      */
+    @Deprecated
     String getRoleNameByCode(String roleCode);
     /*
      * 根据角色返回符合条件的所有用户代码
