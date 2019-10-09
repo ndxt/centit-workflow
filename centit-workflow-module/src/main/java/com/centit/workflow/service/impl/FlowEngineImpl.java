@@ -1254,6 +1254,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
             nodeInst, flowInst,flowVariableDao,this);
 
+        flowVarTrans.setFlowVarTrans(varTrans);
+
         String nextNodeId = nodeTran.getEndNodeId();
         String nodeToken = nodeInst.getRunToken();
         nextNodeInsts = submitToNextNode(
