@@ -213,6 +213,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     || SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(node.getRoleType())
                     /*行政角色按道理是不能有多个人可以同时做的*/
                     || SysUserFilterEngine.ROLE_TYPE_XZ.equalsIgnoreCase(node.getRoleType())
+                    // 多人操作
                     || "C".equals(node.getOptType()))) {
                 if (optUsers.size() == 1) {
                     nodeInst.setTaskAssigned("S");
@@ -370,8 +371,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                            NodeInfo nextOptNode,
                                            String userCode, String unitCode,
                                            FlowVariableTranslate varTrans) {
-
-
         Set<String> optUsers = null;
         if ("en".equals(nextOptNode.getRoleType())) {
             //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色
@@ -403,7 +402,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(nodeInst.getFlowInstId(), nextOptNode.getRoleCode());
             for (FlowWorkTeam u : users)
                 optUsers.add(u.getUserCode());
-            //审批待测试
+            //流程角色（审批角色）待测试
         } else if ("sp".equalsIgnoreCase(nextOptNode.getRoleType())) {
             optUsers = getSpUsers(nextOptNode, unitCode);
         } else/*gw xz*/ {
@@ -423,7 +422,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         return optUsers;
     }
-    /**
+    /*
      * @param flowInst
      * @param flowInfo
      * @param nodeInst
