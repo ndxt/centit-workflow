@@ -1593,7 +1593,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public Set<String> viewNextNodeOperator(String nextNodeId,
-                                            long curNodeInstId, String userCode, String unitCode, UserUnitVariableTranslate varTrans) {
+                                            String curNodeInstId, String userCode, String unitCode, UserUnitVariableTranslate varTrans) {
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
         if (nodeInst == null) {
