@@ -525,7 +525,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                     canSubmit = nNs.size() <= Integer.valueOf(nextRoutertNode.getConvergeParam());
                                     ;
                                 } else if ("V".equals(sCT)) {
-                                    canSubmit = Double.valueOf(submitNodeIds.size()) / Double.valueOf(submitNodeIds.size() + nNs.size())
+                                    canSubmit = (double) submitNodeIds.size() / (double) (submitNodeIds.size() + nNs.size())
                                         >= Double.valueOf(nextRoutertNode.getConvergeParam());
                                     ;
                                 } else

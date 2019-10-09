@@ -147,7 +147,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
 
     @Override
     public Object getVarValue(String varName) {
-        return getLabelValue(varName);
+        return this.getGeneralVariable(varName);
     }
 
     public Set<String> getUsersVariable(String varName){
