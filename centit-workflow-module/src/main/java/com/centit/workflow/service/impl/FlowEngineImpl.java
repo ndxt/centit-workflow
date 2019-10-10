@@ -115,6 +115,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         flowInst.setFlowOptName(options.getFlowOptName());
         flowInst.setFlowOptTag(options.getFlowOptTag());
+        // 设置流程变量
+        if( options.getVariables() != null && !options.getVariables().isEmpty()) {
+            for(Map.Entry<String,Object> ent : options.getVariables().entrySet()) {
+                saveFlowVariable(flowInstId, ent.getKey(), StringBaseOpt.castObjectToString(ent.getValue()));
+            }
+        }
+        // 设置办件角色
+        if( options.getFlowRoleUsers() != null && !options.getFlowRoleUsers().isEmpty()) {
+            for(Map.Entry<String,List<String>> ent : options.getFlowRoleUsers().entrySet()) {
+                assignFlowWorkTeam(flowInstId, ent.getKey(), ent.getValue());
+            }
+        }
+
         //生成首节点实例编号
         NodeInfo node = wf.getFirstNode();
         if (node == null)
@@ -151,9 +164,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInst.setUnitCode(nextNodeUnit);
         //如果锁定首节点只能有本人操作，则要在任务表中添加一条记录
         if (options.isLockFirstOpt()) {
-            nodeInst.setUserCode(options.getUserCode());
+            String optUser = options.getWorkUserCode();
+            if(StringUtils.isBlank(optUser)){
+                optUser = options.getUserCode();
+            }
+            nodeInst.setUserCode(optUser);
             nodeInst.setTaskAssigned("S");
         } else {
+            /** TODO 这个设定操作用户信息需要 提区出来 */
             Set<String> optUsers = new HashSet<>();
             if (SysUserFilterEngine.ROLE_TYPE_ENGINE.equalsIgnoreCase(node.getRoleType())) {
                 //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色

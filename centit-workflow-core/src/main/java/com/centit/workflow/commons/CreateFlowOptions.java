@@ -1,9 +1,11 @@
 package com.centit.workflow.commons;
 
+import com.centit.support.algorithm.CollectionsOpt;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,16 +61,16 @@ public class CreateFlowOptions {
 
     @ApiModelProperty("流程组ID")
     private String flowGroupId;
-    /**
-     * 业务变量数据
-     */
-    @ApiModelProperty("流程变量")
-    private Map<String,Object> variables ;
+
     /**
      * 流程首节点是否只能有创建人操作（一般 报销、请假的首节点都是只能由发起人修改）
      */
     @ApiModelProperty("流程首节点是否只能有创建人操作，如果首节点是办件角色的话可以为true，其余不填")
     private boolean lockFirstOpt;
+
+    @ApiModelProperty("传递的用户code，用于下一步人员指定, " +
+        "和 lockFirstOpt 配合使用，如果lockFirstOpt为true并且workUserCode为空则指定为userCode")
+    private String workUserCode;
 
     /**
      * 设置流程时限
@@ -76,8 +78,18 @@ public class CreateFlowOptions {
     @ApiModelProperty("设置流程时限，格式为3D4H30M这样的")
     private String timeLimitStr;
 
-    @ApiModelProperty("传递的用户code列表，用于下一步人员指定")
-    private String workUserCode;
+    /**
+     * 业务变量数据
+     */
+    @ApiModelProperty("流程变量")
+    private Map<String,Object> variables ;
+
+    /**
+     * 流程办件角色
+     */
+    @ApiModelProperty("流程办件角色")
+    private Map<String, List<String>> flowRoleUsers ;
+
 
     private CreateFlowOptions() {
         this.flowVersion = -1;
@@ -140,6 +152,28 @@ public class CreateFlowOptions {
         this.variables.put(name, value);
         return this;
     }
+
+    public CreateFlowOptions addFlowRoleUsers(String role, List<String> users){
+        if(this.flowRoleUsers == null){
+            this.flowRoleUsers = new HashMap<>();
+        }
+        this.flowRoleUsers.put(role, users);
+        return this;
+    }
+
+    public CreateFlowOptions addFlowRoleUser(String role, String user){
+        if(this.flowRoleUsers == null){
+            this.flowRoleUsers = new HashMap<>();
+        }
+        List<String> users = this.flowRoleUsers.get(role);
+        if(users == null){
+            this.flowRoleUsers.put(role, CollectionsOpt.createList(user));
+        } else {
+            users.add(user);
+        }
+        return this;
+    }
+
 
     public CreateFlowOptions lockFirst(boolean lockFirstOpt){
         this.lockFirstOpt = lockFirstOpt;
