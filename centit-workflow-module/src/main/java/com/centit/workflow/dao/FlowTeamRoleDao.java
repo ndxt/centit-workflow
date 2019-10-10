@@ -22,19 +22,6 @@ public class FlowTeamRoleDao extends BaseDaoImpl<FlowTeamRole,Long>{
         return null;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
-    public Long getNextTeamRoleId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_OPTTEAMROLE");
-    }
-
-    @Transactional(propagation= Propagation.MANDATORY)
-    public void saveNewObject(FlowTeamRole o) {
-        if(o.getFlowTeamRoleId() == null || "".equals(o.getFlowTeamRoleId())){
-            o.setFlowTeamRoleId(UuidOpt.getUuidAsString32());
-//            o.setFlowTeamRoleId(getNextTeamRoleId());
-        }
-        super.saveNewObject(o);
-    }
 
     @Transactional(propagation= Propagation.MANDATORY)
     public Map<String,String> getRoleByFlowCode(String flowCode,Long version){
@@ -44,9 +31,8 @@ public class FlowTeamRoleDao extends BaseDaoImpl<FlowTeamRole,Long>{
             return roleMap;
         }
         //roleMap=flowTeamRoles.stream().collect(Collectors.toMap(FlowTeamRole::getRoleCode,FlowTeamRole::getRoleName));
-        flowTeamRoles.forEach(role->{
-            roleMap.put(role.getRoleCode(),role.getRoleName());
-        });
+        flowTeamRoles.forEach(role -> roleMap.put(role.getRoleCode(),role.getRoleName())
+        );
         return roleMap;
     }
 }

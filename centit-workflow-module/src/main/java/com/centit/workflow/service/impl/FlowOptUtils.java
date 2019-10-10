@@ -24,7 +24,7 @@ public class FlowOptUtils {
     /**
      * 根據角色獲取人
      */
-    public static Set<String> listUserByRoleDefine(FlowTeamDefine roleDefine, String unitCode) {
+    public static Set<String> listUserByRoleDefine(FlowRoleDefine roleDefine, String unitCode) {
         Set<String> optUsers = new HashSet<>();
 //        Set<IUserInfo> optUsers=new HashSet<>();
         if ("xz".equals(roleDefine.getRelatedType())) {

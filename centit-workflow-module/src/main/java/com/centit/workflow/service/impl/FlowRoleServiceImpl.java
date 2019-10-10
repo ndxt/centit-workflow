@@ -9,7 +9,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.FlowRoleDao;
 import com.centit.workflow.dao.FlowRoleDefineDao;
 import com.centit.workflow.po.FlowRole;
-import com.centit.workflow.po.FlowTeamDefine;
+import com.centit.workflow.po.FlowRoleDefine;
 import com.centit.workflow.service.FlowRoleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,7 +105,7 @@ public class FlowRoleServiceImpl implements FlowRoleService {
     }
 
     @Override
-    public List<FlowTeamDefine> getFlowRoleDefineListByCode(String roleCode) {
+    public List<FlowRoleDefine> getFlowRoleDefineListByCode(String roleCode) {
         return translateFlowRoleDefineRelatedCode(flowRoleDefineDao.listObjectsByProperty("roleCode", roleCode));
 //        return flowRoleDefineDao.getFlowRoleDefineByRoleCode(roleCode);
     }
@@ -115,8 +115,8 @@ public class FlowRoleServiceImpl implements FlowRoleService {
      * @param flowRoleDefineList
      * @return
      */
-    private List<FlowTeamDefine> translateFlowRoleDefineRelatedCode(List<FlowTeamDefine> flowRoleDefineList) {
-        for (FlowTeamDefine flowRoleDefine : flowRoleDefineList) {
+    private List<FlowRoleDefine> translateFlowRoleDefineRelatedCode(List<FlowRoleDefine> flowRoleDefineList) {
+        for (FlowRoleDefine flowRoleDefine : flowRoleDefineList) {
             // 职务
             if ("xz".equals(flowRoleDefine.getRelatedType())) {
                 flowRoleDefine.setRelatedCode(CodeRepositoryUtil.getValue("RankType", flowRoleDefine.getRelatedCode()));
@@ -135,7 +135,7 @@ public class FlowRoleServiceImpl implements FlowRoleService {
 
     @Override
     @Transactional
-    public void saveFlowRoleDefine(FlowTeamDefine flowRoleDefine) {
+    public void saveFlowRoleDefine(FlowRoleDefine flowRoleDefine) {
         if(flowRoleDefine == null){
             return;
         }

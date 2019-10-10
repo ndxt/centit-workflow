@@ -220,7 +220,7 @@ public class NodeInfo implements java.io.Serializable {
     }
 
     /**
-     * @return A:一般 B:抢先机制 C:多人操作 D:自动执行  E哑元（可用于嵌套汇聚） S:子流程
+     * @return A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行 E: 哑元（可用于嵌套汇聚） S:子流程
      */
     public String getOptType() {
         return this.optType;
@@ -228,7 +228,7 @@ public class NodeInfo implements java.io.Serializable {
 
     /**
      *
-     * @param opttype A:一般 B:抢先机制 C:多人操作 D:自动执行   E哑元（可用于嵌套汇聚） S:子流程
+     * @param opttype A:唯一执行人 B:抢先机制 C:多人操作 D:自动执行 E: 哑元（可用于嵌套汇聚） S:子流程
      */
     public void setOptType(String opttype) {
         this.optType = opttype;

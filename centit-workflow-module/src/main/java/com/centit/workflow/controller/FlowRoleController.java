@@ -8,7 +8,7 @@ import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowRole;
-import com.centit.workflow.po.FlowTeamDefine;
+import com.centit.workflow.po.FlowRoleDefine;
 import com.centit.workflow.service.FlowRoleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,7 +69,7 @@ public class FlowRoleController extends BaseController {
      */
     @RequestMapping(value = {"/getFlowRoleDefineListByCode/{roleCode}"}, method = {RequestMethod.GET})
     public void getFlowRoleDefineListByCode(@PathVariable String roleCode, HttpServletResponse response) {
-        List<FlowTeamDefine> flowRoleDefineList = this.flowRoleService.getFlowRoleDefineListByCode(roleCode);
+        List<FlowRoleDefine> flowRoleDefineList = this.flowRoleService.getFlowRoleDefineListByCode(roleCode);
         FlowRole flowRole = new FlowRole();
         flowRole.setFlowRoleDefineList(flowRoleDefineList);
         JsonResultUtils.writeSingleDataJson(flowRole, response);
@@ -85,7 +85,7 @@ public class FlowRoleController extends BaseController {
     public void saveFlowRoleDefineList(@RequestBody JSONObject paramData, HttpServletRequest request, HttpServletResponse response) {
         JSONArray flowRoleDefineList = paramData.getJSONArray("flowRoleDefineList");
         for(int i = 0; i < flowRoleDefineList.size(); ++i) {
-            FlowTeamDefine flowRoleDefine = flowRoleDefineList.getObject(i, FlowTeamDefine.class);
+            FlowRoleDefine flowRoleDefine = flowRoleDefineList.getObject(i, FlowRoleDefine.class);
             this.flowRoleService.saveFlowRoleDefine(flowRoleDefine);
         }
         JsonResultUtils.writeBlankJson(response);

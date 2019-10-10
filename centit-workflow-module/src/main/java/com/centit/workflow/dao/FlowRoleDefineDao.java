@@ -6,7 +6,7 @@ import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.database.utils.QueryAndNamedParams;
 import com.centit.support.database.utils.QueryUtils;
-import com.centit.workflow.po.FlowTeamDefine;
+import com.centit.workflow.po.FlowRoleDefine;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.Map;
  * @Version 1.0
  */
 @Repository
-public class FlowRoleDefineDao extends BaseDaoImpl<FlowTeamDefine,String> {
+public class FlowRoleDefineDao extends BaseDaoImpl<FlowRoleDefine,String> {
 
 //    @Transactional
 //    public long getNextId() {
@@ -29,14 +29,14 @@ public class FlowRoleDefineDao extends BaseDaoImpl<FlowTeamDefine,String> {
         return null;
     }
 
-    public List<FlowTeamDefine> getFlowRoleDefineByRoleCode(String roleCode) {
+    public List<FlowRoleDefine> getFlowRoleDefineByRoleCode(String roleCode) {
 
         String sql = "select * from WF_FLOW_ROLE_DEFINE r where r.role_code = '"+roleCode+"'";
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql, null);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
                 queryAndNamedParams.getQuery(), queryAndNamedParams.getParams());
         if (dataList != null && dataList.size() > 0) {
-            return dataList.toJavaList(FlowTeamDefine.class);
+            return dataList.toJavaList(FlowRoleDefine.class);
         } else {
             return null;
         }

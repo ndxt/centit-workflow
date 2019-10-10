@@ -65,8 +65,8 @@ public class CreateFlowOptions {
     /**
      * 流程首节点是否只能有创建人操作（一般 报销、请假的首节点都是只能由发起人修改）
      */
-    @ApiModelProperty("流程首节点是否只能有创建人操作，如果首节点是办件角色的话可以为true，其余不填")
-    private boolean lockFirstOpt;
+    @ApiModelProperty("流程首节点是否只能有创建人操作（一般 报销、请假的首节点都是只能由发起人修改）")
+    private boolean lockOptUser;
 
     @ApiModelProperty("传递的用户code，用于下一步人员指定, " +
         "和 lockFirstOpt 配合使用，如果lockFirstOpt为true并且workUserCode为空则指定为userCode")
@@ -93,7 +93,7 @@ public class CreateFlowOptions {
 
     private CreateFlowOptions() {
         this.flowVersion = -1;
-        this.lockFirstOpt = false;
+        this.lockOptUser = false;
     }
 
     public static CreateFlowOptions create(){
@@ -175,8 +175,8 @@ public class CreateFlowOptions {
     }
 
 
-    public CreateFlowOptions lockFirst(boolean lockFirstOpt){
-        this.lockFirstOpt = lockFirstOpt;
+    public CreateFlowOptions lockOptUser(boolean lockFirstOpt){
+        this.lockOptUser = lockFirstOpt;
         return this;
     }
 
@@ -186,6 +186,7 @@ public class CreateFlowOptions {
     }
 
     public CreateFlowOptions workUser(String workUserCode){
+        this.lockOptUser = true;
         this.workUserCode = workUserCode;
         return this;
     }

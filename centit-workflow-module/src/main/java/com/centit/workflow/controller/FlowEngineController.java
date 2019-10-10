@@ -71,8 +71,8 @@ public class FlowEngineController extends BaseController {
         Set<NodeInfo> nodeInfoSet = flowEngine.viewNextNode(nodeInstId, userCode, unitCode,
             new ObjectUserUnitVariableTranslate(extParams));
         for (NodeInfo nodeInfo : nodeInfoSet) {
-            List<FlowTeamDefine> roleDefines = flowRoleService.getFlowRoleDefineListByCode(nodeInfo.getRoleCode());
-            for (FlowTeamDefine roleDefine : roleDefines) {
+            List<FlowRoleDefine> roleDefines = flowRoleService.getFlowRoleDefineListByCode(nodeInfo.getRoleCode());
+            for (FlowRoleDefine roleDefine : roleDefines) {
                 iUserInfos.addAll(FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode));
             }
         }
@@ -119,9 +119,9 @@ public class FlowEngineController extends BaseController {
             }
         }
 
-        List<FlowTeamDefine> roleDefineListByCode =
+        List<FlowRoleDefine> roleDefineListByCode =
             flowRoleService.getFlowRoleDefineListByCode(roleCode);
-        for (FlowTeamDefine roleDefine : roleDefineListByCode) {
+        for (FlowRoleDefine roleDefine : roleDefineListByCode) {
             iUserInfos = FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode);
         }
         data.addResponseData("userCode", iUserInfos);

@@ -1,6 +1,8 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -17,10 +19,15 @@ import java.util.Date;
 @Table(name = "WF_FLOW_TEAM_ROLE")
 public class FlowTeamRole implements Serializable {
     private static final long serialVersionUID = 1L;
+    /**
+     * 这个主键有前段指定，不能用uuid
+     */
     @Id
     @NotNull
+    @ValueGenerator(strategy = GeneratorType.UUID)
     @Column(name = "FLOW_TEAM_ROLE_ID")
     private String flowTeamRoleId;
+
     @NotNull
     @Column(name = "FLOW_CODE")
     private String flowCode;

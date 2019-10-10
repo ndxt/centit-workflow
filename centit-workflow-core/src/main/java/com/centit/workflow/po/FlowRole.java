@@ -52,13 +52,13 @@ public class FlowRole implements Serializable {
 
 
 
-    private List<FlowTeamDefine> flowRoleDefineList;
+    private List<FlowRoleDefine> flowRoleDefineList;
 
-    public List<FlowTeamDefine> getFlowRoleDefineList() {
+    public List<FlowRoleDefine> getFlowRoleDefineList() {
         return flowRoleDefineList;
     }
 
-    public void setFlowRoleDefineList(List<FlowTeamDefine> flowRoleDefineList) {
+    public void setFlowRoleDefineList(List<FlowRoleDefine> flowRoleDefineList) {
         this.flowRoleDefineList = flowRoleDefineList;
     }
 
