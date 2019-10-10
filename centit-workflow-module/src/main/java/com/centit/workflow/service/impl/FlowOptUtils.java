@@ -22,31 +22,6 @@ public class FlowOptUtils {
     private static final Logger logger = LoggerFactory.getLogger(FlowOptUtils.class);
 
     /**
-     * 根據角色獲取人
-     */
-    public static Set<String> listUserByRoleDefine(FlowRoleDefine roleDefine, String unitCode) {
-        Set<String> optUsers = new HashSet<>();
-//        Set<IUserInfo> optUsers=new HashSet<>();
-        if ("xz".equals(roleDefine.getRelatedType())) {
-            List<? extends IUserUnit> allUserUnits = CodeRepositoryUtil.listAllUserUnits();
-            for (IUserUnit userUnit : allUserUnits) {
-                if (userUnit.getUserRank().equals(roleDefine.getRelatedCode())
-                    && unitCode.equals(userUnit.getUnitCode())) {
-                    optUsers.add(CodeRepositoryUtil.getUserInfoByCode(userUnit.getUserCode()).getUserCode());
-                }
-            }
-        } else if ("js".equals(roleDefine.getRelatedType())) {
-            List<? extends IUserInfo> list =
-                CodeRepositoryUtil.listUsersByRoleCode(roleDefine.getRelatedCode());
-            for (IUserInfo userInfo : list) {
-                optUsers.add(userInfo.getUserCode());
-            }
-//            optUsers.addAll(list);
-        }
-        return optUsers;
-    }
-
-    /**
      * 创建流程实例
      */
     public static FlowInstance createFlowInst(String unitcode, String usercode, FlowInfo wf, String flowInstId, String timeLimitStr) {

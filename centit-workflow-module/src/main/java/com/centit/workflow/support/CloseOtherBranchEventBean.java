@@ -31,15 +31,13 @@ public class CloseOtherBranchEventBean implements NodeEventSupport {
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
                                NodeInfo nodeInfo, String optUserCode) {
-        
+
     }
 
     @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
                                 NodeInfo nodeInfo, String optUserCode) {
-        
-    }
 
- 
+    }
 
 }

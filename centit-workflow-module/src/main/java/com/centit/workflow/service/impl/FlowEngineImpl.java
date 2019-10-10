@@ -56,8 +56,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private FlowManager flowManager;
     @Resource
     private FlowWorkTeamDao flowTeamDao;
-    @Resource
-    private FlowRoleDefineDao flowRoleDefineDao;
 
     @Resource
     private FlowOrganizeDao flowOrganizeDao;
@@ -163,7 +161,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             unitParams, flowVarTrans);
         nodeInst.setUnitCode(nextNodeUnit);
         //如果锁定首节点只能有本人操作，则要在任务表中添加一条记录
-        if (options.isLockFirstOpt()) {
+        if (options.isLockOptUser()) {
             String optUser = options.getWorkUserCode();
             if(StringUtils.isBlank(optUser)){
                 optUser = options.getUserCode();
@@ -204,7 +202,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
                 //审批待测试
             } else if ("sp".equalsIgnoreCase(node.getRoleType())) {
-                optUsers=getSpUsers(node,options.getUnitCode());
+                // TODO 获取用户信息需要重构
+                // optUsers=getSpUsers(node,options.getUnitCode());
             } else {
                 /*gw xz*/
                 optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(userUnitFilterFactory.createCalcContext(),
@@ -422,7 +421,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 optUsers.add(u.getUserCode());
             //流程角色（审批角色）待测试
         } else if ("sp".equalsIgnoreCase(nextOptNode.getRoleType())) {
-            optUsers = getSpUsers(nextOptNode, unitCode);
+            // TODO 获取用户信息需要重构
+            // optUsers = getSpUsers(nextOptNode, unitCode);
         } else/*gw xz*/ {
             optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(userUnitFilterFactory.createCalcContext(),
                 nextOptNode.getRoleType(), nextOptNode.getRoleCode(), unitCode);
@@ -431,29 +431,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return optUsers;
     }
 
-    private Set<String> getSpUsers(NodeInfo nodeInfo,String unitCode) {
-        Set<String> optUsers =new HashSet<>();
-        List<FlowRoleDefine> defineByRoleCode =
-            flowRoleDefineDao.getFlowRoleDefineByRoleCode(nodeInfo.getRoleCode());
-        for (FlowRoleDefine roleDefine : defineByRoleCode) {
-            optUsers.addAll(FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode));
-        }
-        return optUsers;
-    }
-    /*
-     * @param flowInst
-     * @param flowInfo
-     * @param nodeInst
-     * @param trans
-     * @param userCode
-     * @param unitCode
-     * @param varTrans
-     * @param nodeUnits
-     * @param nodeOptUsers
-     * @param application
-     * @return
-     * @throws WorkflowException
-     */
+
     private Set<String> submitToNextRouterNode(
         NodeInfo nextRoutertNode, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance nodeInst, String transPath, FlowTransition trans, String userCode, String unitCode, String nodeToken,

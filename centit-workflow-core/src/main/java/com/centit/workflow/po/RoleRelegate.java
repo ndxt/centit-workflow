@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * create by scaffold
- *
+ * 行政角色 委托信息
  * @author codefan@hotmail.com
  */
 @Entity

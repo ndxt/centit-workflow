@@ -34,7 +34,7 @@ public class FlowModelDataImpl implements FlowModelData, Serializable {
     private FlowOptDefDao wfOptDefDao;
 
     @Resource
-    private FlowRoleDao flowRoleDao;
+    private RoleFormulaDao flowRoleDao;
 
     @Resource
     private FlowOptInfoDao flowOptInfoDao;

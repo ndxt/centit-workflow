@@ -12,7 +12,6 @@ public class CallStoredProcedureEventBean implements NodeEventSupport {
     @Override
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                                    NodeInfo nodeInfo, String optUserCode) {
-
         return true;
     }
 
@@ -29,6 +28,5 @@ public class CallStoredProcedureEventBean implements NodeEventSupport {
     @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
                                 NodeInfo nodeInfo, String optUserCode) {
-        
     }
 }

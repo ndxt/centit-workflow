@@ -9,6 +9,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowModelData;
+import com.centit.workflow.service.RoleFormulaService;
 import com.centit.workflow.service.impl.FlowOptUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +20,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class FlowDefineController extends BaseController {
     @Resource
     private com.centit.workflow.service.FlowDefine flowDef;
     @Resource
-    private com.centit.workflow.service.FlowRoleService flowRoleService;
+    private RoleFormulaService flowRoleService;
     @Resource
     private FlowModelData modelData;
 

@@ -38,7 +38,7 @@ public class FlowEngineController extends BaseController {
     @Resource
     private FlowDefine flowDefine;
     @Resource
-    private FlowRoleService flowRoleService;
+    private RoleFormulaService flowRoleService;
     @Resource
     private PlatformFlowService platformFlowService;
     @Resource

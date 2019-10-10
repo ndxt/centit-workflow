@@ -1,6 +1,5 @@
 package com.centit.workflow.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
@@ -8,10 +7,10 @@ import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.security.model.CentitUserDetails;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.FlowRole;
+import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.po.RoleRelegate;
 import com.centit.workflow.service.FlowManager;
-import com.centit.workflow.service.FlowRoleService;
+import com.centit.workflow.service.RoleFormulaService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +28,7 @@ public class UserOptController extends BaseController {
     @Resource
     private FlowManager flowManager;
     @Resource
-    private FlowRoleService flowRoleService;
+    private RoleFormulaService flowRoleService;
     //private ResponseMapData resData;
 
 
@@ -59,7 +58,7 @@ public class UserOptController extends BaseController {
 
     @RequestMapping(value = "/getUserFlowRole/{userCode}", method = {RequestMethod.GET})
     public void getUserFlowRole(@PathVariable String userCode, HttpServletResponse response) {
-        List<FlowRole> flowRoles = flowRoleService.listFlowRoles(new HashMap<>(), new PageDesc());
+        List<RoleFormula> flowRoles = flowRoleService.listRoleFormulas(new HashMap<>(), new PageDesc());
         ResponseMapData resData = new ResponseMapData();
         resData.addResponseData("flowRoleList", flowRoles);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
