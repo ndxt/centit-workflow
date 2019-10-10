@@ -13,16 +13,19 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "WF_FLOW_ROLE_DEFINE")
-public class FlowRoleDefine implements Serializable {
+public class FlowTeamDefine implements Serializable {
     private static final long serialVersionUID =  1L;
 
     @Id
     @Column(name = "ID")
     private String id;
+
     @Column(name = "ROLE_CODE")
     private String roleCode;
+
     @Column(name = "RELATED_TYPE")
     private String relatedType;
+
     @Column(name = "RELATED_CODE")
     private String relatedCode;
 

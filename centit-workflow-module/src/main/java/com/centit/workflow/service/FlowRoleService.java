@@ -3,7 +3,7 @@ package com.centit.workflow.service;
 
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowRole;
-import com.centit.workflow.po.FlowRoleDefine;
+import com.centit.workflow.po.FlowTeamDefine;
 
 import java.util.List;
 import java.util.Map;
@@ -18,9 +18,9 @@ public interface FlowRoleService {
 
     void deleteFlowRoleByCode(String roleCode);
 
-    List<FlowRoleDefine> getFlowRoleDefineListByCode(String roleCode);
+    List<FlowTeamDefine> getFlowRoleDefineListByCode(String roleCode);
 
     void deleteFlowRoleDefineById(String id);
 
-    void saveFlowRoleDefine(FlowRoleDefine flowRoleDefine);
+    void saveFlowRoleDefine(FlowTeamDefine flowRoleDefine);
 }

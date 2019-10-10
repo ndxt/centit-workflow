@@ -433,9 +433,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     private Set<String> getSpUsers(NodeInfo nodeInfo,String unitCode) {
         Set<String> optUsers =new HashSet<>();
-        List<FlowRoleDefine> defineByRoleCode =
+        List<FlowTeamDefine> defineByRoleCode =
             flowRoleDefineDao.getFlowRoleDefineByRoleCode(nodeInfo.getRoleCode());
-        for (FlowRoleDefine roleDefine : defineByRoleCode) {
+        for (FlowTeamDefine roleDefine : defineByRoleCode) {
             optUsers.addAll(FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode));
         }
         return optUsers;

@@ -26,8 +26,10 @@ public class FlowRole implements Serializable {
 
     @Column(name = "ROLE_NAME")
     private String roleName;
+
     @Column(name = "ROLE_LEVEL")
     private Integer roleLevel;
+
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "CREATE_TIME")
     private Date createTime;
@@ -50,13 +52,13 @@ public class FlowRole implements Serializable {
 
 
 
-    private List<FlowRoleDefine> flowRoleDefineList;
+    private List<FlowTeamDefine> flowRoleDefineList;
 
-    public List<FlowRoleDefine> getFlowRoleDefineList() {
+    public List<FlowTeamDefine> getFlowRoleDefineList() {
         return flowRoleDefineList;
     }
 
-    public void setFlowRoleDefineList(List<FlowRoleDefine> flowRoleDefineList) {
+    public void setFlowRoleDefineList(List<FlowTeamDefine> flowRoleDefineList) {
         this.flowRoleDefineList = flowRoleDefineList;
     }
 
