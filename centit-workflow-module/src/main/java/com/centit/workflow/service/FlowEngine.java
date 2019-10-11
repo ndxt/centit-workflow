@@ -59,7 +59,7 @@ public interface FlowEngine {
                                              String flowOptTag,String userCode,String unitCode){
         return createInstance(
             CreateFlowOptions.create().flow(flowCode).optName(flowOptName)
-                .optTag(flowOptTag).user(userCode).unit(unitCode).lockFirst(true),
+                .optTag(flowOptTag).user(userCode).unit(unitCode).lockOptUser(true),
             null, null);
     }
 

@@ -126,6 +126,39 @@ public class ExtFrameworkContextCacheBean {
                 return unitUsers;
             },
             allUserUnitCache);
+    // ------------------- user Role ------------------------------------
+    CachedObject<List<ExtSysUserRole>> allUserRoleCache =
+        new CachedObject<>( this::reloadUserRole,
+            CodeRepositoryCache.CACHE_FRESH_PERIOD_SECONDS);
+
+    CachedMap<String, List<ExtSysUserRole>> userRoleMapCache=
+        new CachedMap<>( (userCode) ->{
+            List<ExtSysUserRole> userRoleList = allUserRoleCache.getCachedTarget();
+            if(userRoleList==null)
+                return null;
+            List<ExtSysUserRole> userRoles = new ArrayList<>(4);
+            for(ExtSysUserRole uo : userRoleList){
+                if(StringUtils.equals(userCode, uo.getUserCode())){
+                    userRoles.add(uo);
+                }
+            }
+            return userRoles;
+        }, allUserRoleCache);
+
+    CachedMap<String, List<ExtSysUserRole>> roleUserMapCache=
+        new CachedMap<>( (roleCode) ->{
+            List<ExtSysUserRole> userRoleList = allUserRoleCache.getCachedTarget();
+            if(userRoleList==null)
+                return null;
+            List<ExtSysUserRole> userRoles = new ArrayList<>(20);
+            for(ExtSysUserRole uo : userRoleList){
+                if(StringUtils.equals(roleCode, uo.getRoleCode())){
+                    userRoles.add(uo);
+                }
+            }
+            return userRoles;
+        }, allUserRoleCache);
+
 
     CachedObject<Map<String, Integer>> rankMapCache =
         new CachedObject<>( this::reloadRankInfo,
@@ -133,7 +166,7 @@ public class ExtFrameworkContextCacheBean {
 
 
 
-    private ExtSysUnitInfo searchUnitInfoByCode(String unitCode) {
+    public ExtSysUnitInfo searchUnitInfoByCode(String unitCode) {
         for(ExtSysUnitInfo unitInfo : allunitInfoCache.getCachedTarget()){
             if(unitInfo.getUnitCode().equals(unitCode))
                 return unitInfo;
@@ -141,7 +174,7 @@ public class ExtFrameworkContextCacheBean {
         return null;
     }
 
-    private ExtSysUserInfo searchUserInfoByCode(String userCode) {
+    public ExtSysUserInfo searchUserInfoByCode(String userCode) {
         for(ExtSysUserInfo userInfo : allUserInfoCache.getCachedTarget()){
             if(userInfo.getUserCode().equals(userCode))
                 return userInfo;
@@ -235,6 +268,28 @@ public class ExtFrameworkContextCacheBean {
         }
     }
 
+    protected List<ExtSysUserRole> reloadUserRole(){
+        try(Connection conn = getExternalDataConnection() ) {
+            List<Object[]> userRoles = DatabaseAccess.findObjectsBySql(conn,
+                ExtendedQueryPool.getExtendedSql("WORKFLOW_EXTERNAL_USERROLE") );
+
+            if(userRoles == null)
+                return null;
+            List<ExtSysUserRole>  allUserRoles = new ArrayList<>(userRoles.size()+1);
+            for(Object[] uo: userRoles){
+                ExtSysUserRole role = new ExtSysUserRole();
+                role.setUserCode(StringBaseOpt.objectToString(uo[0]));
+                role.setRoleCode(StringBaseOpt.objectToString(uo[1]));
+                role.setObtainType(StringBaseOpt.objectToString(uo[2]));
+                role.setInheritedFrom(StringBaseOpt.objectToString(uo[3]));
+                allUserRoles.add(role);
+            }
+            return allUserRoles;
+        }catch (SQLException |IOException  e){
+            logger.error(e.getLocalizedMessage());
+            return null;
+        }
+    }
     protected Map<String, Integer > reloadRankInfo(){
         try(Connection conn = getExternalDataConnection() ) {
 

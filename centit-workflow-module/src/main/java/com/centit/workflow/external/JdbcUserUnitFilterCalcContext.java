@@ -2,6 +2,7 @@ package com.centit.workflow.external;
 
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.impl.AbstractUserUnitFilterCalcContext;
+import com.centit.framework.model.basedata.IUserRole;
 import com.centit.support.algorithm.CollectionsOpt;
 import org.apache.commons.lang3.StringUtils;
 
@@ -76,7 +77,17 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
 
     @Override
     public List<ExtSysUserUnit> listUserUnits(String userCode) {
-        return this.extFrameworkBean.unitUserMapCache.getCachedValue(userCode);
+        return this.extFrameworkBean.userUnitMapCache.getCachedValue(userCode);
+    }
+
+    @Override
+    public List<? extends IUserRole> listUserRoles(String userCode) {
+        return this.extFrameworkBean.userRoleMapCache.getCachedValue(userCode);
+    }
+
+    @Override
+    public List<? extends IUserRole> listRoleUsers(String roleCode) {
+        return this.extFrameworkBean.roleUserMapCache.getCachedValue(roleCode);
     }
 
     @Override

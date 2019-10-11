@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseData;
-import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
@@ -15,7 +14,6 @@ import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.*;
-import com.centit.workflow.service.impl.FlowOptUtils;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -46,88 +44,6 @@ public class FlowEngineController extends BaseController {
 
 
     private Map<Class<?>, String[]> excludes;
-
-    /**
-     * 下一步审批人
-     * @param json
-     * @param response
-     */
-    @PostMapping("/viewNextNodeOperator")
-    public void viewNextNodeOperator(@RequestBody String json,HttpServletRequest request, HttpServletResponse response) {
-        ResponseMapData data = new ResponseMapData();
-        Set<String> iUserInfos = new HashSet<>();
-        JSONObject jsonObject = JSON.parseObject(json);
-        //解析
-        String nodeInstId = jsonObject.getString("nodeInstId");
-        String userCode = jsonObject.getString("userCode");
-        String unitCode = jsonObject.getString("unitCode");
-        String varTrans = jsonObject.getString("varTrans");
-        Map<String, Object> extParams =
-            BaseController.collectRequestParameters(request);
-        if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
-            Map<String, Object> maps = (Map) JSON.parse(varTrans.replaceAll("&quot;", "\""));
-            extParams.putAll(maps);
-        }
-        Set<NodeInfo> nodeInfoSet = flowEngine.viewNextNode(nodeInstId, userCode, unitCode,
-            new ObjectUserUnitVariableTranslate(extParams));
-        for (NodeInfo nodeInfo : nodeInfoSet) {
-            List<FlowRoleDefine> roleDefines = flowRoleService.getFlowRoleDefineListByCode(nodeInfo.getRoleCode());
-            for (FlowRoleDefine roleDefine : roleDefines) {
-                iUserInfos.addAll(FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode));
-            }
-        }
-        data.addResponseData("userCodeList", iUserInfos);
-        JsonResultUtils.writeResponseDataAsJson(data, response);
-    }
-
-    /**
-     * 获取第一步的操作人员
-     * @param flowCode 流程定义code
-     * @param unitCode 部门编码
-     * @param response
-     */
-    @GetMapping("/viewFlowFirstOperUser/{flowCode}/{unitCode}")
-    public void viewFlowFirstOperUser(@PathVariable String flowCode, @PathVariable String unitCode, HttpServletResponse response) {
-        //获取流程定义信息
-        FlowInfo flowInfo = flowDefine.getFlowDefObject(flowCode);
-        ResponseMapData data = new ResponseMapData();
-        String nodeId = flowInfo.getFirstNode().getNodeId();
-        Set<FlowTransition> trans = flowInfo.getFlowTransitions();
-        Set<NodeInfo> nodes = flowInfo.getFlowNodes();
-        //第二个节点id
-        String targetNodeId = "";
-        //审批角色
-        String roleCode = "";
-        String roleType = "";
-        Set<String> iUserInfos = null;
-        //循环判断首节点下面得一个节点，暂时默认为首节点下面得节点为单节点
-        for (FlowTransition f : trans) {
-            if (nodeId.equals(f.getStartNodeId())) {
-                targetNodeId = f.getEndNodeId();
-                break;
-            }
-        }
-        //找到节点定义的角色代码
-        for (NodeInfo n : nodes) {
-            if (targetNodeId.equals(n.getNodeId())) {
-                roleType = n.getRoleType();
-                roleCode = n.getRoleCode();
-                if ("en".equals(roleType)) {
-                    roleCode = n.getPowerExp();
-                }
-                break;
-            }
-        }
-
-        List<FlowRoleDefine> roleDefineListByCode =
-            flowRoleService.getFlowRoleDefineListByCode(roleCode);
-        for (FlowRoleDefine roleDefine : roleDefineListByCode) {
-            iUserInfos = FlowOptUtils.listUserByRoleDefine(roleDefine, unitCode);
-        }
-        data.addResponseData("userCode", iUserInfos);
-        JsonResultUtils.writeResponseDataAsJson(data, response);
-
-    }
 
     @ApiOperation(value = "创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
     @PostMapping("/createAndSubmitFlow")

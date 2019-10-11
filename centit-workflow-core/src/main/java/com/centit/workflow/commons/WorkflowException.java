@@ -1,6 +1,6 @@
 package com.centit.workflow.commons;
 
-import com.centit.framework.common.ObjectException;
+import com.centit.support.common.ObjectException;
 
 /**
  * Created by codefan on 17-9-11.
