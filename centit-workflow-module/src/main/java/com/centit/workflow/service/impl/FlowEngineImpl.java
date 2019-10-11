@@ -11,6 +11,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.NodeEventSupport;
+import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
@@ -133,7 +134,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         NodeInstance nodeInst = FlowOptUtils.createNodeInst(
             options.getUnitCode(),
-            options.getUserCode(), null, flowInst, null, wf, node, null);
+            options.getUserCode(), flowInst, null, wf, node, null);
         //添加令牌算法 首节点的令牌为初始值 系统默认值
         // nodeInst.setRunToken("T");
         //同步创建时间
@@ -263,11 +264,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             boolean needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
                 node, options.getUserCode());
             if (needSubmit)
-                this.submitOpt(nodeInst.getNodeInstId(), options.getUserCode(), options.getUnitCode(), varTrans, application);
+                this.submitOpt( SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
+                    .user( options.getUserCode()).unit(options.getUnitCode()),
+                    varTrans, application);
 
         } else if ("E".equals(node.getOptType())) {  //哑元节点 自动提交
             try {
-                this.submitOpt(nodeInst.getNodeInstId(), options.getUserCode(), options.getUnitCode(), varTrans, application);
+                this.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
+                    .user( options.getUserCode()).unit(options.getUnitCode()),
+                    varTrans, application);
             } catch (WorkflowException e) {
                 logger.error("自动提交哑元节点 " + nodeInst.getNodeInstId() + "后提交出错 。" + e.getMessage());
                 throw e;
@@ -368,7 +373,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowOptUtils.endInstance(flowInst, "C", userCode, flowInstanceDao);
 
         NodeInstance endNodeInst =
-            FlowOptUtils.createNodeInst(unitCode, userCode, null, flowInst, null, flowInfo, endNode, trans);
+            FlowOptUtils.createNodeInst(unitCode, userCode, flowInst, null, flowInfo, endNode, trans);
         endNodeInst.setNodeInstId(UuidOpt.getUuidAsString32());
 //        endNodeInst.setNodeInstId(nodeInstanceDao.getNextNodeInstId());
         endNodeInst.setNodeState("C");
@@ -379,7 +384,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (StringUtils.isBlank(transPath))
             endNodeInst.setTransPath(trans.getTransId());
         else
-            endNodeInst.setTransPath(transPath + "," + String.valueOf(trans.getTransId()));
+            endNodeInst.setTransPath(transPath + "," + trans.getTransId());
         nodeInstanceDao.saveNewObject(endNodeInst);
         FlowOptUtils.sendFinishMsg(flowInst.getFlowInstId(), userCode);
     }
@@ -431,17 +436,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return optUsers;
     }
 
-
     private Set<String> submitToNextRouterNode(
-        NodeInfo nextRoutertNode, FlowInstance flowInst, FlowInfo flowInfo,
-        NodeInstance nodeInst, String transPath, FlowTransition trans, String userCode, String unitCode, String nodeToken,
-        FlowVariableTranslate varTrans, Map<Long, Set<String>> nodeUnits,
-        Map<Long, Set<String>> nodeOptUsers, ServletContext application)
+        NodeInfo nextRoutertNode, String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
+        NodeInstance nodeInst, String transPath, FlowTransition trans,
+        SubmitOptOptions options,
+        FlowVariableTranslate varTrans, ServletContext application)
         throws WorkflowException {
         String sRT = nextRoutertNode.getRouterType();
         Set<String> resNodes = new HashSet<>();
         String preTransPath = StringUtils.isBlank(transPath) ?
-            String.valueOf(trans.getTransId()) : transPath + "," + String.valueOf(trans.getTransId());
+            trans.getTransId() : transPath + "," + trans.getTransId();
 
         if ("H".equals(sRT) || "D".equals(sRT)) {//D 分支和 H 并行
             //提交游离分支上的叶子节点 将不会向后流转
@@ -464,17 +468,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 FlowTransition nodeTran = selTrans.iterator().next();
                 String nextNodeId = nodeTran.getEndNodeId();
                 resNodes = submitToNextNode(
-                    nextNodeId, flowInst, flowInfo,
-                    nodeInst, preTransPath, nodeTran, userCode, null, unitCode, nodeToken,
-                    varTrans, nodeUnits, nodeOptUsers, application);
+                    nextNodeId, nodeToken, flowInst, flowInfo,
+                    nodeInst, preTransPath, nodeTran, options,
+                    varTrans, application);
             } else {
                 int nNo = 1;
                 for (FlowTransition tran : selTrans) {
                     String nextNodeId = tran.getEndNodeId();
                     Set<String> nNs = submitToNextNode(
-                        nextNodeId, flowInst, flowInfo,
-                        nodeInst, preTransPath, tran, userCode, null, unitCode, nodeToken + "." + nNo,
-                        varTrans, nodeUnits, nodeOptUsers, application);
+                        nextNodeId, nodeToken + "." + nNo, flowInst, flowInfo,
+                        nodeInst, preTransPath, tran, options,
+                        varTrans, application);
                     resNodes.addAll(nNs);
                     nNo++;
                 }
@@ -495,9 +499,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         }
                     }
                     resNodes = submitToNextNode(
-                        nextNodeId, flowInst, flowInfo,
-                        nodeInst, preTransPath, nodeTran, userCode, null, unitCode, preRunToken,
-                        varTrans, nodeUnits, nodeOptUsers, application);
+                        nextNodeId, preRunToken, flowInst, flowInfo,
+                        nodeInst, preTransPath, nodeTran, options,
+                        varTrans, application);
                 } else {
                     //A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X
                     String sCT = nextRoutertNode.getConvergeType();
@@ -538,12 +542,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                 if ("W".equals(ni.getNodeState())) { //结束子流程
                                     FlowInstance subFlowInst = flowInstanceDao.getObjectById(ni.getSubFlowInstId());
                                     if (subFlowInst != null) {
-                                        FlowOptUtils.endInstance(subFlowInst, "F", userCode, flowInstanceDao);
+                                        FlowOptUtils.endInstance(subFlowInst, "F", options.getUserCode(), flowInstanceDao);
                                     }
                                 }
                                 ni.setNodeState("F");// 节点设置为无效
                                 ni.setLastUpdateTime(currentTime);
-                                ni.setLastUpdateUser(userCode);
+                                ni.setLastUpdateUser(options.getUserCode());
                             }
 
                             FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
@@ -554,9 +558,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                 }
                             }
                             resNodes = submitToNextNode(
-                                nextNodeId, flowInst, flowInfo,
-                                nodeInst, preTransPath, nodeTran, userCode, null, unitCode, preRunToken,
-                                varTrans, nodeUnits, nodeOptUsers, application);
+                                nextNodeId, preRunToken, flowInst, flowInfo,
+                                nodeInst, preTransPath, nodeTran, options,
+                                varTrans, application);
                         }
                     }
                 }
@@ -577,20 +581,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
                 //D 机构， U  人员（权限表达式） V 变量
                 if ("D".equals(nextRoutertNode.getMultiInstType())) {
-                    Set<String> nextNodeUnits = null;
-                    if (nodeUnits != null)
-                        nextNodeUnits = nodeUnits.get(nextRoutertNode.getNodeId());
-                    if (nextNodeUnits == null) {
-                        Map<String, Set<String>> unitParams = UserUnitParamBuilder.createEmptyParamMap();
-                        UserUnitParamBuilder.addParamToParamMap(unitParams, "L", unitCode);
-                        UserUnitParamBuilder.addParamToParamMap(unitParams, "U",
-                            CodeRepositoryUtil.getUserInfoByCode(userCode).getPrimaryUnit());
-                        UserUnitParamBuilder.addParamToParamMap(unitParams, "P", nodeInst.getUnitCode());
-                        UserUnitParamBuilder.addParamToParamMap(unitParams, "F", flowInst.getUnitCode());
+                    Map<String, Set<String>> unitParams = UserUnitParamBuilder.createEmptyParamMap();
+                    UserUnitParamBuilder.addParamToParamMap(unitParams, "L", options.getUnitCode());
+                    UserUnitParamBuilder.addParamToParamMap(unitParams, "U",
+                        CodeRepositoryUtil.getUserInfoByCode(options.getUserCode()).getPrimaryUnit());
+                    UserUnitParamBuilder.addParamToParamMap(unitParams, "P", nodeInst.getUnitCode());
+                    UserUnitParamBuilder.addParamToParamMap(unitParams, "F", flowInst.getUnitCode());
 
-                        nextNodeUnits = UserUnitCalcEngine.calcUnitsByExp(userUnitFilterFactory.createCalcContext(), nextRoutertNode.getUnitExp(),
-                            unitParams, flowVarTrans);
-                    }
+                    Set<String> nextNodeUnits = UserUnitCalcEngine.calcUnitsByExp(userUnitFilterFactory.createCalcContext(), nextRoutertNode.getUnitExp(),
+                        unitParams, flowVarTrans);
 
                     if (nextNodeUnits == null || nextNodeUnits.size() == 0) { //报错
                         throw new WorkflowException(WorkflowException.NoValueForMultiInst,
@@ -603,9 +602,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
                                 "cd_" + nextRoutertNode.getNodeCode(), uc);
                             NodeInstance nextNodeInst = submitToSingleNextOptNode(
-                                nextNode, flowInst, flowInfo,
-                                nodeInst, preTransPath, nodeTran, userCode, uc, null, nodeToken + "." + nRn,
-                                false, varTrans, nodeUnits, nodeOptUsers,
+                                nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
+                                nodeInst, preTransPath, nodeTran, options,
+                                varTrans,
                                 application);
                             resNodes.add(nextNodeInst.getNodeInstId());
                             nRn++;
@@ -614,11 +613,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 } else if ("U".equals(nextRoutertNode.getMultiInstType())) {
 
                     Set<String> optUsers = null;
-                    if (nodeOptUsers != null)
-                        optUsers = nodeOptUsers.get(nextRoutertNode.getNodeId());
+                    if (options.getNodeOptUsers() != null) {
+                        optUsers = options.getNodeOptUsers().get(nextRoutertNode.getNodeId());
+                    }
                     if (optUsers == null) {
                         optUsers = calcNodeOpterators(flowInst, nodeInst, nodeToken,
-                            nextRoutertNode, userCode, unitCode,
+                            nextRoutertNode, options.getUserCode(), options.getUnitCode(),
                             varTrans);
                     }
                     if (optUsers == null || optUsers.size() == 0) {
@@ -633,12 +633,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
                                 "cu_" + nextRoutertNode.getNodeCode(), uc);
                             NodeInstance nextNodeInst = submitToSingleNextOptNode(
-                                nextNode, flowInst, flowInfo,
-                                nodeInst, preTransPath, nodeTran, uc,
-                                CodeRepositoryUtil.getUserPrimaryUnit(uc) != null ? CodeRepositoryUtil.getUserPrimaryUnit(uc).getUnitCode() : null,
-                                //CodeRepositoryUtil.getUserInfoByCode(uc).getPrimaryUnit(),
-                                null, nodeToken + "." + nRn,
-                                true, varTrans, nodeUnits, nodeOptUsers,
+                                nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
+                                nodeInst, preTransPath, nodeTran,
+                                options.clone().workUser(uc).unit(CodeRepositoryUtil.getUserPrimaryUnit(uc) != null ? CodeRepositoryUtil.getUserPrimaryUnit(uc).getUnitCode() : null),
+                                varTrans,
                                 application);
                             resNodes.add(nextNodeInst.getNodeInstId());
                             nRn++;
@@ -652,9 +650,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
                 String nextNodeId = nodeTran.getEndNodeId();
                 resNodes = submitToNextNode(
-                    nextNodeId, flowInst, flowInfo,
-                    nodeInst, preTransPath, nodeTran, userCode, null, unitCode, "R" + nodeToken,
-                    varTrans, nodeUnits, nodeOptUsers, application);
+                    nextNodeId, "R" + nodeToken, flowInst, flowInfo,
+                    nodeInst, preTransPath, nodeTran, options,
+                    varTrans, application);
 
             } else if ("S".equals(sRT)) {//同步 保留
                 String preRunToken = NodeInstance.calcSuperToken(nodeToken);
@@ -669,10 +667,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         if ("R".equals(rtN.getNodeType()) && "S".equals(rtN.getRouterType())) {
                             FlowTransition nextTran = selectOptNodeTransition(rtN);
                             Set<String> sN = submitToNextNode(
-                                nextTran.getEndNodeId(), flowInst, flowInfo,
-                                ent.getValue(), preTransPath, nextTran, ent.getValue().getLastUpdateUser(),
-                                null, ent.getValue().getUnitCode(), ent.getValue().getRunToken(),
-                                varTrans, nodeUnits, nodeOptUsers, application);
+                                nextTran.getEndNodeId(), ent.getValue().getRunToken(), flowInst, flowInfo,
+                                ent.getValue(), preTransPath, nextTran,
+                                options.clone().user(ent.getValue().getLastUpdateUser())
+                                    .unit( ent.getValue().getUnitCode()),
+                                varTrans, application);
                             resNodes.addAll(sN);
                         }
                     }
@@ -684,11 +683,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     private Set<String> submitToNextNode(
-        String nextNodeId, FlowInstance flowInst, FlowInfo flowInfo,
+        String nextNodeId, String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance nodeInst, String transPath, FlowTransition nodeTran,
-        String userCode, String grantorCode, String unitCode, String nodeToken,
+        SubmitOptOptions options,
         FlowVariableTranslate varTrans,
-        Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
         ServletContext application) throws WorkflowException {
 
         Set<String> resNodes = new HashSet<String>();
@@ -696,28 +694,28 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if ("R".equals(nextNode.getNodeType())) { // 后续节点为路由节点
 
             resNodes = submitToNextRouterNode(
-                nextNode, flowInst, flowInfo,
-                nodeInst, transPath, nodeTran, userCode, unitCode, nodeToken,
-                varTrans, nodeUnits, nodeOptUsers, application);
+                nextNode, nodeToken, flowInst, flowInfo,
+                nodeInst, transPath, nodeTran, options,
+                varTrans, application);
 
         } else if ("F".equals(nextNode.getNodeType())) {
             //如果是最后一个节点，则要结束整个流程 调用 endInstance
             this.endFlowInstance(flowInst, flowInfo, nextNode, transPath,
-                nodeTran, nodeInst.getNodeInstId(), userCode, unitCode);
+                nodeTran, nodeInst.getNodeInstId(), options.getUserCode(), options.getUnitCode());
 
             if ("Y".equals(flowInst.getIsSubInst())) {
                 long otherSubFlows = flowInstanceDao.calcOtherSubflowSum(
                     flowInst.getPareNodeInstId(), flowInst.getFlowInstId());
                 if (otherSubFlows == 0)// 其他所有子流程都关闭了，则提交父流程对应的节点
-                    resNodes = submitOptInside(flowInst.getPareNodeInstId(), userCode, grantorCode, unitCode,
-                        varTrans, nodeUnits, nodeOptUsers, application);
+                    resNodes = submitOpt(options.clone().nodeInst(flowInst.getPareNodeInstId()),
+                        varTrans, application);
             }
         } else {
 
             NodeInstance ns = submitToNextOptNode(
-                nextNode, flowInst, flowInfo,
-                nodeInst, transPath, nodeTran, userCode, unitCode, nodeToken,
-                varTrans, nodeUnits, nodeOptUsers, application);
+                nextNode, nodeToken, flowInst, flowInfo,
+                nodeInst, transPath, nodeTran, options,
+                varTrans, application);
             resNodes.add(ns.getNodeInstId());
 
         }
@@ -725,28 +723,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return resNodes;
     }
 
-
-    /**
-     * @param nextOptNode
-     * @param flowInst
-     * @param flowInfo
-     * @param nodeInst
-     * @param trans
-     * @param optUserCode
-     * @param optUnitCode
-     * @param varTrans
-     * @param nodeUnits
-     * @param nodeOptUsers
-     * @param application
-     * @return
-     * @throws WorkflowException
-     */
-    private NodeInstance submitToNextOptNode(
-        NodeInfo nextOptNode, FlowInstance flowInst, FlowInfo flowInfo,
+     private NodeInstance submitToNextOptNode(
+        NodeInfo nextOptNode, String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance nodeInst, String transPath, FlowTransition trans,
-        String optUserCode, String optUnitCode, String nodeToken,
+        SubmitOptOptions options,
         FlowVariableTranslate varTrans,
-        Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
         ServletContext application) throws WorkflowException {
 
         //String nodeToken = nodeInst.getRunToken();
@@ -754,10 +735,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
 
         String nextNodeUnit = null;
-        if (nodeUnits != null && nodeUnits.containsKey(nextCode)) {
-            Set<String> thisNodeUints = nodeUnits.get(nextCode);
-            if (thisNodeUints != null && thisNodeUints.size() > 0)
-                nextNodeUnit = thisNodeUints.iterator().next();
+        if (options.getNodeUnits() != null ) {
+            nextNodeUnit = options.getNodeUnits().get(nextCode);
         }
 
         //调用机构引擎来计算 unitCode
@@ -772,9 +751,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             Map<String, Set<String>> unitParams = UserUnitParamBuilder.createEmptyParamMap();
             UserUnitParamBuilder.addParamToParamMap(unitParams, "L", oldNodeInstUnitCode);
             UserUnitParamBuilder.addParamToParamMap(unitParams, "U",
-                optUnitCode == null ?
-                    CodeRepositoryUtil.getUserInfoByCode(optUserCode).getPrimaryUnit() :
-                    optUnitCode);
+                options.getUnitCode() == null ?
+                    CodeRepositoryUtil.getUserInfoByCode(options.getUserCode()).getPrimaryUnit() :
+                    options.getUnitCode());
             UserUnitParamBuilder.addParamToParamMap(unitParams, "P",
                 flowInst.getNearestNodeUnitCode(nodeInst, nodeToken));
             UserUnitParamBuilder.addParamToParamMap(unitParams, "F", flowInst.getUnitCode());
@@ -784,10 +763,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         //如果用户指定的节点对应的操作人员为空 则不创建这个节点
         Set<String> thisNodeUsers = null;
-        String nextNodeUser = optUserCode;
+        String nextNodeUser = options.getUserCode();
         boolean assignedUser = false;
-        if (nodeOptUsers != null && nodeOptUsers.containsKey(nextCode)) {
-            thisNodeUsers = nodeOptUsers.get(nextCode);
+        if (options.getNodeOptUsers() != null) {
+            thisNodeUsers = options.getNodeOptUsers().get(nextCode);
             if (thisNodeUsers != null && thisNodeUsers.size() > 0) {
                 nextNodeUser = thisNodeUsers.iterator().next();
                 assignedUser = true;
@@ -796,9 +775,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         //计算节点的用户
         NodeInstance nextNodeInst = submitToSingleNextOptNode(
-            nextOptNode, flowInst, flowInfo,
-            nodeInst, transPath, trans, nextNodeUser, nextNodeUnit, null, nodeToken,
-            false, varTrans, nodeUnits, nodeOptUsers,
+            nextOptNode, nodeToken, flowInst, flowInfo,
+            nodeInst, transPath, trans, options.clone().user(nextNodeUser).unit(nextNodeUnit),
+            varTrans,
             application);
         //如果用户手动指定节点的操作用户，替换节点的用户分配信息
         if (assignedUser && thisNodeUsers.size() > 0) {
@@ -823,11 +802,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     private NodeInstance submitToSingleNextOptNode(
-        NodeInfo nextOptNode, FlowInstance flowInst, FlowInfo flowInfo,
-        NodeInstance nodeInst, String transPath, FlowTransition trans, String userCode,
-        String unitCode, String nodeParam, String nodeToken,
-        boolean assignedUser, FlowVariableTranslate varTrans,
-        Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
+        NodeInfo nextOptNode,  String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
+        NodeInstance nodeInst, String transPath, FlowTransition trans,
+        SubmitOptOptions options,
+        FlowVariableTranslate varTrans,
         ServletContext application) throws WorkflowException {
 
         Date currentTime = new Date(System.currentTimeMillis());
@@ -836,7 +814,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 //        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
         String lastNodeInstId = UuidOpt.getUuidAsString32();
 
-        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, userCode, nodeParam,
+        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(options.getUnitCode(), options.getUserCode(),
             flowInst, nodeInst, flowInfo, nextOptNode, trans);
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
@@ -886,7 +864,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
                         .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
                 .optTag(flowInst.getFlowOptTag())
-                .user(userCode).unit(unitCode).parentFlow(nodeInst.getFlowInstId(), lastNodeInstId)
+                .user(options.getUserCode()).unit(options.getUnitCode()).parentFlow(nodeInst.getFlowInstId(), lastNodeInstId)
                 .timeLimit(tempFlowTimeLimit), varTrans, application);
 
             nextNodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
@@ -896,10 +874,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 flowInstanceDao.updateObject(flowInst);
             }*/
             tempFirstNode = tempFlow.getFirstNodeInstance();
-        } else if (!assignedUser) {
+        } else if (!options.isLockOptUser()) {
             Set<String> optUsers = calcNodeOpterators(flowInst, nodeInst, nodeToken,
                 nextOptNode,
-                userCode, unitCode,
+                options.getUserCode(), options.getUnitCode(),
                 varTrans);
             //计算人员的分配策略
             if (optUsers != null && optUsers.size() > 0)
@@ -959,24 +937,24 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         if ("W".equals(ni.getNodeState())) { //结束子流程
                             FlowInstance subFlowInst = flowInstanceDao.getObjectById(ni.getSubFlowInstId());
                             if (subFlowInst != null) {
-                                FlowOptUtils.endInstance(subFlowInst, "F", userCode, flowInstanceDao);
+                                FlowOptUtils.endInstance(subFlowInst, "F", options.getUserCode(), flowInstanceDao);
                             }
                         }
                         ni.setNodeState("F");// 节点设置为无效
                         ni.setLastUpdateTime(currentTime);
-                        ni.setLastUpdateUser(userCode);
+                        ni.setLastUpdateUser(options.getUserCode());
                     }
                 }
             }
         }
         nodeInstanceDao.saveNewObject(nextNodeInst);
         flowInst.setLastUpdateTime(currentTime);
-        flowInst.setLastUpdateUser(userCode);
+        flowInst.setLastUpdateUser(options.getUserCode());
         flowInstanceDao.updateObject(flowInst);
 
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nextOptNode);
-        nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nextOptNode, userCode);
+        nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nextOptNode, options.getUserCode());
 
 
         boolean needSubmit = false;
@@ -984,14 +962,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //检查自动执行节点 并执行相关操作
         if ("D".equals(nextOptNode.getOptType())) {
             needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nextNodeInst,
-                nextOptNode, userCode);
+                nextOptNode, options.getUserCode());
         }
         if (needSubmit || "E".equals(nextOptNode.getOptType())) {
             //TODO 如果自动执行的节点下一步生成的节点实例有多个，这边的return就不对了
             //暂时先取第一个节点实例，解决部分问题
             //varTrans改为一个空的
-            Set<String> nextNodes = this.submitOptInside(lastNodeInstId, userCode, null, unitCode,
-                varTrans, nodeUnits, nodeOptUsers, application);
+            Set<String> nextNodes = this.submitOpt(options.clone().nodeInst(lastNodeInstId),
+                varTrans, application);
             for (String n : nextNodes) {
                 nextNodeInst = nodeInstanceDao.getObjectById(n);
                 break;
@@ -1063,17 +1041,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      *        如果下一个节点是介绍节点则介绍整个流程
      * 记录提交日志，节点创建情况
      */
-    private Set<String> submitOptInside(String nodeInstId, String userCode, String grantorCode,
-                                      String unitCode, UserUnitVariableTranslate varTrans,
-                                      Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
-                                      ServletContext application) throws WorkflowException {
+    @Override
+    public Set<String> submitOpt(SubmitOptOptions options,
+                                        UserUnitVariableTranslate varTrans,
+                                        ServletContext application) throws WorkflowException {
 
         //2012-04-16 重构提交事件，添加一个多实例节点类型，这个节点类型会根据不同的机构创建不同的节点
         //根据上级节点实例编号获取节点所在父流程实例信息
-        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
+        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(options.getNodeInstId());
         if (nodeInst == null) {
-            logger.error("找不到节点实例：" + nodeInstId);
-            throw new WorkflowException(WorkflowException.NodeInstNotFound, "找不到节点实例：" + nodeInstId);
+            logger.error("找不到节点实例：" + options.getNodeInstId());
+            throw new WorkflowException(WorkflowException.NodeInstNotFound, "找不到节点实例：" + options.getNodeInstId());
         }
         FlowInstance flowInst = flowInstanceDao.getObjectCascadeById(nodeInst.getFlowInstId());
         if (flowInst == null) {
@@ -1086,10 +1064,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         if ("P".equals(nodeInst.getIsTimer())) {
             logger.error("流程节点处于暂停计时 状态：" + flowInst.getInstState() +
-                "节点：" + nodeInstId);
+                "节点：" + options.getNodeInstId());
             throw new WorkflowException(WorkflowException.PauseTimerNode,
                 "流程节点处于暂停计时 状态：" + flowInst.getInstState() +
-                    "节点：" + nodeInstId);
+                    "节点：" + options.getNodeInstId());
         }
         //校验节点状态 流程和节点状态都要为正常
         if (!"N,M".contains(flowInst.getInstState()) ||
@@ -1098,43 +1076,44 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             )
             ) {
             logger.error("流程节点状态不正确，流程：" + nodeInst.getFlowInstId() + " 状态：" + flowInst.getInstState() +
-                "节点：" + nodeInstId + " 状态：" + nodeInst.getNodeState());
+                "节点：" + options.getNodeInstId() + " 状态：" + nodeInst.getNodeState());
             throw new WorkflowException(WorkflowException.IncorrectNodeState,
                 "流程节点状态不正确，流程：" + nodeInst.getFlowInstId() + " 状态：" + flowInst.getInstState() +
-                    "节点：" + nodeInstId + " 状态：" + nodeInst.getNodeState());
+                    "节点：" + options.getNodeInstId() + " 状态：" + nodeInst.getNodeState());
         }
 
         String sGrantor;
         NodeInfo currNode = flowNodeDao.getObjectById(nodeInst.getNodeId());
         if ("gw".equals(currNode.getRoleType())) {
             //TODO 判断人员岗位吻合
-            sGrantor = userCode;
-        } else if (grantorCode == null || grantorCode.equals(userCode)) {
-            sGrantor = actionTaskDao.getTaskGrantor(nodeInstId, userCode);
+            sGrantor = options.getUserCode();
+        } else if (StringUtils.isBlank(options.getGrantorCode())
+            || StringUtils.equals(options.getGrantorCode(), options.getUserCode())) {
+            sGrantor = actionTaskDao.getTaskGrantor(options.getNodeInstId(), options.getUserCode());
             //哑元、自动执行以及子流程 不判断
             if (sGrantor == null && !"E".equals(currNode.getOptType())
                 && !"D".equals(currNode.getOptType()) && !"S".equals(currNode.getOptType())) {
-                logger.error("用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
-                throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
+                logger.error("用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
+                throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
             }
         } else {
-            sGrantor = grantorCode;
+            sGrantor = options.getGrantorCode();
             if (!"E".equals(currNode.getOptType()) && !"D".equals(currNode.getOptType())
                 && !"S".equals(currNode.getOptType()) &&
-                !actionTaskDao.hasOptPower(nodeInstId, userCode, grantorCode)) {
-                logger.error("用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
-                throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
+                !actionTaskDao.hasOptPower(options.getNodeInstId(), options.getUserCode(), options.getGrantorCode())) {
+                logger.error("用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
+                throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
             }
         }
 
         Date updateTime = DatetimeOpt.currentUtilDate();
         nodeInst.setLastUpdateTime(updateTime);
-        nodeInst.setLastUpdateUser(userCode);
+        nodeInst.setLastUpdateUser(options.getUserCode());
         //创建节点提交日志 S:提交节点
-        ActionLog wfactlog = FlowOptUtils.createActionLog("S", userCode, nodeInst, currNode);
+        ActionLog wfactlog = FlowOptUtils.createActionLog("S", options.getUserCode(), nodeInst, currNode);
         wfactlog.setActionId(actionLogDao.getNextActionId());
         wfactlog.setActionTime(updateTime);
-        if (sGrantor != null && !sGrantor.equals(userCode)) {
+        if (sGrantor != null && !sGrantor.equals(options.getUserCode())) {
             nodeInst.setGrantor(sGrantor);
             wfactlog.setGrantor(sGrantor);
         }
@@ -1152,7 +1131,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         }
         flowInst.setLastUpdateTime(updateTime);
-        flowInst.setLastUpdateUser(userCode);
+        flowInst.setLastUpdateUser(options.getUserCode());
         flowInstanceDao.updateObject(flowInst);
 
         Set<String> nextNodeInsts = new HashSet<>();
@@ -1192,7 +1171,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if ("C".equals(currNode.getOptType()) && havnotSubmit > 0) {
                 nodeInstanceDao.updateObject(nodeInst);
                 nextNodeInsts.clear();
-                nextNodeInsts.add(nodeInstId);
+                nextNodeInsts.add(options.getNodeInstId());
                 return nextNodeInsts;
             }
         }
@@ -1200,7 +1179,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
          * 节点提交前事件
          */
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(currNode);
-        nodeEventExecutor.runBeforeSubmit(flowInst, nodeInst, currNode, userCode);
+        nodeEventExecutor.runBeforeSubmit(flowInst, nodeInst, currNode, options.getUserCode());
 
         //判断是否为临时插入节点
         if (nodeInst.getRunToken().startsWith("L")) {
@@ -1226,19 +1205,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nodeInstanceDao.updateObject(nodeInst);
                 return nextNodeInsts;
             } else {
-                logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + nodeInstId + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
+                logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
                 throw new WorkflowException(WorkflowException.NotFoundNextNode,
-                    "流程：" + nodeInst.getFlowInstId() + "节点：" + nodeInstId + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
+                    "流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
             }
         }
 
         synchronized (lockObject) {
             /*WfNodeInstance*/
-            nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
+            nodeInst = nodeInstanceDao.getObjectCascadeById(options.getNodeInstId());
             if (!"N".equals(nodeInst.getNodeState()) && !"W".equals(nodeInst.getNodeState())) {
-                logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + nodeInstId + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
+                logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
                 throw new WorkflowException(WorkflowException.IncorrectNodeState,
-                    "流程：" + nodeInst.getFlowInstId() + "节点：" + nodeInstId + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
+                    "流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
 
             }
             nodeInst.setNodeState("C");
@@ -1254,9 +1233,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String nextNodeId = nodeTran.getEndNodeId();
         String nodeToken = nodeInst.getRunToken();
         nextNodeInsts = submitToNextNode(
-            nextNodeId, flowInst, flowInfo,
-            nodeInst, "", nodeTran, userCode, grantorCode, unitCode, nodeToken,
-            flowVarTrans, nodeUnits, nodeOptUsers, application);
+            nextNodeId, nodeToken, flowInst, flowInfo,
+            nodeInst, "", nodeTran, options,
+            flowVarTrans, application);
 
 
         nodeInstanceDao.updateObject(nodeInst);
@@ -1479,67 +1458,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return nns > 0;
     }
 
-    @Override
-    public Set<String> submitOpt(String nodeInstId, String userCode, String unitCode,
-                               UserUnitVariableTranslate varTrans, ServletContext application)
-        throws WorkflowException {
-        Set<String> nextNodeInsts = submitOptInside(nodeInstId, userCode, userCode, unitCode,
-            varTrans, null, null, application);
-        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
-        return nextNodeInsts;
-    }
-
-    @Override
-    public Set<String> submitOpt(String nodeInstId, String userCode, String grantorCode,
-                               String unitCode, UserUnitVariableTranslate varTrans, ServletContext application)
-        throws WorkflowException {
-        Set<String> nextNodeInsts = submitOptInside(nodeInstId, userCode, grantorCode, unitCode,
-            varTrans, null, null, application);
-        FlowOptUtils.sendMsg(nodeInstId, nextNodeInsts, userCode);
-        return nextNodeInsts;
-    }
-
-    /**
-     * 返回下一步节点的节点实例ID
-     *
-     * @param nodeInstId   当前节点实例编号
-     * @param userCode     操作用户编号 对应用户表达式  O operator
-     * @param unitCode     用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
-     * @param varTrans     变量转换器
-     * @param nodeOptUsers 预设的节点操作用户  给程序自行判断用户和机构用的
-     * @param nodeUnits    预设的节点机构 给程序自行判断用户和机构用的
-     * @return 节点实例编号列表
-     */
-    @Override
-    public Set<String> submitOptWithAssignUnitAndUser(String nodeInstId, String userCode,
-                                                    String unitCode, UserUnitVariableTranslate varTrans,
-                                                    Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
-                                                    ServletContext application) throws WorkflowException {
-        return submitOptInside(nodeInstId, userCode, userCode, unitCode,
-            varTrans, nodeUnits, nodeOptUsers, application);
-    }
-
-
-    /**
-     * 返回下一步节点的节点实例ID
-     *
-     * @param nodeInstId   当前节点实例编号
-     * @param userCode     操作用户编号 对应用户表达式  O operator
-     * @param unitCode     用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
-     * @param varTrans     变量转换器
-     * @param nodeOptUsers 预设的节点操作用户  给程序自行判断用户和机构用的
-     * @param nodeUnits    预设的节点机构 给程序自行判断用户和机构用的
-     * @return 节点实例编号列表
-     */
-    @Override
-    public Set<String> submitOptWithAssignUnitAndUser(String nodeInstId, String userCode,
-                                                    String grantorCode, String unitCode, UserUnitVariableTranslate varTrans,
-                                                    Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers,
-                                                    ServletContext application) throws WorkflowException {
-        return submitOptInside(nodeInstId, userCode, grantorCode, unitCode,
-            varTrans, nodeUnits, nodeOptUsers, application);
-    }
-
 
     private Set<NodeInfo> viewRouterNextNodeInside(NodeInfo currNode, FlowVariableTranslate varTrans) {
         Set<NodeInfo> nextNodes = new HashSet<NodeInfo>();
@@ -1706,7 +1624,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 //        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
 
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(
-            unitCode, createUser, null, flowInst, nodeInst, flowInfo, nextNode, null);
+            unitCode, createUser, flowInst, nodeInst, flowInfo, nextNode, null);
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
@@ -1797,7 +1715,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String lastNodeInstId = UuidOpt.getUuidAsString32();
 //        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
 
-        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, userCode, null, flowInst, nodeInst, flowInfo, nextNode, null);
+        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, userCode, flowInst, nodeInst, flowInfo, nextNode, null);
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
@@ -1883,7 +1801,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String lastNodeInstId = UuidOpt.getUuidAsString32();
 //        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
 
-        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, null, flowInst, nodeInst, flowInfo, nextNode, null);
+        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, flowInst, nodeInst, flowInfo, nextNode, null);
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
@@ -1955,7 +1873,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         String lastNodeInstId = UuidOpt.getUuidAsString32();
 
-        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, null, flowInst, null, flowInfo, nextNode, null);
+        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, flowInst, null, flowInfo, nextNode, null);
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId("");

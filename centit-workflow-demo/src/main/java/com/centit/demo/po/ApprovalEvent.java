@@ -19,7 +19,7 @@ public class ApprovalEvent implements java.io.Serializable{
     @Column(name="APPROVAL_ID")
     private Long approvalId;
     @Column(name="FLOW_INST_ID")
-    private Long flowInstId;
+    private String flowInstId;
     @Column(name="EVENT_TITLE")
     private String eventTitle;
     @Column(name="EVENT_DESC")
@@ -43,11 +43,11 @@ public class ApprovalEvent implements java.io.Serializable{
         this.approvalId = approvalId;
     }
 
-    public Long getFlowInstId() {
+    public String getFlowInstId() {
         return flowInstId;
     }
 
-    public void setFlowInstId(Long flowInstId) {
+    public void setFlowInstId(String flowInstId) {
         this.flowInstId = flowInstId;
     }
 

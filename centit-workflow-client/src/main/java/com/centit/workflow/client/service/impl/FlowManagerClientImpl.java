@@ -57,7 +57,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
     }
 
     @Override
-    public List<NodeInstance> listFlowInstNodes(Long wfinstid) throws Exception{
+    public List<NodeInstance> listFlowInstNodes(String wfinstid) throws Exception{
         Map<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",String.valueOf(wfinstid));
 

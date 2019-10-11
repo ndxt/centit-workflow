@@ -99,7 +99,7 @@ public class FlowOptUtils {
      * N 正常  B 已回退    C 完成   F被强制结束
      * P 暂停   W 等待子流程返回   S 等等前置节点（可能是多个）完成
      */
-    public static NodeInstance createNodeInst(String unitcode, String usercode, String nodeParam,
+    public static NodeInstance createNodeInst(String unitcode, String usercode,
                                               FlowInstance flowInst, NodeInstance preNodeInst,
                                               FlowInfo flowInfo, NodeInfo node, FlowTransition trans) {
         NodeInstance nodeInst = new NodeInstance();
@@ -108,7 +108,7 @@ public class FlowOptUtils {
         nodeInst.setNodeId(node.getNodeId());
         nodeInst.setUnitCode(unitcode);
         nodeInst.setUserCode(usercode);
-        nodeInst.setNodeParam(nodeParam);
+        //nodeInst.setNodeParam(nodeParam);
         nodeInst.setNodeState("N");
         //nodeInst.setIsTimer(isTimer);
         nodeInst.setTaskAssigned("S");

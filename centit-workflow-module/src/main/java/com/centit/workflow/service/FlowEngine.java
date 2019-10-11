@@ -3,6 +3,7 @@ package com.centit.workflow.service;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.workflow.commons.CreateFlowOptions;
+import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 
@@ -26,92 +27,43 @@ public interface FlowEngine {
      * @return FlowInstance
      */
     FlowInstance createInstance(CreateFlowOptions options,
-                                UserUnitVariableTranslate varTrans, ServletContext application) ;
+                                UserUnitVariableTranslate varTrans,
+                                ServletContext application);
     //--------------------创建流程实例接口-----------------------------------
     /**
      * 创建流程实例  返回流程实例
-     * @param flowCode 流程编码
-     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
-     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
-     * @param userCode 创建用户
-     * @param unitCode 将流程指定一个所属机构
+     * @param options NewFlowInstanceOptions 流程创建选项编码
      * @return 流程实例
      */
-    default FlowInstance createInstance(String flowCode, String flowOptName,
-                                String flowOptTag, String userCode, String unitCode){
-        return createInstance(
-            CreateFlowOptions.create().flow(flowCode).optName(flowOptName)
-            .optTag(flowOptTag).user(userCode).unit(unitCode),
+    default FlowInstance createInstance(CreateFlowOptions options){
+        return createInstance(options,
             null,null);
     }
 
 
-    /**
-     * 创建流程实例并锁定首节点，首节点只能有创建人操作 返回流程实例
-     * @param flowCode 流程编码
-     * @param flowOptName 这个名称用户 查找流程信息，用来显示业务办件名称，
-     * @param flowOptTag  这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
-     * @param userCode 创建用户
-     * @param unitCode 将流程指定一个所属机构
-     * @return 流程实例
-     */
-    default FlowInstance createInstanceLockFirstNode(String  flowCode,String flowOptName,
-                                             String flowOptTag,String userCode,String unitCode){
-        return createInstance(
-            CreateFlowOptions.create().flow(flowCode).optName(flowOptName)
-                .optTag(flowOptTag).user(userCode).unit(unitCode).lockOptUser(true),
-            null, null);
-    }
-
-
-
     //--------------------提交流程业务节点-----------------------------------
-    /**
-     * 返回下一步节点的节点实例ID
-     * @param nodeInstId 当前节点实例编号
-     * @param userCode 操作用户编号 对应用户表达式 O operator
-     * @param unitCode 用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
-     * @param varTrans 变量转换器
-     * @return  节点实例编号列表
-     */
-    Set<String> submitOpt(String nodeInstId,String userCode,
-                        String unitCode,UserUnitVariableTranslate varTrans,
-                        ServletContext application) throws WorkflowException;
-
-
-    Set<String> submitOpt(String nodeInstId,String userCode,String grantorCode,
-                        String unitCode,UserUnitVariableTranslate varTrans,
-                        ServletContext application) throws WorkflowException;
 
     /**
      * 返回下一步节点的节点实例ID
-     * @param nodeInstId 当前节点实例编号
-     * @param userCode 操作用户编号 对应用户表达式  O operator
-     * @param unitCode 用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
+     * @param options SubmitOptOptions 提交流程操作选项编码
+     * @param varTrans UserUnitVariableTranslate 机构执行环境
      * @param varTrans 变量转换器
-     * @param nodeOptUsers 预设的节点操作用户  给程序自行判断用户和机构用的
-     * @param nodeUnits 预设的节点机构 给程序自行判断用户和机构用的
      * @return  节点实例编号列表
      */
-    Set<String> submitOptWithAssignUnitAndUser(String nodeInstId,String userCode,
-                                             String unitCode,UserUnitVariableTranslate varTrans,
-                                             Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
-                                             ServletContext application) throws WorkflowException;
+    Set<String> submitOpt(SubmitOptOptions options,
+            UserUnitVariableTranslate varTrans,
+            ServletContext application) throws WorkflowException;
+
 
     /**
      * 返回下一步节点的节点实例ID
-     * @param nodeInstId 当前节点实例编号
-     * @param userCode 操作用户编号 对应用户表达式  O operator
-     * @param unitCode 用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
-     * @param varTrans 变量转换器
-     * @param nodeOptUsers 预设的节点操作用户  给程序自行判断用户和机构用的
-     * @param nodeUnits 预设的节点机构 给程序自行判断用户和机构用的
+     * @param options 当前节点实例编号
      * @return  节点实例编号列表
      */
-    Set<String> submitOptWithAssignUnitAndUser(String nodeInstId,String userCode,
-                                             String grantorCode,String unitCode,UserUnitVariableTranslate varTrans,
-                                             Map<Long,Set<String>> nodeUnits,Map<Long,Set<String>> nodeOptUsers,
-                                             ServletContext application) throws WorkflowException;
+    default Set<String> submitOpt(SubmitOptOptions options) throws WorkflowException{
+        return submitOpt(options,
+            null,null);
+    }
 
 
     //--------------------查看流转信息-----------------------------------

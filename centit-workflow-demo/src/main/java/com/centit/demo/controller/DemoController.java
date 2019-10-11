@@ -1,14 +1,13 @@
 package com.centit.demo.controller;
 
-import com.centit.demo.po.DemoStartPo;
-import com.centit.demo.po.DemoSubmitPo;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.client.service.FlowDefineClient;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.FlowManagerClient;
-import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
+import com.centit.workflow.commons.CreateFlowOptions;
+import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.UserTask;
 import org.springframework.stereotype.Controller;
@@ -39,16 +38,16 @@ public class DemoController {
     private PlatformEnvironment platformEnvironment;
 
     @RequestMapping(value = "/demoStart")
-    public void demoStart(DemoStartPo startPo, HttpServletResponse response) throws Exception {
+    public void demoStart(CreateFlowOptions startPo, HttpServletResponse response) throws Exception {
         flowEngine.createInstance(startPo.getFlowCode(),startPo.getFlowOptName(),startPo.getFlowOptTag(),
-                startPo.getUserCode(),startPo.getUnitCode());
+                startPo.getUserCode(),startPo.getUnitCode(), startPo.getVariables());
         JsonResultUtils.writeMessageJson("流程创建成功",response);
     }
 
     @RequestMapping(value = "/demoSubmit")
-    public void demoSubmit(DemoSubmitPo submitPo,HttpServletResponse response,HttpServletRequest request) throws Exception {
+    public void demoSubmit(SubmitOptOptions submitPo, HttpServletResponse response, HttpServletRequest request) throws Exception {
         flowEngine.submitOpt(submitPo.getNodeInstId(),submitPo.getUserCode(),submitPo.getUnitCode(),
-                submitPo.getVarTrans(),request.getServletContext());
+                submitPo.getVariables());
         JsonResultUtils.writeBlankJson(response);
     }
 

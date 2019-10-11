@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.centit.framework</groupId>
         <artifactId>framework-snapshot-dependencies</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -18,7 +18,7 @@
     </description>
 
     <properties>
-        <centit.workflow.version>4.4-SNAPSHOT</centit.workflow.version>
+        <centit.workflow.version>4.5-SNAPSHOT</centit.workflow.version>
     </properties>
 
     <dependencies>
@@ -33,12 +33,6 @@
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-view</artifactId>
             <version>${centit.workflow.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-persistence-jdbc</artifactId>
-            <version>${centit.framework.version}</version>
         </dependency>
 
         <dependency>

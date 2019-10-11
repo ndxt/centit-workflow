@@ -61,7 +61,7 @@ public class ApprovalController {
         }
         int phaseCount = set.size();
         //开启工作流 提交申请节点
-        Long flowInstId = approvalService.startProcess(request,approvalEvent,auditors,phaseCount,
+        String flowInstId = approvalService.startProcess(request,approvalEvent,auditors,phaseCount,
                 auditors.get(0).getUserCode());
         List<NodeInstance> nodeInstances = null;
         try {
@@ -70,13 +70,13 @@ public class ApprovalController {
             e.printStackTrace();
         }
         if(nodeInstances != null && nodeInstances.size()>0){
-            flowEngine.submitOpt(nodeInstances.get(0).getNodeInstId(),"u0000000","",null,
-                    request.getServletContext());
+            flowEngine.submitOpt(nodeInstances.get(0).getNodeInstId(),
+                "u0000000","",null);
         }
         JsonResultUtils.writeBlankJson(response);
     }
     @RequestMapping("/doApproval")
-    public void doApproval(HttpServletRequest request, HttpServletResponse response,Long flowInstId,String nodeInstId,
+    public void doApproval(HttpServletRequest request, HttpServletResponse response,String flowInstId,String nodeInstId,
                            String userCodes,String auditResult, String pass,String optUserCode) throws Exception{
         //将前台传过来的usercode 字符串 拆分
         List<String> userCodeList  = new ArrayList<>();

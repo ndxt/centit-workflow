@@ -11,6 +11,7 @@ import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.CreateFlowOptions;
+import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.*;
@@ -58,8 +59,10 @@ public class FlowEngineController extends BaseController {
         //把这个审批角色级别固化到变量createrLevel
         //flowEngine.saveFlowVariable(flowInstance.getFlowInstId(),"createrLevel","");
         //提交节点
-        Set<String> nextNodes = flowEngine.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
-            newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
+        Set<String> nextNodes = flowEngine.submitOpt(
+            SubmitOptOptions.create().nodeInst(flowInstance.getFirstNodeInstance().getNodeInstId())
+                .user(newFlowInstanceOptions.getUserCode())
+                .unit(newFlowInstanceOptions.getUnitCode()));
         //更新操作人
         for (String n : nextNodes) {
             flowManager.deleteNodeActionTasks(n, flowInstance.getFlowInstId(), newFlowInstanceOptions.getUserCode());
@@ -87,8 +90,9 @@ public class FlowEngineController extends BaseController {
             newFlowInstanceOptions, new ObjectUserUnitVariableTranslate(
                 BaseController.collectRequestParameters(request)), null);
         //提交节点 :: TODO 为什么已创建就提交
-        flowEngine.submitOpt(flowInstance.getFirstNodeInstance().getNodeInstId(),
-            newFlowInstanceOptions.getUserCode(), newFlowInstanceOptions.getUnitCode(), null, null);
+        flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(flowInstance.getFirstNodeInstance().getNodeInstId())
+            .user(newFlowInstanceOptions.getUserCode())
+            .unit(newFlowInstanceOptions.getUnitCode()));
         return flowInstance;
     }
 
@@ -96,12 +100,13 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/createInstanceLockFirstNode")
     public FlowInstance createInstanceLockFirstNode(@RequestBody FlowInstance flowInstanceParam) {
 
-        return flowEngine.createInstanceLockFirstNode(
-            flowInstanceParam.getFlowCode(),
-            flowInstanceParam.getFlowOptName(),
-            flowInstanceParam.getFlowOptTag(),
-            flowInstanceParam.getUserCode(),
-            flowInstanceParam.getUnitCode());
+        return flowEngine.createInstance(
+            CreateFlowOptions.create().flow(flowInstanceParam.getFlowCode())
+            .optName(flowInstanceParam.getFlowOptName())
+            .optTag(flowInstanceParam.getFlowOptTag())
+            .user(flowInstanceParam.getUserCode())
+            .unit(flowInstanceParam.getUnitCode())
+            .lockOptUser(true));
     }
 
 
@@ -135,10 +140,15 @@ public class FlowEngineController extends BaseController {
             if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
                 Map<String, Object> maps = BaseController.collectRequestParameters(request);
                 maps.putAll((Map)JSON.parse(varTrans.replaceAll("&quot;", "\"")));
-                nextNodes = flowEngine.submitOpt(nodeInstId, userCode, unitCode,
+                nextNodes = flowEngine.submitOpt(
+                    SubmitOptOptions.create().nodeInst(nodeInstId)
+                        .user(userCode)
+                        .unit(unitCode),
                     new ObjectUserUnitVariableTranslate(maps), null);
             } else {
-                nextNodes = flowEngine.submitOpt(nodeInstId, userCode, unitCode, null, null);
+                nextNodes = flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInstId)
+                    .user(userCode)
+                    .unit(unitCode));
             }
             //更新操作人
             if (users != null && users.size() > 0) {

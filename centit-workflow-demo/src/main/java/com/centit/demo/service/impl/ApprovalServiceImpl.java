@@ -38,7 +38,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     private FlowManagerClient flowManager;
 
     @Override
-    public Long startProcess(HttpServletRequest request, ApprovalEvent approvalEvent,
+    public String startProcess(HttpServletRequest request, ApprovalEvent approvalEvent,
                              List<ApprovalAuditor> approvalAuditors, int phaseNO, String userCode) throws Exception{
         //保存业务数据 创建流程
         Long approvalId = approvalEventDao.getNextApprovalEventId();
@@ -72,7 +72,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     }
     @Override
     public void doApproval(List<String> userCodes, ApprovalProcess approvalProcess,
-                           long flowInstId , String nodeInstId,String userCode, ServletContext ctx) throws Exception{
+                           String flowInstId , String nodeInstId,String userCode, ServletContext ctx) throws Exception{
         List<ApprovalEvent> approvalEvents = approvalEventDao.getApprovalEventByFlowInstId(flowInstId);
         if(approvalEvents != null && approvalEvents.size()>0){
             approvalProcess.setPhraseNo(approvalEvents.get(0).getCurrentPhase());
@@ -81,10 +81,10 @@ public class ApprovalServiceImpl implements ApprovalService {
         approvalProcessDao.saveNewObject(approvalProcess);
         //是否通过
         String pass = approvalProcess.getAuditResult();
-        flowEngine.saveFlowVariable(flowInstId,"pass","Y".equals(pass)?"0":"1");
+        flowEngine.saveFlowVariable(flowInstId,"pass", "Y".equals(pass) ? "0":"1");
 //        //设置审批人
 //        setNextStepAuditors(flowInstId,"auditor",userCodes,phaseNoMap.get("nextPhaseNo"));
-        flowEngine.submitOpt(nodeInstId,userCode,"",null,ctx);
+        flowEngine.submitOpt(nodeInstId,userCode,"",null);
 
     }
 

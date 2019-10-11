@@ -18,7 +18,7 @@ public interface FlowManagerClient {
      * @param wfinstid 流程实例编号
      * @return List<NodeInstance>
      */
-    List<NodeInstance> listFlowInstNodes(Long wfinstid) throws Exception;
+    List<NodeInstance> listFlowInstNodes(String wfinstid) throws Exception;
 
     /**
      * 终止一个流程

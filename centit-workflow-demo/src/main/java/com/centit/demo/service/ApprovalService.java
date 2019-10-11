@@ -18,14 +18,14 @@ public interface ApprovalService {
      * @param approvalEvent
      * @param approvalAuditors
      */
-    Long startProcess(HttpServletRequest request, ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors, int phaseNO, String userCode) throws Exception;
+    String startProcess(HttpServletRequest request, ApprovalEvent approvalEvent, List<ApprovalAuditor> approvalAuditors, int phaseNO, String userCode) throws Exception;
 
     /**
      * 审批通过或者不通过  需要保存审批意见，审批结果，如果通过还要设置下一步的审批人
      * @param userCodes
      * @param approvalProcess
      */
-    void doApproval(List<String> userCodes, ApprovalProcess approvalProcess, long flowInstId, String nodeInstId, String userCode, ServletContext ctx) throws Exception;
+    void doApproval(List<String> userCodes, ApprovalProcess approvalProcess, String flowInstId, String nodeInstId, String userCode, ServletContext ctx) throws Exception;
 
     /**
      * 根据userCode获取 待办任务

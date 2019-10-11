@@ -3,11 +3,9 @@ package com.centit.workflow.commons;
 import com.centit.support.algorithm.CollectionsOpt;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by codefan on 17-9-11.
@@ -86,6 +84,10 @@ public class SubmitOptOptions {
         return new SubmitOptOptions();
     }
 
+    public SubmitOptOptions nodeInst(String nodeInstId){
+        this.nodeInstId = nodeInstId;
+        return this;
+    }
 
     public SubmitOptOptions user(String userCode){
         this.userCode = userCode;
@@ -96,6 +98,12 @@ public class SubmitOptOptions {
         this.unitCode = unitCode;
         return this;
     }
+
+    public SubmitOptOptions grantor(String grantorCode){
+        this.grantorCode = grantorCode;
+        return this;
+    }
+
 
     public SubmitOptOptions addVariable(String name, String value){
         if(this.variables == null){
@@ -113,6 +121,8 @@ public class SubmitOptOptions {
         return this;
     }
 
+
+
     public SubmitOptOptions addFlowRoleUser(String role, String user){
         if(this.flowRoleUsers == null){
             this.flowRoleUsers = new HashMap<>();
@@ -125,6 +135,7 @@ public class SubmitOptOptions {
         }
         return this;
     }
+
 
     public SubmitOptOptions setNextNodeUnit(String nextNode, String unitCode){
         if(this.nodeUnits == null){
@@ -148,8 +159,21 @@ public class SubmitOptOptions {
     }
 
     public SubmitOptOptions workUser(String workUserCode){
-        this.lockOptUser = true;
-        this.workUserCode = workUserCode;
+        if(StringUtils.isNotBlank(workUserCode)) {
+            this.lockOptUser = true;
+            this.workUserCode = workUserCode;
+        }
         return this;
+    }
+
+    public SubmitOptOptions clone(){
+        SubmitOptOptions newObj = new SubmitOptOptions();
+        newObj.setVariables(CollectionsOpt.cloneHashMap(this.variables));
+        newObj.setNodeUnits(CollectionsOpt.cloneHashMap(this.nodeUnits));
+        newObj.setFlowRoleUsers(CollectionsOpt.cloneHashMap(this.flowRoleUsers));
+        newObj.setNodeOptUsers(CollectionsOpt.cloneHashMap(this.nodeOptUsers));
+        return newObj.nodeInst(this.nodeInstId).user(this.userCode)
+            .unit(this.unitCode).workUser(this.workUserCode)
+            .lockOptUser(this.lockOptUser).grantor(this.grantorCode);
     }
 }

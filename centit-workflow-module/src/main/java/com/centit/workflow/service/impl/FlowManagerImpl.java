@@ -2,14 +2,12 @@ package com.centit.workflow.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-//import net.sf.json.JSONObject;
-//import net.sf.json.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.centit.support.algorithm.UuidOpt;
-import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.common.WorkTimeSpan;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.dao.*;
@@ -26,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.*;
+
+//import net.sf.json.JSONObject;
+//import net.sf.json.JSONArray;
 
 /**
  * 流程管理业务实现类
@@ -977,7 +978,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 //        long nextNodeInstId = nodeInstanceDao.getNextNodeInstId();
         String nextNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(
-            nodeInst.getUnitCode(), mangerUserCode, null, flowInst, nodeInst, flowInfo,
+            nodeInst.getUnitCode(), mangerUserCode, flowInst, nodeInst, flowInfo,
             nextNode, trans);
 
         nextNodeInst.setNodeInstId(nextNodeInstId);

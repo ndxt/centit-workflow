@@ -36,7 +36,7 @@ public class ApprovalEventDao extends BaseDaoImpl<ApprovalEvent,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<ApprovalEvent> getApprovalEventByFlowInstId(Long flowInstId){
+    public List<ApprovalEvent> getApprovalEventByFlowInstId(String flowInstId){
         return this.listObjectsByFilter("where flow_Inst_Id = ?",new Object[]{flowInstId});
     }
 }
