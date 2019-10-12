@@ -1,7 +1,7 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
-import com.centit.support.compiler.ObjectTranslate;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.compiler.VariableTranslate;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
@@ -11,13 +11,15 @@ import java.util.*;
 
 public class FlowVariableTranslate implements UserUnitVariableTranslate, VariableTranslate {
 
+    private Map<String,Set<String>> innerVariable;
+
     private UserUnitVariableTranslate flowVarTrans;
     private List<FlowVariable> flowVariables;
     private Map<String,List<String>> flowOrganizes;
     private Map<String,List<String>> flowWorkTeam;
     private Map<String,Set<String>> nodeUnits;
     private Map<String,Set<String>> nodeUsers;
-
+    //可能为 Null
     private NodeInstance nodeInst;
     private FlowInstance flowInst;
 
@@ -25,7 +27,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
         nodeUnits = new HashMap<>();
         nodeUsers = new HashMap<>();
 
-        String token = nodeInst.getRunToken();
+        String token = nodeInst == null? "T" : nodeInst.getRunToken();
 
         for(NodeInstance ni : flowInst.getNodeInstances()){
             String nc = ni.getNodeCode();
@@ -46,12 +48,20 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     }
 
     public FlowVariableTranslate(NodeInstance nodeInstance, FlowInstance flowInstance){
+        //可能为 Null
+        innerVariable = new HashMap<>();
         nodeInst = nodeInstance;
         flowInst = flowInstance;
         collectNodeUnitsAndUsers(flowInst);
     }
 
+    public void setInnerVariable(String name, String value) {
+        this.innerVariable.put(name, CollectionsOpt.createHashSet(value));
+    }
 
+    public void setInnerVariable(String name, Set<String> values) {
+        this.innerVariable.put(name, values);
+    }
 
     public void setNodeInst(NodeInstance nodeInst) {
         this.nodeInst = nodeInst;
@@ -76,7 +86,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     private FlowVariable findFlowVariable(String varName){
         if(flowVariables==null || flowVariables.size()==0)
             return null;
-        String thisToken = nodeInst.getRunToken();
+        String thisToken = nodeInst ==null? "T" : nodeInst.getRunToken();
         FlowVariable sValue = null;
         int nTL=0;
         for(FlowVariable variable : flowVariables){
@@ -95,10 +105,17 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
 
     @Override
     public Object getGeneralVariable(String varName) {
+        // 内部变量最高优先级
+        Set<String> objs = innerVariable.get(varName);
+        if(objs!=null && !objs.isEmpty()) {
+            return objs;
+        }
+
         if(flowVarTrans !=null){
             Object obj =  flowVarTrans.getGeneralVariable(varName);
-            if(obj!=null)
+            if(obj!=null) {
                 return obj;
+            }
         }
         /**
          * 程序设置的流程变量
@@ -133,7 +150,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
             return flowInst.getUserCode();
         else if("flowunit".equalsIgnoreCase(varName))
             return flowInst.getUnitCode();
-        else if("nodeunit".equalsIgnoreCase(varName))
+        else if(nodeInst != null && "nodeunit".equalsIgnoreCase(varName))
             return nodeInst.getUnitCode();
 
         return null;
@@ -151,19 +168,27 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     }
 
     public Set<String> getUsersVariable(String varName){
-        if(flowVarTrans !=null){
-            Set<String> sUsers =  flowVarTrans.getUsersVariable(varName);
-            if(sUsers!=null && sUsers.size()>0)
-                return sUsers;
+        // 内部变量最高优先级
+        Set<String> sUsers = innerVariable.get(varName);
+        if(sUsers!=null && !sUsers.isEmpty()) {
+            return sUsers;
         }
+
+        if(flowVarTrans !=null){
+            sUsers =  flowVarTrans.getUsersVariable(varName);
+            if(sUsers!=null && !sUsers.isEmpty() ) {
+                return sUsers;
+            }
+        }
+
         FlowVariable v = findFlowVariable(varName);
         if(v !=null)
             return v.getVarSet();
 
-        if(flowWorkTeam !=null){
-            List<String> sUsers = flowWorkTeam.get(varName);
-            if(sUsers != null )
-                return new HashSet<>(sUsers);
+        if(flowWorkTeam !=null ){
+            List<String> listUsers = flowWorkTeam.get(varName);
+            if(listUsers != null && !listUsers.isEmpty())
+                return new HashSet<>(listUsers);
         }
         return nodeUsers.get(varName);
     }
@@ -173,20 +198,25 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
      * @param varName 自定义变量
      * @return
      */
-    public Set<String> getUnitsVariable(String varName)
-    {
+    public Set<String> getUnitsVariable(String varName) {
+        Set<String> sUnits = innerVariable.get(varName);
+        if(sUnits!=null && !sUnits.isEmpty()) {
+            return sUnits;
+        }
         if(flowVarTrans !=null){
-            Set<String> sUnits =  flowVarTrans.getUnitsVariable(varName);
-            if(sUnits!=null && sUnits.size()>0)
+            sUnits =  flowVarTrans.getUnitsVariable(varName);
+            if(sUnits!=null && !sUnits.isEmpty())
                 return sUnits;
         }
         FlowVariable v = findFlowVariable(varName);
-        if(v !=null)
+        if(v !=null) {
             return v.getVarSet();
+        }
+
         if(flowOrganizes !=null){
-            List<String> sUnits = flowOrganizes.get(varName);
-            if(sUnits != null )
-                return new HashSet<>(sUnits);
+            List<String> listUnits = flowOrganizes.get(varName);
+            if(listUnits != null && !listUnits.isEmpty() )
+                return new HashSet<>(listUnits);
         }
         return nodeUnits.get(varName);
     }

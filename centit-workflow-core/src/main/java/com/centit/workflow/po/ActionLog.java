@@ -1,6 +1,9 @@
 package com.centit.workflow.po;
 
 
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,8 +21,8 @@ public class ActionLog implements java.io.Serializable{
 
     @Id
     @Column(name = "ACTION_ID")
-       private Long actionId;
-
+    private String actionId;
+    @ValueGenerator(strategy = GeneratorType.UUID22)
     @Column(name="NODE_INST_ID")
     private String nodeInstId;
     @Column(name="ACTION_TYPE")
@@ -41,7 +44,7 @@ public class ActionLog implements java.io.Serializable{
     }
     /** minimal constructor */
     public ActionLog(
-        Long actionId
+        String actionId
         ,String  actiontype,Date  actiontime) {
 
 
@@ -53,7 +56,7 @@ public class ActionLog implements java.io.Serializable{
 
 /** full constructor */
     public ActionLog(
-     Long actionId
+        String actionId
     ,String  nodeinstid,String  actiontype,Date  actiontime,String  usercode,
     String  roletype,String  rolecode,String grantor) {
 
@@ -69,13 +72,11 @@ public class ActionLog implements java.io.Serializable{
         this.grantor = grantor;
     }
 
-
-
-    public Long getActionId() {
+    public String getActionId() {
         return this.actionId;
     }
 
-    public void setActionId(Long actionid) {
+    public void setActionId(String actionid) {
         this.actionId = actionid;
     }
     // Property accessors

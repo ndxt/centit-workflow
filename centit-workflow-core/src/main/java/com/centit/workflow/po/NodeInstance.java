@@ -2,6 +2,8 @@ package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.support.common.WorkTimeSpan;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 
 import javax.persistence.*;
 import java.util.*;
@@ -17,7 +19,8 @@ public class NodeInstance implements java.io.Serializable {
 
     @Id
     @Column(name = "NODE_INST_ID")
-       private String nodeInstId;
+    @ValueGenerator(strategy = GeneratorType.UUID22)
+    private String nodeInstId;
 
     @Column(name="FLOW_INST_ID")
     private String  flowInstId;
@@ -31,7 +34,9 @@ public class NodeInstance implements java.io.Serializable {
 //    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name="CREATE_TIME")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, value = "today()")
     private Date createTime;
+
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name="LAST_UPDATE_TIME")
 //    @JSONField(format = "yyyy-MM-dd HH:mm:ss")

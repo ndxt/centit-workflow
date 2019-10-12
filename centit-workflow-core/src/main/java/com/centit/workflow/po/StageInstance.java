@@ -25,9 +25,10 @@ public class StageInstance implements java.io.Serializable {
 
     @Transient
     private String  stageName;
-
+    // 1 是否 已计时
     @Column(name = "STAGE_BEGIN")
     private String stageBegin;
+
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name = "BEGIN_TIME")
     private Date beginTime;

@@ -73,12 +73,5 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long> {
                                                 PageDesc pageDesc) {
         return this.listObjectsByFilter("where GRANTOR = ?",new Object[]{userCode});
     }
-    /**
-     * 生成流程日志操作编号
-     * @return long
-     */
-    @Transactional(propagation= Propagation.MANDATORY)
-    public long getNextActionId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_ACTIONLOGNO");
-    }
+
 }

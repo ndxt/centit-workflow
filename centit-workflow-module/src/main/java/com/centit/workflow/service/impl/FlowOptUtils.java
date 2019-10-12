@@ -1,8 +1,6 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.components.CodeRepositoryUtil;
-import com.centit.framework.model.basedata.IUserInfo;
-import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
@@ -16,7 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class FlowOptUtils {
     private static final Logger logger = LoggerFactory.getLogger(FlowOptUtils.class);
@@ -69,11 +70,12 @@ public class FlowOptUtils {
                                                FlowInstance flowInst, NodeInstance preNodeInst, FlowInfo flowInfo, NodeInfo node) {
 
         if ("1".equals(node.getInheritType())) {
-            if (preNodeInst != null && preNodeInst.getTimeLimit() != null)
+            if (preNodeInst != null && preNodeInst.getTimeLimit() != null) {
                 nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber() +
                     preNodeInst.getTimeLimit());
-            else
+            } else {
                 nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
+            }
         } else if ("2".equals(node.getInheritType())) {
             //flowInst.
             Set<NodeInfo> nodes = flowInfo.listNodesByNodeCode(node.getInheritNodeCode());
@@ -124,39 +126,27 @@ public class FlowOptUtils {
         nodeInst.setTimeLimit(0L);
         //计算节点的期限
         //I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle。
+        String timeLimit, timeLimitType;
         if (trans == null || "I".equals(trans.getLimitType())) {
-            String timeLimit = node.getTimeLimit();
-            if ("C".equals(node.getLimitType())) {
-                NodeInstance sameInst = flowInst.findLastSameNodeInst(nodeInst.getNodeId(), nodeInst, nodeInst.getNodeInstId());
-                if (sameInst != null)
-                    nodeInst.setTimeLimit(sameInst.getTimeLimit());
-                else {
-                    setNewNodeInstTimelimit(nodeInst, timeLimit,
-                        flowInst, preNodeInst, flowInfo, node);
-                }
-            } else if ("F".equals(node.getLimitType())) {
-                //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
-                setNewNodeInstTimelimit(nodeInst, timeLimit,
-                    flowInst, preNodeInst, flowInfo, node);
-            }
+            timeLimit = node.getTimeLimit();
+            timeLimitType = node.getLimitType();
         } else {
-            String timeLimit = trans.getTimeLimit();
-            if ("C".equals(trans.getLimitType())) {
-                NodeInstance sameInst = flowInst.findLastSameNodeInst(nodeInst.getNodeId(), nodeInst, nodeInst.getNodeInstId());
-                if (sameInst != null)
-                    nodeInst.setTimeLimit(sameInst.getTimeLimit());
-                else {
-                    setNewNodeInstTimelimit(nodeInst, timeLimit,
-                        flowInst, preNodeInst, flowInfo, node);
-                    //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
-                }
-            } else if ("F".equals(trans.getLimitType())) {
-                //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
+            timeLimit = trans.getTimeLimit();
+            timeLimitType = trans.getLimitType();
+        }
+        if ("C".equals(timeLimitType)) {
+            NodeInstance sameInst = flowInst.findLastSameNodeInst(nodeInst.getNodeId(), nodeInst, nodeInst.getNodeInstId());
+            if (sameInst != null)
+                nodeInst.setTimeLimit(sameInst.getTimeLimit());
+            else {
                 setNewNodeInstTimelimit(nodeInst, timeLimit,
                     flowInst, preNodeInst, flowInfo, node);
             }
+        } else if ("F".equals(timeLimitType)) {
+            //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
+            setNewNodeInstTimelimit(nodeInst, timeLimit,
+                flowInst, preNodeInst, flowInfo, node);
         }
-
         nodeInst.setPromiseTime(nodeInst.getTimeLimit());
         //nodeInst.setLastUpdateTime(updateTime);
         return nodeInst;

@@ -77,8 +77,12 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "IS_TRUNK_LINE")
 
     private String isTrunkLine;
+    /**
+     * 环节代码
+     */
     @Column(name = "NODE_CODE")
     private String nodeCode;
+
     @Column(name = "RISK_INFO")
     private String riskinfo;
 

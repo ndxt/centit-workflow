@@ -163,15 +163,15 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
 
     /**
      * 检查节点是否有其他没有提交的子流程
-     * @param nodeInstId
-     * @param curSubFlowId
-     * @return
+     * @param nodeInstId 父流程 ID
+     * @param curSubFlowId 子流程ID
+     * @return 数量
      */
     @Transactional(propagation= Propagation.MANDATORY)
     public long calcOtherSubflowSum(String nodeInstId,String curSubFlowId){
         String baseSql = "select count(1) as otherFlows from WF_FLOW_INSTANCE  "
             + "where INST_STATE='N' and IS_SUB_INST='Y' "
-            + " and PRE_NODE_INST_ID=? and FLOW_INST_ID <> ?";//大小于
+            + " and PRE_NODE_INST_ID = ? and FLOW_INST_ID <> ?";//大小于
         Object obj = this.getJdbcTemplate().queryForObject(baseSql,new Object[]{nodeInstId,curSubFlowId},Long.class);
         if (obj == null)
             return 0;

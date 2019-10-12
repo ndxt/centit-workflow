@@ -1,5 +1,7 @@
 package com.centit.workflow.service;
 
+import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.workflow.commons.CreateFlowOptions;
@@ -37,7 +39,10 @@ public interface FlowEngine {
      */
     default FlowInstance createInstance(CreateFlowOptions options){
         return createInstance(options,
-            null,null);
+            new ObjectUserUnitVariableTranslate(
+                CollectionsOpt.unionTwoMap(
+                    options.getVariables(), options.getGlobalVariables())),
+            null);
     }
 
 
@@ -62,7 +67,10 @@ public interface FlowEngine {
      */
     default Set<String> submitOpt(SubmitOptOptions options) throws WorkflowException{
         return submitOpt(options,
-            null,null);
+            new ObjectUserUnitVariableTranslate(
+                CollectionsOpt.unionTwoMap(
+                    options.getVariables(), options.getGlobalVariables())),
+            null);
     }
 
 

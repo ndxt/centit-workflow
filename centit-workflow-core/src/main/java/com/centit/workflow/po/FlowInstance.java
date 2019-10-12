@@ -112,9 +112,11 @@ public class FlowInstance implements java.io.Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = NodeInstance.class)
     @JoinColumn(name = "flowInstId")
     private List<NodeInstance> flowNodeInstances = null;// new ArrayList<WfNodeInstance>();
+
     @Transient
     @JSONField(serialize = false)
     private List<NodeInstance> activeNodeList;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)
     @JoinColumn(name = "flowInstId")
     private List<StageInstance> flowStageInstances = null;// new ArrayList<WfNodeInstance>();
@@ -467,12 +469,12 @@ public class FlowInstance implements java.io.Serializable {
         if (this.flowNodeInstances == null)
             return null;
         NodeInstance firstNode = null;
-        for (NodeInstance nodeInst : flowNodeInstances)
+        for (NodeInstance nodeInst : flowNodeInstances) {
             if (nodeInst.getPrevNodeInstId() == null) {
                 firstNode = nodeInst;
-                continue;
+                break;
             }
-
+        }
         return firstNode;
     }
 
@@ -594,8 +596,9 @@ public class FlowInstance implements java.io.Serializable {
 
         NodeInstance sameInst = null;
         String runToken = null;
-        if (nodeInst != null)
+        if (nodeInst != null) {
             runToken = nodeInst.getRunToken();
+        }
         for (NodeInstance ni : flowNodeInstances)
             if (ni.getNodeId().equals(nodeId) && !ni.getNodeInstId().equals(thisNodeInstId)
                 && (runToken == null || ni.getRunToken() == null || runToken.equals(ni.getRunToken())

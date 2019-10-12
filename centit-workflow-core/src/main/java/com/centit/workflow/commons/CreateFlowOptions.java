@@ -3,17 +3,19 @@ package com.centit.workflow.commons;
 import com.centit.support.algorithm.CollectionsOpt;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by codefan on 17-9-11.
  * @author codefan
  */
 @Data
-public class CreateFlowOptions {
+public class CreateFlowOptions implements FlowOptParamOptions{
     /**
      * 流程代码
      */
@@ -38,16 +40,7 @@ public class CreateFlowOptions {
      */
     @ApiModelProperty(value ="流程对应的业务id",required = true)
     private String flowOptTag;
-    /**
-     * 创建流程用户
-     */
-    @ApiModelProperty(value ="创建流程用户",required = true)
-    private String userCode;
-    /**
-     * 流程归属单位（机构）
-     */
-    @ApiModelProperty(value ="流程所属部门，可用创建流程用户的部门",required = true)
-    private String unitCode;
+
     /**
      * 作为子流程创建式，对应的父流程节点
      */
@@ -63,9 +56,27 @@ public class CreateFlowOptions {
     private String flowGroupId;
 
     /**
-     * 流程首节点是否只能有创建人操作（一般 报销、请假的首节点都是只能由发起人修改）
+     * 设置流程时限
      */
-    @ApiModelProperty("流程首节点是否只能有创建人操作（一般 报销、请假的首节点都是只能由发起人修改）")
+    @ApiModelProperty("设置流程时限，格式为3D4H30M这样的")
+    private String timeLimitStr;
+
+    /**
+     * 提交（操作）用户
+     */
+    @ApiModelProperty(value ="提交（操作）用户",required = true)
+    private String userCode;
+
+    /**
+     * 提交（操作）用户当前单位（机构）
+     */
+    @ApiModelProperty(value ="提交（操作）用户当前单位（机构）",required = true)
+    private String unitCode;
+
+    /**
+     * 提交后的节点强行指定用户
+     */
+    @ApiModelProperty("提交后的节点强行指定用户")
     private boolean lockOptUser;
 
     @ApiModelProperty("传递的用户code，用于下一步人员指定, " +
@@ -73,32 +84,122 @@ public class CreateFlowOptions {
     private String workUserCode;
 
     /**
-     * 设置流程时限
+     * 业务变量数据
      */
-    @ApiModelProperty("设置流程时限，格式为3D4H30M这样的")
-    private String timeLimitStr;
+    @ApiModelProperty("流程变量")
+    private Map<String,Object> variables;
 
     /**
      * 业务变量数据
      */
-    @ApiModelProperty("流程变量")
-    private Map<String,Object> variables ;
-
+    @ApiModelProperty("流程全局变量")
+    private Map<String,Object> globalVariables;
     /**
      * 流程办件角色
      */
     @ApiModelProperty("流程办件角色")
-    private Map<String, List<String>> flowRoleUsers ;
+    private Map<String, List<String>> flowRoleUsers;
 
+    /**
+     * 后续节点机构
+     * Map String (节点的环节代码或者节点代码) String（机构代码）
+     */
+    @ApiModelProperty("指定后续节点机构")
+    private Map<String, String> nodeUnits;
+
+    /**
+     * 后续节点操作人员
+     * Map String (节点的环节代码或者节点代码) String（人员代码可以是多个）
+     */
+    @ApiModelProperty("指定后续节点操作人员")
+    private Map<String, Set<String>> nodeOptUsers;
 
     private CreateFlowOptions() {
-        this.flowVersion = -1;
         this.lockOptUser = false;
+        this.flowVersion = -1;
     }
 
     public static CreateFlowOptions create(){
         return new CreateFlowOptions();
     }
+
+    public CreateFlowOptions user(String userCode){
+        this.userCode = userCode;
+        return this;
+    }
+
+    public CreateFlowOptions unit(String unitCode){
+        this.unitCode = unitCode;
+        return this;
+    }
+
+    public CreateFlowOptions addVariable(String name, String value){
+        if(this.variables == null){
+            this.variables = new HashMap<>();
+        }
+        this.variables.put(name, value);
+        return this;
+    }
+
+    public CreateFlowOptions addGlobalVariable(String name, String value){
+        if(this.globalVariables == null){
+            this.globalVariables = new HashMap<>();
+        }
+        this.globalVariables.put(name, value);
+        return this;
+    }
+
+    public CreateFlowOptions addFlowRoleUsers(String role, List<String> users){
+        if(this.flowRoleUsers == null){
+            this.flowRoleUsers = new HashMap<>();
+        }
+        this.flowRoleUsers.put(role, users);
+        return this;
+    }
+
+    public CreateFlowOptions addFlowRoleUser(String role, String user){
+        if(this.flowRoleUsers == null){
+            this.flowRoleUsers = new HashMap<>();
+        }
+        List<String> users = this.flowRoleUsers.get(role);
+        if(users == null){
+            this.flowRoleUsers.put(role, CollectionsOpt.createList(user));
+        } else {
+            users.add(user);
+        }
+        return this;
+    }
+
+    public CreateFlowOptions setNextNodeUnit(String nextNode, String unitCode){
+        if(this.nodeUnits == null){
+            this.nodeUnits = new HashMap<>();
+        }
+        this.nodeUnits.put(nextNode, unitCode);
+        return this;
+    }
+
+    public CreateFlowOptions setNextNodeUsers(String nextNode, String ... userCodes){
+        if(this.nodeOptUsers == null){
+            this.nodeOptUsers = new HashMap<>();
+        }
+        this.nodeOptUsers.put(nextNode, CollectionsOpt.createHashSet(userCodes));
+        return this;
+    }
+
+    public CreateFlowOptions lockOptUser(boolean lockFirstOpt){
+        this.lockOptUser = lockFirstOpt;
+        return this;
+    }
+
+    public CreateFlowOptions workUser(String workUserCode){
+        if(StringUtils.isNotBlank(workUserCode)) {
+            this.lockOptUser = true;
+            this.workUserCode = workUserCode;
+        }
+        return this;
+    }
+
+
     public CreateFlowOptions flow(String flowCode){
         this.flowCode = flowCode;
         return this;
@@ -135,59 +236,20 @@ public class CreateFlowOptions {
         return this;
     }
 
-    public CreateFlowOptions user(String userCode){
-        this.userCode = userCode;
-        return this;
-    }
-
-    public CreateFlowOptions unit(String unitCode){
-        this.unitCode = unitCode;
-        return this;
-    }
-
-    public CreateFlowOptions addVariable(String name, String value){
-        if(this.variables == null){
-            this.variables = new HashMap<>();
-        }
-        this.variables.put(name, value);
-        return this;
-    }
-
-    public CreateFlowOptions addFlowRoleUsers(String role, List<String> users){
-        if(this.flowRoleUsers == null){
-            this.flowRoleUsers = new HashMap<>();
-        }
-        this.flowRoleUsers.put(role, users);
-        return this;
-    }
-
-    public CreateFlowOptions addFlowRoleUser(String role, String user){
-        if(this.flowRoleUsers == null){
-            this.flowRoleUsers = new HashMap<>();
-        }
-        List<String> users = this.flowRoleUsers.get(role);
-        if(users == null){
-            this.flowRoleUsers.put(role, CollectionsOpt.createList(user));
-        } else {
-            users.add(user);
-        }
-        return this;
-    }
-
-
-    public CreateFlowOptions lockOptUser(boolean lockFirstOpt){
-        this.lockOptUser = lockFirstOpt;
-        return this;
-    }
-
     public CreateFlowOptions timeLimit(String timeLimitStr) {
         this.timeLimitStr = timeLimitStr;
         return this;
     }
 
-    public CreateFlowOptions workUser(String workUserCode){
-        this.lockOptUser = true;
-        this.workUserCode = workUserCode;
+    public CreateFlowOptions copy(FlowOptParamOptions options){
+        this.setVariables(CollectionsOpt.cloneHashMap(options.getVariables()));
+        this.setFlowRoleUsers(CollectionsOpt.cloneHashMap(options.getFlowRoleUsers()));
+        this.setGlobalVariables(CollectionsOpt.cloneHashMap(options.getGlobalVariables()));
+        this.setNodeUnits(CollectionsOpt.cloneHashMap(options.getNodeUnits()));
+        this.setNodeOptUsers(CollectionsOpt.cloneHashMap(options.getNodeOptUsers()));
+        this.user(options.getUserCode())
+            .unit(options.getUnitCode());
         return this;
     }
+
 }

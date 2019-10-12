@@ -5,7 +5,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by codefan on 17-9-11.
@@ -16,7 +19,7 @@ import java.util.*;
  *                                       Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers
  */
 @Data
-public class SubmitOptOptions {
+public class SubmitOptOptions implements FlowOptParamOptions{
     /**
      * 流程代码
      */
@@ -24,16 +27,17 @@ public class SubmitOptOptions {
     private String nodeInstId;
 
     /**
-     * 提交（操作）用户
-     */
-    @ApiModelProperty(value ="提交（操作）用户",required = true)
-    private String userCode;
-
-    /**
      * 授权用户，在作为被授权人时需要
      */
     @ApiModelProperty(value ="授权用户，在作为被授权人时需要",required = true)
     private String grantorCode;
+
+
+    /**
+     * 提交（操作）用户
+     */
+    @ApiModelProperty(value ="提交（操作）用户",required = true)
+    private String userCode;
 
     /**
      * 提交（操作）用户当前单位（机构）
@@ -55,26 +59,32 @@ public class SubmitOptOptions {
      * 业务变量数据
      */
     @ApiModelProperty("流程变量")
-    private Map<String,Object> variables ;
+    private Map<String,Object> variables;
 
+    /**
+     * 业务变量数据
+     */
+    @ApiModelProperty("流程全局变量")
+    private Map<String,Object> globalVariables;
     /**
      * 流程办件角色
      */
     @ApiModelProperty("流程办件角色")
-    private Map<String, List<String>> flowRoleUsers ;
+    private Map<String, List<String>> flowRoleUsers;
 
     /**
      * 后续节点机构
+     * Map String (节点的环节代码或者节点代码) String（机构代码）
      */
     @ApiModelProperty("指定后续节点机构")
     private Map<String, String> nodeUnits;
 
     /**
      * 后续节点操作人员
+     * Map String (节点的环节代码或者节点代码) String（人员代码可以是多个）
      */
     @ApiModelProperty("指定后续节点操作人员")
     private Map<String, Set<String>> nodeOptUsers;
-
 
     private SubmitOptOptions() {
         this.lockOptUser = false;
@@ -89,6 +99,11 @@ public class SubmitOptOptions {
         return this;
     }
 
+    public SubmitOptOptions grantor(String grantorCode){
+        this.grantorCode = grantorCode;
+        return this;
+    }
+
     public SubmitOptOptions user(String userCode){
         this.userCode = userCode;
         return this;
@@ -99,17 +114,19 @@ public class SubmitOptOptions {
         return this;
     }
 
-    public SubmitOptOptions grantor(String grantorCode){
-        this.grantorCode = grantorCode;
-        return this;
-    }
-
-
     public SubmitOptOptions addVariable(String name, String value){
         if(this.variables == null){
             this.variables = new HashMap<>();
         }
         this.variables.put(name, value);
+        return this;
+    }
+
+    public SubmitOptOptions addGlobalVariable(String name, String value){
+        if(this.globalVariables == null){
+            this.globalVariables = new HashMap<>();
+        }
+        this.globalVariables.put(name, value);
         return this;
     }
 
@@ -120,8 +137,6 @@ public class SubmitOptOptions {
         this.flowRoleUsers.put(role, users);
         return this;
     }
-
-
 
     public SubmitOptOptions addFlowRoleUser(String role, String user){
         if(this.flowRoleUsers == null){
@@ -135,7 +150,6 @@ public class SubmitOptOptions {
         }
         return this;
     }
-
 
     public SubmitOptOptions setNextNodeUnit(String nextNode, String unitCode){
         if(this.nodeUnits == null){
@@ -166,14 +180,30 @@ public class SubmitOptOptions {
         return this;
     }
 
+    public SubmitOptOptions copy(FlowOptParamOptions options){
+
+        this.setVariables(CollectionsOpt.cloneHashMap(options.getVariables()));
+        this.setFlowRoleUsers(CollectionsOpt.cloneHashMap(options.getFlowRoleUsers()));
+        this.setGlobalVariables(CollectionsOpt.cloneHashMap(options.getGlobalVariables()));
+        this.setNodeUnits(CollectionsOpt.cloneHashMap(options.getNodeUnits()));
+        this.setNodeOptUsers(CollectionsOpt.cloneHashMap(options.getNodeOptUsers()));
+
+        this.user(options.getUserCode())
+            .unit(options.getUnitCode());
+
+        return this;
+    }
+
     public SubmitOptOptions clone(){
         SubmitOptOptions newObj = new SubmitOptOptions();
         newObj.setVariables(CollectionsOpt.cloneHashMap(this.variables));
+        newObj.setGlobalVariables(CollectionsOpt.cloneHashMap(this.globalVariables));
         newObj.setNodeUnits(CollectionsOpt.cloneHashMap(this.nodeUnits));
         newObj.setFlowRoleUsers(CollectionsOpt.cloneHashMap(this.flowRoleUsers));
         newObj.setNodeOptUsers(CollectionsOpt.cloneHashMap(this.nodeOptUsers));
-        return newObj.nodeInst(this.nodeInstId).user(this.userCode)
+        return newObj.user(this.userCode)
             .unit(this.unitCode).workUser(this.workUserCode)
-            .lockOptUser(this.lockOptUser).grantor(this.grantorCode);
+            .lockOptUser(this.lockOptUser)
+            .nodeInst(this.nodeInstId).grantor(this.grantorCode);
     }
 }

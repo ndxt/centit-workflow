@@ -829,7 +829,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 nodeInst.setLastUpdateTime(updateTime);
                 ActionLog wfactlog = FlowOptUtils.createActionLog("E",
                     mangerUserCode, nodeInstId);
-                wfactlog.setActionId(actionLogDao.getNextActionId());
+                //wfactlog.setActionId(actionLogDao.getNextActionId());
                 nodeInst.addWfActionLog(wfactlog);
                 nodeInstanceDao.mergeObject(nodeInst);
                 //更新消息为已办
@@ -852,7 +852,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             if ("T".equals(task.getIsValid())) {
                 ActionTask newtask = FlowOptUtils.createActionTask(
                     task.getUserCode(), nextNodeInst, nodedef);
-                newtask.setTaskId(actionTaskDao.getNextTaskId());
+                //newtask.setTaskId(actionTaskDao.getNextTaskId());
                 // 要判断 过期时间的问题
                 nextNodeInst.addWfActionTask(newtask);
                 actionTaskDao.saveNewObject(newtask);
@@ -940,7 +940,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             nodeInst.setLastUpdateUser(mangerUserCode);
             //创建节点提交日志 S:提交节点
             ActionLog wfactlog = FlowOptUtils.createActionLog("S", mangerUserCode, nodeInst, null);
-            wfactlog.setActionId(actionLogDao.getNextActionId());
+            //wfactlog.setActionId(actionLogDao.getNextActionId());
             wfactlog.setActionTime(updateTime);
 
             nodeInst.addWfActionLog(wfactlog);
@@ -989,7 +989,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         //创建节点提交日志 S:提交节点
         ActionLog wfactlog = FlowOptUtils.createActionLog("S", mangerUserCode, nodeInst, null);
-        wfactlog.setActionId(actionLogDao.getNextActionId());
+        //wfactlog.setActionId(actionLogDao.getNextActionId());
         wfactlog.setActionTime(commitTime);
 
         nodeInst.addWfActionLog(wfactlog);
@@ -1303,7 +1303,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 //日志
                 ActionLog wfactlog = FlowOptUtils.createActionLog("A",
                     optUserCode, nodeInstance.getNodeInstId());
-                wfactlog.setActionId(actionLogDao.getNextActionId());
+                //wfactlog.setActionId(actionLogDao.getNextActionId());
                 actionLogList.add(wfactlog);
             }
             //nodeInstanceDao.saveNewObjects(nodeInstances);
@@ -1362,7 +1362,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 //日志
                 ActionLog wfactlog = FlowOptUtils.createActionLog("A",
                     optUserCode, actionTask.getNodeInstId());
-                wfactlog.setActionId(actionLogDao.getNextActionId());
+                //wfactlog.setActionId(actionLogDao.getNextActionId());
                 actionLogList.add(wfactlog);
             }
             //actionTaskDao.saveNewObjects(actionTasks);
@@ -1392,7 +1392,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         ActionTask task = FlowOptUtils.createActionTask(nodeInstId,
             userCode);
-        task.setTaskId(actionTaskDao.getNextTaskId());
+        //task.setTaskId(actionTaskDao.getNextTaskId());
         task.setExpireTime(expiretime);
         task.setAuthDesc(authDesc);
         //node.addWfActionTask(task);
@@ -1404,7 +1404,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
         ActionLog wfactlog = FlowOptUtils.createActionLog("A",
             mangerUserCode, node.getNodeInstId());
-        wfactlog.setActionId(actionLogDao.getNextActionId());
+        //wfactlog.setActionId(actionLogDao.getNextActionId());
         actionLogDao.mergeObject(wfactlog);
         return 0;
     }
@@ -1446,7 +1446,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
         ActionLog wfactlog = FlowOptUtils.createActionLog("A",
             mangerUserCode, node.getNodeInstId());
-        wfactlog.setActionId(actionLogDao.getNextActionId());
+        //wfactlog.setActionId(actionLogDao.getNextActionId());
         actionLogDao.mergeObject(wfactlog);
         return 0;
     }
@@ -1483,7 +1483,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
         ActionLog wfactlog = FlowOptUtils.createActionLog("A",
             mangerUserCode, node.getNodeInstId());
-        wfactlog.setActionId(actionLogDao.getNextActionId());
+        //wfactlog.setActionId(actionLogDao.getNextActionId());
         actionLogDao.mergeObject(wfactlog);
         return 0;
     }

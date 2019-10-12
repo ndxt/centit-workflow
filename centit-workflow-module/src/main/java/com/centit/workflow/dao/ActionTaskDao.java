@@ -92,11 +92,11 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
      * 生成主键编号
      * @return
      */
-    @Transactional(propagation= Propagation.MANDATORY)
+    /*@Transactional(propagation= Propagation.MANDATORY)
     public long getNextTaskId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_ACTIONTASKNO");
     }
-
+    */
     /**
      *  根据用户编码获取用户已办任务列表
      * @param filter

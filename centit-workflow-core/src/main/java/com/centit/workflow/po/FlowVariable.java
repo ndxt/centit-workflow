@@ -136,7 +136,7 @@ public class FlowVariable implements java.io.Serializable {
         if (s == null)
             return null;
         String[] sSet = s.split(";");
-        Set<String> sVS = new HashSet<String>();
+        Set<String> sVS = new HashSet<>();
 
         for (int i = 0; i < sSet.length; i++)
             sVS.add(sSet[i]);
@@ -147,7 +147,7 @@ public class FlowVariable implements java.io.Serializable {
         if ("E".equals(varType)) {
             return stringToStringset(varValue);
         }
-        Set<String> sVS = new HashSet<String>();
+        Set<String> sVS = new HashSet<>();
         sVS.add(varValue);
         return sVS;
     }
