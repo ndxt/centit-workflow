@@ -513,25 +513,20 @@ public class FlowInstance implements java.io.Serializable {
     /**
      * 获取相同Token的最新节点所属机构
      *
-     * @param nodeInst
-     * @param thisToken
-     * @return
+     * @param nodeInst 节点
+     * @param thisToken 令牌
+     * @return NodeInstance 实例
      */
-    public String getNearestNodeUnitCode(NodeInstance nodeInst, String thisToken) {
+    public NodeInstance getNearestNode(NodeInstance nodeInst, String thisToken) {
         NodeInstance curNode = nodeInst;
-
         while (curNode != null) {
-            if (curNode.getUnitCode() != null && !"".equals(curNode.getUnitCode())) {
-                String prevToken = curNode.getRunToken();
-                if (thisToken == null || prevToken == null
-                    || thisToken.equals(prevToken)
-                    || thisToken.startsWith(prevToken + '.'))
-                    return curNode.getUnitCode();
-            }
-
+            String prevToken = curNode.getRunToken();
+            if (thisToken == null || prevToken == null
+                || thisToken.equals(prevToken)
+                || thisToken.startsWith(prevToken + '.'))
+                return curNode;
             if (curNode.getPrevNodeInstId() == null)
                 return null;
-
             curNode = this.getNodeInstanceById(curNode.getPrevNodeInstId());
         }
         return null;
@@ -649,7 +644,7 @@ public class FlowInstance implements java.io.Serializable {
      * @return
      */
     public Set<NodeInstance> findAllActiveSubNodeInstByToken(String token) {
-        Set<NodeInstance> sameNodes = new HashSet<NodeInstance>();
+        Set<NodeInstance> sameNodes = new HashSet<>();
         if (this.flowNodeInstances == null)
             return sameNodes;
         for (NodeInstance nodeInst : flowNodeInstances) {
@@ -719,12 +714,12 @@ public class FlowInstance implements java.io.Serializable {
     /**
      * 找到汇聚节点所有未提交的子节点
      *
-     * @param token
-     * @return subToken
+     * @param token 节点令牌
+     * @return subToken 子节点令牌
      */
     public Set<String> calcNoSubmitSubNodeTokensInstByToken(String token) {
         Set<NodeInstance> sameNodes = findAllActiveSubNodeInstByToken(token);
-        Set<String> subTokens = new HashSet<String>();
+        Set<String> subTokens = new HashSet<>();
 
         int subg = NodeInstance.calcTokenGeneration(token) + 1;
         for (NodeInstance nodeInst : sameNodes) {
