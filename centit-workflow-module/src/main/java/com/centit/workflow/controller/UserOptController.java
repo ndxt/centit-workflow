@@ -7,7 +7,6 @@ import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.security.model.CentitUserDetails;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.po.RoleRelegate;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.RoleFormulaService;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -53,14 +51,6 @@ public class UserOptController extends BaseController {
         ResponseMapData resData = new ResponseMapData();
         resData.addResponseData("objList", relegateList);
         resData.addResponseData("pageDesc", pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
-    }
-
-    @RequestMapping(value = "/getUserFlowRole/{userCode}", method = {RequestMethod.GET})
-    public void getUserFlowRole(@PathVariable String userCode, HttpServletResponse response) {
-        List<RoleFormula> flowRoles = flowRoleService.listRoleFormulas(new HashMap<>(), new PageDesc());
-        ResponseMapData resData = new ResponseMapData();
-        resData.addResponseData("flowRoleList", flowRoles);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
 

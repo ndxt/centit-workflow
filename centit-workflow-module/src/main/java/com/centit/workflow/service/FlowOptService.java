@@ -14,6 +14,7 @@ import java.util.Map;
  *
  */
 public interface FlowOptService {
+
     JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc);
 
     FlowOptInfo getOptById(String optId);

@@ -3,9 +3,9 @@ package com.centit.workflow.service.impl;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitParamBuilder;
-import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
+import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.compiler.VariableFormula;
@@ -267,7 +267,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         else
             endNodeInst.setTransPath(transPath + "," + trans.getTransId());
         nodeInstanceDao.saveNewObject(endNodeInst);
-        FlowOptUtils.sendFinishMsg(flowInst.getFlowInstId(), userCode);
+        //FlowOptUtils.sendFinishMsg(flowInst.getFlowInstId(), userCode);
     }
 
     private LeftRightPair<Set<String>, Set<String>>
@@ -963,7 +963,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             wfactlog.setGrantor(sGrantor);
         }
         nodeInst.addWfActionLog(wfactlog);
-        nodeInstanceDao.updateObject(nodeInst);
+        actionLogDao.saveNewObject(wfactlog);
+        //nodeInstanceDao.updateObject(nodeInst);
         //设置阶段进 变更时间（提交时间）
         StageInstance stage = flowInst.getStageInstanceByCode(currNode.getStageCode());
         if (stage != null) {
@@ -1265,7 +1266,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //调用发送消息接口
         Set<String> nodeInstIds = new HashSet<>();
         nodeInstIds.add(lastNodeInstId);
-        FlowOptUtils.sendMsg(nodeInstId, nodeInstIds, mangerUserCode);
+        //FlowOptUtils.sendMsg(nodeInstId, nodeInstIds, mangerUserCode);
         return lastNodeInstId;
     }
 
@@ -1404,7 +1405,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             wfActionLog.setGrantor(sGrantor);
 
         nodeInst.addWfActionLog(wfActionLog);
-        nodeInstanceDao.updateObject(nodeInst);
+        actionLogDao.saveNewObject(wfActionLog);
+        //nodeInstanceDao.updateObject(nodeInst);
     }
 
 
@@ -1715,8 +1717,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInstanceDao.saveNewObject(nextNodeInst);
         Set<String> nextNodeInsts = new HashSet<>();
         nextNodeInsts.add(lastNodeInstId);
-        FlowOptUtils.sendMsg("", nextNodeInsts, createUser);
-
+        //FlowOptUtils.sendMsg("", nextNodeInsts, createUser);
         return nextNodeInst;
     }
 
@@ -2311,6 +2312,89 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             QueryUtils.createSqlParamsMap("userCode", userCode, "nodeCode", nodeCode), pageDesc);
     }
 
+    @Override
+    public List<UserTask> queryDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<UserTask> taskList = new ArrayList<>();
+        //动态任务
+        //1.找到用户所有机构下的岗位和职务
+        List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits((String) searchColumn.get("userCode"));
+
+        //2.以机构，岗位，职务来查询任务
+        if (iUserUnits == null || iUserUnits.size() == 0) {
+            return taskList;
+        }
+        for (IUserUnit i : iUserUnits) {
+            searchColumn.put("unitCode", i.getUnitCode());
+            searchColumn.put("userStation", i.getUserStation());
+            List<UserTask> dynamicTask = actionTaskDao.queryDynamicTask(searchColumn, pageDesc);
+            taskList.addAll(dynamicTask);
+        }
+
+        return taskList;
+    }
+
+    @Override
+    public List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<UserTask> taskList = new ArrayList<>();
+        String station = StringBaseOpt.castObjectToString(searchColumn.get("userStation"));
+        String unitCode = StringBaseOpt.castObjectToString(searchColumn.get("unitCode"));
+        String nodeInstId = (String) searchColumn.get("nodeInstId");
+        List<? extends IUserUnit> userUnits = CodeRepositoryUtil.listAllUserUnits();
+        //2.以机构，岗位，职务来查询任务
+        for (IUserUnit i : userUnits) {
+            if(StringUtils.isNotBlank(unitCode)){
+                if(!unitCode.equals(i.getUnitCode())){
+                    continue;
+                }
+            }
+            if (!StringUtils.equals(station, i.getUserStation())){
+                continue;
+            }
+            searchColumn.put("nodeInstId", nodeInstId);
+            searchColumn.put("unitCode", i.getUnitCode());
+            searchColumn.put("userStation", i.getUserStation());
+            List<UserTask> dynamicTask = actionTaskDao.queryDynamicTask(searchColumn, pageDesc);
+            for (UserTask u : dynamicTask) {
+                u.setUserCode(i.getUserCode());
+            }
+            taskList.addAll(dynamicTask);
+        }
+
+        return taskList;
+    }
+
+    @Override
+    public List<UserTask> queryTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<UserTask> taskList = new ArrayList<>();
+        //静态任务
+        List<UserTask> staticTaskList = actionTaskDao.queryStaticTask((String) searchColumn.get("userCode"));
+        if (staticTaskList != null) {
+            taskList.addAll(staticTaskList);
+        }
+        //动态任务
+        //1.找到用户主机构下的岗位和职务
+        List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits((String) searchColumn.get("userCode"));
+        IUserUnit userUnit = null;
+        if (iUserUnits != null && iUserUnits.size() > 0) {
+            for (IUserUnit iUserUnit : iUserUnits) {
+                if ("T".equals(iUserUnit.getIsPrimary())) {
+                    userUnit = iUserUnit;
+                    break;
+                }
+            }
+        }
+        //2.以机构，岗位，职务来查询任务
+        if (userUnit == null) {
+            return taskList;
+        }
+        searchColumn.put("unitCode", userUnit.getUnitCode());
+        searchColumn.put("userStation", userUnit.getUserStation());
+        List<UserTask> dynamicTaskList = actionTaskDao.queryDynamicTask(searchColumn, pageDesc);
+        if (dynamicTaskList != null) {
+            taskList.addAll(dynamicTaskList);
+        }
+        return taskList;
+    }
     @Override
     public boolean canAccess(String nodeInstId, String userCode) {
         if (userCode == null)

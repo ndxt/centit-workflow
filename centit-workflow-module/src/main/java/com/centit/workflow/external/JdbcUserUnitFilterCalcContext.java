@@ -3,11 +3,12 @@ package com.centit.workflow.external;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.impl.AbstractUserUnitFilterCalcContext;
 import com.centit.framework.model.basedata.IUserRole;
-import com.centit.support.algorithm.CollectionsOpt;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 /**
  * Created by codefan on 17-9-11.
  * 在这个过滤器中 用户信息只需要用户代码、用户默认机构
@@ -38,7 +39,7 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
         return this.extFrameworkBean.subUnitMapCache.getCachedValue(unitCode);
     }
 
-    @Override
+    /*@Override
     public List<ExtSysUnitInfo> listSubUnitAll(String unitCode) {
 
         if(StringUtils.isBlank(unitCode))
@@ -58,7 +59,7 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
         }
         CollectionsOpt.sortAsTree(units, (p, c) -> StringUtils.equals(p.getUnitCode(),c.getParentUnit()));
         return units;
-    }
+    }*/
 
     @Override
     public ExtSysUnitInfo getUnitInfoByCode(String unitCode) {
@@ -91,6 +92,26 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
     }
 
     @Override
+    public Map<String, String> listAllSystemRole() {
+        return this.extFrameworkBean.systemRoleMapCache.getCachedTarget();
+    }
+
+    @Override
+    public Map<String, String> listAllStation() {
+        return this.extFrameworkBean.stationMapCache.getCachedTarget();
+    }
+
+    @Override
+    public Map<String, String> listAllProjectRole() {
+        return this.extFrameworkBean.projectRoleMapCache.getCachedTarget();
+    }
+
+    @Override
+    public List<Triple<String, String, Integer>> listAllRank() {
+        return this.extFrameworkBean.rankInfoCache.getCachedTarget();
+    }
+
+    @Override
     public ExtSysUserInfo getUserInfoByCode(String userCode) {
         return this.extFrameworkBean.codeToUserMapCache.getCachedTarget().get(userCode);
     }
@@ -102,8 +123,17 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
      */
     @Override
     public int getXzRank(String rankCode) {
-        Integer rank = this.extFrameworkBean.rankMapCache.getCachedTarget().get(rankCode);
-        return rank == null ? CodeRepositoryUtil.MAXXZRANK : rank;
+        List<Triple<String, String, Integer>> ranks =
+            this.extFrameworkBean.rankInfoCache.getCachedTarget();//.get(rankCode);
+        if(ranks==null){
+            return CodeRepositoryUtil.MAXXZRANK;
+        }
+        for(Triple<String, String, Integer> tri: ranks){
+            if(StringUtils.equals(tri.getLeft(),rankCode)){
+                return tri.getRight();
+            }
+        }
+        return CodeRepositoryUtil.MAXXZRANK;
     }
 
 }

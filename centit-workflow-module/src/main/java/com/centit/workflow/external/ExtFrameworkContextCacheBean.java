@@ -1,6 +1,7 @@
 package com.centit.workflow.external;
 
 import com.centit.framework.components.CodeRepositoryCache;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.dao.ExtendedQueryPool;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
@@ -10,6 +11,7 @@ import com.centit.support.database.utils.DataSourceDescription;
 import com.centit.support.database.utils.DatabaseAccess;
 import com.centit.support.database.utils.DbcpConnectPools;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -160,11 +162,21 @@ public class ExtFrameworkContextCacheBean {
         }, allUserRoleCache);
 
 
-    CachedObject<Map<String, Integer>> rankMapCache =
-        new CachedObject<>( this::reloadRankInfo,
+    CachedObject<List<Triple<String, String, Integer>>> rankInfoCache =
+        new CachedObject<>( this::reloadAllRank,
             CodeRepositoryCache.CACHE_FRESH_PERIOD_SECONDS);
 
+    CachedObject<Map<String, String>> systemRoleMapCache =
+        new CachedObject<>( this::reloadAllSystemRole,
+            CodeRepositoryCache.CACHE_FRESH_PERIOD_SECONDS);
 
+    CachedObject<Map<String, String>> projectRoleMapCache =
+        new CachedObject<>( this::reloadAllProjectRole,
+            CodeRepositoryCache.CACHE_FRESH_PERIOD_SECONDS);
+
+    CachedObject<Map<String, String>> stationMapCache =
+        new CachedObject<>( this::reloadAllStation,
+            CodeRepositoryCache.CACHE_FRESH_PERIOD_SECONDS);
 
     public ExtSysUnitInfo searchUnitInfoByCode(String unitCode) {
         for(ExtSysUnitInfo unitInfo : allunitInfoCache.getCachedTarget()){
@@ -193,7 +205,6 @@ public class ExtFrameworkContextCacheBean {
 
 
     protected List<ExtSysUserInfo> reloadUserInfo() {
-
         try(Connection conn = getExternalDataConnection() ) {
             List<Object[]> users = DatabaseAccess.findObjectsBySql(conn,
                 ExtendedQueryPool.getExtendedSql("WORKFLOW_EXTERNAL_USERINFO"));
@@ -290,20 +301,52 @@ public class ExtFrameworkContextCacheBean {
             return null;
         }
     }
-    protected Map<String, Integer > reloadRankInfo(){
+    private Map<String, String> reloadMapBySqlId(String sqlId){
         try(Connection conn = getExternalDataConnection() ) {
+            List<Object[]> objects = DatabaseAccess.findObjectsBySql(conn,
+                ExtendedQueryPool.getExtendedSql(sqlId) );
 
-            List<Object[]> ranks = DatabaseAccess.findObjectsBySql(conn,
-                ExtendedQueryPool.getExtendedSql("WORKFLOW_EXTERNAL_RANKMAP") );
-
-            if(ranks == null)
+            if(objects == null)
                 return null;
-            Map<String, Integer > rankMap = new HashMap<>(ranks.size()*2+1);
-            for(Object[] rank: ranks){
-                rankMap.put(StringBaseOpt.objectToString(rank[0]),
-                    NumberBaseOpt.castObjectToInteger(rank[1]) );
+            Map<String, String> objMap = new HashMap<>(objects.size()*2+1);
+            for(Object[] rank: objects){
+                objMap.put(StringBaseOpt.objectToString(rank[0]),
+                    StringBaseOpt.objectToString(rank[1]) );
             }
-            return rankMap;
+            return objMap;
+        }catch (SQLException |IOException  e){
+            logger.error(e.getLocalizedMessage());
+            return null;
+        }
+    }
+
+
+    protected Map<String, String> reloadAllSystemRole() {
+        return reloadMapBySqlId("WORKFLOW_EXTERNAL_ROLE_INFO");
+    }
+
+    protected Map<String, String> reloadAllStation() {
+        return reloadMapBySqlId("WORKFLOW_EXTERNAL_STATION_INFO");
+    }
+
+    protected Map<String, String> reloadAllProjectRole() {
+        return reloadMapBySqlId("WORKFLOW_EXTERNAL_ITEM_ROLE");
+    }
+
+    protected List<Triple<String, String, Integer>> reloadAllRank() {
+        try(Connection conn = getExternalDataConnection() ) {
+            List<Object[]> objects = DatabaseAccess.findObjectsBySql(conn,
+                ExtendedQueryPool.getExtendedSql("WORKFLOW_EXTERNAL_RANK_INFO") );
+
+            if(objects == null)
+                return null;
+            List<Triple<String, String, Integer>> ranks  = new ArrayList<>(objects.size()+1);
+            for(Object[] rank: objects){
+                ranks.add(Triple.of(StringBaseOpt.objectToString(rank[0]),
+                    StringBaseOpt.objectToString(rank[1]),
+                    NumberBaseOpt.castObjectToInteger(rank[2], CodeRepositoryUtil.MAXXZRANK)));
+            }
+            return ranks;
         }catch (SQLException |IOException  e){
             logger.error(e.getLocalizedMessage());
             return null;

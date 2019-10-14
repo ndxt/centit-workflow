@@ -419,7 +419,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     public long suspendNodeInstance(String nodeInstId, String mangerUserCode) {
-        FlowOptUtils.sendMsg(nodeInstId, null, mangerUserCode);
+        // FlowOptUtils.sendMsg(nodeInstId, null, mangerUserCode);
         return updateNodeInstState(nodeInstId, "P", mangerUserCode);
     }
 
@@ -583,7 +583,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public int stopInstance(String flowInstId, String mangerUserCode,
                             String admindesc) {
-        FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
+        // FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
         return updateInstanceState(flowInstId, "F", mangerUserCode, admindesc);
     }
 
@@ -595,7 +595,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * F 强行结束
      */
     public int stopAndChangeInstance(String flowInstId, String mangerUserCode, String admindesc) {
-        FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
+        //FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
         return stopInstanceState(flowInstId, mangerUserCode, admindesc);
     }
 
@@ -819,8 +819,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                         subFlowInst.setLastUpdateUser(mangerUserCode);
                         flowInstanceDao.updateObject(subFlowInst);
                         //更新子流程下的所有消息为已办
-                        FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(), mangerUserCode);
-
+                        //FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(), mangerUserCode);
                     }
                 }
                 nodeInst.setNodeState("B");
@@ -833,7 +832,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 nodeInst.addWfActionLog(wfactlog);
                 nodeInstanceDao.mergeObject(nodeInst);
                 //更新消息为已办
-                FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, mangerUserCode);
+                // FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, mangerUserCode);
             }
         }
         // 创建新节点
@@ -864,9 +863,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInstanceDao.mergeObject(nextNodeInst);
         Set<String> nextNodeInsts = new HashSet<>();
         nextNodeInsts.add(lastNodeInstId);
-        FlowOptUtils.sendMsg("", nextNodeInsts, mangerUserCode);
-
-
+        //FlowOptUtils.sendMsg("", nextNodeInsts, mangerUserCode);
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nodedef);
         nodeEventExecutor.runAfterCreate(flow, nextNodeInst, nodedef, mangerUserCode);

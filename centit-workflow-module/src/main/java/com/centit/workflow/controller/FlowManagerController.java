@@ -16,7 +16,6 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
-import com.centit.workflow.service.PlatformFlowService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -42,8 +41,7 @@ public class FlowManagerController extends BaseController {
     private FlowEngine flowEng;
     @Resource
     private FlowDefine flowDef;
-    @Resource
-    private PlatformFlowService platformFlowService;
+
 
     private ResponseMapData resData = new ResponseMapData();
     private Map<Class<?>, String[]> excludes;
@@ -512,7 +510,7 @@ public class FlowManagerController extends BaseController {
             searchColumn.put("unitCode", nodeInstance.getUnitCode());
             searchColumn.put("userStation", nodeInstance.getRoleCode());
             PageDesc pageDesc = new PageDesc(1, 100);
-            List<UserTask> dynamicTask = platformFlowService.queryDynamicTaskByUnitStation(searchColumn, pageDesc);
+            List<UserTask> dynamicTask = flowEng.queryDynamicTaskByUnitStation(searchColumn, pageDesc);
             objList.addAll(dynamicTask);
         }
         JsonResultUtils.writeSingleDataJson(objList, response);
@@ -577,7 +575,7 @@ public class FlowManagerController extends BaseController {
                             searchColumn.put("nodeInstId", nodeInst.getNodeInstId());
                             searchColumn.put("unitCode", nodeInst.getUnitCode());
                             searchColumn.put("userStation", nodeInfo.getRoleCode());
-                            List<UserTask> dynamicTask = platformFlowService.queryDynamicTaskByUnitStation(searchColumn, pageDesc);
+                            List<UserTask> dynamicTask = flowEng.queryDynamicTaskByUnitStation(searchColumn, pageDesc);
                             tasks.addAll(dynamicTask);
                         }
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
@@ -660,9 +658,6 @@ public class FlowManagerController extends BaseController {
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
 
-
-
-
     //新增工作组
     @RequestMapping(value = "/assignFlowWorkTeam/{flowInstId}/{roleCode}/{userCode}/{authdesc}", method = RequestMethod.POST)
     public void assignFlowWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode,
@@ -671,8 +666,6 @@ public class FlowManagerController extends BaseController {
             userCode, authdesc);
         JsonResultUtils.writeBlankJson(response);
     }
-
-    ;
 
     /**
      * 获取流程实例的关注列表

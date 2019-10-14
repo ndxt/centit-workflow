@@ -154,12 +154,30 @@ public interface FlowEngine {
     List<UserTask> listUserTasksByNodeCode(String userCode,String nodeCode,PageDesc pageDesc);
 
 
-    /*
-     * 列举用户已办事项
+    /**
+     * 查询任务，包含静态任务和动态任务
+     * @param searchColumn
+     * @param pageDesc
+     * @return
      */
-     /*List<NodeInstance> listUserCompleteTasks(
-            Map<String, Object> filterMap, PageDesc pageDesc, String userCode);
-    */
+    List<UserTask> queryTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+
+    /**
+     * 获取动态待办
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    List<UserTask> queryDynamicTask(Map<String, Object> searchColumn,PageDesc pageDesc);
+
+    /**
+     * 获取动态待办
+     * @param searchColumn 包含nodeInstId，unitCode，userStation
+     * @param pageDesc
+     * @return
+     */
+    List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc);
 
     /**
      * 查看某一个用户所有的已办，并且分页

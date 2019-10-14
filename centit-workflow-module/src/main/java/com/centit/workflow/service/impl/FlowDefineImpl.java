@@ -1,27 +1,29 @@
 package com.centit.workflow.service.impl;
 
-import com.centit.support.algorithm.UuidOpt;
-import com.centit.support.database.utils.PageDesc;
+import com.centit.framework.components.SysUserFilterEngine;
+import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
+import com.centit.support.algorithm.UuidOpt;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.HtmlFormUtils;
 import com.centit.support.xml.XmlUtils;
-import com.centit.workflow.dao.FlowInfoDao;
-import com.centit.workflow.dao.FlowTeamRoleDao;
-import com.centit.workflow.dao.NodeInfoDao;
+import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
+import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.*;
 
@@ -29,13 +31,26 @@ import java.util.*;
 public class FlowDefineImpl implements FlowDefine, Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Resource
+    @Autowired
     private FlowInfoDao flowDefineDao;
-    @Resource
+
+    @Autowired
     private NodeInfoDao flowNodeDao;
 
-    @Resource
+    @Autowired
+    private FlowOptDefDao flowOptDefDao;
+
+    @Autowired
+    private RoleFormulaDao flowRoleDao;
+
+    @Autowired
+    private FlowVariableDefineDao flowVariableDefineDao;
+
+    @Autowired
     private FlowTeamRoleDao flowTeamRoleDao;
+
+    @Autowired
+    private UserUnitFilterCalcContextFactory userUnitFilterFactory;
 
     private static Logger logger = LoggerFactory.getLogger(FlowDefineImpl.class);
     public static final String BEGINNODETAG = "begin";
@@ -49,8 +64,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         public String firstNodeId;
 
         public FlowDataDetail() {
-            nodeTagToId = new HashMap<String, String>();
-            transTagToId = new HashMap<String, String>();
+            nodeTagToId = new HashMap<>();
+            transTagToId = new HashMap<>();
         }
     }
 
@@ -68,7 +83,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     @Transactional
     public List<FlowInfo> getFlowsByOptId(String optId) {
-        Map<String, Object> filterMap = new HashMap<String, Object>();
+        Map<String, Object> filterMap = new HashMap<>();
         filterMap.put("optId", optId);
 
         List<FlowInfo> flows = flowDefineDao.getAllLastVertionFlows(filterMap);
@@ -634,23 +649,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return flowDefineDao.getNextPrimarykey();
     }
 
-    @Override
-    @Transactional
-    public long getNextStageId() {
-        return flowDefineDao.getNextStageId();
-    }
-
-    @Override
-    @Transactional
-    public long getNextRoleId() {
-        return flowDefineDao.getNextRoleId();
-    }
-
-    @Override
-    @Transactional
-    public long getNextVariableDefId() {
-        return flowDefineDao.getNextVariableDefId();
-    }
 
     @Override
     @Transactional
@@ -696,5 +694,178 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public void deleteFlowDef(String flowCode) {
         flowDefineDao.deleteObjectByFlowCode(flowCode);
+    }
+
+    /**
+     * 例举所有节点操作类别
+     */
+    @Override
+    public Map<String, String> listAllOptType() {
+        Map<String, String> optType = new HashMap<>();
+        optType.put("A", "一般");
+        optType.put("B", "抢先机制");
+        optType.put("C", "多人操作");
+        optType.put("D", "自动执行");
+        optType.put("S", "子流程");
+        optType.put("E", "哑元");
+        return optType;
+    }
+
+    /**
+     * 例举所有节点类别
+     * A:开始 B:首节点 C:一般 D:分支 E:汇聚 F结束
+     */
+    @Override
+    public Map<String, String> listAllNoteType() {
+        Map<String, String> nodeType = new HashMap<>();
+        //nodeType.put("A", "开始");
+        //nodeType.put("B", "首节点");
+        nodeType.put("C", "业务");
+        nodeType.put("R", "路由");
+        //nodeType.put("E", "汇聚 ");
+        //nodeType.put("F", "结束");
+        return nodeType;
+    }
+
+    /**
+     * 读取工作定义的业务操作
+     * @param flowCode 流程代码
+     * @param version 版本号
+     * @return 对应的业务操作
+     */
+    public Map<String, String> listAllOptCode(String flowCode, long version) {
+        FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
+        //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
+        List<FlowOptDef> wfOptDefs = flowOptDefDao.listObjectsByProperty("optId", flowDef.getOptId());
+        Map<String, String> optMap = new HashMap<>();
+        for (FlowOptDef f : wfOptDefs) {
+            //optMap.put(flowOptInfo.getOptUrl() + f.getOptMethod(), f.getOptName());
+            optMap.put(f.getOptCode(),f.getOptName());
+        }
+        return optMap;
+    }
+
+    /**
+     * 读取工作定义的业务操作
+     * @param flowCode 流程代码
+     * @return 对应的业务操作
+     */
+    @Override
+    public Map<String, String> listAllOptCode(String flowCode) {
+        return listAllOptCode(flowCode, flowDefineDao.getLastVersion(flowCode));
+    }
+    /**
+     * 列举所有角色类别
+     */
+    @Override
+    public Map<String, String> listRoleType(){
+        Map<String, String> roleTypes = new HashMap<>();
+        roleTypes.put(SysUserFilterEngine.ROLE_TYPE_GW, "岗位职责");
+        roleTypes.put(SysUserFilterEngine.ROLE_TYPE_XZ, "行政职位");
+        roleTypes.put(SysUserFilterEngine.ROLE_TYPE_ITEM, "办件角色");
+        roleTypes.put(SysUserFilterEngine.ROLE_TYPE_SYSTEM, "系统角色");
+        roleTypes.put(SysUserFilterEngine.ROLE_TYPE_ENGINE, "权限引擎");
+        roleTypes.put(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA, "已定义表达式");
+        return roleTypes;
+    }
+
+    /**
+     * 列举所有角色
+     */
+    @Override
+    public Map<String, Map<String, String>> listAllRole() {
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        Map<String, Map<String, String>> roleList = new HashMap<>();
+        roleList.put(SysUserFilterEngine.ROLE_TYPE_GW /*"gw"*/, context.listAllStation());
+        roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ /*"xz"*/, makeRankMap(context.listAllRank()));
+        roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM /*"bj"*/, context.listAllProjectRole());
+        roleList.put(SysUserFilterEngine.ROLE_TYPE_SYSTEM /*"ro"*/, context.listAllSystemRole());
+        roleList.put(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA /*"sf"*/, flowRoleDao.listAllRoleMsg());
+        return roleList;
+    }
+
+    private Map<String, String> makeRankMap(List<Triple<String, String, Integer>> ranks){
+        if(ranks==null){
+            return null;
+        }
+        Map<String, String> rankMap = new HashMap<>();
+        for(Triple<String, String, Integer> tri: ranks){
+            rankMap.put(tri.getLeft(), tri.getMiddle());
+        }
+        return rankMap;
+    }
+    /**
+     * @param stype 角色类别
+     * @return 角色名称和类别对应列表
+     */
+    @Override
+    public Map<String, String> listRoleByType(String stype){
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+
+        if(SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(stype)){
+            return context.listAllStation();
+        } else if(SysUserFilterEngine.ROLE_TYPE_XZ.equalsIgnoreCase(stype)){
+            return makeRankMap(context.listAllRank());
+        } else if(SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(stype)){
+            return context.listAllProjectRole();
+        } else if(SysUserFilterEngine.ROLE_TYPE_SYSTEM.equalsIgnoreCase(stype)){
+            return context.listAllSystemRole();
+        } else if(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA.equalsIgnoreCase(stype)){
+            return flowRoleDao.listAllRoleMsg();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 列举所有的子流程
+     */
+    @Override
+    public Map<String, String> listAllSubFlow() {
+        Map<String, String> subwf = new HashMap<>();
+
+        List<FlowInfo> listflow = flowDefineDao.getFlowsByState("B");
+        for (FlowInfo wfFlowDefine : listflow) {
+            subwf.put(wfFlowDefine.getFlowCode(), wfFlowDefine.getFlowName());
+        }
+        return subwf;
+    }
+
+    /**
+     * 获取流程阶段信息
+     *
+     * @param flowCode 流程代码和名称对应表
+     * @return 流程阶段
+     */
+    @Override
+    public Map<String, String> listFlowStages(String flowCode) {
+        FlowInfo flowDef = flowDefineDao.getFlowDefineByID(flowCode, 0L);//流程0版本读取
+        Set<FlowStage> stageSet = flowDef.getFlowStagesSet();
+
+        Map<String, String> optmap = new HashMap<String, String>();
+
+        if (stageSet != null && !stageSet.isEmpty()) {
+            Iterator<? extends FlowStage> it = stageSet.iterator();
+            while (it.hasNext()) {
+                FlowStage stage = it.next();
+                optmap.put(stage.getStageCode(), stage.getStageName());
+            }
+        }
+        return optmap;
+    }
+
+    /**
+     * 根据流程代码获取流程变量信息
+     * @param flowCode 流程代码
+     * @return 流程变量信息
+     */
+    @Override
+    public Map<String, String> listFlowVariableDefines(String flowCode) {
+        List<FlowVariableDefine> flowVariableDefines = flowVariableDefineDao.getFlowVariableByFlowCode(flowCode);
+        Map<String, String> variableDefineMap = new HashMap<>();
+        for (FlowVariableDefine flowVariableDefine : flowVariableDefines) {
+            variableDefineMap.put(flowVariableDefine.getFlowVariableId(), flowVariableDefine.getVariableName());
+        }
+        return variableDefineMap;
     }
 }

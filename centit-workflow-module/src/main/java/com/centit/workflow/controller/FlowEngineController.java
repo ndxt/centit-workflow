@@ -34,12 +34,10 @@ public class FlowEngineController extends BaseController {
     private FlowEngine flowEngine;
     @Resource
     private FlowManager flowManager;
+
     @Resource
     private FlowDefine flowDefine;
-    @Resource
-    private RoleFormulaService flowRoleService;
-    @Resource
-    private PlatformFlowService platformFlowService;
+
     @Resource
     private FlowOptService wfOptService;
 
@@ -276,7 +274,7 @@ public class FlowEngineController extends BaseController {
         Map<String, Object> searchColumn = new HashMap<>();
         PageDesc pageDesc = new PageDesc(1, 10);
         searchColumn.put("userCode", userCode);
-        List<UserTask> userTasks = platformFlowService.queryDynamicTask(searchColumn, pageDesc);
+        List<UserTask> userTasks = flowEngine.queryDynamicTask(searchColumn, pageDesc);
         return userTasks;
     }
 

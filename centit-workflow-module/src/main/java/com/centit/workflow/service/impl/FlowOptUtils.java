@@ -318,65 +318,6 @@ public class FlowOptUtils {
         return action;
     }
 
-
-    //是否发送消息中心
-    private static String ifSendMsg;
-    //是否发送短信
-    private static String ifSendSms;
-    //调用bean定义
-    private static String sendMsgBean;
-    //发送流程信息到业务系统
-    private static String ifSendFlow;
-
-    private static void initStr() {
-        ifSendMsg = CodeRepositoryUtil.getSysConfigValue("workflow.ifSendMsg");
-        ifSendSms = CodeRepositoryUtil.getSysConfigValue("workflow.ifSendSms");
-        sendMsgBean = CodeRepositoryUtil.getSysConfigValue("workflow.sendMsgBean");
-        ifSendFlow = CodeRepositoryUtil.getSysConfigValue("workflow.ifSendFlow");
-    }
-
-    //流程信息发送给业务
-    public static void sendFlowInfo(FlowInfo flowInfo) {
-        initStr();
-        if ("T".equals(ifSendFlow)) {
-            WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-            NodeMsgSupport msgSupport = (NodeMsgSupport) wac.getBean(sendMsgBean);
-            msgSupport.sendFlowInfo(flowInfo);
-        }
-    }
-
-    //调用待办消息推送
-    public static void sendMsg(String nodeInstId, Set<String> nextNodeInsts, String userCode) {
-        initStr();
-        //如果需要发送待办消息
-        if ("T".equals(ifSendMsg) || "T".equals(ifSendSms)) {
-            WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-            NodeMsgSupport msgSupport = (NodeMsgSupport) wac.getBean(sendMsgBean);
-            if ("T".equals(ifSendMsg)) {
-                msgSupport.sendNodeMsg(nodeInstId, nextNodeInsts, userCode);
-            }
-            if ("T".equals(ifSendSms)) {
-                msgSupport.sendNodeSms(nextNodeInsts, userCode);
-            }
-        }
-    }
-
-    //强制办结流程之后的调用消息中心接口
-    public static void sendFinishMsg(String flowInstId, String userCode) {
-        initStr();
-        //如果需要发送待办消息
-        if ("T".equals(ifSendMsg) || "T".equals(ifSendSms)) {
-            WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-            NodeMsgSupport msgSupport = (NodeMsgSupport) wac.getBean(sendMsgBean);
-            if ("T".equals(ifSendMsg)) {
-                msgSupport.sendFlowNodeMsg(flowInstId, userCode);
-            }
-            if ("T".equals(ifSendSms)) {
-                msgSupport.sendFlowNodeSms(flowInstId, userCode);
-            }
-        }
-    }
-
     public static FlowVariableTranslate createVariableTranslate(
             NodeInstance nodeInstance, FlowInstance flowInstance,
             FlowVariableDao flowVariableDao, FlowEngineImpl flowEngine) {

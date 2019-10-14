@@ -1,22 +1,19 @@
 package com.centit.workflow.controller;
 
 import com.centit.framework.common.JsonResultUtils;
-import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.core.controller.BaseController;
+import com.centit.framework.core.controller.WrapUpResponseBody;
+import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.po.*;
-import com.centit.workflow.service.FlowModelData;
-import com.centit.workflow.service.RoleFormulaService;
-import com.centit.workflow.service.impl.FlowOptUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -32,58 +29,46 @@ import java.util.Map;
 public class FlowDefineController extends BaseController {
     //public static final Logger logger = LoggerFactory.getLogger(SampleFlowDefineController.class);
 
-    @Resource
+    @Autowired
     private com.centit.workflow.service.FlowDefine flowDef;
-    @Resource
-    private RoleFormulaService flowRoleService;
-    @Resource
-    private FlowModelData modelData;
 
-    ResponseMapData resData = new ResponseMapData();
-
-    /**
+    /*
      * 列举系统中的所有流程，只显示最新版本的
      */
     @ApiOperation(value = "流程定义列表", notes = "列出所有的流程定义列表")
     @GetMapping(value = "/listFlow")
-    public void listFlow(HttpServletResponse response,HttpServletRequest request) {
+    @WrapUpResponseBody
+    public PageQueryResult<FlowInfo> listFlow(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
-        List<FlowInfo> listObjects = flowDef.listLastVersionFlow(searchColumn, new PageDesc());
-        resData.addResponseData(OBJLIST, listObjects);
-        JsonResultUtils.writeResponseDataAsJson(resData, response, JsonPropertyUtils.getIncludePropPreFilter(FlowInfo.class, new String[]{"flowCode", "flowName"}));
+        List<FlowInfo> listObjects = flowDef.listLastVersionFlow(searchColumn, pageDesc);
+        return PageQueryResult.createResult(listObjects, pageDesc);
     }
 
 
-    /**
+    /*
      * 列举系统中的所有流程，只显示最新版本的
      */
+    @WrapUpResponseBody
     @RequestMapping(method = RequestMethod.GET)
-    public void list(String[] field, PageDesc pageDesc,
-                     HttpServletRequest request, HttpServletResponse response) {
+    public PageQueryResult<FlowInfo> list(String[] field, PageDesc pageDesc,
+                                          HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> searchColumn = convertSearchColumn(request);
         List<FlowInfo> listObjects = flowDef.listLastVersionFlow(searchColumn, pageDesc);
-        resData.addResponseData(OBJLIST, listObjects);
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response, JsonPropertyUtils.getIncludePropPreFilter(FlowInfo.class, field));
+        return PageQueryResult.createResult(listObjects, pageDesc);
     }
 
     /**
      * 某个流程的所有版本
-     *
-     * @param field    过滤域
+     * // field    过滤域
      * @param pageDesc 分页
      * @param flowcode 流程号
-     * @param request
-     * @param response
      */
+    @WrapUpResponseBody
     @RequestMapping(value = "/allversions/{flowcode}", method = RequestMethod.GET)
-    public void listAllVersionFlow(String[] field, PageDesc pageDesc, @PathVariable String flowcode, HttpServletRequest request, HttpServletResponse response) {
+    public PageQueryResult<FlowInfo> listAllVersionFlow(PageDesc pageDesc, @PathVariable String flowcode) {
         List<FlowInfo> listObjects = flowDef.getFlowsByCode(flowcode, pageDesc);
-        resData.addResponseData(OBJLIST, listObjects);
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response, JsonPropertyUtils.getIncludePropPreFilter(FlowInfo.class, field));
+        return PageQueryResult.createResult(listObjects, pageDesc);
     }
-
 
     /**
      * 某个流程的最新版本
@@ -213,7 +198,7 @@ public class FlowDefineController extends BaseController {
         else
             JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
         //新建流程之后，发送流程定义信息到业务系统
-        FlowOptUtils.sendFlowInfo(flowdefine);
+        //FlowOptUtils.sendFlowInfo(flowdefine);
     }
 
     /**
@@ -319,8 +304,7 @@ public class FlowDefineController extends BaseController {
             flowDef.saveDraftFlowDef(flowdefine);
         }
         //新建流程之后，发送流程定义信息到业务系统
-        FlowOptUtils.sendFlowInfo(flowdefine);
-
+        //FlowOptUtils.sendFlowInfo(flowdefine);
     }
 
 
@@ -409,7 +393,7 @@ public class FlowDefineController extends BaseController {
      */
     @RequestMapping(value = "/getdatamap/{flowcode}", method = RequestMethod.GET)
     public void getDataMap(@PathVariable String flowcode, HttpServletResponse response) {
-        Map<String, Map<String, String>> map = modelData.listAllRole();
+        Map<String, Map<String, String>> map = flowDef.listAllRole();
         //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
         Map<String, String> bjMap = new LinkedHashMap<>();
         bjMap.put("", "请选择");
@@ -421,20 +405,20 @@ public class FlowDefineController extends BaseController {
 //        spMap.putAll(flowDef.getRoleMapByFlowCode);
 //        map.put("SP",spMap);
         // 分配机制
-        Map<String, String> map2 = modelData.listAllOptType();
+        Map<String, String> map2 = flowDef.listAllOptType();
         map.put("OptType", map2);
         // 操作定义
         Map<String, String> map3 = new LinkedHashMap<>();
         map3.put("", "请选择");
-        map3.putAll(modelData.listAllOptCode(flowcode));
+        map3.putAll(flowDef.listAllOptCode(flowcode));
         map.put("OptCode", map3);
         // 子流程
-        Map<String, String> map4 = modelData.listAllSubFlow();
+        Map<String, String> map4 = flowDef.listAllSubFlow();
         map.put("SubWfcode", map4);
-        Map<String, String> stageMap = modelData.listFlowStages(flowcode);
+        Map<String, String> stageMap = flowDef.listFlowStages(flowcode);
         map.put("FlowPhase", stageMap);
         // 流程变量
-        Map<String, String> flowVariableDefineMap = modelData.listFlowVariableDefines(flowcode);
+        Map<String, String> flowVariableDefineMap = flowDef.listFlowVariableDefines(flowcode);
         map.put("FlowVariableDefine", flowVariableDefineMap);
         JsonResultUtils.writeSingleDataJson(map, response);
     }

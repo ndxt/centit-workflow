@@ -55,9 +55,6 @@ public class FlowTaskImpl {
     @Resource
     private FlowInstanceDao flowInstanceDao;
 
-    @Resource
-    private WorkDayManager workDayManager;
-
     @Value("${workflow.flowTimeStart:true}")
     private Boolean flowTimeStart;
 

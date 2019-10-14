@@ -38,10 +38,31 @@
         ]]>
     </sql>
 
-    <sql id="WORKFLOW_EXTERNAL_RANKMAP">
+    <sql id="WORKFLOW_EXTERNAL_RANK_INFO">
+        <![CDATA[
+            select DATA_CODE as RANK_CODE, DATA_VALUE as RANK_NAME, EXTRA_CODE as RANK
+            from F_DATADICTIONARY where CATALOG_CODE = 'RankType'
+        ]]>
+    </sql>
+
+    <sql id="WORKFLOW_EXTERNAL_STATION_INFO">
+        <![CDATA[
+            select DATA_CODE as STATION_CODE, DATA_VALUE as STATION_NAME
+            from F_DATADICTIONARY where CATALOG_CODE = 'StationType'
+        ]]>
+    </sql>
+
+    <sql id="WORKFLOW_EXTERNAL_ITEM_ROLE">
         <![CDATA[
             select DATA_CODE as RANK_CODE, EXTRA_CODE as RANK
-            from F_DATADICTIONARY where CATALOG_CODE = 'RankType'
+            from F_DATADICTIONARY where CATALOG_CODE = 'FlowUserRole'
+        ]]>
+    </sql>
+
+    <sql id="WORKFLOW_EXTERNAL_ROLE_INFO">
+        <![CDATA[
+            select ROLE_CODE, ROLE_NAME
+            from F_ROLEINFO where IS_VALID = 'T'
         ]]>
     </sql>
 
