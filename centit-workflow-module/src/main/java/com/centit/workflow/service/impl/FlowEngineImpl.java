@@ -864,9 +864,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
             );
             for (FlowTransition trans : transList) {
-
-                formula.setFormula(trans.getTransCondition());
-                if (BooleanBaseOpt.castObjectToBoolean(formula.calcFormula())) {
+                if (BooleanBaseOpt.castObjectToBoolean(formula.calcFormula(trans.getTransCondition()))) {
                     //保存目标节点实例
                     selTrans.add(trans);
                     // D:分支节点 只能有一个出口
