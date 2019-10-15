@@ -14,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -32,17 +30,24 @@ import java.util.Map;
  * 机构人员信息中需要 用户代码、机构代码、 用户位和职务
  * Rank 获取用户职务等级信息，有一个职务类表
  */
-@Component
+
 public class ExtFrameworkContextCacheBean {
 
-    @Value("${wf.external.system.jdbc.url:}")
+    //@Value("${wf.external.system.jdbc.url:}")
     protected String externalJdbcUrl;
-    @Value("${wf.external.system.jdbc.user:}")
+    //@Value("${wf.external.system.jdbc.user:}")
     protected String externalJdbcUser;
-    @Value("${wf.external.system.jdbc.password:}")
+    //@Value("${wf.external.system.jdbc.password:}")
     protected String externalJdbcPassword;
 
+
     protected static final Logger logger = LoggerFactory.getLogger(ExtFrameworkContextCacheBean.class);
+
+    public void setDatabaseSource(String dbUrl, String userName, String password){
+        this.externalJdbcUrl = dbUrl;
+        this.externalJdbcUser = userName;
+        this.externalJdbcPassword = password;
+    }
 
     CachedObject<List<ExtSysUserInfo>> allUserInfoCache =
         new CachedObject<>( this::reloadUserInfo,
