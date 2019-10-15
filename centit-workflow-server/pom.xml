@@ -18,28 +18,53 @@
         业务需要用工作流引擎时可以复制这个工程，并对其进行改造。
     </description>
 
-    <properties>
-        <centit.workflow.version>4.5-SNAPSHOT</centit.workflow.version>
-    </properties>
-
     <dependencies>
         <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-system-view-easyui</artifactId>
-            <version>${centit.framework.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-session</artifactId>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-workflow-module</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-view</artifactId>
-            <version>${centit.workflow.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-ip-app</artifactId>
+            <version>${centit.ip.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-ip-app-config</artifactId>
+            <version>${centit.ip.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-base-view-easyui</artifactId>
+            <version>${centit.ui.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-core-web</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-config</artifactId>
+            <version>${centit.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
@@ -49,39 +74,12 @@
 
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>framework-core-web</artifactId>
-        </dependency>
-
-
-        <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-module</artifactId>
-            <version>${centit.workflow.version}</version>
+            <artifactId>centit-persistence-jdbc</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-jdbc-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-app-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-app</artifactId>
-        </dependency>
-
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-persistence-jdbc-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-persistence-config</artifactId>
         </dependency>
 
         <dependency>
@@ -112,11 +110,7 @@
             <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-module</artifactId>
-            <version>4.5-SNAPSHOT</version>
-        </dependency>
+
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>

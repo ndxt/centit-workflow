@@ -4,6 +4,7 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitParamBuilder;
 import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
+import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.algorithm.*;
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Function;
 
 @Service
 @Transactional
@@ -583,7 +585,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 String preRunToken = NodeInstance.calcSuperToken(nodeToken);
                 Set<String> nNs =
                     flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
-                //汇聚节点，所有节点都已提交
+                //查找需要同步的节点
                 if (nNs == null || nNs.size() == 0) {
                     Map<String, NodeInstance> syncNodes =
                         flowInst.findSubmitSubNodeInstByToken(preRunToken);
@@ -728,7 +730,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
                     .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
                     .optTag(flowInst.getFlowOptTag())
-                    .user(options.getUserCode()).unit(options.getUnitCode())
                     .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId)
                     .timeLimit(tempFlowTimeLimit), varTrans, application, true);
 
@@ -855,8 +856,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         if ("H".equals(sRT) || "D".equals(sRT)) {
             for (FlowTransition trans : transList) {
-                if (BooleanBaseOpt.castObjectToBoolean(
-                    VariableFormula.calculate(trans.getTransCondition(), varTrans))) {
+                VariableFormula formula = new VariableFormula();
+                formula.setFormula(trans.getTransCondition());
+                formula.setTrans(varTrans);
+                formula.addExtendFunc(
+                    "rank",
+                    (a) -> {
+                        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+                        return context.getUserRank(StringBaseOpt.castObjectToString(a[0]));
+                    }
+                );
+                if (BooleanBaseOpt.castObjectToBoolean(formula.calcFormula())) {
                     //保存目标节点实例
                     selTrans.add(trans);
                     // D:分支节点 只能有一个出口

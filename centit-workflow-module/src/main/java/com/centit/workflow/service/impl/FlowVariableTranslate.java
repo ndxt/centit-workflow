@@ -2,14 +2,13 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.algorithm.CollectionsOpt;
-import com.centit.support.compiler.VariableTranslate;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInstance;
 
 import java.util.*;
 
-public class FlowVariableTranslate implements UserUnitVariableTranslate, VariableTranslate {
+public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
     private Map<String,Set<String>> innerVariable;
 
