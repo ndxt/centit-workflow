@@ -364,7 +364,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if (optUsers == null || optUsers.size() == 0) {
                 logger.error("权限引擎没有识别出符合表达式的操作人员！ wid:" + flowInst.getFlowInstId() + " nid" + nextOptNode.getNodeId());
             }
-        } else if ("bj".equals(nextOptNode.getRoleType())) {
+        } else if (SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(nextOptNode.getRoleType())) {
             optUsers = new HashSet<>();
             List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(preNodeInst.getFlowInstId(), nextOptNode.getRoleCode());
             for (FlowWorkTeam u : users)

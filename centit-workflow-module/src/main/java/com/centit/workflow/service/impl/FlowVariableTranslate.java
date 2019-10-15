@@ -104,7 +104,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
     }
 
     @Override
-    public Object getGeneralVariable(String varName) {
+    public Object getVarValue(String varName) {
         // 内部变量最高优先级
         Set<String> objs = innerVariable.get(varName);
         if(objs!=null && !objs.isEmpty()) {
@@ -112,7 +112,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
         }
 
         if(flowVarTrans !=null){
-            Object obj =  flowVarTrans.getGeneralVariable(varName);
+            Object obj =  flowVarTrans.getVarValue(varName);
             if(obj!=null) {
                 return obj;
             }
@@ -154,17 +154,6 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate, Variabl
             return nodeInst.getUnitCode();
 
         return null;
-    }
-
-
-    @Override
-    public Object getLabelValue(String varName) {
-        return this.getGeneralVariable(varName);
-    }
-
-    @Override
-    public Object getVarValue(String varName) {
-        return this.getGeneralVariable(varName);
     }
 
     public Set<String> getUsersVariable(String varName){

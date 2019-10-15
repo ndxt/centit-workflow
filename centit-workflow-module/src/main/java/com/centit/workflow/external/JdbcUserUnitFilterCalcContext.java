@@ -6,6 +6,7 @@ import com.centit.framework.model.basedata.IUserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -107,8 +108,16 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
     }
 
     @Override
-    public List<Triple<String, String, Integer>> listAllRank() {
-        return this.extFrameworkBean.rankInfoCache.getCachedTarget();
+    public Map<String, String> listAllRank() {
+        List<Triple<String, String, Integer>> ranks = this.extFrameworkBean.rankInfoCache.getCachedTarget();
+        if(ranks==null){
+            return null;
+        }
+        Map<String, String> rankMap = new HashMap<>();
+        for(Triple<String, String, Integer> tri: ranks){
+            rankMap.put(tri.getLeft(), tri.getMiddle());
+        }
+        return rankMap;
     }
 
     @Override

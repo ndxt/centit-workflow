@@ -13,7 +13,6 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Triple;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -777,23 +776,13 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
         Map<String, Map<String, String>> roleList = new HashMap<>();
         roleList.put(SysUserFilterEngine.ROLE_TYPE_GW /*"gw"*/, context.listAllStation());
-        roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ /*"xz"*/, makeRankMap(context.listAllRank()));
+        roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ /*"xz"*/, context.listAllRank());
         roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM /*"bj"*/, context.listAllProjectRole());
         roleList.put(SysUserFilterEngine.ROLE_TYPE_SYSTEM /*"ro"*/, context.listAllSystemRole());
         roleList.put(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA /*"sf"*/, flowRoleDao.listAllRoleMsg());
         return roleList;
     }
 
-    private Map<String, String> makeRankMap(List<Triple<String, String, Integer>> ranks){
-        if(ranks==null){
-            return null;
-        }
-        Map<String, String> rankMap = new HashMap<>();
-        for(Triple<String, String, Integer> tri: ranks){
-            rankMap.put(tri.getLeft(), tri.getMiddle());
-        }
-        return rankMap;
-    }
     /**
      * @param stype 角色类别
      * @return 角色名称和类别对应列表
@@ -805,7 +794,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if(SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(stype)){
             return context.listAllStation();
         } else if(SysUserFilterEngine.ROLE_TYPE_XZ.equalsIgnoreCase(stype)){
-            return makeRankMap(context.listAllRank());
+            return context.listAllRank();
         } else if(SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(stype)){
             return context.listAllProjectRole();
         } else if(SysUserFilterEngine.ROLE_TYPE_SYSTEM.equalsIgnoreCase(stype)){
@@ -815,6 +804,20 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         } else {
             return null;
         }
+    }
+
+    /**
+     * @return 内置的流程结构表达式
+     */
+    @Override
+    public Map<String, String> listInsideUnitExp() {
+        Map<String, String> optType = new HashMap<>();
+        optType.put("D(P)", "同上一个节点");
+        optType.put("D(F)", "同流程");
+        optType.put("D(U)", "用户的机构");
+        optType.put("D(cursor)", "多实例游标");
+        optType.put("S(D(L),D(U))", "默认用上一个副本机构");
+        return optType;
     }
 
     /**

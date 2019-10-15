@@ -103,30 +103,30 @@ public interface FlowDefine {
 
     /**
      * 根据已知的流程业务，查询对应的定义流程
-     * @param optId
-     * @return
+     * @param optId 业务id
+     * @return 流程列表
      */
     List<FlowInfo> getFlowsByOptId(String optId);
 
     /**
      * 获取某一流程某一版本号中存在的所有机构表达式
-     * @param flowCode
-     * @param version
-     * @return
+     * @param flowCode 流程代码
+     * @param version 版本
+     * @return 机构表达式列表
      */
     Set<String> getUnitExp(String flowCode, Long version);
 
     /**
      * 获取某一流程某一版本号中存在的所有办件角色
-     * @param flowCode
-     * @param version
-     * @return
+     * @param flowCode 流程代码
+     * @param version 版本
+     * @return 流程的办件角色列表
      */
     Map<String,String> getRoleMapByFlowCode(String flowCode,Long version);
 
     /**
      * 根据流程code删除相关的流程定义，用于删除多余的测试数据
-     * @param flowCode
+     * @param flowCode 流程代码
      */
     void deleteFlowDef(String flowCode);
 
@@ -140,11 +140,6 @@ public interface FlowDefine {
     Map<String,String> listAllNoteType();
 
     /**
-     * 列举所有可用变量
-
-     Map<String,String> listAllVariable(String optid);
-     */
-    /**
      * 根据业务类型列举所有业务代码
      */
     Map<String, String> listAllOptCode(String wfcode);
@@ -153,6 +148,7 @@ public interface FlowDefine {
      * 列举所有角色类别
      */
     Map<String, String> listRoleType();
+
     /**
      * 列举所有角色
      */
@@ -163,14 +159,17 @@ public interface FlowDefine {
      * @return 角色名称和类别对应列表
      */
     Map<String, String> listRoleByType(String stype);
+
     /**
-     * TODO 这个方法应该迁移到 FlowDefine中
+     * @return 内置的流程结构表达式
+     */
+    Map<String, String> listInsideUnitExp();
+    /**
      * 列举所有的子流程
      */
     Map<String, String> listAllSubFlow();
 
     /**
-     * TODO 这个方法应该迁移到 FlowDefine中
      * 获取流程阶段信息
      * @param flowCode 流程代码和名称对应表
      * @return 流程阶段
@@ -178,9 +177,8 @@ public interface FlowDefine {
     Map<String, String> listFlowStages(String flowCode);
 
     /**
-     * TODO 这个方法应该迁移到 FlowDefine中
      * 根据流程代码获取流程变量信息
-     * @param flowCode
+     * @param flowCode 流程代码
      * @return 流程变量信息
      */
     Map<String, String> listFlowVariableDefines(String flowCode);

@@ -11,12 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
- * @ClassName RoleFormula/ 权限表达式的 快捷键； 这样在 流程中可以 灵活的使用权限表达式
- * @Date 2019/7/22 15:32
- * @Version 1.0
+ * className RoleFormula/ 权限表达式的 快捷键； 这样在 流程中可以 灵活的使用权限表达式
+ * 2019/7/22 15:32
+ * @version 1.0
  */
 @Data
 @Entity
