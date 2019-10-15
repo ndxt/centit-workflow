@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.List;
  * 2018年9月12日11:00:37
  **/
 @Entity
+@Data
 @Table(name = "WF_OPTINFO")
 public class FlowOptInfo implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
@@ -27,24 +29,30 @@ public class FlowOptInfo implements java.io.Serializable {
     @Column(name = "OPT_URL")
     private String optUrl;
 
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "UPDATE_DATE")
-    private Date updateDate;
+    /**
+     * 默认流程
+     */
+    @Column(name = "DEFAULT_FLOW")
+    private String default_flow;
 
-    @Column(name = "VIEW_URL")
-    private String viewUrl;
-
-    @Column(name = "FORM_TYPE")
-    private String formType;
+    /**
+     * 业务标题魔板，flowOptName
+     */
+    @Column(name = "TITLE_TEMPLATE")
+    private String title_template;
 
     //自定义表单得模板id
     @Column(name = "MODEL_ID")
     private String modelId;
 
-    @Transient
-    private List<FlowOptDef> wfOptDefs;
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "UPDATE_DATE")
+    private Date updateDate;
 
-    public List<FlowOptDef> getWfOptDefs() {
+    @Transient
+    private List<FlowOptPage> wfOptDefs;
+
+    public List<FlowOptPage> getWfOptDefs() {
         if (null == this.wfOptDefs) {
             this.wfOptDefs = new ArrayList();
         }
@@ -52,20 +60,18 @@ public class FlowOptInfo implements java.io.Serializable {
         return this.wfOptDefs;
     }
 
-    public void setWfOptDefs(List<FlowOptDef> wfOptDefs) {
-        this.wfOptDefs = wfOptDefs;
-    }
 
-    public void addWfOptDef(FlowOptDef FlowOptDef) {
+
+    public void addWfOptDef(FlowOptPage FlowOptDef) {
         this.getWfOptDefs().add(FlowOptDef);
     }
-    public void addAllWfOptDefs(List<FlowOptDef> wfOptDefs) {
+    public void addAllWfOptDefs(List<FlowOptPage> wfOptDefs) {
         this.getWfOptDefs().clear();
         if (!CollectionUtils.isEmpty(wfOptDefs)) {
             Iterator var2 = wfOptDefs.iterator();
 
             while(var2.hasNext()) {
-                FlowOptDef FlowOptDef = (FlowOptDef)var2.next();
+                FlowOptPage FlowOptDef = (FlowOptPage)var2.next();
                 FlowOptDef.setOptId(this.optId);
             }
 
@@ -73,63 +79,5 @@ public class FlowOptInfo implements java.io.Serializable {
         }
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
 
-    public String getOptId() {
-        return optId;
-    }
-
-    public void setOptId(String optId) {
-        this.optId = optId;
-    }
-
-    public String getOptName() {
-        return optName;
-    }
-
-    public void setOptName(String optName) {
-        this.optName = optName;
-    }
-
-    public String getOptUrl() {
-        return optUrl;
-    }
-
-    public void setOptUrl(String optUrl) {
-        this.optUrl = optUrl;
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public String getViewUrl() {
-        return viewUrl;
-    }
-
-    public void setViewUrl(String viewUrl) {
-        this.viewUrl = viewUrl;
-    }
-
-    public String getFormType() {
-        return formType;
-    }
-
-    public void setFormType(String formType) {
-        this.formType = formType;
-    }
-
-    public String getModelId() {
-        return modelId;
-    }
-
-    public void setModelId(String modelId) {
-        this.modelId = modelId;
-    }
 }

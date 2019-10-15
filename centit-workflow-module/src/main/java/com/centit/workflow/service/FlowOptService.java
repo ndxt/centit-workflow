@@ -2,7 +2,7 @@ package com.centit.workflow.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.FlowOptDef;
+import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.po.FlowOptInfo;
 
 import java.util.List;
@@ -23,15 +23,15 @@ public interface FlowOptService {
 
     void saveOpt(FlowOptInfo FlowOptInfo);
 
-    void saveOptDef(FlowOptDef FlowOptDef);
+    void saveOptDef(FlowOptPage FlowOptDef);
 
-    List<FlowOptDef> getListOptDefById(String optId, Map<String, Object> filterMap, PageDesc pageDesc);
+    List<FlowOptPage> getListOptDefById(String optId, Map<String, Object> filterMap, PageDesc pageDesc);
 
-    FlowOptDef getOptDefByCode(String optCode);
+    FlowOptPage getOptDefByCode(String optCode);
 
     void deleteOptDefByCode(String optCode);
 
-    List<FlowOptDef> ListOptDef(Map<String, Object> filterMap, PageDesc pageDesc);
+    List<FlowOptPage> ListOptDef(Map<String, Object> filterMap, PageDesc pageDesc);
 
     String getOptInfoSequenceId();
 

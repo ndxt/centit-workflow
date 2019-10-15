@@ -6,7 +6,7 @@ import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.FlowOptDef;
+import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.service.FlowOptService;
 import org.springframework.stereotype.Controller;
@@ -76,7 +76,7 @@ public class FlowOptController extends BaseController {
         Map<String, Object> filterMap = convertSearchColumn(request);
 
 //        List<FlowOptDef> objList = wfOptService.getListOptDefById(optId, filterMap,pageDesc);
-        List<FlowOptDef> objList = wfOptService.ListOptDef(filterMap,pageDesc);
+        List<FlowOptPage> objList = wfOptService.ListOptDef(filterMap,pageDesc);
         resData.addResponseData(OBJLIST, objList);
         resData.addResponseData(PAGE_DESC, pageDesc);
         JsonResultUtils.writeResponseDataAsJson(resData, response);
@@ -84,12 +84,12 @@ public class FlowOptController extends BaseController {
 
     @RequestMapping("/getOptDefByCode")
     public void getOptDefByCode(String optCode, HttpServletRequest request, HttpServletResponse response){
-        FlowOptDef FlowOptDef = wfOptService.getOptDefByCode(optCode);
+        FlowOptPage FlowOptDef = wfOptService.getOptDefByCode(optCode);
         JsonResultUtils.writeSingleDataJson(FlowOptDef,response);
     }
 
     @RequestMapping("/saveOptDef")
-    public void saveOptDef(@RequestBody FlowOptDef FlowOptDef, HttpServletRequest request, HttpServletResponse response){
+    public void saveOptDef(@RequestBody FlowOptPage FlowOptDef, HttpServletRequest request, HttpServletResponse response){
         wfOptService.saveOptDef(FlowOptDef);
         JsonResultUtils.writeBlankJson(response);
     }
@@ -115,7 +115,7 @@ public class FlowOptController extends BaseController {
     @RequestMapping("createOptDef")
     public void getNextOptDefId(String optId, HttpServletResponse response) {
         String optDefCode = wfOptService.getOptDefSequenceId();
-        FlowOptDef copy = new FlowOptDef();
+        FlowOptPage copy = new FlowOptPage();
         copy.setOptCode(optDefCode);
         copy.setOptId(optId);
         copy.setUpdateDate(new Date());
@@ -135,7 +135,7 @@ public class FlowOptController extends BaseController {
     public void saveOptDefs(@RequestBody JSONObject paramData, HttpServletRequest request, HttpServletResponse response){
         JSONArray optDefs = paramData.getJSONArray("optDefs");
         for (int i=0; i<optDefs.size(); i++){
-            FlowOptDef flowOptDef = optDefs.getObject(i, FlowOptDef.class);
+            FlowOptPage flowOptDef = optDefs.getObject(i, FlowOptPage.class);
             wfOptService.saveOptDef(flowOptDef);
         }
 

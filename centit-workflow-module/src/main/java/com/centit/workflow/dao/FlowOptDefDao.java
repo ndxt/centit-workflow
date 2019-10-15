@@ -2,7 +2,7 @@ package com.centit.workflow.dao;
 
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
-import com.centit.workflow.po.FlowOptDef;
+import com.centit.workflow.po.FlowOptPage;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by chen_rj on 2018-5-8.
  */
 @Repository
-public class FlowOptDefDao extends BaseDaoImpl<FlowOptDef,String> {
+public class FlowOptDefDao extends BaseDaoImpl<FlowOptPage,String> {
     @Override
     public Map<String, String> getFilterField() {
         return null;
