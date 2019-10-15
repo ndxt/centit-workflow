@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.Function;
 
 @Service
 @Transactional
@@ -855,17 +854,18 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String sRT = currNode.getRouterType();
 
         if ("H".equals(sRT) || "D".equals(sRT)) {
+            VariableFormula formula = new VariableFormula();
+            formula.setTrans(varTrans);
+            formula.addExtendFunc(
+                "rank",
+                (a) -> {
+                    UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+                    return context.getUserRank(StringBaseOpt.castObjectToString(a[0]));
+                }
+            );
             for (FlowTransition trans : transList) {
-                VariableFormula formula = new VariableFormula();
+
                 formula.setFormula(trans.getTransCondition());
-                formula.setTrans(varTrans);
-                formula.addExtendFunc(
-                    "rank",
-                    (a) -> {
-                        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
-                        return context.getUserRank(StringBaseOpt.castObjectToString(a[0]));
-                    }
-                );
                 if (BooleanBaseOpt.castObjectToBoolean(formula.calcFormula())) {
                     //保存目标节点实例
                     selTrans.add(trans);
