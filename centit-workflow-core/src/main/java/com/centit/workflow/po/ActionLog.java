@@ -3,6 +3,7 @@ package com.centit.workflow.po;
 
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import java.util.Date;
  * @author codefan@hotmail.com
  */
 @Entity
+@Data
 @Table(name="WF_ACTION_LOG")
 public class ActionLog implements java.io.Serializable{
     private static final long serialVersionUID =  1L;
@@ -25,6 +27,14 @@ public class ActionLog implements java.io.Serializable{
     @ValueGenerator(strategy = GeneratorType.UUID22)
     @Column(name="NODE_INST_ID")
     private String nodeInstId;
+    /**
+     's: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
+     c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
+     r: 流转管理，包括  强行回退  、强行提交
+     t: 期限管理 、 设置期限
+     a: 节点任务管理  分配任务、  删除任务 、  禁用任务
+     u: 变更属性';
+     */
     @Column(name="ACTION_TYPE")
     private String actionType;
     @Column(name="ACTION_TIME")
@@ -69,88 +79,6 @@ public class ActionLog implements java.io.Serializable{
         this.userCode = usercode;
         this.roleType = roletype;
         this.roleCode = rolecode;
-        this.grantor = grantor;
-    }
-
-    public String getActionId() {
-        return this.actionId;
-    }
-
-    public void setActionId(String actionid) {
-        this.actionId = actionid;
-    }
-    // Property accessors
-
-    public String getNodeInstId() {
-        return this.nodeInstId;
-    }
-
-    public void setNodeInstId(String nodeInstId) {
-        this.nodeInstId = nodeInstId;
-    }
-    /**
-        's: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
-        c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
-        r: 流转管理，包括  强行回退  、强行提交
-        t: 期限管理 、 设置期限
-        a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-        u: 变更属性';
-     */
-    public String getActionType() {
-        return this.actionType;
-    }
-
-    /**
-     *
-     * @param actiontype
-     *      s: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
-            c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
-            r: 流转管理，包括  强行回退  、强行提交
-            t: 期限管理 、 设置期限
-            a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-            u: 变更属性
-     */
-    public void setActionType(String actiontype) {
-        this.actionType = actiontype;
-    }
-
-
-    public Date getActionTime() {
-        return this.actionTime;
-    }
-
-    public void setActionTime(Date actiontime) {
-        this.actionTime = actiontime;
-    }
-
-    public String getUserCode() {
-        return this.userCode;
-    }
-
-    public void setUserCode(String usercode) {
-        this.userCode = usercode;
-    }
-
-    public String getRoleType() {
-        return this.roleType;
-    }
-
-    public void setRoleType(String roletype) {
-        this.roleType = roletype;
-    }
-
-    public String getRoleCode() {
-        return this.roleCode;
-    }
-
-    public void setRoleCode(String rolecode) {
-        this.roleCode = rolecode;
-    }
-
-    public String getGrantor() {
-        return grantor;
-    }
-    public void setGrantor(String grantor) {
         this.grantor = grantor;
     }
 

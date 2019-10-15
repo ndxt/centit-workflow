@@ -2,7 +2,6 @@ package com.centit.workflow.config;
 
 import com.centit.framework.config.SystemSpringMvcConfig;
 import com.centit.framework.config.WebConfig;
-import com.centit.framework.system.config.SystemBeanConfig;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -44,7 +43,7 @@ public class WebInitializer implements WebApplicationInitializer {
      */
     private void initializeSpringConfig(ServletContext servletContext){
         AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
-        springContext.register(SystemBeanConfig.class,ServiceConfig.class);
+        springContext.register(ServiceConfig.class);
         servletContext.addListener(new ContextLoaderListener(springContext));
     }
 

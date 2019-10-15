@@ -2,6 +2,7 @@ package com.centit.workflow.po;
 
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.Table;
  * @author codefan@hotmail.com
  */
 @Entity
+@Data
 @Table(name = "WF_FLOW_INSTANCE_GROUP")
 public class FlowInstanceGroup implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
@@ -32,33 +34,4 @@ public class FlowInstanceGroup implements java.io.Serializable {
     @Column(name = "FLOW_GROUP_DESC")
     private String  flowGroupDesc;
 
-    /**
-     * default constructor
-     */
-    public FlowInstanceGroup() {
-    }
-
-    public String getFlowGroupId() {
-        return flowGroupId;
-    }
-
-    public void setFlowGroupId(String flowGroupId) {
-        this.flowGroupId = flowGroupId;
-    }
-
-    public String getFlowGroupName() {
-        return flowGroupName;
-    }
-
-    public void setFlowGroupName(String flowGroupName) {
-        this.flowGroupName = flowGroupName;
-    }
-
-    public String getFlowGroupDesc() {
-        return flowGroupDesc;
-    }
-
-    public void setFlowGroupDesc(String flowGroupDesc) {
-        this.flowGroupDesc = flowGroupDesc;
-    }
 }

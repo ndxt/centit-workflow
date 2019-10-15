@@ -40,10 +40,6 @@
             <version>${centit.workflow.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-system-module</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
@@ -56,10 +52,6 @@
             <artifactId>framework-core-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-system-web</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.centit.product</groupId>
@@ -74,23 +66,14 @@
 
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>framework-system-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-adapter</artifactId>
-        </dependency>
-
-        <!--<dependency>
-            <groupId>com.centit.framework</groupId>
             <artifactId>centit-ip-app-config</artifactId>
-        </dependency>-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-ip-app</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>com.centit.framework</groupId>
@@ -132,7 +115,21 @@
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-module</artifactId>
-            <version>4.0.1-SNAPSHOT</version>
+            <version>4.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-models</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>swagger-bootstrap-ui</artifactId>
         </dependency>
         <!--&lt;!&ndash; https://mvnrepository.com/artifact/com.h2database/h2 &ndash;&gt;-->
         <!--<dependency>-->
