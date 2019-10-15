@@ -528,9 +528,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     } else {
                         int nRn = 1;
                         for (String uc : nextNodeUnits) {
-                            // this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
-                            //    "cd_" + nextRoutertNode.getNodeCode(), uc);
-                            flowVarTrans.setInnerVariable( "cd_" + nextRoutertNode.getNodeCode(), uc);
+                            // 持久变量，供后续节点使用
+                            this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
+                                "cd_" + nextRoutertNode.getNodeCode(), uc);
+                            //flowVarTrans.setInnerVariable( "cd_" + nextRoutertNode.getNodeCode(), uc);
                             flowVarTrans.setInnerVariable( "cursor", uc);
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
@@ -553,7 +554,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         int nRn = 1;
                         //Date currentTime = new Date(System.currentTimeMillis());
                         for (String uc : optUsers) {
-                            flowVarTrans.setInnerVariable( "cd_" + nextRoutertNode.getNodeCode(), uc);
+                            // 持久变量，供后续节点使用
+                            this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
+                                "cu_" + nextRoutertNode.getNodeCode(), uc);
                             flowVarTrans.setInnerVariable( "cursor", uc);
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
