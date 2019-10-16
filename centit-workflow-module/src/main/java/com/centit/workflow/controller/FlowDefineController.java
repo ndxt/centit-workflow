@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.xml.ws.Response;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -426,5 +427,11 @@ public class FlowDefineController extends BaseController {
         map.put("FlowVariableDefine", flowVariableDefineMap);
         JsonResultUtils.writeSingleDataJson(map, response);
     }
-
+    @ApiOperation(value = "查询内置的流程结构表达式")
+    @RequestMapping(value = "/listInsideUnitExp", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public void listInsideUnitExp(HttpServletResponse response){
+        Map<String, String> insideUnitExp=flowDef.listInsideUnitExp();
+        JsonResultUtils.writeSingleDataJson(insideUnitExp, response);
+    }
 }
