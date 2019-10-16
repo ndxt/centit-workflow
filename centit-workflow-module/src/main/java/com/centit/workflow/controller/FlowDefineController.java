@@ -427,11 +427,33 @@ public class FlowDefineController extends BaseController {
         map.put("FlowVariableDefine", flowVariableDefineMap);
         JsonResultUtils.writeSingleDataJson(map, response);
     }
-    @ApiOperation(value = "查询内置的流程结构表达式")
+    @ApiOperation(value = "查询内置的流程机构表达式")
     @RequestMapping(value = "/listInsideUnitExp", method = RequestMethod.GET)
     @WrapUpResponseBody
     public void listInsideUnitExp(HttpServletResponse response){
         Map<String, String> insideUnitExp=flowDef.listInsideUnitExp();
         JsonResultUtils.writeSingleDataJson(insideUnitExp, response);
+    }
+
+    @ApiOperation(value = "查询角色类别")
+    @RequestMapping(value = "/listRoleType", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public void listRoleType(HttpServletResponse response){
+        Map<String, String> roleTypes=flowDef.listRoleType();
+        JsonResultUtils.writeSingleDataJson(roleTypes, response);
+    }
+    @ApiOperation(value = "列举所有角色")
+    @RequestMapping(value = "/listAllRole", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public void listAllRole(HttpServletResponse response){
+        Map<String, Map<String, String>> allRole=flowDef.listAllRole();
+        JsonResultUtils.writeSingleDataJson(allRole, response);
+    }
+    @ApiOperation(value = "角色名称和类别对应列表")
+    @RequestMapping(value = "/listRoleByType/{roleType}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public void listAllRole(@PathVariable String roleType,HttpServletResponse response){
+        Map<String, String> role=flowDef.listRoleByType(roleType);
+        JsonResultUtils.writeSingleDataJson(role, response);
     }
 }
