@@ -2,7 +2,10 @@ package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**

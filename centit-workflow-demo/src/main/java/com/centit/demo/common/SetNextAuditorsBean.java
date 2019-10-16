@@ -8,7 +8,10 @@ import com.centit.demo.po.ApprovalEvent;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
-import com.centit.workflow.po.*;
+import com.centit.workflow.po.FlowInstance;
+import com.centit.workflow.po.FlowVariable;
+import com.centit.workflow.po.NodeInfo;
+import com.centit.workflow.po.NodeInstance;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

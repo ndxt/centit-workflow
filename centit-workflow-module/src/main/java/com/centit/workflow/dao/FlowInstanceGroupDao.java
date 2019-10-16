@@ -5,7 +5,8 @@ import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.FlowInstanceGroup;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 流程实例分组

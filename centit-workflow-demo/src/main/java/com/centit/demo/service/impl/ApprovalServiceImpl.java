@@ -10,7 +10,8 @@ import com.centit.demo.service.ApprovalService;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.FlowManagerClient;
-import com.centit.workflow.po.*;
+import com.centit.workflow.po.FlowInstance;
+import com.centit.workflow.po.UserTask;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

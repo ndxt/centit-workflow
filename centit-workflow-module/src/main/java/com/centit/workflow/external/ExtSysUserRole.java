@@ -1,8 +1,6 @@
 package com.centit.workflow.external;
 
 import com.centit.framework.model.basedata.IUserRole;
-import com.centit.framework.model.basedata.IUserUnit;
-import com.centit.support.algorithm.UuidOpt;
 
 /**
  * Created by codefan on 17-9-12.

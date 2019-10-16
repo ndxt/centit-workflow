@@ -2,9 +2,6 @@ package com.centit.workflow.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.centit.framework.appclient.AppSession;
-import com.centit.framework.appclient.RestfulHttpRequest;
-import com.centit.support.network.HttpExecutor;
-import com.centit.support.network.HttpExecutorContext;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;

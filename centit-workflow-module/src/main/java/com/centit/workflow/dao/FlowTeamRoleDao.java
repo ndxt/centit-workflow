@@ -1,16 +1,14 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
-import com.centit.framework.jdbc.dao.DatabaseOptUtils;
-import com.centit.support.algorithm.UuidOpt;
 import com.centit.workflow.po.FlowTeamRole;
-import com.centit.workflow.po.NodeInstance;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chen_rj on 2017-10-9.

@@ -1,8 +1,8 @@
 package com.centit.demo.service;
 
+import com.centit.demo.po.ApprovalAuditor;
 import com.centit.demo.po.ApprovalEvent;
 import com.centit.demo.po.ApprovalProcess;
-import com.centit.demo.po.ApprovalAuditor;
 import com.centit.workflow.po.UserTask;
 
 import javax.servlet.ServletContext;

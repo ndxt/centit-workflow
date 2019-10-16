@@ -1,9 +1,9 @@
 package com.centit.demo.dao;
 
 
+import com.centit.demo.po.ApprovalAuditor;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
-import com.centit.demo.po.ApprovalAuditor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
