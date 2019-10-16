@@ -53,7 +53,7 @@ public class WebInitializer implements WebApplicationInitializer {
      */
     private void initializeSystemServletConfig(ServletContext servletContext) {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.register(SystemSpringMvcConfig.class);
+        context.register(SystemSpringMvcConfig.class,SwaggerConfig.class);
         Dynamic system  = servletContext.addServlet("system", new DispatcherServlet(context));
         system.addMapping("/system/*");
         system.setLoadOnStartup(1);
@@ -64,8 +64,7 @@ public class WebInitializer implements WebApplicationInitializer {
     private void initializeNormalServletConfig(ServletContext servletContext) {
 
         AnnotationConfigWebApplicationContext contextSer = new AnnotationConfigWebApplicationContext();
-        contextSer.register(NormalSpringMvcConfig.class);
-        contextSer.setServletContext(servletContext);
+        contextSer.register(NormalSpringMvcConfig.class,SwaggerConfig.class);
         ServletRegistration.Dynamic workflow  = servletContext.addServlet("workflow", new DispatcherServlet(contextSer));
         workflow.addMapping("/workflow/*");
         workflow.setLoadOnStartup(1);
