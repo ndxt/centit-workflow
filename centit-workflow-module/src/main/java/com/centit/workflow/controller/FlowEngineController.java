@@ -65,7 +65,7 @@ public class FlowEngineController extends BaseController {
         for (String n : nextNodes) {
             flowManager.deleteNodeActionTasks(n, flowInstance.getFlowInstId(), newFlowInstanceOptions.getUserCode());
             //for (String v : vars) {
-            flowManager.assignTask(n, newFlowInstanceOptions.getWorkUserCode(),
+            flowManager.assignNodeTask(n, newFlowInstanceOptions.getWorkUserCode(),
                 newFlowInstanceOptions.getUserCode(), null, "手动指定审批人");
             //}
         }

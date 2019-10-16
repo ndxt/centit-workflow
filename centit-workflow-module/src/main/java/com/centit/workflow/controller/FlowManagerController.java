@@ -202,7 +202,7 @@ public class FlowManagerController extends BaseController {
      */
     @RequestMapping(value = "/assign/{nodeInstId}/{userCode}", method = RequestMethod.POST)
     public void assign(@PathVariable String nodeInstId,@PathVariable String userCode, ActionTask actionTask, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.assignTask(nodeInstId,
+        flowManager.assignNodeTask(nodeInstId,
             actionTask.getUserCode(), "admin",
             actionTask.getExpireTime(), actionTask.getAuthDesc());
         JsonResultUtils.writeSingleDataJson("", response);
