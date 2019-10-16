@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -391,7 +392,10 @@ public class FlowDefineController extends BaseController {
      * @param flowcode
      * @param response
      */
+    @ApiOperation(value = "查询流程图页面需要的数据字典及相关数据")
     @RequestMapping(value = "/getdatamap/{flowcode}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    @Transactional
     public void getDataMap(@PathVariable String flowcode, HttpServletResponse response) {
         Map<String, Map<String, String>> map = flowDef.listAllRole();
         //办件角色重新赋值为当前流程中的办件角色，不再使用系统的

@@ -41,8 +41,8 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
 
     @Override
     @Transactional
-    public RoleFormula getRoleFormulaByCode(String roleCode) {
-        return flowRoleDao.getObjectById(roleCode);
+    public RoleFormula getRoleFormulaByCode(String formulaCode) {
+        return flowRoleDao.getObjectById(formulaCode);
     }
 
     @Override
@@ -53,8 +53,8 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
 
     @Override
     @Transactional
-    public void deleteRoleFormulaByCode(String roleCode) {
-        flowRoleDao.deleteObjectById(roleCode);
+    public void deleteRoleFormulaByCode(String formulaCode) {
+        flowRoleDao.deleteObjectById(formulaCode);
     }
 
     @Override
