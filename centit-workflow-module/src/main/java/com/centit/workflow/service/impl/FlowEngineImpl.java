@@ -1001,9 +1001,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
              */
             int havnotSubmit = 0;
             for (ActionTask task : nodeInst.getWfActionTasks()) {
-                if ("T".equals(task.getIsValid()) && "A".equals(task.getTaskState())
-                    //这个可能存在一个问题就是最后一个人没有提交，但是已经过期了，这个需要处理，需要在设置任务列表时注意
-                    && (task.getExpireTime() == null || task.getExpireTime().after(new Date(System.currentTimeMillis())))) {
+                if ("T".equals(task.getIsValid()) && "A".equals(task.getTaskState())) {
                     if (/*userCode*/sGrantor.equals(task.getUserCode())) {
                         //任务的完成时间在任务的活动日志中
                         task.setTaskState("C");

@@ -329,20 +329,6 @@ public class FlowManagerController extends BaseController {
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
 
-
-    /**
-     * 获取管理日志列表
-     *
-     * @return
-     */
-    @RequestMapping(value = "/getmgrloglist/{flowInstId}", method = RequestMethod.GET)
-    public void getMgrLogList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
-        List<ManageActionLog> logList = flowManager.listManageActionLog(flowInstId, pageDesc);
-        resData.addResponseData(OBJLIST, logList);
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
-    }
-
     /**
      * 流程操作日志
      *
@@ -355,13 +341,7 @@ public class FlowManagerController extends BaseController {
         JsonResultUtils.writeSingleDataJson(actionLogList, response);
     }
 
-
-
-
-
     /*流程实例管理接口*/
-
-
     /**
      * 暂挂一个流程实例
      *

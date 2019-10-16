@@ -280,9 +280,9 @@ public class FlowOptUtils {
      *                    U u: 变更属性
      * @return
      */
-    public static ManageActionLog createManagerAction(String flowInstId, String managerCode,
+    public static ActionLog createManagerAction(String flowInstId, String managerCode,
                                                       String actionType) {
-        ManageActionLog action = new ManageActionLog();
+        ActionLog action = new ActionLog();
         action.setFlowInstId(flowInstId);
         action.setUserCode(managerCode);
         action.setActionType(actionType);
@@ -306,9 +306,9 @@ public class FlowOptUtils {
      *                    U u: 变更属性
      * @return
      */
-    public static ManageActionLog createManagerAction(String flowInstId, String nodeInstId,
+    public static ActionLog createManagerAction(String flowInstId, String nodeInstId,
                                                       String managerCode, String actionType) {
-        ManageActionLog action = new ManageActionLog();
+        ActionLog action = new ActionLog();
         action.setFlowInstId(flowInstId);
         action.setNodeInstId(nodeInstId);
         action.setUserCode(managerCode);

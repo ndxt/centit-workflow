@@ -99,14 +99,14 @@ public interface FlowManagerClient {
      *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      */
     long assignNodeTask(String nodeInstId, String userCode,
-                        String mangerUserCode, Date expiretime, String authDesc);
+                        String mangerUserCode, String authDesc);
 
     /**
      * 添加节点任务, 添加操作人元
      *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      */
     long addNodeTask(String nodeInstId, String userCode,
-                     String mangerUserCode, Date expiretime, String authDesc);
+                     String mangerUserCode,  String authDesc);
     /**
      * 删除节点任务
      */

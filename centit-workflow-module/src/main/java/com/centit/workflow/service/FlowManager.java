@@ -10,7 +10,6 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.po.ActionLog;
 import com.centit.workflow.po.ActionTask;
 import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.ManageActionLog;
 import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.po.StageInstance;
 import com.centit.workflow.po.UserTask;
@@ -141,17 +140,6 @@ public interface FlowManager {
 
 
     //------日志信息查看-----------------
-
-    /**
-     * 查询流程实例管理日志
-     *
-     * @param flowInstId
-     * @return
-     */
-    List<ManageActionLog> listManageActionLog(String flowInstId, PageDesc pageDesc);
-
-
-    //节点实例管理-------------------------------
 
     /**
      * 获取流程实例下的节点实例列表

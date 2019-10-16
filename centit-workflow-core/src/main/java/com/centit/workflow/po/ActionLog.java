@@ -23,8 +23,12 @@ public class ActionLog implements java.io.Serializable{
 
     @Id
     @Column(name = "ACTION_ID")
-    private String actionId;
     @ValueGenerator(strategy = GeneratorType.UUID22)
+    private String actionId;
+
+    @Column(name = "FLOW_INST_ID")
+    private String flowInstId;
+
     @Column(name="NODE_INST_ID")
     private String nodeInstId;
     /**
@@ -48,6 +52,8 @@ public class ActionLog implements java.io.Serializable{
     @Column(name="GRANTOR")
     private String grantor;
 
+    @Column(name="LOG_DETAIL")
+    private String logDetail;
     // Constructors
     /** default constructor */
     public ActionLog() {

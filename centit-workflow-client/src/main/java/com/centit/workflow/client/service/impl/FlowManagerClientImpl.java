@@ -165,11 +165,10 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      * @param nodeInstId
      * @param userCode
      * @param mangerUserCode
-     * @param expiretime
      * @param authDesc
      */
     @Override
-    public long assignNodeTask(String nodeInstId, String userCode, String mangerUserCode, Date expiretime, String authDesc) {
+    public long assignNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
         return 0;
     }
 
@@ -180,11 +179,10 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      * @param nodeInstId
      * @param userCode
      * @param mangerUserCode
-     * @param expiretime
      * @param authDesc
      */
     @Override
-    public long addNodeTask(String nodeInstId, String userCode, String mangerUserCode, Date expiretime, String authDesc) {
+    public long addNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
         return 0;
     }
 

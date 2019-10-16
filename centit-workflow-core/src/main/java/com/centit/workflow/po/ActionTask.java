@@ -2,6 +2,7 @@ package com.centit.workflow.po;
 
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import java.util.Date;
  * create by scaffold
  * @author codefan@hotmail.com
  */
+@Data
 @Entity
 @Table(name="WF_ACTION_TASK")
 public class ActionTask implements java.io.Serializable {
@@ -27,8 +29,7 @@ public class ActionTask implements java.io.Serializable {
     private String nodeInstId;
     @Column(name="ASSIGN_TIME")
     private Date assignTime;
-    @Column(name="EXPIRE_TIME")
-    private Date expireTime;
+
     @Column(name="USER_CODE")
     private String userCode;
     @Column(name="ROLE_TYPE")
@@ -49,131 +50,13 @@ public class ActionTask implements java.io.Serializable {
     /** minimal constructor */
     public ActionTask(
         String taskid
-        ,Date  assigntime,Date  expiretime) {
+        ,Date  assigntime) {
 
 
         this.taskId = taskid;
 
         this.assignTime = assigntime;
-        this.expireTime = expiretime;
     }
-
-/** full constructor */
-    public ActionTask(
-        String taskid
-    ,String  nodeinstid,Date  assigntime,Date  expiretime,String  usercode,String  roletype,String  rolecode,String  taskstate,String  isvalid,String  authdesc) {
-
-
-        this.taskId = taskid;
-
-        this.nodeInstId = nodeinstid;
-        this.assignTime = assigntime;
-        this.expireTime = expiretime;
-        this.userCode = usercode;
-        this.roleType = roletype;
-        this.roleCode = rolecode;
-        this.taskState = taskstate;
-        this.isValid = isvalid;
-        this.authDesc = authdesc;
-    }
-
-
-
-    public String getTaskId() {
-        return this.taskId;
-    }
-
-    public void setTaskId(String taskid) {
-        this.taskId = taskid;
-    }
-    // Property accessors
-
-    public String getNodeInstId() {
-        return this.nodeInstId;
-    }
-
-    public void setNodeInstId(String nodeInstId) {
-        this.nodeInstId = nodeInstId;
-    }
-
-    public Date getAssignTime() {
-        return this.assignTime;
-    }
-
-    public void setAssignTime(Date assigntime) {
-        this.assignTime = assigntime;
-    }
-
-    public Date getExpireTime() {
-        return this.expireTime;
-    }
-
-    public void setExpireTime(Date expiretime) {
-        this.expireTime = expiretime;
-    }
-
-    public String getUserCode() {
-        return this.userCode;
-    }
-
-    public void setUserCode(String usercode) {
-        this.userCode = usercode;
-    }
-
-    public String getRoleType() {
-        return this.roleType;
-    }
-
-    public void setRoleType(String roletype) {
-        this.roleType = roletype;
-    }
-
-    public String getRoleCode() {
-        return this.roleCode;
-    }
-
-    public void setRoleCode(String rolecode) {
-        this.roleCode = rolecode;
-    }
-
-    /**
-     * @return A:已分配  C：已完成（提交）
-     */
-    public String getTaskState() {
-        return this.taskState;
-    }
-
-    /**
-     *
-     * @param taskstate A:已分配  C：已完成（提交）
-     */
-    public void setTaskState(String taskstate) {
-        this.taskState = taskstate;
-    }
-
-    public boolean isValid() {
-        return "T".equals(isValid);
-    }
-    /**
-     * T 正常 F 失效
-     * @return
-     */
-    public String getIsValid() {
-        return this.isValid;
-    }
-
-    public void setIsValid(String isvalid) {
-        this.isValid = isvalid;
-    }
-
-    public String getAuthDesc() {
-        return this.authDesc;
-    }
-
-    public void setAuthDesc(String authdesc) {
-        this.authDesc = authdesc;
-    }
-
 
 
     public void copy(ActionTask other){
@@ -181,7 +64,6 @@ public class ActionTask implements java.io.Serializable {
         this.setTaskId(other.getTaskId());
         this.nodeInstId = other.getNodeInstId();
         this.assignTime = other.getAssignTime();
-        this.expireTime = other.getExpireTime();
         this.userCode = other.getUserCode();
         this.roleType = other.getRoleType();
         this.roleCode = other.getRoleCode();
@@ -198,8 +80,6 @@ public class ActionTask implements java.io.Serializable {
             this.nodeInstId = other.getNodeInstId();
         if( other.getAssignTime() != null)
             this.assignTime = other.getAssignTime();
-        if( other.getExpireTime() != null)
-            this.expireTime = other.getExpireTime();
         if( other.getUserCode() != null)
             this.userCode = other.getUserCode();
         if( other.getRoleType() != null)
