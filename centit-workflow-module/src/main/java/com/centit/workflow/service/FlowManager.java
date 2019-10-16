@@ -45,15 +45,15 @@ public interface FlowManager {
     /**
      * 根据 示例ID获得实例
      *
-     * @param flowInstId
-     * @return
+     * @param flowInstId 流程 实例id
+     * @return 流程实例信息
      */
     FlowInstance getFlowInstance(String flowInstId);
 
     /**
      * 查看工作流程实例状态或进度
      *
-     * @param flowInstId
+     * @param flowInstId 流程 实例id
      * @return XML 描述的流程流转状态图
      */
     String viewFlowInstance(String flowInstId);
@@ -61,8 +61,8 @@ public interface FlowManager {
     /**
      * 查看工作流程节点示例图
      *
-     * @param flowInstId
-     * @return
+     * @param flowInstId  流程 实例id
+     * @return 工作流程节点示例图
      */
     String viewFlowNodeInstance(String flowInstId);
     //流程实例管理-------------------------------
@@ -70,25 +70,25 @@ public interface FlowManager {
 
     /**
      * 终止一个流程  F 强行结束
-     */
-    int stopInstance(String flowInstId, String mangerUserCode, String admindesc);
-
-
-    /**
-     * 终止一个流程
-     * 修改其流程id为负数 ? FIXME : 为什么要更新为负数？什么目的？
+     * 修改其流程id为负数
      * 更新所有节点状态为F
      * F 强行结束
      */
-    int stopAndChangeInstance(String flowInstId, String mangerUserCode, String admindesc);
+    int stopInstance(String flowInstId, String mangerUserCode, String admindesc);
 
     /**
      * 暂停一个流程    P 暂停 挂起
+     * @param flowInstId 流程实例id
+     * @param mangerUserCode 管理人员代码
+     * @param admindesc 管理原因
      */
     int suspendInstance(String flowInstId, String mangerUserCode, String admindesc);
 
     /**
      * 激活一个 挂起的或者无效的流程  N 正常
+     * @param flowInstId 流程实例id
+     * @param mangerUserCode 管理人员代码
+     * @param admindesc 管理原因
      */
     int activizeInstance(String flowInstId, String mangerUserCode, String admindesc);
 
@@ -213,7 +213,10 @@ public interface FlowManager {
 
     /**
      * 从这个节点重新运行该流程，包括已经结束的流程
-     */
+     * @param nodeInstId 节点实例id
+     * @param mangerUserCode 管理人员代码
+     * @return 新的节点实例id
+     * */
     String resetFlowToThisNode(String nodeInstId, String mangerUserCode);
 
     /**
@@ -360,44 +363,32 @@ public interface FlowManager {
     List<NodeInstance> listNodesWithoutOpt();
 
 
-    /**
-     * @param nodeInstId
-     * @param userCode
-     * @param mangerUserCode
-     * @param expiretime
-     * @param authDesc
-     * @Author:chen_rj
-     * @Description:分配任务
-     * @Date:8:54 2017/7/14
-     */
-    public long assignTask(String nodeInstId, String userCode,
-                           String mangerUserCode, Date expiretime, String authDesc);
-
-    /**
+      /**
      * @param nodeInstId
      * @Author:chen_rj
      * @Description:获取节点任务
      * @Date:8:51 2017/7/14
      */
-    public List<ActionTask> listNodeInstTasks(String nodeInstId);
+    List<ActionTask> listNodeInstTasks(String nodeInstId);
+
 
     /**
-     * @param taskInstId
-     * @param mangerUserCode
-     * @Author:chen_rj
-     * @Description:任务失效
-     * @Date:8:52 2017/7/14
+     * 分配节点任务
+     *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      */
-    public int disableTask(long taskInstId, String mangerUserCode);
+    int assignNodeTask(String nodeInstId, String userCode,
+                       String mangerUserCode, String authDesc);
 
     /**
-     * 删除任务
-     *
-     * @param taskId
-     * @param mangerUserCode
-     * @return
+     * 添加节点任务, 添加操作人元
+     *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      */
-    public int deleteTask(long taskId, String mangerUserCode);
+    int addNodeTask(String nodeInstId, String userCode,
+                    String mangerUserCode, String authDesc);
+    /**
+     * 删除节点任务
+     */
+    int deleteNodeTask(String nodeInstId, String userCode, String mangerUserCode);
 
     /**
      * 删除节点任务
@@ -413,7 +404,7 @@ public interface FlowManager {
      * @param relegateno
      * @return
      */
-    public RoleRelegate getRoleRelegateById(Long relegateno);
+    RoleRelegate getRoleRelegateById(Long relegateno);
 
     /**
      * @param roleRelegate
@@ -462,13 +453,13 @@ public interface FlowManager {
      */
     Boolean reStartFlow(String flowInstId, String managerUserCode, Boolean force);
 
-    public Boolean changeRelegateValid( String json);
+    Boolean changeRelegateValid( String json);
 
-    public List<com.alibaba.fastjson.JSONObject> getListRoleRelegateByGrantor(String grantor);
+    List<com.alibaba.fastjson.JSONObject> getListRoleRelegateByGrantor(String grantor);
 
-    public void saveRoleRelegateList(RoleRelegate roleRelegate);
+    void saveRoleRelegateList(RoleRelegate roleRelegate);
 
-    public RoleRelegate getRoleRelegateByPara(String json);
+    RoleRelegate getRoleRelegateByPara(String json);
 
     /**
      * 获取所有流程分组

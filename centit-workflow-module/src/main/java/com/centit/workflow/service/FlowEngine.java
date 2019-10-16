@@ -10,6 +10,7 @@ import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 
 import javax.servlet.ServletContext;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -155,29 +156,28 @@ public interface FlowEngine {
 
 
     /**
-     * 查询任务，包含静态任务和动态任务
-     * @param searchColumn
-     * @param pageDesc
-     * @return
+     * 根据条件查询待办，包括flowInstId，flowOptTag
+     * @param searchColumn 查询参数
+     * @param pageDesc 分页信息
+     * @return 获取待办列表 这里指静态代办
      */
-    List<UserTask> queryTask(Map<String, Object> searchColumn, PageDesc pageDesc);
-
+    List<UserTask> listTasks(Map<String, Object> searchColumn, PageDesc pageDesc);
 
     /**
      * 获取动态待办
      * @param searchColumn
-     * @param pageDesc
-     * @return
+     * @param pageDesc 分页信息
+     * @return  获取待办列表 这里指动态代办
      */
-    List<UserTask> queryDynamicTask(Map<String, Object> searchColumn,PageDesc pageDesc);
+    List<UserTask> listDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 
     /**
      * 获取动态待办
      * @param searchColumn 包含nodeInstId，unitCode，userStation
-     * @param pageDesc
-     * @return
+     * @param pageDesc 分页信息
+     * @return 获取待办列表 这里指动态代办
      */
-    List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc);
+    List<UserTask> listDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc);
 
     /**
      * 查看某一个用户所有的已办，并且分页
@@ -292,98 +292,32 @@ public interface FlowEngine {
      * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
      * @param flowInstId 流程实例号
      * @param curNodeInstId 当前节点实例号
-     * @param nodeId    节点号
+     * @param nodeCode  节点环节代码，这个节点在这个流程中必需唯一
      * @param createUser  当前创建用户
      * @param userCode  指定操作用户
-     * @param unitCode 指定机构
-     * @return 节点实例
-     */
-    NodeInstance createPrepNodeInstLockUser(String flowInstId,String curNodeInstId,
-                                            String nodeId,String createUser,String userCode,String unitCode);
-
-
-    /**
-     * 加签,并指定到人
-     *
-     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
-     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
-     * @param flowInstId 流程实例号
-     * @param curNodeInstId 当前节点实例号
-     * @param nodeCode    节点号
-     * @param createUser  当前创建用户
-     * @param userCode  指定操作用户
-     * @param unitCode 指定机构
-     * @return 节点实例
-     */
-    NodeInstance createPrepNodeInstLockUserWithNodeCode(String flowInstId,String curNodeInstId,
-                                            String nodeCode,String createUser,String userCode,String unitCode);
-
-    /**
-     * 加签
-     *
-     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
-     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
-     * @param flowInstId 流程实例号
-     * @param curNodeInstId 当前节点实例号
-     * @param nodeId    节点号
-     * @param userCode  指定用户
      * @param unitCode 指定机构
      * @return 节点实例
      */
     NodeInstance createPrepNodeInst(String flowInstId,String curNodeInstId,
-                                    long nodeId,String userCode,String unitCode);
-
-
-    /**
-     *
-     * 加签
-     *
-     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
-     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
-     * @param flowInstId 流程实例号
-     * @param curNodeInstId 当前节点实例号
-     * @param nodeCode    节点环节代码，这个节点在这个流程中必需唯一
-     * @param userCode  指定操作用户
-     * @param unitCode 指定机构
-     * @return 节点实例
-     */
-    NodeInstance createPrepNodeInst(String flowInstId,long curNodeInstId,
-                                    String nodeCode, String userCode,String unitCode);
+                                    String nodeCode, String createUser,
+                                    String userCode,String unitCode);
 
     /**
      * 创建一个游离节点
      * 知会、关注
      *
-     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
-     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
+     * 用户手动创建一个节点实例，不影响当前节点实例的执行,当前节点实例Id也可以为空
      * @param flowInstId 流程实例号
      * @param curNodeInstId 当前节点实例号
-     * @param userCode    节点环节代码，这个节点在这个流程中必需唯一
-     * @param createUser  当前创建用户
-     * @param userCode  指定操作用户
-     * @param unitCode 指定机构
-     * @return 节点实例
-     */
-    NodeInstance createIsolatedNodeInstWithNodeCode(String flowInstId,String curNodeInstId,
-                                        String nodeCode,String createUser, String userCode,String unitCode);
-
-
-    /**
-     * 创建一个游离节点
-     * 知会、关注
-     *
-     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
-     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
-     * @param flowInstId 流程实例号
-     * @param curNodeInstId 当前节点实例号
-     * @param nodeId    节点号
+     * @param nodeCode    节点环节代码
      * @param createUser  当前创建用户
      * @param userCode  指定操作用户
      * @param unitCode 指定机构
      * @return 节点实例
      */
     NodeInstance createIsolatedNodeInst(String flowInstId,String curNodeInstId,
-                                        String nodeId,String createUser, String userCode,String unitCode);
+                                        String nodeCode,String createUser,
+                                        String userCode,String unitCode);
 
 
     /**
@@ -486,28 +420,6 @@ public interface FlowEngine {
      */
     List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode,
                                             String authdesc);
-
-
-    /**
-     * 分配节点任务
-     *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
-     */
-    long assignNodeTask(String nodeInstId, String userCode,
-                        String mangerUserCode,Date expiretime,String authDesc);
-    /**
-     * 取消节点任务
-     */
-    int disableNodeTask(String nodeInstId, String userCode, String mangerUserCode);
-    /**
-     * 删除节点任务
-     */
-    int deleteNodeTask(String nodeInstId, String userCode, String mangerUserCode);
-
-    /**
-     * 删除节点任务
-     */
-    int deleteNodeAllTask(String nodeInstId,String mangerUserCode);
-
 
     /**
      * 分配流程组织机构
@@ -767,17 +679,6 @@ public interface FlowEngine {
      */
     void deleteFlowVariable(String flowInstId,String runToken,String varName);
 
-    /**
-     * 手动创建节点实例，暂时不考虑这个节点对流程的整体影响，由调用业务来判断
-     * @param flowInstId    流程实例号
-     * @param createUser  创建人
-     * @param nodeId      节点环节代码，这个节点在这个流程中必需唯一
-     * @param userCodes      指定用户
-     * @param unitCode      指定机构
-     * @return 节点实例
-     */
-    NodeInstance createNodeInst(String flowInstId, String createUser,
-                                       long nodeId,List<String> userCodes, String unitCode);
 
     /**
      * 创建 流程分组

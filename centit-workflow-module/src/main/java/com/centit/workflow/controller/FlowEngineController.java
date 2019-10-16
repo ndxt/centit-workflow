@@ -274,7 +274,7 @@ public class FlowEngineController extends BaseController {
         Map<String, Object> searchColumn = new HashMap<>();
         PageDesc pageDesc = new PageDesc(1, 10);
         searchColumn.put("userCode", userCode);
-        List<UserTask> userTasks = flowEngine.queryDynamicTask(searchColumn, pageDesc);
+        List<UserTask> userTasks = flowEngine.listDynamicTask(searchColumn, pageDesc);
         return userTasks;
     }
 

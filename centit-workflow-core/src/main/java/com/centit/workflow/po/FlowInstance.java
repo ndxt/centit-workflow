@@ -50,7 +50,9 @@ public class FlowInstance implements java.io.Serializable {
     @NotNull(message = "字段不能为空")
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String flowCode;
-
+    /**
+     * varchar(800)
+     */
     @Column(name = "FLOW_OPT_NAME")
     private String flowOptName;
 
@@ -63,7 +65,9 @@ public class FlowInstance implements java.io.Serializable {
     public void setFlowDefine(FlowInfo flowDefine) {
         this.flowDefine = flowDefine;
     }
-
+    /**
+     * varchar(200)
+     */
     @Column(name = "FLOW_OPT_TAG")
     private String flowOptTag;
     @Column(name = "CREATE_TIME")

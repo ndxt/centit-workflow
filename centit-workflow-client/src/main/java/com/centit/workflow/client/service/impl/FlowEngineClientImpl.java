@@ -1,17 +1,19 @@
 package com.centit.workflow.client.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowEngineClient;
+import com.centit.workflow.commons.CreateFlowOptions;
+import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
+import com.centit.workflow.po.FlowInstanceGroup;
 import com.centit.workflow.po.FlowVariable;
-import com.centit.workflow.po.UserTask;
+import com.centit.workflow.po.NodeInstance;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,20 +39,10 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
     private AppSession appSession;
 
-    @Override
-    public CloseableHttpClient getHttpClient() throws Exception {
+    public CloseableHttpClient getHttpClient()  throws Exception{
         return appSession.allocHttpClient();
     }
 
-    @Override
-    public void releaseHttpClient(CloseableHttpClient httpClient) {
-        appSession.releaseHttpClient(httpClient);
-    }
-
-    @Override
-    public void setWorkFlowServerUrl(String workFlowServerUrl) {
-        this.workFlowServerUrl = workFlowServerUrl;
-    }
 
     public void makeAppSession() {
         appSession = new AppSession(workFlowServerUrl, false, null, null);
@@ -76,99 +68,26 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         return receiveJSON.getDataAsObject(FlowInstance.class);
     }
 
-    @Override
-    public FlowInstance createMetaFormFlowAndSubmit(String modelId, String flowOptName, String flowOptTag, String userCode, String unitCode) throws Exception {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("modelId", modelId);
-        jsonObject.put("flowOptName", flowOptName);
-        jsonObject.put("flowOptTag", flowOptTag);
-        jsonObject.put("userCode", userCode);
-        jsonObject.put("unitCode", unitCode);
 
-        String flowJson = RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/createMetaFormFlowAndSubmit", jsonObject);
-        return jsonToFlowInstance(flowJson);
-
-    }
 
     @Override
-    public FlowInstance createInstance(String flowCode, String flowOptName,
-                                       String flowOptTag, String userCode, String unitCode,
-                                       Map<String,Object> flowVariables) throws Exception {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("flowCode", flowCode);
-        jsonObject.put("flowOptName", flowOptName);
-        jsonObject.put("flowOptTag", flowOptTag);
-        jsonObject.put("userCode", userCode);
-        jsonObject.put("unitCode", unitCode);
+    public FlowInstance createInstance(CreateFlowOptions options) {
+        //JSONObject jsonObject = (JSONObject)JSON.toJSON(options);
         String flowJson = RestfulHttpRequest.jsonPost(appSession,
-            UrlOptUtils.appendParamsToUrl(
-            "/flow/engine/createFlowInstDefault", flowVariables), jsonObject);
+            "/flow/engine/createFlowInstDefault", options);
         return jsonToFlowInstance(flowJson);
     }
 
 
-    /**
-     * @param flowCode     流程编码
-     * @param flowOptName  这个名称用户 查找流程信息，用来显示业务办件名称，
-     * @param flowOptTag   这个标记用户 查找流程信息，比如办件代码，由业务系统自己解释可以用于反向关联
-     * @param userCode     创建用户
-     * @param unitCode     将流程指定一个所属机构
-     * @param timeLimitStr 流程计时 默认单位为天，也可以手动设定为d\h\m
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public FlowInstance createInstance(String flowCode, String flowOptName, String flowOptTag, String userCode, String unitCode, String timeLimitStr) throws Exception {
-        Map<String, String> paramMap = new HashMap<>();
-        paramMap.put("flowCode", flowCode);
-        paramMap.put("flowOptName", flowOptName);
-        paramMap.put("flowOptTag", flowOptTag);
-        paramMap.put("userCode", userCode);
-        paramMap.put("unitCode", unitCode);
-        paramMap.put("timeLimitStr", timeLimitStr);
-        String flowJson = RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/createFlowInstDefault", paramMap);
-        return jsonToFlowInstance(flowJson);
-    }
 
     @Override
-    public FlowInstance createInstance(String flowCode, long version, String flowOptName, String flowOptTag,
-                                 String userCode, String unitCode) throws Exception {
-        Map<String, String> paramMap = new HashMap<>();
-        paramMap.put("flowCode", flowCode);
-        paramMap.put("version", String.valueOf(version));
-        paramMap.put("flowOptName", flowOptName);
-        paramMap.put("flowOptTag", flowOptTag);
-        paramMap.put("userCode", userCode);
-        paramMap.put("unitCode", unitCode);
-        String flowJson = RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/createFlowInstDefault", paramMap);
-        return jsonToFlowInstance(flowJson);
-    }
-
-    @Override
-    public FlowInstance createInstanceLockFirstNode(String flowCode, String flowOptName, String flowOptTag,
-                                              String userCode, String unitCode) throws Exception {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("flowCode", flowCode);
-        jsonObject.put("flowOptName", flowOptName);
-        jsonObject.put("flowOptTag", flowOptTag);
-        jsonObject.put("userCode", userCode);
-        jsonObject.put("unitCode", unitCode);
-        String flowJson = RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/createInstanceLockFirstNode", jsonObject);
-        return jsonToFlowInstance(flowJson);
-    }
-
-    @Override
-    public void saveFlowVariable(String flowInstId, String varName, String varValue) throws Exception {
+    public void saveFlowVariable(String flowInstId, String varName, String varValue)  {
         Set<String> vars = new HashSet<>(Arrays.asList(varValue));
         saveFlowVariable(flowInstId, varName, vars);
     }
 
     @Override
-    public void saveFlowVariable(String flowInstId, String varName, Set<String> varValue) throws Exception {
+    public void saveFlowVariable(String flowInstId, String varName, Set<String> varValue)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("varName", varName);
@@ -181,10 +100,10 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @param nodeInstId
      * @param varName
      * @param varValue   SET &lt;String&gt;
-     * @throws Exception
+     * @
      */
     @Override
-    public void saveFlowNodeVariable(String nodeInstId, String varName, String varValue) throws Exception {
+    public void saveFlowNodeVariable(String nodeInstId, String varName, String varValue)  {
         Set<String> vars = new HashSet<>(Arrays.asList(varValue));
         saveFlowNodeVariable(nodeInstId, varName, vars);
     }
@@ -193,10 +112,10 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @param nodeInstId
      * @param varName
      * @param varValue   SET &lt;String&gt;
-     * @throws Exception
+     * @
      */
     @Override
-    public void saveFlowNodeVariable(String nodeInstId, String varName, Set<String> varValue) throws Exception {
+    public void saveFlowNodeVariable(String nodeInstId, String varName, Set<String> varValue)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("varName", varName);
@@ -206,7 +125,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void assignFlowWorkTeam(String flowInstId, String roleCode, List<String> userCodes) throws Exception {
+    public void assignFlowWorkTeam(String flowInstId, String roleCode, List<String> userCodes)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -216,7 +135,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void addFlowWorkTeam(String flowInstId, String roleCode, String userCode) throws Exception {
+    public void addFlowWorkTeam(String flowInstId, String roleCode, String userCode)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -248,22 +167,17 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public Map<String,Object> submitOpt(String nodeInstId, String userCode,
-                                         String unitCode, Map<String, Object> varTrans) throws WorkflowException {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("nodeInstId", nodeInstId);
-        paramMap.put("userCode", userCode);
-        paramMap.put("unitCode", unitCode);
-        paramMap.put("varTrans", varTrans);
+    public Map<String, Object> submitOpt(SubmitOptOptions options) throws WorkflowException {
         String returnJson = RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/submitOpt", paramMap);
-        Map<String,Object> jsonObject=JSONObject.parseObject(returnJson);
-        return jsonObject;
+            "/flow/engine/submitOpt", options);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(returnJson);
+        //Map<String,Object> jsonObject=JSONObject.parseObject(returnJson);
+        return receiveJSON.getJSONObject();
 
     }
 
     @Override
-    public List<FlowVariable> viewFlowVariablesByVarname(String flowInstId, String varName) throws Exception {
+    public List<FlowVariable> viewFlowVariablesByVarname(String flowInstId, String varName)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("varName", varName);
@@ -273,7 +187,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void deleteFlowWorkTeam(String flowInstId, String roleCode) throws Exception {
+    public void deleteFlowWorkTeam(String flowInstId, String roleCode)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -282,7 +196,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void deleteFlowOrganize(String flowInstId, String roleCode) throws Exception {
+    public void deleteFlowOrganize(String flowInstId, String roleCode)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -290,22 +204,6 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/deleteFlowOrganize", paramMap);
     }
 
-    @Override
-    public List<UserTask> listUserTasks(String userCode, PageDesc pageDesc) {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("userCode", userCode);
-        paramMap.put("pageDesc", pageDesc);
-        return RestfulHttpRequest.getResponseObjectList(appSession,
-            "/flow/engine/listUserTasks", paramMap, UserTask.class);
-    }
-
-    @Override
-    public List<UserTask> listNodeTaskUsers(String nodeInstId) {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("nodeInstId", nodeInstId);
-        return RestfulHttpRequest.getResponseObjectList(appSession,
-            "/flow/engine/listNodeTaskUsers", paramMap, UserTask.class);
-    }
 
     @Override
     public List<FlowInstance> listAllFlowInstByOptTag(String optTag) {
@@ -341,20 +239,6 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
 
-    @Override
-    public void createNodeInst(String flowInstId, String createUser,
-                               String nodeId, List<String> userCodes, String unitCode) throws Exception {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId", flowInstId);
-        paramMap.put("createUser", createUser);
-        paramMap.put("userCodes", userCodes);
-        paramMap.put("nodeId", nodeId);
-        paramMap.put("unitCode", unitCode);
-        RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/createNodeInst", paramMap);
-    }
-
-
     public void deleteFlowVariable(String flowInstId, String runToken, String varName) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
@@ -362,6 +246,18 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("varName", varName);
         RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/deleteFlowVariable", paramMap);
+    }
+
+    /**
+     * 检查后续的节点是否被操作过，包括更新和提交
+     * 只有后续节点没有处理的才可以收回。true表示可以撤回，false表示不可以撤回，
+     *
+     * @param nodeInstId 流程实例id
+     * @return 是否可以回收
+     */
+    @Override
+    public boolean nodeCanBeReclaim(String nodeInstId) {
+        return false;
     }
 
     public void rollBackNode(String nodeInstId,String managerUserCode){
@@ -372,10 +268,101 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/rollBackNode", paramMap);
     }
 
+    /**
+     * 创建孤立节点  知会、关注
+     * <p>
+     * 用户手动创建一个节点实例，不影响当前节点实例的执行,当前节点实例Id也可以为空
+     *
+     * @param flowInstId    流程实例号
+     * @param curNodeInstId 当前节点实例号
+     * @param nodeCode      节点 的环节代码
+     * @param createUser
+     * @param userCode      指定用户
+     * @param unitCode      指定机构
+     * @return 节点实例
+     */
     @Override
-    public List<UserTask> listTasks(Map<String, Object> paramMap) {
-        return RestfulHttpRequest.getResponseObjectList(appSession,
-            "/flow/engine/listTasks", paramMap, UserTask.class);
+    public NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId, String nodeCode, String createUser, String userCode, String unitCode) {
+        return null;
     }
+
+    /**
+     * 加签,并指定到人
+     * <p>
+     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
+     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
+     *
+     * @param flowInstId    流程实例号
+     * @param curNodeInstId 当前节点实例号
+     * @param nodeCode      节点环节代码，这个节点在这个流程中必需唯一
+     * @param createUser    当前创建用户
+     * @param userCode      指定操作用户
+     * @param unitCode      指定机构
+     * @return 节点实例
+     */
+    @Override
+    public NodeInstance createPrepNodeInst(String flowInstId, String curNodeInstId, String nodeCode, String createUser, String userCode, String unitCode) {
+        return null;
+    }
+
+    /**
+     * 创建 流程分组
+     *
+     * @param name 分组名称
+     * @param desc 分组描述
+     * @return 流程分组
+     */
+    @Override
+    public FlowInstanceGroup createFlowInstGroup(String name, String desc) {
+        return null;
+    }
+
+    /**
+     * 查询流程组信息
+     *
+     * @param paramMap 查询参数
+     * @param pageDesc 分页信息
+     * @return 流程分组
+     */
+    @Override
+    public JSONArray listFlowInstGroup(Map<String, Object> paramMap, PageDesc pageDesc) {
+        return null;
+    }
+
+    /**
+     * 根据条件查询待办，包括flowInstId，flowOptTag
+     *
+     * @param paramMap 查询参数
+     * @param pageDesc 分页信息
+     * @return 获取待办列表 这里指静态代办
+     */
+    @Override
+    public JSONArray listTasks(Map<String, Object> paramMap, PageDesc pageDesc) {
+        return null;
+    }
+
+    /**
+     * 查看某一个节点所有的可以办理的用户
+     *
+     * @param nodeInstId 节点实例Id
+     * @return 用户办件信息
+     */
+    @Override
+    public JSONArray listNodeTaskUsers(String nodeInstId) {
+        return null;
+    }
+
+    /**
+     * 获取动态待办
+     *
+     * @param searchColumn 包含nodeInstId，unitCode，userStation
+     * @param pageDesc     分页信息
+     * @return
+     */
+    @Override
+    public JSONArray listDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return null;
+    }
+
 
 }

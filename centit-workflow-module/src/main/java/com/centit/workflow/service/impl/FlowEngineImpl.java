@@ -1055,7 +1055,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         FlowTransition nodeTran = selectOptNodeTransition(currNode);
         if (nodeTran == null) {
-            if (nodeInst.getRunToken().startsWith("R")) {
+            // 临时节点 和 游离节点都可以不管
+            if (nodeInst.getRunToken().startsWith("R") /*|| nodeInst.getRunToken().startsWith("L")*/) {
                 //logger.info("游离节点:" + nodeInstId);
                 //将节点的状态设置为已完成
                 nodeInst.setNodeState("C");
@@ -1420,114 +1421,39 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //nodeInstanceDao.updateObject(nodeInst);
     }
 
-
-    /**
-     * 加签,并指定到人
+     /** 加签,并指定到人
      * <p>
      * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
      * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
      *
      * @param flowInstId    流程实例号
      * @param curNodeInstId 当前节点实例号
-     * @param nodeId        节点号
-     * @param createUser    当前创建用户
-     * @param userCode      指定操作用户
+     * @param nodeCode      节点环节代码，这个节点在这个流程中必需唯一
+     * @param userCode      指定用户
      * @param unitCode      指定机构
+     * @param createUser    创建用户
      * @return 节点实例
      */
-    public NodeInstance createPrepNodeInstLockUser(String flowInstId, String curNodeInstId,
-                                                   String nodeId, String createUser, String userCode, String unitCode) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
-        //必需存在且状态为正常 或者 暂停
-        if (nodeInst == null || (!"N".equals(nodeInst.getNodeState()) && !"S".equals(nodeInst.getNodeState()))) {
-            logger.error("找不到节点实例：" + curNodeInstId);
-            return null;
-        }
-        if (nodeInst.getRunToken().startsWith("R")) {
-            logger.error("游离节点不能创建前置节点：" + curNodeInstId + " token:" + nodeInst.getRunToken() + "。");
-            return null;
-        }
-        FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
-        if (flowInst == null) {
-            logger.error("找不到流程实例：" + nodeInst.getFlowInstId());
-            return null;
-        }
-
-        FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
-
-        NodeInfo nextNode = flowNodeDao.getObjectById(nodeId);
-        //获取上一个相同节点实例机构
-
-        String lastNodeInstId = UuidOpt.getUuidAsString32();
-//        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
-
-        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(
-            unitCode, createUser, flowInst, nodeInst, flowInfo, nextNode, null);
-
-        nextNodeInst.setNodeInstId(lastNodeInstId);
-        nextNodeInst.setPrevNodeInstId(curNodeInstId);
-        nextNodeInst.setRunToken("L" + nodeInst.getRunToken());//设置为插入前置节点
-        nextNodeInst.setUserCode(userCode);
-        nextNodeInst.setTaskAssigned("S");
-        nextNodeInst.setTransPath("");
-
-        //等待前置节点提交
-        nodeInst.setNodeState("S");
-
-        nodeInstanceDao.saveNewObject(nextNodeInst);
-        nodeInstanceDao.updateObject(nodeInst);
-        return nextNodeInst;
-    }
-
-
-    /**
-     * 加签,并指定到人
-     * <p>
-     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
-     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
-     *
-     * @param flowInstId    流程实例号
-     * @param curNodeInstId 当前节点实例号
-     * @param nodeCode      节点号
-     * @param createUser    当前创建用户
-     * @param userCode      指定操作用户
-     * @param unitCode      指定机构
-     * @return 节点实例
-     */
-    public NodeInstance createPrepNodeInstLockUserWithNodeCode(String flowInstId, String curNodeInstId,
-                                                   String nodeCode, String createUser, String userCode, String unitCode) {
+    @Override
+    public NodeInstance createPrepNodeInst(String flowInstId, String curNodeInstId,
+                                           String nodeCode, String createUser,
+                                           String userCode, String unitCode) {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
-        if (flowInst == null)
+        if (flowInst == null) {
+            logger.error("找不到流程实例：" + flowInstId);
             return null;
+        }
         List<NodeInfo> nodeList = flowNodeDao.listNodeByNodecode(flowInst.getFlowCode(),
             flowInst.getVersion(), nodeCode);
 
         if (nodeList == null || nodeList.size() < 1)
             return null;
-        if (nodeList.size() > 1)
+        if (nodeList.size() > 1) {
             logger.error("流程 " + flowInst.getFlowCode() + "（版本号" + flowInst.getVersion()
                 + "）中对应环节代码为" + nodeCode + "的节点有多个，系统随机的创建一个，如有问题请和管理人员联系。");
-
-        return createPrepNodeInstLockUser(flowInstId, curNodeInstId,
-            nodeList.get(0).getNodeId(), createUser, userCode, unitCode);
-    }
-
-
-    /**
-     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
-     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
-     *
-     * @param flowInstId    流程实例号
-     * @param curNodeInstId 当前节点实例号
-     * @param nodeId        节点号
-     * @param userCode      指定用户
-     * @param unitCode      指定机构
-     * @return 节点实例
-     */
-    @Override
-    public NodeInstance createPrepNodeInst(String flowInstId, String curNodeInstId,
-                                           long nodeId, String userCode, String unitCode) {
+        }
+        String nodeId = nodeList.get(0).getNodeId();
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
         //必需存在且状态为正常 或者 暂停
@@ -1537,11 +1463,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         if (nodeInst.getRunToken().startsWith("R")) {
             logger.error("游离节点不能创建前置节点：" + curNodeInstId + " token:" + nodeInst.getRunToken() + "。");
-            return null;
-        }
-        FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
-        if (flowInst == null) {
-            logger.error("找不到流程实例：" + nodeInst.getFlowInstId());
             return null;
         }
 
@@ -1558,8 +1479,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
         nextNodeInst.setRunToken("L" + nodeInst.getRunToken());//设置为插入前置节点
+        nextNodeInst.setUserCode(userCode);
+        nextNodeInst.setTaskAssigned("S");
         nextNodeInst.setTransPath("");
-
         //等待前置节点提交
         nodeInst.setNodeState("S");
 
@@ -1568,7 +1490,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return nextNodeInst;
     }
 
+
+
     /**
+     * 创建孤立节点  知会、关注
+     * <p>
      * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
      * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
      *
@@ -1576,11 +1502,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param curNodeInstId 当前节点实例号
      * @param nodeCode      节点环节代码，这个节点在这个流程中必需唯一
      * @param userCode      指定用户
+     * @param createUser    创建用户
      * @param unitCode      指定机构
      * @return 节点实例
      */
-    public NodeInstance createPrepNodeInst(String flowInstId, long curNodeInstId,
-                                           String nodeCode, String userCode, String unitCode) {
+    @Override
+    public NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId,
+                                               String nodeCode, String createUser,
+                                               String userCode, String unitCode) {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
@@ -1594,28 +1523,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error("流程 " + flowInst.getFlowCode() + "（版本号" + flowInst.getVersion()
                 + "）中对应环节代码为" + nodeCode + "的节点有多个，系统随机的创建一个，如有问题请和管理人员联系。");
 
-        return createPrepNodeInst(flowInstId, curNodeInstId,
-            nodeList.get(0).getNodeId(), userCode, unitCode);
-    }
-
-
-    /**
-     * 创建孤立节点  知会、关注
-     * <p>
-     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
-     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
-     *
-     * @param flowInstId    流程实例号
-     * @param curNodeInstId 当前节点实例号
-     * @param nodeId        节点号
-     * @param userCode      指定用户
-     * @param unitCode      指定机构
-     * @return 节点实例
-     */
-    @Override
-    public NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId,
-                                               String nodeId, String createUser, String userCode, String unitCode) {
-
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
         //必需存在且状态为正常 或者 暂停
         if (nodeInst == null
@@ -1624,12 +1531,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error("找不到节点实例：" + curNodeInstId);
             return null;
         }
-
-        FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
-        if (flowInst == null) {
-            logger.error("找不到流程实例：" + nodeInst.getFlowInstId());
-            return null;
-        }
+        String nodeId = nodeList.get(0).getNodeId();
 
         FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
 
@@ -1653,84 +1555,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return nextNodeInst;
     }
 
-    /**
-     * 创建孤立节点  知会、关注
-     * <p>
-     * 用户手动创建一个节点实例，当前节点实例挂起，等这个新建的节点实例运行完提交时，当前节点实例继续运行.
-     * 同一个节点可以创建多个前置节点，当所有的前置节点都执行提交后，现有的节点才被唤醒
-     *
-     * @param flowInstId    流程实例号
-     * @param curNodeInstId 当前节点实例号
-     * @param nodeCode      节点环节代码，这个节点在这个流程中必需唯一
-     * @param userCode      指定用户
-     * @param unitCode      指定机构
-     * @return 节点实例
-     */
-    public NodeInstance createIsolatedNodeInstWithNodeCode(String flowInstId, String curNodeInstId,
-                                               String nodeCode, String createUser, String userCode, String unitCode) {
 
-        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
-        if (flowInst == null)
-            return null;
-        List<NodeInfo> nodeList = flowNodeDao.listNodeByNodecode(flowInst.getFlowCode(),
-            flowInst.getVersion(), nodeCode);
-
-        if (nodeList == null || nodeList.size() < 1)
-            return null;
-        if (nodeList.size() > 1)
-            logger.error("流程 " + flowInst.getFlowCode() + "（版本号" + flowInst.getVersion()
-                + "）中对应环节代码为" + nodeCode + "的节点有多个，系统随机的创建一个，如有问题请和管理人员联系。");
-
-        return createIsolatedNodeInst(flowInstId, curNodeInstId,
-            nodeList.get(0).getNodeId(), createUser, userCode, unitCode);
-    }
-
-    /**
-     * 手动创建节点实例，暂时不考虑这个节点对流程的整体影响，由调用业务来判断
-     *
-     * @param flowInstId 流程实例号
-     * @param createUser 创建人
-     * @param nodeId     节点id
-     * @param userCodes  指定用户
-     * @param unitCode   指定机构
-     * @return 节点实例
-     */
-    public NodeInstance createNodeInst(String flowInstId, String createUser,
-                                       long nodeId, List<String> userCodes, String unitCode) {
-
-        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
-        if (flowInst == null) {
-            logger.error("找不到流程实例：" + flowInstId);
-            return null;
-        }
-
-        FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
-
-        NodeInfo nextNode = flowNodeDao.getObjectById(nodeId);
-        //获取上一个相同节点实例机构
-
-        String lastNodeInstId = UuidOpt.getUuidAsString32();
-
-        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, flowInst, null, flowInfo, nextNode, null);
-
-        nextNodeInst.setNodeInstId(lastNodeInstId);
-        nextNodeInst.setPrevNodeInstId("");
-        nextNodeInst.setRunToken("RT");//设置为游离节点
-        nextNodeInst.setTaskAssigned("T");
-        nextNodeInst.setTransPath("");
-        for (String u : userCodes) {
-            ActionTask wfactTask = FlowOptUtils.createActionTask(lastNodeInstId, u);
-            //wfactTask.setTaskId(actionTaskDao.getNextTaskId());
-            wfactTask.setAssignTime(new Date());
-            actionTaskDao.saveNewObject(wfactTask);
-        }
-
-        nodeInstanceDao.saveNewObject(nextNodeInst);
-        Set<String> nextNodeInsts = new HashSet<>();
-        nextNodeInsts.add(lastNodeInstId);
-        //FlowOptUtils.sendMsg("", nextNodeInsts, createUser);
-        return nextNodeInst;
-    }
 
     @Override
     public void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode) {
@@ -1823,151 +1648,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowVariableId id = new FlowVariableId(flowInstId, runToken,
             varname);
         return flowVariableDao.getObjectById(id);
-    }
-
-
-    /**
-     * 在任务列表中指定工作人员，这样就屏蔽了按照角色自动查找符合权限的人员
-     */
-    @Override
-    public long assignNodeTask(String nodeInstId, String userCode,
-                               String mangerUserCode, Date expiretime, String authDesc) {
-        NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
-        if (node == null)
-            return -1;
-        // * T: 通过 tasklist 分配， D：通过 岗位、行政角色 自动匹配 S：静态代办（usercode)
-        Set<ActionTask> taskList = node.getWfActionTasks();
-        //如果只有一个 人，放在 wf_node_instance 表中的user_code
-        if ((taskList != null && taskList.size() > 1) ||
-            (taskList != null && taskList.size() == 1 &&
-                userCode != null && !userCode.equals(taskList.iterator().next().getUserCode()))) {
-            node.setTaskAssigned("T");
-            for (ActionTask task : taskList) {
-                if ("T".equals(task.getIsValid())
-                    && userCode.equals(task.getUserCode()))
-                    return -2;
-            }
-
-            ActionTask task = FlowOptUtils.createActionTask(nodeInstId,
-                userCode);
-            //task.setTaskId(actionTaskDao.getNextTaskId());
-            task.setExpireTime(expiretime);
-            task.setAuthDesc(authDesc);
-            node.addWfActionTask(task);
-        } else {//taskList 为空 或者 新加入的用户已经存在情况
-            node.setTaskAssigned("S");
-            node.setUserCode(userCode);
-        }
-        nodeInstanceDao.saveNewObject(node);
-
- /*       WfManageAction managerAct = FlowOptUtils.createManagerAction(
-                node.getFlowInstId(), userCode, "A");
-        managerAct.setActionId(manageActionDao.getNextManageId());
-        managerAct.setAdminDesc(authDesc);
-        manageActionDao.saveObject(managerAct);*/
-        return 0;
-    }
-
-    /**
-     * 收回任务分配
-     */
-    @Override
-    public int disableNodeTask(String nodeInstId, String userCode,
-                               String mangerUserCode) {
-
-        NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
-        if (node == null)
-            return -1;
-        ActionTask assignedTask = null;
-        Set<ActionTask> taskList = node.getWfActionTasks();
-        int atc = 0;
-        for (ActionTask task : taskList) {
-            if ("T".equals(task.getIsValid())
-                && "A".equals(task.getTaskState()))// 只能禁用未完成的任务
-            {
-                if (userCode.equals(task.getUserCode()))
-                    assignedTask = task;
-                else
-                    atc++;
-            }
-        }
-
-        if (assignedTask == null)
-            return -3;
-        assignedTask.setIsValid("F");
-        node.setTaskAssigned(atc > 0 ? "T" : "D");
-        nodeInstanceDao.updateObject(node);
-
-/*        WfManageAction managerAct = FlowOptUtils.createManagerAction(
-                node.getFlowInstId(), mangerUserCode, "P");
-        managerAct.setActionId(manageActionDao.getNextManageId());
-        managerAct.setAdminDesc("node:" + nodeInstId + " user:" + userCode);
-        manageActionDao.saveObject(managerAct);*/
-        return 0;
-    }
-
-
-    /**
-     * 删除任务节点
-     */
-    @Override
-    public int deleteNodeTask(String nodeInstId, String userCode,
-                              String mangerUserCode) {
-        NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
-        if (node == null)
-            return -1;
-        ActionTask assignedTask = null;
-        Set<ActionTask> taskList = node.getWfActionTasks();
-        int atc = 0;
-        for (ActionTask task : taskList) {
-            if ("T".equals(task.getIsValid())
-                && "A".equals(task.getTaskState()))// 只能禁用未完成的任务
-            {
-                if (userCode.equals(task.getUserCode()))
-                    assignedTask = task;
-                else
-                    atc++;
-            }
-        }
-
-        if (assignedTask == null)
-            return -3;
-
-        node.removeWfActionTask(assignedTask);
-        node.setTaskAssigned(atc > 0 ? "T" : "D");
-        nodeInstanceDao.updateObject(node);
-
-/*        WfManageAction managerAct = FlowOptUtils.createManagerAction(
-                node.getFlowInstId(), mangerUserCode, "D");
-        managerAct.setActionId(manageActionDao.getNextManageId());
-        managerAct.setAdminDesc("node:" + nodeInstId + " user:" + userCode);
-        manageActionDao.saveObject(managerAct);*/
-        return 0;
-    }
-
-    @Override
-    public int deleteNodeAllTask(String nodeInstId, String mangerUserCode) {
-        NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
-        if (node == null)
-            return -1;
-
-        Set<ActionTask> taskList = node.getWfActionTasks();
-        for (ActionTask task : taskList) {
-            if ("T".equals(task.getIsValid())
-                && "A".equals(task.getTaskState()))// 只能禁用未完成的任务
-            {
-                node.removeWfActionTask(task);
-            }
-        }
-        node.setTaskAssigned("D");
-        nodeInstanceDao.updateObject(node);
-
-/*        WfManageAction managerAct = FlowOptUtils.createManagerAction(
-                node.getFlowInstId(), mangerUserCode, "D");
-        managerAct.setActionId(manageActionDao.getNextManageId());
-        managerAct.setAdminDesc("node:" + nodeInstId + " user:" + userCode);
-        manageActionDao.saveObject(managerAct);*/
-        return 0;
     }
 
 
@@ -2324,11 +2004,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<UserTask> queryDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+    public List<UserTask> listDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
         //动态任务
         //1.找到用户所有机构下的岗位和职务
-        List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits((String) searchColumn.get("userCode"));
+        List<? extends IUserUnit> iUserUnits =
+            CodeRepositoryUtil.listUserUnits((String) searchColumn.get("userCode"));
 
         //2.以机构，岗位，职务来查询任务
         if (iUserUnits == null || iUserUnits.size() == 0) {
@@ -2345,11 +2026,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<UserTask> queryDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
+    public List<UserTask> listDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
         String station = StringBaseOpt.castObjectToString(searchColumn.get("userStation"));
         String unitCode = StringBaseOpt.castObjectToString(searchColumn.get("unitCode"));
         String nodeInstId = (String) searchColumn.get("nodeInstId");
+        // TODO CodeRepositoryUtil 这个是bug 应该替换为  UserUnitFilterCalcContext
         List<? extends IUserUnit> userUnits = CodeRepositoryUtil.listAllUserUnits();
         //2.以机构，岗位，职务来查询任务
         for (IUserUnit i : userUnits) {
@@ -2375,7 +2057,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<UserTask> queryTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+    public List<UserTask> listTasks(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
         //静态任务
         List<UserTask> staticTaskList = actionTaskDao.queryStaticTask((String) searchColumn.get("userCode"));

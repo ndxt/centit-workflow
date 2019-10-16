@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-
+/**
+ * 用户的权限委托 和任务转移
+ */
 @Controller
 @RequestMapping("/flow/userOpt")
 public class UserOptController extends BaseController {

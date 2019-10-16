@@ -510,7 +510,7 @@ public class FlowManagerController extends BaseController {
             searchColumn.put("unitCode", nodeInstance.getUnitCode());
             searchColumn.put("userStation", nodeInstance.getRoleCode());
             PageDesc pageDesc = new PageDesc(1, 100);
-            List<UserTask> dynamicTask = flowEng.queryDynamicTaskByUnitStation(searchColumn, pageDesc);
+            List<UserTask> dynamicTask = flowEng.listDynamicTaskByUnitStation(searchColumn, pageDesc);
             objList.addAll(dynamicTask);
         }
         JsonResultUtils.writeSingleDataJson(objList, response);
@@ -575,7 +575,7 @@ public class FlowManagerController extends BaseController {
                             searchColumn.put("nodeInstId", nodeInst.getNodeInstId());
                             searchColumn.put("unitCode", nodeInst.getUnitCode());
                             searchColumn.put("userStation", nodeInfo.getRoleCode());
-                            List<UserTask> dynamicTask = flowEng.queryDynamicTaskByUnitStation(searchColumn, pageDesc);
+                            List<UserTask> dynamicTask = flowEng.listDynamicTaskByUnitStation(searchColumn, pageDesc);
                             tasks.addAll(dynamicTask);
                         }
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
@@ -712,7 +712,7 @@ public class FlowManagerController extends BaseController {
      */
     @PostMapping(value = "/stopAndChangeInstance/{flowInstId}/{userCode}")
     public void stopAndChangeInstance(String flowInstId, String userCode, String desc) {
-        flowManager.stopAndChangeInstance(flowInstId, userCode, desc);
+        flowManager.stopInstance(flowInstId, userCode, desc);
     }
 
     /**

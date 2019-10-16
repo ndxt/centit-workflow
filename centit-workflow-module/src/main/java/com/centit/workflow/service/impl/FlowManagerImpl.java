@@ -25,9 +25,6 @@ import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.*;
 
-//import net.sf.json.JSONObject;
-//import net.sf.json.JSONArray;
-
 /**
  * 流程管理业务实现类
  *
@@ -577,44 +574,24 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return new ArrayList<ManageActionLog>(magLogList);
     }
 
-    /**
-     * 强行结束一个流程，同时将其所有的活动节点也强行结束
-     */
-    @Override
-    public int stopInstance(String flowInstId, String mangerUserCode,
-                            String admindesc) {
-        // FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
-        return updateInstanceState(flowInstId, "F", mangerUserCode, admindesc);
-    }
-
-
-    /**
-     * 终止一个流程
-     * 修改其流程id为负数
-     * 更新所有节点状态为F
-     * F 强行结束
-     */
-    public int stopAndChangeInstance(String flowInstId, String mangerUserCode, String admindesc) {
-        //FlowOptUtils.sendFinishMsg(flowInstId, mangerUserCode);
-        return stopInstanceState(flowInstId, mangerUserCode, admindesc);
-    }
 
     /**
      * 更新流程实例状态，同时需更新所有节点实例状态
      *
-     * @param instid   实例编号
-     * @param userCode 操作用户
+     * @param flowInstId   实例编号
+     * @param mangerUserCode 操作用户
      */
-    private int stopInstanceState(String instid, String userCode,
+    @Override
+    public int stopInstance(String flowInstId, String mangerUserCode,
                                   String admindesc) {
 
-        FlowInstance wfFlowInst = flowInstanceDao.getObjectById(instid);
+        FlowInstance wfFlowInst = flowInstanceDao.getObjectById(flowInstId);
         if (wfFlowInst == null)
             return 0;
         Date updateTime = DatetimeOpt.currentUtilDate();
         wfFlowInst.setLastUpdateTime(updateTime);
-        wfFlowInst.setLastUpdateUser(userCode);
-        wfFlowInst.setFlowInstId(instid);
+        wfFlowInst.setLastUpdateUser(mangerUserCode);
+        wfFlowInst.setFlowInstId(flowInstId);
 
         String actionDesc = "U";
         // 只能结束未完成的流程
@@ -633,14 +610,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             if ("N".equals(nodeInst.getNodeState()) || "P".equals(nodeInst.getNodeState()) || "S".equals(nodeInst.getNodeState())) {
                 nodeInst.setNodeState("F");
                 nodeInst.setLastUpdateTime(updateTime);
-                nodeInst.setLastUpdateUser(userCode);
+                nodeInst.setLastUpdateUser(mangerUserCode);
                 nodeInstanceDao.updateObject(nodeInst);
             }
         }
 
 
-        ManageActionLog managerAct = FlowOptUtils.createManagerAction(instid,
-            userCode, "S");
+        ManageActionLog managerAct = FlowOptUtils.createManagerAction(flowInstId,
+            mangerUserCode, "S");
         managerAct.setActionId(manageActionDao.getNextManageId());
         managerAct.setAdminDesc(actionDesc + admindesc);
         manageActionDao.saveNewObject(managerAct);
@@ -1374,31 +1351,21 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 在任务列表中指定工作人员，这样就屏蔽了按照角色自动查找符合权限的人员
      */
     @Override
-    public long assignTask(String nodeInstId, String userCode,
-                           String mangerUserCode, Date expiretime, String authDesc) {
+    public int assignNodeTask(String nodeInstId, String userCode,
+                           String mangerUserCode, String authDesc) {
         NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
         if (node == null)
             return -1;
 
         Set<ActionTask> taskList = node.getWfActionTasks();
         for (ActionTask task : taskList) {
-            if ("T".equals(task.getIsValid())
-                && userCode.equals(task.getUserCode()))
-                return -2;
+            actionTaskDao.deleteObject(task);
         }
-
-        ActionTask task = FlowOptUtils.createActionTask(nodeInstId,
-            userCode);
-        //task.setTaskId(actionTaskDao.getNextTaskId());
-        task.setExpireTime(expiretime);
-        task.setAuthDesc(authDesc);
-        //node.addWfActionTask(task);
-        node.setTaskAssigned("T");
-
-        actionTaskDao.saveNewObject(task);
-        nodeInstanceDao.mergeObject(node);
+        node.setTaskAssigned("S");
+        node.setUserCode(userCode);
         node.setLastUpdateUser(mangerUserCode);
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+        nodeInstanceDao.updateObject(node);
         ActionLog wfactlog = FlowOptUtils.createActionLog("A",
             mangerUserCode, node.getNodeInstId());
         //wfactlog.setActionId(actionLogDao.getNextActionId());
@@ -1415,32 +1382,30 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     @Override
-    public int disableTask(long taskInstId, String mangerUserCode) {
-        ActionTask assignedTask = actionTaskDao.getObjectById(taskInstId);
-        if (assignedTask == null)
-            return -1;
-        NodeInstance node = nodeInstanceDao.getObjectById(assignedTask
-            .getNodeInstId());
+    public int deleteNodeTask(String nodeInstId, String userCode,
+                              String mangerUserCode) {
+        NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
         if (node == null)
-            return -2;
-        if ("C".equals(assignedTask.getTaskState()))// 只能禁用没有完成的任务
-            return -3;
-
+            return -1;
         Set<ActionTask> taskList = node.getWfActionTasks();
-        int atc = 0;
+        int leftTaskCount = 0;
+        ActionTask leftTask = null;
         for (ActionTask task : taskList) {
-            if (task.getTaskId().equals(taskInstId))// 只能禁用未完成的任务
-                assignedTask = task;
-            else if ("T".equals(task.getIsValid())
-                && "A".equals(task.getTaskState()))
-                atc++;
+            if (userCode.equals(task.getUserCode())) {
+                actionTaskDao.deleteObject(task);
+            }else{
+                leftTaskCount ++;
+                leftTask = task;
+            }
         }
-
-        assignedTask.setIsValid("F");
-        node.setTaskAssigned(atc > 0 ? "T" : "F");
-        nodeInstanceDao.mergeObject(node);
+        if( leftTaskCount ==1){
+            node.setTaskAssigned("S");
+            node.setUserCode(leftTask.getUserCode());
+        }
         node.setLastUpdateUser(mangerUserCode);
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+        nodeInstanceDao.updateObject(node);
+
         ActionLog wfactlog = FlowOptUtils.createActionLog("A",
             mangerUserCode, node.getNodeInstId());
         //wfactlog.setActionId(actionLogDao.getNextActionId());
@@ -1452,30 +1417,45 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 删除节点任务
      */
     @Override
-    public int deleteTask(long taskInstId, String mangerUserCode) {
-        ActionTask assignedTask = actionTaskDao.getObjectById(taskInstId);
-        if (assignedTask == null)
-            return -1;
-        NodeInstance node = nodeInstanceDao.getObjectById(assignedTask
-            .getNodeInstId());
+    public int addNodeTask(String nodeInstId, String userCode,
+                           String mangerUserCode, String authDesc)  {
+        NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
         if (node == null)
-            return -2;
-        if ("C".equals(assignedTask.getTaskState()))// 只能禁用没有完成的任务
-            return -3;
-
-        Set<ActionTask> taskList = node.getWfActionTasks();
-        int atc = 0;
-        for (ActionTask task : taskList) {
-            if (task.getTaskId().equals(taskInstId))// 只能禁用未完成的任务
-                assignedTask = task;
-            else if ("T".equals(task.getIsValid())
-                && "A".equals(task.getTaskState()))
-                atc++;
+            return -1;
+        if("T".equals(node.getTaskAssigned())) {
+            nodeInstanceDao.fetchObjectReference(node,"wfActionTasks");
+            boolean findCount = false;
+            ActionTask leftTask = null;
+            for (ActionTask task : node.getWfActionTasks()) {
+                if (userCode.equals(task.getUserCode())) {
+                    findCount = true;
+                    break;
+                }
+            }
+            if(!findCount){
+                ActionTask task = FlowOptUtils.createActionTask(nodeInstId,
+                    userCode);
+                task.setAuthDesc(authDesc);
+                actionTaskDao.saveNewObject(task);
+            }
+        } else {
+            String oldUser = node.getUserCode();
+            if(StringUtils.isBlank(oldUser) || StringUtils.equals(oldUser, userCode) ){
+                node.setUserCode(userCode);
+            } else {
+                node.setTaskAssigned("T");
+                ActionTask task = FlowOptUtils.createActionTask(nodeInstId,
+                    userCode);
+                task.setAuthDesc(authDesc);
+                actionTaskDao.saveNewObject(task);
+                task = FlowOptUtils.createActionTask(nodeInstId,
+                    oldUser);
+                task.setAuthDesc("转换为多人操作");
+                actionTaskDao.saveNewObject(task);
+            }
         }
 
-        node.removeWfActionTask(assignedTask);
-        node.setTaskAssigned(atc > 0 ? "T" : "F");
-        nodeInstanceDao.mergeObject(node);
+        nodeInstanceDao.updateObject(node);
         node.setLastUpdateUser(mangerUserCode);
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
         ActionLog wfactlog = FlowOptUtils.createActionLog("A",
