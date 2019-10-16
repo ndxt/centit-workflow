@@ -1413,6 +1413,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return 0;
     }
 
+    @Override
+    public int deleteNodeTaskById(String taskId,
+                              String mangerUserCode) {
+        actionTaskDao.deleteObjectById(taskId);
+        return 0;
+    }
+
     /**
      * 删除节点任务
      */

@@ -22,6 +22,7 @@ public class ActionTask implements java.io.Serializable {
     @Column(name = "TASK_ID")
     @ValueGenerator(strategy = GeneratorType.UUID22)
     private String taskId;
+
     @Column(name="NODE_INST_ID")
     private String nodeInstId;
     @Column(name="ASSIGN_TIME")

@@ -66,7 +66,7 @@ public class FlowEngineController extends BaseController {
             flowManager.deleteNodeActionTasks(n, flowInstance.getFlowInstId(), newFlowInstanceOptions.getUserCode());
             //for (String v : vars) {
             flowManager.assignNodeTask(n, newFlowInstanceOptions.getWorkUserCode(),
-                newFlowInstanceOptions.getUserCode(), null, "手动指定审批人");
+                newFlowInstanceOptions.getUserCode(),  "手动指定审批人");
             //}
         }
         JsonResultUtils.writeSingleDataJson(flowInstance, response);
@@ -153,7 +153,7 @@ public class FlowEngineController extends BaseController {
                 for (String n : nextNodes) {
                     flowManager.deleteNodeActionTasks(n, flowEngine.getNodeInstById(nodeInstId).getFlowInstId(), userCode);
                     for (Object v : users) {
-                        flowManager.assignTask(n, v.toString(), userCode, null, "手动指定审批人");
+                        flowManager.assignNodeTask(n, v.toString(), userCode,  "手动指定审批人");
                     }
                 }
             }
@@ -349,12 +349,13 @@ public class FlowEngineController extends BaseController {
     public void createNodeInst(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         String flowInstId = jsonObject.getString("flowInstId");
+        String curNodeInstId = jsonObject.getString("curNodeInstId");
         String createUser = jsonObject.getString("createUser");
-        String userCodes = jsonObject.getString("userCodes");
-        long nodeId = jsonObject.getLong("nodeId");
+        String userCode = jsonObject.getString("userCode");
+        String nodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
-        List<String> userList = JSON.parseArray(userCodes, String.class);
-        flowEngine.createNodeInst(flowInstId, createUser, nodeId, userList, unitCode);
+        flowEngine.createIsolatedNodeInst(flowInstId, curNodeInstId, createUser,
+            nodeCode, userCode, unitCode);
     }
 
     @ApiOperation(value = "回退节点", notes = "回退节点")

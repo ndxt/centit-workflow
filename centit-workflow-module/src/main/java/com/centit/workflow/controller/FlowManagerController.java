@@ -203,21 +203,10 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/assign/{nodeInstId}/{userCode}", method = RequestMethod.POST)
     public void assign(@PathVariable String nodeInstId,@PathVariable String userCode, ActionTask actionTask, HttpServletRequest request, HttpServletResponse response) {
         flowManager.assignNodeTask(nodeInstId,
-            actionTask.getUserCode(), "admin",
-            actionTask.getExpireTime(), actionTask.getAuthDesc());
+            actionTask.getUserCode(), "admin", actionTask.getAuthDesc());
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
-    /**
-     * 收回一个分配的任务
-     *
-     * @return
-     */
-    @RequestMapping(value = "/disableTask/{taskId}", method = RequestMethod.POST)
-    public void disableTask(@PathVariable Long taskId, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.disableTask(taskId, "admin");
-        JsonResultUtils.writeSingleDataJson("", response);
-    }
 
     /**
      * 删除任务
@@ -225,13 +214,12 @@ public class FlowManagerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteTask/{taskId}", method = RequestMethod.POST)
-    public void deleteTask(@PathVariable Long taskId, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.deleteTask(taskId, "admin");
+    public void deleteTask(@PathVariable String taskId, HttpServletRequest request, HttpServletResponse response) {
+        flowManager.deleteNodeTaskById(taskId, "admin");
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
     /*tab：办件角色管理*/
-
     /**
      * 查询办件角色列表
      *
