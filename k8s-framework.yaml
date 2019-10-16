@@ -6,7 +6,7 @@ spec:
   type: NodePort
   ports:
     - port: 8080
-      nodePort: 11000
+      nodePort: 23000
   selector:
     app: workflow
 ---
