@@ -1,6 +1,8 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
@@ -22,6 +24,7 @@ public class FlowStage implements java.io.Serializable {
 
     @Id
     @Column(name = "STAGE_ID")
+    @ValueGenerator(strategy = GeneratorType.UUID22)
     private String stageId;
 
     @Column(name = "STAGE_CODE")
