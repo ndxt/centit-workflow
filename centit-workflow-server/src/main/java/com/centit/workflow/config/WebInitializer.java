@@ -18,10 +18,8 @@ import javax.servlet.ServletRegistration.Dynamic;
 
 
 public class WebInitializer implements WebApplicationInitializer {
-
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-
         initializeSpringConfig(servletContext);
         initializeSystemServletConfig(servletContext);
         initializeNormalServletConfig(servletContext);
@@ -34,7 +32,6 @@ public class WebInitializer implements WebApplicationInitializer {
         WebConfig.registerRequestThreadLocalFilter(servletContext);
         WebConfig.registerSpringSecurityFilter(servletContext, servletUrlPatterns);
     }
-
     /**
      * 加载Spring 配置
      * @param servletContext ServletContext
@@ -44,7 +41,6 @@ public class WebInitializer implements WebApplicationInitializer {
         springContext.register(ServiceConfig.class);
         servletContext.addListener(new ContextLoaderListener(springContext));
     }
-
     /**
      * 加载Servlet 配置
      * @param servletContext ServletContext
@@ -58,9 +54,7 @@ public class WebInitializer implements WebApplicationInitializer {
         system.setAsyncSupported(true);
     }
 
-
     private void initializeNormalServletConfig(ServletContext servletContext) {
-
         AnnotationConfigWebApplicationContext contextSer = new AnnotationConfigWebApplicationContext();
         contextSer.register(NormalSpringMvcConfig.class,SwaggerConfig.class);
         ServletRegistration.Dynamic workflow  = servletContext.addServlet("workflow", new DispatcherServlet(contextSer));
