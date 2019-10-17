@@ -1,6 +1,8 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +22,8 @@ public class RoleRelegate implements java.io.Serializable {
 
     @Id
     @Column(name = "RELEGATE_NO")
-    private Long relegateNo;
+    @ValueGenerator(strategy = GeneratorType.UUID22)
+    private String relegateNo;
     //委托人
     @Column(name = "GRANTOR")
     private String grantor;
@@ -56,7 +59,7 @@ public class RoleRelegate implements java.io.Serializable {
     }
 
     /** minimal constructor */
-    public RoleRelegate(Long relegateno, String grantor, String grantee,
+    public RoleRelegate(String relegateno, String grantor, String grantee,
                         String isvalid, Date relegatetime) {
 
         this.relegateNo = relegateno;
@@ -68,7 +71,7 @@ public class RoleRelegate implements java.io.Serializable {
     }
 
     /** full constructor */
-    public RoleRelegate(Long relegateno, String grantor, String grantee,
+    public RoleRelegate(String relegateno, String grantor, String grantee,
                         String isvalid, Date relegatetime, Date expiretime,
                         String unitcode, String roletype, String rolecode,
                         String grantdesc, String recorder, Date recorddate) {
@@ -88,11 +91,11 @@ public class RoleRelegate implements java.io.Serializable {
         this.recordDate = recorddate;
     }
 
-    public Long getRelegateNo() {
+    public String getRelegateNo() {
         return this.relegateNo;
     }
 
-    public void setRelegateNo(Long relegateno) {
+    public void setRelegateNo(String relegateno) {
         this.relegateNo = relegateno;
     }
 

@@ -3,7 +3,9 @@ package com.centit.workflow.dao;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.algorithm.UuidOpt;
 import com.centit.workflow.po.RoleRelegate;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,9 +55,8 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate,Long> {
     }
     @Transactional(propagation= Propagation.MANDATORY)
     public void saveObject(RoleRelegate roleRelegate) {
-        if (roleRelegate.getRelegateNo() == null
-                || roleRelegate.getRelegateNo() == 0) {
-            roleRelegate.setRelegateNo(getNextReleGateId());
+        if (StringUtils.isBlank(roleRelegate.getRelegateNo())) {
+            roleRelegate.setRelegateNo(UuidOpt.getUuidAsString32());
         }
         super.mergeObject(roleRelegate);
     }
