@@ -1,6 +1,5 @@
 package com.centit.workflow.client.service;
 
-
 import com.alibaba.fastjson.JSONArray;
 import com.centit.workflow.po.FlowInstance;
 

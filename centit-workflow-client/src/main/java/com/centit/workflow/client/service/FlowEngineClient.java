@@ -1,6 +1,5 @@
 package com.centit.workflow.client.service;
 
-
 import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
@@ -18,8 +17,6 @@ import java.util.Set;
  * 流程运行接口
  */
 public interface FlowEngineClient {
-
-
     //--------------------创建流程实例接口-----------------------------------
     /**
      * 创建流程实例  返回流程实例

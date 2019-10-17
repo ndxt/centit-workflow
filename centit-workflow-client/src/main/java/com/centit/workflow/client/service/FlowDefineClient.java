@@ -65,7 +65,6 @@ public interface FlowDefineClient {
         return listFlowItemRole(flowCode, -1);
     }
 
-
     /**
      * 获取流程所有阶段
      * @param flowCode 流程代码

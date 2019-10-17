@@ -21,7 +21,9 @@ public class FlowOptPage implements java.io.Serializable {
     @Id
     @Column(name = "OPT_CODE")
     private String optCode;
-
+    /**
+     * 和flowOptInfo关联
+     */
     @Column(name = "OPT_ID")
     private String optId;
 
