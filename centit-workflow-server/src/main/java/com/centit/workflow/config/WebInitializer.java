@@ -6,7 +6,6 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -29,7 +28,6 @@ public class WebInitializer implements WebApplicationInitializer {
         String [] servletUrlPatterns = {"/system/*","/workflow/*"};
         WebConfig.registerRequestContextListener(servletContext);
         WebConfig.registerSingleSignOutHttpSessionListener(servletContext);
-//        WebConfig.registerResponseCorsFilter(servletContext);
         WebConfig.registerCharacterEncodingFilter(servletContext, servletUrlPatterns);
         WebConfig.registerHttpPutFormContentFilter(servletContext, servletUrlPatterns);
         WebConfig.registerHiddenHttpMethodFilter(servletContext, servletUrlPatterns);
@@ -69,8 +67,5 @@ public class WebInitializer implements WebApplicationInitializer {
         workflow.addMapping("/workflow/*");
         workflow.setLoadOnStartup(1);
         workflow.setAsyncSupported(true);
-        //这个过滤器保证hibernate懒加载成功
-        /* javax.servlet.FilterRegistration.Dynamic corsFilter = servletContext.addFilter("hibernateFilter", OpenSessionInViewFilter.class);
-        corsFilter.addMappingForUrlPatterns((EnumSet)null, false, new String[]{"*//*"});*/
     }
 }
