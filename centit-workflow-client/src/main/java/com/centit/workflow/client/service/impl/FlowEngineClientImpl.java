@@ -276,7 +276,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @param flowInstId    流程实例号
      * @param curNodeInstId 当前节点实例号
      * @param nodeCode      节点 的环节代码
-     * @param createUser
+     * @param createUser    创建用户
      * @param userCode      指定用户
      * @param unitCode      指定机构
      * @return 节点实例

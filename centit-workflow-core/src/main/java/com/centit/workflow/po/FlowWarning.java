@@ -1,5 +1,7 @@
 package com.centit.workflow.po;
 
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -12,6 +14,7 @@ import java.util.Date;
  */
 
 @Entity
+@Data
 @Table(name="WF_RUNTIME_WARNING")
 public class FlowWarning implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
@@ -19,7 +22,8 @@ public class FlowWarning implements java.io.Serializable {
     @Column(name = "WARNING_ID")
     //@GeneratedValue(generator = "assignedGenerator")
     //@GenericGenerator(name = "assignedGenerator", strategy = "assigned")
-    private Long warningId;
+    private String warningId;
+
     @Column(name="NODE_INST_ID")
     private String  nodeInstId;
     @Column(name="FLOW_INST_ID")
@@ -51,7 +55,7 @@ public class FlowWarning implements java.io.Serializable {
     }
     /** minimal constructor */
     public FlowWarning(
-        Long warningid
+        String warningid
         ,String flowInstId) {
 
 
@@ -60,162 +64,10 @@ public class FlowWarning implements java.io.Serializable {
         this.flowInstId= flowInstId;
     }
 
-/** full constructor */
-    public FlowWarning(
-     Long warningid
-    ,String  nodeInstId,String flowInstId,String  flowPhase,String  warningType,String  warningCode,Date  warningTime,String  warningState,String  warningidMsg,Date  sendMsgTime,String  sendUsers) {
-
-        this.warningId = warningid;
-
-        this.nodeInstId= nodeInstId;
-        this.flowInstId= flowInstId;
-        this.flowStage= flowPhase;
-        this.warningType= warningType;
-        this.warningCode= warningCode;
-        this.warningTime= warningTime;
-        this.warningState= warningState;
-        this.warningidMsg= warningidMsg;
-        this.sendMsgTime= sendMsgTime;
-        this.sendUsers= sendUsers;
-    }
-
-    /**
-     * F ： 工作流 N ：节点 P：阶段
-     * @return
-     */
-    public String getObjType() {
-        return objType;
-    }
-    /**
-     * F ： 工作流 N ：节点 P：阶段
-     * @param objType
-     */
-    public void setObjType(String objType) {
-        this.objType = objType;
-    }
-    /**
-     * 0 待发送 1 已发送 2 发送消息失败
-     * @return
-     */
-    public String getNoticeState() {
-        return noticeState;
-    }
-    /**
-     * 0 待发送 1 已发送 2 发送消息失败
-     * @param noticeState
-     */
-    public void setNoticeState(String noticeState) {
-        this.noticeState = noticeState;
-    }
-
-    public Long getWarningid() {
-        return this.warningId;
-    }
-
-    public void setWarningid(Long warningid) {
-        this.warningId = warningid;
-    }
-    // Property accessors
-
-    public String getNodeInstId() {
-        return this.nodeInstId;
-    }
-
-    public void setNodeInstId(String nodeInstId) {
-        this.nodeInstId = nodeInstId;
-    }
-
-    public String getFlowInstId() {
-        return this.flowInstId;
-    }
-
-    public void setFlowInstId(String flowInstId) {
-        this.flowInstId = flowInstId;
-    }
-
-    public String getFlowStage() {
-        return this.flowStage;
-    }
-
-    public void setFlowStage(String stageCode) {
-        this.flowStage = stageCode;
-    }
-
-    /**
-     * @return W，预警  A  报警 N 提醒  O 其他
-     */
-    public String getWarningType() {
-        return this.warningType;
-    }
-    /**
-     *
-     * @param warningType W，预警  A  报警 N 提醒  O 其他
-     */
-    public void setWarningType(String warningType) {
-        this.warningType = warningType;
-    }
-
-    public String getWarningCode() {
-        return this.warningCode;
-    }
-
-    public void setWarningCode(String warningCode) {
-        this.warningCode = warningCode;
-    }
-
-    public Date getWarningTime() {
-        return this.warningTime;
-    }
-
-    public void setWarningTime(Date warningTime) {
-        this.warningTime = warningTime;
-    }
-
-    /**
-     * D 摘牌 C 纠正 F 督办 N 未处理
-     */
-    public String getWarningState() {
-        return this.warningState;
-    }
-
-    /**
-     * D 摘牌 C 纠正 F 督办 N 未处理
-     * @param warningState
-     */
-    public void setWarningState(String warningState) {
-        this.warningState = warningState;
-    }
-
-    public String getWarningidMsg() {
-        return this.warningidMsg;
-    }
-
-    public void setWarningidMsg(String warningidMsg) {
-        this.warningidMsg = warningidMsg;
-    }
-
-    public Date getSendMsgTime() {
-        return this.sendMsgTime;
-    }
-
-    public void setSendMsgTime(Date sendMsgTime) {
-        this.sendMsgTime = sendMsgTime;
-    }
-
-    public String getSendUsers() {
-        return this.sendUsers;
-    }
-
-    public void setSendUsers(String sendUsers) {
-        this.sendUsers = sendUsers;
-    }
-
-
 
     public void copy(FlowWarning other){
 
-        this.setWarningid(other.getWarningid());
-
+        this.setWarningId(other.getWarningId());
         this.nodeInstId= other.getNodeInstId();
         this.flowInstId= other.getFlowInstId();
         this.flowStage= other.getFlowStage();
@@ -226,13 +78,11 @@ public class FlowWarning implements java.io.Serializable {
         this.warningidMsg= other.getWarningidMsg();
         this.sendMsgTime= other.getSendMsgTime();
         this.sendUsers= other.getSendUsers();
-
     }
 
     public void copyNotNullProperty(FlowWarning other){
-
-    if( other.getWarningid() != null)
-        this.setWarningid(other.getWarningid());
+        if( other.getWarningId() != null)
+            this.setWarningId(other.getWarningId());
 
         if( other.getNodeInstId() != null)
             this.nodeInstId= other.getNodeInstId();
@@ -258,7 +108,6 @@ public class FlowWarning implements java.io.Serializable {
     }
 
     public void clearProperties(){
-
         this.nodeInstId= null;
         this.flowInstId= null;
         this.flowStage= null;
@@ -269,7 +118,5 @@ public class FlowWarning implements java.io.Serializable {
         this.warningidMsg= null;
         this.sendMsgTime= null;
         this.sendUsers= null;
-
     }
-
 }

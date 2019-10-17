@@ -1,9 +1,7 @@
 package com.centit.workflow.service.impl;
 
-import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitParamBuilder;
-import com.centit.framework.components.impl.SystemUserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.framework.model.basedata.IUserUnit;
@@ -288,7 +286,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nodeUnits = CollectionsOpt.createHashSet(nodeUnit);
             }
         }
-
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
         //构建内置变量
         Map<String, Set<String>> unitParams = UserUnitParamBuilder.createEmptyParamMap();
         Map<String, Set<String>> userParams = UserUnitParamBuilder.createEmptyParamMap();
@@ -304,9 +302,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             UserUnitParamBuilder.addParamToParamMap(userParams, "P", preNode.getUserCode());
         }
 
+        //context.getUserInfoByCode()
+
         UserUnitParamBuilder.addParamToParamMap(unitParams, "U",
             options.getUnitCode() == null ?
-                CodeRepositoryUtil.getUserInfoByCode(options.getUserCode()).getPrimaryUnit():
+                context.getUserInfoByCode(options.getUserCode()).getPrimaryUnit():
                 options.getUnitCode());
 
         UserUnitParamBuilder.addParamToParamMap(unitParams, "N", options.getUnitCode());
@@ -320,7 +320,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // 如果指定机构 就不需要再进行计算了
         if (nodeUnits == null) {
             nodeUnits = UserUnitCalcEngine.calcUnitsByExp(
-                new SystemUserUnitFilterCalcContext(),
+                context,
                 nextOptNode.getUnitExp(),
                 unitParams,
                 varTrans);
@@ -360,7 +360,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
             //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色
             //根据权限表达式创建任务列表
-            optUsers = UserUnitCalcEngine.calcOperators(userUnitFilterFactory.createCalcContext(), roleFormula,
+            optUsers = UserUnitCalcEngine.calcOperators(context, roleFormula,
                 unitParams, userParams, null, varTrans);
             if (optUsers == null || optUsers.size() == 0) {
                 logger.error("权限引擎没有识别出符合表达式的操作人员！ wid:" + flowInst.getFlowInstId() + " nid" + nextOptNode.getNodeId());
@@ -374,7 +374,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else/*gw xz ro(system)*/
             if(StringUtils.isNotBlank(nextOptNode.getRoleType())
                 && StringUtils.isNotBlank(nextOptNode.getRoleCode())) {
-            optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(userUnitFilterFactory.createCalcContext(),
+            optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(context,
                 nextOptNode.getRoleType(), nextOptNode.getRoleCode(), options.getUnitCode());
         }
 
@@ -554,6 +554,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     } else {
                         int nRn = 1;
                         //Date currentTime = new Date(System.currentTimeMillis());
+                        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
                         for (String uc : optUsers) {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
@@ -562,7 +563,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
                                 preNodeInst, preTransPath, nodeTran,
-                                SubmitOptOptions.create().copy(options).workUser(uc).lockOptUser(true).unit(CodeRepositoryUtil.getUserPrimaryUnit(uc) != null ? CodeRepositoryUtil.getUserPrimaryUnit(uc).getUnitCode() : null),
+                                SubmitOptOptions.create().copy(options).workUser(uc).lockOptUser(true)
+                                    .unit(context.getUserInfoByCode(options.getUserCode()).getPrimaryUnit()),
                                 flowVarTrans,
                                 application));
                             nRn++;
@@ -2004,10 +2006,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public List<UserTask> listDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
         //动态任务
         //1.找到用户所有机构下的岗位和职务
-        List<? extends IUserUnit> iUserUnits =
-            CodeRepositoryUtil.listUserUnits((String) searchColumn.get("userCode"));
+        List<? extends IUserUnit> iUserUnits =context.listUserUnits((String) searchColumn.get("userCode"));
 
         //2.以机构，岗位，职务来查询任务
         if (iUserUnits == null || iUserUnits.size() == 0) {
@@ -2029,8 +2031,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String station = StringBaseOpt.castObjectToString(searchColumn.get("userStation"));
         String unitCode = StringBaseOpt.castObjectToString(searchColumn.get("unitCode"));
         String nodeInstId = (String) searchColumn.get("nodeInstId");
-        // TODO CodeRepositoryUtil 这个是bug 应该替换为  UserUnitFilterCalcContext
-        List<? extends IUserUnit> userUnits = CodeRepositoryUtil.listAllUserUnits();
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        List<? extends IUserUnit> userUnits = context.listAllUserUnits();
         //2.以机构，岗位，职务来查询任务
         for (IUserUnit i : userUnits) {
             if(StringUtils.isNotBlank(unitCode)){
@@ -2064,7 +2066,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         //动态任务
         //1.找到用户主机构下的岗位和职务
-        List<? extends IUserUnit> iUserUnits = CodeRepositoryUtil.listUserUnits((String) searchColumn.get("userCode"));
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        List<? extends IUserUnit> iUserUnits = context.listUserUnits((String) searchColumn.get("userCode"));
         IUserUnit userUnit = null;
         if (iUserUnits != null && iUserUnits.size() > 0) {
             for (IUserUnit iUserUnit : iUserUnits) {

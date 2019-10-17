@@ -90,6 +90,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         " [ :stageArr | and c.STAGE_CODE in (:stageArr) ] "+
         "[:(like) flowOptName| and w.FLOW_OPT_NAME like :flowOptName] " +
         "[ :unitCode| and ( a.unit_code = :unitCode or a.unit_code is null )] " +
+        "[ :inUnitCodes| and ( a.unit_code in (:inUnitCodes) or a.unit_code is null )] " +
         "[ :userStation| and c.role_code = :userStation] " +
         "[ :stageCode| and c.STAGE_CODE = :stageCode] "+
         "[ :flowCode| and w.FLOW_CODE = :flowCode] " +
