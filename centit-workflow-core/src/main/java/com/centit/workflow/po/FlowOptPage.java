@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 /**
- * WF_OPTDEF 选项表  流程页面定义
+ * WF_OPTPAGE   流程页面定义
  * 2018年9月12日11:00:37
  **/
 @Entity

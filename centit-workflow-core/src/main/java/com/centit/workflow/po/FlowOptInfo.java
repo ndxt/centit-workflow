@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * WF_OPTINFO 选项表
+ * WF_OPTINFO 流程业务定义
  * 2018年9月12日11:00:37
  **/
 @Entity
