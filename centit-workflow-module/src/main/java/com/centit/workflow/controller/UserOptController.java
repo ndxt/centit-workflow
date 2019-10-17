@@ -5,11 +5,15 @@ import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
+import com.centit.framework.core.controller.WrapUpResponseBody;
+import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.security.model.CentitUserDetails;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleRelegate;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.RoleFormulaService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +26,8 @@ import java.util.List;
 /**
  * 用户的权限委托 和任务转移
  */
+@Api(value = "任务管理",
+    tags = "权限委托和任务转移")
 @Controller
 @RequestMapping("/flow/userOpt")
 public class UserOptController extends BaseController {
@@ -38,10 +44,11 @@ public class UserOptController extends BaseController {
      * @param userCode
      * @param pageDesc
      * @param request
-     * @param response
      */
+    @ApiOperation(value = "获取指定用户委托列表", notes = "获取指定用户委托列表")
+    @WrapUpResponseBody
     @RequestMapping(value = "/getRelegateList/{userCode}", method = {RequestMethod.GET})
-    public void getRelegateListByGrantor(@PathVariable String userCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
+    public PageQueryResult getRelegateListByGrantor(@PathVariable String userCode, PageDesc pageDesc, HttpServletRequest request) {
         if (StringUtils.isBlank(userCode)) {
             CentitUserDetails centitUserDetails = (CentitUserDetails) WebOptUtils.getLoginUser(request);
             if (centitUserDetails != null) {
@@ -50,18 +57,16 @@ public class UserOptController extends BaseController {
         }
         List<JSONObject> relegateList = flowManager.getListRoleRelegateByGrantor(userCode);
 
-        ResponseMapData resData = new ResponseMapData();
-        resData.addResponseData("objList", relegateList);
-        resData.addResponseData("pageDesc", pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+        return PageQueryResult.createResult(relegateList,pageDesc);
     }
 
     /**
      * 更新委托
-     *
      * @param json
      * @param response
      */
+    @ApiOperation(value = "保存委托", notes = "保存委托")
+    @WrapUpResponseBody
     @PostMapping(value = "/saveRelegate")
     public void saveRelegate(@RequestBody String json, HttpServletResponse response) {
         RoleRelegate roleRelegate = JSONObject.parseObject(json, RoleRelegate.class);
@@ -75,17 +80,21 @@ public class UserOptController extends BaseController {
      * @param relegateNo
      * @param response
      */
+    @ApiOperation(value = "删除委托", notes = "删除委托")
+    @WrapUpResponseBody
     @RequestMapping(value = "/deleteRelegate/{relegateNo}", method = {RequestMethod.DELETE})
     public void deleteRelegate(@PathVariable Long relegateNo, HttpServletResponse response) {
         flowManager.deleteRoleRelegate(relegateNo);
         JsonResultUtils.writeSuccessJson(response);
     }
-
+    @ApiOperation(value = "通过参数获取委托", notes = "通过参数获取委托")
+    @WrapUpResponseBody
     @RequestMapping(value = "/getTaskDelegateByNo", method = RequestMethod.POST)
     public void getTaskDelegateByNo(@RequestBody String json, HttpServletResponse response) {
         JsonResultUtils.writeSingleDataJson(flowManager.getRoleRelegateByPara(json), response);
     }
-
+    @ApiOperation(value = "更新委托", notes = "更新委托")
+    @WrapUpResponseBody
     @RequestMapping(value = "/resetRelegate", method = RequestMethod.PUT)
     public void resetRelegate(@RequestBody String json, HttpServletResponse response) {
         Boolean flag = flowManager.changeRelegateValid(json);
