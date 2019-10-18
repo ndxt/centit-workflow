@@ -68,20 +68,23 @@ public class FlowManagerController extends BaseController {
      * @param flowInstId
      * @param response
      */
+    @ApiOperation(value = "根据id获取流程实例对象", notes = "根据id获取流程实例对象")
+    @WrapUpResponseBody
     @RequestMapping(value = "/{flowInstId}", method = RequestMethod.GET)
-    public void getFlowInstance(@PathVariable String flowInstId, HttpServletResponse response) {
+    public Map<String, Object> getFlowInstance(@PathVariable String flowInstId, HttpServletResponse response) {
         FlowInstance flowInst = flowManager.getFlowInstance(flowInstId);
         Map<String, Object> result = new HashMap<>();
-        excludes = new HashMap<>();
+/*        excludes = new HashMap<>();
         excludes.put(FlowInstance.class, new String[]{"flowDefine", "wfStageInstances"});
         excludes.put(NodeInstance.class, new String[]{"wfActionLogs"});
-        excludes.put(NodeInfo.class, new String[]{"flowDefine"});
+        excludes.put(NodeInfo.class, new String[]{"flowDefine"});*/
         List<StageInstance> stageList = flowManager.listStageInstByFlowInstId(flowInstId);
         String viewFlowInst = flowManager.viewFlowInstance(flowInstId);
         result.put("flowInst", flowInst);
         result.put("viewFlowInst", viewFlowInst);
         result.put("stageList", stageList);
-        JsonResultUtils.writeSingleDataJson(result, response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
+        return result;
+        //JsonResultUtils.writeSingleDataJson(result, response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
     }
 
     /**
@@ -347,14 +350,18 @@ public class FlowManagerController extends BaseController {
      *
      * @param wfinstid
      * @param request
-     * @param response
      */
+    @ApiOperation(value = "暂挂一个流程实例", notes = "暂挂一个流程实例")
+    @WrapUpResponseBody
     @RequestMapping(value = "/suspendinst/{wfinstid}", method = RequestMethod.GET)
-    public void suspendInstance(@PathVariable String wfinstid, HttpServletRequest request, HttpServletResponse response) {
-        String mangerUserCode = "admin";
+    public String suspendInstance(@PathVariable String wfinstid, HttpServletRequest request) {
+        String mangerUserCode = request.getParameter("admin");
+        if(StringUtils.isBlank(mangerUserCode)){
+            mangerUserCode="admin";
+        }
         String admindesc = request.getParameter("stopDesc");
         flowManager.suspendInstance(wfinstid, mangerUserCode, admindesc);
-        JsonResultUtils.writeSingleDataJson("已暂挂", response);
+        return "已暂挂";
     }
 
     /**
@@ -391,14 +398,28 @@ public class FlowManagerController extends BaseController {
      *
      * @param flowInstId
      * @param request
-     * @param response
      */
+    @ApiOperation(value = "激活流程实例", notes = "激活流程实例")
+    @WrapUpResponseBody
     @RequestMapping(value = "/activizeinst/{flowInstId}", method = RequestMethod.GET)
-    public void activizeInstance(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.activizeInstance(flowInstId, "admin", "");
-        JsonResultUtils.writeSingleDataJson("", response);
+    public void activizeInstance(@PathVariable String flowInstId, HttpServletRequest request) {
+        String mangerUserCode = request.getParameter("admin");
+        if(StringUtils.isBlank(mangerUserCode)){
+            mangerUserCode="admin";
+        }
+        String admindesc = request.getParameter("stopDesc");
+        flowManager.activizeInstance(flowInstId, mangerUserCode, admindesc);
     }
-
+    @ApiOperation(value = "暂停流程的一个节点", notes = "暂停流程的一个节点")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/suspendNodeInst/{nodeInstId}", method = RequestMethod.GET)
+    public void suspendNodeInstance(@PathVariable String nodeInstId, HttpServletRequest request) {
+        String mangerUserCode = request.getParameter("admin");
+        if(StringUtils.isBlank(mangerUserCode)){
+            mangerUserCode="admin";
+        }
+        flowManager.suspendNodeInstance(nodeInstId, mangerUserCode);
+    }
 
     /*节点状态管理api
      * 1.回滚一个流程节点到上一节点
@@ -664,12 +685,11 @@ public class FlowManagerController extends BaseController {
         flowManager.moveUserTaskTo("u0000002", "u0000001", "u0000000", "测试");
         JsonResultUtils.writeBlankJson(response);
     }
-
+    @ApiOperation(value = "根据id获取流程实例节点", notes = "根据id获取流程实例节点")
+    @WrapUpResponseBody
     @RequestMapping(value = "/listFlowInstNodes", method = RequestMethod.GET)
-    public void listFlowInstNodes(HttpServletResponse response, String flowInstId) {
-        List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
-        resData.addResponseData(OBJLIST, nodeInstList);
-        JsonResultUtils.writeSingleDataJson(resData, response);
+    public List<NodeInstance> listFlowInstNodes(String flowInstId) {
+        return flowManager.listFlowInstNodes(flowInstId);
     }
 
     /**

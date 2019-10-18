@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
+import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.po.FlowInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -40,7 +41,9 @@ public class FlowManagerClientImpl implements FlowManagerClient {
         appSession = new AppSession(workFlowServerUrl,false,null,null);
         appSession.setAppLoginUrl(workFlowServerLoginUrl);
     }
-
+    public void setWorkFlowServerUrl(String workFlowServerUrl) {
+        this.workFlowServerUrl = workFlowServerUrl;
+    }
     @PostConstruct
     public void init(){
         //this.setWorkFlowServerUrl(workFlowServerUrl);
@@ -53,7 +56,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
         paramMap.put("flowInstId",String.valueOf(wfinstid));
 
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/engine/listFlowInstNodes",
+            "/flow/manager/listFlowInstNodes",
             paramMap);
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         return receiveJSON.getJSONArray();
@@ -67,7 +70,9 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public FlowInstance getFlowInstance(String flowInstId) {
-        return null;
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/manager/"+flowInstId);
+        return receiveJSON.getDataAsObject("flowInst", FlowInstance.class);
     }
 
 
@@ -89,6 +94,11 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public int suspendInstance(String flowInstId, String mangerUserCode, String admindesc) {
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("admin",mangerUserCode);
+        paramMap.put("stopDesc",admindesc);
+        RestfulHttpRequest.getResponseData(appSession,
+            "/flow/manager/suspendinst/"+flowInstId,paramMap);
         return 0;
     }
 
@@ -102,6 +112,11 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public int activizeInstance(String flowInstId, String mangerUserCode, String admindesc) {
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("admin",mangerUserCode);
+        paramMap.put("stopDesc",admindesc);
+        RestfulHttpRequest.getResponseData(appSession,
+            "/flow/manager/activizeinst/"+flowInstId,paramMap);
         return 0;
     }
 
@@ -114,6 +129,10 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public int suspendNodeInstance(String nodeInstId, String mangerUserCode) {
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("admin",mangerUserCode);
+        RestfulHttpRequest.getResponseData(appSession,
+            "/flow/manager/suspendNodeInst/"+nodeInstId,paramMap);
         return 0;
     }
 
