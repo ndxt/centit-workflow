@@ -29,9 +29,8 @@ public class FlowManagerClientImpl implements FlowManagerClient {
     public FlowManagerClientImpl() {
 
     }
+
     private AppSession appSession;
-
-
 
     public CloseableHttpClient allocHttpClient() throws Exception {
         return appSession.allocHttpClient();
@@ -41,7 +40,6 @@ public class FlowManagerClientImpl implements FlowManagerClient {
         appSession = new AppSession(workFlowServerUrl,false,null,null);
         appSession.setAppLoginUrl(workFlowServerLoginUrl);
     }
-
 
     @PostConstruct
     public void init(){

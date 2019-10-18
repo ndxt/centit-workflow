@@ -405,7 +405,7 @@ public class FlowDefineController extends BaseController {
         //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
         Map<String, String> bjMap = new LinkedHashMap<>();
         bjMap.put("", "请选择");
-        bjMap.putAll(flowDef.getRoleMapByFlowCode(flowcode, 0L));
+        bjMap.putAll(flowDef.listFlowItemRoles(flowcode, 0L));
         map.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, bjMap);
 
 //        Map<String, String> spMap = new LinkedHashMap<>();
@@ -423,10 +423,10 @@ public class FlowDefineController extends BaseController {
         // 子流程
         Map<String, String> map4 = flowDef.listAllSubFlow();
         map.put("SubWfcode", map4);
-        Map<String, String> stageMap = flowDef.listFlowStages(flowcode);
+        Map<String, String> stageMap = flowDef.listFlowStages(flowcode, 0L);
         map.put("FlowPhase", stageMap);
         // 流程变量
-        Map<String, String> flowVariableDefineMap = flowDef.listFlowVariableDefines(flowcode);
+        Map<String, String> flowVariableDefineMap = flowDef.listFlowVariableDefines(flowcode, 0L);
         map.put("FlowVariableDefine", flowVariableDefineMap);
         JsonResultUtils.writeSingleDataJson(map, response);
     }
@@ -450,10 +450,33 @@ public class FlowDefineController extends BaseController {
     public Map<String, Map<String, String>> listAllRole(){
         return flowDef.listAllRole();
     }
+
     @ApiOperation(value = "角色名称和类别对应列表")
     @RequestMapping(value = "/listRoleByType/{roleType}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public Map<String, String> listAllRole(@PathVariable String roleType){
         return flowDef.listRoleByType(roleType);
     }
+
+    @ApiOperation(value = "列举流程办件角色")
+    @RequestMapping(value = "/itemrole/{flowCode}/{version}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public Map<String, String> listFlowItemRoles(@PathVariable String flowCode, @PathVariable Long version){
+        return flowDef.listFlowItemRoles(flowCode, version);
+    }
+
+    @ApiOperation(value = "列举所有角色")
+    @RequestMapping(value = "/variable/{flowCode}/{version}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public Map<String, String> listFlowVariable(@PathVariable String flowCode, @PathVariable Long version){
+        return flowDef.listFlowVariableDefines(flowCode, version);
+    }
+
+    @ApiOperation(value = "列举所有角色")
+    @RequestMapping(value = "/stage/{flowCode}/{version}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public Map<String, String> listFlowStage(@PathVariable String flowCode, @PathVariable Long version){
+        return flowDef.listFlowStages(flowCode, version);
+    }
+
 }

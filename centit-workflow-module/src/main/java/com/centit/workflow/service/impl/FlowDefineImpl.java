@@ -685,12 +685,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public Map<String, String> getRoleMapByFlowCode(String flowCode, Long version) {
-        return flowTeamRoleDao.getRoleByFlowCode(flowCode, version);
-    }
-
-    @Override
-    @Transactional
     public void deleteFlowDef(String flowCode) {
         flowDefineDao.deleteObjectByFlowCode(flowCode);
     }
@@ -834,6 +828,15 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return subwf;
     }
 
+    @Override
+    @Transactional
+    public Map<String, String> listFlowItemRoles(String flowCode, Long version) {
+        if(version == null || version < 0){
+            version = flowDefineDao.getLastVersion(flowCode);
+        }
+        return flowTeamRoleDao.getRoleByFlowCode(flowCode, version);
+    }
+
     /**
      * 获取流程阶段信息
      *
@@ -841,11 +844,17 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @return 流程阶段
      */
     @Override
-    public Map<String, String> listFlowStages(String flowCode) {
-        FlowInfo flowDef = flowDefineDao.getFlowDefineByID(flowCode, 0L);//流程0版本读取
+    public Map<String, String> listFlowStages(String flowCode, Long version) {
+        if(version == null || version < 0){
+            version = flowDefineDao.getLastVersion(flowCode);
+        }
+
+        FlowInfo flowDef = flowDefineDao.getFlowDefineByID(flowCode, version);//流程0版本读取
+        flowDefineDao.fetchObjectReference(flowDef,"flowStages");
+
         Set<FlowStage> stageSet = flowDef.getFlowStagesSet();
 
-        Map<String, String> optmap = new HashMap<String, String>();
+        Map<String, String> optmap = new HashMap<>();
 
         if (stageSet != null && !stageSet.isEmpty()) {
             Iterator<? extends FlowStage> it = stageSet.iterator();
@@ -863,8 +872,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @return 流程变量信息
      */
     @Override
-    public Map<String, String> listFlowVariableDefines(String flowCode) {
-        List<FlowVariableDefine> flowVariableDefines = flowVariableDefineDao.getFlowVariableByFlowCode(flowCode);
+    public Map<String, String> listFlowVariableDefines(String flowCode, Long version) {
+        if(version == null || version < 0){
+            version = flowDefineDao.getLastVersion(flowCode);
+        }
+        List<FlowVariableDefine> flowVariableDefines
+            = flowVariableDefineDao.getFlowVariableByFlowCode(flowCode, version);
         Map<String, String> variableDefineMap = new HashMap<>();
         for (FlowVariableDefine flowVariableDefine : flowVariableDefines) {
             variableDefineMap.put(flowVariableDefine.getFlowVariableId(), flowVariableDefine.getVariableName());

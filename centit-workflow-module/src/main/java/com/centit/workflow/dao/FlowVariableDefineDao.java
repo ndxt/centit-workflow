@@ -36,7 +36,7 @@ public class FlowVariableDefineDao extends BaseDaoImpl<FlowVariableDefine,Long> 
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public List<FlowVariableDefine> getFlowVariableByFlowCode(String flowCode){
-        return this.listObjectsByFilter("where flow_code = ?",new Object[]{flowCode});
+    public List<FlowVariableDefine> getFlowVariableByFlowCode(String flowCode, long version){
+        return this.listObjectsByFilter("where FLOW_CODE = ? and VERSION = ?",new Object[]{flowCode, version});
     }
 }

@@ -71,7 +71,7 @@ public class FlowDefineClientImpl implements FlowDefineClient {
     @Override
     public FlowInfo getFlowInfo(String flowCode, long version) {
         HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/"+String.valueOf(version)+"/"+flowCode);
+            "/flow/define/"+String.valueOf(version)+"/"+flowCode);
         return HttpReceiveJSON.getDataAsObject(FlowInfo.class);
     }
 
@@ -84,21 +84,10 @@ public class FlowDefineClientImpl implements FlowDefineClient {
     @Override
     public List<FlowInfo> listFlowInfoVersion(String flowCode, PageDesc pageDesc) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            UrlOptUtils.appendParamsToUrl("/flow/lastversion/"+flowCode,
+            UrlOptUtils.appendParamsToUrl("/flow/define/lastversion/"+flowCode,
                 (JSONObject)JSON.toJSON(pageDesc)));
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
         return receiveJSON.getDataAsArray("objList",FlowInfo.class);
-    }
-
-    /**
-     * 获取和业务关联的所有 工作流
-     *
-     * @param optId 业务代码
-     * @return 工作流代码 -> 工作流名称
-     */
-    @Override
-    public Map<String, String> listFlowByOpt(String optId) {
-        return null;
     }
 
     /**
@@ -110,7 +99,9 @@ public class FlowDefineClientImpl implements FlowDefineClient {
      */
     @Override
     public Map<String, String> listFlowItemRole(String flowCode, long version) {
-        return null;
+        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/define/itemrole/"+flowCode +"/"+String.valueOf(version));
+        return HttpReceiveJSON.getDataAsMap(String.class);
     }
 
     /**
@@ -122,7 +113,9 @@ public class FlowDefineClientImpl implements FlowDefineClient {
      */
     @Override
     public Map<String, String> listFlowVariable(String flowCode, long version) {
-        return null;
+        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/define/variable/"+flowCode +"/"+String.valueOf(version));
+        return HttpReceiveJSON.getDataAsMap(String.class);
     }
 
     /**
@@ -134,7 +127,9 @@ public class FlowDefineClientImpl implements FlowDefineClient {
      */
     @Override
     public Map<String, String> listFlowStage(String flowCode, long version) {
-        return null;
+        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/define/stage/"+flowCode +"/"+String.valueOf(version));
+        return HttpReceiveJSON.getDataAsMap(String.class);
     }
 
     public void setWorkFlowServerUrl(String workFlowServerUrl) {

@@ -116,13 +116,7 @@ public interface FlowDefine {
      */
     Set<String> getUnitExp(String flowCode, Long version);
 
-    /**
-     * 获取某一流程某一版本号中存在的所有办件角色
-     * @param flowCode 流程代码
-     * @param version 版本
-     * @return 流程的办件角色列表
-     */
-    Map<String,String> getRoleMapByFlowCode(String flowCode,Long version);
+
 
     /**
      * 根据流程code删除相关的流程定义，用于删除多余的测试数据
@@ -170,16 +164,25 @@ public interface FlowDefine {
     Map<String, String> listAllSubFlow();
 
     /**
+     * 获取某一流程某一版本号中存在的所有办件角色
+     * @param flowCode 流程代码
+     * @param version 版本 0 草稿 -1 最新版本
+     * @return 流程的办件角色列表
+     */
+    Map<String,String> listFlowItemRoles(String flowCode, Long version);
+    /**
      * 获取流程阶段信息
      * @param flowCode 流程代码和名称对应表
+     * @param version 版本 0 草稿 -1 最新版本
      * @return 流程阶段
      */
-    Map<String, String> listFlowStages(String flowCode);
+    Map<String, String> listFlowStages(String flowCode, Long version);
 
     /**
      * 根据流程代码获取流程变量信息
      * @param flowCode 流程代码
+     * @param version 版本 0 草稿 -1 最新版本
      * @return 流程变量信息
      */
-    Map<String, String> listFlowVariableDefines(String flowCode);
+    Map<String, String> listFlowVariableDefines(String flowCode, Long version);
 }
