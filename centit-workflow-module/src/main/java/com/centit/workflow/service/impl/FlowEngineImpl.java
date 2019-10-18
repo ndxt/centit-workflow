@@ -2169,4 +2169,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return flowInstGroup;
     }
 
+    @Override
+    public List<FlowInstanceGroup> listFlowInstGroup(Map<String, Object> filterMap, PageDesc pageDesc){
+        return flowInstanceGroupDao.listObjects(filterMap, pageDesc);
+    }
 }

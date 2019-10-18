@@ -686,5 +686,10 @@ public interface FlowEngine {
      */
     FlowInstanceGroup createFlowInstGroup(String name, String desc);
 
-
+    /**
+     * @param filterMap 过滤条件
+     * @param pageDesc 分页信息
+     * @return 用户任务列表
+     */
+    List<FlowInstanceGroup> listFlowInstGroup(Map<String, Object> filterMap, PageDesc pageDesc);
 }

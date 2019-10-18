@@ -1,20 +1,20 @@
 package com.centit.workflow.client.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.commons.WorkflowException;
-import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.FlowInstanceGroup;
-import com.centit.workflow.po.FlowVariable;
-import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.po.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -285,8 +285,20 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @return 节点实例
      */
     @Override
-    public NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId, String nodeCode, String createUser, String userCode, String unitCode) {
-        return null;
+    public NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId,
+                                               String nodeCode, String createUser,
+                                               String userCode, String unitCode) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("curNodeInstId", curNodeInstId);
+        paramMap.put("createUser", createUser);
+        paramMap.put("nodeCode", nodeCode);
+        paramMap.put("userCode", userCode);
+        paramMap.put("unitCode", unitCode);
+        String json =  RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/isolatedNode", paramMap);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        return receiveJSON.getDataAsObject(NodeInstance.class);
     }
 
     /**
@@ -304,8 +316,20 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @return 节点实例
      */
     @Override
-    public NodeInstance createPrepNodeInst(String flowInstId, String curNodeInstId, String nodeCode, String createUser, String userCode, String unitCode) {
-        return null;
+    public NodeInstance createPrepNodeInst(String flowInstId, String curNodeInstId,
+                                           String nodeCode, String createUser,
+                                           String userCode, String unitCode) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("curNodeInstId", curNodeInstId);
+        paramMap.put("createUser", createUser);
+        paramMap.put("nodeCode", nodeCode);
+        paramMap.put("userCode", userCode);
+        paramMap.put("unitCode", unitCode);
+        String json =  RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/prepNode", paramMap);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        return receiveJSON.getDataAsObject(NodeInstance.class);
     }
 
     /**
@@ -317,7 +341,13 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public FlowInstanceGroup createFlowInstGroup(String name, String desc) {
-        return null;
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowGroupName", name);
+        paramMap.put("flowGroupDesc", desc);
+        String json =  RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/flowGroup", paramMap);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        return receiveJSON.getDataAsObject(FlowInstanceGroup.class);
     }
 
     /**
@@ -329,7 +359,12 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public JSONArray listFlowInstGroup(Map<String, Object> paramMap, PageDesc pageDesc) {
-        return null;
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/engine/flowGroup",
+                    paramMap), (JSONObject) JSON.toJSON(pageDesc)));
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getJSONArray("objList"/*, FlowInstanceGroup.class*/);
     }
 
     /**

@@ -9,6 +9,7 @@ import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
+import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.CreateFlowOptions;
@@ -349,8 +350,8 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
     @WrapUpResponseBody
-    @PostMapping(value = "createNodeInst")
-    public void createNodeInst(@RequestBody String json) {
+    @PostMapping(value = "isolatedNode")
+    public NodeInstance createIsolatedNodeInst(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         String flowInstId = jsonObject.getString("flowInstId");
         String curNodeInstId = jsonObject.getString("curNodeInstId");
@@ -358,7 +359,22 @@ public class FlowEngineController extends BaseController {
         String userCode = jsonObject.getString("userCode");
         String nodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
-        flowEngine.createIsolatedNodeInst(flowInstId, curNodeInstId, createUser,
+        return /*NodeInstance =*/ flowEngine.createIsolatedNodeInst(flowInstId, curNodeInstId, createUser,
+            nodeCode, userCode, unitCode);
+    }
+
+    @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
+    @WrapUpResponseBody
+    @PostMapping(value = "prepNode")
+    public NodeInstance createPrepNodeInst(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        String flowInstId = jsonObject.getString("flowInstId");
+        String curNodeInstId = jsonObject.getString("curNodeInstId");
+        String createUser = jsonObject.getString("createUser");
+        String userCode = jsonObject.getString("userCode");
+        String nodeCode = jsonObject.getString("nodeCode");
+        String unitCode = jsonObject.getString("unitCode");
+        return /*NodeInstance =*/ flowEngine.createPrepNodeInst(flowInstId, curNodeInstId, createUser,
             nodeCode, userCode, unitCode);
     }
 
@@ -381,13 +397,22 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "创建流程实例分组", notes = "创建流程实例分组")
     @WrapUpResponseBody
-    @PostMapping(value = "/createFlowInstGroupDefault")
-    public FlowInstanceGroup createFlowInstGroupDefault(@RequestBody String json) {
+    @PostMapping(value = "/flowGroup")
+    public FlowInstanceGroup createFlowInstGroup(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         String flowGroupName = jsonObject.getString("flowGroupName");
         String flowGroupDesc = jsonObject.getString("flowGroupDesc");
         FlowInstanceGroup flowInstanceGroup = flowEngine.createFlowInstGroup(flowGroupName, flowGroupDesc);
         return flowInstanceGroup;
+    }
+
+    @ApiOperation(value = "查询流程实例分组", notes = "查询流程实例分组")
+    @WrapUpResponseBody
+    @GetMapping(value = "/flowGroup")
+    public PageQueryResult<FlowInstanceGroup> listFlowInstGroup(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<FlowInstanceGroup> listObjects = flowEngine.listFlowInstGroup(searchColumn, pageDesc);
+        return PageQueryResult.createResult(listObjects, pageDesc);
     }
 
 }
