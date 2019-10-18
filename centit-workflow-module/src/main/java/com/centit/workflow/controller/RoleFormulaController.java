@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.model.basedata.IUnitInfo;
+import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.service.RoleFormulaService;
@@ -33,7 +35,6 @@ import java.util.Map;
 @RequestMapping("/formula")
 public class RoleFormulaController extends BaseController {
 
-
     @Resource
     private RoleFormulaService roleFormulaService;
 
@@ -50,8 +51,7 @@ public class RoleFormulaController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/getRoleFormulaCode/{formulaCode}", method = RequestMethod.GET)
     public RoleFormula getRoleFormulaByCode(@PathVariable String formulaCode){
-        RoleFormula roleFormula = roleFormulaService.getRoleFormulaByCode(formulaCode);
-        return roleFormula;
+        return roleFormulaService.getRoleFormulaByCode(formulaCode);
     }
     @ApiOperation(value = "保存权限表达式", notes = "保存权限表达式")
     @WrapUpResponseBody
@@ -90,7 +90,29 @@ public class RoleFormulaController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value="/viewFormulaUsers/{formula}",method = RequestMethod.GET)
     public JSONArray viewFormulaUsers(@PathVariable String formula){
-        JSONArray listObjects = roleFormulaService.viewFormulaUsers(StringEscapeUtils.unescapeHtml4(formula));
-        return listObjects;
+        return roleFormulaService.viewFormulaUsers(StringEscapeUtils.unescapeHtml4(formula));
     }
+
+    @ApiOperation(value = "列举所有用户", notes = "列举所有用户")
+    @WrapUpResponseBody
+    @RequestMapping(value="/allUsers",method = RequestMethod.GET)
+    public List<? extends IUserInfo> listAllUserInfo(){
+        return roleFormulaService.listAllUserInfo();
+    }
+
+    @ApiOperation(value = "列举所有机构", notes = "列举所有机构")
+    @WrapUpResponseBody
+    @RequestMapping(value="/allUnits",method = RequestMethod.GET)
+    public List<? extends IUnitInfo> listAllUnitInfo(){
+        return roleFormulaService.listAllUnitInfo();
+    }
+
+
+    @ApiOperation(value = "列举所有子机构", notes = "列举所有子机构")
+    @WrapUpResponseBody
+    @RequestMapping(value="/subUnits/{unitCode}",method = RequestMethod.GET)
+    public List<? extends IUnitInfo> listSubUnit(@PathVariable String unitCode){
+        return roleFormulaService.listSubUnit(unitCode);
+    }
+
 }
