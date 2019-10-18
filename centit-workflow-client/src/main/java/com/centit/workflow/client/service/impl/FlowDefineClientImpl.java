@@ -1,8 +1,12 @@
 package com.centit.workflow.client.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
+import com.centit.support.database.utils.PageDesc;
+import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowDefineClient;
 import com.centit.workflow.po.FlowInfo;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -26,6 +30,7 @@ public class FlowDefineClientImpl implements FlowDefineClient {
     public FlowDefineClientImpl() {
 
     }
+
     private AppSession appSession;
 
 
@@ -44,22 +49,17 @@ public class FlowDefineClientImpl implements FlowDefineClient {
         makeAppSession();
     }
 
-    public List<FlowInfo> list() {
-        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/define/listFlow");
-        return HttpReceiveJSON.getDataAsArray("objList",FlowInfo.class);
+    @Override
+    public List<FlowInfo> listLastVersionFlow(Map<String, Object> filterMap,
+                                              PageDesc pageDesc) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/define/listFlow",
+                filterMap), (JSONObject)JSON.toJSON(pageDesc)));
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getDataAsArray("objList",FlowInfo.class);
     }
 
-    /**
-     * 获取 流程信息
-     *
-     * @param flowCode 流程代码
-     * @return 流程信息
-     */
-    @Override
-    public FlowInfo getFlowInfo(String flowCode) {
-        return null;
-    }
 
     /**
      * 获取 流程信息
@@ -70,7 +70,9 @@ public class FlowDefineClientImpl implements FlowDefineClient {
      */
     @Override
     public FlowInfo getFlowInfo(String flowCode, long version) {
-        return null;
+        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/"+String.valueOf(version)+"/"+flowCode);
+        return HttpReceiveJSON.getDataAsObject(FlowInfo.class);
     }
 
     /**
@@ -80,8 +82,12 @@ public class FlowDefineClientImpl implements FlowDefineClient {
      * @return 流程所有版本
      */
     @Override
-    public List<FlowInfo> listFlowInfoVersion(String flowCode) {
-        return null;
+    public List<FlowInfo> listFlowInfoVersion(String flowCode, PageDesc pageDesc) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl("/flow/lastversion/"+flowCode,
+                (JSONObject)JSON.toJSON(pageDesc)));
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getDataAsArray("objList",FlowInfo.class);
     }
 
     /**
@@ -129,5 +135,9 @@ public class FlowDefineClientImpl implements FlowDefineClient {
     @Override
     public Map<String, String> listFlowStage(String flowCode, long version) {
         return null;
+    }
+
+    public void setWorkFlowServerUrl(String workFlowServerUrl) {
+        this.workFlowServerUrl = workFlowServerUrl;
     }
 }

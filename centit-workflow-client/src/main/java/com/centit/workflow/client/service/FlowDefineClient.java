@@ -1,5 +1,6 @@
 package com.centit.workflow.client.service;
 
+import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
 
 import java.util.List;
@@ -15,7 +16,9 @@ public interface FlowDefineClient {
      * @param flowCode 流程代码
      * @return 流程信息
      */
-    FlowInfo getFlowInfo(String flowCode);
+    default FlowInfo getFlowInfo(String flowCode){
+        return getFlowInfo(flowCode, -1);
+    }
 
     /**
      * 获取 流程信息
@@ -26,11 +29,19 @@ public interface FlowDefineClient {
     FlowInfo getFlowInfo(String flowCode, long version);
 
     /**
+     * 获取全部最新版本流程
+     * @param filterMap 过滤条件
+     * @param pageDesc 分页信息
+     * @return 返回列表
+     */
+    List<FlowInfo> listLastVersionFlow(Map<String, Object> filterMap,
+                                       PageDesc pageDesc);
+    /**
      * 获取 流程所有版本
      * @param flowCode 流程代码
      * @return 流程所有版本
      */
-    List<FlowInfo> listFlowInfoVersion(String flowCode);
+    List<FlowInfo> listFlowInfoVersion(String flowCode, PageDesc pageDesc);
 
     /**
      * 获取和业务关联的所有 工作流

@@ -51,8 +51,7 @@ public class FlowDefineController extends BaseController {
      */
     @WrapUpResponseBody
     @RequestMapping(method = RequestMethod.GET)
-    public PageQueryResult<FlowInfo> list(String[] field, PageDesc pageDesc,
-                                          HttpServletRequest request, HttpServletResponse response) {
+    public PageQueryResult<FlowInfo> list(PageDesc pageDesc, HttpServletRequest request) {
         Map<String, Object> searchColumn = convertSearchColumn(request);
         List<FlowInfo> listObjects = flowDef.listLastVersionFlow(searchColumn, pageDesc);
         return PageQueryResult.createResult(listObjects, pageDesc);
@@ -64,6 +63,7 @@ public class FlowDefineController extends BaseController {
      * @param pageDesc 分页
      * @param flowcode 流程号
      */
+    @ApiOperation(value = "列出所有的流程定义列表", notes = "列出所有的流程定义列表")
     @WrapUpResponseBody
     @RequestMapping(value = "/allversions/{flowcode}", method = RequestMethod.GET)
     public PageQueryResult<FlowInfo> listAllVersionFlow(PageDesc pageDesc, @PathVariable String flowcode) {
@@ -75,12 +75,12 @@ public class FlowDefineController extends BaseController {
      * 某个流程的最新版本
      *
      * @param flowcode 流程号
-     * @param response
      */
+    @ApiOperation(value = "获取流程最新版本信息", notes = "获取流程最新版本信息")
     @RequestMapping(value = "/lastversion/{flowcode}", method = RequestMethod.GET)
-    public void listLastVersion(@PathVariable String flowcode, HttpServletResponse response) {
-        FlowInfo lastVerOne = flowDef.getFlowDefObject(flowcode);
-        JsonResultUtils.writeSingleDataJson(lastVerOne, response);
+    @WrapUpResponseBody
+    public FlowInfo listLastVersion(@PathVariable String flowcode) {
+        return flowDef.getFlowDefObject(flowcode);
     }
 
     @RequestMapping(value = "/editfromthis/{flowCode}/{version}", method = RequestMethod.POST)
@@ -114,10 +114,15 @@ public class FlowDefineController extends BaseController {
      * @param flowcode
      * @param response
      */
+    @ApiOperation(value = "获取流程指定版本信息", notes = "获取流程指定版本信息")
     @RequestMapping(value = "/{version}/{flowcode}", method = RequestMethod.GET)
-    public void getFlowDefine(@PathVariable Long version, @PathVariable String flowcode, HttpServletResponse response) {
-        FlowInfo obj = flowDef.getFlowDefObject(flowcode, version);
-        JsonResultUtils.writeSingleDataJson(obj, response);
+    @WrapUpResponseBody
+    public FlowInfo getFlowDefine(@PathVariable Long version, @PathVariable String flowcode, HttpServletResponse response) {
+        if(version >= 0) {
+            return flowDef.getFlowDefObject(flowcode, version);
+        } else {
+            return flowDef.getFlowDefObject(flowcode);
+        }
     }
 
 
@@ -385,7 +390,6 @@ public class FlowDefineController extends BaseController {
         JsonResultUtils.writeSingleDataJson(copy, response);
     }
 
-
     /**
      * 编辑流程图页面需要的数据字典及相关数据
      *
@@ -429,30 +433,27 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "查询内置的流程机构表达式")
     @RequestMapping(value = "/listInsideUnitExp", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public void listInsideUnitExp(HttpServletResponse response){
-        Map<String, String> insideUnitExp=flowDef.listInsideUnitExp();
-        JsonResultUtils.writeSingleDataJson(insideUnitExp, response);
+    public Map<String, String> listInsideUnitExp(){
+        return flowDef.listInsideUnitExp();
     }
 
     @ApiOperation(value = "查询角色类别")
     @RequestMapping(value = "/listRoleType", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public void listRoleType(HttpServletResponse response){
-        Map<String, String> roleTypes=flowDef.listRoleType();
-        JsonResultUtils.writeSingleDataJson(roleTypes, response);
+    public Map<String, String> listRoleType(){
+        return flowDef.listRoleType();
     }
+
     @ApiOperation(value = "列举所有角色")
     @RequestMapping(value = "/listAllRole", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public void listAllRole(HttpServletResponse response){
-        Map<String, Map<String, String>> allRole=flowDef.listAllRole();
-        JsonResultUtils.writeSingleDataJson(allRole, response);
+    public Map<String, Map<String, String>> listAllRole(){
+        return flowDef.listAllRole();
     }
     @ApiOperation(value = "角色名称和类别对应列表")
     @RequestMapping(value = "/listRoleByType/{roleType}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public void listAllRole(@PathVariable String roleType,HttpServletResponse response){
-        Map<String, String> role=flowDef.listRoleByType(roleType);
-        JsonResultUtils.writeSingleDataJson(role, response);
+    public Map<String, String> listAllRole(@PathVariable String roleType){
+        return flowDef.listRoleByType(roleType);
     }
 }
