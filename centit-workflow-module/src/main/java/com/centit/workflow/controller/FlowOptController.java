@@ -6,6 +6,7 @@ import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
+import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.FlowOptPage;
@@ -43,76 +44,64 @@ public class FlowOptController extends BaseController {
     @ApiOperation(value = "获取业务列表", notes = "获取业务列表")
     @WrapUpResponseBody
     @RequestMapping(value="flow_listFlowOptInfo" ,method = RequestMethod.GET)
-    public void getListFlowOptInfo(HttpServletRequest request, HttpServletResponse response){
-        List<FlowOptInfo> listFlowOptInfo = wfOptService.getListOptInfo();
-        JsonResultUtils.writeSingleDataJson(listFlowOptInfo, response);
+    public List<FlowOptInfo> getListFlowOptInfo(){
+         return wfOptService.getListOptInfo();
     }
     @ApiOperation(value = "分页获取业务列表", notes = "分页获取业务列表")
     @WrapUpResponseBody
     @RequestMapping(value="/listOptInfo",method = RequestMethod.GET)
-    public void listOptInfo(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
+    public PageQueryResult listOptInfo(PageDesc pageDesc, HttpServletRequest request){
         Map<String, Object> filterMap = convertSearchColumn(request);
-
         JSONArray objList = wfOptService.listOptInfo(filterMap,pageDesc);
-        resData.addResponseData(OBJLIST, objList);
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+        return PageQueryResult.createResult(objList,pageDesc);
     }
     @ApiOperation(value = "获取指定业务", notes = "获取指定业务")
     @WrapUpResponseBody
     @RequestMapping(value="/getOptById",method = RequestMethod.GET)
-    public void getOptById(String optId, HttpServletRequest request, HttpServletResponse response){
-        FlowOptInfo FlowOptInfo = wfOptService.getOptById(optId);
-        JsonResultUtils.writeSingleDataJson(FlowOptInfo,response);
+    public FlowOptInfo getOptById(String optId){
+        return wfOptService.getOptById(optId);
     }
     @ApiOperation(value = "删除业务", notes = "删除业务")
     @WrapUpResponseBody
     @RequestMapping(value="/deleteOptInfoById",method = RequestMethod.DELETE)
-    public void deleteOptInfoById(String optId, HttpServletRequest request, HttpServletResponse response){
+    public void deleteOptInfoById(String optId){
         wfOptService.deleteOptInfoById(optId);
-        JsonResultUtils.writeSuccessJson(response);
     }
     @ApiOperation(value = "保存业务", notes = "保存业务")
     @WrapUpResponseBody
     @RequestMapping(value="/saveOpt",method = RequestMethod.POST)
-    public void saveOpt(@RequestBody FlowOptInfo FlowOptInfo, HttpServletRequest request, HttpServletResponse response){
+    public void saveOpt(@RequestBody FlowOptInfo FlowOptInfo){
         wfOptService.saveOpt(FlowOptInfo);
-        JsonResultUtils.writeBlankJson(response);
     }
 
     //根据optId获取表wf_optdef中数据，分页功能没有加！
     @ApiOperation(value = "根据optId获取流程页面", notes = "根据optId获取流程页面")
     @WrapUpResponseBody
     @RequestMapping(value="/getListOptDefById",method = RequestMethod.GET)
-    public void getListOptDefById(String optId, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
+    public PageQueryResult getListOptDefById(String optId, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
         Map<String, Object> filterMap = convertSearchColumn(request);
 
 //        List<FlowOptDef> objList = wfOptService.getListOptDefById(optId, filterMap,pageDesc);
         List<FlowOptPage> objList = wfOptService.ListOptDef(filterMap,pageDesc);
-        resData.addResponseData(OBJLIST, objList);
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+       return PageQueryResult.createResult(objList,pageDesc);
     }
     @ApiOperation(value = "根据optCode获取流程页面", notes = "根据optCode获取流程页面")
     @WrapUpResponseBody
     @RequestMapping(value="/getOptDefByCode",method = RequestMethod.GET)
-    public void getOptDefByCode(String optCode, HttpServletRequest request, HttpServletResponse response){
-        FlowOptPage FlowOptDef = wfOptService.getOptDefByCode(optCode);
-        JsonResultUtils.writeSingleDataJson(FlowOptDef,response);
+    public FlowOptPage getOptDefByCode(String optCode){
+        return wfOptService.getOptDefByCode(optCode);
     }
     @ApiOperation(value = "保存流程页面", notes = "保存流程页面")
     @WrapUpResponseBody
     @RequestMapping(value="/saveOptDef",method = RequestMethod.POST)
-    public void saveOptDef(@RequestBody FlowOptPage FlowOptDef, HttpServletRequest request, HttpServletResponse response){
+    public void saveOptDef(@RequestBody FlowOptPage FlowOptDef){
         wfOptService.saveOptDef(FlowOptDef);
-        JsonResultUtils.writeBlankJson(response);
     }
     @ApiOperation(value = "删除流程页面", notes = "删除流程页面")
-    @WrapUpResponseBody
     @RequestMapping(value="/deleteOptDefByCode",method = RequestMethod.DELETE)
-    public void deleteOptDefByCode(String optCode, HttpServletRequest request, HttpServletResponse response){
+    @WrapUpResponseBody
+    public void deleteOptDefByCode(String optCode){
         wfOptService.deleteOptDefByCode(optCode);
-        JsonResultUtils.writeSuccessJson(response);
     }
 
     @RequestMapping(
@@ -148,13 +137,11 @@ public class FlowOptController extends BaseController {
     @ApiOperation(value = "批量保存流程页面", notes = "批量保存流程页面")
     @WrapUpResponseBody
     @RequestMapping(value="/saveOptDefs",method = RequestMethod.POST)
-    public void saveOptDefs(@RequestBody JSONObject paramData, HttpServletRequest request, HttpServletResponse response){
+    public void saveOptDefs(@RequestBody JSONObject paramData){
         JSONArray optDefs = paramData.getJSONArray("optDefs");
         for (int i=0; i<optDefs.size(); i++){
             FlowOptPage flowOptDef = optDefs.getObject(i, FlowOptPage.class);
             wfOptService.saveOptDef(flowOptDef);
         }
-
-        JsonResultUtils.writeBlankJson(response);
     }
 }
