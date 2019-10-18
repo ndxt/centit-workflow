@@ -62,47 +62,35 @@ public class UserOptController extends BaseController {
 
     /**
      * 更新委托
-     * @param json
-     * @param response
      */
     @ApiOperation(value = "保存委托", notes = "保存委托")
     @WrapUpResponseBody
     @PostMapping(value = "/saveRelegate")
-    public void saveRelegate(@RequestBody String json, HttpServletResponse response) {
-        RoleRelegate roleRelegate = JSONObject.parseObject(json, RoleRelegate.class);
+    public void saveRelegate(@RequestBody RoleRelegate roleRelegate) {
         flowManager.saveRoleRelegateList(roleRelegate);
-        JsonResultUtils.writeSuccessJson(response);
     }
 
     /**
      * 根据id删除委托
      *
      * @param relegateNo
-     * @param response
      */
     @ApiOperation(value = "删除委托", notes = "删除委托")
     @WrapUpResponseBody
     @RequestMapping(value = "/deleteRelegate/{relegateNo}", method = {RequestMethod.DELETE})
-    public void deleteRelegate(@PathVariable Long relegateNo, HttpServletResponse response) {
+    public void deleteRelegate(@PathVariable Long relegateNo) {
         flowManager.deleteRoleRelegate(relegateNo);
-        JsonResultUtils.writeSuccessJson(response);
     }
     @ApiOperation(value = "通过参数获取委托", notes = "通过参数获取委托")
     @WrapUpResponseBody
     @RequestMapping(value = "/getTaskDelegateByNo", method = RequestMethod.POST)
-    public void getTaskDelegateByNo(@RequestBody String json, HttpServletResponse response) {
-        JsonResultUtils.writeSingleDataJson(flowManager.getRoleRelegateByPara(json), response);
+    public RoleRelegate getTaskDelegateByNo(@RequestBody String json) {
+        return flowManager.getRoleRelegateByPara(json);
     }
-    @ApiOperation(value = "更新委托", notes = "更新委托")
-    @WrapUpResponseBody
+
     @RequestMapping(value = "/resetRelegate", method = RequestMethod.PUT)
-    public void resetRelegate(@RequestBody String json, HttpServletResponse response) {
-        Boolean flag = flowManager.changeRelegateValid(json);
-        if (flag) {
-            JsonResultUtils.writeSingleDataJson("", response);
-        } else {
-            JsonResultUtils.writeErrorMessageJson("更新信息失败", response);
-        }
+    public void resetRelegate(@RequestBody String json) {
+        flowManager.changeRelegateValid(json);
     }
 
 }
