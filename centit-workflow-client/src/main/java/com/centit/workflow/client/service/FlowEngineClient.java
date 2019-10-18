@@ -234,14 +234,6 @@ public interface FlowEngineClient {
      */
     JSONArray/*List<UserTask>*/ listTasks(Map<String, Object> paramMap, PageDesc pageDesc);
 
-   /* *//**
-     * 查看某一个用户所有的待办，并且分页
-     * @param userCode 用户代码
-     * @param pageDesc 分页信息
-     * @return 任务列表
-     *//*
-    JSONArray*//*List<UserTask>*//* listUserTasks(String userCode, PageDesc pageDesc);*/
-
     /**
      * 查看某一个节点所有的可以办理的用户
      * @param nodeInstId 节点实例Id
