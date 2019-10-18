@@ -70,9 +70,9 @@ public class FlowDefineClientImpl implements FlowDefineClient {
      */
     @Override
     public FlowInfo getFlowInfo(String flowCode, long version) {
-        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/define/"+String.valueOf(version)+"/"+flowCode);
-        return HttpReceiveJSON.getDataAsObject(FlowInfo.class);
+        return receiveJSON.getDataAsObject(FlowInfo.class);
     }
 
     /**
@@ -99,9 +99,9 @@ public class FlowDefineClientImpl implements FlowDefineClient {
      */
     @Override
     public Map<String, String> listFlowItemRole(String flowCode, long version) {
-        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/define/itemrole/"+flowCode +"/"+String.valueOf(version));
-        return HttpReceiveJSON.getDataAsMap(String.class);
+        return receiveJSON.getDataAsMap(String.class);
     }
 
     /**
@@ -113,9 +113,9 @@ public class FlowDefineClientImpl implements FlowDefineClient {
      */
     @Override
     public Map<String, String> listFlowVariable(String flowCode, long version) {
-        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/define/variable/"+flowCode +"/"+String.valueOf(version));
-        return HttpReceiveJSON.getDataAsMap(String.class);
+        return receiveJSON.getDataAsMap(String.class);
     }
 
     /**
@@ -127,9 +127,9 @@ public class FlowDefineClientImpl implements FlowDefineClient {
      */
     @Override
     public Map<String, String> listFlowStage(String flowCode, long version) {
-        HttpReceiveJSON HttpReceiveJSON = RestfulHttpRequest.getResponseData(appSession,
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/define/stage/"+flowCode +"/"+String.valueOf(version));
-        return HttpReceiveJSON.getDataAsMap(String.class);
+        return receiveJSON.getDataAsMap(String.class);
     }
 
     public void setWorkFlowServerUrl(String workFlowServerUrl) {

@@ -7,6 +7,7 @@ import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
+import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JsonPropertyUtils;
@@ -369,6 +370,13 @@ public class FlowEngineController extends BaseController {
         String nodeInstId = jsonObject.getString("nodeInstId");
         String managerUserCode = jsonObject.getString("managerUserCode");
         flowEngine.rollbackOpt(nodeInstId, managerUserCode);
+    }
+
+    @ApiOperation(value = "回退节点", notes = "回退节点")
+    @WrapUpResponseBody(contentType = WrapUpContentType.RAW)
+    @GetMapping(value = "nodeCanBeReclaim")
+    public Boolean checkNodeCanBeReclaim(@PathVariable String nodeInstId) {
+        return flowEngine.nodeCanBeReclaim(nodeInstId);
     }
 
     @ApiOperation(value = "创建流程实例分组", notes = "创建流程实例分组")

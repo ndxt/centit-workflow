@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
+import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.client.service.FlowEngineClient;
@@ -257,7 +258,9 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public boolean nodeCanBeReclaim(String nodeInstId) {
-        return false;
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/nodeCanBeReclaim/"+nodeInstId);
+        return BooleanBaseOpt.castObjectToBoolean(receiveJSON.getData(), false);
     }
 
     public void rollBackNode(String nodeInstId,String managerUserCode){
