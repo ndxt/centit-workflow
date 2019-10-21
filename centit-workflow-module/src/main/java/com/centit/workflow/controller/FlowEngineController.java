@@ -22,10 +22,10 @@ import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.FlowOptService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -35,15 +35,15 @@ import java.util.*;
     tags = "流程引擎接口类")
 @RequestMapping("/flow/engine")
 public class FlowEngineController extends BaseController {
-    @Resource
+    @Autowired
     private FlowEngine flowEngine;
-    @Resource
+    @Autowired
     private FlowManager flowManager;
 
-    @Resource
+    @Autowired
     private FlowDefine flowDefine;
 
-    @Resource
+    @Autowired
     private FlowOptService wfOptService;
 
 

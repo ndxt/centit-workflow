@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -26,15 +26,15 @@ import java.util.List;
 @RequestMapping("/demo")
 public class DemoController {
 
-    @Resource
+    @Autowired
     private FlowEngineClient flowEngine;
-    @Resource
+    @Autowired
     private FlowManagerClient flowManager;
 
-    @Resource
+    @Autowired
     private FlowDefineClient flowDefineClient;
 
-    @Resource
+    @Autowired
     private PlatformEnvironment platformEnvironment;
 
     @RequestMapping(value = "/demoStart")

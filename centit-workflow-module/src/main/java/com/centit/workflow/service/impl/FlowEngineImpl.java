@@ -2,6 +2,7 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.UserUnitParamBuilder;
+import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.framework.model.basedata.IUserUnit;
@@ -19,10 +20,10 @@ import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import java.io.Serializable;
 import java.util.*;
@@ -33,42 +34,45 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(FlowEngineImpl.class);
-    @Resource
+    @Autowired
     private FlowInstanceDao flowInstanceDao;
 
-    @Resource
+    @Autowired
     private UserUnitFilterCalcContextFactory userUnitFilterFactory;
 
-    @Resource
+    @Autowired
     private NodeInstanceDao nodeInstanceDao;
-    @Resource
+    @Autowired
     private NodeInfoDao flowNodeDao;
-    @Resource
+    @Autowired
     private FlowTransitionDao flowTransitionDao;
-    @Resource
+    @Autowired
     private ActionTaskDao actionTaskDao;
-    @Resource
+    @Autowired
     private ActionLogDao actionLogDao;
-    @Resource
+    @Autowired
     private FlowInfoDao flowDefDao;
-    @Resource
+    @Autowired
     private FlowManager flowManager;
-    @Resource
+    @Autowired
     private FlowWorkTeamDao flowTeamDao;
 
-    @Resource
+    @Autowired
     private RoleFormulaDao roleFormulaDao;
 
-    @Resource
+    @Autowired
     private FlowOrganizeDao flowOrganizeDao;
-    @Resource
+    @Autowired
     private FlowVariableDao flowVariableDao;
-    @Resource
+    @Autowired
     private InstAttentionDao attentionDao;
-    @Resource
+    @Autowired
     private FlowWarningDao runtimeWarningDao;
-    @Resource
+    @Autowired
     private FlowInstanceGroupDao flowInstanceGroupDao;
+
+    @Autowired
+    private NotificationCenter notificationCenter;
 
     private final static Object lockObject = new Object();
 

@@ -11,12 +11,12 @@ import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
@@ -31,27 +31,27 @@ public class FlowTaskImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowTaskImpl.class);
 
-    /*@Resource
+    /*@Autowired
     private FlowEngine flowEngine;
 */
-    @Resource
+    @Autowired
     ActionTaskDao actionTaskDao;
 
-    @Resource
+    @Autowired
     NodeInstanceDao nodeInstanceDao;
 
-    @Resource
+    @Autowired
     private NodeInfoDao nodeInfoDao;
 
-    @Resource
+    @Autowired
     private FlowWarningDao wfRuntimeWarningDao;
     /**
      * 这个map需要更换会系统的通知中心
      */
-    @Resource
+    @Autowired
     private NotificationCenter notificationCenter;
 
-    @Resource
+    @Autowired
     private FlowInstanceDao flowInstanceDao;
 
     @Value("${workflow.flowTimeStart:true}")

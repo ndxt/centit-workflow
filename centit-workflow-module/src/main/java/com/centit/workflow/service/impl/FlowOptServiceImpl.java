@@ -7,10 +7,10 @@ import com.centit.workflow.dao.FlowOptInfoDao;
 import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.service.FlowOptService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +21,10 @@ import java.util.Map;
  */
 @Service
 public class FlowOptServiceImpl implements FlowOptService {
-    @Resource
+    @Autowired
     private FlowOptInfoDao flowOptInfoDao;
 
-    @Resource
+    @Autowired
     private FlowOptDefDao wfOptDefDao;
 
     @Override

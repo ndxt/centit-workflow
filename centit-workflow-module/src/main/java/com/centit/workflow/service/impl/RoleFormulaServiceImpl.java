@@ -13,10 +13,10 @@ import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.service.RoleFormulaService;
 import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,10 +29,10 @@ import java.util.Set;
 @Service
 public class RoleFormulaServiceImpl implements RoleFormulaService {
 
-    @Resource
+    @Autowired
     private UserUnitFilterCalcContextFactory userUnitFilterFactory;
 
-    @Resource
+    @Autowired
     private RoleFormulaDao flowRoleDao;
 
     //审批角色列表

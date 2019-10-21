@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -27,13 +27,13 @@ import java.util.*;
 @Controller
 @RequestMapping("/approval")
 public class ApprovalController {
-    @Resource
+    @Autowired
     private FlowEngineClient flowEngine;
-    @Resource
+    @Autowired
     private ApprovalService approvalService;
-    @Resource
+    @Autowired
     private PlatformEnvironment platformEnvironment;
-    @Resource
+    @Autowired
     private FlowManagerClientImpl flowManager;
     @RequestMapping(value = "/listAllUser", method = RequestMethod.GET)
     public void listAllUser(HttpServletResponse response){

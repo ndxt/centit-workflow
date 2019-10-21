@@ -12,13 +12,13 @@ import com.centit.workflow.service.RoleFormulaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.Map;
 @RequestMapping("/formula")
 public class RoleFormulaController extends BaseController {
 
-    @Resource
+    @Autowired
     private RoleFormulaService roleFormulaService;
 
     @ApiOperation(value = "权限表达式列表", notes = "权限表达式列表")

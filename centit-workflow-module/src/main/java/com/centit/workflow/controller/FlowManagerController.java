@@ -19,10 +19,10 @@ import com.centit.workflow.service.FlowManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -35,11 +35,11 @@ import java.util.*;
 public class FlowManagerController extends BaseController {
     //public static final Logger logger = LoggerFactory.getLogger(SampleFlowManagerController.class);
 
-    @Resource
+    @Autowired
     private FlowManager flowManager;
-    @Resource
+    @Autowired
     private FlowEngine flowEng;
-    @Resource
+    @Autowired
     private FlowDefine flowDef;
 
 

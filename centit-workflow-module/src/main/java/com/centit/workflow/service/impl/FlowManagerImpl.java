@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.common.WorkTimeSpan;
@@ -18,10 +19,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.*;
 
@@ -35,32 +36,33 @@ import java.util.*;
 @Transactional
 public class FlowManagerImpl implements FlowManager, Serializable {
     private static final long serialVersionUID = 1L;
-    @Resource
+    @Autowired
     FlowInstanceDao flowInstanceDao;
-    @Resource
+    @Autowired
     NodeInstanceDao nodeInstanceDao;
-    @Resource
+    @Autowired
     NodeInfoDao flowNodeDao;
-    @Resource
+    @Autowired
     FlowTransitionDao flowTransitionDao;
 
-    @Resource
+    @Autowired
     ActionTaskDao actionTaskDao;
-    @Resource
+    @Autowired
     ActionLogDao actionLogDao;
-    @Resource
+    @Autowired
     FlowInfoDao flowDefDao;
-    @Resource
+    @Autowired
     StageInstanceDao stageInstanceDao;
-    @Resource
-    private FlowWorkTeamDao flowTeamDao;
-    @Resource
+
+    @Autowired
     RoleRelegateDao flowRoleRelegateDao;
-    @Resource
+    @Autowired
     FlowEngine flowEngine;
-    @Resource
+    @Autowired
     FlowInstanceGroupDao flowInstanceGroupDao;
 
+    @Autowired
+    private NotificationCenter notificationCenter;
     /**
      * 查看工作流程实例状态或进度
      *

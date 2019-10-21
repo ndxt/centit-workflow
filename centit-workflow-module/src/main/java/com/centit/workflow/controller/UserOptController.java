@@ -1,8 +1,6 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.centit.framework.common.JsonResultUtils;
-import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
@@ -15,12 +13,11 @@ import com.centit.workflow.service.RoleFormulaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -31,9 +28,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/flow/userOpt")
 public class UserOptController extends BaseController {
-    @Resource
+    @Autowired
     private FlowManager flowManager;
-    @Resource
+    @Autowired
     private RoleFormulaService flowRoleService;
     //private ResponseMapData resData;
 

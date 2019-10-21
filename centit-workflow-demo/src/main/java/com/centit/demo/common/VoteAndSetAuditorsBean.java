@@ -12,20 +12,20 @@ import com.centit.workflow.po.NodeInstance;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
  * Created by chen_rj on 2017/8/4.
  */
 @Transactional
-@Component("VoteAndSetAuditorsBean")
+@Component
 public class VoteAndSetAuditorsBean implements NodeEventSupport {
-    @Resource
+    @Autowired
     private ApprovalEventDao approvalEventDao;
-    @Resource
+    @Autowired
     private ApprovalProcessDao approvalProcessDao;
-    @Resource
+    @Autowired
     private FlowEngineClient flowEngine;
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,

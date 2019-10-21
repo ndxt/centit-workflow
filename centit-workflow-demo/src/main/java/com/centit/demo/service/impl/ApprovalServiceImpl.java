@@ -15,7 +15,7 @@ import com.centit.workflow.po.UserTask;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -27,15 +27,15 @@ import java.util.List;
 @Service
 @Transactional
 public class ApprovalServiceImpl implements ApprovalService {
-    @Resource
+    @Autowired
     private ApprovalEventDao approvalEventDao;
-    @Resource
+    @Autowired
     private ApprovalAuditorDao approvalAuditorDao;
-    @Resource
+    @Autowired
     private ApprovalProcessDao approvalProcessDao;
-    @Resource
+    @Autowired
     private FlowEngineClient flowEngine;
-    @Resource
+    @Autowired
     private FlowManagerClient flowManager;
 
     @Override
