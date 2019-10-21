@@ -16,7 +16,7 @@ public interface FlowManagerClient {
      * @param wfinstid 流程实例编号
      * @return List<NodeInstance>
      */
-    JSONArray /*List<NodeInstance>*/ listFlowInstNodes(String wfinstid) throws Exception;
+    JSONArray /*List<NodeInstance>*/ listFlowInstNodes(String wfinstid);
 
     /**
      * 根据 示例ID获得实例
@@ -36,7 +36,7 @@ public interface FlowManagerClient {
      * @throws Exception 异常
      * @return 状态码
      * */
-    int stopInstance(String flowInstId, String mangerUserCode, String admindesc) throws Exception;
+    int stopInstance(String flowInstId, String mangerUserCode, String admindesc);
 
     /**
      * 暂停一个流程    P 暂停 挂起

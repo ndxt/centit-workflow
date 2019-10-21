@@ -51,7 +51,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
     }
 
     @Override
-    public JSONArray listFlowInstNodes(String wfinstid) throws Exception{
+    public JSONArray listFlowInstNodes(String wfinstid){
         Map<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",String.valueOf(wfinstid));
 
@@ -77,7 +77,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
 
 
     @Override
-    public int stopInstance(String flowInstId, String mangerUserCode, String admindesc) throws Exception{
+    public int stopInstance(String flowInstId, String mangerUserCode, String admindesc){
         /*String s = */RestfulHttpRequest.jsonPut(appSession,
             "/flow/manager/stopInstance/"+flowInstId+"/"+mangerUserCode,null);
         return 0;
