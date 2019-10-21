@@ -213,6 +213,28 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
     }
 
+    /**
+     * 列举当前流程可以创建的所有节点
+     * @param flowInstId 流程实例代码
+     * @return Map 节点代码， 节点名称
+     */
+    @Override
+    public Map<String, String> listFlowNodeForCreate(String flowInstId){
+        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+        if (flowInst == null)
+            return null;
+        List<NodeInfo> nodeList = flowNodeDao.listObjects(
+            CollectionsOpt.createHashMap("flowCode",flowInst.getFlowCode(),
+            "version", flowInst.getVersion()));
+        Map<String, String> nodes = new HashMap<>();
+        for(NodeInfo node:nodeList){
+            if(StringUtils.isNotBlank(node.getNodeCode())){
+                nodes.put(node.getNodeCode(), node.getNodeName());
+            }
+        }
+        return nodes;
+    }
+
     @Override
     public List<NodeInstance> listNodeInstsByNodecode(String flowInstId, String nodeCode) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
@@ -222,7 +244,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             flowInst.getVersion(), nodeCode);
         if (nodeList == null)
             return null;
-        List<NodeInstance> nodeInstList = new ArrayList<NodeInstance>();
+        List<NodeInstance> nodeInstList = new ArrayList<>();
         for (NodeInfo node : nodeList) {
             nodeInstList.addAll(
                 flowInst.getAllNodeInstancesByNodeid(node.getNodeId()));

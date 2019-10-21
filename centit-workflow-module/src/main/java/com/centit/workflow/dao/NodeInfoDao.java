@@ -14,7 +14,7 @@ public class NodeInfoDao extends BaseDaoImpl<NodeInfo,Long>
     {
     public Map<String, String> getFilterField() {
         if( filterField == null){
-            filterField = new HashMap<String, String>();
+            filterField = new HashMap<>();
 
             filterField.put("nodeId" , CodeBook.EQUAL_HQL_ID);
 

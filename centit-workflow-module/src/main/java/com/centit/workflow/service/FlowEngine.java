@@ -662,6 +662,12 @@ public interface FlowEngine {
     List<NodeInstance> listNodeInstsByNodecode(String flowInstId,String nodeCode);
 
     /**
+     * 列举当前流程可以创建的所有节点
+     * @param flowInstId 流程实例代码
+     * @return Map 节点代码， 节点名称
+     */
+    Map<String, String> listFlowNodeForCreate(String flowInstId);
+    /**
      * 获取节点所在阶段信息
      * @param nodeInstId 节点实例id
      * @return 阶段信息

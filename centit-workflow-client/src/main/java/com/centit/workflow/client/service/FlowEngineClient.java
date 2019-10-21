@@ -179,6 +179,13 @@ public interface FlowEngineClient {
     void rollBackNode(String nodeInstId,String managerUserCode);
 
     /**
+     * 列举当前流程可以创建的所有节点
+     * @param flowInstId 流程实例代码
+     * @return Map 节点代码， 节点名称
+     */
+    Map<String, String> listFlowNodeForCreate(String flowInstId);
+
+    /**
      * 创建孤立节点  知会、关注
      * <p>
      * 用户手动创建一个节点实例，不影响当前节点实例的执行,当前节点实例Id也可以为空
@@ -193,6 +200,7 @@ public interface FlowEngineClient {
     NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId,
                                                String nodeCode, String createUser,
                                          String userCode, String unitCode);
+
 
     /**
      * 加签,并指定到人

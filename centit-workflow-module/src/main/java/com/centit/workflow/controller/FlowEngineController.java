@@ -342,7 +342,7 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "删除流程机构", notes = "删除流程机构")
     @WrapUpResponseBody
-    @PostMapping(value = "deleteFlowOrganize")
+    @PostMapping(value = "/deleteFlowOrganize")
     public void deleteFlowOrganize(@RequestBody FlowOrganizeId flowOrganize) {
         flowEngine.deleteFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
@@ -350,7 +350,15 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
     @WrapUpResponseBody
-    @PostMapping(value = "isolatedNode")
+    @GetMapping(value = "/nodeForCreate/{flowInstId}")
+    public Map<String, String> listFlowNodeForCreate(@PathVariable String flowInstId) {
+        return flowEngine.listFlowNodeForCreate(flowInstId);
+    }
+
+
+    @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
+    @WrapUpResponseBody
+    @PostMapping(value = "/isolatedNode")
     public NodeInstance createIsolatedNodeInst(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         String flowInstId = jsonObject.getString("flowInstId");
@@ -365,7 +373,7 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
     @WrapUpResponseBody
-    @PostMapping(value = "prepNode")
+    @PostMapping(value = "/prepNode")
     public NodeInstance createPrepNodeInst(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         String flowInstId = jsonObject.getString("flowInstId");
@@ -380,7 +388,7 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "回退节点", notes = "回退节点")
     @WrapUpResponseBody
-    @PostMapping(value = "rollBackNode")
+    @PostMapping(value = "/rollBackNode")
     public void rollBackNode(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         String nodeInstId = jsonObject.getString("nodeInstId");

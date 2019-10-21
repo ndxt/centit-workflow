@@ -272,6 +272,17 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     /**
+     * 列举当前流程可以创建的所有节点
+     * @param flowInstId 流程实例代码
+     * @return Map 节点代码， 节点名称
+     */
+    @Override
+    public Map<String, String> listFlowNodeForCreate(String flowInstId){
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/nodeForCreate/"+flowInstId);
+        return receiveJSON.getDataAsMap(String.class);
+    }
+    /**
      * 创建孤立节点  知会、关注
      * <p>
      * 用户手动创建一个节点实例，不影响当前节点实例的执行,当前节点实例Id也可以为空
