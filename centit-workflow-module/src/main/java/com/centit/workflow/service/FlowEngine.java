@@ -266,8 +266,10 @@ public interface FlowEngine {
      *               t: 期限管理 、 设置期限
      *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
      *               u: 变更属性     *
+     * @param actionDetail 日志详细信息描述
      */
-    void recordActionLog(String nodeInstId, String userCode,String actionType);
+    void recordActionLog(String nodeInstId, String userCode,
+                         String actionType, String actionDetail);
 
 
     /*

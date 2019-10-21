@@ -6,6 +6,7 @@ import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.framework.model.basedata.IUserUnit;
+import com.centit.framework.model.basedata.NoticeMessage;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.compiler.VariableFormula;
@@ -115,7 +116,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public FlowInstance createInstance(CreateFlowOptions options,
                                              UserUnitVariableTranslate varTrans, ServletContext application) {
-        return createInstanceInside(options, varTrans,  application,true);
+        FlowInstance instance = createInstanceInside(options, varTrans,  application,true);
+        // 记录日志
+        return instance;
     }
 
     private FlowInstance createInstanceInside(CreateFlowOptions options,
@@ -797,6 +800,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     //nodeInst.setUserCode(optUsers.iterator().next());
                 }
             }
+            //TODO 消息内容需要重构
+            notificationCenter.sendMessage("system",optUsers,
+                NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
+                .content("您有新任务:" + nextOptNode.getNodeName()));
         }
         /**
          *  检查令牌冲突（自由流程，令牌的冲突有业务程序和流程图自己控制，无需检查）
@@ -1421,10 +1428,22 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return actionTaskDao.getTaskGrantor(nodeInstId, userCode);
     }
 
+    /**
+     * 流程节点操作日志
+     * @param nodeInstId 节点实例编号
+     * @param userCode 用户编码
+     * @param actionType
+     *               s: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
+     *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
+     *               r: 流转管理，包括  强行回退  、强行提交
+     *               t: 期限管理 、 设置期限
+     *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
+     *               u: 变更属性     *
+     * @param actionDetail 日志详细信息描述
+     */
     @Override
-    public void recordActionLog(String nodeInstId, String userCode,
-                                String actionType) {
-
+    public  void recordActionLog(String nodeInstId, String userCode,
+        String actionType, String actionDetail){
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
             return;
@@ -1435,13 +1454,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
         }
 
-        if ("C".equals(actionType))
+        /*if ("C".equals(actionType)) {
             nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
+        }*/
         ActionLog wfActionLog = FlowOptUtils.createActionLog(actionType, userCode, nodeInstId);
         //wfActionLog.setActionId(actionLogDao.getNextActionId());
-        if (!sGrantor.equals(userCode))
+        if (!sGrantor.equals(userCode)) {
             wfActionLog.setGrantor(sGrantor);
-
+        }
+        wfActionLog.setLogDetail(actionDetail);
         nodeInst.addWfActionLog(wfActionLog);
         actionLogDao.saveNewObject(wfActionLog);
         //nodeInstanceDao.updateObject(nodeInst);

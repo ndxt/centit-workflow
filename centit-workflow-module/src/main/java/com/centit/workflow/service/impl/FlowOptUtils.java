@@ -191,7 +191,7 @@ public class FlowOptUtils {
         ActionLog actionLog = new ActionLog();
 
         actionLog.setNodeInstId(nodeInstId);
-        actionLog.setActionTime(new Date(System.currentTimeMillis()));
+        actionLog.setActionTime(DatetimeOpt.currentUtilDate());
         actionLog.setActionType(actType);
         actionLog.setUserCode(userCode);
         return actionLog;
