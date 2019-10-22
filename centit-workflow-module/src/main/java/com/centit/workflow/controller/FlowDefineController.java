@@ -52,7 +52,7 @@ public class FlowDefineController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(method = RequestMethod.GET)
     public PageQueryResult<FlowInfo> list(PageDesc pageDesc, HttpServletRequest request) {
-        Map<String, Object> searchColumn = convertSearchColumn(request);
+        Map<String, Object> searchColumn = BaseController.collectRequestParameters(request);
         List<FlowInfo> listObjects = flowDef.listLastVersionFlow(searchColumn, pageDesc);
         return PageQueryResult.createResult(listObjects, pageDesc);
     }

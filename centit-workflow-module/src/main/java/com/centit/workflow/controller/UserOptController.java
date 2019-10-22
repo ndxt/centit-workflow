@@ -75,7 +75,7 @@ public class UserOptController extends BaseController {
     @ApiOperation(value = "删除委托", notes = "删除委托")
     @WrapUpResponseBody
     @RequestMapping(value = "/deleteRelegate/{relegateNo}", method = {RequestMethod.DELETE})
-    public void deleteRelegate(@PathVariable Long relegateNo) {
+    public void deleteRelegate(@PathVariable String relegateNo) {
         flowManager.deleteRoleRelegate(relegateNo);
     }
     @ApiOperation(value = "通过参数获取委托", notes = "通过参数获取委托")

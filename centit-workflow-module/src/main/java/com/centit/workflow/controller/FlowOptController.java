@@ -51,7 +51,7 @@ public class FlowOptController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value="/listOptInfo",method = RequestMethod.GET)
     public PageQueryResult listOptInfo(PageDesc pageDesc, HttpServletRequest request){
-        Map<String, Object> filterMap = convertSearchColumn(request);
+        Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
         JSONArray objList = wfOptService.listOptInfo(filterMap,pageDesc);
         return PageQueryResult.createResult(objList,pageDesc);
     }
@@ -79,7 +79,7 @@ public class FlowOptController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value="/getListOptDefById",method = RequestMethod.GET)
     public PageQueryResult getListOptDefById(String optId, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
-        Map<String, Object> filterMap = convertSearchColumn(request);
+        Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
 
 //        List<FlowOptDef> objList = wfOptService.getListOptDefById(optId, filterMap,pageDesc);
         List<FlowOptPage> objList = wfOptService.ListOptDef(filterMap,pageDesc);
