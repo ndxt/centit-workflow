@@ -366,7 +366,7 @@ CREATE   or replace VIEW v_inner_user_task_list AS
     c.NODE_NAME AS Node_Name,c.NODE_TYPE AS Node_Type,c.OPT_TYPE AS NODE_OPT_TYPE,c.OPT_PARAM AS Opt_Param,
     a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT,c.OPT_CODE AS OPT_CODE,
     c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME,
-    w.INST_STATE AS inst_state
+    w.INST_STATE AS inst_state, a.NODE_PARAM
   from wf_node_instance a join wf_flow_instance w on (a.FLOW_INST_ID = w.FLOW_INST_ID)
     join wf_node c on (a.NODE_ID = c.NODE_ID)
   where (a.NODE_STATE = 'N' and w.INST_STATE = 'N' and a.TASK_ASSIGNED = 'S')
@@ -377,7 +377,7 @@ CREATE   or replace VIEW v_inner_user_task_list AS
     c.NODE_NAME AS Node_Name,c.NODE_TYPE AS Node_Type,c.OPT_TYPE AS NODE_OPT_TYPE,c.OPT_PARAM AS Opt_Param,
     a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT,c.OPT_CODE AS OPT_CODE,
     c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME,
-    w.INST_STATE AS inst_state
+    w.INST_STATE AS inst_state, a.NODE_PARAM
   from wf_node_instance a join wf_flow_instance w on a.FLOW_INST_ID = w.FLOW_INST_ID
     join wf_action_task b on a.NODE_INST_ID = b.NODE_INST_ID
     join wf_node c on a.NODE_ID = c.NODE_ID
@@ -385,9 +385,9 @@ CREATE   or replace VIEW v_inner_user_task_list AS
     and b.TASK_STATE = 'A' and (b.EXPIRE_TIME is null or b.EXPIRE_TIME > sysdate);
 /*  union all
   select a.FLOW_INST_ID AS FLOW_INST_ID,w.FLOW_CODE AS FLOW_CODE,w.VERSION AS version,w.FLOW_Opt_Name AS FLOW_OPT_NAME,w.FLOW_Opt_Tag AS FLOW_OPT_TAG,a.NODE_INST_ID AS NODE_INST_ID,b.UNIT_CODE AS Unit_Code,b.USER_CODE AS user_code,c.ROLE_TYPE AS ROLE_TYPE,c.ROLE_CODE AS ROLE_CODE,'系统指定' AS AUTHDESC,c.NODE_CODE AS node_code,c.NODE_NAME AS Node_Name,c.NODE_TYPE AS Node_Type,c.OPT_TYPE AS NODEOPTTYPE,d.opt_id AS opt_id,d.Opt_Name AS Opt_Name,d.Opt_Name AS MethodName,d.optdef_url AS OptUrl,d.opt_Method AS opt_Method,c.OPT_PARAM AS Opt_Param,d.opt_desc AS Opt_Desc,a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT,c.OPT_CODE AS OPT_CODE,c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME,w.INST_STATE AS inst_state
-from wf_node_instance a 
+from wf_node_instance a
 join wf_flow_instance w on a.FLOW_INST_ID = w.FLOW_INST_ID
-join wf_node c on a.NODE_ID = c.NODE_ID 
+join wf_node c on a.NODE_ID = c.NODE_ID
 join f_v_wf_optdef_url_map d on c.OPT_CODE = d.opt_code
 join f_userunit b on b.user_code=a.user_code
 where a.NODE_STATE = 'N'
@@ -405,7 +405,7 @@ CREATE or replace   VIEW v_user_task_list AS
            a.Node_Name AS Node_Name,a.Node_Type AS Node_Type,a.NODE_OPT_TYPE AS NODE_OPT_TYPE, a.Opt_Param AS Opt_Param,
            a.CREATE_TIME AS CREATE_TIME,a.Promise_Time AS promise_time,a.TIME_LIMIT AS time_limit,a.OPT_CODE AS OPT_CODE,
            a.Expire_Opt AS Expire_Opt,a.STAGE_CODE AS STAGE_CODE,NULL AS GRANTOR,a.last_update_user AS last_update_user,
-           a.LAST_UPDATE_TIME AS LAST_UPDATE_TIME,a.inst_state AS inst_state,a.OPT_CODE as opt_url
+           a.LAST_UPDATE_TIME AS LAST_UPDATE_TIME,a.inst_state AS inst_state,a.OPT_CODE as opt_url, a.NODE_PARAM
     from v_inner_user_task_list a
   union
     select a.FLOW_INST_ID AS FLOW_INST_ID,a.FLOW_CODE AS FLOW_CODE,a.version AS version,a.FLOW_OPT_NAME AS FLOW_OPT_NAME,
@@ -414,7 +414,7 @@ CREATE or replace   VIEW v_user_task_list AS
            a.Node_Name AS Node_Name,a.Node_Type AS Node_Type,a.NODE_OPT_TYPE AS NODE_OPT_TYPE, a.Opt_Param AS Opt_Param,
            a.CREATE_TIME AS CREATE_TIME,a.Promise_Time AS promise_time,a.TIME_LIMIT AS time_limit,a.OPT_CODE AS OPT_CODE,
            a.Expire_Opt AS Expire_Opt,a.STAGE_CODE AS STAGE_CODE,b.GRANTOR AS GRANTOR,a.last_update_user AS last_update_user,
-           a.LAST_UPDATE_TIME AS last_update_time,a.inst_state AS inst_state,a.OPT_CODE as opt_url
+           a.LAST_UPDATE_TIME AS last_update_time,a.inst_state AS inst_state,a.OPT_CODE as opt_url, a.NODE_PARAM
     from v_inner_user_task_list a join wf_role_relegate b on b.unit_code=a.UNIT_CODE
     where b.IS_VALID = 'T' and b.RELEGATE_TIME <= sysdate and a.user_code = b.GRANTOR
           and (b.EXPIRE_TIME is null or b.EXPIRE_TIME >= sysdate)

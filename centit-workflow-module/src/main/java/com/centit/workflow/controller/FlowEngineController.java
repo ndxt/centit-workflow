@@ -198,7 +198,7 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "更改流程业务信息", notes = "更改流程业务信息程")
     @WrapUpResponseBody
-    @PostMapping(value = "/updateFlowInstOptInfo")
+    @PostMapping(value = "/updateFlowOptInfo")
     public void updateFlowInstOptInfo(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         //流程实例ID
@@ -209,6 +209,20 @@ public class FlowEngineController extends BaseController {
         String flowOptTag = jsonObject.getString("flowOptTag");
         flowEngine.updateFlowInstOptInfo(flowInstId, flowOptName, flowOptTag);
     }
+
+
+    @ApiOperation(value = "更改流程节点参数", notes = "更改流程业务信息程")
+    @WrapUpResponseBody
+    @PostMapping(value = "/updateNodeParam")
+    public void updateNodeInstanceParam(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        //流程实例ID
+        String nodeInstId = jsonObject.getString("nodeInstId");
+        //流程名称
+        String nodeParam = jsonObject.getString("nodeParam");
+        flowEngine.updateNodeInstanceParam(nodeInstId, nodeParam);
+    }
+
 
     @ApiOperation(value = "查看办件角色", notes = "查看办件角色")
     @WrapUpResponseBody

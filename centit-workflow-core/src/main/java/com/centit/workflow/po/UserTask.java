@@ -3,6 +3,7 @@ package com.centit.workflow.po;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.common.WorkTimeSpan;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -11,11 +12,9 @@ import java.util.Date;
  * create by scaffold
  * @author codefan@hotmail.com
  */
-
+@Data
 public class UserTask implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
-
-
     private String nodeInstId;
     @DictionaryMap(value="unitCode", fieldName="unitName")
     private String unitCode;
@@ -33,6 +32,7 @@ public class UserTask implements java.io.Serializable {
     private String  nodeName;
     private String  nodeType;
     private String  nodeOptType;
+    private String  nodeParam;
     private String  optParam;
     private String  optCode;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
@@ -76,168 +76,7 @@ public class UserTask implements java.io.Serializable {
     public UserTask() {
     }
 
-    public String getStageCode() {
-        return stageCode;
-    }
 
-    public void setStageCode(String stageCode) {
-        this.stageCode = stageCode;
-    }
-
-    public String getNodeInstId() {
-        return nodeInstId;
-    }
-
-    public void setNodeInstId(String nodeInstId) {
-        this.nodeInstId = nodeInstId;
-    }
-
-    public String getUnitCode() {
-        return unitCode;
-    }
-
-    public void setUnitCode(String unitCode) {
-        this.unitCode = unitCode;
-    }
-
-    public String getUserCode() {
-        return userCode;
-    }
-
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
-    }
-
-    public String getInstState() {
-        return instState;
-    }
-
-    public void setInstState(String instState) {
-        this.instState = instState;
-    }
-
-    public String getFlowCode() {
-        return flowCode;
-    }
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
-    }
-    public String getVersion() {
-        return version;
-    }
-    public void setVersion(String version) {
-        this.version = version;
-    }
-    public String getNodeCode() {
-        return nodeCode;
-    }
-    public void setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
-    }
-
-    public String getRoleType() {
-        return this.roleType;
-    }
-
-    public void setRoleType(String roleType) {
-        this.roleType = roleType;
-    }
-
-    public String getRoleCode() {
-        return this.roleCode;
-    }
-
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
-    }
-
-    // Property accessors
-    public String getFlowName() {
-        return flowName;
-    }
-
-    public void setFlowName(String flowName) {
-        this.flowName = flowName;
-    }
-
-    public String getFlowInstId() {
-        return this.flowInstId;
-    }
-
-    public void setFlowInstId(String flowInstId) {
-        this.flowInstId = flowInstId;
-    }
-
-    public String getAuthDesc() {
-        return this.authDesc;
-    }
-
-    public void setAuthDesc(String authDesc) {
-        this.authDesc = authDesc;
-    }
-
-    public String getFlowOptName() {
-        return this.flowOptName;
-    }
-
-    public void setFlowOptName(String flowOptName) {
-        this.flowOptName = flowOptName;
-    }
-
-    public String getFlowOptTag() {
-        return this.flowOptTag;
-    }
-
-    public void setFlowOptTag(String flowOptTag) {
-        this.flowOptTag = flowOptTag;
-    }
-
-    public String getNodeName() {
-        return this.nodeName;
-    }
-
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-    }
-
-    public String getNodeType() {
-        return this.nodeType;
-    }
-
-    public void setNodeType(String nodeType) {
-        this.nodeType = nodeType;
-    }
-
-    public String getNodeOptType() {
-        return this.nodeOptType;
-    }
-
-    public void setNodeOptType(String nodeOptType) {
-        this.nodeOptType = nodeOptType;
-    }
-
-    public String getOptParam() {
-        return this.optParam;
-    }
-
-    public void setOptParam(String optParam) {
-        this.optParam = optParam;
-    }
-    public String getOptCode() {
-        return this.optCode;
-    }
-
-    public void setOptCode(String optCode) {
-        this.optCode = optCode;
-    }
-
-    public Date getCreateTime() {
-        return this.createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 
     public String getPromiseTimeStr() {
         if(promiseTime==null)
@@ -247,13 +86,6 @@ public class UserTask implements java.io.Serializable {
         return wts.getTimeSpanDesc();
     }
 
-    public Long getPromiseTime() {
-        return promiseTime;
-    }
-
-    public void setPromiseTime(Long promiseTime) {
-        this.promiseTime = promiseTime;
-    }
 
     public String getTimeLimitStr() {
         if(timeLimit==null)
@@ -278,14 +110,20 @@ public class UserTask implements java.io.Serializable {
         urlBuilder.append("flowInstId=")
             .append(this.flowInstId)
             .append("&nodeInstId=")
-            .append(this.nodeInstId)
-            .append("&flowOptTag=")
-            .append(this.flowOptTag);
-        if(StringUtils.isNoneBlank(this.optParam)){
+            .append(this.nodeInstId);
+        if(StringUtils.isNotBlank(this.flowOptTag)){
+            urlBuilder.append("&flowOptTag=")
+                .append(this.flowOptTag);
+        }
+        if(StringUtils.isNotBlank(this.nodeParam)){
+            urlBuilder.append("&nodeParam=")
+                .append(this.nodeParam);
+        }
+        if(StringUtils.isNotBlank(this.optParam)){
             urlBuilder.append("&")
             .append(this.optParam);
         }
-        if(StringUtils.isNoneBlank(this.grantor) &&
+        if(StringUtils.isNotBlank(this.grantor) &&
           ! StringUtils.equals(this.grantor, this.userCode)){
             urlBuilder.append("&grantor=")
               .append(this.grantor);
@@ -293,28 +131,7 @@ public class UserTask implements java.io.Serializable {
         return urlBuilder.toString();
     }
 
-    public String getOptUrl() {
-        return optUrl;
-    }
 
-    public void setOptUrl(String optUrl) {
-        this.optUrl = optUrl;
-    }
-
-    /**
-     * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
-     * @return
-     */
-    public String getExpireOpt() {
-        return this.expireOpt;
-    }
-    /**
-     * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
-     * @param expireopt
-     */
-    public void setExpireOpt(String expireopt) {
-        this.expireOpt = expireopt;
-    }
     public void copy(UserTask other){
 
         this.setNodeInstId(other.getNodeInstId());
@@ -420,95 +237,5 @@ public class UserTask implements java.io.Serializable {
         this.flowStage = null;
         this.stageCode = null;
     }
-    public Date getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-    public void setLastUpdateTime(Date lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
-    public String getLastUpdateUser() {
-        return lastUpdateUser;
-    }
-    public void setLastUpdateUser(String lastUpdateUser) {
-        this.lastUpdateUser = lastUpdateUser;
-    }
-    public Long getTimeLimit() {
-        return timeLimit;
-    }
-    public void setTimeLimit(Long timeLimit) {
-        this.timeLimit = timeLimit;
-    }
-    public String getGrantor() {
-        return grantor;
-    }
-    public void setGrantor(String grantor) {
-        this.grantor = grantor;
-    }
-    public String getFlowStage() {
-        return flowStage;
-    }
-    public void setFlowStage(String flowPhase) {
-        this.flowStage = flowPhase;
-    }
-    public String getInststate() {
-        return instState;
-    }
-    public void setInststate(String inststate) {
-        this.instState = inststate;
-    }
-    public Date getNodeCreateTime() {
-        return nodeCreateTime;
-    }
-    public void setNodeCreateTime(Date nodeCreateTime) {
-        this.nodeCreateTime = nodeCreateTime;
-    }
-    public Date getNodeExpireTime() {
-        return nodeExpireTime;
-    }
-    public void setNodeExpireTime(Date nodeExpireTime) {
-        this.nodeExpireTime = nodeExpireTime;
-    }
 
-    public Date getNodeLastUpdateTime() {
-        return nodeLastUpdateTime;
-    }
-    public void setNodeLastUpdateTime(Date nodeLastUpdateTime) {
-        this.nodeLastUpdateTime = nodeLastUpdateTime;
-    }
-    public Date getFlowExpireTime() {
-        return flowExpireTime;
-    }
-    public void setFlowExpireTime(Date flowExpireTime) {
-        this.flowExpireTime = flowExpireTime;
-    }
-    public Long getFlowTimeLimit() {
-        return flowTimeLimit;
-    }
-    public void setFlowTimeLimit(Long flowTimeLimit) {
-        this.flowTimeLimit = flowTimeLimit;
-    }
-
-    public String getOptName() {
-        return optName;
-    }
-
-    public void setOptName(String optName) {
-        this.optName = optName;
-    }
-
-    public String getOsId() {
-        return osId;
-    }
-
-    public void setOsId(String osId) {
-        this.osId = osId;
-    }
-
-    public String getApplyTime() {
-        return applyTime;
-    }
-
-    public void setApplyTime(String applyTime) {
-        this.applyTime = applyTime;
-    }
 }

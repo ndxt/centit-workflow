@@ -60,9 +60,16 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
+    public void updtNodeInstParam(String nodeInstId, String nodeParam) {
+        NodeInstance nodeInst = this.getObjectById(nodeInstId);
+        nodeInst.setNodeParam(nodeParam);
+        this.updateObject(nodeInst);
+    }
+
+    @Transactional(propagation= Propagation.MANDATORY)
     public List<NodeInstance> listNodeInstByState(String flowInstId, String nodeState) {
         return this.listObjectsByFilter("where node_State= ? and flow_Inst_Id= ?",
-                new Object[]{nodeState,flowInstId,});
+                new Object[]{nodeState,flowInstId});
     }
 
     @Transactional(propagation= Propagation.MANDATORY)

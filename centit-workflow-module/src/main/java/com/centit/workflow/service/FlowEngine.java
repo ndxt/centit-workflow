@@ -253,6 +253,13 @@ public interface FlowEngine {
      */
     void updateFlowInstOptInfo(String flowInstId,String flowOptName,String flowOptTag);
 
+    /**
+     * 设置节点实例参数
+     * @param nodeInstId 节点实例id
+     * @param nodeParam  节点实例参数
+     */
+    void updateNodeInstanceParam(String nodeInstId, String nodeParam);
+
     //--------------------人工控制流程流转和任务分配------------------------------------
 
     /**

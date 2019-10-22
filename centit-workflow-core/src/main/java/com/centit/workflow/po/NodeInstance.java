@@ -78,7 +78,10 @@ public class NodeInstance implements java.io.Serializable {
     //add by codefan@sina.com 2014-4-20
     @Column(name="USER_CODE")
     private String userCode;
-
+    /**
+     * 节点参数，又业务填写，并且通过业务url返回给业务系统
+     * 可以作为业务相关表的主键
+     */
     @Column(name="NODE_PARAM")
     private String nodeParam;
 

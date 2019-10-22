@@ -196,6 +196,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInstanceDao.updateFlowInstOptInfo(flowInstId, flowOptName, flowOptTag);
     }
 
+    /**
+     * 设置节点实例参数
+     * @param nodeInstId 节点实例id
+     * @param nodeParam  节点实例参数
+     */
+    @Override
+    public void updateNodeInstanceParam(String nodeInstId, String nodeParam){
+        nodeInstanceDao.updtNodeInstParam(nodeInstId, nodeParam);
+    }
+
     @Override
     public void updateFlowInstParentNode(String flowInstId, String parentFlowInstId, String parentNodeInstId) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);

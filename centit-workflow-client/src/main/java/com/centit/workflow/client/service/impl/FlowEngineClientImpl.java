@@ -273,7 +273,16 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         paramMap.put("flowOptName", flowOptName);
         paramMap.put("flowOptTag", flowOptTag);
         RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/updateFlowInstOptInfo", paramMap);
+            "/flow/engine/updateFlowOptInfo", paramMap);
+    }
+
+    @Override
+    public void updateNodeInstanceParam(String nodeInstId, String nodeParam) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("nodeInstId", nodeInstId);
+        paramMap.put("nodeParam", nodeParam);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/updateNodeParam", paramMap);
     }
 
     public List<String> viewFlowWorkTeam(String flowInstId, String roleCode) {

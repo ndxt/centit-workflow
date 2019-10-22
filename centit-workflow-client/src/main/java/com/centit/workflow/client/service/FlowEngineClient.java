@@ -58,6 +58,14 @@ public interface FlowEngineClient {
      * @return 节点实例信息
      */
     NodeInfo getNodeInfo(String nodeInstId);
+
+
+    /**
+     * 设置节点实例参数
+     * @param nodeInstId 节点实例id
+     * @param nodeParam  节点实例参数
+     */
+    void updateNodeInstanceParam(String nodeInstId, String nodeParam);
     /**
      * 根据业务id获取所有该业务下的流程 一般应该只有一个
      * @param optTag 这个是业务的主键,如果是多个字段生成 a=b&c=d 的浏览器参数形式,并且注意字段顺序
