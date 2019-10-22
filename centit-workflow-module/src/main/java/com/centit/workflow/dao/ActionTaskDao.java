@@ -48,7 +48,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "FLOW_OPT_TAG,NODE_INST_ID,UNIT_CODE,USER_CODE,ROLE_TYPE," +
             "ROLE_CODE,AUTH_DESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
             "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
-            "OPT_CODE,EXPIRE_OPT,STAGE_CODE as flowStage,GRANTOR,LAST_UPDATE_USER," +
+            "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
             "LAST_UPDATE_TIME,INST_STATE,OPT_URL,OPT_NAME,os_id,flow_name,apply_time, NODE_PARAM  " +
             "from V_USER_TASK_LIST " +
             "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
@@ -76,7 +76,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         "  a.node_inst_id,a.unit_code,a.user_code,c.node_code, " +
         " c.node_name,c.node_type,c.opt_type as NODE_OPT_TYPE,c.opt_param,"+
         " w.create_time,w.promise_time,a.time_limit,c.opt_code, " +
-        " c.expire_opt,c.stage_code as flowStage,'' as GRANTOR,a.last_update_user," +
+        " c.expire_opt,c.stage_code,'' as GRANTOR,a.last_update_user," +
         " a.last_update_time,w.inst_state,c.opt_code as opt_url, a.NODE_PARAM "+
         "from wf_node_instance a " +
         "left join wf_flow_instance w " +
@@ -215,13 +215,13 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
 
     @Transactional
     public List<UserTask> queryStaticTask(String userCode){
-        String sql = "select t.flow_inst_id flowInstId," +
-            "t.node_Inst_Id nodeInstId," +
-            "t.flow_opt_name flowOptName," +
-            "t.flow_opt_tag flowOptTag," +
-            "t.user_Code userCode," +
-            "t.unit_Code unitCode," +
-            "t.opt_param opt_param," +
+        String sql = "select t.flow_inst_id ," +
+            "t.node_Inst_Id," +
+            "t.flow_opt_name," +
+            "t.flow_opt_tag," +
+            "t.user_Code," +
+            "t.unit_Code," +
+            "t.opt_param," +
             "t.NODE_PARAM " +
             "from v_user_task_list t where t.user_code = ?";//TODO 字段按需补全
         return this.getJdbcTemplate().query(sql,new Object[]{userCode},new BeanPropertyRowMapper(UserTask.class));

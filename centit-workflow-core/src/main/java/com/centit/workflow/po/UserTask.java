@@ -51,9 +51,6 @@ public class UserTask implements java.io.Serializable {
     private String optUrl;
     private String stageCode;
 
-    //流程节点阶段
-    private String flowStage;
-
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeCreateTime;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
@@ -154,7 +151,6 @@ public class UserTask implements java.io.Serializable {
         this.lastUpdateTime= other.getLastUpdateTime();
         this.expireOpt= other.getExpireOpt();
         this.grantor = other.getGrantor();
-        this.flowStage = other.getFlowStage();
         this.roleType = other.getRoleType();
         this.roleCode = other.getRoleCode();
         this.optUrl = other.getOptUrl();
@@ -203,8 +199,7 @@ public class UserTask implements java.io.Serializable {
         if(other.getGrantor() != null){
             this.grantor = other.getGrantor();
         }
-        if(other.getFlowStage() != null)
-            this.flowStage = other.getFlowStage();
+
         if(other.getRoleType() != null){
             this.roleType = other.getRoleType();
         }
@@ -234,7 +229,6 @@ public class UserTask implements java.io.Serializable {
         this.promiseTime=null;
         this.expireOpt= null;
         this.grantor = null;
-        this.flowStage = null;
         this.stageCode = null;
     }
 
