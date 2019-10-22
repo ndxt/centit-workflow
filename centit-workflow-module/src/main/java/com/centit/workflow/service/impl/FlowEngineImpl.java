@@ -2024,7 +2024,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public List<UserTask> listUserTasks(String userCode, PageDesc pageDesc) {
         List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(
-            QueryUtils.createSqlParamsMap("userCode", userCode), pageDesc);
+            CollectionsOpt.createHashMap("userCode", userCode), pageDesc);
         return taskList;
     }
 

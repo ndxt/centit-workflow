@@ -687,11 +687,12 @@ public class FlowManagerController extends BaseController {
         flowEng.saveFlowAttention(instAttention);
     }
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @RequestMapping(value = "/test", method = RequestMethod.POST)
     public void Test(HttpServletResponse response) {
         flowManager.moveUserTaskTo("u0000002", "u0000001", "u0000000", "测试");
         JsonResultUtils.writeBlankJson(response);
     }
+
     @ApiOperation(value = "根据id获取流程实例节点", notes = "根据id获取流程实例节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/listFlowInstNodes", method = RequestMethod.GET)
