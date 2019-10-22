@@ -53,15 +53,14 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @WrapUpResponseBody
     @RequestMapping(method = RequestMethod.GET)
-    public void list(PageDesc pageDesc,
+    public List<FlowInstance> list(PageDesc pageDesc,
                      HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         JSONArray listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
-        List<FlowInstance> flowInstanceList = listObjects.toJavaList(FlowInstance.class);
-        resData.addResponseData(OBJLIST, flowInstanceList);
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+        return listObjects.toJavaList(FlowInstance.class);
+
     }
 
     /**
@@ -142,10 +141,10 @@ public class FlowManagerController extends BaseController {
      * TODO:flowEng.viewFlowOrganize(flowInstId)要是直接返回unitInfo更方便
      *
      * @param flowInstId
-     * @param response
      */
+    @WrapUpResponseBody
     @RequestMapping(value = "/getorglist/{flowInstId}", method = RequestMethod.GET)
-    public void getOrganizeList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
+    public List<Map<String, String>> getOrganizeList(@PathVariable String flowInstId) {
         Map<String, List<String>> organizeMap = flowEng.viewFlowOrganize(flowInstId);
         List<Map<String, String>> organizeList = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : organizeMap.entrySet()) {
@@ -157,10 +156,7 @@ public class FlowManagerController extends BaseController {
                 organizeList.add(unitTempMap);
             }
         }
-        pageDesc.setTotalRows(organizeList.size());
-        resData.addResponseData(OBJLIST, organizeList);
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+        return organizeList;
     }
 
     /**
@@ -229,10 +225,10 @@ public class FlowManagerController extends BaseController {
      * 查询办件角色列表
      *
      * @param flowInstId
-     * @param response
      */
+    @WrapUpResponseBody
     @RequestMapping(value = "/getteamlist/{flowInstId}", method = RequestMethod.GET)
-    public void getTeamList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
+    public List<Map<String, String>> getTeamList(@PathVariable String flowInstId) {
         Map<String, List<String>> teamMap = flowEng.viewFlowWorkTeam(flowInstId);
         List<Map<String, String>> teamList = new ArrayList<Map<String, String>>();
         for (Map.Entry<String, List<String>> entry : teamMap.entrySet()) {
@@ -245,10 +241,7 @@ public class FlowManagerController extends BaseController {
                 teamList.add(teamTempMap);
             }
         }
-        resData.addResponseData(OBJLIST, teamList);
-        pageDesc.setTotalRows(teamList.size());
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+        return  teamList;
     }
 
 
@@ -281,15 +274,12 @@ public class FlowManagerController extends BaseController {
      * 查询变量列表
      *
      * @param flowInstId
-     * @param response
+
      */
+    @WrapUpResponseBody
     @RequestMapping(value = "/getvariablelist/{flowInstId}", method = RequestMethod.GET)
-    public void getVariableList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
-        List<FlowVariable> variableList = flowEng.listFlowVariables(flowInstId);
-        pageDesc.setTotalRows(variableList.size());
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        resData.addResponseData(OBJLIST, variableList);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+    public List<FlowVariable> getVariableList(@PathVariable String flowInstId) {
+         return flowEng.listFlowVariables(flowInstId);
     }
 
 
@@ -310,11 +300,10 @@ public class FlowManagerController extends BaseController {
      * 新增变量是需要的令牌选择项
      *
      * @param flowInstId
-     * @param request
-     * @param response
      */
+    @WrapUpResponseBody
     @RequestMapping(value = "/tokens/{flowInstId}", method = RequestMethod.GET)
-    public void editVariable(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, String> editVariable(@PathVariable String flowInstId) {
         List<FlowVariable> flowVariableList = flowEng.listFlowVariables(flowInstId);
         Set<String> existTokenSet = new HashSet<String>();
         for (FlowVariable flowVariable : flowVariableList) {
@@ -330,8 +319,7 @@ public class FlowManagerController extends BaseController {
                 tokenLvbList.put(nodeInst.getRunToken(), nodeInst.getRunToken()); // 获取没有使用过的令牌
             }
         }
-        resData.addResponseData(OBJLIST, tokenLvbList);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+        return  tokenLvbList;
     }
 
     /**
@@ -635,11 +623,11 @@ public class FlowManagerController extends BaseController {
      *
      * @return String
      */
+    @WrapUpResponseBody
     @RequestMapping(value = "/listusertasks/{nodeInstId}", method = RequestMethod.GET)
-    public void listNodeInstTasks(@PathVariable String nodeInstId, HttpServletRequest request, HttpServletResponse response) {
-        List<ActionTask> taskList = flowManager.listNodeInstTasks(nodeInstId);
-        resData.addResponseData(OBJLIST, taskList);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+    public List<ActionTask> listNodeInstTasks(@PathVariable String nodeInstId) {
+         return flowManager.listNodeInstTasks(nodeInstId);
+
     }
 
     /**
@@ -647,11 +635,11 @@ public class FlowManagerController extends BaseController {
      *
      * @return String
      */
+    @WrapUpResponseBody
     @RequestMapping(value = "/nodelogs/{nodeInstId}", method = RequestMethod.GET)
-    public void listNodeInstLogs(@PathVariable String nodeInstId, HttpServletRequest request, HttpServletResponse response) {
-        List<ActionLog> logList = flowManager.listNodeActionLogs(nodeInstId);
-        resData.addResponseData(OBJLIST, logList);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+    public List<ActionLog>  listNodeInstLogs(@PathVariable String nodeInstId) {
+       return flowManager.listNodeActionLogs(nodeInstId);
+
     }
 
     //新增工作组
@@ -667,13 +655,12 @@ public class FlowManagerController extends BaseController {
      * 获取流程实例的关注列表
      *
      * @param flowInstId
-     * @param response
      */
+    @WrapUpResponseBody
     @RequestMapping(value = "/getAttByFlowInstId/{flowInstId}", method = RequestMethod.GET)
-    public void getAttByFlowInstId(@PathVariable String flowInstId, HttpServletResponse response) {
-        List<InstAttention> attentions = flowEng.viewFlowAttention(flowInstId);
-        resData.addResponseData(OBJLIST, attentions);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+    public List<InstAttention> getAttByFlowInstId(@PathVariable String flowInstId) {
+         return flowEng.viewFlowAttention(flowInstId);
+
     }
 
     /**
@@ -751,15 +738,14 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @WrapUpResponseBody
     @RequestMapping(value = "/group", method = RequestMethod.GET)
-    public void listFlowInstGroup(PageDesc pageDesc,
-                     HttpServletRequest request, HttpServletResponse response) {
+    public List<FlowInstanceGroup> listFlowInstGroup(PageDesc pageDesc,
+                     HttpServletRequest request) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         JSONArray listObjects = flowManager.listFlowInstGroup(searchColumn, pageDesc);
-        List<FlowInstanceGroup> flowInstanceGroupList = listObjects.toJavaList(FlowInstanceGroup.class);
-        resData.addResponseData(OBJLIST, flowInstanceGroupList);
-        resData.addResponseData(PAGE_DESC, pageDesc);
-        JsonResultUtils.writeResponseDataAsJson(resData, response);
+        return listObjects.toJavaList(FlowInstanceGroup.class);
+
     }
 
     /**
