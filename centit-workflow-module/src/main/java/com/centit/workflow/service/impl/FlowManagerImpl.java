@@ -1277,7 +1277,20 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return 0;
     }
 
-
+    /**
+     * 将 fromUserCode 所有任务 迁移 给 toUserCode
+     * @param nodeInstIds 任务节点结合
+     * @param fromUserCode 任务属主
+     * @param toUserCode 新的属主
+     * @param moveDesc 迁移描述
+     * @param optUserCode  操作人员
+     * @return 返回迁移的任务数
+     */
+    @Override
+    public int moveUserTaskTo(List<String> nodeInstIds, String fromUserCode, String toUserCode,
+                       String optUserCode, String moveDesc){
+        return 0;
+    }
     /**
      * 在任务列表中指定工作人员，这样就屏蔽了按照角色自动查找符合权限的人员
      */
@@ -1455,7 +1468,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public void deleteRoleRelegate(Long relegateno) {
+    public void deleteRoleRelegate(String relegateno) {
         flowRoleRelegateDao.deleteObjectById(relegateno);
     }
 

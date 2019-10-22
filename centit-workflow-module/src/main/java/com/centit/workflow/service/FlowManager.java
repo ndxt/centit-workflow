@@ -416,18 +416,31 @@ public interface FlowManager {
     /**
      * @param relegateno
      */
-    void deleteRoleRelegate(Long relegateno);
+    void deleteRoleRelegate(String relegateno);
     // ---------节点任务迁移--------------------
 
     /**
-     * 迁移任务
+     * 将 fromUserCode 所有任务 迁移 给 toUserCode
      *
-     * @param fromUserCode
+     * @param fromUserCode 任务属主
+     * @param toUserCode 新的属主
+     * @param moveDesc 迁移描述
+     * @param optUserCode  操作人员
      * @return 返回迁移的任务数
      */
     int moveUserTaskTo(String fromUserCode, String toUserCode,
                        String optUserCode, String moveDesc);
-
+    /**
+     * 将 fromUserCode 所有任务 迁移 给 toUserCode
+     * @param nodeInstIds 任务节点结合
+     * @param fromUserCode 任务属主
+     * @param toUserCode 新的属主
+     * @param moveDesc 迁移描述
+     * @param optUserCode  操作人员
+     * @return 返回迁移的任务数
+     */
+    int moveUserTaskTo(List<String> nodeInstIds, String fromUserCode, String toUserCode,
+                       String optUserCode, String moveDesc);
 
     void updateFlow(FlowInstance flowInstance);
 
