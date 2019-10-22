@@ -93,18 +93,29 @@ public interface FlowManagerClient {
     /**
      * 分配节点任务
      *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
-     */
+     * @param nodeInstId 节点实例ID
+     * @param userCode 操作用户
+     * @param mangerUserCode 管理用户
+     * @param authDesc 授权说明
+     * */
     int assignNodeTask(String nodeInstId, String userCode,
                         String mangerUserCode, String authDesc);
 
     /**
      * 添加节点任务, 添加操作人元
      *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
-     */
+     * @param nodeInstId 节点实例ID
+     * @param userCode 操作用户
+     * @param mangerUserCode 管理用户
+     * @param authDesc 授权说明
+     * */
     int addNodeTask(String nodeInstId, String userCode,
                      String mangerUserCode,  String authDesc);
     /**
      * 删除节点任务
-     */
+     * @param nodeInstId 节点实例ID
+     * @param userCode 操作用户
+     * @param mangerUserCode 管理用户
+     * */
     int deleteNodeTask(String nodeInstId, String userCode, String mangerUserCode);
 }
