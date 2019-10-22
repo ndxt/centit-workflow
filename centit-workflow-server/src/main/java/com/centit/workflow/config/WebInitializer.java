@@ -11,12 +11,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import javax.servlet.ServletRegistration.Dynamic;
 
-
 /**
  * Created by zou_wy on 2017/3/29.
  */
-
-
 public class WebInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
@@ -53,7 +50,6 @@ public class WebInitializer implements WebApplicationInitializer {
         system.setLoadOnStartup(1);
         system.setAsyncSupported(true);
     }
-
     private void initializeNormalServletConfig(ServletContext servletContext) {
         AnnotationConfigWebApplicationContext contextSer = new AnnotationConfigWebApplicationContext();
         contextSer.register(NormalSpringMvcConfig.class,SwaggerConfig.class);
