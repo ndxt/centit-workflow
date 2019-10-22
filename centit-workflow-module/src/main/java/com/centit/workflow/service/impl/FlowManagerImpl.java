@@ -716,7 +716,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * 从这个节点重新运行该流程，包括已经结束的流程
      */
-    public String resetFlowToThisNode(String nodeInstId, String mangerUserCode) {
+    @Override
+    public NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode) {
 
         NodeInstance thisnode = nodeInstanceDao.getObjectCascadeById(nodeInstId);
         if (thisnode == null)
@@ -822,10 +823,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
 
         flow.addWfNodeInstance(nextNodeInst);
-        flowInstanceDao.updateObject(flow);
-        nodeInstanceDao.mergeObject(nextNodeInst);
-        Set<String> nextNodeInsts = new HashSet<>();
-        nextNodeInsts.add(lastNodeInstId);
+        //flowInstanceDao.updateObject(flow);
+        nodeInstanceDao.saveNewObject(nextNodeInst);
+
         //FlowOptUtils.sendMsg("", nextNodeInsts, mangerUserCode);
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nodedef);
@@ -836,7 +836,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         managerAct.setLogDetail("重新运行节点：" + nodeInstId);
         actionLogDao.saveNewObject(managerAct);
 
-        return lastNodeInstId;
+        return nextNodeInst;
     }
 
 

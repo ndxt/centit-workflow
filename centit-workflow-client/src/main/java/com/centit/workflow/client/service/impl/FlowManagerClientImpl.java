@@ -7,6 +7,7 @@ import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.po.FlowInstance;
+import com.centit.workflow.po.NodeInstance;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -168,8 +169,11 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      * @return 新的节点实例id
      */
     @Override
-    public String resetFlowToThisNode(String nodeInstId, String mangerUserCode) {
-        return null;
+    public NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode) {
+        String json =  RestfulHttpRequest.jsonPost(appSession,
+            "/flow/manager/resetToCurrent/"+nodeInstId+"?userCode="+mangerUserCode, null);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        return receiveJSON.getDataAsObject(NodeInstance.class);
     }
 
     /**
@@ -182,7 +186,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      * @param authDesc
      */
     @Override
-    public long assignNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
+    public int assignNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
         return 0;
     }
 
@@ -196,7 +200,7 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      * @param authDesc
      */
     @Override
-    public long addNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
+    public int addNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
         return 0;
     }
 

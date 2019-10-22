@@ -49,73 +49,12 @@ public class FlowEngineController extends BaseController {
 
     private Map<Class<?>, String[]> excludes;
 
-    @ApiOperation(value = "创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
-    @PostMapping("/createAndSubmitFlow")
-    public void createAndSubmitFlow(@RequestBody CreateFlowOptions newFlowInstanceOptions,
-                                    HttpServletRequest request, HttpServletResponse response) {
-        //List<String> vars = JSON.parseArray(newFlowInstanceOptions.getUserList(), String.class);
-        //创建流程
-        FlowInstance flowInstance = flowEngine.createInstance(newFlowInstanceOptions,
-            new ObjectUserUnitVariableTranslate(BaseController.collectRequestParameters(request)), null);
-        //找到创建人得审批角色级别
 
-        //把这个审批角色级别固化到变量createrLevel
-        //flowEngine.saveFlowVariable(flowInstance.getFlowInstId(),"createrLevel","");
-        //提交节点
-        Set<String> nextNodes = flowEngine.submitOpt(
-            SubmitOptOptions.create().nodeInst(flowInstance.getFirstNodeInstance().getNodeInstId())
-                .user(newFlowInstanceOptions.getUserCode())
-                .unit(newFlowInstanceOptions.getUnitCode()));
-        //更新操作人
-        for (String n : nextNodes) {
-            flowManager.deleteNodeActionTasks(n, flowInstance.getFlowInstId(), newFlowInstanceOptions.getUserCode());
-            //for (String v : vars) {
-            flowManager.assignNodeTask(n, newFlowInstanceOptions.getWorkUserCode(),
-                newFlowInstanceOptions.getUserCode(),  "手动指定审批人");
-            //}
-        }
-        JsonResultUtils.writeSingleDataJson(flowInstance, response);
-
-    }
-
-
-    @ApiOperation(value = "自定义表单创建流程并提交", notes = "参数为json格式，包含指定下一步操作人员得list")
-    @PostMapping("/createMetaFormFlowAndSubmit")
-    @WrapUpResponseBody
-    public FlowInstance createMetaFormFlowAndSubmit(@RequestBody CreateFlowOptions newFlowInstanceOptions, HttpServletRequest request) {
-        //暂时这么定义，一个基本业务自定义表单必然只匹配一个流程
-        FlowOptInfo flowOptInfo = wfOptService.getOptByModelId(newFlowInstanceOptions.getModelId());
-        List<FlowInfo> flowInfos = flowDefine.getFlowsByOptId(flowOptInfo.getOptId());
-        FlowInfo flowInfo = flowInfos.get(0);
-        //创建流程
-        newFlowInstanceOptions.setFlowCode(flowInfo.getFlowCode());
-        FlowInstance flowInstance = flowEngine.createInstance(
-            newFlowInstanceOptions, new ObjectUserUnitVariableTranslate(
-                BaseController.collectRequestParameters(request)), null);
-        //提交节点 :: TODO 为什么已创建就提交
-        flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(flowInstance.getFirstNodeInstance().getNodeInstId())
-            .user(newFlowInstanceOptions.getUserCode())
-            .unit(newFlowInstanceOptions.getUnitCode()));
-        return flowInstance;
-    }
-
-    @WrapUpResponseBody
-    @PostMapping(value = "/createInstanceLockFirstNode")
-    public FlowInstance createInstanceLockFirstNode(@RequestBody FlowInstance flowInstanceParam) {
-
-        return flowEngine.createInstance(
-            CreateFlowOptions.create().flow(flowInstanceParam.getFlowCode())
-            .optName(flowInstanceParam.getFlowOptName())
-            .optTag(flowInstanceParam.getFlowOptTag())
-            .user(flowInstanceParam.getUserCode())
-            .unit(flowInstanceParam.getUnitCode())
-            .lockOptUser(true));
-    }
 
 
     @ApiOperation(value = "创建流程", notes = "创建流程，参数为json格式")
     @WrapUpResponseBody
-    @PostMapping(value = "/createFlowInstDefault")
+    @PostMapping(value = "/createInstance")
     public FlowInstance createFlowInstDefault(@RequestBody CreateFlowOptions newFlowInstanceOptions, HttpServletRequest request) {
         FlowInstance flowInstance =
             flowEngine.createInstance(newFlowInstanceOptions,
@@ -130,42 +69,9 @@ public class FlowEngineController extends BaseController {
     }))
     @WrapUpResponseBody
     @PostMapping(value = "/submitOpt")
-    public ResponseData submitOpt(@RequestBody String json, HttpServletRequest request) {
-        JSONObject jsonObject = JSON.parseObject(json);
-        String nodeInstId = jsonObject.getString("nodeInstId");
-        String userCode = jsonObject.getString("userCode");
-        String unitCode = jsonObject.getString("unitCode");
-        String varTrans = jsonObject.getString("varTrans");
-        JSONArray users = jsonObject.getJSONArray("userList");
-
-        try {
-            Set<String> nextNodes;
-            if (StringUtils.isNotBlank(varTrans) && !"null".equals(varTrans)) {
-                Map<String, Object> maps = BaseController.collectRequestParameters(request);
-                maps.putAll((Map)JSON.parse(varTrans.replaceAll("&quot;", "\"")));
-                nextNodes = flowEngine.submitOpt(
-                    SubmitOptOptions.create().nodeInst(nodeInstId)
-                        .user(userCode)
-                        .unit(unitCode),
-                    new ObjectUserUnitVariableTranslate(maps), null);
-            } else {
-                nextNodes = flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInstId)
-                    .user(userCode)
-                    .unit(unitCode));
-            }
-            //更新操作人
-            if (users != null && users.size() > 0) {
-                for (String n : nextNodes) {
-                    flowManager.deleteNodeActionTasks(n, flowEngine.getNodeInstById(nodeInstId).getFlowInstId(), userCode);
-                    for (Object v : users) {
-                        flowManager.assignNodeTask(n, v.toString(), userCode,  "手动指定审批人");
-                    }
-                }
-            }
-            return ResponseData.makeResponseData(nextNodes);
-        } catch (WorkflowException e) {
-            return ResponseData.makeErrorMessage(e.getExceptionType(), e.getMessage());
-        }
+    public Set<String> submitOpt(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
+        return flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
+            BaseController.collectRequestParameters(request)),null);
     }
 
     @ApiOperation(value = "保存流程变量", notes = "保存流程变量")
@@ -423,4 +329,64 @@ public class FlowEngineController extends BaseController {
         return PageQueryResult.createResult(listObjects, pageDesc);
     }
 
+
+    /**
+     * 获取流程实例信息
+     *
+     * @param flowInstId 实例id
+     * @return 实例信息
+     */
+    @ApiOperation(value = "获取流程实例信息", notes = "获取流程实例信息")
+    @WrapUpResponseBody
+    @GetMapping(value = "/inst/{flowInstId}")
+    public FlowInstance getFlowInstance(String flowInstId) {
+        return flowEngine.getFlowInstById(flowInstId);
+    }
+
+    /**
+     * 获取流程定义信息
+     *
+     * @param flowInstId 实例id
+     * @return 流程定义信息
+     */
+    @ApiOperation(value = "获取流程定义信息", notes = "获取流程定义信息")
+    @WrapUpResponseBody
+    @GetMapping(value = "/instDef/{flowInstId}")
+    public FlowInfo getFlowDefine(String flowInstId) {
+        FlowInstance instance = flowEngine.getFlowInstById(flowInstId);
+        if(instance==null){
+            return null;
+        }
+        return flowDefine.getFlowDefObject(instance.getFlowCode(), instance.getVersion());
+    }
+
+    /**
+     * 获取节点实例信息
+     *
+     * @param nodeInstId 节点实例id
+     * @return 节点实例信息
+     */
+    @ApiOperation(value = "获取节点实例信息", notes = "获取节点实例信息")
+    @WrapUpResponseBody
+    @GetMapping(value = "/nodeInst/{nodeInstId}")
+    public NodeInstance getNodeInstance(String nodeInstId) {
+        return flowEngine.getNodeInstById(nodeInstId);
+    }
+
+    /**
+     * 获取节点定义信息
+     *
+     * @param nodeInstId 节点实例id
+     * @return 节点实例信息
+     */
+    @ApiOperation(value = "获取节点实例信息", notes = "获取节点实例信息")
+    @WrapUpResponseBody
+    @GetMapping(value = "/nodeDef/{nodeInstId}")
+    public NodeInfo getNodeInfo(String nodeInstId) {
+        NodeInstance inst = flowEngine.getNodeInstById(nodeInstId);
+        if(inst==null){
+            return null;
+        }
+        return flowDefine.getNodeInfoById(inst.getNodeId());
+    }
 }

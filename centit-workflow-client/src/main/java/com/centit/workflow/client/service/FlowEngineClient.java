@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
-import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.FlowInstanceGroup;
-import com.centit.workflow.po.FlowVariable;
-import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.po.*;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +20,7 @@ public interface FlowEngineClient {
      * @param options CreateFlowOptions 流程创建选项编码
      * @return 流程实例
      */
-    FlowInstance createInstance(CreateFlowOptions options) ;
+    FlowInstance createInstance(CreateFlowOptions options);
 
 
    //--------------------提交流程业务节点-----------------------------------
@@ -32,8 +29,35 @@ public interface FlowEngineClient {
      * @param options SubmitOptOptions 提交流程操作选项编码
      * @return  节点实例编号列表
      */
-    Map<String, Object> submitOpt(SubmitOptOptions options) ;
+    Map<String, Object> submitOpt(SubmitOptOptions options);
 
+    /**
+     * 获取流程实例信息
+     * @param flowInstId 实例id
+     * @return 实例信息
+     */
+    FlowInstance getFlowInstance(String flowInstId);
+
+    /**
+     * 获取流程定义信息
+     * @param flowInstId 实例id
+     * @return 流程定义信息
+     */
+    FlowInfo getFlowDefine(String flowInstId);
+
+    /**
+     * 获取节点实例 Id
+     * @param nodeInstId 节点实例id
+     * @return 节点实例信息
+     */
+    NodeInstance getNodeInstance(String nodeInstId);
+
+    /**
+     * 获取节点定义信息
+     * @param nodeInstId 节点实例id
+     * @return 节点实例信息
+     */
+    NodeInfo getNodeInfo(String nodeInstId);
     /**
      * 根据业务id获取所有该业务下的流程 一般应该只有一个
      * @param optTag 这个是业务的主键,如果是多个字段生成 a=b&c=d 的浏览器参数形式,并且注意字段顺序

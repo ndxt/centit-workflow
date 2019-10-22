@@ -2,6 +2,7 @@ package com.centit.workflow.client.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.centit.workflow.po.FlowInstance;
+import com.centit.workflow.po.NodeInstance;
 
 /**
  * 流程管理业务接口类
@@ -49,6 +50,13 @@ public interface FlowManagerClient {
     int suspendInstance(String flowInstId, String mangerUserCode, String admindesc);
 
     /**
+     * 从这个节点重新运行该流程，包括已经结束的流程
+     * @param nodeInstId 节点实例id
+     * @param mangerUserCode 管理人员代码
+     * @return 新的节点实例
+     * */
+    NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode);
+    /**
      * 激活一个 挂起的或者无效的流程  N 正常
      * @param flowInstId 流程实例id
      * @param mangerUserCode 管理人员代码
@@ -81,26 +89,19 @@ public interface FlowManagerClient {
      * @return 状态码
      * */
     String forceCommit(String nodeInstId, String mangerUserCode);
-    /**
-     * 从这个节点重新运行该流程，包括已经结束的流程
-     * @param nodeInstId 节点实例id
-     * @param mangerUserCode 管理人员代码
-     * @return 新的节点实例id
-     */
-    String resetFlowToThisNode(String nodeInstId, String mangerUserCode);
 
     /**
      * 分配节点任务
      *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      */
-    long assignNodeTask(String nodeInstId, String userCode,
+    int assignNodeTask(String nodeInstId, String userCode,
                         String mangerUserCode, String authDesc);
 
     /**
      * 添加节点任务, 添加操作人元
      *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      */
-    long addNodeTask(String nodeInstId, String userCode,
+    int addNodeTask(String nodeInstId, String userCode,
                      String mangerUserCode,  String authDesc);
     /**
      * 删除节点任务

@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseMapData;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JSONOpt;
 import com.centit.support.json.JsonPropertyUtils;
@@ -478,17 +480,22 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.GET)
-    public void resetToCurrent(@PathVariable String nodeInstId, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.resetFlowToThisNode(nodeInstId, "admin");
-        JsonResultUtils.writeSingleDataJson("", response);
+    @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.POST)
+    @WrapUpResponseBody
+    public NodeInstance resetToCurrent(@PathVariable String nodeInstId, HttpServletRequest request) {
+        Map<String, Object> params = BaseController.collectRequestParameters(request);
+        String managerUser = StringBaseOpt.castObjectToString(params.get("userCode"));
+        if(StringUtils.isBlank(managerUser)){
+            managerUser = WebOptUtils.getCurrentUserCode(request);
+        }
+        return flowManager.resetFlowToThisNode(nodeInstId, managerUser);
     }
 
     /**
      * 任务列表查询，查询条件可自助添加
      */
     @RequestMapping(value = "/listNodeOpers/{nodeInstId}", method = RequestMethod.GET)
-    public void listNodeOpers(@PathVariable String nodeInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void listNodeOpers(@PathVariable String nodeInstId, HttpServletResponse response) {
         NodeInstance nodeInstance = flowEng.getNodeInstById(nodeInstId);
         List<UserTask> objList = new ArrayList<>();
         List<UserTask> innerTask = flowManager.listNodeTasks(nodeInstId);

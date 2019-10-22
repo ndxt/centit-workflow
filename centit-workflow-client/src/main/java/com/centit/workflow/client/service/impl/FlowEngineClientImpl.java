@@ -75,7 +75,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     public FlowInstance createInstance(CreateFlowOptions options) {
         //JSONObject jsonObject = (JSONObject)JSON.toJSON(options);
         String flowJson = RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/createFlowInstDefault", options);
+            "/flow/engine/createInstance", options);
         return jsonToFlowInstance(flowJson);
     }
 
@@ -175,6 +175,58 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         //Map<String,Object> jsonObject=JSONObject.parseObject(returnJson);
         return receiveJSON.getJSONObject();
 
+    }
+
+    /**
+     * 获取流程实例信息
+     *
+     * @param flowInstId 实例id
+     * @return 实例信息
+     */
+    @Override
+    public FlowInstance getFlowInstance(String flowInstId) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/inst/"+flowInstId);
+        return receiveJSON.getDataAsObject(FlowInstance.class);
+    }
+
+    /**
+     * 获取流程定义信息
+     *
+     * @param flowInstId 实例id
+     * @return 流程定义信息
+     */
+    @Override
+    public FlowInfo getFlowDefine(String flowInstId) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/instDef/"+flowInstId);
+        return receiveJSON.getDataAsObject(FlowInfo.class);
+    }
+
+    /**
+     * 获取节点实例 Id
+     *
+     * @param nodeInstId 节点实例id
+     * @return 节点实例信息
+     */
+    @Override
+    public NodeInstance getNodeInstance(String nodeInstId) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/nodeInst/"+nodeInstId);
+        return receiveJSON.getDataAsObject(NodeInstance.class);
+    }
+
+    /**
+     * 获取节点定义信息
+     *
+     * @param nodeInstId 节点实例id
+     * @return 节点实例信息
+     */
+    @Override
+    public NodeInfo getNodeInfo(String nodeInstId) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/nodeDef/"+nodeInstId);
+        return receiveJSON.getDataAsObject(NodeInfo.class);
     }
 
     @Override

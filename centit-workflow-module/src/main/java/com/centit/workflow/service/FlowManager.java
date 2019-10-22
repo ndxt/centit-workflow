@@ -197,9 +197,9 @@ public interface FlowManager {
      * 从这个节点重新运行该流程，包括已经结束的流程
      * @param nodeInstId 节点实例id
      * @param mangerUserCode 管理人员代码
-     * @return 新的节点实例id
+     * @return 新的节点实例
      * */
-    String resetFlowToThisNode(String nodeInstId, String mangerUserCode);
+    NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode);
 
     /**
      * 强制一个并行分支的节点为游离状态，在提交其他并行分支前调用
