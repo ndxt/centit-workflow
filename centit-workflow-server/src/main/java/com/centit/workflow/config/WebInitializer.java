@@ -50,6 +50,11 @@ public class WebInitializer implements WebApplicationInitializer {
         system.setLoadOnStartup(1);
         system.setAsyncSupported(true);
     }
+
+    /**
+     * 加载工作流
+     * @param servletContext
+     */
     private void initializeNormalServletConfig(ServletContext servletContext) {
         AnnotationConfigWebApplicationContext contextSer = new AnnotationConfigWebApplicationContext();
         contextSer.register(NormalSpringMvcConfig.class,SwaggerConfig.class);

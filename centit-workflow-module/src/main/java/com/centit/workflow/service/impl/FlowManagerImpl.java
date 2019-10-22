@@ -1208,7 +1208,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 nodeInstance.setUserCode(toUserCode);
                 nodeInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                 nodeInstance.setLastUpdateUser(optUserCode);
-                nodeInstanceDao.mergeObject(nodeInstance);
+                nodeInstanceDao.updateObject(nodeInstance);
                 //日志
                 ActionLog wfactlog = FlowOptUtils.createActionLog("A",
                     optUserCode, nodeInstance.getNodeInstId());

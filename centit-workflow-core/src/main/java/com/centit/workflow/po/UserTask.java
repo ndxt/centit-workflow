@@ -24,7 +24,6 @@ public class UserTask implements java.io.Serializable {
     private String flowInstId;
     private String  authDesc;
     private String  flowOptName;
-    private String  flowName;
     private String  flowOptTag;
     private String  flowCode;
     private String  version;
@@ -62,11 +61,8 @@ public class UserTask implements java.io.Serializable {
 
     private Long flowTimeLimit;
 
-    private String optName;
-
     private String osId;
 
-    private String applyTime;
 
     // Constructors
     /** default constructor */

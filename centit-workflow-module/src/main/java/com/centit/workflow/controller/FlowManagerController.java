@@ -638,11 +638,11 @@ public class FlowManagerController extends BaseController {
 
     //新增工作组
     @RequestMapping(value = "/assignFlowWorkTeam/{flowInstId}/{roleCode}/{userCode}/{authdesc}", method = RequestMethod.POST)
+    @WrapUpResponseBody
     public void assignFlowWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode,
                                    @PathVariable String userCode, @PathVariable String authdesc, HttpServletRequest request, HttpServletResponse response) {
         flowEng.assignFlowWorkTeam(flowInstId, roleCode,
             userCode, authdesc);
-        JsonResultUtils.writeBlankJson(response);
     }
 
     /**
@@ -666,12 +666,16 @@ public class FlowManagerController extends BaseController {
     public void addAttention(@RequestBody InstAttention instAttention) {
         flowEng.saveFlowAttention(instAttention);
     }
-
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public void Test(HttpServletResponse response) {
-        flowManager.moveUserTaskTo("u0000002", "u0000001", "u0000000", "测试");
-        JsonResultUtils.writeBlankJson(response);
+    /**
+     * 将 fromUserCode 所有任务 迁移 给 toUserCode
+     */
+    @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode", notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/moveUserTaskTo", method = RequestMethod.POST)
+    public void moveUserTaskTo(@RequestBody RoleRelegate roleRelegate) {
+        flowManager.moveUserTaskTo(roleRelegate.getGrantor(),roleRelegate.getGrantee(),roleRelegate.getRecorder(),roleRelegate.getGrantDesc());
     }
+
     @ApiOperation(value = "根据id获取流程实例节点", notes = "根据id获取流程实例节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/listFlowInstNodes", method = RequestMethod.GET)
@@ -686,6 +690,7 @@ public class FlowManagerController extends BaseController {
      * F 强行结束
      */
     @PostMapping(value = "/stopAndChangeInstance/{flowInstId}/{userCode}")
+    @WrapUpResponseBody
     public void stopAndChangeInstance(String flowInstId, String userCode, String desc) {
         flowManager.stopInstance(flowInstId, userCode, desc);
     }
