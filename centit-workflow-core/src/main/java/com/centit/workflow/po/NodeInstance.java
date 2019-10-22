@@ -21,7 +21,9 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name = "NODE_INST_ID")
     @ValueGenerator(strategy = GeneratorType.UUID22)
     private String nodeInstId;
-
+    /**
+     *
+     */
     @Column(name="FLOW_INST_ID")
     private String  flowInstId;
 
