@@ -42,7 +42,7 @@ public class RoleFormulaController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value="/listRoleFormula",method = RequestMethod.GET)
     public PageQueryResult<RoleFormula> listAllRoleFormula(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
-        Map<String, Object> filterMap = convertSearchColumn(request);
+        Map<String, Object> filterMap = collectRequestParameters(request);
         List<RoleFormula> listObjects = roleFormulaService.listRoleFormulas(filterMap, pageDesc);
 
         return PageQueryResult.createResult(listObjects, pageDesc);

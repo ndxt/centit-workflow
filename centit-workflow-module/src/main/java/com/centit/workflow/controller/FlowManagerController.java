@@ -56,7 +56,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     public void list(PageDesc pageDesc,
                      HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> searchColumn = convertSearchColumn(request);
+        Map<String, Object> searchColumn = collectRequestParameters(request);
         JSONArray listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
         List<FlowInstance> flowInstanceList = listObjects.toJavaList(FlowInstance.class);
         resData.addResponseData(OBJLIST, flowInstanceList);
@@ -686,11 +686,14 @@ public class FlowManagerController extends BaseController {
     public void addAttention(@RequestBody InstAttention instAttention) {
         flowEng.saveFlowAttention(instAttention);
     }
-
-    @RequestMapping(value = "/test", method = RequestMethod.POST)
-    public void Test(HttpServletResponse response) {
-        flowManager.moveUserTaskTo("u0000002", "u0000001", "u0000000", "测试");
-        JsonResultUtils.writeBlankJson(response);
+    /**
+     * 将 fromUserCode 所有任务 迁移 给 toUserCode
+     */
+    @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode", notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/moveUserTaskTo", method = RequestMethod.POST)
+    public void moveUserTaskTo(@RequestBody RoleRelegate roleRelegate) {
+        flowManager.moveUserTaskTo(roleRelegate.getGrantor(),roleRelegate.getGrantee(),roleRelegate.getRecorder(),roleRelegate.getGrantDesc());
     }
 
     @ApiOperation(value = "根据id获取流程实例节点", notes = "根据id获取流程实例节点")
@@ -751,7 +754,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/group", method = RequestMethod.GET)
     public void listFlowInstGroup(PageDesc pageDesc,
                      HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> searchColumn = convertSearchColumn(request);
+        Map<String, Object> searchColumn = collectRequestParameters(request);
         JSONArray listObjects = flowManager.listFlowInstGroup(searchColumn, pageDesc);
         List<FlowInstanceGroup> flowInstanceGroupList = listObjects.toJavaList(FlowInstanceGroup.class);
         resData.addResponseData(OBJLIST, flowInstanceGroupList);
