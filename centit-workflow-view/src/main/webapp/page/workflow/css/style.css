@@ -169,3 +169,77 @@ text::selection{
     background: #ffffff;
     display: none;
 }
+
+#allUnit {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 130;
+    background: rgba(0, 0, 0, .3);
+    display: none;
+}
+
+#allUnit .frame {
+    margin: -200px -250px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: #dddddd;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+#allUnit .frame .title {
+    display: block;
+    background: #f5f5f5;
+    color: #333;
+    font-size: 14px;
+    padding: 5px 10px;
+    position: relative;
+}
+
+#allUnit .frame .close {
+    position: absolute;
+    font-size: 16px;
+    width: 29px;
+    text-align: center;
+    height: 29px;
+    cursor: pointer;
+    color: rgba(255, 0, 0, .6);
+    line-height: 29px;
+    right: 0;
+    top: 0;
+}
+
+#allUnit .frame .close:hover {
+    font-weight: bold;
+    color: red;
+}
+
+#allUnit .frame div {
+    padding: 10px;
+    width: 500px;
+    height: 400px;
+    overflow: auto;
+}
+
+#allUnit .frame div span {
+    float: left;
+    min-width: 100px;
+    margin: 5px 20px;
+}
+
+#allUnit .frame div span input {
+    float: left;
+    zoom: 1.4;
+    cursor: pointer;
+}
+
+#allUnit .frame div span label {
+    font-size: 13px;
+    float: left;
+    margin-top: -1px;
+    cursor: pointer;
+}

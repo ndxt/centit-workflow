@@ -11,7 +11,7 @@ function bindAttr(obj) {
         $("#argumentTool").show();
     }
     $("#route-type").hide();//隐藏路由类别
-    $("#iosid").show();
+    // $("#iosid").show();
     $("#flow-phase").show();//显示流程节点阶段
     $("#is-trunkLine").show();//显示是否主干节点
     //！--公共属性开始
@@ -40,17 +40,30 @@ function bindAttr(obj) {
             g("isTrunkLine").options[i].selected = "selected";
         }
     }
+
+    // 操作类别
+    $('#opttype').empty();//清空select
+    for (k in Data.OptType) {//重新添加option
+      $("#opttype").append("<option  value='" + k + "' >" + Data.OptType[k] + "</option>");
+    }
+
+    // 流程节点阶段
     $('#flowphase').empty();//清空select
     for (k in Data.FlowPhase) {//重新添加option
         if (SVG.get(o).attr("flowphase") == k) {//节点阶段
             $("#flowphase").append("<option  value='" + k + "' selected='selected'>" + Data.FlowPhase[k] + "</option>");
         }
         else {
-
             $("#flowphase").append("<option  value='" + k + "' >" + Data.FlowPhase[k] + "</option>");
         }
     }
-    g("osid").value = SVG.get(o).attr("osid");//osid
+
+    // 机构表达式
+    $('#insideUnit').empty();//清空select
+    for (k in Data.InsideUnit) {//重新添加option
+      $("#insideUnit").append("<option  value='" + k + "' >" + Data.InsideUnit[k] + "</option>");
+    }
+    // g("osid").value = SVG.get(o).attr("osid");//osid
 
     g("nodedesc").value = SVG.get(o).attr("nodedesc");//节点描述
     //--公共属性结束
@@ -177,7 +190,7 @@ function bindAttr(obj) {
         $("#commonAttr").show();//默认显示公共属性栏
         if(SVG.get(o).attr("nodetype")=="R"){
             $("#route-type").show();//显示路由类别
-            $("#iosid").hide();
+            // $("#iosid").hide();
         }
         for (i = 0; i < g("routertype").options.length; i++) {//路由类别
             if (g("routertype").options[i].value == SVG.get(o).attr("routertype")) {

@@ -614,6 +614,10 @@ function changeValue(obj,id){
         g(o).setAttribute(id,obj.value);
     }
 }
+
+function changeInputValue(obj, id){
+  $('#' + id).val(obj.value)
+}
 /**
  * 设置线条名称
  * @param obj
@@ -1153,4 +1157,23 @@ function saveXml(){
     catch(e){
         alert(e);
     }
+}
+
+// 所有机构
+function viewAllUnit(display) {
+  // $('#allUnit .frame div input:checked').prop('checked', false)
+  display ? $('#allUnit').fadeIn() : $('#allUnit').fadeOut()
+}
+
+function changeInsideUnit() {
+  var unit = ''
+
+  $('#allUnit .frame div input:checked').each(function (i) {
+    unit += "'" + $(this).attr('id') + "'"
+
+    if (i < $('#allUnit .frame div input:checked').length - 1) {
+      unit += ','
+    }
+  })
+  $('#unitexp').val(unit !== '' ? 'D('+unit+')' : '')
 }

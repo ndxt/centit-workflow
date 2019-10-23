@@ -79,7 +79,7 @@
 			<ul>
 				<li id="common">基本属性</li>
 				<li id="operate">业务设置</li>
-				<li id="permission">权限定义</li>
+				<li id="permission">任务分配</li>
 				<li id="time">时间约束</li>
 				<li id="special" style="display: none;">特殊属性</li>
 				<li id="constraint" style="width: 120px; display: none;">目标节点时间约束</li>
@@ -112,21 +112,21 @@
 							</div>
 						</td>
 					</tr>
-          <tr id="iosid">
-          <td>
-							<div>
-								<label for="osid">osid</label>
-							</div>
-						</td>
-						<td>
-							<div>
-								<select style="width: 99%;" id="osid"
-										oninput="changeValue(this,'osid')">
-									<option value="">请选择</option>
-								</select>
-							</div>
-						</td>
-					</tr>
+          <!--<tr id="iosid">-->
+          <!--<td>-->
+							<!--<div>-->
+								<!--<label for="osid">osid</label>-->
+							<!--</div>-->
+						<!--</td>-->
+						<!--<td>-->
+							<!--<div>-->
+								<!--<select style="width: 99%;" id="osid"-->
+										<!--oninput="changeValue(this,'osid')">-->
+									<!--<option value="">请选择</option>-->
+								<!--</select>-->
+							<!--</div>-->
+						<!--</td>-->
+					<!--</tr>-->
 					<tr id="route-type" style="display: none;">
 						<td>
 							<div>
@@ -204,11 +204,11 @@
 							<div>
 								<select style="width: 99%;" id="opttype"
 										oninput="changeValue(this,'opttype')">
-									<option value="D">自动执行</option>
-									<option value="E">哑元</option>
-									<option value="S">子流程</option>
-									<option value="A">抢先（一般）</option>
-									<option value="C">多人操作</option>
+									<!--<option value="D">自动执行</option>-->
+									<!--<option value="E">哑元</option>-->
+									<!--<option value="S">子流程</option>-->
+									<!--<option value="A">抢先（一般）</option>-->
+									<!--<option value="C">多人操作</option>-->
 								</select>
 							</div>
 						</td>
@@ -295,9 +295,13 @@
 							</div>
 						</td>
 						<td>
-							<div>
-								<input type="text" id="unitexp" value="D(P)" style="width: 97%;"
-									oninput="changeValue(this,'unitexp')" />
+							<div style="position: relative; overflow: hidden;">
+                <select id="insideUnit" oninput="changeInputValue(this, 'unitexp')"
+                  style="width: 80%; float: left; cursor: pointer;">
+                </select>
+                <input type="text" id="unitexp" value="D(P)" oninput="changeValue(this,'unitexp')"
+                       style="width: 118px; height: 18px; position: absolute; left: 5px; top: 5px; border: none;"/>
+                <button type="button" onclick="viewAllUnit(true)" style="cursor: pointer;">机构</button>
 							</div>
 						</td>
 					</tr>
@@ -315,8 +319,10 @@
 									<option value="bj">办件角色</option>
 									<option value="gw">岗位角色</option>
 									<option value="xz">行政角色</option>
-									<option value="en">权限引擎</option>
-									<option value="sp">审批角色</option>
+                  <option value="xt">系统角色</option>
+                  <option value="en">权限引擎</option>
+									<option value="qx">已定义权限表达式</option>
+									<!--<option value="sp">审批角色</option>-->
 								</select>
 							</div>
 						</td>
@@ -521,7 +527,9 @@
 									<option value="bj">办件角色</option>
 									<option value="gw">岗位角色</option>
 									<option value="xz">行政角色</option>
-									<option value="en">权限引擎</option>
+                  <option value="xt">系统角色</option>
+                  <option value="en">权限引擎</option>
+                  <option value="qx">已定义权限表达式</option>
 								</select>
 							</div>
 						</td>
@@ -734,6 +742,14 @@
 	</div>
 	<div id="canvas"></div>
 	<div id="lineCon"></div>
+  <div id="allUnit">
+    <div class="frame">
+      <label class="title">
+        所有机构<span class="close" onclick="viewAllUnit(false)">X</span>
+      </label>
+      <div></div>
+    </div>
+  </div>
 	<script type="text/javascript" src="js/url.js"></script>
 	<script type="text/javascript" src="js/svg.js"></script>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
@@ -806,6 +822,45 @@
         	error:function(data){
         		alert("请求失败");
         	}
+        });
+
+        // 所有用户
+        $.ajax({
+          type:"get",
+          async:false,
+          url:path+loadAllUserData,
+          success:function(data){
+            Data.AllUser = data.data
+          },
+        });
+
+        // 所有机构
+        $.ajax({
+          type:"get",
+          async:false,
+          url:path+loadAllUnitData,
+          success:function(data){
+            // Data.AllUint = data.data
+            $('#allUnit .frame div').html('');
+            data.data.forEach(function (v, i) {
+              $('#allUnit .frame div').append(
+                '<span>'+
+                  '<input id="'+v.unitCode+'" name="unit-'+i+'" type="checkbox" onchange="changeInsideUnit()"/>'+
+                  '<label for="'+v.unitCode+'">'+v.unitName+'</label>'+
+                '</span>'
+              );
+            })
+          },
+        });
+
+        // 内置机构表达式
+        $.ajax({
+          type:"get",
+          async:false,
+          url:path+loadInsideUnitData,
+          success:function(data){
+            Data.InsideUnit = data.data
+          },
         });
     }
     else {
