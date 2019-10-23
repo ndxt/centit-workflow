@@ -27,6 +27,8 @@ public interface FlowOptParamOptions {
 
      Map<String, List<String>> getFlowRoleUsers();
 
+    Map<String, List<String>> getFlowOrganizes();
+
      Map<String, String> getNodeUnits();
 
      Map<String, Set<String>> getNodeOptUsers();

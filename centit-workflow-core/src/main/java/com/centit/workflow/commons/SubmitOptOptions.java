@@ -73,6 +73,12 @@ public class SubmitOptOptions implements FlowOptParamOptions{
     private Map<String, List<String>> flowRoleUsers;
 
     /**
+     * 流程机构
+     * Map String 机构角色 String（机构代码）
+     */
+    @ApiModelProperty("指定后续节点机构")
+    private Map<String, List<String>> flowOrganizes;
+    /**
      * 后续节点机构
      * Map String (节点的环节代码或者节点代码) String（机构代码）
      */
@@ -151,6 +157,27 @@ public class SubmitOptOptions implements FlowOptParamOptions{
         return this;
     }
 
+    public SubmitOptOptions addFlowOrganizes(String role, List<String> units){
+        if(this.flowOrganizes == null){
+            this.flowOrganizes = new HashMap<>();
+        }
+        this.flowOrganizes.put(role, units);
+        return this;
+    }
+
+    public SubmitOptOptions addFlowOrganize(String role, String unitCode){
+        if(this.flowOrganizes == null){
+            this.flowOrganizes = new HashMap<>();
+        }
+        List<String> units = this.flowOrganizes.get(role);
+        if(units == null){
+            this.flowOrganizes.put(role, CollectionsOpt.createList(unitCode));
+        } else {
+            units.add(unitCode);
+        }
+        return this;
+    }
+
     public SubmitOptOptions setNextNodeUnit(String nextNode, String unitCode){
         if(this.nodeUnits == null){
             this.nodeUnits = new HashMap<>();
@@ -187,6 +214,7 @@ public class SubmitOptOptions implements FlowOptParamOptions{
         this.setGlobalVariables(CollectionsOpt.cloneHashMap(options.getGlobalVariables()));
         this.setNodeUnits(CollectionsOpt.cloneHashMap(options.getNodeUnits()));
         this.setNodeOptUsers(CollectionsOpt.cloneHashMap(options.getNodeOptUsers()));
+        this.setFlowOrganizes(CollectionsOpt.cloneHashMap(options.getFlowOrganizes()));
 
         this.user(options.getUserCode())
             .unit(options.getUnitCode());
@@ -201,6 +229,8 @@ public class SubmitOptOptions implements FlowOptParamOptions{
         newObj.setNodeUnits(CollectionsOpt.cloneHashMap(this.nodeUnits));
         newObj.setFlowRoleUsers(CollectionsOpt.cloneHashMap(this.flowRoleUsers));
         newObj.setNodeOptUsers(CollectionsOpt.cloneHashMap(this.nodeOptUsers));
+        newObj.setFlowOrganizes(CollectionsOpt.cloneHashMap(this.flowOrganizes));
+
         return newObj.user(this.userCode)
             .unit(this.unitCode).workUser(this.workUserCode)
             .lockOptUser(this.lockOptUser)
