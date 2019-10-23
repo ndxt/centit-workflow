@@ -5,10 +5,7 @@ import lombok.Data;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * WF_OPTINFO 流程业务定义
@@ -29,6 +26,8 @@ public class FlowOptInfo implements java.io.Serializable {
     @Column(name = "OPT_URL")
     private String optUrl;
 
+    @Column(name = "OPT_VIEW_URL")
+    private String optViewUrl;
     /**
      * 默认流程
      */
@@ -50,34 +49,28 @@ public class FlowOptInfo implements java.io.Serializable {
     private Date updateDate;
 
     @Transient
-    private List<FlowOptPage> wfOptDefs;
+    private List<FlowOptPage> optPages;
 
-    public List<FlowOptPage> getWfOptDefs() {
-        if (null == this.wfOptDefs) {
-            this.wfOptDefs = new ArrayList();
+    public List<FlowOptPage> getOptPages() {
+        if (null == this.optPages) {
+            this.optPages = new ArrayList();
         }
 
-        return this.wfOptDefs;
+        return this.optPages;
     }
 
-
-
-    public void addWfOptDef(FlowOptPage FlowOptDef) {
-        this.getWfOptDefs().add(FlowOptDef);
+    public void addOptPage(FlowOptPage optPage) {
+        this.getOptPages().add(optPage);
     }
-    public void addAllWfOptDefs(List<FlowOptPage> wfOptDefs) {
-        this.getWfOptDefs().clear();
-        if (!CollectionUtils.isEmpty(wfOptDefs)) {
-            Iterator var2 = wfOptDefs.iterator();
 
-            while(var2.hasNext()) {
-                FlowOptPage FlowOptDef = (FlowOptPage)var2.next();
-                FlowOptDef.setOptId(this.optId);
+    public void addOptPages(Collection<FlowOptPage> optPages) {
+        this.getOptPages().clear();
+        if (!CollectionUtils.isEmpty(optPages)) {
+            for(FlowOptPage optPage : optPages) {
+                optPage.setOptId(this.optId);
             }
-
-            this.getWfOptDefs().addAll(wfOptDefs);
+            this.getOptPages().addAll(optPages);
         }
     }
-
 
 }

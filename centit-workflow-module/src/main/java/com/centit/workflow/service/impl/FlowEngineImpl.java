@@ -83,21 +83,27 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     private void saveValueAndRoleInOptions(String flowInstId, String runToken, FlowOptParamOptions options){
         // 设置流程变量
-        if( options.getVariables() != null && !options.getVariables().isEmpty()) {
+        if(options.getVariables() != null && !options.getVariables().isEmpty()) {
             for(Map.Entry<String,Object> ent : options.getVariables().entrySet()) {
                 saveFlowNodeVariable(flowInstId, runToken, ent.getKey(), StringBaseOpt.castObjectToString(ent.getValue()));
             }
         }
         // 设置全局流程变量
-        if( options.getGlobalVariables() != null && !options.getGlobalVariables().isEmpty()) {
+        if(options.getGlobalVariables() != null && !options.getGlobalVariables().isEmpty()) {
             for(Map.Entry<String,Object> ent : options.getGlobalVariables().entrySet()) {
                 saveFlowVariable(flowInstId, ent.getKey(), StringBaseOpt.castObjectToString(ent.getValue()));
             }
         }
         // 设置办件角色
-        if( options.getFlowRoleUsers() != null && !options.getFlowRoleUsers().isEmpty()) {
+        if(options.getFlowRoleUsers() != null && !options.getFlowRoleUsers().isEmpty()) {
             for(Map.Entry<String,List<String>> ent : options.getFlowRoleUsers().entrySet()) {
                 assignFlowWorkTeam(flowInstId, ent.getKey(), ent.getValue());
+            }
+        }
+        // 设置流程机构
+        if(options.getFlowOrganizes() != null && !options.getFlowOrganizes().isEmpty()) {
+            for(Map.Entry<String,List<String>> ent : options.getFlowOrganizes().entrySet()) {
+                assignFlowOrganize(flowInstId, ent.getKey(), ent.getValue());
             }
         }
     }

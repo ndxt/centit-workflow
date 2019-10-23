@@ -204,6 +204,17 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     /**
+     * 获取流程业务信息
+     * @param flowInstId 实例id
+     * @return 流程业务信息
+     */
+    @Override
+    public FlowOptInfo getFlowOptInfo(String flowInstId){
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/optInfo/"+flowInstId);
+        return receiveJSON.getDataAsObject(FlowOptInfo.class);
+    }
+    /**
      * 获取节点实例 Id
      *
      * @param nodeInstId 节点实例id

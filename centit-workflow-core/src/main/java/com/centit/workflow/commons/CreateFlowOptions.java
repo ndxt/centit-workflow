@@ -101,6 +101,13 @@ public class CreateFlowOptions implements FlowOptParamOptions{
     private Map<String, List<String>> flowRoleUsers;
 
     /**
+     * 流程机构
+     * Map String 机构角色 String（机构代码）
+     */
+    @ApiModelProperty("指定后续节点机构")
+    private Map<String, List<String>> flowOrganizes;
+
+    /**
      * 后续节点机构
      * Map String (节点的环节代码或者节点代码) String（机构代码）
      */
@@ -166,6 +173,27 @@ public class CreateFlowOptions implements FlowOptParamOptions{
             this.flowRoleUsers.put(role, CollectionsOpt.createList(user));
         } else {
             users.add(user);
+        }
+        return this;
+    }
+
+    public CreateFlowOptions addFlowOrganizes(String role, List<String> units){
+        if(this.flowOrganizes == null){
+            this.flowOrganizes = new HashMap<>();
+        }
+        this.flowOrganizes.put(role, units);
+        return this;
+    }
+
+    public CreateFlowOptions addFlowOrganize(String role, String unitCode){
+        if(this.flowOrganizes == null){
+            this.flowOrganizes = new HashMap<>();
+        }
+        List<String> units = this.flowOrganizes.get(role);
+        if(units == null){
+            this.flowOrganizes.put(role, CollectionsOpt.createList(unitCode));
+        } else {
+            units.add(unitCode);
         }
         return this;
     }
@@ -247,6 +275,7 @@ public class CreateFlowOptions implements FlowOptParamOptions{
         this.setGlobalVariables(CollectionsOpt.cloneHashMap(options.getGlobalVariables()));
         this.setNodeUnits(CollectionsOpt.cloneHashMap(options.getNodeUnits()));
         this.setNodeOptUsers(CollectionsOpt.cloneHashMap(options.getNodeOptUsers()));
+        this.setFlowOrganizes(CollectionsOpt.cloneHashMap(options.getFlowOrganizes()));
         this.user(options.getUserCode())
             .unit(options.getUnitCode());
         return this;

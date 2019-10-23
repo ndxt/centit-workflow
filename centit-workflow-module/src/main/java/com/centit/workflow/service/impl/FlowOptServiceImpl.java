@@ -121,7 +121,7 @@ public class FlowOptServiceImpl implements FlowOptService {
         FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(optId);
         if(flowOptInfo != null){
             List<FlowOptPage> wfOptDefs = this.wfOptDefDao.listObjectsByProperty("optId", optId);
-            flowOptInfo.addAllWfOptDefs(wfOptDefs);
+            flowOptInfo.addOptPages(wfOptDefs);
         }
         return flowOptInfo;
     }
