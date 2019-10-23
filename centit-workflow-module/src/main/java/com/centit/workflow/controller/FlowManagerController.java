@@ -49,6 +49,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "流程实例检索查询", notes = "流程实例检索查询")
     @RequestMapping(method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<Object> list(PageDesc pageDesc,
@@ -84,8 +85,9 @@ public class FlowManagerController extends BaseController {
      *
      * @param response
      */
+    @ApiOperation(value = "查看流程实例流程图", notes = "查看流程实例流程图")
     @RequestMapping(value = "/viewxml/{flowInstId}", method = RequestMethod.GET)
-    public void viewRuntimeXml(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void viewRuntimeXml(@PathVariable String flowInstId, HttpServletResponse response) {
         FlowInstance flowInst = flowManager.getFlowInstance(flowInstId);
         String flowCode = flowInst.getFlowCode();
         Long version = flowInst.getVersion();
@@ -105,6 +107,7 @@ public class FlowManagerController extends BaseController {
      *
      * @param response
      */
+    @ApiOperation(value = "查看流程图", notes = "查看流程图")
     @RequestMapping(value = "/viewxml/{flowCode}/{version}", method = RequestMethod.GET)
     public void viewRuntimeXml(@PathVariable String flowCode, @PathVariable Long version, HttpServletRequest request, HttpServletResponse response) {
         FlowInfo obj = flowDef.getFlowDefObject(flowCode, version);
@@ -119,8 +122,9 @@ public class FlowManagerController extends BaseController {
      *
      * @param response
      */
+    @ApiOperation(value = "查看流程实例节点流程图", notes = "查看流程实例节点流程图")
     @RequestMapping(value = "/nodesxml/{flowInstId}", method = RequestMethod.GET)
-    public void viewNodeInstancesXml(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void viewNodeInstancesXml(@PathVariable String flowInstId,  HttpServletResponse response) {
         String nodesxml = flowManager.viewFlowNodeInstance(flowInstId);
         HashMap<String, String> result = new HashMap<String, String>();
         result.put("nodesxml", nodesxml);
@@ -134,6 +138,7 @@ public class FlowManagerController extends BaseController {
      * @param flowInstId
      * @param response
      */
+    @ApiOperation(value = "获取组织机构列表", notes = "获取组织机构列表")
     @RequestMapping(value = "/getorglist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<Map<String, String>> getOrganizeList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
@@ -157,6 +162,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "删除指定的流程组织机构", notes = "删除指定的流程组织机构")
     @RequestMapping(value = "/deleteorg/{flowInstId}/{roleCode}/{unitCode}", method = RequestMethod.GET)
     public void deleteOrg(@PathVariable String flowInstId, @PathVariable String roleCode, @PathVariable String unitCode, HttpServletResponse response) {
         flowEng.deleteFlowOrganize(flowInstId, roleCode, unitCode);
@@ -169,6 +175,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "删除指定roleCode下的所有流程工作机构", notes = "删除指定roleCode下的所有流程工作机构")
     @RequestMapping(value = "/deleteorg/{flowInstId}/{roleCode}", method = RequestMethod.GET)
     public void deleteOrgAll(@PathVariable String flowInstId, @PathVariable String roleCode, HttpServletResponse response) {
         flowEng.deleteFlowOrganize(flowInstId, roleCode);
@@ -181,6 +188,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "添加流程工作机构", notes = "添加流程工作机构")
     @RequestMapping(value = "/saveorg/{flowInstId}/{roleCode}/{unitCode}/{authDesc}", method = RequestMethod.POST)
     public void assignOrganize(
         @PathVariable String flowInstId, @PathVariable String roleCode,
@@ -194,6 +202,7 @@ public class FlowManagerController extends BaseController {
     /**
      * 给一个节点指定任务、用这个代替系统自动分配任务
      */
+    @ApiOperation(value = "给一个节点指定任务、用这个代替系统自动分配任务", notes = "给一个节点指定任务、用这个代替系统自动分配任务")
     @RequestMapping(value = "/assign/{nodeInstId}/{userCode}", method = RequestMethod.POST)
     public void assign(@PathVariable String nodeInstId,@PathVariable String userCode, ActionTask actionTask, HttpServletRequest request, HttpServletResponse response) {
         flowManager.assignNodeTask(nodeInstId,
@@ -207,6 +216,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "删除任务", notes = "删除任务")
     @RequestMapping(value = "/deleteTask/{taskId}", method = RequestMethod.POST)
     public void deleteTask(@PathVariable String taskId, HttpServletRequest request, HttpServletResponse response) {
         flowManager.deleteNodeTaskById(taskId, "admin");
@@ -220,6 +230,7 @@ public class FlowManagerController extends BaseController {
      * @param flowInstId
      * @param response
      */
+    @ApiOperation(value = "查询办件角色列表", notes = "查询办件角色列表")
     @RequestMapping(value = "/getteamlist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<Map<String, String>> getTeamList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
@@ -245,6 +256,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "删除指定roleCode下的所有流程工作小组", notes = "删除指定roleCode下的所有流程工作小组")
     @RequestMapping(value = "/deleteteam/{flowInstId}/{roleCode}", method = RequestMethod.GET)
     public void deleteWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
         flowEng.deleteFlowWorkTeam(flowInstId, roleCode);
@@ -256,6 +268,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "删除指定的流程工作小组", notes = "删除指定的流程工作小组")
     @RequestMapping(value = "/deleteteam/{flowInstId}/{roleCode}/{userCode}", method = RequestMethod.GET)
     public void deleteWorkTeamUser(@PathVariable String flowInstId, @PathVariable String roleCode, @PathVariable String userCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
         flowEng.deleteFlowWorkTeam(flowInstId, roleCode, userCode);
@@ -271,6 +284,7 @@ public class FlowManagerController extends BaseController {
      * @param flowInstId
      * @param response
      */
+    @ApiOperation(value = "查询变量列表", notes = "查询变量列表")
     @RequestMapping(value = "/getvariablelist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<FlowVariable> getVariableList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
@@ -285,6 +299,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "保存流程变量", notes = "保存流程变量")
     @RequestMapping(value = "/savevariable/{flowInstId}/{varName}/{varValue}", method = RequestMethod.GET)
     public void saveVariable(@PathVariable String flowInstId, @PathVariable String varName, @PathVariable String varValue, HttpServletRequest request, HttpServletResponse response) {
         String runToken = request.getParameter("runToken");
@@ -298,6 +313,7 @@ public class FlowManagerController extends BaseController {
      *
      * @param flowInstId 流程实例ID
      */
+    @ApiOperation(value = "新增变量时需要的令牌选择项", notes = "新增变量时需要的令牌选择项")
     @RequestMapping(value = "/tokens/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public Map<String, String> listTokens(@PathVariable String flowInstId) {
@@ -325,6 +341,7 @@ public class FlowManagerController extends BaseController {
      * @param flowInstId
      * @param response
      */
+    @ApiOperation(value = "流程操作日志", notes = "流程操作日志")
     @RequestMapping(value = "/getOptLogList/{flowInstId}", method = RequestMethod.GET)
     public void getOptLogList(@PathVariable String flowInstId, HttpServletResponse response) {
         List<ActionLog> actionLogList = flowManager.listFlowActionLogs(flowInstId);
@@ -359,6 +376,7 @@ public class FlowManagerController extends BaseController {
      * @param request
      * @param response
      */
+    @ApiOperation(value = "更改机构", notes = "更改机构")
     @PutMapping(value = "/changeunit/{wfinstid}/{unitcode}")
     public void changeUnit(@PathVariable String wfinstid, @PathVariable String unitcode, HttpServletRequest request, HttpServletResponse response) {
         flowManager.updateFlowInstUnit(wfinstid, unitcode, "admin");
@@ -374,6 +392,7 @@ public class FlowManagerController extends BaseController {
      * @param request
      * @param response
      */
+    @ApiOperation(value = "终止流程实例", notes = "终止流程实例")
     @RequestMapping(value = "/stopinst/{flowInstId}", method = RequestMethod.GET)
     public void stopInstance(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
         flowManager.stopInstance(flowInstId, "admin", "");
@@ -422,6 +441,7 @@ public class FlowManagerController extends BaseController {
     /**
      * 回滚一个流程节点到上一节点
      */
+    @ApiOperation(value = "回滚一个流程节点到上一节点", notes = "1.回滚一个流程节点到上一节点2.提交，强制一个流程节点前进到下一个节点3.对一个正在运行的节点实例强制游离6.唤醒一个暂挂节点实例7.从这个节点重新运行该流程，包括已经结束的流程8.暂挂一个节点实例")
     @RequestMapping(value = "/nodestate/{nodeInstId}/{bo}", method = RequestMethod.POST)
     @WrapUpResponseBody
     public NodeInstance changeFlowInstState(@PathVariable String nodeInstId,
@@ -464,6 +484,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "从这个节点重新运行该流程，包括已经结束的流程", notes = "从这个节点重新运行该流程，包括已经结束的流程")
     @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.POST)
     @WrapUpResponseBody
     public NodeInstance resetToCurrent(@PathVariable String nodeInstId, HttpServletRequest request) {
@@ -478,6 +499,7 @@ public class FlowManagerController extends BaseController {
     /**
      * 任务列表查询，查询条件可自助添加
      */
+    @ApiOperation(value = "任务列表查询，查询条件可自助添加", notes = "任务列表查询，查询条件可自助添加")
     @RequestMapping(value = "/listNodeOpers/{nodeInstId}", method = RequestMethod.GET)
     public void listNodeOpers(@PathVariable String nodeInstId, HttpServletResponse response) {
         NodeInstance nodeInstance = flowEng.getNodeInstById(nodeInstId);
@@ -501,6 +523,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "返回节点的操作记录，或者日志", notes = "返回节点的操作记录，或者日志")
     @RequestMapping(value = "/viewnode/{nodeInstId}", method = RequestMethod.GET)
     public void viewNodeInstanceInfo(@PathVariable String nodeInstId, HttpServletResponse response) {
         NodeInstance nodeInst = flowEng.getNodeInstById(nodeInstId);
@@ -520,6 +543,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "返回节点的操作记录，或者日志", notes = "返回节点的操作记录，或者日志")
     @RequestMapping(value = "/viewflownode/{flowInstId}/{nodeId}", method = RequestMethod.GET)
     public void viewFlowNodeInfo(@PathVariable String flowInstId, @PathVariable String nodeId, HttpServletResponse response) {
         try {
@@ -608,6 +632,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "查找所有没有操作用户的节点", notes = "查找所有没有操作用户的节点")
     @RequestMapping(value = "/nooptnodes", method = RequestMethod.GET)
     public void listNoOptNodes(HttpServletResponse response) {
         List<NodeInstance> nodeList = flowManager.listNodesWithoutOpt();
@@ -619,6 +644,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return String
      */
+    @ApiOperation(value = "查询某节点实例下的任务信息", notes = "查询某节点实例下的任务信息")
     @RequestMapping(value = "/listusertasks/{nodeInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public List<ActionTask> listNodeInstTasks(@PathVariable String nodeInstId) {
@@ -630,6 +656,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return String
      */
+    @ApiOperation(value = "查询某节点实例下的日志信息", notes = "查询某节点实例下的日志信息")
     @RequestMapping(value = "/nodelogs/{nodeInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public List<ActionLog> listNodeInstLogs(@PathVariable String nodeInstId) {
@@ -637,6 +664,7 @@ public class FlowManagerController extends BaseController {
     }
 
     //新增工作组
+    @ApiOperation(value = "新增工作组", notes = "新增工作组")
     @RequestMapping(value = "/assignFlowWorkTeam/{flowInstId}/{roleCode}/{userCode}/{authdesc}", method = RequestMethod.POST)
     @WrapUpResponseBody
     public void assignFlowWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode,
@@ -650,6 +678,7 @@ public class FlowManagerController extends BaseController {
      *
      * @param flowInstId
      */
+    @ApiOperation(value = "获取流程实例的关注列表", notes = "获取流程实例的关注列表")
     @RequestMapping(value = "/getAttByFlowInstId/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public List<InstAttention> getAttByFlowInstId(@PathVariable String flowInstId) {
@@ -661,6 +690,7 @@ public class FlowManagerController extends BaseController {
      *
      * @param instAttention
      */
+    @ApiOperation(value = "新增流程关注", notes = "新增流程关注")
     @WrapUpResponseBody
     @RequestMapping(value = "/addAttention", method = RequestMethod.POST)
     public void addAttention(@RequestBody InstAttention instAttention) {
@@ -689,6 +719,7 @@ public class FlowManagerController extends BaseController {
      * 更新所有节点状态为F
      * F 强行结束
      */
+    @ApiOperation(value = "终止一个流程，修改其流程id为负数，更新所有节点状态为F", notes = "终止一个流程，修改其流程id为负数，更新所有节点状态为F")
     @PostMapping(value = "/stopAndChangeInstance/{flowInstId}/{userCode}")
     @WrapUpResponseBody
     public void stopAndChangeInstance(String flowInstId, String userCode, String desc) {
@@ -700,6 +731,7 @@ public class FlowManagerController extends BaseController {
      * 更新所有节点状态为F
      * F 强行结束
      */
+    @ApiOperation(value = "终止一个流程，更新所有节点状态为F", notes = "终止一个流程，更新所有节点状态为F")
     @PutMapping(value = "/stopInstance/{flowInstId}/{userCode}")
     public void stopInstance(@PathVariable String flowInstId, @PathVariable String userCode, HttpServletResponse response) {
         try {
@@ -732,6 +764,7 @@ public class FlowManagerController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "查询所有流程分组", notes = "查询所有流程分组")
     @RequestMapping(value = "/group", method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<FlowInstanceGroup> listFlowInstGroup(PageDesc pageDesc,
@@ -747,6 +780,7 @@ public class FlowManagerController extends BaseController {
      *
      * @param flowInstGroupId
      */
+    @ApiOperation(value = "根据id获取流程分组对象", notes = "根据id获取流程分组对象")
     @RequestMapping(value = "/group/{flowInstGroupId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public FlowInstanceGroup getFlowInstanceGroup(@PathVariable String flowInstGroupId) {
