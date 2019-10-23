@@ -46,6 +46,12 @@ public interface FlowEngineClient {
     FlowInfo getFlowDefine(String flowInstId);
 
     /**
+     * 获取流程业务信息
+     * @param flowInstId 实例id
+     * @return 流程业务信息
+     */
+    FlowOptInfo getFlowOptInfo(String flowInstId);
+    /**
      * 获取节点实例 Id
      * @param nodeInstId 节点实例id
      * @return 节点实例信息

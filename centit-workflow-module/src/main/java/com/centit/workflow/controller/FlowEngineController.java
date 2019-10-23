@@ -41,7 +41,7 @@ public class FlowEngineController extends BaseController {
     private FlowDefine flowDefine;
 
     @Autowired
-    private FlowOptService wfOptService;
+    private FlowOptService flowOptService;
 
 
     private Map<Class<?>, String[]> excludes;
@@ -368,7 +368,24 @@ public class FlowEngineController extends BaseController {
         if(instance==null){
             return null;
         }
-        return flowDefine.getFlowDefObject(instance.getFlowCode(), instance.getVersion());
+        return flowDefine.getFlowDefObject(instance.getFlowCode(),
+            instance.getVersion());
+    }
+
+    /**
+     * 获取流程业务信息
+     * @param flowInstId 实例id
+     * @return 流程业务信息
+     */
+    @ApiOperation(value = "获取流程定义信息", notes = "获取流程定义信息")
+    @WrapUpResponseBody
+    @GetMapping(value = "/optInfo/{flowInstId}")
+    public FlowOptInfo getFlowOptInfo(String flowInstId) {
+        FlowInfo flowInfo = getFlowDefine(flowInstId);
+        if(flowInfo==null){
+            return null;
+        }
+        return flowOptService.getFlowOptInfoById(flowInfo.getOptId());
     }
 
     /**

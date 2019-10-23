@@ -29,6 +29,8 @@ public class FlowOptInfo implements java.io.Serializable {
     @Column(name = "OPT_URL")
     private String optUrl;
 
+    @Column(name = "OPT_VIEW_URL")
+    private String optViewUrl;
     /**
      * 默认流程
      */
@@ -59,8 +61,6 @@ public class FlowOptInfo implements java.io.Serializable {
 
         return this.wfOptDefs;
     }
-
-
 
     public void addWfOptDef(FlowOptPage FlowOptDef) {
         this.getWfOptDefs().add(FlowOptDef);
