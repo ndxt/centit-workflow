@@ -204,12 +204,25 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "给一个节点指定任务、用这个代替系统自动分配任务", notes = "给一个节点指定任务、用这个代替系统自动分配任务")
     @RequestMapping(value = "/assign/{nodeInstId}/{userCode}", method = RequestMethod.POST)
-    public void assign(@PathVariable String nodeInstId,@PathVariable String userCode, ActionTask actionTask, HttpServletRequest request, HttpServletResponse response) {
+    @WrapUpResponseBody
+    public void assign(@PathVariable String nodeInstId,@PathVariable String userCode, ActionTask actionTask) {
         flowManager.assignNodeTask(nodeInstId,
-            actionTask.getUserCode(), "admin", actionTask.getAuthDesc());
-        JsonResultUtils.writeSingleDataJson("", response);
+            actionTask.getUserCode(), StringUtils.isBlank(userCode)?"admin":userCode, actionTask.getAuthDesc());
     }
-
+    @ApiOperation(value = "添加节点任务", notes = "添加节点任务")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/addNodeTask/{nodeInstId}/{mangerUserCode}", method = RequestMethod.POST)
+    public void addNodeTask(@PathVariable String nodeInstId,@PathVariable String mangerUserCode, ActionTask actionTask) {
+        flowManager.addNodeTask(nodeInstId,
+            actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode)?"admin":mangerUserCode, actionTask.getAuthDesc());
+    }
+    @ApiOperation(value = "删除节点任务", notes = "删除节点任务")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/deleteNodeTask/{nodeInstId}/{mangerUserCode}", method = RequestMethod.POST)
+    public void deleteNodeTask(@PathVariable String nodeInstId,@PathVariable String mangerUserCode, ActionTask actionTask) {
+        flowManager.deleteNodeTask(nodeInstId,
+            actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode)?"admin":mangerUserCode);
+    }
 
     /**
      * 删除任务
@@ -426,7 +439,26 @@ public class FlowManagerController extends BaseController {
         }
         flowManager.suspendNodeInstance(nodeInstId, mangerUserCode);
     }
-
+    @ApiOperation(value = "激活流程的一个节点", notes = "激活流程的一个节点")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/activizeNodeInst/{nodeInstId}", method = RequestMethod.GET)
+    public void activizeNodeInstance(@PathVariable String nodeInstId, HttpServletRequest request) {
+        String mangerUserCode = request.getParameter("admin");
+        if(StringUtils.isBlank(mangerUserCode)){
+            mangerUserCode="admin";
+        }
+        flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
+    }
+    @ApiOperation(value = "强制流转到下一结点", notes = "强制流转到下一结点")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/forceCommit/{nodeInstId}", method = RequestMethod.GET)
+    public String forceCommit(@PathVariable String nodeInstId, HttpServletRequest request) {
+        String mangerUserCode = request.getParameter("admin");
+        if(StringUtils.isBlank(mangerUserCode)){
+            mangerUserCode="admin";
+        }
+        return flowManager.forceCommit(nodeInstId, mangerUserCode);
+    }
     /*节点状态管理api
      * 1.回滚一个流程节点到上一节点
      * 2.提交，强制一个流程节点前进到下一个节点

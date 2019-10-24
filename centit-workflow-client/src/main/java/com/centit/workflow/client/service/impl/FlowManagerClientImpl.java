@@ -146,6 +146,10 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public int activizeNodeInstance(String nodeInstId, String mangerUserCode) {
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("admin",mangerUserCode);
+        RestfulHttpRequest.jsonPut(appSession,
+            "/flow/manager/activizeNodeInst/"+nodeInstId,paramMap);
         return 0;
     }
 
@@ -158,7 +162,11 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public String forceCommit(String nodeInstId, String mangerUserCode) {
-        return null;
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("admin",mangerUserCode);
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/manager/forceCommit/"+nodeInstId,paramMap);
+        return receiveJSON.getDataAsString();
     }
 
     /**
@@ -187,6 +195,11 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public int assignNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userCode",userCode);
+        paramMap.put("authDesc",authDesc);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/manager/assign/"+nodeInstId+"/"+mangerUserCode, paramMap);
         return 0;
     }
 
@@ -194,13 +207,18 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      * 添加节点任务, 添加操作人元
      * Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      *
-     * @param nodeInstId 节点实例ID
-     * @param userCode 操作用户
-     * @param mangerUserCode 管理用户
-     * @param authDesc 授权说明
+     * @param nodeInstId
+     * @param userCode
+     * @param mangerUserCode
+     * @param authDesc
      */
     @Override
     public int addNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userCode",userCode);
+        paramMap.put("authDesc",authDesc);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/manager/addNodeTask/"+nodeInstId+"/"+mangerUserCode, paramMap);
         return 0;
     }
 
@@ -213,6 +231,10 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public int deleteNodeTask(String nodeInstId, String userCode, String mangerUserCode) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userCode",userCode);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/manager/deleteNodeTask/"+nodeInstId+"/"+mangerUserCode, paramMap);
         return 0;
     }
 
