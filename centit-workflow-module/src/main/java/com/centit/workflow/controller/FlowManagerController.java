@@ -439,7 +439,26 @@ public class FlowManagerController extends BaseController {
         }
         flowManager.suspendNodeInstance(nodeInstId, mangerUserCode);
     }
-
+    @ApiOperation(value = "激活流程的一个节点", notes = "激活流程的一个节点")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/activizeNodeInst/{nodeInstId}", method = RequestMethod.GET)
+    public void activizeNodeInstance(@PathVariable String nodeInstId, HttpServletRequest request) {
+        String mangerUserCode = request.getParameter("admin");
+        if(StringUtils.isBlank(mangerUserCode)){
+            mangerUserCode="admin";
+        }
+        flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
+    }
+    @ApiOperation(value = "强制流转到下一结点", notes = "强制流转到下一结点")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/forceCommit/{nodeInstId}", method = RequestMethod.GET)
+    public String forceCommit(@PathVariable String nodeInstId, HttpServletRequest request) {
+        String mangerUserCode = request.getParameter("admin");
+        if(StringUtils.isBlank(mangerUserCode)){
+            mangerUserCode="admin";
+        }
+        return flowManager.forceCommit(nodeInstId, mangerUserCode);
+    }
     /*节点状态管理api
      * 1.回滚一个流程节点到上一节点
      * 2.提交，强制一个流程节点前进到下一个节点

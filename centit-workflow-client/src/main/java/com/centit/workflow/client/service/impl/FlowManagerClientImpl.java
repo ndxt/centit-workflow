@@ -146,6 +146,10 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public int activizeNodeInstance(String nodeInstId, String mangerUserCode) {
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("admin",mangerUserCode);
+        RestfulHttpRequest.jsonPut(appSession,
+            "/flow/manager/activizeNodeInst/"+nodeInstId,paramMap);
         return 0;
     }
 
@@ -158,7 +162,11 @@ public class FlowManagerClientImpl implements FlowManagerClient {
      */
     @Override
     public String forceCommit(String nodeInstId, String mangerUserCode) {
-        return null;
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("admin",mangerUserCode);
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/manager/forceCommit/"+nodeInstId,paramMap);
+        return receiveJSON.getDataAsString();
     }
 
     /**
