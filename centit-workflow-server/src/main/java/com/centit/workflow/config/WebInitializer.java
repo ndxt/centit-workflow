@@ -50,7 +50,6 @@ public class WebInitializer implements WebApplicationInitializer {
         system.setLoadOnStartup(1);
         system.setAsyncSupported(true);
     }
-
     /**
      * 加载工作流
      * @param servletContext
