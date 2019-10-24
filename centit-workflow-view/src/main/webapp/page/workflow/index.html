@@ -296,12 +296,12 @@
 						</td>
 						<td>
 							<div style="position: relative; overflow: hidden;">
-                <select id="insideUnit" oninput="changeInputValue(this, 'unitexp')"
+                <select class="insideUnit" oninput="changeInputValue(this, 'unitexp')"
                   style="width: 80%; float: left; cursor: pointer;">
                 </select>
-                <input type="text" id="unitexp" value="D(P)" oninput="changeValue(this,'unitexp')"
+                <input type="text" id="unitexp" class="unitexp" value="D(P)" oninput="changeValue(this,'unitexp')"
                        style="width: 118px; height: 18px; position: absolute; left: 5px; top: 5px; border: none;"/>
-                <button type="button" onclick="viewAllUnit(true)" style="cursor: pointer;">机构</button>
+                <button type="button" onclick="viewInsideDialog('allUnit', true)" style="cursor: pointer;">机构</button>
 							</div>
 						</td>
 					</tr>
@@ -312,9 +312,9 @@
 							</div>
 						</td>
 						<td>
-							<div>
-								<select style="width: 99%;" id="roletype"
-									oninput="changeValue(this,'roletype')">
+							<div style="overflow: hidden;">
+                <select style="width: 99%; float: left;" id="roletype" class="roletype"
+                        oninput="changeValue(this,'roletype')">
 									<option value="">不设置</option>
 									<option value="bj">办件角色</option>
 									<option value="gw">岗位角色</option>
@@ -324,6 +324,7 @@
 									<option value="qx">已定义权限表达式</option>
 									<!--<option value="sp">审批角色</option>-->
 								</select>
+                <button class="insideUser" type="button" onclick="viewInsideDialog('allUser', true)" style="cursor: pointer; display: none;">用户</button>
 							</div>
 						</td>
 					</tr>
@@ -351,7 +352,7 @@
 						<td>
 							<div>
 								<input id="powerexp" oninput="changeValue(this,'powerexp')"
-									type="text" style="width: 97%;" />
+									type="text" style="width: 99%;" />
 							</div>
 						</td>
 					</tr>
@@ -508,10 +509,14 @@
 							</div>
 						</td>
 						<td>
-							<div>
-								<input type="text" id="route-unitexp" value="D(P)"
-									style="width: 97%;" oninput="changeValue(this,'unitexp')" />
-							</div>
+              <div style="position: relative; overflow: hidden;">
+                <select class="insideUnit" oninput="changeInputValue(this, 'unitexp')"
+                        style="width: 80%; float: left; cursor: pointer;">
+                </select>
+                <input type="text" id="route-unitexp" class="unitexp" value="D(P)" oninput="changeValue(this,'unitexp')"
+                       style="width: 118px; height: 18px; position: absolute; left: 5px; top: 5px; border: none;"/>
+                <button type="button" onclick="viewInsideDialog('allUnit', true)" style="cursor: pointer;">机构</button>
+              </div>
 						</td>
 					</tr>
 					<tr class="multi-special">
@@ -521,17 +526,19 @@
 							</div>
 						</td>
 						<td>
-							<div>
-								<select style="width: 99%;" id="route-roletype"
-									oninput="setRoleType(this)">
-									<option value="bj">办件角色</option>
-									<option value="gw">岗位角色</option>
-									<option value="xz">行政角色</option>
+              <div style="overflow: hidden;">
+                <select style="width: 99%; float: left;" id="route-roletype" class="roletype"
+                        oninput="changeValue(this,'roletype')">
+                  <option value="">不设置</option>
+                  <option value="bj">办件角色</option>
+                  <option value="gw">岗位角色</option>
+                  <option value="xz">行政角色</option>
                   <option value="xt">系统角色</option>
                   <option value="en">权限引擎</option>
                   <option value="qx">已定义权限表达式</option>
-								</select>
-							</div>
+                </select>
+                <button class="insideUser" type="button" onclick="viewInsideDialog('allUser', true)" style="cursor: pointer; display: none;">用户</button>
+              </div>
 						</td>
 					</tr>
 					<tr id="route-roleName" class="multi-special">
@@ -742,12 +749,28 @@
 	</div>
 	<div id="canvas"></div>
 	<div id="lineCon"></div>
-  <div id="allUnit">
+  <div id="allUnit" class="insideDialog">
     <div class="frame">
-      <label class="title">
-        所有机构<span class="close" onclick="viewAllUnit(false)">X</span>
+      <label id="unit-title">
+        所有机构<span class="close" onclick="viewInsideDialog('allUnit', false)">X</span>
       </label>
-      <div></div>
+      <div class="search">
+        <span>名称：</span>
+        <input type="text" oninput="searchInsideUnit(this)" />
+      </div>
+      <div class="content"></div>
+    </div>
+  </div>
+  <div id="allUser" class="insideDialog">
+    <div class="frame">
+      <label id="user-title">
+        所有用户<span class="close" onclick="viewInsideDialog('allUser', false)">X</span>
+      </label>
+      <div class="search">
+        <span>姓名：</span>
+        <input type="text" oninput="searchInsideUser(this)" />
+      </div>
+      <div class="content"></div>
     </div>
   </div>
 	<script type="text/javascript" src="js/url.js"></script>
@@ -824,13 +847,13 @@
         	}
         });
 
-        // 所有用户
+        // 内置机构表达式
         $.ajax({
           type:"get",
           async:false,
-          url:path+loadAllUserData,
+          url:path+loadInsideUnitData,
           success:function(data){
-            Data.AllUser = data.data
+            Data.InsideUnit = data.data
           },
         });
 
@@ -840,26 +863,35 @@
           async:false,
           url:path+loadAllUnitData,
           success:function(data){
-            // Data.AllUint = data.data
-            $('#allUnit .frame div').html('');
-            data.data.forEach(function (v, i) {
-              $('#allUnit .frame div').append(
+            Data.AllUnit = data.data
+            $('#allUnit .content').html('');
+            Data.AllUnit.forEach(function (v, i) {
+              $('#allUnit .content').append(
                 '<span>'+
-                  '<input id="'+v.unitCode+'" name="unit-'+i+'" type="checkbox" onchange="changeInsideUnit()"/>'+
-                  '<label for="'+v.unitCode+'">'+v.unitName+'</label>'+
+                  '<input id="unit-'+v.unitCode+'" data="'+v.unitCode+'" name="unit-'+i+'" type="checkbox" onchange="changeInsideInput(\'allUnit\', \'unitexp\', \'D\')"/>'+
+                  '<label for="unit-'+v.unitCode+'">'+v.unitName+'</label>'+
                 '</span>'
               );
             })
           },
         });
 
-        // 内置机构表达式
+        // 所有用户
         $.ajax({
           type:"get",
           async:false,
-          url:path+loadInsideUnitData,
+          url:path+loadAllUserData,
           success:function(data){
-            Data.InsideUnit = data.data
+            Data.AllUser = data.data
+            $('#allUser .content').html('');
+            Data.AllUser.forEach(function (v, i) {
+              $('#allUser .content').append(
+                '<span>'+
+                  '<input id="user-'+v.userCode+'" data="'+v.userCode+'" name="user-'+i+'" type="checkbox" onchange="changeInsideInput(\'allUser\', \'unitexp\', \'U\')"/>'+
+                  '<label for="user-'+v.userCode+'">'+v.userName+'</label>'+
+                '</span>'
+              );
+            })
           },
         });
     }

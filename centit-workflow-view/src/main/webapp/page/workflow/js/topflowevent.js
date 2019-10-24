@@ -10,7 +10,8 @@ function bindAttr(obj) {
     if (!$("#argumentTool").is(":visible")) {
         $("#argumentTool").show();
     }
-    $("#route-type").hide();//隐藏路由类别
+    $("#route-type,.insideDialog").hide();//隐藏路由类别
+    $('.insideDialog .content input:checked').prop('checked', false)
     // $("#iosid").show();
     $("#flow-phase").show();//显示流程节点阶段
     $("#is-trunkLine").show();//显示是否主干节点
@@ -59,9 +60,9 @@ function bindAttr(obj) {
     }
 
     // 机构表达式
-    $('#insideUnit').empty();//清空select
+    $('.insideUnit').empty();//清空select
     for (k in Data.InsideUnit) {//重新添加option
-      $("#insideUnit").append("<option  value='" + k + "' >" + Data.InsideUnit[k] + "</option>");
+      $(".insideUnit").append("<option  value='" + k + "' >" + Data.InsideUnit[k] + "</option>");
     }
     // g("osid").value = SVG.get(o).attr("osid");//osid
 
@@ -1158,6 +1159,8 @@ function removePoint(event) {
 //移动操作工具栏
 moveTip(g("tool"), g("move"));
 moveTip(g("argumentTool"), g("argumentTitle"));
+moveTip(g("allUnit"), g("unit-title"));
+moveTip(g("allUser"), g("user-title"));
 //删除过程
 addEvent(g("delete"), "click", function() {
 	deletePro(o);

@@ -571,11 +571,13 @@ function changeValue(obj,id){
             if(obj.value=="en"){
                 $("#roleName").hide();//隐藏角色代码
                 $("#powerName").show();//显示权限表达式
+                $('.roletype:visible').width('78%').siblings('.insideUser').show();
                 g("powerexp").value = SVG.get(o).attr("powerexp");//权限表达式
             }
             else{
-                $("#powerName").hide();//隐藏权限表达式
+                $("#powerName,#allUser").hide();//隐藏权限表达式
                 $("#roleName").show();//显示角色代码
+                $('.roletype:visible').width('97%').siblings('.insideUser').hide();
                 $("#rolecode").empty();
                 for (k in Data[obj.value]) {
                     if (SVG.get(o).attr("rolecode") == k) {
@@ -615,8 +617,8 @@ function changeValue(obj,id){
     }
 }
 
-function changeInputValue(obj, id){
-  $('#' + id).val(obj.value)
+function changeInputValue(obj, input){
+  $('.' + input+':visible').val(obj.value)
 }
 /**
  * 设置线条名称
@@ -1159,21 +1161,66 @@ function saveXml(){
     }
 }
 
-// 所有机构
-function viewAllUnit(display) {
-  // $('#allUnit .frame div input:checked').prop('checked', false)
-  display ? $('#allUnit').fadeIn() : $('#allUnit').fadeOut()
-}
+function changeInsideInput(dialog, input, type) {
+  var data = ''
+  var check = $('#'+dialog+' .frame div input:checked')
 
-function changeInsideUnit() {
-  var unit = ''
+  check.each(function (i) {
+    data += "'" + $(this).attr('data') + "'"
 
-  $('#allUnit .frame div input:checked').each(function (i) {
-    unit += "'" + $(this).attr('id') + "'"
-
-    if (i < $('#allUnit .frame div input:checked').length - 1) {
-      unit += ','
+    if (i < check.length - 1) {
+      data += ','
     }
   })
-  $('#unitexp').val(unit !== '' ? 'D('+unit+')' : '')
+  $('.'+input+':visible').val(data !== '' ? type+'('+data+')' : '')
+}
+
+function viewInsideDialog(dialog, display) {
+  display ? $('#'+dialog).fadeIn() : $('#'+dialog).fadeOut()
+}
+
+function searchInsideUnit(obj) {
+  if (Data.AllUnit.length > 0) {
+    var data = [].concat(Data.AllUnit)
+
+    $('#allUnit .content').html('');
+
+    if (obj.value !== '') {
+      data = data.filter(function (d) {
+        return d.unitName.indexOf(obj.value) != -1
+      })
+    }
+
+    data.forEach(function (v, i) {
+      $('#allUnit .content').append(
+        '<span>'+
+          '<input id="unit-'+v.unitCode+'" data="'+v.unitCode+'" name="unit-'+i+'" type="checkbox" onchange="changeInsideInput(\'allUnit\', \'unitexp\', \'D\')"/>'+
+          '<label for="unit-'+v.unitCode+'">'+v.unitName+'</label>'+
+        '</span>'
+      );
+    })
+  }
+}
+
+function searchInsideUser(obj) {
+  if (Data.AllUser.length > 0) {
+    var data = [].concat(Data.AllUser)
+
+    $('#allUser .content').html('');
+
+    if (obj.value !== '') {
+      data = data.filter(function (d) {
+        return d.userName.indexOf(obj.value) != -1
+      })
+    }
+
+    data.forEach(function (v, i) {
+      $('#allUser .content').append(
+        '<span>'+
+          '<input id="user-'+v.userCode+'" data="'+v.userCode+'" name="user-'+i+'" type="checkbox" onchange="changeInsideInput(\'allUser\', \'unitexp\', \'U\')"/>'+
+          '<label for="user-'+v.userCode+'">'+v.userName+'</label>'+
+        '</span>'
+      );
+    })
+  }
 }
