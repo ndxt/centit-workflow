@@ -220,6 +220,15 @@ public class FlowEngineController extends BaseController {
         flowEngine.updateNodeInstanceParam(nodeInstId, nodeParam);
     }
 
+    @ApiOperation(value = "更改流程节点参数", notes = "更改流程业务信息程")
+    @WrapUpResponseBody
+    @PostMapping(value = "/lockTask")
+    public void lockNodeTask(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        String nodeInstId = jsonObject.getString("nodeInstId");
+        String userCode = jsonObject.getString("userCode");
+        flowEngine.lockNodeTask(nodeInstId, userCode);
+    }
 
     @ApiOperation(value = "查看办件角色", notes = "查看办件角色")
     @WrapUpResponseBody
