@@ -212,6 +212,25 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInstanceDao.updtNodeInstParam(nodeInstId, nodeParam);
     }
 
+    /**
+     * 针对 抢先类别的 节点， 锁定任务，这个任务后续只能由 他来做
+     * @param nodeInstId 节点实例id
+     * @param userCode  用户
+     */
+    @Override
+    public void lockNodeTask(String nodeInstId, String userCode){
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        if("T".equals(nodeInst.getTaskAssigned())){
+            NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
+            //B: 抢先机制
+            if("B".equals(node.getOptType())){
+                nodeInst.setUserCode(userCode);
+                nodeInst.setTaskAssigned("S");
+                nodeInstanceDao.updateObject(nodeInst);
+            }
+        }
+    }
+
     @Override
     public void updateFlowInstParentNode(String flowInstId, String parentFlowInstId, String parentNodeInstId) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);

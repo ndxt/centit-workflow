@@ -260,6 +260,12 @@ public interface FlowEngine {
      */
     void updateNodeInstanceParam(String nodeInstId, String nodeParam);
 
+    /**
+     * 针对 抢先类别的 节点， 锁定任务，这个任务后续只能由 他来做
+     * @param nodeInstId 节点实例id
+     * @param userCode  用户
+     */
+    void lockNodeTask(String nodeInstId, String userCode);
     //--------------------人工控制流程流转和任务分配------------------------------------
 
     /**

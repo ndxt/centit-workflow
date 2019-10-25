@@ -296,6 +296,20 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/updateNodeParam", paramMap);
     }
 
+    /**
+     * 针对 抢先类别的 节点， 锁定任务，这个任务后续只能由 他来做
+     * @param nodeInstId 节点实例id
+     * @param userCode  用户
+     */
+    @Override
+    public void lockNodeTask(String nodeInstId, String userCode){
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("nodeInstId", nodeInstId);
+        paramMap.put("userCode", userCode);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/lockTask", paramMap);
+    }
+
     public List<String> viewFlowWorkTeam(String flowInstId, String roleCode) {
         HashMap<java.lang.String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
