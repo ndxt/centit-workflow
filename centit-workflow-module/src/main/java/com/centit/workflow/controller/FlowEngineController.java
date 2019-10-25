@@ -273,14 +273,12 @@ public class FlowEngineController extends BaseController {
         flowEngine.deleteFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
 
-
-    @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
+    @ApiOperation(value = "获取流程中可以创建的节点", notes = "获取流程中可以创建的节点")
     @WrapUpResponseBody
     @GetMapping(value = "/nodeForCreate/{flowInstId}")
     public Map<String, String> listFlowNodeForCreate(@PathVariable String flowInstId) {
         return flowEngine.listFlowNodeForCreate(flowInstId);
     }
-
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
     @WrapUpResponseBody
@@ -348,7 +346,6 @@ public class FlowEngineController extends BaseController {
         List<FlowInstanceGroup> listObjects = flowEngine.listFlowInstGroup(searchColumn, pageDesc);
         return PageQueryResult.createResult(listObjects, pageDesc);
     }
-
 
     /**
      * 获取流程实例信息
