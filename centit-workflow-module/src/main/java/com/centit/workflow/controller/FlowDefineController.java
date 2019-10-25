@@ -454,7 +454,7 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "角色名称和类别对应列表")
     @RequestMapping(value = "/listRoleByType/{roleType}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public Map<String, String> listAllRole(@PathVariable String roleType){
+    public Map<String, String> listRoleByType(@PathVariable String roleType){
         return flowDef.listRoleByType(roleType);
     }
 

@@ -41,8 +41,12 @@ public class RoleRelegate implements java.io.Serializable {
     private Date expireTime;
     @Column(name = "UNIT_CODE")
     private String unitCode;
+    /**
+     * 目前只能是 行政职务 “XZ”
+     */
     @Column(name = "ROLE_TYPE")
     private String roleType;
+
     @Column(name = "ROLE_CODE")
     private String roleCode;
     @Column(name = "GRANT_DESC")
