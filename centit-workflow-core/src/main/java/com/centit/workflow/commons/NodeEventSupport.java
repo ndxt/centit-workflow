@@ -46,6 +46,15 @@ public interface NodeEventSupport {
     boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                             NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
 
+    /**
+     * 是否可以跳转到下一个节点，用于 汇聚节点自行判断条件
+     * @param flowInst 流程实例
+     * @param nodeInst 节点实例
+     * @param nodeInfo 用户自定义操作参数
+     * @param optUserCode 当前操作用户
+     * @return 是否可以跳转到下一个节点，用于 汇聚节点自行判断条件
+     * @throws WorkflowException 异常
+     */
     boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
                           NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
 }

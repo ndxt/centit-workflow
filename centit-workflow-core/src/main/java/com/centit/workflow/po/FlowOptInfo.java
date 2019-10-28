@@ -5,7 +5,10 @@ import lombok.Data;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * WF_OPTINFO 流程业务定义

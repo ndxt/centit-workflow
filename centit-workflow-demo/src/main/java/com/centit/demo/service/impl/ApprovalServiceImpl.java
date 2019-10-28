@@ -12,10 +12,10 @@ import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.UserTask;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

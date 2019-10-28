@@ -5,6 +5,8 @@ import com.centit.framework.ip.po.OsInfo;
 import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.po.NodeInfo;
+import com.centit.workflow.support.LocalBeanNodeEventSupport;
+import com.centit.workflow.support.RemoteBeanNodeEventSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
@@ -21,6 +23,29 @@ public class NodeEventSupportFactory {
     private static IntegrationEnvironment integrationEnvironment = null;
     private static ConcurrentHashMap<String, AppSession> appSessionPoolMap = new ConcurrentHashMap<>(10);
 
+    /*public static class DummyNodeEventSupport implements NodeEventSupport{
+
+        @Override
+        public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+
+        }
+
+        @Override
+        public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+
+        }
+
+        @Override
+        public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+            return true;
+        }
+
+        @Override
+        public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+            return true;
+        }
+    }
+    */
     private static AppSession fetchAppSession(String url){
         String sUrl = StringUtils.isBlank(url)? "blank": url;
         AppSession appSession = appSessionPoolMap.get(sUrl);
@@ -32,17 +57,16 @@ public class NodeEventSupportFactory {
     }
 
     public static NodeEventSupport getNodeEventSupportBean(NodeInfo nodeInfo) {
-        if (nodeInfo == null) {
-            return null;
-        }
 
         WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
         if (integrationEnvironment == null) {
             integrationEnvironment = (IntegrationEnvironment) webApplicationContext.getBean("integrationEnvironment");
         }
 
-        OsInfo osInfo = integrationEnvironment == null ? null : integrationEnvironment.getOsInfo(nodeInfo.getOsId());
-        if (osInfo != null) {
+        OsInfo osInfo = StringUtils.isBlank(nodeInfo.getOsId()) ?
+            null : integrationEnvironment.getOsInfo(nodeInfo.getOsId());
+
+        if (osInfo != null || StringUtils.isBlank(osInfo.getOsUrl())) {
             RemoteBeanNodeEventSupport remoteNodeEventExecutor = new RemoteBeanNodeEventSupport();
             remoteNodeEventExecutor.setAppSession(fetchAppSession(osInfo.getOsUrl()));
             return remoteNodeEventExecutor;

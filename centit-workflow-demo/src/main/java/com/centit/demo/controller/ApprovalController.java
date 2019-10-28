@@ -11,12 +11,12 @@ import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
 import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.po.UserTask;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;

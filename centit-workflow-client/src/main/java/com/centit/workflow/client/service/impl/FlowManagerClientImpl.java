@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
-import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInstance;
