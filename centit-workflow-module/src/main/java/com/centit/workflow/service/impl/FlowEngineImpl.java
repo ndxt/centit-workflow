@@ -170,10 +170,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             null, flowInst,flowVariableDao,this);
         flowVarTrans.setFlowVarTrans(varTrans);
 
-        submitToNextNode( node, "T", flowInst, wf,
+        Set<String> nodeInsts = submitToNextNode( node, "T", flowInst, wf,
             null, null, null,
             options, flowVarTrans, application);
 
+        ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_LOG,
+            options.getUserCode(), flowInstId ,"创建流程，创建首节点:" +
+                StringBaseOpt.castObjectToString(nodeInsts));
+        actionLogDao.saveNewObject(wfactlog);
         //flowInstanceDao.saveObjectReference(flowInst, "flowNodeInstances");
         //flowInstanceDao.saveObjectReference(flowInst, "flowStageInstances");
         return flowInst;
@@ -1041,7 +1045,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInst.setLastUpdateTime(updateTime);
         nodeInst.setLastUpdateUser(options.getUserCode());
         //创建节点提交日志 S:提交节点
-        ActionLog wfactlog = FlowOptUtils.createActionLog("S", options.getUserCode(), nodeInst, currNode);
+        ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_LOG,
+            options.getUserCode(), nodeInst,"提交节点", currNode);
         //wfactlog.setActionId(actionLogDao.getNextActionId());
         wfactlog.setActionTime(updateTime);
         if (sGrantor != null && !sGrantor.equals(options.getUserCode())) {
@@ -1468,46 +1473,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public String getTaskGrantor(String nodeInstId, String userCode) {
         return actionTaskDao.getTaskGrantor(nodeInstId, userCode);
-    }
-
-    /**
-     * 流程节点操作日志
-     * @param nodeInstId 节点实例编号
-     * @param userCode 用户编码
-     * @param actionType
-     *               s: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
-     *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
-     *               r: 流转管理，包括  强行回退  、强行提交
-     *               t: 期限管理 、 设置期限
-     *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-     *               u: 变更属性     *
-     * @param actionDetail 日志详细信息描述
-     */
-    @Override
-    public  void recordActionLog(String nodeInstId, String userCode,
-        String actionType, String actionDetail){
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        if (nodeInst == null)
-            return;
-
-        String sGrantor = actionTaskDao.getTaskGrantor(nodeInstId, userCode);
-        if (sGrantor == null) {
-            logger.error("用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
-            throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + userCode + " -- " + nodeInstId);
-        }
-
-        /*if ("C".equals(actionType)) {
-            nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
-        }*/
-        ActionLog wfActionLog = FlowOptUtils.createActionLog(actionType, userCode, nodeInstId);
-        //wfActionLog.setActionId(actionLogDao.getNextActionId());
-        if (!sGrantor.equals(userCode)) {
-            wfActionLog.setGrantor(sGrantor);
-        }
-        wfActionLog.setLogDetail(actionDetail);
-        nodeInst.addWfActionLog(wfActionLog);
-        actionLogDao.saveNewObject(wfActionLog);
-        //nodeInstanceDao.updateObject(nodeInst);
     }
 
      /** 加签,并指定到人

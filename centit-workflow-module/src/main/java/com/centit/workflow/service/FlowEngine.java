@@ -268,23 +268,6 @@ public interface FlowEngine {
     void lockNodeTask(String nodeInstId, String userCode);
     //--------------------人工控制流程流转和任务分配------------------------------------
 
-    /**
-     * 流程节点操作日志
-     * @param nodeInstId 节点实例编号
-     * @param userCode 用户编码
-     * @param actionType
-     *               s: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
-     *               c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
-     *               r: 流转管理，包括  强行回退  、强行提交
-     *               t: 期限管理 、 设置期限
-     *               a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-     *               u: 变更属性     *
-     * @param actionDetail 日志详细信息描述
-     */
-    void recordActionLog(String nodeInstId, String userCode,
-                         String actionType, String actionDetail);
-
-
     /*
      * 回退操作-回退到上一个节点
      */

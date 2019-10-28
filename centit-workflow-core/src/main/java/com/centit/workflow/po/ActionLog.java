@@ -20,6 +20,38 @@ import java.util.Date;
 @Table(name="WF_ACTION_LOG")
 public class ActionLog implements java.io.Serializable{
     private static final long serialVersionUID =  1L;
+    /**
+     * state 流程状态变更
+     */
+    public static final String ACTION_TYPE_CHANGE_FLOW_STATE = "S";
+    /**
+     * node state 节点状态变更
+     */
+    public static final String ACTION_TYPE_CHANGE_NODE_STATE = "N";
+    /**
+     * manager 流程流传管理  强行回退、强行提交、重新运行、从当前节点运行
+     */
+    public static final String ACTION_TYPE_FLOW_MANAGER = "M";
+    /**
+     * timer 流程计时管理
+     */
+    public static final String ACTION_TYPE_TIME_LIMIT_MANAGER = "T";
+    /**
+     * attribute 流程属性维护
+     */
+    public static final String ACTION_TYPE_FLOW_ATTRIBUTE = "A";
+    /**
+     * variable 流程变量维护， 包括流程机构和 办件角色变更
+     */
+    public static final String ACTION_TYPE_FLOW_VARIABLE = "V";
+    /**
+     * job 流程任务维护
+     */
+    public static final String ACTION_TYPE_TASK_MANAGER = "J";
+    /**
+     * log 流程正常 创建、提交操作
+     */
+    public static final String ACTION_TYPE_LOG = "L";
 
     @Id
     @Column(name = "ACTION_ID")
@@ -32,12 +64,14 @@ public class ActionLog implements java.io.Serializable{
     @Column(name="NODE_INST_ID")
     private String nodeInstId;
     /**
-     's: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
-     c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
-     r: 流转管理，包括  强行回退  、强行提交
-     t: 期限管理 、 设置期限
-     a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-     u: 变更属性';
+     "S" state 流程状态变更
+     "N" node state 节点状态变更
+     "M" manager 流程流传管理  强行回退、强行提交、重新运行、从当前节点运行
+     "T" timer 流程计时管理
+     "A" attribute 流程属性维护
+     "V" variable 流程变量维护， 包括流程机构和 办件角色变更
+     "J" job 流程任务维护
+     "L" log 流程正常 创建、提交操作
      */
     @Column(name="ACTION_TYPE")
     private String actionType;

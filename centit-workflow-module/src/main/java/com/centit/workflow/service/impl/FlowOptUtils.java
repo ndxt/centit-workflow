@@ -7,8 +7,6 @@ import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.dao.FlowVariableDao;
 import com.centit.workflow.po.*;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class FlowOptUtils {
-    private static final Logger logger = LoggerFactory.getLogger(FlowOptUtils.class);
+    //private static final Logger logger = LoggerFactory.getLogger(FlowOptUtils.class);
 
     /**
      * 创建流程实例
@@ -174,65 +172,57 @@ public class FlowOptUtils {
         return actionTask;
     }
 
-    /**
-     * 流程节点操作日志
-     *
-     * @param actType    s: 状态变更，挂起节点、 唤醒超时节点、  唤醒节点 、使失效、 终止节点 、使一个正常的节点变为游离状态 、 是游离节点失效
-     *                   c: 创建节点  、创建一个游离节点 创建（任意）指定节点、 创建流程同时创建首节点
-     *                   r: 流转管理，包括  强行回退  、强行提交
-     *                   t: 期限管理 、 设置期限
-     *                   a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-     *                   u: 变更属性     *
-     * @param nodeInstId
-     * @return
+     /**
+      * @param actType
+             "S" state 流程状态变更
+             "N" node state 节点状态变更
+             "M" manager 流程流传管理  强行回退、强行提交、重新运行、从当前节点运行
+             "T" timer 流程计时管理
+             "A" attribute 流程属性维护
+             "V" variable 流程变量维护， 包括流程机构和 办件角色变更
+             "J" job 流程任务维护
+             "L" log 流程正常 创建、提交操作
+     * @param usercode 操作用户
+     * @param flowInstId 流程实例ID
+     * @param logDetail 操作说明
+     * @return ActionLog
      */
-    public static ActionLog createActionLog(String actType, String userCode,
-                                            String nodeInstId) {
-        ActionLog actionLog = new ActionLog();
-
-        actionLog.setNodeInstId(nodeInstId);
-        actionLog.setActionTime(DatetimeOpt.currentUtilDate());
-        actionLog.setActionType(actType);
-        actionLog.setUserCode(userCode);
-        return actionLog;
-    }
-
+     public static ActionLog createActionLog(String actType, String usercode,
+                                             String flowInstId, String logDetail) {
+         ActionLog actionLog = new ActionLog();
+         actionLog.setFlowInstId(flowInstId);
+         actionLog.setActionTime(DatetimeOpt.currentUtilDate());
+         actionLog.setActionType(actType);
+         actionLog.setUserCode(usercode);
+         actionLog.setLogDetail(logDetail);
+         return actionLog;
+     }
     /**
-     * 创建日志实例
-     * 创建流程同时创建首节点  W
-     * 创建节点 C
-     * 更改数据 U
-     * 提交节点 S
-     * 挂起节点 A
-     * 唤醒节点 R
-     * 终止节点 E
-     * X 唤醒一个超时流程的一个节点
+     * @param actType
+    "S" state 流程状态变更
+    "N" node state 节点状态变更
+    "M" manager 流程流传管理  强行回退、强行提交、重新运行、从当前节点运行
+    "T" timer 流程计时管理
+    "A" attribute 流程属性维护
+    "V" variable 流程变量维护， 包括流程机构和 办件角色变更
+    "J" job 流程任务维护
+    "L" log 流程正常 创建、提交操作
+     * @param usercode 操作用户
+     * @param nodeInst 流程节点实例
+     * @param node 节点信息
+     * @param logDetail 操作说明
+     * @return ActionLog
      */
     public static ActionLog createActionLog(String actType, String usercode,
-                                            String nodeInstId, NodeInfo node) {
-        ActionLog actionLog = createActionLog(actType, usercode, nodeInstId);
+                                            NodeInstance nodeInst, String logDetail, NodeInfo node) {
+        ActionLog actionLog = createActionLog(actType, usercode,
+            nodeInst.getFlowInstId(), logDetail);
+        actionLog.setNodeInstId(nodeInst.getNodeInstId());
         if (node != null) {
             actionLog.setRoleType(node.getRoleType());
             actionLog.setRoleCode(node.getRoleCode());
         }
         return actionLog;
-    }
-
-    /**
-     * 创建日志实例
-     * 创建流程同时创建首节点  W
-     * 创建节点 C
-     * 更改数据 U
-     * 提交节点 S
-     * 挂起节点 A
-     * 唤醒节点 R
-     * 终止节点 E
-     * X 唤醒一个超时流程的一个节点
-     */
-    public static ActionLog createActionLog(String actType, String usercode,
-                                            NodeInstance nodeInst, NodeInfo node) {
-        return createActionLog(actType, usercode,
-            nodeInst.getNodeInstId(), node);
     }
 
     /**
@@ -260,58 +250,6 @@ public class FlowOptUtils {
             //}
         }
         flowInstanceDao.updateObject(flowInst);
-    }
-
-    /**
-     * 在保存之前，必需设置 actionid，这个主键 hibernate目前不会自动分配
-     *
-     * @param flowInstId
-     * @param managerCode
-     * @param actionType  对流程管理操作用大写字母，对节点管理操作用小写字母
-     *                    S s: 状态变更， 超时唤醒、 使失效、 使一个正常的节点变为游离状态 、 是游离节点失效
-     *                    c: 创建节点  、创建一个游离节点 创建（任意）指定节点
-     *                    R  : 流转管理，包括  强行回退  、强行提交
-     *                    T t: 期限管理 、 设置期限
-     *                    a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-     *                    U u: 变更属性
-     * @return
-     */
-    public static ActionLog createManagerAction(String flowInstId, String managerCode,
-                                                      String actionType) {
-        ActionLog action = new ActionLog();
-        action.setFlowInstId(flowInstId);
-        action.setUserCode(managerCode);
-        action.setActionType(actionType);
-        action.setActionTime(new Date(System.currentTimeMillis()));
-
-        return action;
-    }
-
-    /**
-     * 在保存之前，必需设置 actionid，这个主键 hibernate目前不会自动分配
-     *
-     * @param flowInstId
-     * @param nodeInstId
-     * @param managerCode
-     * @param actionType  对流程管理操作用大写字母，对节点管理操作用小写字母
-     *                    S s: 状态变更， 超时唤醒、 使失效、 使一个正常的节点变为游离状态 、 是游离节点失效
-     *                    c: 创建节点  、创建一个游离节点 创建（任意）指定节点
-     *                    R  : 流转管理，包括  强行回退  、强行提交
-     *                    T t: 期限管理 、 设置期限
-     *                    a: 节点任务管理  分配任务、  删除任务 、  禁用任务
-     *                    U u: 变更属性
-     * @return
-     */
-    public static ActionLog createManagerAction(String flowInstId, String nodeInstId,
-                                                      String managerCode, String actionType) {
-        ActionLog action = new ActionLog();
-        action.setFlowInstId(flowInstId);
-        action.setNodeInstId(nodeInstId);
-        action.setUserCode(managerCode);
-        action.setActionType(actionType);
-        action.setActionTime(new Date(System.currentTimeMillis()));
-
-        return action;
     }
 
     public static FlowVariableTranslate createVariableTranslate(
