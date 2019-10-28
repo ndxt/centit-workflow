@@ -25,13 +25,15 @@ public interface FlowOptService {
 
     void saveOptDef(FlowOptPage FlowOptDef);
 
-    List<FlowOptPage> getListOptDefById(String optId, Map<String, Object> filterMap, PageDesc pageDesc);
-
     FlowOptPage getOptDefByCode(String optCode);
 
     void deleteOptDefByCode(String optCode);
 
-    List<FlowOptPage> ListOptDef(Map<String, Object> filterMap, PageDesc pageDesc);
+    List<FlowOptPage> listOptDef(Map<String, Object> filterMap, PageDesc pageDesc);
+
+    List<FlowOptPage> listOptPageById(String optId);
+
+    List<FlowOptPage> listOptAutoRunById(String optId);
 
     String getOptInfoSequenceId();
 

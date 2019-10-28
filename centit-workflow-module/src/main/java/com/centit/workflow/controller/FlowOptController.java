@@ -3,7 +3,6 @@ package com.centit.workflow.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
-import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
@@ -34,8 +33,6 @@ import java.util.Map;
     tags = "流程业务")
 @RequestMapping("/flow/opt")
 public class FlowOptController extends BaseController {
-
-    private ResponseMapData resData=new ResponseMapData();
 
     @Autowired
     private FlowOptService wfOptService;
@@ -78,13 +75,27 @@ public class FlowOptController extends BaseController {
     @ApiOperation(value = "根据optId获取流程页面", notes = "根据optId获取流程页面")
     @WrapUpResponseBody
     @RequestMapping(value="/getListOptDefById",method = RequestMethod.GET)
-    public PageQueryResult getListOptDefById(String optId, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
+    public PageQueryResult getListOptDefById(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
         Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
-
 //        List<FlowOptDef> objList = wfOptService.getListOptDefById(optId, filterMap,pageDesc);
-        List<FlowOptPage> objList = wfOptService.ListOptDef(filterMap,pageDesc);
+        List<FlowOptPage> objList = wfOptService.listOptDef(filterMap,pageDesc);
        return PageQueryResult.createResult(objList,pageDesc);
     }
+
+    @ApiOperation(value = "根据optId获取流程页面,用于流程定义", notes = "根据optId获取流程页面,用于流程定义")
+    @WrapUpResponseBody
+    @RequestMapping(value="/pages/{optId}",method = RequestMethod.GET)
+    public List<FlowOptPage> listOptPagesById(@PathVariable String optId){
+        return wfOptService.listOptPageById(optId);
+    }
+
+    @ApiOperation(value = "根据optId获取业务自动操作业务", notes = "根据optId获取业务自动操作业务")
+    @WrapUpResponseBody
+    @RequestMapping(value="/autos/{optId}",method = RequestMethod.GET)
+    public List<FlowOptPage> listOptAutoRunById(@PathVariable String optId){
+        return wfOptService.listOptAutoRunById(optId);
+    }
+
     @ApiOperation(value = "根据optCode获取流程页面", notes = "根据optCode获取流程页面")
     @WrapUpResponseBody
     @RequestMapping(value="/getOptDefByCode",method = RequestMethod.GET)

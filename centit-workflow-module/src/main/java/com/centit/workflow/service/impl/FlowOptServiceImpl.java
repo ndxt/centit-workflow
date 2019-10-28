@@ -78,9 +78,19 @@ public class FlowOptServiceImpl implements FlowOptService {
 
     @Override
     @Transactional
-    public List<FlowOptPage> getListOptDefById(String optId, Map<String, Object> filterMap, PageDesc pageDesc) {
+    public List<FlowOptPage> listOptPageById(String optId) {
+        List<FlowOptPage> wfOptDefs = wfOptDefDao.listObjectsByFilter(
+            "where OPT_ID = ? and PAGE_TYPE != 'A'",
+            new Object[] {optId});
+        return wfOptDefs;
+    }
+
+    @Override
+    @Transactional
+    public List<FlowOptPage> listOptAutoRunById(String optId) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("optId",optId);
+        properties.put("pageType","A");
         List<FlowOptPage> wfOptDefs = wfOptDefDao.listObjectsByProperties(properties);
         return wfOptDefs;
     }
@@ -102,7 +112,7 @@ public class FlowOptServiceImpl implements FlowOptService {
 
     @Override
     @Transactional
-    public List<FlowOptPage> ListOptDef(Map<String, Object> filterMap, PageDesc pageDesc) {
+    public List<FlowOptPage> listOptDef(Map<String, Object> filterMap, PageDesc pageDesc) {
         return wfOptDefDao.listObjectsByProperties(filterMap,pageDesc);
     }
 
