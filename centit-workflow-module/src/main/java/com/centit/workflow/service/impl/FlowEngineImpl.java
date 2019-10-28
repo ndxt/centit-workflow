@@ -54,6 +54,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private FlowInfoDao flowDefDao;
     @Autowired
+    FlowOptPageDao flowOptPageDao;
+
+    @Autowired
     private FlowManager flowManager;
     @Autowired
     private FlowWorkTeamDao flowTeamDao;
@@ -870,7 +873,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInst.setLastUpdateUser(options.getUserCode());
         flowInstanceDao.updateObject(flowInst);
         //执行节点创建后 事件
-        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nextOptNode);
+        NodeEventSupport nodeEventExecutor =
+            NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode,
+                 flowOptPageDao.getObjectById(nextOptNode.getOptCode()));
         nodeEventExecutor.runAfterCreate(flowInst, nodeInst, nextOptNode, options.getUserCode());
         boolean needSubmit = false;
         //检查自动执行节点 并执行相关操作
@@ -1103,7 +1108,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         /**
          * 节点提交前事件
          */
-        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(currNode);
+        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
+            .createNodeEventSupportBean(currNode);
         nodeEventExecutor.runBeforeSubmit(flowInst, nodeInst, currNode, options.getUserCode());
 
         //判断是否为临时插入节点
@@ -1341,7 +1347,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInstanceDao.updateObject(flowInst);
 
         //执行节点创建后 事件
-        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nodedef);
+        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
+            .createNodeEventSupportBean(nodedef);
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, mangerUserCode);
         //调用发送消息接口
         Set<String> nodeInstIds = new HashSet<>();

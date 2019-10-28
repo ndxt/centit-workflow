@@ -27,21 +27,14 @@ import java.util.Map;
 public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     public Map<String, String> getFilterField() {
         if( filterField == null){
-            filterField = new HashMap<String, String>();
-
+            filterField = new HashMap<>();
             filterField.put("flowCode" , "flowCode= :flowCode");
-
             filterField.put("version" , "version= :version");
-
             filterField.put("flowName" , CodeBook.LIKE_HQL_ID);
-
             filterField.put("flowState" , CodeBook.LIKE_HQL_ID);
-
             filterField.put("flowDesc" , CodeBook.LIKE_HQL_ID);
             filterField.put("optId" , CodeBook.EQUAL_HQL_ID);
-
             filterField.put(CodeBook.ORDER_BY_HQL_ID , "version DESC,flowPublishDate DESC,flowCode DESC ");
-
         }
         return filterField;
     }

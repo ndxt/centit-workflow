@@ -2,8 +2,8 @@ package com.centit.workflow.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.dao.FlowOptDefDao;
 import com.centit.workflow.dao.FlowOptInfoDao;
+import com.centit.workflow.dao.FlowOptPageDao;
 import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.service.FlowOptService;
@@ -25,7 +25,7 @@ public class FlowOptServiceImpl implements FlowOptService {
     private FlowOptInfoDao flowOptInfoDao;
 
     @Autowired
-    private FlowOptDefDao wfOptDefDao;
+    private FlowOptPageDao flowOptPageDao;
 
     @Override
     public List<FlowOptInfo> getListOptInfo() {
@@ -73,13 +73,13 @@ public class FlowOptServiceImpl implements FlowOptService {
     @Transactional
     public void saveOptDef(FlowOptPage flowOptDef) {
         flowOptDef.setUpdateDate(new Date());
-        wfOptDefDao.mergeObject(flowOptDef);
+        flowOptPageDao.mergeObject(flowOptDef);
     }
 
     @Override
     @Transactional
     public List<FlowOptPage> listOptPageById(String optId) {
-        List<FlowOptPage> wfOptDefs = wfOptDefDao.listObjectsByFilter(
+        List<FlowOptPage> wfOptDefs = flowOptPageDao.listObjectsByFilter(
             "where OPT_ID = ? and PAGE_TYPE != 'A'",
             new Object[] {optId});
         return wfOptDefs;
@@ -91,7 +91,7 @@ public class FlowOptServiceImpl implements FlowOptService {
         Map<String, Object> properties = new HashMap<>();
         properties.put("optId",optId);
         properties.put("pageType","A");
-        List<FlowOptPage> wfOptDefs = wfOptDefDao.listObjectsByProperties(properties);
+        List<FlowOptPage> wfOptDefs = flowOptPageDao.listObjectsByProperties(properties);
         return wfOptDefs;
     }
 
@@ -100,20 +100,20 @@ public class FlowOptServiceImpl implements FlowOptService {
     public FlowOptPage getOptDefByCode(String optCode) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("optCode",optCode);
-        FlowOptPage flowOptDef = wfOptDefDao.getObjectByProperties(properties);
+        FlowOptPage flowOptDef = flowOptPageDao.getObjectByProperties(properties);
         return flowOptDef;
     }
 
     @Override
     @Transactional
     public void deleteOptDefByCode(String optCode) {
-        wfOptDefDao.deleteObjectById(optCode);
+        flowOptPageDao.deleteObjectById(optCode);
     }
 
     @Override
     @Transactional
     public List<FlowOptPage> listOptDef(Map<String, Object> filterMap, PageDesc pageDesc) {
-        return wfOptDefDao.listObjectsByProperties(filterMap,pageDesc);
+        return flowOptPageDao.listObjectsByProperties(filterMap,pageDesc);
     }
 
     @Override
@@ -123,14 +123,14 @@ public class FlowOptServiceImpl implements FlowOptService {
 
     @Override
     public String getOptDefSequenceId() {
-        return wfOptDefDao.getOptDefSequenceId();
+        return flowOptPageDao.getOptDefSequenceId();
     }
 
      @Override
     public FlowOptInfo getFlowOptInfoById(String optId) {
         FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(optId);
         if(flowOptInfo != null){
-            List<FlowOptPage> wfOptDefs = this.wfOptDefDao.listObjectsByProperty("optId", optId);
+            List<FlowOptPage> wfOptDefs = this.flowOptPageDao.listObjectsByProperty("optId", optId);
             flowOptInfo.addOptPages(wfOptDefs);
         }
         return flowOptInfo;

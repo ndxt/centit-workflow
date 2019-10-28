@@ -51,6 +51,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     ActionLogDao actionLogDao;
     @Autowired
     FlowInfoDao flowDefDao;
+
     @Autowired
     StageInstanceDao stageInstanceDao;
 
@@ -825,10 +826,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flow.addWfNodeInstance(nextNodeInst);
         //flowInstanceDao.updateObject(flow);
         nodeInstanceDao.saveNewObject(nextNodeInst);
-
         //FlowOptUtils.sendMsg("", nextNodeInsts, mangerUserCode);
         //执行节点创建后 事件
-        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory.getNodeEventSupportBean(nodedef);
+        NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
+            .createNodeEventSupportBean(nodedef);
         nodeEventExecutor.runAfterCreate(flow, nextNodeInst, nodedef, mangerUserCode);
 
         ActionLog managerAct = FlowOptUtils.createManagerAction(
