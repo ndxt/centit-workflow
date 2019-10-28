@@ -74,7 +74,8 @@ public class ExtFrameworkContextCacheBean {
     private List<ExtSysUnitInfo> fetchSubUnit(String unitCode) {
         List<ExtSysUnitInfo> units = new ArrayList<>(10);
         for(ExtSysUnitInfo ui : allunitInfoCache.getCachedTarget() ){
-            if(StringUtils.equals(unitCode,ui.getParentUnit())){
+            if(StringUtils.equals(unitCode,ui.getParentUnit()) ||
+                ("null".equals(unitCode) && StringUtils.isBlank(ui.getParentUnit()))){
                 units.add(ui);
             }
         }

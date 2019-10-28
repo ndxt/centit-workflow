@@ -100,6 +100,13 @@ public class RoleFormulaController extends BaseController {
         return roleFormulaService.listAllUserInfo();
     }
 
+    @ApiOperation(value = "根据前缀或者后缀查询用户", notes = "根据前缀或者后缀查询用户")
+    @WrapUpResponseBody
+    @RequestMapping(value="/users/{prefix}",method = RequestMethod.GET)
+    public List<? extends IUserInfo> listUserInfo(@PathVariable String prefix){
+        return roleFormulaService.listUserInfo(prefix);
+    }
+
     @ApiOperation(value = "列举所有机构", notes = "列举所有机构")
     @WrapUpResponseBody
     @RequestMapping(value="/allUnits",method = RequestMethod.GET)
