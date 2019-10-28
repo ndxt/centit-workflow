@@ -18,7 +18,7 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
 
     public Map<String, String> getFilterField() {
         if (filterField == null) {
-            filterField = new HashMap<String, String>();
+            filterField = new HashMap<>();
 
             filterField.put("flowInstId" , "flowInstId=:flowInstId");
             filterField.put("unitCode" , "userCode=:userCode");

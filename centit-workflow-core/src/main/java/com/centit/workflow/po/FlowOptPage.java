@@ -23,6 +23,7 @@ public class FlowOptPage implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "OPT_CODE")
+    @ValueGenerator(strategy = GeneratorType.UUID)
     private String optCode;
     /**
      * 和flowOptInfo关联

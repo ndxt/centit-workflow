@@ -1,6 +1,8 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
 
@@ -21,6 +23,7 @@ public class FlowOptInfo implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "OPT_ID")
+    @ValueGenerator(strategy = GeneratorType.UUID)
     private String optId;
 
     @Column(name = "OPT_NAME")
