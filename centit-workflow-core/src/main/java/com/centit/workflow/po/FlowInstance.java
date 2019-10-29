@@ -383,23 +383,21 @@ public class FlowInstance implements java.io.Serializable {
         this.flowNodeInstances = flowNodeInstances;
     }
 
-    public void addWfNodeInstance(NodeInstance wfNodeInstance) {
+    public void addNodeInstance(NodeInstance wfNodeInstance) {
         if (this.flowNodeInstances == null)
             this.flowNodeInstances = new ArrayList<NodeInstance>();
         this.flowNodeInstances.add(wfNodeInstance);
     }
 
-    public void removeWfNodeInstance(NodeInstance wfNodeInstance) {
+    public void removeNodeInstance(NodeInstance wfNodeInstance) {
         if (this.flowNodeInstances == null)
             return;
         this.flowNodeInstances.remove(wfNodeInstance);
     }
 
-    public NodeInstance newWfNodeInstance() {
+    public NodeInstance newNodeInstance() {
         NodeInstance res = new NodeInstance();
-
         res.setFlowInstId(this.getFlowInstId());
-
         return res;
     }
 
@@ -817,7 +815,7 @@ public class FlowInstance implements java.io.Serializable {
         for (NodeInstance p : wfNodeInstances) {
             if (p == null)
                 continue;
-            NodeInstance newdt = newWfNodeInstance();
+            NodeInstance newdt = newNodeInstance();
             newdt.copyNotNullProperty(p);
             newObjs.add(newdt);
         }
@@ -836,7 +834,7 @@ public class FlowInstance implements java.io.Serializable {
                 }
             }
             if (!found)
-                removeWfNodeInstance(odt);
+                removeNodeInstance(odt);
         }
         oldObjs.clear();
         //insert
@@ -852,7 +850,7 @@ public class FlowInstance implements java.io.Serializable {
                 }
             }
             if (!found)
-                addWfNodeInstance(newdt);
+                addNodeInstance(newdt);
         }
     }
 

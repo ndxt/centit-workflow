@@ -777,7 +777,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         // 创建新节点
         String lastNodeInstId = UuidOpt.getUuidAsString32();
 //        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
-        NodeInstance nextNodeInst = flow.newWfNodeInstance();
+        NodeInstance nextNodeInst = flow.newNodeInstance();
         nextNodeInst.copyNotNullProperty(thisnode);
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setNodeState("N");
@@ -797,7 +797,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
 
-        flow.addWfNodeInstance(nextNodeInst);
+        flow.addNodeInstance(nextNodeInst);
         //flowInstanceDao.updateObject(flow);
         nodeInstanceDao.saveNewObject(nextNodeInst);
         //FlowOptUtils.sendMsg("", nextNodeInsts, mangerUserCode);
@@ -1388,12 +1388,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
         //根据时间排序
         if (actionLogList.size() > 0) {
-            Collections.sort(actionLogList, new Comparator<ActionLog>() {
-                @Override
-                public int compare(ActionLog o1, ActionLog o2) {
-                    return o1.getActionTime().getTime() > o2.getActionTime().getTime() ? 1 : -1;
-                }
-            });
+            Collections.sort(actionLogList,
+                (o1, o2) ->
+                    o1.getActionTime().getTime() > o2.getActionTime().getTime() ? 1 : -1);
         }
         return actionLogList;
     }

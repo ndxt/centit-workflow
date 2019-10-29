@@ -873,6 +873,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         }
         nodeInstanceDao.saveNewObject(nodeInst);
+        flowInst.addNodeInstance(nodeInst);
         flowInst.setLastUpdateTime(currentTime);
         flowInst.setLastUpdateUser(options.getUserCode());
         flowInstanceDao.updateObject(flowInst);
@@ -1318,7 +1319,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         thisNodeInst.setLastUpdateTime(updateTime);
 
         String lastNodeInstId = UuidOpt.getUuidAsString32();
-        NodeInstance nextNodeInst = flowInst.newWfNodeInstance();
+        NodeInstance nextNodeInst = flowInst.newNodeInstance();
         //如果是子流程退回父流程，把流程id置为父流程的流程id
         if (subProcess) {
             nextNodeInst.setFlowInstId(flowInst.getPreInstId());
@@ -1346,7 +1347,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         }
 
-        flowInst.addWfNodeInstance(nextNodeInst);
+        flowInst.addNodeInstance(nextNodeInst);
         nodeInstanceDao.mergeObject(thisNodeInst);
         nodeInstanceDao.mergeObject(nextNodeInst);
         flowInstanceDao.updateObject(flowInst);
