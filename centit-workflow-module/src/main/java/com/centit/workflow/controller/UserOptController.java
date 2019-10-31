@@ -33,7 +33,7 @@ import java.util.Map;
 @Api(value = "任务管理",
     tags = "权限委托和任务转移")
 @Controller
-@RequestMapping("/flow/userOpt")
+@RequestMapping("/flow/relegate")
 public class UserOptController extends BaseController {
     @Autowired
     private FlowManager flowManager;
@@ -78,7 +78,7 @@ public class UserOptController extends BaseController {
      */
     @ApiOperation(value = "获取指定用户委托列表", notes = "获取指定用户委托列表")
     @WrapUpResponseBody
-    @RequestMapping(value = "/getRelegateList/{userCode}", method = {RequestMethod.GET})
+    @RequestMapping(value = "/byUser/{userCode}", method = {RequestMethod.GET})
     public PageQueryResult getRelegateListByGrantor(@PathVariable String userCode, PageDesc pageDesc, HttpServletRequest request) {
         if (StringUtils.isBlank(userCode)) {
             CentitUserDetails centitUserDetails = (CentitUserDetails) WebOptUtils.getLoginUser(request);
@@ -96,11 +96,16 @@ public class UserOptController extends BaseController {
      */
     @ApiOperation(value = "保存委托", notes = "保存委托")
     @WrapUpResponseBody
-    @PostMapping(value = "/saveRelegate")
+    @PostMapping
     public void saveRelegate(@RequestBody RoleRelegate roleRelegate) {
         flowManager.saveRoleRelegateList(roleRelegate);
     }
 
+    @ApiOperation(value = "修改委托状态", notes = "修改委托状态")
+    @RequestMapping(method = RequestMethod.PUT)
+    public void updateRelegate(@RequestBody String json) {
+        flowManager.changeRelegateValid(json);
+    }
     /**
      * 根据id删除委托
      *
@@ -108,20 +113,17 @@ public class UserOptController extends BaseController {
      */
     @ApiOperation(value = "删除委托", notes = "删除委托")
     @WrapUpResponseBody
-    @RequestMapping(value = "/deleteRelegate/{relegateNo}", method = {RequestMethod.DELETE})
+    @RequestMapping(value = "/relegate/{relegateNo}", method = {RequestMethod.DELETE})
     public void deleteRelegate(@PathVariable String relegateNo) {
         flowManager.deleteRoleRelegate(relegateNo);
     }
     @ApiOperation(value = "通过参数获取委托", notes = "通过参数获取委托")
     @WrapUpResponseBody
-    @RequestMapping(value = "/getTaskDelegateByNo", method = RequestMethod.POST)
+    @RequestMapping(value = "/get", method = RequestMethod.POST)
     public RoleRelegate getTaskDelegateByNo(@RequestBody String json) {
         return flowManager.getRoleRelegateByPara(json);
     }
 
-    @RequestMapping(value = "/resetRelegate", method = RequestMethod.PUT)
-    public void resetRelegate(@RequestBody String json) {
-        flowManager.changeRelegateValid(json);
-    }
+
 
 }

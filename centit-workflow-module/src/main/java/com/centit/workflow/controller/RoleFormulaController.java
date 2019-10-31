@@ -40,7 +40,7 @@ public class RoleFormulaController extends BaseController {
 
     @ApiOperation(value = "权限表达式列表", notes = "权限表达式列表")
     @WrapUpResponseBody
-    @RequestMapping(value="/listRoleFormula",method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public PageQueryResult<RoleFormula> listAllRoleFormula(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
         Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
         List<RoleFormula> listObjects = roleFormulaService.listRoleFormulas(filterMap, pageDesc);
@@ -49,26 +49,26 @@ public class RoleFormulaController extends BaseController {
     }
     @ApiOperation(value = "查询单个权限表达式", notes = "查询单个权限表达式")
     @WrapUpResponseBody
-    @RequestMapping(value = "/getRoleFormulaCode/{formulaCode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{formulaCode}", method = RequestMethod.GET)
     public RoleFormula getRoleFormulaByCode(@PathVariable String formulaCode){
         return roleFormulaService.getRoleFormulaByCode(formulaCode);
     }
     @ApiOperation(value = "保存权限表达式", notes = "保存权限表达式")
     @WrapUpResponseBody
-    @RequestMapping(value = "/saveRoleFormula", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public RoleFormula saveFlowRole(@RequestBody RoleFormula roleFormula){
         roleFormulaService.saveRoleFormula(roleFormula);
         return roleFormula;
     }
     @ApiOperation(value = "删除权限表达式", notes = "删除权限表达式")
     @WrapUpResponseBody
-    @RequestMapping(value="/deleteRoleFormulaByCode/{formulaCode}", method = RequestMethod.POST)
+    @RequestMapping(value="/{formulaCode}", method = RequestMethod.DELETE)
     public void deleteFlowRoleByCode(@PathVariable String formulaCode) {
         roleFormulaService.deleteRoleFormulaByCode(formulaCode);
     }
     @ApiOperation(value = "查询权限表达式对应用户", notes = "查询权限表达式对应用户")
     @WrapUpResponseBody
-    @RequestMapping(value="/viewRoleFormulaUsers/{formulaCode}",method = RequestMethod.GET)
+    @RequestMapping(value="/users/{formulaCode}",method = RequestMethod.GET)
     public JSONArray viewRoleFormulaUsers(@PathVariable String formulaCode){
         JSONArray listObjects = roleFormulaService.viewRoleFormulaUsers(formulaCode);
         return listObjects;
@@ -88,7 +88,7 @@ public class RoleFormulaController extends BaseController {
             "* UL 根据用户标签过滤 UL(\"用户标记常量\" [,\"用户标记常量\"])\n" +
             "* RO 根据用户角色过滤 RO(\"系统角色代码常量\" [,\"系统角色代码常量\"])" )
     @WrapUpResponseBody
-    @RequestMapping(value="/viewFormulaUsers/{formula}",method = RequestMethod.GET)
+    @RequestMapping(value="/calcUsers/{formula}",method = RequestMethod.GET)
     public JSONArray viewFormulaUsers(@PathVariable String formula){
         return roleFormulaService.viewFormulaUsers(StringEscapeUtils.unescapeHtml4(formula));
     }

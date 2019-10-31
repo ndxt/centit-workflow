@@ -48,12 +48,8 @@ public class FlowOptServiceImpl implements FlowOptService {
     }
 
     @Override
-    @Transactional
-    public FlowOptInfo getOptById(String optId) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("optId",optId);
-        FlowOptInfo optInfo = flowOptInfoDao.getObjectByProperties(properties);
-        return optInfo;
+    public FlowOptInfo getFlowOptInfoById(String optId) {
+        return flowOptInfoDao.getObjectById(optId);
     }
 
     @Override
@@ -64,17 +60,24 @@ public class FlowOptServiceImpl implements FlowOptService {
 
     @Override
     @Transactional
-    public void saveOpt(FlowOptInfo FlowOptInfo) {
+    public void saveOptInfo(FlowOptInfo FlowOptInfo) {
         FlowOptInfo.setUpdateDate(new Date());
         flowOptInfoDao.mergeObject(FlowOptInfo);
     }
 
     @Override
     @Transactional
-    public void saveOptDef(FlowOptPage flowOptDef) {
+    public void saveOptPage(FlowOptPage flowOptDef) {
         flowOptDef.setUpdateDate(new Date());
         flowOptPageDao.mergeObject(flowOptDef);
     }
+
+    @Override
+    @Transactional
+    public List<FlowOptPage> listAllOptPageById(String optId) {
+        return flowOptPageDao.listObjectsByProperty("optId", optId);
+    }
+
 
     @Override
     @Transactional
@@ -97,7 +100,7 @@ public class FlowOptServiceImpl implements FlowOptService {
 
     @Override
     @Transactional
-    public FlowOptPage getOptDefByCode(String optCode) {
+    public FlowOptPage getOptPageByCode(String optCode) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("optCode",optCode);
         FlowOptPage flowOptDef = flowOptPageDao.getObjectByProperties(properties);
@@ -106,13 +109,13 @@ public class FlowOptServiceImpl implements FlowOptService {
 
     @Override
     @Transactional
-    public void deleteOptDefByCode(String optCode) {
+    public void deleteOptPageByCode(String optCode) {
         flowOptPageDao.deleteObjectById(optCode);
     }
 
     @Override
     @Transactional
-    public List<FlowOptPage> listOptDef(Map<String, Object> filterMap, PageDesc pageDesc) {
+    public List<FlowOptPage> listOptPage(Map<String, Object> filterMap, PageDesc pageDesc) {
         return flowOptPageDao.listObjectsByProperties(filterMap,pageDesc);
     }
 
@@ -125,16 +128,5 @@ public class FlowOptServiceImpl implements FlowOptService {
     public String getOptDefSequenceId() {
         return flowOptPageDao.getOptDefSequenceId();
     }
-
-     @Override
-    public FlowOptInfo getFlowOptInfoById(String optId) {
-        FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(optId);
-        if(flowOptInfo != null){
-            List<FlowOptPage> wfOptDefs = this.flowOptPageDao.listObjectsByProperty("optId", optId);
-            flowOptInfo.addOptPages(wfOptDefs);
-        }
-        return flowOptInfo;
-    }
-
 
 }

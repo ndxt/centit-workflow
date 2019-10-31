@@ -17,19 +17,21 @@ public interface FlowOptService {
 
     JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc);
 
-    FlowOptInfo getOptById(String optId);
+    FlowOptInfo getFlowOptInfoById(String optId);
 
     void deleteOptInfoById(String optId);
 
-    void saveOpt(FlowOptInfo FlowOptInfo);
+    void saveOptInfo(FlowOptInfo FlowOptInfo);
 
-    void saveOptDef(FlowOptPage FlowOptDef);
+    void saveOptPage(FlowOptPage FlowOptDef);
 
-    FlowOptPage getOptDefByCode(String optCode);
+    FlowOptPage getOptPageByCode(String optCode);
 
-    void deleteOptDefByCode(String optCode);
+    void deleteOptPageByCode(String optCode);
 
-    List<FlowOptPage> listOptDef(Map<String, Object> filterMap, PageDesc pageDesc);
+    List<FlowOptPage> listOptPage(Map<String, Object> filterMap, PageDesc pageDesc);
+
+    List<FlowOptPage> listAllOptPageById(String optId);
 
     List<FlowOptPage> listOptPageById(String optId);
 
@@ -38,8 +40,6 @@ public interface FlowOptService {
     String getOptInfoSequenceId();
 
     String getOptDefSequenceId();
-
-    FlowOptInfo getFlowOptInfoById(String optId);
 
     List<FlowOptInfo> getListOptInfo();
 

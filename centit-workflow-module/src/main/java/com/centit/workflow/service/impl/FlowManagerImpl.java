@@ -1453,7 +1453,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             String valid = jsonObject.getString("valid");
             map.put("grantor", jsonObject.getString("grantor"));
             map.put("grantee", jsonObject.getString("grantee"));
-            map.put("role_code", jsonObject.getString("roleCode"));
+            map.put("roleCode", jsonObject.getString("roleCode"));
             RoleRelegate relegate = flowRoleRelegateDao.getObjectByProperties(map);
             String isValid = relegate.getIsValid();
             if (!isValid.equalsIgnoreCase(valid)) {
@@ -1476,7 +1476,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             HashMap<String, Object> map = new HashMap<>();
             map.put("grantor", jsonObject.getString("grantor"));
             map.put("grantee", jsonObject.getString("grantee"));
-            map.put("role_code", jsonObject.getString("roleCode"));
+            map.put("roleCode", jsonObject.getString("roleCode"));
             relegate = flowRoleRelegateDao.getObjectByProperties(map);
         } catch (Exception e) {
             e.printStackTrace();

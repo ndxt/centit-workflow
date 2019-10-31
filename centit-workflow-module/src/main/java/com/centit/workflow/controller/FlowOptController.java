@@ -40,51 +40,59 @@ public class FlowOptController extends BaseController {
     //工作流--流程定义--业务模块取值
     @ApiOperation(value = "获取业务列表", notes = "获取业务列表")
     @WrapUpResponseBody
-    @RequestMapping(value="flow_listFlowOptInfo" ,method = RequestMethod.GET)
+    @RequestMapping(value="/allOptInfos" ,method = RequestMethod.GET)
     public List<FlowOptInfo> getListFlowOptInfo(){
          return wfOptService.getListOptInfo();
     }
     @ApiOperation(value = "分页获取业务列表", notes = "分页获取业务列表")
     @WrapUpResponseBody
-    @RequestMapping(value="/listOptInfo",method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public PageQueryResult listOptInfo(PageDesc pageDesc, HttpServletRequest request){
         Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
         JSONArray objList = wfOptService.listOptInfo(filterMap,pageDesc);
         return PageQueryResult.createResult(objList,pageDesc);
     }
+
     @ApiOperation(value = "获取指定业务", notes = "获取指定业务")
     @WrapUpResponseBody
-    @RequestMapping(value="/getOptById",method = RequestMethod.GET)
-    public FlowOptInfo getOptById(String optId){
-        return wfOptService.getOptById(optId);
+    @RequestMapping(value = "/{optId}", method = RequestMethod.GET)
+    public FlowOptInfo getOptInfoById(@PathVariable String optId) {
+        return this.wfOptService.getFlowOptInfoById(optId);
     }
+
     @ApiOperation(value = "删除业务", notes = "删除业务")
     @WrapUpResponseBody
-    @RequestMapping(value="/deleteOptInfoById",method = RequestMethod.DELETE)
-    public void deleteOptInfoById(String optId){
+    @RequestMapping(value="/{optId}",method = RequestMethod.DELETE)
+    public void deleteOptInfoById(@PathVariable String optId){
         wfOptService.deleteOptInfoById(optId);
     }
-    @ApiOperation(value = "保存业务", notes = "保存业务")
+
+    @ApiOperation(value = "保存新业务", notes = "保存新业务")
     @WrapUpResponseBody
-    @RequestMapping(value="/saveOpt",method = RequestMethod.POST)
-    public void saveOpt(@RequestBody FlowOptInfo FlowOptInfo){
-        wfOptService.saveOpt(FlowOptInfo);
+    @RequestMapping(method = RequestMethod.POST)
+    public void saveNewOptInfo(@RequestBody FlowOptInfo FlowOptInfo){
+        wfOptService.saveOptInfo(FlowOptInfo);
+    }
+
+    @ApiOperation(value = "更改业务", notes = "更改业务")
+    @WrapUpResponseBody
+    @RequestMapping(method = RequestMethod.PUT)
+    public void updateOptInfo(@RequestBody FlowOptInfo FlowOptInfo){
+        wfOptService.saveOptInfo(FlowOptInfo);
     }
 
     //根据optId获取表wf_optdef中数据，分页功能没有加！
-    @ApiOperation(value = "根据optId获取流程页面", notes = "根据optId获取流程页面")
+    @ApiOperation(value = "根据optId获取流程页面,用于编辑包括交互的和自动运行的",
+        notes = "根据optId获取流程页面,用于编辑包括交互的和自动运行的")
     @WrapUpResponseBody
-    @RequestMapping(value="/getListOptDefById",method = RequestMethod.GET)
-    public PageQueryResult getListOptDefById(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
-        Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
-//        List<FlowOptDef> objList = wfOptService.getListOptDefById(optId, filterMap,pageDesc);
-        List<FlowOptPage> objList = wfOptService.listOptDef(filterMap,pageDesc);
-       return PageQueryResult.createResult(objList,pageDesc);
+    @RequestMapping(value="/pages/{optId}",method = RequestMethod.GET)
+    public List<FlowOptPage> listOptPagesForEdit(@PathVariable String optId){
+        return wfOptService.listAllOptPageById(optId);
     }
 
     @ApiOperation(value = "根据optId获取流程页面,用于流程定义", notes = "根据optId获取流程页面,用于流程定义")
     @WrapUpResponseBody
-    @RequestMapping(value="/pages/{optId}",method = RequestMethod.GET)
+    @RequestMapping(value="/views/{optId}",method = RequestMethod.GET)
     public List<FlowOptPage> listOptPagesById(@PathVariable String optId){
         return wfOptService.listOptPageById(optId);
     }
@@ -100,25 +108,24 @@ public class FlowOptController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value="/getOptDefByCode",method = RequestMethod.GET)
     public FlowOptPage getOptDefByCode(String optCode){
-        return wfOptService.getOptDefByCode(optCode);
-    }
-    @ApiOperation(value = "保存流程页面", notes = "保存流程页面")
-    @WrapUpResponseBody
-    @RequestMapping(value="/saveOptDef",method = RequestMethod.POST)
-    public void saveOptDef(@RequestBody FlowOptPage FlowOptDef){
-        wfOptService.saveOptDef(FlowOptDef);
-    }
-    @ApiOperation(value = "删除流程页面", notes = "删除流程页面")
-    @RequestMapping(value="/deleteOptDefByCode",method = RequestMethod.DELETE)
-    @WrapUpResponseBody
-    public void deleteOptDefByCode(String optCode){
-        wfOptService.deleteOptDefByCode(optCode);
+        return wfOptService.getOptPageByCode(optCode);
     }
 
-    @RequestMapping(
-            value = {"/createOptInfo"},
-            method = {RequestMethod.GET}
-    )
+    @ApiOperation(value = "保存流程页面", notes = "保存流程页面")
+    @WrapUpResponseBody
+    @RequestMapping(method = RequestMethod.POST)
+    public void saveOptDef(@RequestBody FlowOptPage FlowOptDef){
+        wfOptService.saveOptPage(FlowOptDef);
+    }
+
+    @ApiOperation(value = "删除流程页面", notes = "删除流程页面")
+    @RequestMapping(value = "/page/{optCode}", method = RequestMethod.DELETE)
+    @WrapUpResponseBody
+    public void deleteOptDefByCode(@PathVariable String optCode){
+        wfOptService.deleteOptPageByCode(optCode);
+    }
+
+    @RequestMapping(value = "/newId", method = RequestMethod.GET)
     public void getNextOptInfoId(HttpServletResponse response) {
         String optInfoId = wfOptService.getOptInfoSequenceId();
         FlowOptInfo copy = new FlowOptInfo();
@@ -127,7 +134,7 @@ public class FlowOptController extends BaseController {
         JsonResultUtils.writeSingleDataJson(copy, response);
     }
 
-    @RequestMapping("createOptDef")
+    @RequestMapping("/newOptCode")
     public void getNextOptDefId(String optId, HttpServletResponse response) {
         String optDefCode = wfOptService.getOptDefSequenceId();
         FlowOptPage copy = new FlowOptPage();
@@ -137,22 +144,15 @@ public class FlowOptController extends BaseController {
         JsonResultUtils.writeSingleDataJson(copy, response);
     }
 
-    @RequestMapping(
-            value = {"/{optId}"},
-            method = {RequestMethod.GET}
-    )
-    public void getOptInfoById(@PathVariable String optId, HttpServletResponse response) {
-        FlowOptInfo FlowOptInfo = this.wfOptService.getFlowOptInfoById(optId);
-        JsonResultUtils.writeSingleDataJson(FlowOptInfo, response);
-    }
+
     @ApiOperation(value = "批量保存流程页面", notes = "批量保存流程页面")
     @WrapUpResponseBody
-    @RequestMapping(value="/saveOptDefs",method = RequestMethod.POST)
-    public void saveOptDefs(@RequestBody JSONObject paramData){
+    @RequestMapping(value="/pages",method = RequestMethod.POST)
+    public void saveOptPages(@RequestBody JSONObject paramData){
         JSONArray optDefs = paramData.getJSONArray("optDefs");
         for (int i=0; i<optDefs.size(); i++){
             FlowOptPage flowOptDef = optDefs.getObject(i, FlowOptPage.class);
-            wfOptService.saveOptDef(flowOptDef);
+            wfOptService.saveOptPage(flowOptDef);
         }
     }
 }
