@@ -38,7 +38,7 @@ public interface FlowOptParamOptions {
 
     void setGlobalVariables(Map<String, Object> variables);
 
-    void setFlowRoleUsers(Map<String, List<String>> variables);
+    void setFlowRoleUsers(Map<String, List<String>> flowRoleUsers);
 
     void setFlowOrganizes(Map<String, List<String>> flowOrganizes);
 
