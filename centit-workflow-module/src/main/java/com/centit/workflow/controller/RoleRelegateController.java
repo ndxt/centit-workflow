@@ -34,7 +34,7 @@ import java.util.Map;
     tags = "权限委托和任务转移")
 @Controller
 @RequestMapping("/flow/relegate")
-public class UserOptController extends BaseController {
+public class RoleRelegateController extends BaseController {
     @Autowired
     private FlowManager flowManager;
 
