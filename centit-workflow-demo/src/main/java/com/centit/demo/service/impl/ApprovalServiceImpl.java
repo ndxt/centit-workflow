@@ -1,5 +1,6 @@
 package com.centit.demo.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.demo.dao.ApprovalAuditorDao;
 import com.centit.demo.dao.ApprovalEventDao;
 import com.centit.demo.dao.ApprovalProcessDao;
@@ -7,11 +8,13 @@ import com.centit.demo.po.ApprovalAuditor;
 import com.centit.demo.po.ApprovalEvent;
 import com.centit.demo.po.ApprovalProcess;
 import com.centit.demo.service.ApprovalService;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.FlowManagerClient;
+import com.centit.workflow.commons.CreateFlowOptions;
+import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.UserTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +47,12 @@ public class ApprovalServiceImpl implements ApprovalService {
         //保存业务数据 创建流程
         Long approvalId = approvalEventDao.getNextApprovalEventId();
         approvalEvent.setApprovalId(approvalId);
-        FlowInstance flowInstance = flowEngine.createInstanceLockFirstNode("000070",
-                approvalEvent.getEventTitle(),String.valueOf(approvalEvent.getApprovalId()),"u0000000",null);
+        FlowInstance flowInstance = flowEngine.createInstance(
+            CreateFlowOptions.create().flow("000070")
+                .optName(approvalEvent.getEventTitle())
+            .optTag(String.valueOf(approvalEvent.getApprovalId()))
+            .user("u0000000")
+            .workUser("u0000000"));
         approvalEvent.setFlowInstId(flowInstance.getFlowInstId());
         approvalEventDao.saveNewObject(approvalEvent);
         if(approvalAuditors != null && approvalAuditors.size()>0){
@@ -85,13 +92,14 @@ public class ApprovalServiceImpl implements ApprovalService {
         flowEngine.saveFlowVariable(flowInstId,"pass", "Y".equals(pass) ? "0":"1");
 //        //设置审批人
 //        setNextStepAuditors(flowInstId,"auditor",userCodes,phaseNoMap.get("nextPhaseNo"));
-        flowEngine.submitOpt(nodeInstId,userCode,"",null);
+        flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInstId).user(userCode));
 
     }
 
     @Override
-    public List<UserTask> getUserTasksByUserCode(String userCode) throws Exception {
-        List<UserTask> userTasks = flowEngine.listUserTasks(userCode,new PageDesc(-1,-1));
-        return  userTasks;
+    public JSONArray getUserTasksByUserCode(String userCode) throws Exception {
+        return flowEngine.listTasks(
+            CollectionsOpt.createHashMap("userCode",userCode),
+            new PageDesc(-1,-1));
     }
 }

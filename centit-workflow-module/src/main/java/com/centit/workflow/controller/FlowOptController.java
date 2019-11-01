@@ -142,18 +142,19 @@ public class FlowOptController extends BaseController {
     @ApiOperation(value = "保存流程页面", notes = "保存流程页面")
     @WrapUpResponseBody
     @RequestMapping(value="/page", method = RequestMethod.POST)
-    public void saveOptDef(@RequestBody FlowOptPage FlowOptDef){
-        wfOptService.saveOptPage(FlowOptDef);
+    public void saveOptDef(@RequestBody FlowOptPage optPage){
+        wfOptService.saveOptPage(optPage);
     }
 
     @ApiOperation(value = "批量保存流程页面", notes = "批量保存流程页面")
     @WrapUpResponseBody
     @RequestMapping(value="/pages",method = RequestMethod.POST)
-    public void saveOptPages(@RequestBody JSONObject paramData){
-        JSONArray optDefs = paramData.getJSONArray("optDefs");
-        for (int i=0; i<optDefs.size(); i++){
-            FlowOptPage flowOptDef = optDefs.getObject(i, FlowOptPage.class);
-            wfOptService.saveOptPage(flowOptDef);
+    public void saveOptPages(@RequestBody List<FlowOptPage> optPages){
+        if(optPages==null || optPages.size()==0){
+            return;
+        }
+        for(FlowOptPage optPage : optPages){
+            wfOptService.saveOptPage(optPage);
         }
     }
 }

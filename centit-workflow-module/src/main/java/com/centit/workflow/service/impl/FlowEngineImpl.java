@@ -872,6 +872,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
             }
         }
+
         nodeInstanceDao.saveNewObject(nodeInst);
         flowInst.addNodeInstance(nodeInst);
         flowInst.setLastUpdateTime(currentTime);

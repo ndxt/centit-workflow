@@ -1,6 +1,8 @@
 package com.centit.demo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.demo.po.ApprovalAuditor;
 import com.centit.demo.po.ApprovalEvent;
 import com.centit.demo.po.ApprovalProcess;
@@ -9,8 +11,7 @@ import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
-import com.centit.workflow.po.NodeInstance;
-import com.centit.workflow.po.UserTask;
+import com.centit.workflow.commons.SubmitOptOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,7 @@ public class ApprovalController {
         Object userList = platformEnvironment.listAllUsers();
         JsonResultUtils.writeSingleDataJson(userList,response);
     }
+
     @RequestMapping("/startProcess")
     public void startProcess(HttpServletRequest request,HttpServletResponse response,String approvalTitle,
                              String approvalDesc,String approvalAuditors) throws Exception{
@@ -64,16 +66,18 @@ public class ApprovalController {
         //开启工作流 提交申请节点
         String flowInstId = approvalService.startProcess(request,approvalEvent,auditors,phaseCount,
                 auditors.get(0).getUserCode());
-        List<NodeInstance> nodeInstances = null;
         try {
-            nodeInstances = flowManager.listFlowInstNodes(flowInstId);
+            JSONArray nodeInstances = flowManager.listFlowInstNodes(flowInstId);
+            if(nodeInstances != null && nodeInstances.size()>0){
+                flowEngine.submitOpt(
+                    SubmitOptOptions.create().nodeInst(
+                        ((JSONObject)nodeInstances.get(0)).getString("nodeInstId"))
+                    .user("u0000000"));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(nodeInstances != null && nodeInstances.size()>0){
-            flowEngine.submitOpt(nodeInstances.get(0).getNodeInstId(),
-                "u0000000","",null);
-        }
+
         JsonResultUtils.writeBlankJson(response);
     }
     @RequestMapping("/doApproval")
@@ -99,7 +103,7 @@ public class ApprovalController {
     }
     @RequestMapping(value = "/getUserTasksByUserCode/{userCode}",method = RequestMethod.GET)
     public void getUserTasksByUserCode(HttpServletResponse response,@PathVariable String userCode) throws Exception{
-        List<UserTask> userTasks = approvalService.getUserTasksByUserCode(userCode);
+        JSONArray userTasks = approvalService.getUserTasksByUserCode(userCode);
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
 }
