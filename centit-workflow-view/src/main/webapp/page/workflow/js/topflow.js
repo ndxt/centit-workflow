@@ -533,22 +533,22 @@ function changeValue(obj,id){
             }
         }
         if(id=="opttype"){//操作类别
-            if(obj.value=="D"){//自动流程节点的时候
-                $("#business").hide();//隐藏业务操作
-                $("#childNode").hide();//隐藏子流程
-            }
-            else if(obj.value=="S"){//子流程节点的时候
-                $("#business").hide();//隐藏业务操作
-                $("#childNode").show();//显示子流程
-                $("#subwfcode").empty();//清空
-                for (k in Data.SubWfcode) {
-                    if (SVG.get(o).attr("subwfcode") == k) {
-                        $("#subwfcode").append("<option  value='" + k + "' selected='selected'>" + Data.SubWfcode[k] + "</option>");
-                    }
-                    else {
-                        $("#subwfcode").append("<option  value='" + k + "' >" + Data.SubWfcode[k] + "</option>");
-                    }
-                }
+            // if(obj.value=="D"){//自动流程节点的时候
+            //     $("#business").hide();//隐藏业务操作
+            //     $("#childNode").hide();//隐藏子流程
+            // }
+            if(obj.value=="S"){//子流程节点的时候
+              $("#business").hide();//隐藏业务操作
+              $("#childNode").show();//显示子流程
+              $("#subwfcode").empty();//清空
+              for (k in Data.SubWfcode) {
+                  if (SVG.get(o).attr("subwfcode") == k) {
+                      $("#subwfcode").append("<option  value='" + k + "' selected='selected'>" + Data.SubWfcode[k] + "</option>");
+                  }
+                  else {
+                      $("#subwfcode").append("<option  value='" + k + "' >" + Data.SubWfcode[k] + "</option>");
+                  }
+              }
             }
             else{//正常的时候
                 $("#business").show();//显示业务操作
