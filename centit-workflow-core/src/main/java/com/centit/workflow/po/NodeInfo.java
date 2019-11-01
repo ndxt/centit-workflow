@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotNull;
  * @author codefan@hotmail.com
  */
 @Entity
+@Data
 @Table(name = "WF_NODE")
 public class NodeInfo implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
@@ -24,58 +26,101 @@ public class NodeInfo implements java.io.Serializable {
     @Id
     @Column(name = "NODE_ID")
     private String nodeId;
-    /*@Column(name = "FLOWCODE")
+    @Column(name = "FLOW_CODE")
+    @NotNull(message = "字段不能为空")
+    @Length(max = 32, message = "字段长度不能大于{max}")
     private String flowCode;
+
+    /**
+     * 框架解析 不到ManyToOne的属性 这儿单独 设置
+     */
     @Column(name = "VERSION")
+    @NotNull(message = "字段不能为空")
+    @Range( max = 9999, message = "版本号不能大于{max}")
     private Long version;
-    A:开始 B:首节点 C:业务节点  F结束  R: 路由节点
-    */
+    /**
+     * A:开始 B:首节点 C:业务节点  F结束  R: 路由节点
+     */
     @Column(name = "NODE_TYPE")
     private String nodeType;
     @Column(name = "NODE_NAME")
     private String nodeName;
+    /**
+     * A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行 E: 哑元（可用于嵌套汇聚） S:子流程
+     */
     @Column(name = "OPT_TYPE")
     private String optType;
 
-    @Column(name = "OS_ID")
-    private String osId;
-
+    /**
+     * 业务ID 关联到 FlowOptInfo
+     */
     @Column(name = "OPT_ID")
     private String optId;
-
+    /**
+     * 业务页面代码 关联到 FlowOptPage
+     */
     @Column(name = "OPT_CODE")
     private String optCode;
 
     @Column(name = "OPT_PARAM")
     private String optParam;
+
+    @Column(name = "OS_ID")
+    private String osId;
+
     @Column(name = "OPT_BEAN")
     private String optBean;
+
     @Column(name = "SUB_FLOW_CODE")
     private String subFlowCode;
+
+    /**
+     * EN GW XZ BJ RO
+     */
     @Column(name = "ROLE_TYPE")
     private String roleType;
+
     @Column(name = "ROLE_CODE")
     private String roleCode;
+
     @Column(name = "UNIT_EXP")
     private String unitExp;
+
     @Column(name = "POWER_EXP")
     private String powerExp;
+
     @Column(name = "NODE_DESC")
     private String nodeDesc;
+
+    /**
+     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、
+     * C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
+     */
     @Column(name = "LIMIT_TYPE")
     private String limitType;
+
     @Column(name = "TIME_LIMIT")
     private String timeLimit;
+    /**
+     *  0：不继承， 1 ：继承前节点 2 ：继承指定节点；
+     */
     @Column(name = "INHERIT_TYPE")
     private String inheritType;
+
+    /**
+     * 继承节点环节代码 输入框 ，文本输入； XML 属性名 inheritNodeCode
+     * InheritType == '2' 时有效
+     */
     @Column(name = "INHERIT_NODE_CODE")
     private String inheritNodeCode;
+
     @Column(name = "EXPIRE_OPT")
     private String expireOpt;
+
     @Column(name = "IS_ACCOUNT_TIME")
     private String isAccountTime;
-    @Column(name = "IS_TRUNK_LINE")
 
+    @Column(name = "IS_TRUNK_LINE")
     private String isTrunkLine;
     /**
      * 环节代码
@@ -88,58 +133,42 @@ public class NodeInfo implements java.io.Serializable {
 
     @Column(name = "STAGE_CODE")
     private String stageCode;
-
+    /**
+     * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
+     */
     @Column(name = "ROUTER_TYPE")
     private String routerType;
+    /**
+     * D 机构， U 人员 (权限表达式)， V 变量(暂时未实现，没有找到应用场景)
+     */
     @Column(name = "MULTI_INST_TYPE")
     private String multiInstType;
+    /**
+     * 自定义变量表达式
+     */
     @Column(name = "MULTI_INST_PARAM")
     private String multiInstParam;
+
+    /**
+     * A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X ，E  外埠判断
+     */
     @Column(name = "CONVERGE_TYPE")
     private String convergeType;
+
     @Column(name = "CONVERGE_PARAM")
     private String convergeParam;
+    /**
+     * R：运行时间  L:剩余时间 P：比率
+     */
     @Column(name = "WARNING_RULE")
     private String warningRule;
+
     @Column(name = "WARNING_PARAM")
     private String warningParam;
-    /**
-     * 框架解析 不到ManyToOne的属性 这儿单独 设置
-     */
-    @Column(name = "VERSION")
-    @NotNull(message = "字段不能为空")
-    @Range( max = 9999, message = "版本号不能大于{max}")
-    private Long version;
-
-    @Column(name = "FLOW_CODE")
-    @NotNull(message = "字段不能为空")
-    @Length(max = 32, message = "字段长度不能大于{max}")
-    private String flowCode;
 
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
-    public String getIsTrunkLine() {
-        return isTrunkLine;
-    }
 
-    public void setIsTrunkLine(String isTrunkLine) {
-        this.isTrunkLine = isTrunkLine;
-    }
-    public String getNodeCode() {
-        return nodeCode;
-    }
-
-    public void setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
-    }
-
-    public String getRiskinfo() {
-        return riskinfo;
-    }
-
-    public void setRiskinfo(String riskinfo) {
-        this.riskinfo = riskinfo;
-    }
 
     // Constructors
     /** default constructor */
@@ -157,347 +186,6 @@ public class NodeInfo implements java.io.Serializable {
         this.isAccountTime = "T";
         this.inheritType = "0";
     }
-
-    public String getNodeId() {
-        return this.nodeId;
-    }
-
-    public void setNodeId(String nodeid) {
-        this.nodeId = nodeid;
-    }
-
-    // Property accessors
-
-    public String getStageCode() {
-        return stageCode;
-    }
-
-    public void setStageCode(String flowPhase) {
-        this.stageCode = flowPhase;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public String getFlowCode() {
-        return flowCode;
-    }
-
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
-    }
-
-    public FlowInfo getFlowDefine() {
-        return flowDefine;
-    }
-
-    public void setFlowDefine(FlowInfo flowDefine) {
-        this.flowDefine = flowDefine;
-    }
-
-    /**
-     * A:开始 B:首节点 C:业务节点  F结束  R: 路由节点
-     * @return
-     */
-    public String getNodeType() {
-        return this.nodeType;
-    }
-    /**
-     *
-     * @param nodetype A:开始 B:首节点 C:业务节点  F结束  R: 路由节点
-     */
-    public void setNodeType(String nodetype) {
-        this.nodeType = nodetype;
-    }
-
-    public String getNodeName() {
-        return this.nodeName;
-    }
-
-    public void setNodeName(String nodename) {
-        this.nodeName = nodename;
-    }
-
-    /**
-     * @return A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行 E: 哑元（可用于嵌套汇聚） S:子流程
-     */
-    public String getOptType() {
-        return this.optType;
-    }
-
-    /**
-     *
-     * @param opttype A:唯一执行人 B:抢先机制 C:多人操作 D:自动执行 E: 哑元（可用于嵌套汇聚） S:子流程
-     */
-    public void setOptType(String opttype) {
-        this.optType = opttype;
-    }
-
-    public String getOptCode() {
-        return this.optCode;
-    }
-
-    public void setOptCode(String optcode) {
-        this.optCode = optcode;
-    }
-
-    public String getOptBean() {
-        return this.optBean;
-    }
-
-    public void setOptBean(String opturl) {
-        this.optBean = opturl;
-    }
-
-    public String getSubFlowCode() {
-        return this.subFlowCode;
-    }
-
-    public void setSubFlowCode(String subwfcode) {
-        this.subFlowCode = subwfcode;
-    }
-    /**
-     * en gw xz bj
-     * @return
-     */
-    public String getRoleType() {
-        return this.roleType;
-    }
-
-    public void setRoleType(String roletype) {
-        this.roleType = roletype;
-    }
-
-    public String getRoleCode() {
-        return this.roleCode;
-    }
-
-    public void setRoleCode(String rolecode) {
-        this.roleCode = rolecode;
-    }
-
-    public String getOptParam() {
-        return optParam;
-    }
-
-    public void setOptParam(String optparam) {
-        this.optParam = optparam;
-    }
-
-    public String getUnitExp() {
-        return this.unitExp;
-    }
-
-    public void setUnitExp(String unitexp) {
-        this.unitExp = unitexp;
-    }
-
-    public String getPowerExp() {
-        return this.powerExp;
-    }
-
-    public void setPowerExp(String powerexp) {
-        this.powerExp = powerexp;
-    }
-
-    public String getNodeDesc() {
-        return this.nodeDesc;
-    }
-
-    public void setNodeDesc(String nodedesc) {
-        this.nodeDesc = nodedesc;
-    }
-
-    /**
-     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
-     * @return
-     */
-    public String getLimitType() {
-        return limitType;
-    }
-    /**
-     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
-     * @param limitType
-     */
-    public void setLimitType(String limitType) {
-        this.limitType = limitType;
-    }
-    public String getTimeLimit() {
-        return this.timeLimit;
-    }
-
-    public void setTimeLimit(String timelimit) {
-        this.timeLimit = timelimit;
-    }
-    /**
-     *  0：不继承， 1 ：继承前节点 2 ：继承指定节点；
-     * @return
-     */
-    public String getInheritType() {
-        return inheritType;
-    }
-    /**
-     * @param inheritType  0：不继承， 1 ：继承前节点 2 ：继承指定节点；
-     */
-    public void setInheritType(String inheritType) {
-        this.inheritType = inheritType;
-    }
-    /**
-     * 继承节点环节代码 输入框 ，文本输入； XML 属性名 inheritNodeCode
-     * InheritType == '2' 时有效
-     * @return
-     */
-    public String getInheritNodeCode() {
-        return inheritNodeCode;
-    }
-
-    public void setInheritNodeCode(String inheritNodeCode) {
-        this.inheritNodeCode = inheritNodeCode;
-    }
-
-    /**
-     * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
-     * @return
-     */
-    public String getExpireOpt() {
-        return this.expireOpt;
-    }
-    /**
-     * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
-     * @param expireopt
-     */
-    public void setExpireOpt(String expireopt) {
-        this.expireOpt = expireopt;
-    }
-
-    /**
-     * 节点执行时间是否计入时间限制     T 计时、有期限   F  不计时    H仅环节计时
-     */
-    public String getIsAccountTime() {
-        return this.isAccountTime;
-    }
-
-    /**
-     * 节点执行时间是否计入时间限制    T 计时、有期限  F 不计时   H 仅环节计时
-     * @param issync
-     */
-    public void setIsAccountTime(String issync) {
-        this.isAccountTime = issync;
-    }
-
-
-    /**
-     * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
-     * @return
-     */
-    public String getRouterType() {
-        return routerType;
-    }
-    /**
-     * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
-     * @param routerType
-     */
-    public void setRouterType(String routerType) {
-        this.routerType = routerType;
-    }
-
-    /**
-     * D 机构， U 人员 (权限表达式)， V 变量
-     * @return
-     */
-    public String getMultiInstType() {
-        return multiInstType;
-    }
-
-    /**
-     * D 机构， U 人员 (权限表达式)， V 变量
-     * @param multiInstType
-     */
-    public void setMultiInstType(String multiInstType) {
-        this.multiInstType = multiInstType;
-    }
-
-    /**
-     * 自定义变量表达式
-     * @return
-     */
-    public String getMultiInstParam() {
-        return multiInstParam;
-    }
-    /**
-     * 自定义变量表达式
-     * @param multiInstParam
-     */
-    public void setMultiInstParam(String multiInstParam) {
-        this.multiInstParam = multiInstParam;
-    }
-
-    /**
-     * A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X ，E  外埠判断
-     * @return
-     */
-    public String getConvergeType() {
-        return convergeType;
-    }
-    /**
-     * A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X ，E  外埠判断
-     * @param convergeType
-     */
-    public void setConvergeType(String convergeType) {
-        this.convergeType = convergeType;
-    }
-
-    public String getConvergeParam() {
-        return convergeParam;
-    }
-
-    public void setConvergeParam(String convergeParam) {
-        this.convergeParam = convergeParam;
-    }
-    /**
-     * R：运行时间  L:剩余时间 P：比率
-     * @return
-     */
-    public String getWarningRule() {
-        return warningRule;
-    }
-    /**
-     *  R：运行时间  L:剩余时间 P：比率
-     * @param warningRule
-     */
-    public void setWarningRule(String warningRule) {
-        this.warningRule = warningRule;
-    }
-
-    public String getWarningParam() {
-        return warningParam;
-    }
-
-    public void setWarningParam(String warningParam) {
-        this.warningParam = warningParam;
-    }
-
-    public String getOsId() {
-        return osId;
-    }
-
-    public void setOsId(String osId) {
-        this.osId = osId;
-    }
-
-    public String getOptId() {
-        return optId;
-    }
-
-    public void setOptId(String optId) {
-        this.optId = optId;
-    }
-
 
     public void copy(NodeInfo other) {
         //this.setNodeId(other.getNodeId());

@@ -8,6 +8,7 @@ import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.*;
+import com.centit.workflow.service.FlowDefine;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class FlowDefineController extends BaseController {
     //public static final Logger logger = LoggerFactory.getLogger(SampleFlowDefineController.class);
 
     @Autowired
-    private com.centit.workflow.service.FlowDefine flowDef;
+    private FlowDefine flowDef;
 
     /*
      * 列举系统中的所有流程，只显示最新版本的
@@ -313,7 +314,6 @@ public class FlowDefineController extends BaseController {
         //FlowOptUtils.sendFlowInfo(flowdefine);
     }
 
-
     /**
      * 删除流程
      *
@@ -344,7 +344,6 @@ public class FlowDefineController extends BaseController {
         JsonResultUtils.writeSuccessJson(response);
     }
 
-
     /**
      * 发布新版本流程
      *
@@ -356,7 +355,6 @@ public class FlowDefineController extends BaseController {
         flowDef.publishFlowDef(flowcode);
         JsonResultUtils.writeSingleDataJson("已发布！", response);
     }
-
 
     /**
      * 更新流程状态
@@ -376,7 +374,6 @@ public class FlowDefineController extends BaseController {
             JsonResultUtils.writeSingleDataJson("已经启用！", response);
         }
     }
-
 
     /**
      * 返回一个带id的空流程
@@ -454,7 +451,7 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "角色名称和类别对应列表")
     @RequestMapping(value = "/listRoleByType/{roleType}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public Map<String, String> listAllRole(@PathVariable String roleType){
+    public Map<String, String> listRoleByType(@PathVariable String roleType){
         return flowDef.listRoleByType(roleType);
     }
 

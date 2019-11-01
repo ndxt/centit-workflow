@@ -734,8 +734,17 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode", notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")
     @WrapUpResponseBody
     @RequestMapping(value = "/moveUserTaskTo", method = RequestMethod.POST)
-    public void moveUserTaskTo(@RequestBody RoleRelegate roleRelegate) {
-        flowManager.moveUserTaskTo(roleRelegate.getGrantor(),roleRelegate.getGrantee(),roleRelegate.getRecorder(),roleRelegate.getGrantDesc());
+    public void moveUserTaskTo(@RequestBody TaskMove taskMove) {
+        flowManager.moveUserTaskTo(taskMove.getFormUser(),taskMove.getToUser(),taskMove.getOperatorUser(),
+            taskMove.getMoveDesc());
+    }
+
+    @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode", notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/moveSelectedUserTaskTo", method = RequestMethod.POST)
+    public void moveSelectedUserTaskTo(@RequestBody TaskMove taskMove) {
+        flowManager.moveUserTaskTo(taskMove.getNodeInstIds(), taskMove.getFormUser(),taskMove.getToUser(),taskMove.getOperatorUser(),
+            taskMove.getMoveDesc());
     }
 
     @ApiOperation(value = "根据id获取流程实例节点", notes = "根据id获取流程实例节点")

@@ -1,9 +1,9 @@
 package com.centit.demo.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.demo.po.ApprovalAuditor;
 import com.centit.demo.po.ApprovalEvent;
 import com.centit.demo.po.ApprovalProcess;
-import com.centit.workflow.po.UserTask;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -32,5 +32,5 @@ public interface ApprovalService {
      * @param userCode
      * @throws Exception
      */
-    List<UserTask> getUserTasksByUserCode(String userCode) throws Exception;
+    JSONArray getUserTasksByUserCode(String userCode) throws Exception;
 }

@@ -17,27 +17,29 @@ public interface FlowOptService {
 
     JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc);
 
-    FlowOptInfo getOptById(String optId);
+    FlowOptInfo getFlowOptInfoById(String optId);
 
     void deleteOptInfoById(String optId);
 
-    void saveOpt(FlowOptInfo FlowOptInfo);
+    void saveOptInfo(FlowOptInfo FlowOptInfo);
 
-    void saveOptDef(FlowOptPage FlowOptDef);
+    void saveOptPage(FlowOptPage FlowOptDef);
 
-    List<FlowOptPage> getListOptDefById(String optId, Map<String, Object> filterMap, PageDesc pageDesc);
+    FlowOptPage getOptPageByCode(String optCode);
 
-    FlowOptPage getOptDefByCode(String optCode);
+    void deleteOptPageByCode(String optCode);
 
-    void deleteOptDefByCode(String optCode);
+    List<FlowOptPage> listOptPage(Map<String, Object> filterMap, PageDesc pageDesc);
 
-    List<FlowOptPage> ListOptDef(Map<String, Object> filterMap, PageDesc pageDesc);
+    List<FlowOptPage> listAllOptPageById(String optId);
+
+    List<FlowOptPage> listOptPageById(String optId);
+
+    List<FlowOptPage> listOptAutoRunById(String optId);
 
     String getOptInfoSequenceId();
 
     String getOptDefSequenceId();
-
-    FlowOptInfo getFlowOptInfoById(String optId);
 
     List<FlowOptInfo> getListOptInfo();
 

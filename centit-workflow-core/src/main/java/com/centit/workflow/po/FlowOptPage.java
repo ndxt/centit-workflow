@@ -1,6 +1,9 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.support.database.orm.GeneratorCondition;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -20,6 +23,7 @@ public class FlowOptPage implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "OPT_CODE")
+    @ValueGenerator(strategy = GeneratorType.UUID)
     private String optCode;
     /**
      * 和flowOptInfo关联
@@ -30,7 +34,8 @@ public class FlowOptPage implements java.io.Serializable {
     @Column(name = "OPT_NAME")
     private String optName;
     /**
-     * C 公司开发的业务， E外部 需要IFrame嵌入， F 自定义表单
+     * C 公司开发的业务， E外部 需要IFrame嵌入，
+     * F 自定义表单， A auto 自动执行http调用
      */
     @Column(name = "PAGE_TYPE")
     private String pageType;
@@ -40,14 +45,20 @@ public class FlowOptPage implements java.io.Serializable {
      */
     @Column(name = "PAGE_URL")
     private String pageUrl;
-
+    /**
+     * pageType = 'A' 时生效
+     * C ：create - post R：read - get
+     * U： update - put D：delete
+     */
     @Column(name = "OPT_METHOD")
     private String optMethod;
 
-
+    /**
+     * 最后更新时间
+     */
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name = "UPDATE_DATE")
+    @ValueGenerator(strategy = GeneratorType.FUNCTION,
+        condition = GeneratorCondition.ALWAYS,value = "today()")
     private Date updateDate;
-
-
 }

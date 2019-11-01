@@ -9,7 +9,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>centit-workflow-server</artifactId>
     <version>4.5-SNAPSHOT</version>
     <packaging>war</packaging>

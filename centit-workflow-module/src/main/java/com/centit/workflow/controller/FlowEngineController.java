@@ -2,14 +2,12 @@ package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.support.json.JsonPropertyUtils;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.*;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Controller
@@ -42,12 +39,6 @@ public class FlowEngineController extends BaseController {
 
     @Autowired
     private FlowOptService flowOptService;
-
-
-    private Map<Class<?>, String[]> excludes;
-
-
-
 
     @ApiOperation(value = "创建流程", notes = "创建流程，参数为json格式")
     @WrapUpResponseBody
@@ -139,11 +130,9 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "查看流程节点", notes = "查看流程节点")
     @GetMapping(value = "/listFlowInstNodes")
-    public void listFlowInstNodes(HttpServletResponse response, String flowInstId) {
-        List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
-        excludes = new HashMap<>();
-        excludes.put(NodeInstance.class, new String[]{"wfActionLogs", "wfActionTasks"});
-        JsonResultUtils.writeSingleDataJson(nodeInstList, response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
+    @WrapUpResponseBody
+    public List<NodeInstance> listFlowInstNodes(String flowInstId) {
+        return flowManager.listFlowInstNodes(flowInstId);
     }
 
     @ApiOperation(value = "查询用户待办", notes = "查询用户待办")
@@ -152,8 +141,7 @@ public class FlowEngineController extends BaseController {
     public List<UserTask> listUserTasks(String userCode) {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("userCode", userCode);
-        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
-        return userTasks;
+        return flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
     }
 
     @ApiOperation(value = "根据条件查询待办", notes = "根据条件查询待办")
@@ -161,8 +149,7 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/listTasks")
     public List<UserTask> listTasks(HttpServletRequest request) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
-        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
-        return userTasks;
+        return flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
     }
 
     @ApiOperation(value = "查询节点待办用户", notes = "查询节点待办用户")
@@ -171,8 +158,7 @@ public class FlowEngineController extends BaseController {
     public List<UserTask> listNodeTaskUsers(String nodeInstId) {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("nodeInstId", nodeInstId);
-        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
-        return userTasks;
+        return flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
     }
 
     @ApiOperation(value = "查询用户岗位待办", notes = "查询用户岗位待办")
@@ -182,8 +168,7 @@ public class FlowEngineController extends BaseController {
         Map<String, Object> searchColumn = new HashMap<>();
         PageDesc pageDesc = new PageDesc(1, 10);
         searchColumn.put("userCode", userCode);
-        List<UserTask> userTasks = flowEngine.listDynamicTask(searchColumn, pageDesc);
-        return userTasks;
+        return flowEngine.listDynamicTask(searchColumn, pageDesc);
     }
 
     @ApiOperation(value = "业务id关联流程", notes = "根据业务id查询关联流程")
@@ -220,6 +205,15 @@ public class FlowEngineController extends BaseController {
         flowEngine.updateNodeInstanceParam(nodeInstId, nodeParam);
     }
 
+    @ApiOperation(value = "更改流程节点参数", notes = "更改流程业务信息程")
+    @WrapUpResponseBody
+    @PostMapping(value = "/lockTask")
+    public void lockNodeTask(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        String nodeInstId = jsonObject.getString("nodeInstId");
+        String userCode = jsonObject.getString("userCode");
+        flowEngine.lockNodeTask(nodeInstId, userCode);
+    }
 
     @ApiOperation(value = "查看办件角色", notes = "查看办件角色")
     @WrapUpResponseBody
@@ -264,14 +258,12 @@ public class FlowEngineController extends BaseController {
         flowEngine.deleteFlowOrganize(flowOrganize.getFlowInstId(), flowOrganize.getRoleCode());
     }
 
-
-    @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
+    @ApiOperation(value = "获取流程中可以创建的节点", notes = "获取流程中可以创建的节点")
     @WrapUpResponseBody
     @GetMapping(value = "/nodeForCreate/{flowInstId}")
     public Map<String, String> listFlowNodeForCreate(@PathVariable String flowInstId) {
         return flowEngine.listFlowNodeForCreate(flowInstId);
     }
-
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
     @WrapUpResponseBody
@@ -339,7 +331,6 @@ public class FlowEngineController extends BaseController {
         List<FlowInstanceGroup> listObjects = flowEngine.listFlowInstGroup(searchColumn, pageDesc);
         return PageQueryResult.createResult(listObjects, pageDesc);
     }
-
 
     /**
      * 获取流程实例信息

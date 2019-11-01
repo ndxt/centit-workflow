@@ -26,6 +26,8 @@ public interface RoleFormulaService {
 
     List<? extends IUserInfo> listAllUserInfo();
 
+    List<? extends IUserInfo> listUserInfo(String prefix);
+
     List<? extends IUnitInfo> listAllUnitInfo();
 
     List<? extends IUnitInfo> listSubUnit(String unitCode);

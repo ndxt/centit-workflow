@@ -1,12 +1,15 @@
 package com.centit.workflow.client.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.core.controller.WrapUpResponseBody;
+import com.centit.support.common.ObjectException;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +19,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * Created by chen_rj on 2017/8/3.
@@ -25,70 +27,87 @@ import java.util.Map;
 @RequestMapping("/workflowEventBean")
 public class EventBeanController {
 
+    public static final Logger logger = LoggerFactory.getLogger(EventBeanController.class);
+
     @RequestMapping(value = "/runAfterCreate")
-    public void runAfterCreate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody Map<String, Object> paramMap) {
+    @WrapUpResponseBody
+    public void runAfterCreate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                               @RequestBody JSONObject paramMap) {
         WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(httpServletRequest.getServletContext());//获取spring的context
         try {
-            FlowInstance flowInstance = JSONObject.parseObject(paramMap.get("flowInst").toString(), FlowInstance.class);
-            NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
-            NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
-            String optUserCode = (String) paramMap.get("optUserCode");
+            FlowInstance flowInstance = paramMap.getObject("flowInst", FlowInstance.class);
+            NodeInstance nodeInstance = paramMap.getObject("nodeInst", NodeInstance.class);
+            NodeInfo nodeInfo = paramMap.getObject("nodeInfo", NodeInfo.class);
+            String optUserCode = paramMap.getString("optUserCode");
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean());
             autoRun.runAfterCreate(flowInstance, nodeInstance, nodeInfo, optUserCode);
-        } catch (BeansException e) {
-            e.printStackTrace();
-            JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
-        } catch (WorkflowException e) {
-            e.printStackTrace();
-            JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
+        } catch (BeansException | WorkflowException e) {
+            logger.error("bean调用失败");
+            //JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
+            throw new ObjectException("bean调用失败", e);
         }
-        JsonResultUtils.writeMessageJson("bean调用成功", httpServletResponse);
+
     }
 
     @RequestMapping(value = "/runBeforeSubmit")
-    public void runBeforeSubmit(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody Map<String, Object> paramMap) {
+    @WrapUpResponseBody
+    public void runBeforeSubmit(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                                @RequestBody JSONObject paramMap) {
         WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(httpServletRequest.getServletContext());//获取spring的context
         try {
-            FlowInstance flowInstance = JSONObject.parseObject(paramMap.get("flowInst").toString(), FlowInstance.class);
-            NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
-            NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
-            String optUserCode = (String) paramMap.get("optUserCode");
+            FlowInstance flowInstance = paramMap.getObject("flowInst", FlowInstance.class);
+            NodeInstance nodeInstance = paramMap.getObject("nodeInst", NodeInstance.class);
+            NodeInfo nodeInfo = paramMap.getObject("nodeInfo", NodeInfo.class);
+            String optUserCode = paramMap.getString("optUserCode");
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean());
             autoRun.runBeforeSubmit(flowInstance, nodeInstance, nodeInfo, optUserCode);
-        } catch (BeansException e) {
-            e.printStackTrace();
-            JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
-        } catch (WorkflowException e) {
-            e.printStackTrace();
-            JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
+        } catch (BeansException | WorkflowException e) {
+            //e.printStackTrace();
+            logger.error("bean调用失败");
+            //JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
+            throw new ObjectException("bean调用失败", e);
         }
-        JsonResultUtils.writeMessageJson("bean调用成功", httpServletResponse);
+        //JsonResultUtils.writeMessageJson("bean调用成功", httpServletResponse);
     }
 
     @RequestMapping(value = "/runAutoOperator")
-    public void runAutoOperator(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody Map<String, Object> paramMap) {
+    @WrapUpResponseBody
+    public boolean runAutoOperator(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                                @RequestBody JSONObject paramMap) {
         WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(httpServletRequest.getServletContext());//获取spring的context
         try {
-            FlowInstance flowInstance = JSONObject.parseObject(paramMap.get("flowInst").toString(), FlowInstance.class);
-            NodeInstance nodeInstance = JSONObject.parseObject(paramMap.get("nodeInst").toString(), NodeInstance.class);
-            NodeInfo nodeInfo = JSONObject.parseObject(paramMap.get("nodeInfo").toString(), NodeInfo.class);
-            String optUserCode = (String) paramMap.get("optUserCode");
+            FlowInstance flowInstance = paramMap.getObject("flowInst", FlowInstance.class);
+            NodeInstance nodeInstance = paramMap.getObject("nodeInst", NodeInstance.class);
+            NodeInfo nodeInfo = paramMap.getObject("nodeInfo", NodeInfo.class);
+            String optUserCode = paramMap.getString("optUserCode");
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean());
-            autoRun.runAutoOperator(flowInstance, nodeInstance, nodeInfo, optUserCode);
-        } catch (BeansException e) {
-            e.printStackTrace();
-            JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
-        } catch (WorkflowException e) {
-            e.printStackTrace();
-            JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
+            return autoRun.runAutoOperator(flowInstance, nodeInstance, nodeInfo, optUserCode);
+        } catch (BeansException | WorkflowException e) {
+            //e.printStackTrace();
+            //JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
+            logger.error("bean调用失败");
+            return false;
         }
-        JsonResultUtils.writeMessageJson("bean调用成功", httpServletResponse);
+
     }
 
     @RequestMapping(value = "/canStepToNext")
-    public void canStepToNext(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody(required = true) Map<String, Object> map) {
+    @WrapUpResponseBody
+    public boolean canStepToNext(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                              @RequestBody JSONObject paramMap) {
         WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(httpServletRequest.getServletContext());//获取spring的context
-        //NodeEventSupport autoRun = (NodeEventSupport)wac.getBean(beanName);
-        //needSubmit = autoRun.runAutoOperator(flowInst, nodeInst, nodeInfo.getOptParam(),optUserCode);
+        try {
+            FlowInstance flowInstance = paramMap.getObject("flowInst", FlowInstance.class);
+            NodeInstance nodeInstance = paramMap.getObject("nodeInst", NodeInstance.class);
+            NodeInfo nodeInfo = paramMap.getObject("nodeInfo", NodeInfo.class);
+            String optUserCode = paramMap.getString("optUserCode");
+            NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean());
+            return autoRun.canStepToNext(flowInstance, nodeInstance, nodeInfo, optUserCode);
+        } catch (BeansException | WorkflowException e) {
+            //e.printStackTrace();
+            logger.error("bean调用失败");
+            return false;
+        }
+        //JsonResultUtils.writeMessageJson("bean调用成功", httpServletResponse);
     }
 }

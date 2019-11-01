@@ -1,12 +1,6 @@
 package com.centit.workflow.client;
 
-import com.alibaba.fastjson.JSON;
-import com.centit.support.json.JSONOpt;
-import com.centit.workflow.client.service.impl.FlowDefineClientImpl;
 import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
-import com.centit.workflow.po.FlowInfo;
-import com.centit.workflow.po.FlowInstance;
-import netscape.javascript.JSObject;
 
 
 public class TestClient {

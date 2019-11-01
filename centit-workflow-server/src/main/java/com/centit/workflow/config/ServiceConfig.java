@@ -12,6 +12,7 @@ import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.security.model.CentitPasswordEncoder;
 import com.centit.framework.security.model.StandardPasswordEncoderImpl;
+import com.centit.support.file.FileSystemOpt;
 import com.centit.workflow.external.ExtFrameworkContextCacheBean;
 import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
 import com.centit.workflow.service.impl.UserUnitFilterCalcContextFactoryImpl;
@@ -41,6 +42,9 @@ public class ServiceConfig {
     protected String externalJdbcPassword;
     @Value("${wf.userunit.engine.type:system}")
     protected String engineType;
+
+    @Value("${app.home:/}")
+    protected String appHome;
 
     @Bean("passwordEncoder")
     public CentitPasswordEncoder passwordEncoder(){
@@ -78,7 +82,9 @@ public class ServiceConfig {
     @Bean
     @Lazy(value = false)
     public OperationLogWriter operationLogWriter() {
-        TextOperationLogWriterImpl  operationLog =  new TextOperationLogWriterImpl();
+        TextOperationLogWriterImpl operationLog = new TextOperationLogWriterImpl();
+        operationLog.setOptLogHomePath(
+            FileSystemOpt.appendPath(appHome , "logs"));
         operationLog.init();
         return operationLog;
     }

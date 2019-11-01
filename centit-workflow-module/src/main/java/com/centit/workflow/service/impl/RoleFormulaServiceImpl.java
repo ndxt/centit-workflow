@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,6 +86,21 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
 
         return context.listAllUserInfo();
+    }
+
+    @Override
+    public List<? extends IUserInfo> listUserInfo(String prefix){
+        List<? extends IUserInfo> allUsers = listAllUserInfo();
+        List<IUserInfo> selUsers = new ArrayList<>();
+        for(IUserInfo user : allUsers ){
+            if(user.getUserName().startsWith(prefix)
+                || user.getUserName().endsWith(prefix)
+                || user.getLoginName().startsWith(prefix)
+                || user.getLoginName().endsWith(prefix)){
+                selUsers.add(user);
+            }
+        }
+        return selUsers;
     }
 
     @Override
