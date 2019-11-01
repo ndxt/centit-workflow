@@ -106,17 +106,11 @@ public class FlowOptController extends BaseController {
 
     @ApiOperation(value = "根据optCode获取流程页面", notes = "根据optCode获取流程页面")
     @WrapUpResponseBody
-    @RequestMapping(value="/getOptDefByCode",method = RequestMethod.GET)
-    public FlowOptPage getOptDefByCode(String optCode){
+    @RequestMapping(value="/page/{optCode}",method = RequestMethod.GET)
+    public FlowOptPage getOptDefByCode(@PathVariable String optCode){
         return wfOptService.getOptPageByCode(optCode);
     }
 
-    @ApiOperation(value = "保存流程页面", notes = "保存流程页面")
-    @WrapUpResponseBody
-    @RequestMapping(method = RequestMethod.POST)
-    public void saveOptDef(@RequestBody FlowOptPage FlowOptDef){
-        wfOptService.saveOptPage(FlowOptDef);
-    }
 
     @ApiOperation(value = "删除流程页面", notes = "删除流程页面")
     @RequestMapping(value = "/page/{optCode}", method = RequestMethod.DELETE)
@@ -144,6 +138,13 @@ public class FlowOptController extends BaseController {
         JsonResultUtils.writeSingleDataJson(copy, response);
     }
 
+
+    @ApiOperation(value = "保存流程页面", notes = "保存流程页面")
+    @WrapUpResponseBody
+    @RequestMapping(value="/page", method = RequestMethod.POST)
+    public void saveOptDef(@RequestBody FlowOptPage FlowOptDef){
+        wfOptService.saveOptPage(FlowOptDef);
+    }
 
     @ApiOperation(value = "批量保存流程页面", notes = "批量保存流程页面")
     @WrapUpResponseBody
