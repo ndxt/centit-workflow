@@ -66,15 +66,6 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
 //        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
-    public FlowInfo getObjectWithReferences(FlowInfoId flowInfoId){
-        return jdbcTemplate.execute(
-          (ConnectionCallback<FlowInfo>) conn ->
-            OrmDaoUtils.getObjectWithReferences(conn, flowInfoId, FlowInfo.class));
-      /*FlowInfo flowInfo = super.getObjectById(flowInfoId);
-        return super.fetchObjectReferences(flowInfo);*/
-    }
-
     @SuppressWarnings({ "unchecked", "deprecation" })
     @Transactional(propagation= Propagation.MANDATORY)
     public List<FlowInfo> getAllLastVertionFlows(Map<String,Object> filterMap){
@@ -96,7 +87,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     @Transactional(propagation= Propagation.MANDATORY)
     public FlowInfo getFlowDefineByID(String flowCode, Long version)
     {
-        return this.getObjectWithReferences(new FlowInfoId(version, flowCode));
+        return super.getObjectWithReferences(new FlowInfoId(version, flowCode));
     }
 
     @SuppressWarnings("unchecked")
