@@ -2,7 +2,6 @@ package com.centit.workflow.service;
 
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
-import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInfo;
 
 import java.util.List;

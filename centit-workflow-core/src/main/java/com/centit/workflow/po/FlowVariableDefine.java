@@ -63,11 +63,11 @@ public class FlowVariableDefine implements Serializable {
     value = "today()")
     private Date modifyTime;
 
-//    @OneToOne(targetEntity = FlowInfo.class)
-//    @JoinColumns({
-//        @JoinColumn(name="flowCode", referencedColumnName = "flowCode"),
-//        @JoinColumn(name="version", referencedColumnName = "version")
-//    })
+    @OneToOne(targetEntity = FlowInfo.class)
+    @JoinColumns({
+        @JoinColumn(name="flowCode", referencedColumnName = "flowCode"),
+        @JoinColumn(name="version", referencedColumnName = "version")
+    })
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
 

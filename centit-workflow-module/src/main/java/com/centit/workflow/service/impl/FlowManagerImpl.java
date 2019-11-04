@@ -71,10 +71,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     public String viewFlowInstance(String flowInstId) {
-        FlowInstance wfInst = flowInstanceDao.getObjectCascadeById(flowInstId);
+        FlowInstance wfInst = flowInstanceDao.getObjectWithReferences(flowInstId);
         FlowInfoId id = new FlowInfoId(wfInst
             .getVersion(), wfInst.getFlowCode());
-        FlowInfo wfDef = flowDefDao.getObjectCascadeById(id);
+        FlowInfo wfDef = flowDefDao.getObjectWithReferences(id);
         Map<String, String> nodeState = new HashMap<>();
         Map<String, Integer> nodeInstCount = new HashMap<>();
         Map<String, NodeInfo> nodeMap = new HashMap<>();
@@ -451,7 +451,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     public FlowInstance getFlowInstance(String flowInstId) {
-        FlowInstance flowInstance = flowInstanceDao.getObjectCascadeById(flowInstId);
+        FlowInstance flowInstance = flowInstanceDao.getObjectWithReferences(flowInstId);
         /**
          * 初始化节点信息
          */
@@ -698,12 +698,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode) {
 
-        NodeInstance thisnode = nodeInstanceDao.getObjectCascadeById(nodeInstId);
+        NodeInstance thisnode = nodeInstanceDao.getObjectWithReferences(nodeInstId);
         if (thisnode == null)
             return null;
 //            return -1;//d大小于
 
-        FlowInstance flow = flowInstanceDao.getObjectCascadeById(thisnode
+        FlowInstance flow = flowInstanceDao.getObjectWithReferences(thisnode
             .getFlowInstId());
         if (flow == null)
             return null;
@@ -971,7 +971,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     public List<NodeInstance> listFlowInstNodes(String wfinstid) {
         List<NodeInstance> nodeInstList = new ArrayList<>();
-        FlowInstance flowInst = flowInstanceDao.getObjectCascadeById(wfinstid);
+        FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(wfinstid);
         List<NodeInstance> nodeInstsSet = flowInst.getFlowNodeInstances();
         for (NodeInstance nodeInst : nodeInstsSet) {
             NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
@@ -998,7 +998,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     public List<ActionTask> listNodeActionTasks(String nodeInstId) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
+        NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(nodeInstId);
         if (null == nodeInst)
             nodeInst = new NodeInstance();
         return new ArrayList<>(nodeInst.getWfActionTasks());
@@ -1277,7 +1277,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public List<ActionTask> listNodeInstTasks(String nodeInstId) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
+        NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(nodeInstId);
         return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
@@ -1432,7 +1432,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public Boolean reStartFlow(String flowInstId, String managerUserCode, Boolean force) {
-        FlowInstance flowInstance = flowInstanceDao.getObjectCascadeById(flowInstId);
+        FlowInstance flowInstance = flowInstanceDao.getObjectWithReferences(flowInstId);
         //如果不是强行拉回，需要判断是否流程最后提交人是自己
         if (!force) {
             if (!managerUserCode.equals(flowInstance.getLastUpdateUser())) {
@@ -1466,7 +1466,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
         return true;
     }
-
 
     @Override
     public RoleRelegate getRoleRelegateByPara(String json) {

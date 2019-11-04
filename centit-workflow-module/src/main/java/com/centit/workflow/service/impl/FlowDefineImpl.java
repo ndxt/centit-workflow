@@ -577,7 +577,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public FlowInfo getFlowDefObject(String flowCode, long version) {
         try {
-            return flowDefineDao.getObjectCascadeById(new FlowInfoId(version, flowCode));
+            return flowDefineDao.getObjectWithReferences(new FlowInfoId(version, flowCode));
         } catch (Exception e) {
             return null;
         }
@@ -608,7 +608,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public String getFlowDefXML(String flowCode, long version) {
         // 获得某个特定版本的流程定义 文本
-        FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(Long.valueOf(version), flowCode));
+        FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(version, flowCode));
         if (flowDef == null)
             return "";
         return flowDef.getFlowXmlDesc();
