@@ -3,10 +3,8 @@ package com.centit.workflow.dao;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
-import com.centit.support.database.orm.OrmDaoUtils;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.NodeInstance;
-import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,15 +68,6 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
     public List<NodeInstance> listNodeInstByState(String flowInstId, String nodeState) {
         return this.listObjectsByFilter("where node_State= ? and flow_Inst_Id= ?",
                 new Object[]{nodeState,flowInstId});
-    }
-
-    @Transactional(propagation= Propagation.MANDATORY)
-    public NodeInstance getObjectCascadeById(String nodeInstId){
-        return jdbcTemplate.execute(
-            (ConnectionCallback<NodeInstance>) conn ->
-                OrmDaoUtils.getObjectCascadeById(conn, nodeInstId, NodeInstance.class));
-        /*NodeInstance flowInstance = super.getObjectById(nodeInstid);
-        return super.fetchObjectReferences(flowInstance);*/
     }
 
     @Transactional(propagation= Propagation.MANDATORY)

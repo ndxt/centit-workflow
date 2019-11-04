@@ -20,7 +20,7 @@ import java.util.Map;
 public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
     public Map<String, String> getFilterField() {
         if( filterField == null){
-            filterField = new HashMap<String, String>();
+            filterField = new HashMap<>();
 
             filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
             filterField.put("flowId" , CodeBook.EQUAL_HQL_ID);

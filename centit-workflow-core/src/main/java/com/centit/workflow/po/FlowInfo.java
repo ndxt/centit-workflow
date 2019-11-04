@@ -583,7 +583,7 @@ public class FlowInfo implements java.io.Serializable {
      *
      */
     public void replaceFlowRoles(Collection<? extends FlowTeamRole> flowTeamRoles) {
-        List<FlowTeamRole> newObjs = new ArrayList<FlowTeamRole>();
+        List<FlowTeamRole> newObjs = new ArrayList<>();
         for(FlowTeamRole p :flowTeamRoles){
             if(p==null)
                 continue;
@@ -593,13 +593,12 @@ public class FlowInfo implements java.io.Serializable {
             newObjs.add(newdt);
         }
         //delete
-        boolean found = false;
-        Set<FlowTeamRole> oldObjs = new HashSet<FlowTeamRole>();
+        Set<FlowTeamRole> oldObjs = new HashSet<>();
         oldObjs.addAll(getFlowRoles());
 
         for(Iterator<FlowTeamRole> it = oldObjs.iterator(); it.hasNext();){
             FlowTeamRole odt = it.next();
-            found = false;
+            boolean found = false;
             for(FlowTeamRole newdt :newObjs){
                 if(odt.getFlowTeamRoleId().equals( newdt.getFlowTeamRoleId())){
                     found = true;
@@ -612,7 +611,7 @@ public class FlowInfo implements java.io.Serializable {
         oldObjs.clear();
         //insert or update
         for(FlowTeamRole newdt :newObjs){
-            found = false;
+            boolean found = false;
             for(Iterator<FlowTeamRole> it = getFlowRoles().iterator();
                 it.hasNext();){
                 FlowTeamRole odt = it.next();
@@ -633,7 +632,7 @@ public class FlowInfo implements java.io.Serializable {
      */
     public void replaceFlowVariableDefs(Collection<? extends FlowVariableDefine>
                                         flowVariableDefines) {
-        List<FlowVariableDefine> newObjs = new ArrayList<FlowVariableDefine>();
+        List<FlowVariableDefine> newObjs = new ArrayList<>();
         for(FlowVariableDefine p :flowVariableDefines){
             if(p==null)
                 continue;
@@ -644,7 +643,7 @@ public class FlowInfo implements java.io.Serializable {
         }
         //delete
         boolean found = false;
-        Set<FlowVariableDefine> oldObjs = new HashSet<FlowVariableDefine>();
+        Set<FlowVariableDefine> oldObjs = new HashSet<>();
         oldObjs.addAll(getFlowVariableDefines());
 
         for(Iterator<FlowVariableDefine> it = oldObjs.iterator(); it.hasNext();){

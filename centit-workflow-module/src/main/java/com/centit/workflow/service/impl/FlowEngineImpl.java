@@ -190,12 +190,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public FlowInstance getFlowInstById(String flowInstId) {
-        return flowInstanceDao.getObjectCascadeById(flowInstId);
+        return flowInstanceDao.getObjectWithReferences(flowInstId);
     }
 
     @Override
     public NodeInstance getNodeInstById(String nodeInstId) {
-        return nodeInstanceDao.getObjectCascadeById(nodeInstId);
+        return nodeInstanceDao.getObjectWithReferences(nodeInstId);
     }
 
     @Override
@@ -983,12 +983,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             ServletContext application, boolean saveOptions) throws WorkflowException {
         //2012-04-16 重构提交事件，添加一个多实例节点类型，这个节点类型会根据不同的机构创建不同的节点
         //根据上级节点实例编号获取节点所在父流程实例信息
-        NodeInstance nodeInst = nodeInstanceDao.getObjectCascadeById(options.getNodeInstId());
+        NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(options.getNodeInstId());
         if (nodeInst == null) {
             logger.error("找不到节点实例：" + options.getNodeInstId());
             throw new WorkflowException(WorkflowException.NodeInstNotFound, "找不到节点实例：" + options.getNodeInstId());
         }
-        FlowInstance flowInst = flowInstanceDao.getObjectCascadeById(nodeInst.getFlowInstId());
+        FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(nodeInst.getFlowInstId());
         if (flowInst == null) {
             logger.error("找不到流程实例：" + nodeInst.getFlowInstId());
             throw new WorkflowException(WorkflowException.FlowInstNotFound,
@@ -1154,7 +1154,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         synchronized (lockObject) {
             /*WfNodeInstance*/
-            nodeInst = nodeInstanceDao.getObjectCascadeById(options.getNodeInstId());
+            nodeInst = nodeInstanceDao.getObjectWithReferences(options.getNodeInstId());
             if (!"N".equals(nodeInst.getNodeState()) && !"W".equals(nodeInst.getNodeState())) {
                 logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
                 throw new WorkflowException(WorkflowException.IncorrectNodeState,
@@ -1236,14 +1236,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public String rollbackOpt(String nodeInstId, String mangerUserCode) {
         // 添加令牌算法
-        NodeInstance thisNodeInst = nodeInstanceDao.getObjectCascadeById(nodeInstId);
+        NodeInstance thisNodeInst = nodeInstanceDao.getObjectWithReferences(nodeInstId);
         if (thisNodeInst == null)
             return null;
         // 当前节点状态必需为正常
         if (!"N".equals(thisNodeInst.getNodeState()))
             return null;
 
-        FlowInstance flowInst = flowInstanceDao.getObjectCascadeById(thisNodeInst
+        FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(thisNodeInst
             .getFlowInstId());
         if (flowInst == null)
             return null;
@@ -1255,7 +1255,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // 查找上一个流经节点
         NodeInstance prevNodeInst = null;
         if (thisNodeInst.getPrevNodeInstId() != null) {
-            prevNodeInst = nodeInstanceDao.getObjectCascadeById(thisNodeInst.getPrevNodeInstId());
+            prevNodeInst = nodeInstanceDao.getObjectWithReferences(thisNodeInst.getPrevNodeInstId());
         } else {
             prevNodeInst = flowInst.getPareNodeInst(nodeInstId);
         }
@@ -1270,8 +1270,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             } else {
                 //是子流程的话，把流程实例中的prenodeinst取出来找到对应的前一节点
                 subProcess = true;
-                prevNodeInst = nodeInstanceDao.getObjectCascadeById(flowInst.getPreNodeInstId());
-                prevFlowInst = flowInstanceDao.getObjectCascadeById(flowInst.getPreInstId());
+                prevNodeInst = nodeInstanceDao.getObjectWithReferences(flowInst.getPreNodeInstId());
+                prevFlowInst = flowInstanceDao.getObjectWithReferences(flowInst.getPreInstId());
             }
         }
         NodeInfo nodedef = flowNodeDao.getObjectById(prevNodeInst.getNodeId());
@@ -1284,7 +1284,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 pns.add(prevNodeInst);
                 //优先通过节点表中的prenodeinstid来查找上一节点
                 String currnetNodeInstId = prevNodeInst.getPrevNodeInstId();
-                prevNodeInst = nodeInstanceDao.getObjectCascadeById(currnetNodeInstId);
+                prevNodeInst = nodeInstanceDao.getObjectWithReferences(currnetNodeInstId);
                 if (prevNodeInst == null) {
                     prevNodeInst = flowInst.getPareNodeInst(currnetNodeInstId);
                 }

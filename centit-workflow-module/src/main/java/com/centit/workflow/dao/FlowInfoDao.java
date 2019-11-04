@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
-import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.orm.OrmDaoUtils;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryAndNamedParams;
@@ -68,10 +67,10 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
-    public FlowInfo getObjectCascadeById(FlowInfoId flowInfoId){
+    public FlowInfo getObjectWithReferences(FlowInfoId flowInfoId){
         return jdbcTemplate.execute(
           (ConnectionCallback<FlowInfo>) conn ->
-            OrmDaoUtils.getObjectCascadeById(conn, flowInfoId, FlowInfo.class));
+            OrmDaoUtils.getObjectWithReferences(conn, flowInfoId, FlowInfo.class));
       /*FlowInfo flowInfo = super.getObjectById(flowInfoId);
         return super.fetchObjectReferences(flowInfo);*/
     }
@@ -97,7 +96,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
     @Transactional(propagation= Propagation.MANDATORY)
     public FlowInfo getFlowDefineByID(String flowCode, Long version)
     {
-        return this.getObjectCascadeById(new FlowInfoId(version, flowCode));
+        return this.getObjectWithReferences(new FlowInfoId(version, flowCode));
     }
 
     @SuppressWarnings("unchecked")
