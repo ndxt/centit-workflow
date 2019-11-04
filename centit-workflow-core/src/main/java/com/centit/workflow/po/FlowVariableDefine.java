@@ -37,15 +37,20 @@ public class FlowVariableDefine implements Serializable {
     @NotNull(message = "字段不能为空")
     @Range( max = 9999, message = "版本号不能大于{max}")
     private Long version;
-
+    /**
+     * 变量名称
+     */
     @NotNull
     @Column(name = "VARIABLE_NAME")
     private String variableName;
-
+    /**
+     * 变量类型 E:集合 S:单值
+     */
     @Column(name = "VARIABLE_TYPE")
-    //E:集合 S:单值
     private String variableType;
-
+    /**
+     * 默认值
+     */
     @Column(name = "DEFAULT_VALUE")
     private String defaultValue;
 
@@ -54,11 +59,11 @@ public class FlowVariableDefine implements Serializable {
     value = "today()")
     private Date modifyTime;
 
-    @OneToOne(targetEntity = FlowInfo.class)
-    @JoinColumns({
-        @JoinColumn(name="flowCode", referencedColumnName = "flowCode"),
-        @JoinColumn(name="version", referencedColumnName = "version")
-    })
+//    @OneToOne(targetEntity = FlowInfo.class)
+//    @JoinColumns({
+//        @JoinColumn(name="flowCode", referencedColumnName = "flowCode"),
+//        @JoinColumn(name="version", referencedColumnName = "version")
+//    })
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
 

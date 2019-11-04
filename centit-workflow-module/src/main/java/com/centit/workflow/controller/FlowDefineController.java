@@ -101,7 +101,9 @@ public class FlowDefineController extends BaseController {
      * @param flowcode
      * @param response
      */
+    @ApiOperation(value = "查询单个流程草稿", notes = "查询单个流程草稿")
     @RequestMapping(value = "/draft/{flowcode}", method = RequestMethod.GET)
+    @WrapUpResponseBody
     public void getFlowDefineDraft(@PathVariable String flowcode, HttpServletResponse response) {
         FlowInfo obj = flowDef.getFlowDefObject(flowcode, 0);
 
@@ -273,7 +275,9 @@ public class FlowDefineController extends BaseController {
      * @param flowcode
      * @param response
      */
+    @ApiOperation(value = "编辑流程变量", notes = "编辑流程变量")
     @PostMapping(value = "/variableDefine/{flowcode}")
+    @WrapUpResponseBody
     public void editVariable(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         if (null != flowdefine.getFlowVariableDefines()) {
             for (FlowVariableDefine variableDefine : flowdefine.getFlowVariableDefines()) {

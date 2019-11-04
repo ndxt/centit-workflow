@@ -102,11 +102,6 @@ public class FlowInfo implements java.io.Serializable {
         this.flowTeamRoles = flowTeamRoles;
     }
 
-    public List<FlowVariableDefine> getFlowVariableDefines() {
-        return
-            flowVariableDefines;
-    }
-
     public void setFlowVariableDefines(List<FlowVariableDefine> flowVariableDefines) {
         this.flowVariableDefines = flowVariableDefines;
     }
@@ -116,9 +111,6 @@ public class FlowInfo implements java.io.Serializable {
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version")
     })
-
-
-
     private Set<FlowTransition> flowTransitions;// new ArrayList<WfTransition>();
 
     // Constructors
@@ -463,7 +455,7 @@ public class FlowInfo implements java.io.Serializable {
         return flowTeamRoles;
     }
 
-    public List<FlowVariableDefine> getFlowVariableDefs(){
+    public List<FlowVariableDefine> getFlowVariableDefines(){
         if(this.flowVariableDefines ==null)
             this.flowVariableDefines = new ArrayList<FlowVariableDefine>();
         return flowVariableDefines;
@@ -650,7 +642,7 @@ public class FlowInfo implements java.io.Serializable {
         //delete
         boolean found = false;
         Set<FlowVariableDefine> oldObjs = new HashSet<FlowVariableDefine>();
-        oldObjs.addAll(getFlowVariableDefs());
+        oldObjs.addAll(getFlowVariableDefines());
 
         for(Iterator<FlowVariableDefine> it = oldObjs.iterator(); it.hasNext();){
             FlowVariableDefine odt = it.next();
@@ -668,7 +660,7 @@ public class FlowInfo implements java.io.Serializable {
         //insert or update
         for(FlowVariableDefine newdt :newObjs){
             found = false;
-            for(Iterator<FlowVariableDefine> it = getFlowVariableDefs().iterator();
+            for(Iterator<FlowVariableDefine> it = getFlowVariableDefines().iterator();
                 it.hasNext();){
                 FlowVariableDefine odt = it.next();
                 if(odt.getFlowVariableId().equals( newdt.getFlowVariableId())){
