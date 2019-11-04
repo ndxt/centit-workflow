@@ -719,8 +719,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @param version 版本号
      * @return 对应的业务操作
      */
-    @Transactional
-    public Map<String, String> listAllOptCode(String flowCode, long version) {
+    private Map<String, String> listAllOptCode(String flowCode, long version) {
         FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
         //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
         List<FlowOptPage> wfOptDefs = flowOptDefDao.listObjectsByProperty("optId", flowDef.getOptId());
@@ -740,7 +739,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     @Transactional
     public Map<String, String> listAllOptCode(String flowCode) {
-        return listAllOptCode(flowCode, flowDefineDao.getLastVersion(flowCode));
+        return listAllOptCode(flowCode, 0L);
     }
     /**
      * 列举所有角色类别

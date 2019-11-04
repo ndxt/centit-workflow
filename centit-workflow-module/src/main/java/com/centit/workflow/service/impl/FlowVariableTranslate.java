@@ -27,21 +27,22 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         nodeUsers = new HashMap<>();
 
         String token = nodeInst == null? "T" : nodeInst.getRunToken();
+        if (null != flowInst.getNodeInstances()) {
+            for (NodeInstance ni : flowInst.getNodeInstances()) {
+                String nc = ni.getNodeCode();
+                if (nc != null && (token.equals(ni.getRunToken()) || token.startsWith(ni.getRunToken() + "."))) {
+                    Set<String> nUnits = nodeUnits.get(nc);
+                    if (nUnits == null)
+                        nUnits = new HashSet<>();
+                    nUnits.add(ni.getUnitCode());
+                    nodeUnits.put(nc, nUnits);
 
-        for(NodeInstance ni : flowInst.getNodeInstances()){
-            String nc = ni.getNodeCode();
-            if(nc != null && (token.equals(ni.getRunToken()) || token.startsWith(ni.getRunToken()+"."))){
-                Set<String> nUnits = nodeUnits.get(nc);
-                if(nUnits == null)
-                    nUnits = new HashSet<>();
-                nUnits.add( ni.getUnitCode());
-                nodeUnits.put(nc, nUnits);
-
-                Set<String> nUsers = nodeUsers.get(nc);
-                if(nUsers == null)
-                    nUsers = new HashSet<>();
-                nUsers.add( ni.getUserCode());
-                nodeUsers.put(nc, nUsers);
+                    Set<String> nUsers = nodeUsers.get(nc);
+                    if (nUsers == null)
+                        nUsers = new HashSet<>();
+                    nUsers.add(ni.getUserCode());
+                    nodeUsers.put(nc, nUsers);
+                }
             }
         }
     }

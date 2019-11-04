@@ -43,7 +43,6 @@ public class FlowVariableDao extends BaseDaoImpl<FlowVariable,FlowVariableId>
                                                          String varname) {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? and var_Name=? order by run_Token",
                 new Object[] { flowInstId, varname });
-
     }
 
     @Transactional(propagation= Propagation.MANDATORY)
