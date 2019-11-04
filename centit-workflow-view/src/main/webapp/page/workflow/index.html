@@ -631,13 +631,18 @@
 						</td>
 					</tr>
 					<tr>
-						<td><div>
+						<td>
+              <div>
 								<label for="cond">条件表达式</label>
-							</div></td>
-						<td><div>
-								<input id="cond" type="text" style="width: 97%;"
-									oninput="changeValue(this,'cond')">
-							</div></td>
+							</div>
+            </td>
+						<td>
+              <div style="overflow: hidden;">
+                <input id="cond" type="text" style="width: 80%; float: left;"
+                       oninput="changeValue(this, 'cond')">
+                <button type="button" onclick="viewInsideDialog('insideFunc', true)" style="cursor: pointer;">函数</button>
+              </div>
+            </td>
 					</tr>
 					<tr>
 						<td><div>
@@ -750,7 +755,7 @@
 	<div id="lineCon"></div>
   <div id="allUnit" class="insideDialog">
     <div class="frame">
-      <label id="unit-title">
+      <label id="unit-title" class="title">
         所有机构<span class="close" onclick="viewInsideDialog('allUnit', false)">X</span>
       </label>
       <div class="search">
@@ -762,7 +767,7 @@
   </div>
   <div id="allUser" class="insideDialog">
     <div class="frame">
-      <label id="user-title">
+      <label id="user-title" class="title">
         所有用户<span class="close" onclick="viewInsideDialog('allUser', false)">X</span>
       </label>
       <div class="search">
@@ -770,6 +775,92 @@
         <input type="text" oninput="searchInsideUser(this)" />
       </div>
       <div class="content"></div>
+    </div>
+  </div>
+  <div id="insideFunc" class="insideDialog">
+    <div class="frame">
+      <label id="func-title" class="title">
+        逻辑表达式内置的函数<span class="close" onclick="viewInsideDialog('insideFunc', false)">X</span>
+      </label>
+      <div class="content">
+        <ul>
+          <li id="szjs1" class="active">数值计算</li>
+          <li id="zfcjs">字符串计算</li>
+          <li id="szjs2">数组计算</li>
+          <li id="rqjs">日期计算</li>
+          <li id="xzyj">选择语句</li>
+        </ul>
+        <div id="szjs1Func" class="tabCont" style="display: block;">
+          log : 求以10为底的对数<br/>
+          ln : 求自然对数<br/>
+          sin :  求正弦<br/>
+          cos : 求余弦<br/>
+          tan : 求正切<br/>
+          ctan : 求余切<br/>
+          exp : 求以e为底的指数<br/>
+          sqrt : 求平方根<br/>
+          round : 四舍五入<br/>
+          int/integer ： 求整数部分 int (12.34)=12 int -12.34)=-12<br/>
+          frac : 求小数部分 frac (12.34)=0.34 frac (-12.34)=-0.34<br/>
+          byte : 求位值 byte (4321.789,0)=1  byte (4321.789,-2) =8  byte ("4321.789",2)=3<br/>
+          toNumber ：转换为数字
+        </div>
+        <div id="zfcjsFunc" class="tabCont">
+          upcase : 字符串大写<br/>
+          lowcase : 字符串小写<br/>
+          substr : 求字符串子串 substr ("123456",2,3)="345"<br/>
+          lpad : 左侧补充字符串<br/>
+          rpad : 右侧补充字符串<br/>
+          find ： 求子串位置 find ("123456","34")=2  find ("123456","35")=-1<br/>
+          frequence ： 求子串个数 find ("12345236","23")=2<br/>
+          capital :  capital (123.45)="壹佰贰拾叁点肆伍" capital (123.45, true)="一二三.四五"<br/>
+          concat/strcat : 连接字符串 concat ("12","34","56")="123456"<br/>
+          match ： 匹配*?为通配符 match ("abcd","a??d")=1， match ("abcd","a*d")=1<br/>
+          regexMatch : 正则表达式 regexMatch<br/>
+          regexMatchValue : 正则表达式匹配部分<br/>
+          toString ： 转换为String
+        </div>
+        <div id="szjs2Func" class="tabCont">
+          isEmpty : 判断参数是否为空 isempty("")=1<br/>
+          isNotEmpty : 判断参数是否为空 notempty("")=0<br/>
+          <br/>
+          max : 求最大值 max (1,2,3,5,4) = 5<br/>
+          min : 求最小值 min (1,2,3,5,4) = 1<br/>
+          ave : 求均值  ave (1,2,3)=2<br/>
+          count : 计数 count(1,"2",3,"5",1,1,4) = 7<br/>
+          countNotNull : 计数 非空参数 countnotnull(1,,"2",,,,1,1,4) = 5<br/>
+          countNull : 计数空参数  countnull(1,,"2",,,,1,1,4) = 4<br/>
+          sum : 求和 sum (1,2,3,4,5) = 15<br/>
+          stddev : 求标准偏差<br/>
+          getAt : 求数组中的一个值  getat (0,"2","3")= "2"  getat (0,2,3)= 2<br/>
+          singleton ： 返回新的去掉重复元素的集合（set）
+        </div>
+        <div id="rqjsFunc" class="tabCont">
+          today/currentDatetime : 当前日期 包括时间<br/>
+          currentDate ：当前日期 时间为0点<br/>
+          currentTimestamp ： 当前时间戳<br/>
+          day ：取日期在月中的序号，从1开始<br/>
+          month ： 取日期的月份<br/>
+          year ： 取日期的年份<br/>
+          week ： 取日期在当年中 第几周<br/>
+          weekday ：取日期的星期几，周日为0，周一~六为1~6<br/>
+          formatdate ： 格式化日期<br/>
+          <br/>
+          dayspan ： 求两日期之间的天数，返回整数，计算这个周期中的天数, 包括 beginTime，endTime<br/>
+          datespan ：求两日期之间的天数，返回浮点数，计算这个周期中的天数, 不足一天用小数表示<br/>
+          <br/>
+          adddays ： 加天数<br/>
+          addmonths ： 加月数<br/>
+          addyears ： 加年数<br/>
+          truncdate ：  截断日期  第二个参数  Y ，M , D 分别返回一年、月的第一天 ，或者一日的零点<br/>
+          firstofmonth ：  求这个月的第一天<br/>
+          toDate ：转换为日期
+        </div>
+        <div id="xzyjFunc" class="tabCont">
+          if : if (1,2,3)= 2  if (0,"2","3")= "3"<br/>
+          case : 第一个参数是条件，后面匹配值成对出现，不成对的为默认值 case(1,2,3)= null，case(1, 2,3, 1,"5")= "5"，case(0, 1, "2","3")= "3"
+        </div>
+      </div>
     </div>
   </div>
 	<script type="text/javascript" src="js/url.js"></script>
@@ -812,7 +903,7 @@
     if (SVG.supported) {
     	var flowCode = location.search.substr(1).split("&")[0].split("=")[1];
       var version = location.search.substr(1).split("&")[1].split("=")[1];
-    	var Data;
+    	var Data = {};
 
         var xml;
         $.ajax({
@@ -839,7 +930,7 @@
         	url:path+loadDefineData+flowCode,
         	success:function(data){
         		Data = data.data;
-        		setFlowVariable(Data)
+            setFlowVariable(Data)
         	},
         	error:function(data){
         		alert("请求失败");
@@ -932,6 +1023,19 @@
         });
     });
 
+    $("#insideFunc .content li").each(function () {
+      $(this).bind("click", function () {
+        if ($(this).hasClass("active")) {
+          return
+        }
+
+        $("#insideFunc .content li").removeClass("active");
+        $(this).addClass("active");
+
+        $("#insideFunc .content .tabCont").hide()
+        $("#insideFunc .content #"+$(this).attr('id')+"Func").show()
+      });
+    });
 </script>
 
 </body>

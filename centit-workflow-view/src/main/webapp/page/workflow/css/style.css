@@ -205,8 +205,7 @@ text::selection{
     height: 100%;
 }
 
-.insideDialog .frame #unit-title,
-.insideDialog .frame #user-title {
+.insideDialog .frame .title{
     display: block;
     background: #f5f5f5;
     color: #333;
@@ -274,4 +273,40 @@ text::selection{
     float: left;
     margin-top: -1px;
     cursor: pointer;
+}
+
+#insideFunc .content ul {
+    cursor: pointer;
+    overflow: hidden;
+}
+
+#insideFunc .content ul li {
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 70px;
+    border-bottom: 1px solid #dddddd;
+    color: #333;
+    float: left;
+    box-sizing: border-box;
+    border-radius: 4px 4px 0 0;
+}
+
+#insideFunc .content ul li.active {
+    font-weight: bold;
+    background: #fff;
+}
+#insideFunc .content ul li:hover {
+    background: #eeeeee;
+}
+
+#insideFunc .content .tabCont {
+    margin-top: 10px;
+    display: none;
+}
+
+#insideFunc .content .tabCont label {
+    width: 150px;
+    float: left;
+    text-align: right;
 }
