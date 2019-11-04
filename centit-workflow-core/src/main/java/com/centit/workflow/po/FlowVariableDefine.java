@@ -43,21 +43,16 @@ public class FlowVariableDefine implements Serializable {
     private String variableName;
 
     @Column(name = "VARIABLE_TYPE")
-    //E:集合 S:单个字符串
+    //E:集合 S:单值
     private String variableType;
 
     @Column(name = "DEFAULT_VALUE")
     private String defaultValue;
 
-    @Column(name = "VARIABLE_ORDER")
-    private Integer variableOrder;
-
-
     @Column(name = "MODIFY_TIME")
     @ValueGenerator(strategy = GeneratorType.FUNCTION, condition = GeneratorCondition.ALWAYS,
     value = "today()")
     private Date modifyTime;
-
 
     @OneToOne(targetEntity = FlowInfo.class)
     @JoinColumns({
@@ -68,7 +63,6 @@ public class FlowVariableDefine implements Serializable {
     private FlowInfo flowDefine;
 
     public void copyNotNullProperty(FlowVariableDefine other){
-
         if( other.getFlowVariableId() != null)
             this.setFlowVariableId(other.getFlowVariableId());
         /*if( other.getFlowDefine() != null)
@@ -79,15 +73,12 @@ public class FlowVariableDefine implements Serializable {
             this.variableName= other.getVariableName();
         if( other.getVariableType() != null)
             this.variableType = other.getVariableType();
-        if( other.getVariableOrder() != null)
-            this.variableOrder= other.getVariableOrder();
     }
 
     public void copy(FlowVariableDefine other){
         this.setFlowVariableId(other.getFlowVariableId());
         //this.setVersion(other.getVersion());
         //this.setFlowCode(other.getFlowCode());
-        this.variableOrder= other.getVariableOrder();
         this.variableType= other.getVariableType();
         this.variableName= other.getVariableName();
         this.modifyTime= other.getModifyTime();

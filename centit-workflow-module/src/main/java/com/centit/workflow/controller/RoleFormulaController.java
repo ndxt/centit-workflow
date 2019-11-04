@@ -93,18 +93,25 @@ public class RoleFormulaController extends BaseController {
         return roleFormulaService.viewFormulaUsers(StringEscapeUtils.unescapeHtml4(formula));
     }
 
+    private static List<? extends IUserInfo> truncateUsers(List<? extends IUserInfo> allusers, int maxSize){
+        if(maxSize < 1 || allusers == null || allusers.size() <= maxSize){
+            return allusers;
+        }
+        return allusers.subList(0, maxSize);
+    }
+
     @ApiOperation(value = "列举所有用户", notes = "列举所有用户")
     @WrapUpResponseBody
     @RequestMapping(value="/allUsers",method = RequestMethod.GET)
-    public List<? extends IUserInfo> listAllUserInfo(){
-        return roleFormulaService.listAllUserInfo();
+    public List<? extends IUserInfo> listAllUserInfo(int maxUsers){
+        return truncateUsers(roleFormulaService.listAllUserInfo(), maxUsers);
     }
 
     @ApiOperation(value = "根据前缀或者后缀查询用户", notes = "根据前缀或者后缀查询用户")
     @WrapUpResponseBody
     @RequestMapping(value="/users/{prefix}",method = RequestMethod.GET)
-    public List<? extends IUserInfo> listUserInfo(@PathVariable String prefix){
-        return roleFormulaService.listUserInfo(prefix);
+    public List<? extends IUserInfo> listUserInfo(@PathVariable String prefix, int maxUsers){
+        return truncateUsers(roleFormulaService.listUserInfo(prefix), maxUsers);
     }
 
     @ApiOperation(value = "列举所有机构", notes = "列举所有机构")
@@ -119,6 +126,9 @@ public class RoleFormulaController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value="/subUnits/{unitCode}",method = RequestMethod.GET)
     public List<? extends IUnitInfo> listSubUnit(@PathVariable String unitCode){
+        if("null".equalsIgnoreCase(unitCode)){
+            unitCode = "";
+        }
         return roleFormulaService.listSubUnit(unitCode);
     }
 

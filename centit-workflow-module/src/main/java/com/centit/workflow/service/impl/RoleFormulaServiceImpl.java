@@ -121,10 +121,9 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     @Override
     public List<? extends IUnitInfo> listSubUnit(String unitCode) {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
-        List<? extends IUnitInfo> unitInfos = context.listSubUnit(unitCode);
-        CollectionsOpt.sortAsTree(unitInfos,
-            (p,c) -> StringUtils.equals(p.getUnitCode(),c.getParentUnit()));
-        return unitInfos;
+        return context.listSubUnit(unitCode);
+        /*CollectionsOpt.sortAsTree(unitInfos,
+            (p,c) -> StringUtils.equals(p.getUnitCode(),c.getParentUnit()));*/
     }
 
 }

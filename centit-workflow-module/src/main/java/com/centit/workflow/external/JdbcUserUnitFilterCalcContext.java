@@ -37,6 +37,9 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
 
     @Override
     public List<ExtSysUnitInfo> listSubUnit(String unitCode) {
+        if(StringUtils.isBlank(unitCode)){
+            unitCode = "null";
+        }
         return this.extFrameworkBean.subUnitMapCache.getCachedValue(unitCode);
     }
 
