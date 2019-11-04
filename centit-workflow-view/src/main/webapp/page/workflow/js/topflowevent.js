@@ -139,12 +139,12 @@ function bindAttr(obj) {
             $("#powerName").hide();//隐藏权限表达式
             $("#roleName").show();//显示角色代码
             $("#rolecode").empty();
-            for (k in Data[SVG.get(o).attr("roletype")]) {
+            for (k in Data.SF) { // [SVG.get(o).attr("roletype")]
                 if (SVG.get(o).attr("rolecode") == k) {
-                    $("#rolecode").append("<option  value='" + k + "' selected='selected' >" + Data[SVG.get(o).attr("roletype")][k] + "</option>");
+                    $("#rolecode").append("<option  value='" + k + "' selected='selected' >" + Data.SF[k] + "</option>");
                 }
                 else {
-                    $("#rolecode").append("<option  value='" + k + "'>" + Data[SVG.get(o).attr("roletype")][k] + "</option>");
+                    $("#rolecode").append("<option  value='" + k + "'>" + Data.SF[k] + "</option>");
                 }
             }
             SVG.get(o).attr({"rolecode":$("#rolecode").val()});
@@ -263,8 +263,8 @@ function bindLineAttr(obj) {
 	if (!$("#argumentTool").is(":visible")) {//如果工具栏处于隐藏则显示
 		$("#argumentTool").show();
 	}
-	$("li.active").removeClass("active");//清除选中
-	$("li").hide();//隐藏其他tab页
+	$("#argumentTool li.active").removeClass("active");//清除选中
+	$("#argumentTool li").hide();//隐藏其他tab页
 	$("#common").show().addClass("active");//显示公共属性tab页
 	$("#constraint").show();//显示目标节点时间约束tab页
 	$("table").hide();//隐藏其他属性栏
