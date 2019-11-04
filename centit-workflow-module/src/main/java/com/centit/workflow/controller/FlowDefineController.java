@@ -164,7 +164,9 @@ public class FlowDefineController extends BaseController {
      * @param flowcode 流程代码
      * @param response HttpServletResponse
      */
+    @ApiOperation(value = "查看流程图",notes = "查看流程图")
     @RequestMapping(value = "/viewxml/{flowcode}/{version}", method = RequestMethod.GET)
+    @WrapUpResponseBody
     public void viewXml(@PathVariable Long version, @PathVariable String flowcode, HttpServletRequest request, HttpServletResponse response) {
         FlowInfo obj = flowDefine.getFlowDefObject(flowcode, version);
         JsonResultUtils.writeSingleDataJson(obj.getFlowXmlDesc(), response);
