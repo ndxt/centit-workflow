@@ -15,12 +15,13 @@ import java.util.Map;
  * Created by chen_rj on 2017-10-9.
  */
 @Repository
-public class FlowVariableDefineDao extends BaseDaoImpl<FlowVariableDefine,Long> {
+public class FlowVariableDefineDao extends BaseDaoImpl<FlowVariableDefine, Long> {
     @Override
     public Map<String, String> getFilterField() {
         return null;
     }
 
+    @Deprecated
     @Transactional(propagation= Propagation.MANDATORY)
     public Long getNextFlowVariableId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_OPTVARIABLE");

@@ -258,10 +258,16 @@ public class FlowOptUtils {
 
         FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(nodeInstance, flowInstance);
         boolean hasFlowGroup = StringUtils.isNotBlank(flowInstance.getFlowGroupId());
+        // 优先加载本流程的变量
         List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInstance.getFlowInstId());
+        // 如果有 流程组加载流程组变量
         if(hasFlowGroup) {
             flowVariables.addAll(flowVariableDao.listFlowVariables(flowInstance.getFlowGroupId()));
         }
+        // 加载变量的默认值
+        flowVariables.addAll(flowVariableDao.listFlowDefaultVariables(
+            flowInstance.getFlowInstId(), flowInstance.getFlowCode(), flowInstance.getVersion()));
+
         flowVarTrans.setFlowVariables(flowVariables);
 
         Map<String, List<String>> flowOrgs = flowEngine.viewFlowOrganize(flowInstance.getFlowInstId());

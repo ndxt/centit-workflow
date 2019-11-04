@@ -39,7 +39,7 @@ public class FlowVariableId implements java.io.Serializable {
     public FlowVariableId(String flowInstId, String runToken, String varName) {
 
         this.flowInstId = flowInstId;
-        this.runToken = runToken;
+        this.runToken = FlowVariable.trimNodeToken(runToken);
         this.varName = varName;
     }
 
@@ -57,7 +57,7 @@ public class FlowVariableId implements java.io.Serializable {
     }
 
     public void setRunToken(String runToken) {
-        this.runToken = runToken;
+        this.runToken = FlowVariable.trimNodeToken(runToken);
     }
 
     public String getVarName() {

@@ -152,6 +152,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (StringUtils.isNotBlank(options.getParentNodeInstId())) {
             flowInst.setPreNodeInstId(options.getParentNodeInstId());
             flowInst.setPreInstId(options.getParentFlowInstId());
+            FlowInstance parentInst = flowInstanceDao.getObjectById(options.getParentFlowInstId());
+            if(parentInst != null || StringUtils.isNotBlank(parentInst.getFlowGroupId())) {
+                // 子流程继承父流程的 流程实例组
+                flowInst.setFlowGroupId(parentInst.getFlowGroupId());
+            }
             flowInst.setIsSubInst("Y");
         }
         flowInst.setFlowOptName(options.getFlowOptName());
@@ -362,30 +367,27 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Map<String, Set<String>> unitParams = UserUnitParamBuilder.createEmptyParamMap();
         Map<String, Set<String>> userParams = UserUnitParamBuilder.createEmptyParamMap();
         NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(nextOptNode.getNodeId(), preNodeInst, "");
+        // L 上一次运行到本节点的 用户和机构
         if (oldNodeInst != null) {
             UserUnitParamBuilder.addParamToParamMap(unitParams, "L", oldNodeInst.getUnitCode());
             UserUnitParamBuilder.addParamToParamMap(userParams, "L", oldNodeInst.getUserCode());
         }
-
+        // P 前面一个节点的 用户和机构
         NodeInstance preNode = flowInst.getNearestNode(preNodeInst, nodeToken);
         if (preNode != null) {
             UserUnitParamBuilder.addParamToParamMap(unitParams, "P", preNode.getUnitCode());
             UserUnitParamBuilder.addParamToParamMap(userParams, "P", preNode.getUserCode());
         }
-
-        //context.getUserInfoByCode()
-
-        UserUnitParamBuilder.addParamToParamMap(unitParams, "U",
+        // C 参数指定的，就是提交的人和机构
+        UserUnitParamBuilder.addParamToParamMap(unitParams, "C",
             options.getUnitCode() == null ?
                 context.getUserInfoByCode(options.getUserCode()).getPrimaryUnit():
                 options.getUnitCode());
-
-        UserUnitParamBuilder.addParamToParamMap(unitParams, "N", options.getUnitCode());
+        UserUnitParamBuilder.addParamToParamMap(userParams, "C",
+            options.getUserCode());
+        // F 流程的 用户 和 机构
         UserUnitParamBuilder.addParamToParamMap(unitParams, "F", flowInst.getUnitCode());
-
-
-        UserUnitParamBuilder.addParamToParamMap(userParams, "C", flowInst.getUserCode());
-        UserUnitParamBuilder.addParamToParamMap(userParams, "O", options.getUserCode());
+        UserUnitParamBuilder.addParamToParamMap(userParams, "F", flowInst.getUserCode());
 
         //调用机构引擎来计算 unitCode
         // 如果指定机构 就不需要再进行计算了
@@ -1835,10 +1837,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     /**
      * 设置流程节点上下文变量
      *
-     * @param flowInstId
-     * @param runToken
-     * @param sVar
-     * @param sValue
+     * @param flowInstId 流程实例id
+     * @param runToken 令牌
+     * @param sVar 流程变量
+     * @param sValue 流程值
      */
     @Override
     public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, String sValue) {
@@ -1850,6 +1852,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         FlowVariableId cid = new FlowVariableId(flowInstId,
             runToken, sVar);
+
         FlowVariable varO = flowVariableDao.getObjectById(cid);
         if (varO == null) {
             varO = new FlowVariable(flowInstId,
@@ -1923,7 +1926,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     /**
      * 删除流程关注人员
      *
-     * @param flowInstId
+     * @param flowInstId 流程实例ID
      * @param optUser    关注设置人员
      */
     public void deleteFlowAttentionByOptUser(String flowInstId, String optUser) {
@@ -1939,20 +1942,18 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     /**
      * 获取流程关注人员
      *
-     * @param flowInstId
-     * @return
+     * @param flowInstId 流程实例ID
+     * @return 关注人员
      */
     @Override
     public List<InstAttention> viewFlowAttention(String flowInstId) {
-
-        List<InstAttention> attentions = attentionDao.listAttentionByFlowInstId(flowInstId);
-        return attentions;
+        return attentionDao.listAttentionByFlowInstId(flowInstId);
     }
 
     /**
-     * @param flowInstId
+     * @param flowInstId 流程实例ID
      * @param userCode   关注人员
-     * @return
+     * @return 关注人员
      */
     @Override
     public InstAttention getFlowAttention(String flowInstId, String userCode) {
@@ -1966,7 +1967,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      *
      * @param userCode  关注人
      * @param instState N 正常  C 完成   P 暂停 挂起     F 强行结束  A 所有
-     * @return
+     * @return 关注项目（流程）
      */
     @Override
     public List<FlowInstance> viewAttentionFLowInstance(String userCode, String instState) {
@@ -2013,11 +2014,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     public List<FlowVariable> viewFlowVariablesByVarname(String flowInstId,
                                                          String varname) {
-        List<FlowVariable> lv = flowVariableDao.viewFlowVariablesByVarname(
+        return flowVariableDao.viewFlowVariablesByVarname(
             flowInstId, varname);
-        if (lv == null)
-            return null;
-        return new ArrayList<FlowVariable>(lv);
     }
 
     @Override

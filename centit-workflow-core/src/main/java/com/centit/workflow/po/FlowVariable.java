@@ -25,13 +25,26 @@ public class FlowVariable implements java.io.Serializable {
     @Column(name = "VAR_VALUE")
     @ApiModelProperty(value = "变量值", required = true)
     private String varValue;
+
     @Column(name = "VAR_TYPE")
     //E:集合 S:单个字符串
     @ApiModelProperty(value = "变量类型")
     private String varType;
 
     // Constructors
-
+    /**
+     * 计算变量时去掉，令牌中的 L 临时 和 R 游离标记
+     * @param runToken 令牌
+     * @return 变量的令牌
+     */
+    public static String trimNodeToken(String runToken){
+        int nPos = runToken.indexOf('T');
+        if(nPos>0){
+            return runToken.substring(nPos);
+        } else {
+            return runToken;
+        }
+    }
     /**
      * default constructor
      */
@@ -48,17 +61,15 @@ public class FlowVariable implements java.io.Serializable {
     public FlowVariable(FlowVariableId id
         , String varValue, String varType) {
         this.cid = id;
-
-
         this.varValue = varValue;
         this.varType = varType;
     }
 
     /**
-     * @param flowInstId
-     * @param runToken
-     * @param varName
-     * @param varValue
+     * @param flowInstId 流程节点
+     * @param runToken 令牌
+     * @param varName 变量名
+     * @param varValue 值
      * @param varType    E:集合 S:单个字符串
      */
     public FlowVariable(String flowInstId, String runToken, String varName, String varValue, String varType) {

@@ -1,12 +1,13 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.support.database.orm.GeneratorCondition;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
+import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -17,110 +18,54 @@ import java.util.Date;
  *
  * 和这个对应 WF_FLOW_VARIABLE
  */
+@Data
 @Entity
 @Table(name = "WF_FLOW_VARIABLE_DEFINE")
 public class FlowVariableDefine implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
-    @NotNull
+    @ValueGenerator(strategy = GeneratorType.UUID22)
     @Column(name = "FLOW_VARIABLE_ID")
     private String flowVariableId;
+
     @NotNull
     @Column(name = "FLOW_CODE")
     private String flowCode;
-    @NotNull
-    @Column(name = "VARIABLE_NAME")
-    private String variableName;
-    @Column(name = "VARIABLE_TYPE")
-    //E:集合 S:单个字符串
-    private String variableType;
-    @Column(name = "VARIABLE_ORDER")
-    private Integer variableOrder;
-    @Column(name = "CREATE_TIME")
-    private Date createTime;
-    @Column(name = "MODIFY_TIME")
-    private Date modifyTime;
 
     @Column(name = "VERSION")
     @NotNull(message = "字段不能为空")
     @Range( max = 9999, message = "版本号不能大于{max}")
     private Long version;
 
+    @NotNull
+    @Column(name = "VARIABLE_NAME")
+    private String variableName;
+
+    @Column(name = "VARIABLE_TYPE")
+    //E:集合 S:单个字符串
+    private String variableType;
+
+    @Column(name = "DEFAULT_VALUE")
+    private String defaultValue;
+
+    @Column(name = "VARIABLE_ORDER")
+    private Integer variableOrder;
+
+
+    @Column(name = "MODIFY_TIME")
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, condition = GeneratorCondition.ALWAYS,
+    value = "today()")
+    private Date modifyTime;
+
+
+    @OneToOne(targetEntity = FlowInfo.class)
+    @JoinColumns({
+        @JoinColumn(name="flowCode", referencedColumnName = "flowCode"),
+        @JoinColumn(name="version", referencedColumnName = "version")
+    })
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
-
-    public FlowInfo getFlowDefine() {
-        return flowDefine;
-    }
-    public void setFlowDefine(FlowInfo flowDefine) {
-        this.flowDefine = flowDefine;
-    }
-
-    public void setFlowVariableId(String flowVariableId) {
-        this.flowVariableId = flowVariableId;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public String getFlowVariableId() {
-        return flowVariableId;
-    }
-
-
-
-    public String getFlowCode() {
-        return flowCode;
-    }
-
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
-    }
-
-    public String getVariableName() {
-        return variableName;
-    }
-
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-    public String getVariableType() {
-        return variableType;
-    }
-
-    public void setVariableType(String variableType) {
-        this.variableType = variableType;
-    }
-
-    public Integer getVariableOrder() {
-        return variableOrder;
-    }
-
-    public void setVariableOrder(Integer variableOrder) {
-        this.variableOrder = variableOrder;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
 
     public void copyNotNullProperty(FlowVariableDefine other){
 
@@ -145,8 +90,7 @@ public class FlowVariableDefine implements Serializable {
         this.variableOrder= other.getVariableOrder();
         this.variableType= other.getVariableType();
         this.variableName= other.getVariableName();
-        this.createTime= other.getCreateTime();
-        this.modifyTime= other.modifyTime;
+        this.modifyTime= other.getModifyTime();
         this.flowCode= other.getFlowCode();
 
     }
