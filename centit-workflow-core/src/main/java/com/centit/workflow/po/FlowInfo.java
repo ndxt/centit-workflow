@@ -94,30 +94,12 @@ public class FlowInfo implements java.io.Serializable {
     })
     private Set<NodeInfo> flowNodes;// new ArrayList<WfNode>();
 
-    public List<FlowTeamRole> getFlowTeamRoles() {
-        return flowTeamRoles;
-    }
-
-    public void setFlowTeamRoles(List<FlowTeamRole> flowTeamRoles) {
-        this.flowTeamRoles = flowTeamRoles;
-    }
-
-    public List<FlowVariableDefine> getFlowVariableDefines() {
-        return
-            flowVariableDefines;
-    }
-
-    public void setFlowVariableDefines(List<FlowVariableDefine> flowVariableDefines) {
-        this.flowVariableDefines = flowVariableDefines;
-    }
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowTransition.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
             @JoinColumn(name="version", referencedColumnName="version")
     })
-
-
 
     private Set<FlowTransition> flowTransitions;// new ArrayList<WfTransition>();
 
@@ -341,7 +323,7 @@ public class FlowInfo implements java.io.Serializable {
 
     public Set<FlowTransition> getFlowTransitions(){
         if(this.flowTransitions ==null)
-            this.flowTransitions = new HashSet<FlowTransition>();
+            this.flowTransitions = new HashSet<>();
         return this.flowTransitions;
     }
 
@@ -358,7 +340,7 @@ public class FlowInfo implements java.io.Serializable {
 
     public void addFlowTransition(FlowTransition wfTransition ){
         if (this.flowTransitions ==null)
-            this.flowTransitions = new HashSet<FlowTransition>();
+            this.flowTransitions = new HashSet<>();
         //wfTransition.setFlowDefine(this);
         wfTransition.setFlowCode(this.getFlowCode());
         wfTransition.setVersion(this.getVersion());
@@ -378,7 +360,7 @@ public class FlowInfo implements java.io.Serializable {
     }
 
     public void replaceFlowTransitions(List<FlowTransition> wfTransitions) {
-        List<FlowTransition> newObjs = new ArrayList<FlowTransition>();
+        List<FlowTransition> newObjs = new ArrayList<>();
         for(FlowTransition p :wfTransitions){
             if(p==null)
                 continue;
@@ -388,7 +370,7 @@ public class FlowInfo implements java.io.Serializable {
         }
         //delete
         boolean found = false;
-        Set<FlowTransition> oldObjs = new HashSet<FlowTransition>();
+        Set<FlowTransition> oldObjs = new HashSet<>();
         oldObjs.addAll(getFlowTransitions());
 
         for(Iterator<FlowTransition> it = oldObjs.iterator(); it.hasNext();){
@@ -441,9 +423,28 @@ public class FlowInfo implements java.io.Serializable {
         return flowTeamRoles;
     }
 
+    public List<FlowTeamRole> getFlowTeamRoles() {
+        return flowTeamRoles;
+    }
+
+    public void setFlowTeamRoles(List<FlowTeamRole> flowTeamRoles) {
+        this.flowTeamRoles = flowTeamRoles;
+    }
+
+    public void setFlowVariableDefines(List<FlowVariableDefine> flowVariableDefines) {
+        this.flowVariableDefines = flowVariableDefines;
+    }
+
+
+    public List<FlowVariableDefine> getFlowVariableDefines(){
+        if(this.flowVariableDefines ==null)
+            this.flowVariableDefines = new ArrayList<>();
+        return flowVariableDefines;
+    }
+
     @JSONField(serialize=false)
     public Set<FlowVariableDefine> getFlowVariableDefSet(){
-        Set<FlowVariableDefine> flowVariableDefines = new HashSet<FlowVariableDefine>();
+        Set<FlowVariableDefine> flowVariableDefines = new HashSet<>();
         if(this.flowVariableDefines !=null){
             for(FlowVariableDefine fs: this.flowVariableDefines)
                 flowVariableDefines.add(fs);
@@ -461,12 +462,6 @@ public class FlowInfo implements java.io.Serializable {
         if(this.flowTeamRoles ==null)
             this.flowTeamRoles = new ArrayList<FlowTeamRole>();
         return flowTeamRoles;
-    }
-
-    public List<FlowVariableDefine> getFlowVariableDefs(){
-        if(this.flowVariableDefines ==null)
-            this.flowVariableDefines = new ArrayList<FlowVariableDefine>();
-        return flowVariableDefines;
     }
 
     public void setFlowStages(List<FlowStage> flowstages){
@@ -650,7 +645,7 @@ public class FlowInfo implements java.io.Serializable {
         //delete
         boolean found = false;
         Set<FlowVariableDefine> oldObjs = new HashSet<FlowVariableDefine>();
-        oldObjs.addAll(getFlowVariableDefs());
+        oldObjs.addAll(getFlowVariableDefines());
 
         for(Iterator<FlowVariableDefine> it = oldObjs.iterator(); it.hasNext();){
             FlowVariableDefine odt = it.next();
@@ -668,7 +663,7 @@ public class FlowInfo implements java.io.Serializable {
         //insert or update
         for(FlowVariableDefine newdt :newObjs){
             found = false;
-            for(Iterator<FlowVariableDefine> it = getFlowVariableDefs().iterator();
+            for(Iterator<FlowVariableDefine> it = getFlowVariableDefines().iterator();
                 it.hasNext();){
                 FlowVariableDefine odt = it.next();
                 if(odt.getFlowVariableId().equals( newdt.getFlowVariableId())){

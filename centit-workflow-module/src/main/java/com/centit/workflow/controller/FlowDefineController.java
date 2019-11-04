@@ -101,7 +101,9 @@ public class FlowDefineController extends BaseController {
      * @param flowcode
      * @param response
      */
+    @ApiOperation(value = "查询单个流程草稿", notes = "查询单个流程草稿")
     @RequestMapping(value = "/draft/{flowcode}", method = RequestMethod.GET)
+    @WrapUpResponseBody
     public void getFlowDefineDraft(@PathVariable String flowcode, HttpServletResponse response) {
         FlowInfo obj = flowDefine.getFlowDefObject(flowcode, 0);
         JsonResultUtils.writeSingleDataJson(obj, response);
@@ -128,9 +130,9 @@ public class FlowDefineController extends BaseController {
     /**
      * 复制单个流程某个版本
      *
-     * @param version
-     * @param flowcode
-     * @param response
+     * @param version 版本号
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/copy/{flowcode}/{version}", method = RequestMethod.POST)
     public void copyFlowDefine(@PathVariable String flowcode, @PathVariable Long version, HttpServletResponse response) {
@@ -143,9 +145,8 @@ public class FlowDefineController extends BaseController {
 
     /**
      * 编辑流程图
-     *
-     * @param flowcode
-     * @param response
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/savexmldesc/{flowcode}", method = RequestMethod.POST)
     public void editXml(@PathVariable String flowcode, HttpServletRequest request, HttpServletResponse response) {
@@ -159,10 +160,9 @@ public class FlowDefineController extends BaseController {
 
     /**
      * 查看流程图
-     *
-     * @param version
-     * @param flowcode
-     * @param response
+     * @param version 版本号
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/viewxml/{flowcode}/{version}", method = RequestMethod.GET)
     public void viewXml(@PathVariable Long version, @PathVariable String flowcode, HttpServletRequest request, HttpServletResponse response) {
@@ -172,9 +172,8 @@ public class FlowDefineController extends BaseController {
 
     /**
      * 保存草稿
-     *
-     * @param flowdefine
-     * @param response
+     * @param flowdefine 流程定义信息
+     * @param response HttpServletResponse
      */
     @RequestMapping(method = RequestMethod.POST)
     public void addFlowDefine(@Valid FlowInfo flowdefine, HttpServletResponse response) {
@@ -188,9 +187,9 @@ public class FlowDefineController extends BaseController {
     /**
      * 更新流程，默认编辑草稿，版本号为0
      *
-     * @param flowdefine
-     * @param flowcode
-     * @param response
+     * @param flowdefine 流程定义信息
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/{flowcode}", method = RequestMethod.POST)
     public void editFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
@@ -207,10 +206,9 @@ public class FlowDefineController extends BaseController {
 
     /**
      * 新增流程阶段，默认编辑草稿，版本号为0
-     *
-     * @param flowdefine
-     * @param flowcode
-     * @param response
+     * @param flowdefine 流程定义信息
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
      */
     @PostMapping(value = "/stage/{flowcode}")
     public void editFlowStage(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
@@ -236,10 +234,9 @@ public class FlowDefineController extends BaseController {
 
     /**
      * 编辑流程角色
-     *
-     * @param flowdefine
-     * @param flowcode
-     * @param response
+     * @param flowdefine 流程定义信息
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
      */
     @PostMapping(value = "/role/{flowcode}")
     public void editRole(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
@@ -265,12 +262,13 @@ public class FlowDefineController extends BaseController {
 
     /**
      * 编辑流程变量
-     *
-     * @param flowdefine
-     * @param flowcode
-     * @param response
+     * @param flowdefine 流程定义信息
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
      */
+    @ApiOperation(value = "编辑流程变量", notes = "编辑流程变量")
     @PostMapping(value = "/variableDefine/{flowcode}")
+    @WrapUpResponseBody
     public void editVariable(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         if (null != flowdefine.getFlowVariableDefines()) {
             for (FlowVariableDefine variableDefine : flowdefine.getFlowVariableDefines()) {
@@ -295,8 +293,8 @@ public class FlowDefineController extends BaseController {
     /**
      * 更新流程，默认编辑草稿，版本号为0
      *
-     * @param flowdefine
-     * @param response
+     * @param flowdefine 流程定义信息
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/{oldflowcode}/{doCopyXML}", method = RequestMethod.POST)
     public void editCopyFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String oldflowcode, @PathVariable String doCopyXML, HttpServletResponse response) {
@@ -313,10 +311,9 @@ public class FlowDefineController extends BaseController {
 
     /**
      * 删除流程
-     *
-     * @param version
-     * @param flowcode
-     * @param response
+     * @param version 版本号
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/{flowcode}/{version}", method = RequestMethod.DELETE)
     public void deleteFlowDefine(@PathVariable String flowcode, @PathVariable Long version, HttpServletResponse response) {
@@ -331,9 +328,8 @@ public class FlowDefineController extends BaseController {
 
     /**
      * 物理删除流程定义
-     *
-     * @param flowcode
-     * @param response
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/deleteFlow/{flowcode}", method = RequestMethod.GET)
     public void deleteFlowDefine(@PathVariable String flowcode, HttpServletResponse response) {
@@ -344,8 +340,9 @@ public class FlowDefineController extends BaseController {
     /**
      * 发布新版本流程
      *
-     * @return String
-     * @throws Exception
+     * @param flowcode 流程代码
+     * @param response HttpServletResponse
+     * @throws Exception 异常
      */
     @RequestMapping(value = "/publish/{flowcode}", method = RequestMethod.POST)
     public void publishFlow(@PathVariable String flowcode, HttpServletResponse response) throws Exception {
@@ -356,9 +353,9 @@ public class FlowDefineController extends BaseController {
     /**
      * 更新流程状态
      *
-     * @param flowcode
-     * @param newstate
-     * @param response
+     * @param flowcode 流程代码
+     * @param newstate 新的状态
+     * @param response HttpServletResponse
      */
     @RequestMapping(value = "/changestate/{flowcode}/{newstate}", method = RequestMethod.GET)
     public void changeState(@PathVariable String flowcode, @PathVariable String newstate, HttpServletResponse response) {
