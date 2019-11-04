@@ -22,12 +22,12 @@ public class FlowVariableDefineDao extends BaseDaoImpl<FlowVariableDefine, Long>
     }
 
     @Deprecated
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public Long getNextFlowVariableId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_OPTVARIABLE");
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void saveNewObject(FlowVariableDefine o) {
         if(o.getFlowVariableId() == null || "".equals(o.getFlowVariableId())){
             o.setFlowVariableId(UuidOpt.getUuidAsString32());
@@ -36,7 +36,7 @@ public class FlowVariableDefineDao extends BaseDaoImpl<FlowVariableDefine, Long>
         super.saveNewObject(o);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowVariableDefine> getFlowVariableByFlowCode(String flowCode, long version){
         return this.listObjectsByFilter("where FLOW_CODE = ? and VERSION = ?",new Object[]{flowCode, version});
     }

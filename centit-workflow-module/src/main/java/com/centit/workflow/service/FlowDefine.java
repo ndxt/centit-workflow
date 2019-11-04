@@ -2,6 +2,7 @@ package com.centit.workflow.service;
 
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
+import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInfo;
 
 import java.util.List;
@@ -97,11 +98,6 @@ public interface FlowDefine {
     List<FlowInfo> getFlowsByCode(String wfCode,PageDesc pageDesc);
 
     /**
-     * 获取新建流程的主键（流程代码）
-     */
-    String getNextPrimarykey();
-
-    /**
      * 根据已知的流程业务，查询对应的定义流程
      * @param optId 业务id
      * @return 流程列表
@@ -185,4 +181,12 @@ public interface FlowDefine {
      * @return 流程变量信息
      */
     Map<String, String> listFlowVariableDefines(String flowCode, Long version);
+
+    /**
+     * 根据流程代码获取流程变量的默认值
+     * @param flowCode 流程代码
+     * @param version 版本 0 草稿 -1 最新版本
+     * @return 流程变量信息
+     */
+    Map<String, String> listFlowDefaultVariables(String flowCode, Long version);
 }

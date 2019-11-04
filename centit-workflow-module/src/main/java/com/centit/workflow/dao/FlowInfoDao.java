@@ -44,6 +44,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
         return this.getJdbcTemplate().queryForObject(sql,
                 new Object[]{flowCode} ,Long.class);
     }
+
     @Transactional(propagation= Propagation.MANDATORY)
     public long getNextNodeId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
@@ -106,11 +107,6 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
         String sql="SELECT * FROM F_V_LASTVERSIONFLOW WHERE FLOW_STATE = ? ORDER BY VERSION";
         return  this.getJdbcTemplate().query(sql,
                 new Object[]{wfstate} ,new BeanPropertyRowMapper<FlowInfo>(FlowInfo.class));
-    }
-    @Transactional(propagation= Propagation.MANDATORY)
-    public String getNextPrimarykey() {
-        return UuidOpt.getUuidAsString32();
-//        return String.valueOf(DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFINE"));
     }
 
     @SuppressWarnings("deprecation")

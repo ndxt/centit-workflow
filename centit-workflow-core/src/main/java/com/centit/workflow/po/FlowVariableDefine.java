@@ -38,9 +38,18 @@ public class FlowVariableDefine implements Serializable {
     @Range( max = 9999, message = "版本号不能大于{max}")
     private Long version;
 
+    /**
+     * 变量名
+     */
     @NotNull
     @Column(name = "VARIABLE_NAME")
     private String variableName;
+
+    /**
+     * 变量中文描述
+     */
+    @Column(name = "VARIABLE_DESC")
+    private String variableDesc;
 
     @Column(name = "VARIABLE_TYPE")
     //E:集合 S:单值
@@ -71,6 +80,8 @@ public class FlowVariableDefine implements Serializable {
             this.flowCode= other.getFlowCode();
         if( other.getVariableName() != null)
             this.variableName= other.getVariableName();
+        if( other.getVariableDesc() != null)
+            this.variableDesc = other.getVariableDesc();
         if( other.getVariableType() != null)
             this.variableType = other.getVariableType();
     }
@@ -83,6 +94,6 @@ public class FlowVariableDefine implements Serializable {
         this.variableName= other.getVariableName();
         this.modifyTime= other.getModifyTime();
         this.flowCode= other.getFlowCode();
-
+        this.variableDesc = other.getVariableDesc();
     }
 }

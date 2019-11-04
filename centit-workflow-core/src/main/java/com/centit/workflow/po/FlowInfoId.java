@@ -10,9 +10,9 @@ import javax.validation.constraints.NotNull;
 
 /**
  * FAddressBook entity.
- * 
+ *
  * @author codefan@hotmail.com
- */ 
+ */
 @Embeddable
 public class FlowInfoId implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
@@ -21,7 +21,7 @@ public class FlowInfoId implements java.io.Serializable {
     @NotNull(message = "字段不能为空")
     @Range( max = 9999, message = "版本号不能大于{max}")
     private Long version;
-    
+
     @Column(name = "FLOW_CODE")
     @NotBlank(message = "字段不能为空")
     @Length(max = 32, message = "字段长度不能大于{max}")
@@ -33,12 +33,11 @@ public class FlowInfoId implements java.io.Serializable {
     }
     /** full constructor */
     public FlowInfoId(Long version, String wfcode) {
-
         this.version = version;
         this.flowCode = wfcode;
     }
 
-  
+
     public Long getVersion() {
         return this.version;
     }
@@ -62,30 +61,30 @@ public class FlowInfoId implements java.io.Serializable {
             return false;
         if (!(other instanceof FlowInfoId))
             return false;
-        
+
         FlowInfoId castOther = (FlowInfoId) other;
         boolean ret = true;
-  
+
         ret = ret && ( this.getVersion() == castOther.getVersion() ||
                        (this.getVersion() != null && castOther.getVersion() != null
                                && this.getVersion().equals(castOther.getVersion())));
-  
+
         ret = ret && ( this.getFlowCode() == castOther.getFlowCode() ||
                        (this.getFlowCode() != null && castOther.getFlowCode() != null
                                && this.getFlowCode().equals(castOther.getFlowCode())));
 
         return ret;
     }
-    
+
     public int hashCode() {
         int result = 17;
-  
+
         result = 37 * result +
             (this.getVersion() == null ? 0 :this.getVersion().hashCode());
-  
+
         result = 37 * result +
             (this.getFlowCode() == null ? 0 :this.getFlowCode().hashCode());
-    
+
         return result;
     }
 }

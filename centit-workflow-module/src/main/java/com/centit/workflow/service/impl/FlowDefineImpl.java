@@ -644,13 +644,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public String getNextPrimarykey() {
-        return flowDefineDao.getNextPrimarykey();
-    }
-
-
-    @Override
-    @Transactional
     public List<FlowInfo> getFlowsByCode(String wfCode, PageDesc pageDesc) {
         List<FlowInfo> flows = flowDefineDao
             .getAllVersionFlowsByCode(wfCode, pageDesc);
@@ -726,6 +719,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @param version 版本号
      * @return 对应的业务操作
      */
+    @Transactional
     public Map<String, String> listAllOptCode(String flowCode, long version) {
         FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
         //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
@@ -744,6 +738,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @return 对应的业务操作
      */
     @Override
+    @Transactional
     public Map<String, String> listAllOptCode(String flowCode) {
         return listAllOptCode(flowCode, flowDefineDao.getLastVersion(flowCode));
     }
@@ -818,6 +813,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * 列举所有的子流程
      */
     @Override
+    @Transactional
     public Map<String, String> listAllSubFlow() {
         Map<String, String> subwf = new HashMap<>();
 
@@ -844,6 +840,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @return 流程阶段
      */
     @Override
+    @Transactional
     public Map<String, String> listFlowStages(String flowCode, Long version) {
         if(version == null || version < 0){
             version = flowDefineDao.getLastVersion(flowCode);
@@ -866,22 +863,48 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return optmap;
     }
 
+    private List<FlowVariableDefine> listFlowVariables(String flowCode, Long version) {
+        if(version == null || version < 0){
+            version = flowDefineDao.getLastVersion(flowCode);
+        }
+
+        return flowVariableDefineDao.getFlowVariableByFlowCode(flowCode, version);
+    }
+
     /**
      * 根据流程代码获取流程变量信息
      * @param flowCode 流程代码
      * @return 流程变量信息
      */
     @Override
+    @Transactional
     public Map<String, String> listFlowVariableDefines(String flowCode, Long version) {
-        if(version == null || version < 0){
-            version = flowDefineDao.getLastVersion(flowCode);
-        }
         List<FlowVariableDefine> flowVariableDefines
-            = flowVariableDefineDao.getFlowVariableByFlowCode(flowCode, version);
+            = listFlowVariables(flowCode, version);
+
         Map<String, String> variableDefineMap = new HashMap<>();
-        for (FlowVariableDefine flowVariableDefine : flowVariableDefines) {
-            variableDefineMap.put(flowVariableDefine.getFlowVariableId(), flowVariableDefine.getVariableName());
+        if(flowVariableDefines!=null) {
+            for (FlowVariableDefine flowVariableDefine : flowVariableDefines) {
+                variableDefineMap.put(flowVariableDefine.getVariableName(), flowVariableDefine.getVariableDesc());
+            }
         }
         return variableDefineMap;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, String> listFlowDefaultVariables(String flowCode, Long version){
+        List<FlowVariableDefine> flowVariableDefines
+            = listFlowVariables(flowCode, version);
+
+        Map<String, String> variableValueMap = new HashMap<>();
+        if(flowVariableDefines!=null) {
+            for (FlowVariableDefine flowVariableDefine : flowVariableDefines) {
+                if (StringUtils.isNotBlank(flowVariableDefine.getDefaultValue())) {
+                    variableValueMap.put(flowVariableDefine.getVariableName(), flowVariableDefine.getDefaultValue());
+                }
+            }
+        }
+        return variableValueMap;
     }
 }

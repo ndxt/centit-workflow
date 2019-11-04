@@ -88,8 +88,8 @@ public class RoleFormulaController extends BaseController {
             "* UL 根据用户标签过滤 UL(\"用户标记常量\" [,\"用户标记常量\"])\n" +
             "* RO 根据用户角色过滤 RO(\"系统角色代码常量\" [,\"系统角色代码常量\"])" )
     @WrapUpResponseBody
-    @RequestMapping(value="/calcUsers/{formula}",method = RequestMethod.GET)
-    public JSONArray viewFormulaUsers(@PathVariable String formula){
+    @RequestMapping(value="/calcUsers",method = RequestMethod.GET)
+    public JSONArray viewFormulaUsers(String formula){
         return roleFormulaService.viewFormulaUsers(StringEscapeUtils.unescapeHtml4(formula));
     }
 
@@ -120,7 +120,6 @@ public class RoleFormulaController extends BaseController {
     public List<? extends IUnitInfo> listAllUnitInfo(){
         return roleFormulaService.listAllUnitInfo();
     }
-
 
     @ApiOperation(value = "列举所有子机构", notes = "列举所有子机构")
     @WrapUpResponseBody
