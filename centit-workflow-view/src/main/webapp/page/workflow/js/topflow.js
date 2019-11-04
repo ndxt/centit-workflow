@@ -579,12 +579,12 @@ function changeValue(obj,id){
                 $("#roleName").show();//显示角色代码
                 $('.roletype:visible').width('97%').siblings('.insideUser').hide();
                 $("#rolecode").empty();
-                for (k in Data[obj.value]) {
+                for (k in Data.SF) { // [obj.value]
                     if (SVG.get(o).attr("rolecode") == k) {
-                        $("#rolecode").append("<option  value='" + k + "' selected='selected' >" + Data[obj.value][k] + "</option>");
+                        $("#rolecode").append("<option  value='" + k + "' selected='selected' >" + Data.SF[k] + "</option>");
                     }
                     else {
-                        $("#rolecode").append("<option  value='" + k + "'>" + Data[obj.value][k] + "</option>");
+                        $("#rolecode").append("<option  value='" + k + "'>" + Data.SF[k] + "</option>");
                     }
                 }
             }
