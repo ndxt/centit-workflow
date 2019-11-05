@@ -424,6 +424,8 @@ public class FlowInfo implements java.io.Serializable {
     }
 
     public List<FlowTeamRole> getFlowTeamRoles() {
+        if(this.flowTeamRoles ==null)
+            this.flowTeamRoles = new ArrayList<FlowTeamRole>();
         return flowTeamRoles;
     }
 
@@ -458,11 +460,6 @@ public class FlowInfo implements java.io.Serializable {
         return flowStages;
     }
 
-    public List<FlowTeamRole> getFlowRoles(){
-        if(this.flowTeamRoles ==null)
-            this.flowTeamRoles = new ArrayList<FlowTeamRole>();
-        return flowTeamRoles;
-    }
 
     public void setFlowStages(List<FlowStage> flowstages){
         if(flowstages == null || flowstages.size() == 0){
@@ -491,7 +488,7 @@ public class FlowInfo implements java.io.Serializable {
         flowTeamRole.setVersion(this.getVersion());
 
         //wfFlowStage.setVersion(this.getVersion());
-        this.getFlowRoles().add(flowTeamRole);
+        this.getFlowTeamRoles().add(flowTeamRole);
     }
 
     public void addFlowVariableDef(FlowVariableDefine flowVariableDefine){
@@ -594,7 +591,7 @@ public class FlowInfo implements java.io.Serializable {
         }
         //delete
         Set<FlowTeamRole> oldObjs = new HashSet<>();
-        oldObjs.addAll(getFlowRoles());
+        oldObjs.addAll(getFlowTeamRoles());
 
         for(Iterator<FlowTeamRole> it = oldObjs.iterator(); it.hasNext();){
             FlowTeamRole odt = it.next();
@@ -612,7 +609,7 @@ public class FlowInfo implements java.io.Serializable {
         //insert or update
         for(FlowTeamRole newdt :newObjs){
             boolean found = false;
-            for(Iterator<FlowTeamRole> it = getFlowRoles().iterator();
+            for(Iterator<FlowTeamRole> it = getFlowTeamRoles().iterator();
                 it.hasNext();){
                 FlowTeamRole odt = it.next();
                 if(odt.getFlowTeamRoleId().equals( newdt.getFlowTeamRoleId())){
