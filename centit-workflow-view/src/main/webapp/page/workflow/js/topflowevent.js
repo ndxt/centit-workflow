@@ -1,14 +1,6 @@
 /**
  * Created by gyr on 2015-4-10.
  */
-var rolecodeJson = {
-  bj: 'BJ',
-  gw: 'GW',
-  xz: 'XZ',
-  xt: 'RO',
-  en: '',
-  qx: 'SF'
-}
 /**
  * 绑定节点属性属性工具栏
  * @param obj 目标对象
@@ -138,7 +130,7 @@ function bindAttr(obj) {
         }
         SVG.get(o).attr({"roletype":$("#roletype").val()});
         //根据角色类别进行判断
-        if (SVG.get(o).attr("roletype") == "en") {//权限引擎
+        if (SVG.get(o).attr("roletype") == "EN") {//权限引擎
             $("#roleName").hide();//隐藏角色代码
             $("#powerName").show();//显示权限表达式
             g("powerexp").value = SVG.get(o).attr("powerexp");//权限表达式
@@ -147,7 +139,7 @@ function bindAttr(obj) {
             $("#powerName").hide();//隐藏权限表达式
             $("#roleName").show();//显示角色代码
             $("#rolecode").empty();
-            var key = rolecodeJson[SVG.get(o).attr("roletype")]
+            var key = SVG.get(o).attr("roletype")
 
             for (k in Data[key]) {
                 if (SVG.get(o).attr("rolecode") == k) {
@@ -220,7 +212,7 @@ function bindAttr(obj) {
                 }
                 g("route-unitexp").value = SVG.get(o).attr("unitexp");//机构表达式
                 //根据角色类别进行判断
-                if (SVG.get(o).attr("roletype") == "en") {//权限引擎
+                if (SVG.get(o).attr("roletype") == "EN") {//权限引擎
                     $("#route-roleName").hide();//隐藏角色代码
                     $("#route-powerName").show();//显示权限表达式
                     g("route-powerexp").value = SVG.get(o).attr("powerexp");//权限表达式
@@ -1171,6 +1163,7 @@ moveTip(g("tool"), g("move"));
 moveTip(g("argumentTool"), g("argumentTitle"));
 moveTip(g("allUnit"), g("unit-title"));
 moveTip(g("allUser"), g("user-title"));
+moveTip(g("insideFunc"), g("func-title"));
 //删除过程
 addEvent(g("delete"), "click", function() {
 	deletePro(o);
