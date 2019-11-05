@@ -135,17 +135,18 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         Date createTime = new Date(System.currentTimeMillis());
         if(options.getFlowVersion()<1) {
-            options.setFlowVersion(flowDefDao.getLastVersion(options.getFlowCode()));
+            options.version(flowDefDao.getLastVersion(options.getFlowCode()));
         }
         //获取流程信息
         FlowInfo wf = flowDefDao.getFlowDefineByID(options.getFlowCode(), options.getFlowVersion());
 
         //获取流程实例编号
-//        String flowInstId = flowInstanceDao.getNextFlowInstId();//update by ljy
-        String flowInstId = UuidOpt.getUuidAsString32();//update by ljy
+        String flowInstId = StringUtils.isBlank(options.getFlowInstId())?
+                            UuidOpt.getUuidAsString32() : options.getFlowInstId();
+
         FlowInstance flowInst = FlowOptUtils.createFlowInst(
             options.getUnitCode(), options.getUserCode(), wf, flowInstId, options.getTimeLimitStr());
-//        flowInst.setFlowInstId(flowInstanceDao.getNextFlowInstId());
+
         flowInst.setCreateTime(createTime);
         flowInst.setFlowGroupId(options.getFlowGroupId());
         //节点实例编号不为空，为子流程，创建子流程时要给父节点的状态设置为 W：等待子流程返回

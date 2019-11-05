@@ -2,7 +2,8 @@ package com.centit.workflow.commons;
 
 import com.centit.support.algorithm.CollectionsOpt;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.Set;
  * Created by codefan on 17-9-11.
  * @author codefan
  */
-@Data
+@Getter
 public class CreateFlowOptions implements FlowOptParamOptions{
     /**
      * 流程代码
@@ -46,6 +47,13 @@ public class CreateFlowOptions implements FlowOptParamOptions{
      */
     @ApiModelProperty("父节点ID，作为子流程时有效")
     private String parentNodeInstId;
+
+    /**
+     * 流程实例ID，指定创建流程的实例编号，UUID要保证不能冲突
+     */
+    @ApiModelProperty("流程实例ID，指定创建流程的实例编号")
+    private String flowInstId;
+
     /**
      * 作为子流程创建式，对应的父流程
      */
@@ -86,17 +94,20 @@ public class CreateFlowOptions implements FlowOptParamOptions{
     /**
      * 业务变量数据
      */
+    @Setter
     @ApiModelProperty("流程变量")
     private Map<String,Object> variables;
 
     /**
      * 业务变量数据
      */
+    @Setter
     @ApiModelProperty("流程全局变量")
     private Map<String,Object> globalVariables;
     /**
      * 流程办件角色
      */
+    @Setter
     @ApiModelProperty("流程办件角色")
     private Map<String, List<String>> flowRoleUsers;
 
@@ -104,6 +115,7 @@ public class CreateFlowOptions implements FlowOptParamOptions{
      * 流程机构
      * Map String 机构角色 String（机构代码）
      */
+    @Setter
     @ApiModelProperty("指定后续节点机构")
     private Map<String, List<String>> flowOrganizes;
 
@@ -111,6 +123,7 @@ public class CreateFlowOptions implements FlowOptParamOptions{
      * 后续节点机构
      * Map String (节点的环节代码或者节点代码) String（机构代码）
      */
+    @Setter
     @ApiModelProperty("指定后续节点机构")
     private Map<String, String> nodeUnits;
 
@@ -118,6 +131,7 @@ public class CreateFlowOptions implements FlowOptParamOptions{
      * 后续节点操作人员
      * Map String (节点的环节代码或者节点代码) String（人员代码可以是多个）
      */
+    @Setter
     @ApiModelProperty("指定后续节点操作人员")
     private Map<String, Set<String>> nodeOptUsers;
 
@@ -128,6 +142,11 @@ public class CreateFlowOptions implements FlowOptParamOptions{
 
     public static CreateFlowOptions create(){
         return new CreateFlowOptions();
+    }
+
+    public CreateFlowOptions flowInst(String flowInstId){
+        this.flowInstId = flowInstId;
+        return this;
     }
 
     public CreateFlowOptions user(String userCode){
