@@ -753,18 +753,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         nodeInst.setRunToken(nodeToken);
 
-        LeftRightPair<Set<String>, Set<String>> unitAndUser = calcNodeUnitAndOpterators(flowInst, preNodeInst, nodeToken,
-            nextOptNode, options, varTrans);
-        Set<String> nodeUnits = unitAndUser.getLeft();
-        Set<String> optUsers = unitAndUser.getRight();
-        if(nodeUnits!=null && !nodeUnits.isEmpty()){
-            nodeInst.setUnitCode( nodeUnits.iterator().next());
-        }
-
-        if(optUsers!=null && !optUsers.isEmpty()){
-            nodeInst.setUserCode(optUsers.iterator().next());
-        }
-
         //设置阶段进入时间 或者变更时间
         if(StringUtils.isNotBlank(nextOptNode.getStageCode())) {
             StageInstance stage = flowInst.getStageInstanceByCode(nextOptNode.getStageCode());
@@ -781,7 +769,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Set<String> createNodes = new HashSet<>();
         createNodes.add(nodeInst.getNodeInstId());
 
-        //判断是否为子流程 A:一般 B:抢先机制 C:多人操作 S:子流程
+        LeftRightPair<Set<String>, Set<String>> unitAndUser = calcNodeUnitAndOpterators(flowInst, preNodeInst, nodeToken,
+            nextOptNode, options, varTrans);
+        Set<String> nodeUnits = unitAndUser.getLeft();
+        Set<String> optUsers = unitAndUser.getRight();
+        if(nodeUnits!=null && !nodeUnits.isEmpty()){
+            nodeInst.setUnitCode(nodeUnits.iterator().next());
+        }
+
+        if(optUsers!=null && !optUsers.isEmpty()){
+            nodeInst.setUserCode(optUsers.iterator().next());
+        }
+
+        // A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行 E: 哑元（可用于嵌套汇聚） S:子流程
         if ("S".equals(nextOptNode.getOptType())) {
             //如果是子流程 启动流程
             nodeInst.setNodeState("W");
@@ -819,10 +819,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             createNodes.add(tempFirstNode.getNodeInstId());
         } else {
             //计算人员的分配策略
-            if (optUsers.isEmpty() && !"D".equals(nextOptNode.getOptType()) && !"E".equals(nextOptNode.getOptType())) {
+            if ( (optUsers==null || optUsers.isEmpty())
+                && !"D".equals(nextOptNode.getOptType()) && !"E".equals(nextOptNode.getOptType())) {
                 logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员");
                 throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员");
             }
+
             if ("gw".equals(nextOptNode.getRoleType())) {/* &&
                     "A".equals(nextOptNode.getOptType())){*/
                 nodeInst.setTaskAssigned("D");
@@ -846,8 +848,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     //nodeInst.setUserCode(optUsers.iterator().next());
                 }
             }
-            //TODO 消息内容需要重构
-            notificationCenter.sendMessage("system",optUsers,
+
+            notificationCenter.sendMessage("system", optUsers,
                 NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
                 .content("您有新任务:" + nextOptNode.getNodeName()));
         }
