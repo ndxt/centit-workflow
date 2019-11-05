@@ -746,21 +746,22 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if(preNodeInst!=null) {
             nodeInst.setPrevNodeInstId(preNodeInst.getNodeInstId());
         }
-
-        nodeInst.setTransPath(
-            StringUtils.isBlank(transPath) ? String.valueOf(trans.getTransId()) :
-                transPath + "," + trans.getTransId());
+        if(trans!=null) {
+            nodeInst.setTransPath(
+                StringUtils.isBlank(transPath) ? String.valueOf(trans.getTransId()) :
+                    transPath + "," + trans.getTransId());
+        }
         nodeInst.setRunToken(nodeToken);
 
         LeftRightPair<Set<String>, Set<String>> unitAndUser = calcNodeUnitAndOpterators(flowInst, preNodeInst, nodeToken,
             nextOptNode, options, varTrans);
         Set<String> nodeUnits = unitAndUser.getLeft();
         Set<String> optUsers = unitAndUser.getRight();
-        if(nodeUnits!=null || !nodeUnits.isEmpty()){
+        if(nodeUnits!=null && !nodeUnits.isEmpty()){
             nodeInst.setUnitCode( nodeUnits.iterator().next());
         }
 
-        if(optUsers!=null || !optUsers.isEmpty()){
+        if(optUsers!=null && !optUsers.isEmpty()){
             nodeInst.setUserCode(optUsers.iterator().next());
         }
 

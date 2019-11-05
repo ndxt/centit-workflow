@@ -453,7 +453,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     public long publishFlowDef(String flowCode) throws Exception {
         FlowDataDetail flowData = new FlowDataDetail();
         // 将流程从 XML 格式中解析出来
-        FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(0L, flowCode));
+        FlowInfo flowDef = flowDefineDao.getObjectWithReferences(new FlowInfoId(0L, flowCode));
         if (flowDef == null) {
             return 0L;
         }
@@ -470,19 +470,29 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         // 添加验证流程定义验证
         checkFlowDef(newFlowDef);
 
-        List<FlowStage> newStages = new ArrayList<FlowStage>();
-        //newFlowDef.replaceFlowStages(flowDef.getFlowStages());
-        for (FlowStage p : flowDef.getFlowStages()) {
+        List<FlowStage> newStages = flowDef.getFlowStages();
+        for (FlowStage p : newStages) {
             if (p == null)
                 continue;
-            FlowStage newdt = newFlowDef.newFlowStage();
-            newdt.copyNotNullProperty(p);
-            newdt.setStageId(UuidOpt.getUuidAsString32());
-//            newdt.setStageId(getNextStageId());
-            newStages.add(newdt);
+            p.setStageId(UuidOpt.getUuidAsString32());
+            p.setVersion(newVersion);
         }
         newFlowDef.setFlowStages(newStages);
-
+        List<FlowTeamRole> newTeamRole = flowDef.getFlowTeamRoles();
+        for(FlowTeamRole p:newTeamRole){
+            if (p == null)
+                continue;
+            p.setFlowTeamRoleId(UuidOpt.getUuidAsString32());
+            p.setVersion(newVersion);
+        }
+        newFlowDef.setFlowTeamRoles(newTeamRole);
+        List<FlowVariableDefine> newFlowVariableDefine=flowDef.getFlowVariableDefines();
+        for(FlowVariableDefine p:newFlowVariableDefine){
+            if(p==null) continue;
+            p.setFlowVariableId(UuidOpt.getUuidAsString32());
+            p.setVersion(newVersion);
+        }
+        newFlowDef.setFlowVariableDefines(newFlowVariableDefine);
         Map<String, String> nodeIsLeaf = new HashMap<String, String>();
         for (NodeInfo nd : newFlowDef.getFlowNodes()) {
             if (nd.getNodeId().equals(flowData.firstNodeId)) {
@@ -719,8 +729,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @param version 版本号
      * @return 对应的业务操作
      */
-    @Transactional
-    public Map<String, String> listAllOptCode(String flowCode, long version) {
+    private Map<String, String> listAllOptCode(String flowCode, long version) {
         FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
         //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
         List<FlowOptPage> wfOptDefs = flowOptDefDao.listObjectsByProperty("optId", flowDef.getOptId());
@@ -740,7 +749,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     @Transactional
     public Map<String, String> listAllOptCode(String flowCode) {
-        return listAllOptCode(flowCode, flowDefineDao.getLastVersion(flowCode));
+        return listAllOptCode(flowCode, 0L);
     }
     /**
      * 列举所有角色类别

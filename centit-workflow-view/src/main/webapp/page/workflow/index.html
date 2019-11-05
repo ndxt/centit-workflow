@@ -314,13 +314,13 @@
 							<div style="overflow: hidden;">
                 <select style="width: 99%; float: left;" id="roletype" class="roletype"
                         oninput="changeValue(this,'roletype')">
-									<option value="">不设置</option>
-									<option value="bj">办件角色</option>
-									<option value="gw">岗位角色</option>
-									<option value="xz">行政角色</option>
-                  <option value="xt">系统角色</option>
-                  <option value="en">权限引擎</option>
-									<option value="qx">已定义权限表达式</option>
+									<!--<option value="">不设置</option>-->
+									<!--<option value="bj">办件角色</option>-->
+									<!--<option value="gw">岗位角色</option>-->
+									<!--<option value="xz">行政角色</option>-->
+                  <!--<option value="xt">系统角色</option>-->
+                  <!--<option value="en">权限引擎</option>-->
+									<!--<option value="qx">已定义权限表达式</option>-->
 									<!--<option value="sp">审批角色</option>-->
 								</select>
                 <button class="insideUser" type="button" onclick="viewInsideDialog('allUser', true)" style="cursor: pointer; display: none;">用户</button>
@@ -528,13 +528,13 @@
               <div style="overflow: hidden;">
                 <select style="width: 99%; float: left;" id="route-roletype" class="roletype"
                         oninput="changeValue(this,'roletype')">
-                  <option value="">不设置</option>
-                  <option value="bj">办件角色</option>
-                  <option value="gw">岗位角色</option>
-                  <option value="xz">行政角色</option>
-                  <option value="xt">系统角色</option>
-                  <option value="en">权限引擎</option>
-                  <option value="qx">已定义权限表达式</option>
+                  <!--<option value="">不设置</option>-->
+                  <!--<option value="bj">办件角色</option>-->
+                  <!--<option value="gw">岗位角色</option>-->
+                  <!--<option value="xz">行政角色</option>-->
+                  <!--<option value="xt">系统角色</option>-->
+                  <!--<option value="en">权限引擎</option>-->
+                  <!--<option value="qx">已定义权限表达式</option>-->
                 </select>
                 <button class="insideUser" type="button" onclick="viewInsideDialog('allUser', true)" style="cursor: pointer; display: none;">用户</button>
               </div>
@@ -789,6 +789,7 @@
           <li id="szjs2">数组计算</li>
           <li id="rqjs">日期计算</li>
           <li id="xzyj">选择语句</li>
+          <li id="variable">变量</li>
         </ul>
         <div id="szjs1Func" class="tabCont" style="display: block;">
           log : 求以10为底的对数<br/>
@@ -860,6 +861,7 @@
           if : if (1,2,3)= 2  if (0,"2","3")= "3"<br/>
           case : 第一个参数是条件，后面匹配值成对出现，不成对的为默认值 case(1,2,3)= null，case(1, 2,3, 1,"5")= "5"，case(0, 1, "2","3")= "3"
         </div>
+        <div id="variableFunc" class="tabCont"></div>
       </div>
     </div>
   </div>
@@ -937,6 +939,20 @@
         	}
         });
 
+        // 角色类别
+        $.ajax({
+          type:"get",
+          async:false,
+          url:path+loadRoleType,
+          success:function(data){
+            Data.RoleType = data.data;
+            setRoleType()
+          },
+          error:function(data){
+            alert("请求失败");
+          }
+        });
+
         // 内置机构表达式
         $.ajax({
           type:"get",
@@ -954,15 +970,7 @@
           url:path+loadAllUnitData,
           success:function(data){
             Data.AllUnit = data.data
-            $('#allUnit .content').html('');
-            Data.AllUnit.forEach(function (v, i) {
-              $('#allUnit .content').append(
-                '<span>'+
-                  '<input id="unit-'+v.unitCode+'" data="'+v.unitCode+'" name="unit-'+i+'" type="checkbox" onchange="changeInsideInput(\'allUnit\', \'unitexp\', \'D\')"/>'+
-                  '<label for="unit-'+v.unitCode+'">'+v.unitName+'</label>'+
-                '</span>'
-              );
-            })
+            setAllUnit()
           },
         });
 
@@ -973,15 +981,7 @@
           url:path+loadAllUserData,
           success:function(data){
             Data.AllUser = data.data
-            $('#allUser .content').html('');
-            Data.AllUser.forEach(function (v, i) {
-              $('#allUser .content').append(
-                '<span>'+
-                  '<input id="user-'+v.userCode+'" data="'+v.userCode+'" name="user-'+i+'" type="checkbox" onchange="changeInsideInput(\'allUser\', \'unitexp\', \'U\')"/>'+
-                  '<label for="user-'+v.userCode+'">'+v.userName+'</label>'+
-                '</span>'
-              );
-            })
+            setAllUser()
           },
         });
     }

@@ -568,23 +568,23 @@ function changeValue(obj,id){
             changeOperateImg(obj.value,o);
         }
         if(id=="roletype"){
-            if(obj.value=="en"){
-                $("#roleName").hide();//隐藏角色代码
-                $("#powerName").show();//显示权限表达式
+            if(obj.value=="EN"){
+                $("#roleName,#route-roleName").hide();//隐藏角色代码
+                $("#powerName,#route-powerName").show();//显示权限表达式
                 $('.roletype:visible').width('78%').siblings('.insideUser').show();
                 g("powerexp").value = SVG.get(o).attr("powerexp");//权限表达式
             }
             else{
-                $("#powerName,#allUser").hide();//隐藏权限表达式
-                $("#roleName").show();//显示角色代码
+                $("#powerName,#route-powerName,#allUser").hide();//隐藏权限表达式
+                $("#roleName,#route-roleName").show();//显示角色代码
                 $('.roletype:visible').width('97%').siblings('.insideUser').hide();
-                $("#rolecode").empty();
-                for (k in Data[obj.value]) {
+                $("#rolecode,#route-rolecode").empty();
+                for (k in Data[obj.value]) { // [obj.value]
                     if (SVG.get(o).attr("rolecode") == k) {
-                        $("#rolecode").append("<option  value='" + k + "' selected='selected' >" + Data[obj.value][k] + "</option>");
+                        $("#rolecode,#route-rolecode").append("<option  value='" + k + "' selected='selected' >" + Data[obj.value][k] + "</option>");
                     }
                     else {
-                        $("#rolecode").append("<option  value='" + k + "'>" + Data[obj.value][k] + "</option>");
+                        $("#rolecode,#route-rolecode").append("<option  value='" + k + "'>" + Data[obj.value][k] + "</option>");
                     }
                 }
             }
@@ -630,41 +630,90 @@ function setLineName(obj){
 }
 
 /**
- * 设置流程变量
+ * 设置角色类别
  * @param obj
  */
-function setFlowVariable(obj) {
-  if (obj.FlowVariableDefine) {
-    for (v in obj.FlowVariableDefine) {
-      $("#flowvariabledefine").append("<a href='#' style='margin-right: 3px;'>" + obj.FlowVariableDefine[v] + "</a>")
+function setRoleType() {
+  $('#roletype,#route-roletype').html("<option  value='' selected='selected'>不设置</option>")
+  if (Data.RoleType) {
+    for (k in Data.RoleType) {
+      $("#roletype,#route-roletype").append("<option  value='" + k + "'>" + Data.RoleType[k] + "</option>");
     }
   }
 }
+
 /**
  * 设置多实例节点角色类别
  * @param obj
  */
-function setRoleType(obj){
-    SVG.get(o).attr({"roletype":obj.value});
-    if(obj.value=="en"){
-        $("#route-roleName").hide();//隐藏角色代码
-        $("#route-powerName").show();//显示权限表达式
-        g("route-powerexp").value = SVG.get(o).attr("powerexp");//权限表达式
+function setRouteRoleType(obj){
+  SVG.get(o).attr({"roletype":obj.value});
+  if(obj.value=="EN"){
+    $("#route-roleName").hide();//隐藏角色代码
+    $("#route-powerName").show();//显示权限表达式
+    g("route-powerexp").value = SVG.get(o).attr("powerexp");//权限表达式
+  }
+  else{
+    $("#route-powerName").hide();//隐藏权限表达式
+    $("#route-roleName").show();//显示角色代码
+    $("#route-rolecode").empty();
+    for (var k in Data[SVG.get(o).attr("roletype")]) {
+      if (SVG.get(o).attr("rolecode") == k) {
+        $("#route-rolecode").append("<option  value='" + k + "' selected='selected' >" + Data[SVG.get(o).attr("roletype")][k] + "</option>");
+      }
+      else {
+        $("#route-rolecode").append("<option  value='" + k + "'>" + Data[SVG.get(o).attr("roletype")][k] + "</option>");
+      }
     }
-    else{
-        $("#route-powerName").hide();//隐藏权限表达式
-        $("#route-roleName").show();//显示角色代码
-        $("#route-rolecode").empty();
-        for (var k in Data[SVG.get(o).attr("roletype")]) {
-            if (SVG.get(o).attr("rolecode") == k) {
-                $("#route-rolecode").append("<option  value='" + k + "' selected='selected' >" + Data[SVG.get(o).attr("roletype")][k] + "</option>");
-            }
-            else {
-                $("#route-rolecode").append("<option  value='" + k + "'>" + Data[SVG.get(o).attr("roletype")][k] + "</option>");
-            }
-        }
-    }
+  }
 }
+
+/**
+ * 设置流程变量
+ * @param obj
+ */
+function setFlowVariable(obj) {
+  $('#variableFunc').html('')
+  if (obj.FlowVariableDefine) {
+    for (v in obj.FlowVariableDefine) {
+      $("#flowvariabledefine").append("<a href='#' style='margin-right: 3px;'>" + obj.FlowVariableDefine[v] + "</a>")
+      $("#variableFunc").append("<a href='#'>" + obj.FlowVariableDefine[v] + "</a><br/>")
+    }
+  }
+}
+
+/**
+ * 设置内置机构
+ * @param obj
+ */
+function setAllUnit() {
+  $('#allUnit .content').html('');
+  Data.AllUnit.forEach(function (v, i) {
+    $('#allUnit .content').append(
+      '<span>'+
+        '<input id="unit-'+v.unitCode+'" data="'+v.unitCode+'" name="unit-'+i+'" type="checkbox" onchange="changeInsideInput(\'allUnit\', \'unitexp\', \'D\')"/>'+
+        '<label for="unit-'+v.unitCode+'">'+v.unitName+'</label>'+
+      '</span>'
+    );
+  })
+}
+
+/**
+ * 设置内置用户
+ * @param obj
+ */
+function setAllUser() {
+  $('#allUser .content').html('');
+  Data.AllUser.forEach(function (v, i) {
+    $('#allUser .content').append(
+      '<span>'+
+        '<input id="user-'+v.userCode+'" data="'+v.userCode+'" name="user-'+i+'" type="checkbox" onchange="changeInsideInput(\'allUser\', \'unitexp\', \'U\')"/>'+
+        '<label for="user-'+v.userCode+'">'+v.userName+'</label>'+
+      '</span>'
+    );
+  })
+}
+
 /**
  * 设置线继承期限类别
  * @param obj
@@ -679,6 +728,7 @@ function setInheritType(obj){
         $("#line-inheritCode").hide();
     }
 }
+
 /**
  * 设置路由类别
  * @param obj
@@ -742,7 +792,7 @@ function setRouteType(obj){
              }
              g("route-unitexp").value = SVG.get(o).attr("unitexp");//机构表达式
              //根据角色类别进行判断
-             if (SVG.get(o).attr("roletype") == "en") {//权限引擎
+             if (SVG.get(o).attr("roletype") == "EN") {//权限引擎
                  $("#route-roleName").hide();//隐藏角色代码
                  $("#route-powerName").show();//显示权限表达式
                  g("route-powerexp").value = SVG.get(o).attr("powerexp");//权限表达式
@@ -852,7 +902,7 @@ function validate(){
                 }
             }
             //角色类型为权限引擎
-            if(obj[i].getAttribute("roletype")=='en')	{
+            if(obj[i].getAttribute("roletype")=='EN')	{
                 if(obj[i].getAttribute("powerexp")==''){
                     myerrors.push(obj[i].getAttribute("title")+"的角色类别为权限引擎，但是没有设置权限表达式，请检查后保存");
                     flog=false;
