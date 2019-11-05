@@ -244,14 +244,15 @@ CREATE TABLE `wf_node_instance` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wf_optinfo`;
 CREATE TABLE `wf_optinfo` (
-  `OPT_ID` varchar(32) ,
-  `OPT_NAME` varchar(100) ,
+  `OPT_ID` varchar(32)  not null,
+  `OPT_NAME` varchar(100) not null,
   `OPT_URL` varchar(500) ,
   `OPT_VIEW_URL` varchar(500) ,
   `UPDATE_DATE` date DEFAULT NULL,
   `MODEL_ID` varchar(64) ,
   `TITLE_TEMPLATE` varchar(500) ,
-  `DEFAULT_FLOW` varchar(32) 
+  `DEFAULT_FLOW` varchar(32),
+  PRIMARY KEY (`OPT_ID`)
 ) ;
 
 -- ----------------------------
@@ -259,13 +260,14 @@ CREATE TABLE `wf_optinfo` (
 -- ----------------------------
 DROP TABLE IF EXISTS `wf_optpage`;
 CREATE TABLE `wf_optpage` (
-  `opt_code` varchar(32) ,
-  `opt_id` varchar(32) ,
-  `opt_name` varchar(128) ,
+  `opt_code` varchar(32)  not null,
+  `opt_id` varchar(32) not NULL ,
+  `opt_name` varchar(128) not NULL,
   `opt_method` varchar(50) ,
   `update_date` date DEFAULT NULL,
   `page_url` varchar(500) ,
-  `page_type` char(1) 
+  `page_type` char(1),
+  PRIMARY KEY (`opt_code`)
 ) ;
 
 -- ----------------------------

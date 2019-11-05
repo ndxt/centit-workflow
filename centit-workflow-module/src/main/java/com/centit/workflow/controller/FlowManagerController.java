@@ -583,10 +583,11 @@ public class FlowManagerController extends BaseController {
             NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeId);
             JSONObject nodeOptInfo = new JSONObject();
             nodeOptInfo.put("nodename", nodeInfo.getNodeName());
+            NodeInstance nextNodeInstance = new NodeInstance();
             int nodeInstInd = 0;
             //String nodeInstId=0;
             for (NodeInstance nodeInst : dbobject.getNodeInstances()) {
-                if (nodeInst.getNodeId().equals(nodeId)) {
+                if (nodeInst.getNodeId().equals(nodeId) || nodeInst.getPrevNodeInstId().equals(nextNodeInstance.getNodeInstId())) {
                     //暂时保证一个节点保留一条查看信息
                    /* if(nodeInstId>nodeInst.getNodeInstId())
                         continue;
@@ -594,6 +595,7 @@ public class FlowManagerController extends BaseController {
                         nodeOptInfo.clear();
                         nodeInstInd=0;
                     }*/
+                    nextNodeInstance = nodeInst;
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].createtime", DatetimeOpt.convertDatetimeToString(nodeInst.getCreateTime()));
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode", nodeInst.getUnitCode());
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname", CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
@@ -633,7 +635,8 @@ public class FlowManagerController extends BaseController {
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updateuser",
                             CodeRepositoryUtil.getValue("userCode", nodeInst.getLastUpdateUser()));
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
-                            DatetimeOpt.convertDatetimeToString(nodeInst.getLastUpdateTime()));
+                            DatetimeOpt.convertDatetimeToString(
+                                nodeInst.getLastUpdateTime()==null?nodeInst.getCreateTime():nodeInst.getLastUpdateTime()));
                         //ActionLog的获取暂时取消
 //                        List<ActionLog> actions = flowManager.listNodeActionLogs(nodeInst.getNodeInstId());
 //                        int actionInd = 0;
