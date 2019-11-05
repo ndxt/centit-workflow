@@ -10,6 +10,7 @@ import com.centit.framework.ip.service.impl.JsonIntegrationEnvironment;
 import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
+import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.security.model.CentitPasswordEncoder;
 import com.centit.framework.security.model.StandardPasswordEncoderImpl;
 import com.centit.support.file.FileSystemOpt;
@@ -57,9 +58,10 @@ public class ServiceConfig {
     }
 
     @Bean
-    public NotificationCenter notificationCenter() {
+    public NotificationCenter notificationCenter(@Autowired PlatformEnvironment platformEnvironment) {
         NotificationCenterImpl notificationCenter = new NotificationCenterImpl();
-        //notificationCenter.initMsgSenders();
+        notificationCenter.initDummyMsgSenders();
+        notificationCenter.setPlatformEnvironment(platformEnvironment);
         //notificationCenter.registerMessageSender("innerMsg",innerMessageManager);
         return notificationCenter;
     }
