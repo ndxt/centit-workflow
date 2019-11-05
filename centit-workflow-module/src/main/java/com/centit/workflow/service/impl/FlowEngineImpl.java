@@ -847,11 +847,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     nodeInst.setTaskAssigned("S");
                     //nodeInst.setUserCode(optUsers.iterator().next());
                 }
+                notificationCenter.sendMessage("system", optUsers,
+                    NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
+                        .content("您有新任务:" + nextOptNode.getNodeName()));
             }
 
-            notificationCenter.sendMessage("system", optUsers,
-                NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
-                .content("您有新任务:" + nextOptNode.getNodeName()));
         }
         /**
          *  检查令牌冲突（自由流程，令牌的冲突有业务程序和流程图自己控制，无需检查）
