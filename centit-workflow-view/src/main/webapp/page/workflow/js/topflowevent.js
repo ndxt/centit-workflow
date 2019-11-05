@@ -1,6 +1,14 @@
 /**
  * Created by gyr on 2015-4-10.
  */
+var rolecodeJson = {
+  bj: 'BJ',
+  gw: 'GW',
+  xz: 'XZ',
+  xt: 'RO',
+  en: '',
+  qx: 'SF'
+}
 /**
  * 绑定节点属性属性工具栏
  * @param obj 目标对象
@@ -139,12 +147,14 @@ function bindAttr(obj) {
             $("#powerName").hide();//隐藏权限表达式
             $("#roleName").show();//显示角色代码
             $("#rolecode").empty();
-            for (k in Data.SF) { // [SVG.get(o).attr("roletype")]
+            var key = rolecodeJson[SVG.get(o).attr("roletype")]
+
+            for (k in Data[key]) {
                 if (SVG.get(o).attr("rolecode") == k) {
-                    $("#rolecode").append("<option  value='" + k + "' selected='selected' >" + Data.SF[k] + "</option>");
+                    $("#rolecode").append("<option  value='" + k + "' selected='selected' >" + Data[key][k] + "</option>");
                 }
                 else {
-                    $("#rolecode").append("<option  value='" + k + "'>" + Data.SF[k] + "</option>");
+                    $("#rolecode").append("<option  value='" + k + "'>" + Data[key][k] + "</option>");
                 }
             }
             SVG.get(o).attr({"rolecode":$("#rolecode").val()});

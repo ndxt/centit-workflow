@@ -579,12 +579,14 @@ function changeValue(obj,id){
                 $("#roleName").show();//显示角色代码
                 $('.roletype:visible').width('97%').siblings('.insideUser').hide();
                 $("#rolecode").empty();
-                for (k in Data.SF) { // [obj.value]
+              var key = rolecodeJson[obj.value]
+
+                for (k in Data[key]) { // [obj.value]
                     if (SVG.get(o).attr("rolecode") == k) {
-                        $("#rolecode").append("<option  value='" + k + "' selected='selected' >" + Data.SF[k] + "</option>");
+                        $("#rolecode").append("<option  value='" + k + "' selected='selected' >" + Data[key][k] + "</option>");
                     }
                     else {
-                        $("#rolecode").append("<option  value='" + k + "'>" + Data.SF[k] + "</option>");
+                        $("#rolecode").append("<option  value='" + k + "'>" + Data[key][k] + "</option>");
                     }
                 }
             }
@@ -634,9 +636,11 @@ function setLineName(obj){
  * @param obj
  */
 function setFlowVariable(obj) {
+  $('#variableFunc').html('')
   if (obj.FlowVariableDefine) {
     for (v in obj.FlowVariableDefine) {
       $("#flowvariabledefine").append("<a href='#' style='margin-right: 3px;'>" + obj.FlowVariableDefine[v] + "</a>")
+      $("#variableFunc").append("<a href='#'>" + obj.FlowVariableDefine[v] + "</a><br/>")
     }
   }
 }
