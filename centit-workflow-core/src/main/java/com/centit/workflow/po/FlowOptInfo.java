@@ -38,13 +38,13 @@ public class FlowOptInfo implements java.io.Serializable {
      * 默认流程
      */
     @Column(name = "DEFAULT_FLOW")
-    private String default_flow;
+    private String defaultFlow;
 
     /**
      * 业务标题魔板，flowOptName
      */
     @Column(name = "TITLE_TEMPLATE")
-    private String title_template;
+    private String titleTemplate;
 
     //自定义表单得模板id
     @Column(name = "MODEL_ID")
