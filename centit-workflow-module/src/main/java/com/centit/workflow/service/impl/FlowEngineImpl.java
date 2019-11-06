@@ -404,10 +404,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // 强制锁定用户 优先级最好
         if(options.isLockOptUser()){
             String optUser = options.getWorkUserCode();
-            if(StringUtils.isBlank(optUser)){
-                optUser = options.getUserCode();
+            if(StringUtils.isNotBlank(optUser)) {
+                return new LeftRightPair<>(nodeUnits, CollectionsOpt.createHashSet(optUser));
             }
-            return new LeftRightPair<>(nodeUnits, CollectionsOpt.createHashSet(optUser));
         }
         // 通过节点 映射
         Set<String> optUsers = null;
