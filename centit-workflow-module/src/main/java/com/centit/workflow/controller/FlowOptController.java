@@ -41,7 +41,7 @@ public class FlowOptController extends BaseController {
     @Autowired
     private IntegrationEnvironment integrationEnvironmen;
 
-    @ApiOperation(value = "获取业务列表", notes = "获取业务列表")
+    @ApiOperation(value = "获取业务系统列表", notes = "获取业务系统列表")
     @WrapUpResponseBody
     @RequestMapping(value="/oslist" ,method = RequestMethod.GET)
     public List<OsInfo> listAllOs(){
