@@ -103,14 +103,14 @@ function bindAttr(obj) {
                     $("#business").show();//显示业务操作
                     $("#optcode").empty();//清空
                     for (k in Data.OptCode) {
+                      if (k !== '') {
                         if (SVG.get(o).attr("optcode") == k) {
-                            $("#optcode").append("<option  value='" + k + "' selected='selected'>" + Data.OptCode[k] + "</option>");
+                          $("#optcode").append("<option  value='" + k + "' selected='selected'>" + Data.OptCode[k] + "</option>");
                         }
                         else {
-
-                            $("#optcode").append("<option  value='" + k + "' >" + Data.OptCode[k] + "</option>");
-
+                          $("#optcode").append("<option  value='" + k + "' >" + Data.OptCode[k] + "</option>");
                         }
+                      }
                     }
                     SVG.get(o).attr({"optcode":$("#optcode").val()});
                     $("#childNode").hide();//隐藏子流程

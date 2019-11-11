@@ -12,14 +12,14 @@ function init() {
     $(document).ready(function () {
         $.ajax({
             type: "GET",
-            url: path+"system/cp/dictionary/ptbmxx",
+            url: path+"workflow/flow/opt/oslist",
             type: "GET",
             contentType:'application/json',
             dataType:'json',
             success: function(data){
                 var value = data.data;
                 for(var i=0; i<value.length; i++){
-                    $("#osid").append("<option  value='" + value[i].dataCode + "'  >" + value[i].dataValue + "</option>");
+                    $("#osid").append("<option  value='" + value[i].osId + "'  >" + value[i].osName + "</option>");
                 }
             }
         });
@@ -554,14 +554,14 @@ function changeValue(obj,id){
                 $("#business").show();//显示业务操作
                 $("#optcode").empty();//清空
                 for (k in Data.OptCode) {
+                  if (k !== '') {
                     if (SVG.get(o).attr("optcode") == k) {
-                        $("#optcode").append("<option  value='" + k + "' selected='selected'>" + Data.OptCode[k] + "</option>");
+                      $("#optcode").append("<option  value='" + k + "' selected='selected'>" + Data.OptCode[k] + "</option>");
                     }
                     else {
-
-                        $("#optcode").append("<option  value='" + k + "' >" + Data.OptCode[k] + "</option>");
-
+                      $("#optcode").append("<option  value='" + k + "' >" + Data.OptCode[k] + "</option>");
                     }
+                  }
                 }
                 $("#childNode").hide();//隐藏子流程
             }
