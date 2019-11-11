@@ -41,15 +41,22 @@ public class FlowOptController extends BaseController {
     @Autowired
     private IntegrationEnvironment integrationEnvironmen;
 
-    @ApiOperation(value = "获取业务列表", notes = "获取业务列表")
+    @ApiOperation(value = "获取业务系统列表", notes = "获取业务系统列表")
     @WrapUpResponseBody
     @RequestMapping(value="/oslist" ,method = RequestMethod.GET)
     public List<OsInfo> listAllOs(){
         return integrationEnvironmen.listOsInfos();
     }
 
-    //工作流--流程定义--业务模块取值
     @ApiOperation(value = "获取业务列表", notes = "获取业务列表")
+    @WrapUpResponseBody
+    @RequestMapping(method = RequestMethod.GET)
+    public List<FlowOptInfo> listAllFlowOptInfo(){
+        return wfOptService.getListOptInfo();
+    }
+
+    //工作流--流程定义--业务模块取值
+    @ApiOperation(value = "获取业务列表（不用用这个，这个url太随意）", notes = "获取业务列表")
     @WrapUpResponseBody
     @RequestMapping(value="/allOptInfos" ,method = RequestMethod.GET)
     public List<FlowOptInfo> listFlowOptInfo(){
