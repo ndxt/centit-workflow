@@ -1438,6 +1438,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public void updateFlow(FlowInstance flowInstance) {
         flowInstanceDao.updateObject(flowInstance);
     }
+    @Override
+    public void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName, String flowOptTag, String userCode, String unitCode){
+        flowInstanceDao.updateFlowInstOptInfoAndUser(flowInstId, flowOptName, flowOptTag,userCode,unitCode);
+    }
 
     @Override
     public Boolean reStartFlow(String flowInstId, String managerUserCode, Boolean force) {

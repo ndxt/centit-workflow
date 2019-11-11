@@ -475,4 +475,6 @@ public interface FlowManager {
      * @return
      */
     FlowInstanceGroup getFlowInstanceGroup(String flowInstGroupId);
+
+    void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName, String flowOptTag, String userCode, String unitCode);
 }

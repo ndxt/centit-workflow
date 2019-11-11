@@ -1,5 +1,6 @@
 package com.centit.workflow.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
@@ -380,7 +381,21 @@ public class FlowManagerController extends BaseController {
         flowManager.suspendInstance(wfinstid, mangerUserCode, admindesc);
         return "已暂挂";
     }
-
+   @ApiOperation(value="编辑流程实例",notes="编辑流程实例")
+   @WrapUpResponseBody
+   @PostMapping
+   public void updateFlowInst(@RequestBody String json){
+       JSONObject jsonObject = JSON.parseObject(json);
+       //流程实例ID
+       String flowInstId = jsonObject.getString("flowInstId");
+       //流程名称
+       String flowOptName = jsonObject.getString("flowOptName");
+       //流程业务id
+       String flowOptTag = jsonObject.getString("flowOptTag");
+       String userCode = jsonObject.getString("userCode");
+       String unitCode = jsonObject.getString("unitCode");
+       flowManager.updateFlowInstOptInfoAndUser(flowInstId, flowOptName, flowOptTag,userCode,unitCode);
+   }
     /**
      * 更改机构
      *

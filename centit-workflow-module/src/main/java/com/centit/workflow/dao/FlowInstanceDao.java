@@ -187,6 +187,10 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
         String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=? where  FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,flowInstId});
     }
+    public void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName,String flowOptTag,String userCode,String unitCode){
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=?,user_code=?,unit_code=? where  FLOW_INST_ID=?";
+        this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,userCode,unitCode,flowInstId});
+    }
 
     public List<FlowInstance> listAllFlowInstByOptTag(String flowOptTag) {
         return this.listObjectsByFilter("where FLOW_OPT_TAG=? "
