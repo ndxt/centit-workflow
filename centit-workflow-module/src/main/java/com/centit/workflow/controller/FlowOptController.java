@@ -5,6 +5,8 @@ import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.ip.po.OsInfo;
+import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.FlowOptPage;
@@ -36,13 +38,24 @@ public class FlowOptController extends BaseController {
     @Autowired
     private FlowOptService wfOptService;
 
+    @Autowired
+    private IntegrationEnvironment integrationEnvironmen;
+
+    @ApiOperation(value = "获取业务列表", notes = "获取业务列表")
+    @WrapUpResponseBody
+    @RequestMapping(value="/oslist" ,method = RequestMethod.GET)
+    public List<OsInfo> listAllOs(){
+        return integrationEnvironmen.listOsInfos();
+    }
+
     //工作流--流程定义--业务模块取值
     @ApiOperation(value = "获取业务列表", notes = "获取业务列表")
     @WrapUpResponseBody
     @RequestMapping(value="/allOptInfos" ,method = RequestMethod.GET)
-    public List<FlowOptInfo> getListFlowOptInfo(){
+    public List<FlowOptInfo> listFlowOptInfo(){
          return wfOptService.getListOptInfo();
     }
+
     @ApiOperation(value = "分页获取业务列表", notes = "分页获取业务列表")
     @WrapUpResponseBody
     @RequestMapping(method = RequestMethod.GET)

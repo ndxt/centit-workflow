@@ -2,7 +2,6 @@ package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.WebOptUtils;
-import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
@@ -23,9 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 用户的权限委托 和任务转移
@@ -50,12 +47,12 @@ public class RoleRelegateController extends BaseController {
         required=true, paramType = "path", dataType= "String"
     )})
     @WrapUpResponseBody
-    @GetMapping(value = "/role/{userCode}/{roleType}")
-    public Map<String, String> listUserRoles(@PathVariable String userCode,
+    @GetMapping(value = "/role/{userCode}")
+    public List<? extends IUserUnit> listUserRoles(@PathVariable String userCode,
                                              @PathVariable String roleType){
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
-        List<? extends IUserUnit> userUnits = context.listUserUnits(userCode);
-        boolean isGwRole = SysUserFilterEngine.ROLE_TYPE_GW.equals(roleType);
+        return /* List<? extends IUserUnit> userUnits =*/ context.listUserUnits(userCode);
+       /* boolean isGwRole = SysUserFilterEngine.ROLE_TYPE_GW.equals(roleType);
         Map<String, String> allRoles = isGwRole? context.listAllStation()
             : context.listAllRank();
         Map<String, String> userRoles = new HashMap<>();
@@ -66,7 +63,7 @@ public class RoleRelegateController extends BaseController {
                 userRoles.put(uu.getUserRank(), allRoles.get(uu.getUserRank()));
             }
         }
-        return userRoles;
+        return userRoles;*/
     }
 
     /**
@@ -113,10 +110,12 @@ public class RoleRelegateController extends BaseController {
      */
     @ApiOperation(value = "删除委托", notes = "删除委托")
     @WrapUpResponseBody
-    @RequestMapping(value = "/relegate/{relegateNo}", method = {RequestMethod.DELETE})
+    @RequestMapping(value = "/{relegateNo}", method = {RequestMethod.DELETE})
     public void deleteRelegate(@PathVariable String relegateNo) {
         flowManager.deleteRoleRelegate(relegateNo);
     }
+
+
     @ApiOperation(value = "通过参数获取委托", notes = "通过参数获取委托")
     @WrapUpResponseBody
     @RequestMapping(value = "/get", method = RequestMethod.POST)
