@@ -32,14 +32,14 @@ public class ActionTask implements java.io.Serializable {
 
     @Column(name="USER_CODE")
     private String userCode;
-    @Column(name="ROLE_TYPE")
+ /*   @Column(name="ROLE_TYPE")
     private String roleType;
     @Column(name="ROLE_CODE")
-    private String roleCode;
+    private String roleCode;*/
     @Column(name="TASK_STATE")
     private String taskState;
-    @Column(name="IS_VALID")
-    private String isValid;
+/*    @Column(name="IS_VALID")
+    private String isValid;*/
     @Column(name="AUTH_DESC")
     private String authDesc;
 
@@ -60,17 +60,11 @@ public class ActionTask implements java.io.Serializable {
 
 
     public void copy(ActionTask other){
-
         this.setTaskId(other.getTaskId());
         this.nodeInstId = other.getNodeInstId();
         this.assignTime = other.getAssignTime();
         this.userCode = other.getUserCode();
-        this.roleType = other.getRoleType();
-        this.roleCode = other.getRoleCode();
         this.taskState = other.getTaskState();
-        this.isValid = other.getIsValid();
-        this.authDesc = other.getAuthDesc();
-
     }
 
     public void copyNotNullProperty(ActionTask other){
@@ -82,15 +76,5 @@ public class ActionTask implements java.io.Serializable {
             this.assignTime = other.getAssignTime();
         if( other.getUserCode() != null)
             this.userCode = other.getUserCode();
-        if( other.getRoleType() != null)
-            this.roleType = other.getRoleType();
-        if( other.getRoleCode() != null)
-            this.roleCode = other.getRoleCode();
-        if( other.getTaskState() != null)
-            this.taskState = other.getTaskState();
-        if( other.getIsValid() != null)
-            this.isValid = other.getIsValid();
-        if( other.getAuthDesc() != null)
-            this.authDesc = other.getAuthDesc();
     }
  }

@@ -152,7 +152,6 @@ public class FlowOptUtils {
     public static ActionTask createActionTask(String nodeInstId, String usercode) {
         ActionTask task = new ActionTask();
         task.setNodeInstId(nodeInstId);
-        task.setIsValid("T");
         task.setAssignTime(new Date(System.currentTimeMillis()));
         task.setUserCode(usercode);
         task.setTaskState("A");
@@ -165,8 +164,6 @@ public class FlowOptUtils {
     public static ActionTask createActionTask(String usercode,
                                               NodeInstance nodeInst, NodeInfo node) {
         ActionTask actionTask = createActionTask(nodeInst.getNodeInstId(), usercode);
-        actionTask.setRoleType(node.getRoleType());
-        actionTask.setRoleCode(node.getRoleCode());
         //actionTask.setIsvalid("T");
         //actionTask.setExpireTime(new Date(System.currentTimeMillis()+1000*60*60*480));
         return actionTask;

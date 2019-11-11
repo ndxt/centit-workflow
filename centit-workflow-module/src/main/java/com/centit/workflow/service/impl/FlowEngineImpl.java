@@ -1087,7 +1087,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
              */
             int havnotSubmit = 0;
             for (ActionTask task : nodeInst.getWfActionTasks()) {
-                if ("T".equals(task.getIsValid()) && "A".equals(task.getTaskState())) {
+                if ("A".equals(task.getTaskState())) {
                     if (/*userCode*/sGrantor.equals(task.getUserCode())) {
                         //任务的完成时间在任务的活动日志中
                         task.setTaskState("C");
@@ -1340,7 +1340,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nextNodeInst.setLastUpdateTime(updateTime);
 
         for (ActionTask task : prevNodeInst.getWfActionTasks()) {
-            if ("T".equals(task.getIsValid())) {
                 ActionTask newtask = FlowOptUtils.createActionTask(
                     task.getUserCode(), nextNodeInst, nodedef);
                 //newtask.setTaskId(actionTaskDao.getNextTaskId());
@@ -1349,7 +1348,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nextNodeInst.setTimeLimit(null);
                 nextNodeInst.setTaskAssigned("T");
                 actionTaskDao.saveNewObject(newtask);
-            }
         }
 
         flowInst.addNodeInstance(nextNodeInst);

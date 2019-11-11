@@ -547,7 +547,7 @@ public class NodeInstance implements java.io.Serializable {
 
     public Set<ActionTask> getWfActionTasks(){
         if(this.wfActionTasks==null)
-            this.wfActionTasks = new HashSet<ActionTask>();
+            this.wfActionTasks = new HashSet<>();
         return this.wfActionTasks;
     }
 

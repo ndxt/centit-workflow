@@ -787,14 +787,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         for (ActionTask task : thisnode.getWfActionTasks()) {
             nextNodeInst.setTaskAssigned("T");
-            if ("T".equals(task.getIsValid())) {
                 ActionTask newtask = FlowOptUtils.createActionTask(
                     task.getUserCode(), nextNodeInst, nodedef);
                 //newtask.setTaskId(actionTaskDao.getNextTaskId());
                 // 要判断 过期时间的问题
                 nextNodeInst.addWfActionTask(newtask);
                 actionTaskDao.saveNewObject(newtask);
-            }
+
         }
 
         flow.addNodeInstance(nextNodeInst);
@@ -1255,7 +1254,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public int assignNodeTask(String nodeInstId, String userCode,
                            String mangerUserCode, String authDesc) {
-        NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
+        NodeInstance node = nodeInstanceDao.getObjectWithReferences(nodeInstId);
         if (node == null)
             return -1;
 
@@ -1278,6 +1277,18 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public List<ActionTask> listNodeInstTasks(String nodeInstId) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(nodeInstId);
+        if (null == nodeInst)
+            nodeInst = new NodeInstance();
+        if (nodeInst.getWfActionTasks().size()==0){
+          List<ActionTask> actionTasks=new ArrayList<>(1);
+          ActionTask actionTask=new ActionTask();
+          actionTask.setNodeInstId(nodeInst.getNodeInstId());
+          actionTask.setUserCode(nodeInst.getUserCode());
+          actionTask.setAssignTime(nodeInst.getLastUpdateTime());
+          actionTask.setTaskId(nodeInst.getNodeInstId());
+          actionTasks.add(actionTask);
+          return actionTasks;
+        }
         return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
@@ -1302,6 +1313,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if( leftTaskCount ==1){
             node.setTaskAssigned("S");
             node.setUserCode(leftTask.getUserCode());
+            actionTaskDao.deleteObject(leftTask);
         }
         node.setLastUpdateUser(mangerUserCode);
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
@@ -1342,7 +1354,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             if(!findCount){
                 ActionTask task = FlowOptUtils.createActionTask(nodeInstId,
                     userCode);
-                task.setAuthDesc(authDesc);
                 actionTaskDao.saveNewObject(task);
             }
         } else {
@@ -1353,11 +1364,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 node.setTaskAssigned("T");
                 ActionTask task = FlowOptUtils.createActionTask(nodeInstId,
                     userCode);
-                task.setAuthDesc(authDesc);
                 actionTaskDao.saveNewObject(task);
                 task = FlowOptUtils.createActionTask(nodeInstId,
                     oldUser);
-                task.setAuthDesc("转换为多人操作");
                 actionTaskDao.saveNewObject(task);
             }
         }
