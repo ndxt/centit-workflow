@@ -40,17 +40,13 @@ public class RoleRelegateController extends BaseController {
     private UserUnitFilterCalcContextFactory userUnitFilterFactory;
 
     @ApiOperation(value = "获取用户角色", notes = "获取用户角色")
-    @ApiImplicitParams({@ApiImplicitParam(
+    @ApiImplicitParam(
         name = "userCode", value="用户代码",
         required=true, paramType = "path", dataType= "String"
-    ),@ApiImplicitParam(
-        name = "roleType", value="角色类别只能为'GW'或者'XZ'",
-        required=true, paramType = "path", dataType= "String"
-    )})
+    )
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/role/{userCode}")
-    public List<? extends IUserUnit> listUserRoles(@PathVariable String userCode,
-                                             @PathVariable String roleType){
+    public List<? extends IUserUnit> listUserRoles(@PathVariable String userCode){
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
         return /* List<? extends IUserUnit> userUnits =*/ context.listUserUnits(userCode);
        /* boolean isGwRole = SysUserFilterEngine.ROLE_TYPE_GW.equals(roleType);
