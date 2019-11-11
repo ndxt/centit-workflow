@@ -6,7 +6,6 @@ import org.springframework.web.WebApplicationInitializer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-
 /**
  * Created by zou_wy on 2017/3/29.
  */
