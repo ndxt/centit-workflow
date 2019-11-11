@@ -3,6 +3,7 @@ package com.centit.workflow.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
+import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
@@ -46,7 +47,7 @@ public class RoleRelegateController extends BaseController {
         name = "roleType", value="角色类别只能为'GW'或者'XZ'",
         required=true, paramType = "path", dataType= "String"
     )})
-    @WrapUpResponseBody
+    @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/role/{userCode}")
     public List<? extends IUserUnit> listUserRoles(@PathVariable String userCode,
                                              @PathVariable String roleType){
