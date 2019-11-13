@@ -1,6 +1,7 @@
 package com.centit.workflow.client.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.support.common.ObjectException;
 import com.centit.workflow.commons.NodeEventSupport;
@@ -25,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 @RequestMapping("/workflowEventBean")
-public class EventBeanController {
+public class EventBeanController extends BaseController {
 
     public static final Logger logger = LoggerFactory.getLogger(EventBeanController.class);
 
