@@ -824,7 +824,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员");
             }
 
-            if ("gw".equals(nextOptNode.getRoleType())) {/* &&
+            if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(nextOptNode.getRoleType())) {/* &&
                     "A".equals(nextOptNode.getOptType())){*/
                 nodeInst.setTaskAssigned("D");
             } else if ("A".equals(nextOptNode.getOptType())
@@ -1021,7 +1021,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         String sGrantor;
         NodeInfo currNode = flowNodeDao.getObjectById(nodeInst.getNodeId());
-        if ("gw".equals(currNode.getRoleType())) {
+        if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(currNode.getRoleType())) {
             //TODO 判断人员岗位吻合
             sGrantor = options.getUserCode();
         } else if (StringUtils.isBlank(options.getGrantorCode())
