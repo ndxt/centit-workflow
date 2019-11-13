@@ -1537,6 +1537,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             jsonObject.put("grantor", newRelegate.getGrantor());
             jsonObject.put("grantee", newRelegate.getGrantee());
             jsonObject.put("roleCode", roleCodeList);
+            jsonObject.put("unitCode",newRelegate.getUnitCode());
+            jsonObject.put("relegateTime",newRelegate.getRelegateTime());
+            jsonObject.put("expireTime",newRelegate.getExpireTime());
+            jsonObject.put("grantDesc",newRelegate.getGrantDesc());
             roleRelegates.add(jsonObject);
         }
         return roleRelegates;
