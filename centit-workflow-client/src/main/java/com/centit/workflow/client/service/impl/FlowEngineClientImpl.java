@@ -473,7 +473,12 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public JSONArray listTasks(Map<String, Object> paramMap, PageDesc pageDesc) {
-        return null;
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/engine/listTasks",
+                    paramMap), (JSONObject) JSON.toJSON(pageDesc)));
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getJSONArray("objList"/*, UserTask.class*/);
     }
 
     /**
@@ -484,19 +489,26 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public JSONArray listNodeTaskUsers(String nodeInstId) {
-        return null;
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+                "/flow/engine/nodeTaskUsers?nodeInstId="+nodeInstId);
+        return receiveJSON.getJSONArray();
     }
 
     /**
      * 获取动态待办
      *
-     * @param searchColumn 包含nodeInstId，unitCode，userStation
+     * @param paramMap 包含nodeInstId，unitCode，userStation
      * @param pageDesc     分页信息
      * @return
      */
     @Override
-    public JSONArray listDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return null;
+    public JSONArray listDynamicTask(Map<String, Object> paramMap, PageDesc pageDesc) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/engine/listDynamicTasks",
+                    paramMap), (JSONObject) JSON.toJSON(pageDesc)));
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getJSONArray("objList"/*, UserTask.class*/);
     }
 
     /**

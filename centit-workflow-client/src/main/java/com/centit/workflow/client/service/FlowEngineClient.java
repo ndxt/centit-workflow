@@ -296,12 +296,12 @@ public interface FlowEngineClient {
 
     /**
      * 获取动态待办
-     * @param searchColumn 包含nodeInstId，unitCode，userStation
+     * @param paramMap 包含nodeInstId，unitCode，userStation
      * @param pageDesc 分页信息
      * @return 获取待办列表 这里指动态代办
      * @return
      */
-    JSONArray/*List<UserTask>*/ listDynamicTask(Map<String, Object> searchColumn,PageDesc pageDesc);
+    JSONArray/*List<UserTask>*/ listDynamicTask(Map<String, Object> paramMap,PageDesc pageDesc);
 
     /**
      *

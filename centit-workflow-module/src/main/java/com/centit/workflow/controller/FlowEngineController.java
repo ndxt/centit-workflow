@@ -139,23 +139,25 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查询用户待办", notes = "查询用户待办")
     @WrapUpResponseBody
     @GetMapping(value = "/listUserTasks")
-    public List<UserTask> listUserTasks(String userCode) {
+    public PageQueryResult<UserTask> listUserTasks(@RequestParam(value = "userCode") String userCode, PageDesc pageDesc) {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("userCode", userCode);
-        return flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
+        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, pageDesc);
+        return PageQueryResult.createResult(userTasks, pageDesc);
     }
 
     @ApiOperation(value = "根据条件查询待办", notes = "根据条件查询待办")
     @WrapUpResponseBody
     @GetMapping(value = "/listTasks")
-    public List<UserTask> listTasks(HttpServletRequest request) {
+    public PageQueryResult<UserTask> listTasks(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
-        return flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
+        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, pageDesc);
+        return PageQueryResult.createResult(userTasks, pageDesc);
     }
 
     @ApiOperation(value = "查询节点待办用户", notes = "查询节点待办用户")
     @WrapUpResponseBody
-    @GetMapping(value = "/listNodeTaskUsers")
+    @GetMapping(value = "/nodeTaskUsers")
     public List<UserTask> listNodeTaskUsers(String nodeInstId) {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("nodeInstId", nodeInstId);
@@ -164,12 +166,11 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "查询用户岗位待办", notes = "查询用户岗位待办")
     @WrapUpResponseBody
-    @GetMapping(value = "/listUserDynamicTasks")
-    public List<UserTask> listUserDynamicTasks(String userCode) {
-        Map<String, Object> searchColumn = new HashMap<>();
-        PageDesc pageDesc = new PageDesc(1, 10);
-        searchColumn.put("userCode", userCode);
-        return flowEngine.listDynamicTask(searchColumn, pageDesc);
+    @GetMapping(value = "/listDynamicTasks")
+    public PageQueryResult<UserTask> listUserDynamicTasks(HttpServletRequest request, PageDesc pageDesc ) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks =  flowEngine.listDynamicTask(searchColumn, pageDesc);
+        return PageQueryResult.createResult(userTasks, pageDesc);
     }
 
     @ApiOperation(value = "业务id关联流程", notes = "根据业务id查询关联流程")
