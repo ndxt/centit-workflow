@@ -29,7 +29,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
         return filterField;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void deleteFlowWorkTeam(String flowInstId, String roleCode) {
         List<FlowWorkTeam> team = listFlowWorkTeamByRole(flowInstId,  roleCode);
         if(team==null || team.size()==0)
@@ -66,7 +66,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
      * @return
      */
     @SuppressWarnings("unchecked")
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowWorkTeam> listFlowWorkTeam(String flowInstId, String roleCode, String authdesc)
     {
         return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? and auth_Desc = ? " +

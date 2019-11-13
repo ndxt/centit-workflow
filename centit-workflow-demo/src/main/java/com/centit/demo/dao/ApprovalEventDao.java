@@ -22,12 +22,12 @@ public class ApprovalEventDao extends BaseDaoImpl<ApprovalEvent,Long> {
         return null;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public long getNextApprovalEventId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_APPROVALEVENT");
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void saveNewObject(ApprovalEvent o) {
         if(o.getApprovalId() == null || o.getApprovalId() == 0){
             o.setApprovalId(getNextApprovalEventId());
@@ -35,7 +35,7 @@ public class ApprovalEventDao extends BaseDaoImpl<ApprovalEvent,Long> {
         super.saveNewObject(o);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<ApprovalEvent> getApprovalEventByFlowInstId(String flowInstId){
         return this.listObjectsByFilter("where flow_Inst_Id = ?",new Object[]{flowInstId});
     }

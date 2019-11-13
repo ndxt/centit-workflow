@@ -22,13 +22,13 @@ public class ApprovalProcessDao extends BaseDaoImpl<ApprovalProcess,Long> {
         return null;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public long getNextApprovalProcessId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_APPROVALPROCESS");
     }
 
     @Override
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void saveNewObject(ApprovalProcess o) {
         if(o.getProcessId() == null || o.getProcessId() == 0){
             o.setProcessId(getNextApprovalProcessId());
@@ -36,7 +36,7 @@ public class ApprovalProcessDao extends BaseDaoImpl<ApprovalProcess,Long> {
         super.saveNewObject(o);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<ApprovalProcess> getApprovalProcessByNodeInstId(String nodeInstId){
         return this.listObjectsByFilter("where node_Inst_Id = ?",new Object[]{nodeInstId});
     }

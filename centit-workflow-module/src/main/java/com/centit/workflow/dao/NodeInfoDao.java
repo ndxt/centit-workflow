@@ -5,7 +5,6 @@ import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.NodeInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -44,7 +43,7 @@ public class NodeInfoDao extends BaseDaoImpl<NodeInfo,Long>
         return filterField;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public Set<String> getUnitExp(String flowCode, Long version) {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("flowCode", flowCode);
@@ -63,7 +62,7 @@ public class NodeInfoDao extends BaseDaoImpl<NodeInfo,Long>
         return unitExpSet;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<NodeInfo> listNodeByNodecode(String flowCode, Long version, String nodeCode) {
         return this.listObjectsByFilter("where FLOW_CODE=? " +
                 "and version=? and node_Code=?",new Object[]{flowCode,  version,  nodeCode});

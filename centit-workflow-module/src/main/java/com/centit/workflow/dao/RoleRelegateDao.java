@@ -7,7 +7,6 @@ import com.centit.support.algorithm.UuidOpt;
 import com.centit.workflow.po.RoleRelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
@@ -37,11 +36,11 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate,Long> {
         }
         return filterField;
     }
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public long getNextReleGateId() {
         return DatabaseOptUtils.getSequenceNextValue(this,"S_RELEGATENO");
     }
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void saveObject(RoleRelegate roleRelegate) {
         if (StringUtils.isBlank(roleRelegate.getRelegateNo())) {
             roleRelegate.setRelegateNo(UuidOpt.getUuidAsString32());

@@ -1,5 +1,6 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.*;
 
@@ -71,21 +73,20 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     public FlowDefineImpl() {
     }
 
-    public void setFlowNodeDao(NodeInfoDao flowNodeDao) {
-        this.flowNodeDao = flowNodeDao;
+    @PostConstruct
+    public void registerDictionary(){
+        CodeRepositoryUtil.registeExtendedCodeRepo(
+            "flowCode", flowDefineDao.listFlowCodeNameMap()
+            );
     }
 
-    public void setFlowDefineDao(FlowInfoDao baseDao) {
-        this.flowDefineDao = baseDao;
-    }
+
+
 
     @Override
     @Transactional
     public List<FlowInfo> getFlowsByOptId(String optId) {
-        Map<String, Object> filterMap = new HashMap<>();
-        filterMap.put("optId", optId);
-
-        List<FlowInfo> flows = flowDefineDao.getAllLastVertionFlows(filterMap);
+        List<FlowInfo> flows = flowDefineDao.listLastVersionFlowByOptId(optId);
         return new ArrayList<>(
             flows == null ? new ArrayList<>() : flows);
     }
@@ -666,7 +667,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     public List<FlowInfo> listLastVersionFlow(
         Map<String, Object> filterMap, PageDesc pageDesc) {
         List<FlowInfo> flows = flowDefineDao
-            .getAllLastVertionFlows(filterMap, pageDesc);
+            .listLastVersionFlows(filterMap, pageDesc);
 
         //获取草稿版本的状态（0版本的状态）
         for (FlowInfo def : flows) {
