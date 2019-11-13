@@ -73,6 +73,7 @@ public class RoleFormulaController extends BaseController {
         JSONArray listObjects = roleFormulaService.viewRoleFormulaUsers(formulaCode);
         return listObjects;
     }
+
     @ApiOperation(value = "预览权限表达式对应用户", notes =
         "表达式为itemExp ([或| itemExp][与& itemExp][非! itemExp])的形式，itemExp为下列形式\n" +
             "D()P()DT()DL()GW()XZ()R()UT()UL()U()RO()\n" +

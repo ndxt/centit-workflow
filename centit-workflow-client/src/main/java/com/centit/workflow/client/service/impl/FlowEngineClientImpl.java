@@ -499,5 +499,17 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         return null;
     }
 
+    /**
+     * @param flowInstId   流程实例号
+     * @param itemRoleCode 办件角色代码
+     * @return 用户范围
+     */
+    @Override
+    public JSONArray listItemRoleFilter(String flowInstId, String itemRoleCode) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/itemRoleFilter/"+flowInstId+"/"+itemRoleCode);
+        return receiveJSON.getJSONArray();
+    }
+
 
 }

@@ -2,6 +2,7 @@ package com.centit.workflow.service;
 
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
+import com.centit.workflow.po.FlowTeamRole;
 import com.centit.workflow.po.NodeInfo;
 
 import java.util.List;
@@ -159,12 +160,28 @@ public interface FlowDefine {
     Map<String, String> listAllSubFlow();
 
     /**
+     * 获取流程最新的版本好
+     * @param flowCode 流程代码
+     * @return 流程已发布的最新版本号
+     */
+    Long getFlowLastVersion(String flowCode);
+
+    /**
      * 获取某一流程某一版本号中存在的所有办件角色
      * @param flowCode 流程代码
      * @param version 版本 0 草稿 -1 最新版本
      * @return 流程的办件角色列表
      */
     Map<String,String> listFlowItemRoles(String flowCode, Long version);
+
+    /**
+     * 获取某一流程某一版本号中存在的所有办件角色
+     * @param flowCode 流程代码
+     * @param version 版本 0 草稿 -1 最新版本
+     * @param roleCode 办件角色代码
+     * @return 流程的办件角色
+     */
+    FlowTeamRole getFlowItemRole(String flowCode, Long version, String roleCode);
     /**
      * 获取流程阶段信息
      * @param flowCode 流程代码和名称对应表

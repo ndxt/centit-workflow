@@ -1,6 +1,7 @@
 package com.centit.workflow.client.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
@@ -131,6 +132,14 @@ public class FlowDefineClientImpl implements FlowDefineClient {
             "/flow/define/stage/"+flowCode +"/"+String.valueOf(version));
         return receiveJSON.getDataAsMap(String.class);
     }
+
+    @Override
+    public JSONArray listItemRoleFilter(String flowCode, long version, String itemRoleCode) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/define/itemRoleFilter/"+flowCode+"/"+version+"/"+itemRoleCode);
+        return receiveJSON.getJSONArray();
+    }
+
 
     public void setWorkFlowServerUrl(String workFlowServerUrl) {
         this.workFlowServerUrl = workFlowServerUrl;

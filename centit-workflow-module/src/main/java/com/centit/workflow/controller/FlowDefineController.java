@@ -1,5 +1,6 @@
 package com.centit.workflow.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.core.controller.BaseController;
@@ -10,8 +11,12 @@ import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
+import com.centit.workflow.service.RoleFormulaService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +39,9 @@ public class FlowDefineController extends BaseController {
 
     @Autowired
     private FlowDefine flowDefine;
+
+    @Autowired
+    private RoleFormulaService roleFormulaService;
 
     /*
      * 列举系统中的所有流程，只显示最新版本的
@@ -481,5 +489,29 @@ public class FlowDefineController extends BaseController {
     public Object testFormula(@PathVariable String flowCode,  String formula){
         return VariableFormula.calculate(formula,
             flowDefine.listFlowDefaultVariables(flowCode,0L));
+    }
+
+    @ApiOperation(value = "查询流程办件角色对应的用户范围，返回空表示可以选择任意人员", notes = "查询流程办件角色对应的用户范围")
+    @WrapUpResponseBody
+    @ApiImplicitParams({@ApiImplicitParam(
+        name = "flowCode", value="流程代码",
+        required = true, paramType = "path", dataType= "String"
+    ),@ApiImplicitParam(
+        name = "version", value="流程版本号，<1 表示最新版本",
+        required= true, paramType = "path", dataType= "Long"
+    ),@ApiImplicitParam(
+        name = "itemRoleCode", value="办件角色代码",
+        required= true, paramType = "path", dataType= "String"
+    )})
+    @RequestMapping(value="/itemRoleFilter/{flowCode}/{version}/{itemRoleCode}",method = RequestMethod.GET)
+    public JSONArray viewRoleFormulaUsers(@PathVariable String flowCode, @PathVariable Long version, @PathVariable String itemRoleCode){
+        if(version == null || version < 1){
+            version = flowDefine.getFlowLastVersion(flowCode);
+        }
+        FlowTeamRole itemRole = flowDefine.getFlowItemRole(flowCode, version, itemRoleCode);
+        if(StringUtils.isBlank(itemRole.getFormulaCode())){
+            return null;
+        }
+        return roleFormulaService.viewRoleFormulaUsers(itemRole.getFormulaCode());
     }
 }

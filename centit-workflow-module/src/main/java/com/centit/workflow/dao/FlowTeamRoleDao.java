@@ -1,9 +1,9 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.workflow.po.FlowTeamRole;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
@@ -21,7 +21,7 @@ public class FlowTeamRoleDao extends BaseDaoImpl<FlowTeamRole,Long>{
     }
 
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public Map<String,String> getRoleByFlowCode(String flowCode,Long version){
         Map<String,String> roleMap = new LinkedHashMap<>();
         List<FlowTeamRole> flowTeamRoles = this.listObjectsByFilter("where flow_code = ? and version = ? order by TEAM_ROLE_ORDER asc",new Object[]{flowCode,version});
@@ -32,5 +32,12 @@ public class FlowTeamRoleDao extends BaseDaoImpl<FlowTeamRole,Long>{
         flowTeamRoles.forEach(role -> roleMap.put(role.getRoleCode(),role.getRoleName())
         );
         return roleMap;
+    }
+
+    @Transactional
+    public FlowTeamRole getItemRole(String flowCode,Long version, String roleCode){
+        return this.getObjectByProperties(
+            CollectionsOpt.createHashMap("flowCode",flowCode,"version",version,"roleCode",roleCode)
+        );
     }
 }

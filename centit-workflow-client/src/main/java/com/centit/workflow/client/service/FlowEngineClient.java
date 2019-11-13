@@ -303,4 +303,12 @@ public interface FlowEngineClient {
      */
     JSONArray/*List<UserTask>*/ listDynamicTask(Map<String, Object> searchColumn,PageDesc pageDesc);
 
+    /**
+     *
+     * @param flowInstId 流程实例号
+     * @param itemRoleCode 办件角色代码
+     * @return 用户范围
+     */
+    JSONArray/*List<UserInfo>*/ listItemRoleFilter(String flowInstId, String itemRoleCode);
+
 }

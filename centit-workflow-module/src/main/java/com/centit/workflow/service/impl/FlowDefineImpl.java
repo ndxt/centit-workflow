@@ -657,8 +657,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     public List<FlowInfo> getFlowsByCode(String wfCode, PageDesc pageDesc) {
         List<FlowInfo> flows = flowDefineDao
             .getAllVersionFlowsByCode(wfCode, pageDesc);
-        return new ArrayList<FlowInfo>(
-            flows == null ? new ArrayList<FlowInfo>() : flows);
+        return new ArrayList<>(
+            flows == null ? new ArrayList<>() : flows);
     }
 
     @Override
@@ -835,11 +835,23 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
+    public Long getFlowLastVersion(String flowCode){
+        return flowDefineDao.getLastVersion(flowCode);
+    }
+
+    @Override
+    @Transactional
     public Map<String, String> listFlowItemRoles(String flowCode, Long version) {
         if(version == null || version < 0){
             version = flowDefineDao.getLastVersion(flowCode);
         }
         return flowTeamRoleDao.getRoleByFlowCode(flowCode, version);
+    }
+
+    @Override
+    @Transactional
+    public FlowTeamRole getFlowItemRole(String flowCode, Long version, String roleCode){
+        return flowTeamRoleDao.getItemRole(flowCode, version, roleCode);
     }
 
     /**

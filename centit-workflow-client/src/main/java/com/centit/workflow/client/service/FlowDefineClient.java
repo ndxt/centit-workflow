@@ -1,5 +1,6 @@
 package com.centit.workflow.client.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
 
@@ -80,5 +81,12 @@ public interface FlowDefineClient {
     default Map<String, String> listFlowStage(String flowCode){
         // -1 代表最新的版本
         return listFlowItemRole(flowCode, -1);
+    }
+
+    JSONArray/*List<UserInfo>*/ listItemRoleFilter(String flowCode, long version, String itemRoleCode);
+
+    default JSONArray listItemRoleFilter(String flowCode, String itemRoleCode){
+        // -1 代表最新的版本
+        return listItemRoleFilter(flowCode, -1, itemRoleCode);
     }
 }
