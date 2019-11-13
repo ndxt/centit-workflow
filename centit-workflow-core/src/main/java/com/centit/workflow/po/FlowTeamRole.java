@@ -1,8 +1,10 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.support.database.orm.GeneratorCondition;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
+import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -15,13 +17,12 @@ import java.util.Date;
  * 这个更名为 WF_FLOW_TEAM_ROLE
  * 和流程关联
  */
+@Data
 @Entity
 @Table(name = "WF_FLOW_TEAM_ROLE")
 public class FlowTeamRole implements Serializable {
     private static final long serialVersionUID = 1L;
-    /**
-     * 这个主键有前段指定，不能用uuid
-     */
+
     @Id
     @NotNull
     @ValueGenerator(strategy = GeneratorType.UUID)
@@ -31,105 +32,44 @@ public class FlowTeamRole implements Serializable {
     @NotNull
     @Column(name = "FLOW_CODE")
     private String flowCode;
-    @NotNull
-    @Column(name = "ROLE_CODE")
-    private String roleCode;
-    @NotNull
-    @Column(name = "ROLE_NAME")
-    private String roleName;
-    @Column(name = "TEAM_ROLE_ORDER")
-    @OrderBy(value = "ASC")
-    private Integer teamRoleOrder;
-    @Column(name = "CREATE_TIME")
-    private Date createTime;
-    @Column(name = "MODIFY_TIME")
-    private Date modifyTime;
 
     @Column(name = "VERSION")
     @NotNull(message = "字段不能为空")
     @Range( max = 9999, message = "版本号不能大于{max}")
     private Long version;
 
+    @NotNull
+    @Column(name = "ROLE_CODE")
+    private String roleCode;
+
+    @NotNull
+    @Column(name = "ROLE_NAME")
+    private String roleName;
+
+    /**
+     * 办件角色的约束范围
+     */
+    @Column(name = "FORMULA_CODE")
+    private String formulaCode;
+
+    @Column(name = "TEAM_ROLE_ORDER")
+    @OrderBy(value = "ASC")
+    private Integer teamRoleOrder;
+
+    @Column(name = "MODIFY_TIME")
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, condition = GeneratorCondition.ALWAYS,
+        value = "today()")
+    private Date modifyTime;
+
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
-
-    public FlowInfo getFlowDefine() {
-        return flowDefine;
-    }
-    public void setFlowDefine(FlowInfo flowDefine) {
-        this.flowDefine = flowDefine;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public String getFlowTeamRoleId() {
-        return flowTeamRoleId;
-    }
-
-    public void setFlowTeamRoleId(String flowTeamRoleId) {
-        this.flowTeamRoleId = flowTeamRoleId;
-    }
-
-    public String getFlowCode() {
-        return flowCode;
-    }
-
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
-    }
-
-    public String getRoleCode() {
-        return roleCode;
-    }
-
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public Integer getTeamRoleOrder() {
-        return teamRoleOrder;
-    }
-
-    public void setTeamRoleOrder(Integer teamRoleOrder) {
-        this.teamRoleOrder = teamRoleOrder;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
 
     public void copyNotNullProperty(FlowTeamRole other){
 
         if( other.getFlowTeamRoleId() != null)
             this.setFlowTeamRoleId(other.getFlowTeamRoleId());
-        /*if( other.getFlowDefine() != null)
-            this.flowDefine = other.getFlowDefine();*/
+        if( other.getFormulaCode() != null)
+            this.formulaCode = other.getFormulaCode();
         if( other.getFlowCode() != null)
             this.flowCode= other.getFlowCode();
         if( other.getRoleCode() != null)
@@ -148,8 +88,7 @@ public class FlowTeamRole implements Serializable {
         this.roleCode= other.getRoleCode();
         this.teamRoleOrder= other.getTeamRoleOrder();
         this.flowCode= other.getFlowCode();
-        this.createTime= other.getCreateTime();
+        this.formulaCode= other.getFormulaCode();
         this.modifyTime= other.getModifyTime();
-
     }
 }
