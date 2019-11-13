@@ -775,7 +775,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         Map<String, Map<String, String>> roleList = new HashMap<>();
         roleList.put(SysUserFilterEngine.ROLE_TYPE_GW /*"gw"*/, context.listAllStation());
         roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ /*"xz"*/, context.listAllRank());
-        roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM /*"bj"*/, context.listAllProjectRole());
+        //roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM /*"bj"*/, context.listAllProjectRole());
         roleList.put(SysUserFilterEngine.ROLE_TYPE_SYSTEM /*"ro"*/, context.listAllSystemRole());
         roleList.put(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA /*"sf"*/, flowRoleDao.listAllRoleMsg());
         return roleList;
