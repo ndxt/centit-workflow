@@ -4,7 +4,6 @@ import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.FlowTransition;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
@@ -42,12 +41,12 @@ public class FlowTransitionDao extends BaseDaoImpl<FlowTransition,Long>
         return filterField;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowTransition> getNodeTrans(String nodeID){
         return this.listObjectsByFilter("where start_Node_Id = ?",new Object[]{nodeID});
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowTransition> getNodeInputTrans(String nodeID){
         return this.listObjectsByFilter("where end_Node_Id = ?",new Object[]{nodeID});
     }

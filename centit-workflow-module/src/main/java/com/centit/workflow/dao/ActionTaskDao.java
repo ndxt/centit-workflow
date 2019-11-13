@@ -12,7 +12,6 @@ import com.centit.workflow.po.UserTask;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
@@ -118,7 +117,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
      * 生成主键编号
      * @return
      */
-    /*@Transactional(propagation= Propagation.MANDATORY)
+    /*@Transactional
     public long getNextTaskId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_ACTIONTASKNO");
     }
@@ -129,7 +128,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
      * @param pageDesc
      * @return
      */
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<UserTask> listUserTaskFinByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskFinBaseSql ,filter);
@@ -139,7 +138,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         return dataList == null? null : dataList.toJavaList(UserTask.class);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<UserTask> listUserTaskByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskBaseSql,filter);
@@ -150,7 +149,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         return dataList == null? null : dataList.toJavaList(UserTask.class);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<ActionTask> getActionTaskByNodeidAndUser(String nodeInstId , String userCode){
         String whereSql = "where NODE_INST_ID=? and USER_CODE=? and IS_VALID='T'";
 
@@ -158,7 +157,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     }
 
     @SuppressWarnings("unchecked")
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<ActionTask> listActionTaskByNode(String nodeInstId){
        // String baseHQL = "from WfActionTask t join WfNodeInstance i on i.nodeinstid = t.nodeinstid where i.nodestate <> 'C' and t.usercode = ?";
        //return this.listObjects(baseHQL,userCode);
@@ -169,7 +168,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     }
 
     @SuppressWarnings("unchecked")
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public String getTaskGrantor(String nodeInstId ,String userCode){
         String baseSQL = "select GRANTOR  from V_USER_TASK_LIST where NODE_INST_ID = ? and USER_CODE =? ";
         List<String> utl = this.getJdbcTemplate().queryForList(baseSQL,
@@ -190,7 +189,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     }
 
     @SuppressWarnings("unchecked")
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public boolean hasOptPower(String nodeInstId ,String userCode,String grantorCode){
 
         String baseSQL = "select GRANTOR  from V_USER_TASK_LIST where NODE_INST_ID = ? and USER_CODE =? ";

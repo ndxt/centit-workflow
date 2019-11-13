@@ -5,7 +5,6 @@ import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.StageInstance;
 import com.centit.workflow.po.StageInstanceId;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
@@ -32,11 +31,11 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
         }
         return filterField;
     }
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<StageInstance> listStageInstByFlowInstId(String flowInstId) {
         return this.listObjectsByFilter("where flow_Inst_Id=?",new Object[]{flowInstId});
     }
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public StageInstance getObject(String flowInstId, String stageId) {
         return this.getObjectById(new StageInstanceId(flowInstId,stageId));
     }

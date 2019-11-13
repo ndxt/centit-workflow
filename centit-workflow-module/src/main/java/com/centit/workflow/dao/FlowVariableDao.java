@@ -38,14 +38,14 @@ public class FlowVariableDao extends BaseDaoImpl<FlowVariable,FlowVariableId>
         return this.listObjectsByFilter("where FLOW_INST_ID = ? order by run_Token",new Object[]{flowInstId});
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowVariable> viewFlowVariablesByVarname(String flowInstId,
                                                          String varname) {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? and var_Name=? order by run_Token",
                 new Object[] { flowInstId, varname });
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowVariable> listFlowDefaultVariables(String flowInstId, String flowCode, long version){
         List<Object[]>  ja = DatabaseOptUtils.listObjectsBySql(this,
             " select VARIABLE_NAME, VARIABLE_TYPE, DEFAULT_VALUE" +

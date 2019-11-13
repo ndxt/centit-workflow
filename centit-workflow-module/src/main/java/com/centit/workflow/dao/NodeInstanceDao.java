@@ -6,7 +6,6 @@ import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.NodeInstance;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -40,7 +39,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
         return filterField;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public long getNextNodeInstId() {
         return DatabaseOptUtils.getSequenceNextValue(this,"S_NODEINSTNO");
     }
@@ -50,27 +49,27 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
      * @param nodeInstId 节点实例编号
      * @param state 状态代码
     */
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void updtNodeInstState(String nodeInstId, String state) {
         NodeInstance nodeInst = this.getObjectById(nodeInstId);
         nodeInst.setNodeState(state);
         this.updateObject(nodeInst);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void updtNodeInstParam(String nodeInstId, String nodeParam) {
         NodeInstance nodeInst = this.getObjectById(nodeInstId);
         nodeInst.setNodeParam(nodeParam);
         this.updateObject(nodeInst);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<NodeInstance> listNodeInstByState(String flowInstId, String nodeState) {
         return this.listObjectsByFilter("where node_State= ? and flow_Inst_Id= ?",
                 new Object[]{nodeState,flowInstId});
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<NodeInstance> listNodesWithoutOpt() {
         return this.listObjectsByFilter("where (node_State='N' or node_State='R') and  " +
                         "node_Inst_Id not in (select node_Inst_Id from v_user_task_list) and " +
@@ -78,7 +77,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
                 new Object[]{});
     }
     //expireOptSign == 0未处理  1 已通知  ,2..6 已通知2..5次（暂时不启动重复通知） 6:不处理    7：已挂起  8 已终止 9 已完成
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<NodeInstance> listNearExpireNodeInstance(long leaveTime) {
         return this.listObjectsByFilter(" where time_Limit <= ? and node_State='N' and " +
                 "(is_Timer='T' or is_Timer='R')",new Object[]{leaveTime});
@@ -91,7 +90,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
      * @param state
      * @return
      */
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<NodeInstance> listLastUpdateNodeInst(String userCode, String state){
         return this.listObjectsByFilter(" where last_Update_User = ? and node_State = ? " +
                         "order by last_Update_Time ",
@@ -103,7 +102,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
      * @param userCode
      * @return
      */
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<NodeInstance> listNodeInstByTimer(String userCode, String isTimer, PageDesc pageDesc){
         return this.listObjectsByFilterAsJson(" where last_Update_User = ? and is_Timer = ? " +
                         "order by last_Update_Time ",
@@ -115,7 +114,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
      * @param instid 实例编号
      * @param isTimer 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
      */
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void updateNodeTimerState(String instid,String isTimer,String mangerUserCode){
         NodeInstance nodeInst = this.getObjectById(instid);
         nodeInst.setIsTimer(isTimer);
@@ -124,13 +123,13 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
         this.updateObject(nodeInst);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<NodeInstance> listActiveTimerNodeByFlow(String flowInstId){
         return this.listObjectsByFilter(" where flow_Inst_Id = ? and is_Timer = 'T' ",
                 new Object[]{flowInstId});
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<NodeInstance> listActiveTimerNodeByFlowStage(String flowInstId, String flowStage){
         return this.listObjectsByFilter(" where flow_Inst_Id = ? and flow_Stage = ? and is_Timer = 'T'",
                 new Object[]{flowInstId,flowStage});

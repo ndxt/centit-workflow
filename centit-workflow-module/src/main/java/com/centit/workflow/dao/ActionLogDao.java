@@ -5,7 +5,6 @@ import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.ActionLog;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -35,7 +34,7 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long> {
         return filterField;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<ActionLog> listUserActionLogs(String userCode, PageDesc pageDesc, Date lastTime )
     {
         List<ActionLog> list = new ArrayList<>();
@@ -55,7 +54,7 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long> {
      * @param pageDesc
      * @return
      */
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<ActionLog> listGrantedActionLog(String userCode, PageDesc pageDesc){
         return this.listObjectsByFilter("where USER_CODE = ? and  grantor <> null",
                 new Object[]{userCode});
@@ -67,7 +66,7 @@ public class ActionLogDao extends BaseDaoImpl<ActionLog,Long> {
      * @param pageDesc
      * @return
      */
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<ActionLog> listGrantorActionLog(String userCode,
                                                 PageDesc pageDesc) {
         return this.listObjectsByFilter("where GRANTOR = ?",new Object[]{userCode});

@@ -5,7 +5,6 @@ import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowWarning;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
@@ -36,13 +35,13 @@ public class FlowWarningDao extends BaseDaoImpl<FlowWarning,Long>
         return filterField;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowWarning> listFlowWarningByInst(String flowInstId,
                                                    PageDesc pageDesc) {
         return this.listObjectsByFilterAsJson("where flow_Inst_Id = ?",new Object[]{flowInstId},pageDesc).toJavaList(FlowWarning.class);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowWarning> listFlowWarningByNodeInst(String nodeInstId,
                                                        PageDesc pageDesc) {
         return this.listObjectsByFilterAsJson("where node_Inst_Id = ?",new Object[]{nodeInstId},pageDesc).toJavaList(FlowWarning.class);

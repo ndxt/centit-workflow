@@ -21,13 +21,13 @@ public class ApprovalAuditorDao extends BaseDaoImpl<ApprovalAuditor,Long> {
         return null;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public long getNextApprovalAuditorId(){
         return DatabaseOptUtils.getSequenceNextValue(this,"S_APPROVALAUDITOR");
     }
 
     @Override
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void saveNewObject(ApprovalAuditor o) {
         if(o.getAuditorId() == null || o.getAuditorId() == 0){
             o.setAuditorId(getNextApprovalAuditorId());
@@ -35,7 +35,7 @@ public class ApprovalAuditorDao extends BaseDaoImpl<ApprovalAuditor,Long> {
         super.saveNewObject(o);
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<ApprovalAuditor> getAuditorsByPhaseNo(String phaseNo){
         return this.listObjectsByFilter("where phase_No = ?",new Object[]{phaseNo});
     }

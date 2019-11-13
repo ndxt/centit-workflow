@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
-import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.common.WorkTimeSpan;
@@ -62,8 +61,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Autowired
     FlowInstanceGroupDao flowInstanceGroupDao;
 
-    @Autowired
-    private NotificationCenter notificationCenter;
+    /*@Autowired
+    private NotificationCenter notificationCenter;*/
 
     /**
      * 查看工作流程实例状态或进度

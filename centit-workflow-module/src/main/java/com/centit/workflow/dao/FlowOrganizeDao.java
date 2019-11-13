@@ -32,12 +32,12 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
         return filterField;
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void deleteFlowOrganize(String flowInstId, String roleCode) {
         this.getJdbcTemplate().update("delete from WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ?",
                 new Object[]{flowInstId, roleCode});
     }
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public void deleteFlowOrganize(String flowInstId, String roleCode,String authDesc) {
         this.getJdbcTemplate().update("delete from WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ? " +
                 "and AUTH_DESC = ?",new Object[]{flowInstId, roleCode,authDesc});
@@ -49,14 +49,14 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
                 new Object[]{flowInstId});
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowOrganize> listFlowOrganizeByRole(String flowInstId, String roleCode)
     {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? and ROLE_CODE = ? order by unit_Order",
                 new Object[]{flowInstId, roleCode});
     }
 
-    @Transactional(propagation= Propagation.MANDATORY)
+    @Transactional
     public List<FlowOrganize> listFlowOrganize(String flowInstId, String roleCode, String authDesc)
     {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? and ROLE_CODE = ? and auth_Desc = ? " +

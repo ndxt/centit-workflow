@@ -49,6 +49,7 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name = "FLOW_CODE")
     @NotNull(message = "字段不能为空")
     @Length(max = 32, message = "字段长度不能大于{max}")
+    @DictionaryMap(value = "flowCode", fieldName = "flowName")
     private String flowCode;
     /**
      * varchar(800)

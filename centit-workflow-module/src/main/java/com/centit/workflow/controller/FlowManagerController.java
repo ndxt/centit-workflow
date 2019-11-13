@@ -57,7 +57,7 @@ public class FlowManagerController extends BaseController {
                      HttpServletRequest request) {
         Map<String, Object> searchColumn = BaseController.collectRequestParameters(request);
         JSONArray listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
-        return PageQueryResult.createJSONArrayResult(listObjects, pageDesc);
+        return PageQueryResult.createJSONArrayResult(listObjects, pageDesc, FlowInstance.class);
     }
 
     /**
