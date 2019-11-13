@@ -40,4 +40,9 @@ public class FlowTeamRoleDao extends BaseDaoImpl<FlowTeamRole,Long>{
             CollectionsOpt.createHashMap("flowCode",flowCode,"version",version,"roleCode",roleCode)
         );
     }
+
+    @Override
+    public int updateObject(FlowTeamRole o) {
+        return super.updateObjectWithNullField(o);
+    }
 }
