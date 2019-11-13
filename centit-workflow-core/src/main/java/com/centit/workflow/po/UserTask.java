@@ -22,27 +22,29 @@ public class UserTask implements java.io.Serializable {
     private String userCode;
 
     private String flowInstId;
-    private String  authDesc;
-    private String  flowOptName;
-    private String  flowOptTag;
-    private String  flowCode;
-    private String  version;
-    private String  nodeCode;
-    private String  nodeName;
-    private String  nodeType;
-    private String  nodeOptType;
-    private String  nodeParam;
-    private String  optParam;
-    private String  optCode;
+    private String authDesc;
+    private String flowOptName;
+    private String flowOptTag;
+    @DictionaryMap(value="flowCode", fieldName="flowName")
+    private String flowCode;
+    private String version;
+    private String nodeCode;
+    private String nodeName;
+    private String nodeType;
+    private String nodeOptType;
+    private String nodeParam;
+    private String optParam;
+    private String optCode;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
-    private Date  createTime;
-    private String  expireOpt;
+    private Date createTime;
+    private String expireOpt;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
-    private Date  lastUpdateTime;
+    private Date lastUpdateTime;
     @DictionaryMap(value="userCode", fieldName="lastUpdateUserName")
     private String lastUpdateUser;
-    private Long  promiseTime;
-    private Long  timeLimit;
+    private Long promiseTime;
+    private Long timeLimit;
+    @DictionaryMap(value="userCode", fieldName="grantorName")
     private String grantor;
     private String roleType;
     private String roleCode;

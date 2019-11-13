@@ -152,11 +152,11 @@ public class FlowEngineController extends BaseController {
     public PageQueryResult<UserTask> listTasks(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, pageDesc);
-        return PageQueryResult.createResult(userTasks, pageDesc);
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
     @ApiOperation(value = "查询节点待办用户", notes = "查询节点待办用户")
-    @WrapUpResponseBody
+    @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/nodeTaskUsers")
     public List<UserTask> listNodeTaskUsers(String nodeInstId) {
         Map<String, Object> searchColumn = new HashMap<>();
@@ -170,7 +170,7 @@ public class FlowEngineController extends BaseController {
     public PageQueryResult<UserTask> listUserDynamicTasks(HttpServletRequest request, PageDesc pageDesc ) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         List<UserTask> userTasks =  flowEngine.listDynamicTask(searchColumn, pageDesc);
-        return PageQueryResult.createResult(userTasks, pageDesc);
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
     @ApiOperation(value = "业务id关联流程", notes = "根据业务id查询关联流程")
