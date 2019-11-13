@@ -402,7 +402,7 @@ public class FlowDefineController extends BaseController {
         Map<String, String> bjMap = new LinkedHashMap<>();
         bjMap.put("", "请选择");
         bjMap.putAll(flowDefine.listFlowItemRoles(flowcode, 0L));
-        map.put(SysUserFilterEngine.ROLE_TYPE_ITEM.toLowerCase() /*"bj"*/, bjMap);
+        map.put(SysUserFilterEngine.ROLE_TYPE_ITEM /*"bj"*/, bjMap);
 
 //        Map<String, String> spMap = new LinkedHashMap<>();
 //        spMap.put("", "请选择");
