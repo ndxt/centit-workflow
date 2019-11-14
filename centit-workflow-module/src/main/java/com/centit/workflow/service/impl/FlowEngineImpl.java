@@ -173,7 +173,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             throw new WorkflowException(WorkflowException.FlowDefineError, "找不到首节点");
         }
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-            null, flowInst,flowVariableDao,this);
+            null, flowInst,flowVariableDao,this,"T", options);
         flowVarTrans.setFlowVarTrans(varTrans);
 
         Set<String> nodeInsts = submitToNextNode( node, "T", flowInst, wf,
@@ -1169,7 +1169,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         //刷新 变量接口 里面的变量
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-            nodeInst, flowInst,flowVariableDao,this);
+            nodeInst, flowInst,flowVariableDao,this,nodeInst.getRunToken(), options);
         flowVarTrans.setFlowVarTrans(varTrans);
 
         String nextNodeId = nodeTran.getEndNodeId();
@@ -1433,7 +1433,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nextNodes.add(nextNode);
         } else if ("R".equals(nextNode.getNodeType())) {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-                nodeInst, flowInst,flowVariableDao,this);
+                nodeInst, flowInst,flowVariableDao,this,null,null);
             nextNodes = viewRouterNextNodeInside(nextNode, flowVarTrans);
         }
         return nextNodes;
@@ -1460,7 +1460,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //判断是否为子流程 A:一般 B:抢先机制 C:多人操作 S:子流程
         if (!"S".equals(nextNode.getOptType())) {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-                nodeInst, flowInst, flowVariableDao,this);
+                nodeInst, flowInst, flowVariableDao,this,null,null);
             flowVarTrans.setFlowVarTrans(varTrans);
 
             LeftRightPair<Set<String>, Set<String>> unitAndUser =

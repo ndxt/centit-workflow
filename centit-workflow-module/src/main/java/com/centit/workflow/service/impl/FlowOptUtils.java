@@ -3,6 +3,7 @@ package com.centit.workflow.service.impl;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
+import com.centit.workflow.commons.FlowOptParamOptions;
 import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.dao.FlowVariableDao;
 import com.centit.workflow.po.*;
@@ -251,12 +252,18 @@ public class FlowOptUtils {
 
     public static FlowVariableTranslate createVariableTranslate(
             NodeInstance nodeInstance, FlowInstance flowInstance,
-            FlowVariableDao flowVariableDao, FlowEngineImpl flowEngine) {
+            FlowVariableDao flowVariableDao, FlowEngineImpl flowEngine,String runToken,FlowOptParamOptions options) {
 
         FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(nodeInstance, flowInstance);
         boolean hasFlowGroup = StringUtils.isNotBlank(flowInstance.getFlowGroupId());
         // 优先加载本流程的变量
         List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInstance.getFlowInstId());
+        if(options.getVariables() != null && !options.getVariables().isEmpty()) {
+            for(Map.Entry<String,Object> ent : options.getVariables().entrySet()) {
+                FlowVariable flowVariable=new FlowVariable(flowInstance.getFlowInstId(), runToken,ent.getKey(), StringBaseOpt.castObjectToString(ent.getValue()),"S");
+                flowVariables.add(flowVariable);
+            }
+        }
         // 如果有 流程组加载流程组变量
         if(hasFlowGroup) {
             if(null!=flowVariableDao.listFlowVariables(flowInstance.getFlowGroupId()))
