@@ -108,6 +108,9 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         // 内部变量最高优先级
         Set<String> objs = innerVariable.get(varName);
         if(objs!=null && !objs.isEmpty()) {
+            if(objs.size()==1){
+                return objs.iterator().next();
+            }
             return objs;
         }
 
