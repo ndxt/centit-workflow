@@ -117,6 +117,12 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         if(flowVarTrans !=null){
             Object obj =  flowVarTrans.getVarValue(varName);
             if(obj!=null) {
+                if(obj instanceof Collection){
+                    Collection objSet = (Collection<?>) obj;
+                    if(objSet.size()==1){
+                        return objSet.iterator().next();
+                    }
+                }
                 return obj;
             }
         }
