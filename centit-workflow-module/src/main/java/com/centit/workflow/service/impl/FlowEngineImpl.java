@@ -173,7 +173,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             throw new WorkflowException(WorkflowException.FlowDefineError, "找不到首节点");
         }
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-            null, flowInst,flowVariableDao,this,"T", options);
+            null, flowInst,flowVariableDao,this, options);
         flowVarTrans.setFlowVarTrans(varTrans);
 
         Set<String> nodeInsts = submitToNextNode( node, "T", flowInst, wf,
@@ -1169,7 +1169,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         //刷新 变量接口 里面的变量
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-            nodeInst, flowInst,flowVariableDao,this,nodeInst.getRunToken(), options);
+            nodeInst, flowInst,flowVariableDao,this, options);
         flowVarTrans.setFlowVarTrans(varTrans);
 
         String nextNodeId = nodeTran.getEndNodeId();
@@ -1433,7 +1433,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nextNodes.add(nextNode);
         } else if ("R".equals(nextNode.getNodeType())) {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-                nodeInst, flowInst,flowVariableDao,this,null,null);
+                nodeInst, flowInst,flowVariableDao,this,null);
             nextNodes = viewRouterNextNodeInside(nextNode, flowVarTrans);
         }
         return nextNodes;
@@ -1455,12 +1455,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error("找不到流程实例：" + nodeInst.getFlowInstId());
             return null;
         }
+
         //判断是否为 结束节点 A:开始 B:首节点 C:一般 D:分支 E:汇聚 F结束
         NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
         //判断是否为子流程 A:一般 B:抢先机制 C:多人操作 S:子流程
         if (!"S".equals(nextNode.getOptType())) {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-                nodeInst, flowInst, flowVariableDao,this,null,null);
+                nodeInst, flowInst, flowVariableDao,this,null);
             flowVarTrans.setFlowVarTrans(varTrans);
 
             LeftRightPair<Set<String>, Set<String>> unitAndUser =

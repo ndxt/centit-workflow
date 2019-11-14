@@ -252,31 +252,45 @@ public class FlowOptUtils {
 
     public static FlowVariableTranslate createVariableTranslate(
             NodeInstance nodeInstance, FlowInstance flowInstance,
-            FlowVariableDao flowVariableDao, FlowEngineImpl flowEngine,String runToken,FlowOptParamOptions options) {
+            FlowVariableDao flowVariableDao, FlowEngineImpl flowEngine,
+            FlowOptParamOptions options) {
 
         FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(nodeInstance, flowInstance);
         boolean hasFlowGroup = StringUtils.isNotBlank(flowInstance.getFlowGroupId());
         // 优先加载本流程的变量
-        List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInstance.getFlowInstId());
         if(options.getVariables() != null && !options.getVariables().isEmpty()) {
-            for(Map.Entry<String,Object> ent : options.getVariables().entrySet()) {
-                FlowVariable flowVariable=new FlowVariable(flowInstance.getFlowInstId(), runToken,ent.getKey(), StringBaseOpt.castObjectToString(ent.getValue()),"S");
-                flowVariables.add(flowVariable);
+            for(Map.Entry<String, Object> ent : options.getVariables().entrySet()) {
+                flowVarTrans.setInnerVariable(ent.getKey(), StringBaseOpt.objectToStringSet(ent.getValue()) );
             }
         }
+
+        if(options.getGlobalVariables() != null && !options.getGlobalVariables().isEmpty()) {
+            for(Map.Entry<String, Object> ent : options.getGlobalVariables().entrySet()) {
+                flowVarTrans.setInnerVariable(ent.getKey(), StringBaseOpt.objectToStringSet(ent.getValue()) );
+            }
+        }
+
+        List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInstance.getFlowInstId());
         // 如果有 流程组加载流程组变量
         if(hasFlowGroup) {
-            if(null!=flowVariableDao.listFlowVariables(flowInstance.getFlowGroupId()))
-              flowVariables.addAll(flowVariableDao.listFlowVariables(flowInstance.getFlowGroupId()));
+            List<FlowVariable> groupVariables = flowVariableDao.listFlowVariables(flowInstance.getFlowGroupId());
+            if(flowVariables==null){
+                flowVariables = groupVariables;
+            } else {
+                flowVariables.addAll(groupVariables);
+            }
         }
+
         // 加载变量的默认值
-        if(null!=flowVariableDao.listFlowDefaultVariables(
-            flowInstance.getFlowInstId(), flowInstance.getFlowCode(), flowInstance.getVersion()))
-           flowVariables.addAll(flowVariableDao.listFlowDefaultVariables(
-              flowInstance.getFlowInstId(), flowInstance.getFlowCode(), flowInstance.getVersion()));
+        List<FlowVariable> defaultVariables = flowVariableDao.listFlowDefaultVariables(
+            flowInstance.getFlowInstId(), flowInstance.getFlowCode(), flowInstance.getVersion());
+        if(flowVariables==null){
+            flowVariables = defaultVariables;
+        } else {
+            flowVariables.addAll(defaultVariables);
+        }
 
         flowVarTrans.setFlowVariables(flowVariables);
-
         Map<String, List<String>> flowOrgs = flowEngine.viewFlowOrganize(flowInstance.getFlowInstId());
         if(hasFlowGroup) {
             Map<String, List<String>> tempOrgs = flowEngine.viewFlowOrganize(flowInstance.getFlowGroupId());
