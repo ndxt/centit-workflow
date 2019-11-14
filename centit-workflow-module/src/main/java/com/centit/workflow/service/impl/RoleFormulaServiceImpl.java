@@ -2,7 +2,6 @@ package com.centit.workflow.service.impl;
 
 
 import com.alibaba.fastjson.JSONArray;
-import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.basedata.IUnitInfo;
 import com.centit.framework.model.basedata.IUserInfo;
@@ -64,12 +63,15 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     @Override
     public JSONArray viewFormulaUsers(String formula) {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
-        Set<String> users = UserUnitCalcEngine.calcOperators(
+        Set<String> sUsers = UserUnitCalcEngine.calcOperators(
             context,
             formula, null, null, null,null);
-        // 这个又 和系统用户 绑定了，这个是不对的；这部分内容应该需要重构
-        return (JSONArray) JSONArray.toJSON(
-            CodeRepositoryUtil.getUserInfosByCodes(users));
+
+        List<IUserInfo> userInfos = new ArrayList<>();
+        for(String uc : sUsers){
+            userInfos.add(context.getUserInfoByCode(uc));
+        }
+        return (JSONArray) JSONArray.toJSON(userInfos);
     }
 
     @Override
