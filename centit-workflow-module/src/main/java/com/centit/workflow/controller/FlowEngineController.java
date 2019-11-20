@@ -143,7 +143,7 @@ public class FlowEngineController extends BaseController {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("userCode", userCode);
         List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, pageDesc);
-        return PageQueryResult.createResult(userTasks, pageDesc);
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
     @ApiOperation(value = "根据条件查询待办", notes = "根据条件查询待办")
@@ -174,7 +174,7 @@ public class FlowEngineController extends BaseController {
     }
 
     @ApiOperation(value = "业务id关联流程", notes = "根据业务id查询关联流程")
-    @WrapUpResponseBody
+    @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/listAllFlowInstByOptTag")
     public List<FlowInstance> listAllFlowInstByOptTag(@RequestParam(value = "flowOptTag") String flowOptTag) {
         return flowEngine.listAllFlowInstByOptTag(flowOptTag);

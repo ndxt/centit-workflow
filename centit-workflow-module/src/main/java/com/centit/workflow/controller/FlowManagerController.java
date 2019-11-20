@@ -603,7 +603,7 @@ public class FlowManagerController extends BaseController {
             int nodeInstInd = 0;
             //String nodeInstId=0;
             for (NodeInstance nodeInst : dbobject.getNodeInstances()) {
-                if (nodeInst.getNodeId().equals(nodeId) || nodeInst.getPrevNodeInstId().equals(nextNodeInstance.getNodeInstId())) {
+                if (nodeInst.getNodeId().equals(nodeId) || (nodeInst.getPrevNodeInstId()!=null && nodeInst.getPrevNodeInstId().equals(nextNodeInstance.getNodeInstId()))) {
                     //暂时保证一个节点保留一条查看信息
                    /* if(nodeInstId>nodeInst.getNodeInstId())
                         continue;
