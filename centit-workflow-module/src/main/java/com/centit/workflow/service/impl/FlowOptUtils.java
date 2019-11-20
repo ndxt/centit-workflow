@@ -284,9 +284,7 @@ public class FlowOptUtils {
         // 加载变量的默认值
         List<FlowVariable> defaultVariables = flowVariableDao.listFlowDefaultVariables(
             flowInstance.getFlowInstId(), flowInstance.getFlowCode(), flowInstance.getVersion());
-        if(flowVariables==null){
-            flowVariables = defaultVariables;
-        } else {
+        if(defaultVariables!=null){
             flowVariables.addAll(defaultVariables);
         }
 
