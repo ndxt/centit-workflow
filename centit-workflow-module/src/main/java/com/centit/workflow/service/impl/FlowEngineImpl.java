@@ -2074,7 +2074,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             searchColumn.put("unitCode", i.getUnitCode());
             searchColumn.put("userStation", i.getUserStation());
             List<UserTask> dynamicTask = actionTaskDao.queryDynamicTask(searchColumn, pageDesc);
-            taskList.addAll(dynamicTask);
+            if (dynamicTask!=null)
+              taskList.addAll(dynamicTask);
         }
 
         return taskList;
@@ -2102,10 +2103,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             searchColumn.put("unitCode", i.getUnitCode());
             searchColumn.put("userStation", i.getUserStation());
             List<UserTask> dynamicTask = actionTaskDao.queryDynamicTask(searchColumn, pageDesc);
-            for (UserTask u : dynamicTask) {
-                u.setUserCode(i.getUserCode());
+            if (dynamicTask!=null) {
+                for (UserTask u : dynamicTask) {
+                    u.setUserCode(i.getUserCode());
+                }
+                taskList.addAll(dynamicTask);
             }
-            taskList.addAll(dynamicTask);
         }
 
         return taskList;

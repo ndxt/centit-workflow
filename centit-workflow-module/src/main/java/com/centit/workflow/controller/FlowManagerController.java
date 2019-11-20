@@ -552,7 +552,8 @@ public class FlowManagerController extends BaseController {
         NodeInstance nodeInstance = flowEng.getNodeInstById(nodeInstId);
         List<UserTask> objList = new ArrayList<>();
         List<UserTask> innerTask = flowManager.listNodeTasks(nodeInstId);
-        objList.addAll(innerTask);
+        if(innerTask!=null)
+           objList.addAll(innerTask);
         if ("D".equals(nodeInstance.getTaskAssigned())) {
             Map<String, Object> searchColumn = new HashMap<>();
             searchColumn.put("nodeInstId", nodeInstId);
