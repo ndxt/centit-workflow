@@ -42,7 +42,7 @@ CREATE TABLE `wf_flow_define` (
   `FLOW_Publish_Date` datetime DEFAULT NULL,
   `FLOW_STATE` char(1) ,
   `FLOW_DESC` varchar(500) ,
-  `FLOW_XML_DESC` text COLLATE utf8_bin,
+  `FLOW_XML_DESC` text,
   `Time_Limit` varchar(20) ,
   `Expire_Opt` char(1) ,
   `Opt_ID` varchar(32) ,
@@ -173,7 +173,7 @@ CREATE TABLE `wf_node` (
   `NODE_TYPE` varchar(1) ,
   `NODE_NAME` varchar(120) ,
   `OPT_TYPE` varchar(1) ,
-  `OS_ID` varchar(32) COLLATE utf8_bin DEFAULT 'TEST',
+  `OS_ID` varchar(32)  DEFAULT 'TEST',
   `OPT_ID` varchar(32) ,
   `OPT_CODE` varchar(64) ,
   `OPT_BEAN` varchar(100) ,
@@ -226,7 +226,7 @@ CREATE TABLE `wf_node_instance` (
   `ROLE_CODE` varchar(32) ,
   `USER_CODE` varchar(8) ,
   `NODE_PARAM` varchar(128) ,
-  `TASK_ASSIGNED` varchar(1) COLLATE utf8_bin DEFAULT 'F',
+  `TASK_ASSIGNED` varchar(1)  DEFAULT 'F',
   `Run_Token` varchar(20) ,
   `GRANTOR` varchar(8) ,
   `last_update_user` varchar(8) ,
@@ -245,7 +245,7 @@ CREATE TABLE `wf_optinfo` (
   `OPT_NAME` varchar(100) not null,
   `OPT_URL` varchar(500) ,
   `OPT_VIEW_URL` varchar(500) ,
-  `UPDATE_DATE` date DEFAULT NULL,
+  `UPDATE_DATE` date DEFAULT CURRENT_TIMESTAMP,
   `MODEL_ID` varchar(64) ,
   `TITLE_TEMPLATE` varchar(500) ,
   `DEFAULT_FLOW` varchar(32),
@@ -290,7 +290,7 @@ CREATE TABLE `wf_role_formula` (
   `FORMULA_NAME` varchar(200) ,
   `ROLE_FORMULA` varchar(500) ,
   `ROLE_LEVEL` varchar(20) ,
-  `CREATE_TIME` datetime DEFAULT NULL,
+  `CREATE_TIME` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`FORMULA_CODE`)
 ) ;
 
@@ -309,7 +309,7 @@ CREATE TABLE `wf_role_relegate` (
   `UNIT_CODE` varchar(8) ,
   `ROLE_TYPE` varchar(8) ,
   `ROLE_CODE` varchar(32) ,
-  `Record_Date` datetime DEFAULT NULL,
+  `Record_Date` datetime DEFAULT CURRENT_TIMESTAMP,
   `grant_Desc` varchar(256) ,
   PRIMARY KEY (`RELEGATE_NO`)
 ) ;
@@ -325,11 +325,11 @@ CREATE TABLE `wf_runtime_warning` (
   `FLOW_STAGE` varchar(32) ,
   `OBJ_TYPE` char(1) ,
   `WARNING_TYPE` char(1) ,
-  `WARNING_STATE` char(1) COLLATE utf8_bin DEFAULT 'N',
+  `WARNING_STATE` char(1)  DEFAULT 'N',
   `WARNING_CODE` varchar(16) ,
   `WARNING_TIME` datetime DEFAULT NULL,
   `WARNINGID_MSG` varchar(500) ,
-  `NOTICE_STATE` char(1) COLLATE utf8_bin DEFAULT '0',
+  `NOTICE_STATE` char(1)  DEFAULT '0',
   `SEND_MSG_TIME` datetime DEFAULT NULL,
   `SEND_USERS` varchar(100) ,
   PRIMARY KEY (`WARNING_ID`)
