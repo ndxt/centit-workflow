@@ -7,7 +7,6 @@ import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.algorithm.BooleanBaseOpt;
-import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowEngineClient;
@@ -15,7 +14,6 @@ import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,27 +55,14 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         makeAppSession();
     }
 
-    private FlowInstance jsonToFlowInstance(String json) {
-        if(StringUtils.isBlank(json)){
-            return null;
-        }
-        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
-        if(receiveJSON.getCode() != 0){
-            throw new ObjectException(receiveJSON.getCode(),
-                receiveJSON.getMessage());
-        }
-        return receiveJSON.getDataAsObject(FlowInstance.class);
-    }
-
-
-
     @Override
     public FlowInstance createInstance(CreateFlowOptions options) {
         //JSONObject jsonObject = (JSONObject)JSON.toJSON(options);
         String flowJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createInstance", options);
-        RestfulHttpRequest.checkHttpReceiveJSON(HttpReceiveJSON.valueOfJson(flowJson));
-        return jsonToFlowInstance(flowJson);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(flowJson);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        return receiveJSON.getDataAsObject(FlowInstance.class);
     }
 
 
@@ -185,9 +170,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public FlowInstance getFlowInstance(String flowInstId) {
-        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/engine/inst/"+flowInstId);
-        return receiveJSON.getDataAsObject(FlowInstance.class);
+        return RestfulHttpRequest.getResponseObject(appSession,
+            "/flow/engine/inst/"+flowInstId, FlowInstance.class);
     }
 
     /**
@@ -198,9 +182,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public FlowInfo getFlowDefine(String flowInstId) {
-        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/engine/instDef/"+flowInstId);
-        return receiveJSON.getDataAsObject(FlowInfo.class);
+        return RestfulHttpRequest.getResponseObject(appSession,
+            "/flow/engine/instDef/"+flowInstId, FlowInfo.class);
     }
 
     /**
@@ -210,9 +193,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public FlowOptInfo getFlowOptInfo(String flowInstId){
-        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/engine/optInfo/"+flowInstId);
-        return receiveJSON.getDataAsObject(FlowOptInfo.class);
+        return RestfulHttpRequest.getResponseObject(appSession,
+            "/flow/engine/optInfo/"+flowInstId, FlowOptInfo.class);
     }
     /**
      * 获取节点实例 Id
@@ -222,9 +204,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public NodeInstance getNodeInstance(String nodeInstId) {
-        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/engine/nodeInst/"+nodeInstId);
-        return receiveJSON.getDataAsObject(NodeInstance.class);
+        return RestfulHttpRequest.getResponseObject(appSession,
+            "/flow/engine/nodeInst/"+nodeInstId, NodeInstance.class);
     }
 
     /**
@@ -235,9 +216,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      */
     @Override
     public NodeInfo getNodeInfo(String nodeInstId) {
-        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/engine/nodeDef/"+nodeInstId);
-        return receiveJSON.getDataAsObject(NodeInfo.class);
+        return RestfulHttpRequest.getResponseObject(appSession,
+            "/flow/engine/nodeDef/"+nodeInstId, NodeInfo.class);
     }
 
     @Override
@@ -322,7 +302,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         HashMap<java.lang.String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
-        return RestfulHttpRequest.getResponseObjectList(appSession, "/flow/engine/viewFlowOrganize", paramMap, String.class);
+        return RestfulHttpRequest.getResponseObjectList(appSession,
+            "/flow/engine/viewFlowOrganize", paramMap, String.class);
     }
 
 
@@ -346,6 +327,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     public boolean nodeCanBeReclaim(String nodeInstId) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/engine/nodeCanBeReclaim/"+nodeInstId);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         return BooleanBaseOpt.castObjectToBoolean(receiveJSON.getData(), false);
     }
 
@@ -366,6 +348,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     public Map<String, String> listFlowNodeForCreate(String flowInstId){
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/engine/nodeForCreate/"+flowInstId);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         return receiveJSON.getDataAsMap(String.class);
     }
     /**
@@ -463,6 +446,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             UrlOptUtils.appendParamsToUrl(
                 UrlOptUtils.appendParamsToUrl("/flow/engine/flowGroup",
                     paramMap), (JSONObject) JSON.toJSON(pageDesc)));
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
         return receiveJSON.getJSONArray("objList"/*, FlowInstanceGroup.class*/);
     }
@@ -480,6 +464,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             UrlOptUtils.appendParamsToUrl(
                 UrlOptUtils.appendParamsToUrl("/flow/engine/listTasks",
                     paramMap), (JSONObject) JSON.toJSON(pageDesc)));
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
         return receiveJSON.getJSONArray("objList"/*, UserTask.class*/);
     }
@@ -494,6 +479,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     public JSONArray listNodeTaskUsers(String nodeInstId) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
                 "/flow/engine/nodeTaskUsers?nodeInstId="+nodeInstId);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         return receiveJSON.getJSONArray();
     }
 
@@ -510,6 +496,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             UrlOptUtils.appendParamsToUrl(
                 UrlOptUtils.appendParamsToUrl("/flow/engine/listDynamicTasks",
                     paramMap), (JSONObject) JSON.toJSON(pageDesc)));
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
         return receiveJSON.getJSONArray("objList"/*, UserTask.class*/);
     }
@@ -523,8 +510,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     public JSONArray listItemRoleFilter(String flowInstId, String itemRoleCode) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/engine/itemRoleFilter/"+flowInstId+"/"+itemRoleCode);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         return receiveJSON.getJSONArray();
     }
-
 
 }
