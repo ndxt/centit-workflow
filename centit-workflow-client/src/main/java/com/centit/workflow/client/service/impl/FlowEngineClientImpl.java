@@ -76,6 +76,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         //JSONObject jsonObject = (JSONObject)JSON.toJSON(options);
         String flowJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/createInstance", options);
+        RestfulHttpRequest.checkHttpReceiveJSON(HttpReceiveJSON.valueOfJson(flowJson));
         return jsonToFlowInstance(flowJson);
     }
 
@@ -172,9 +173,8 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         String returnJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/submitOpt", options);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(returnJson);
-        //Map<String,Object> jsonObject=JSONObject.parseObject(returnJson);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         return receiveJSON.getJSONObject();
-
     }
 
     /**
@@ -395,6 +395,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         String json =  RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/isolatedNode", paramMap);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         return receiveJSON.getDataAsObject(NodeInstance.class);
     }
 
@@ -426,6 +427,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         String json =  RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/prepNode", paramMap);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         return receiveJSON.getDataAsObject(NodeInstance.class);
     }
 
@@ -444,6 +446,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
         String json =  RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/flowGroup", paramMap);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         return receiveJSON.getDataAsObject(FlowInstanceGroup.class);
     }
 
