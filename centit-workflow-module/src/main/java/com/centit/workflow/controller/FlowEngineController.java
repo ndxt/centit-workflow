@@ -3,6 +3,7 @@ package com.centit.workflow.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpContentType;
@@ -421,7 +422,9 @@ public class FlowEngineController extends BaseController {
         required= true, paramType = "path", dataType= "String"
     )})
     @RequestMapping(value="/itemRoleFilter/{flowInstId}/{itemRoleCode}",method = RequestMethod.GET)
-    public JSONArray viewRoleFormulaUsers(@PathVariable String flowInstId, @PathVariable String itemRoleCode){
+    public JSONArray viewRoleFormulaUsers(@PathVariable String flowInstId,
+                                          @PathVariable String itemRoleCode,
+                                          HttpServletRequest request){
 
         FlowInstance instance = flowEngine.getFlowInstById(flowInstId);
         if(instance==null){
@@ -432,6 +435,9 @@ public class FlowEngineController extends BaseController {
         if(StringUtils.isBlank(itemRole.getFormulaCode())){
             return null;
         }
-        return roleFormulaService.viewRoleFormulaUsers(itemRole.getFormulaCode());
+        return roleFormulaService.viewRoleFormulaUsers(
+            itemRole.getFormulaCode(),
+            WebOptUtils.getCurrentUserCode(request),
+            WebOptUtils.getCurrentUnitCode(request));
     }
 }

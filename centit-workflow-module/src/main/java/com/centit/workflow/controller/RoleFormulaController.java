@@ -1,6 +1,7 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
@@ -69,8 +70,11 @@ public class RoleFormulaController extends BaseController {
     @ApiOperation(value = "查询权限表达式对应用户", notes = "查询权限表达式对应用户")
     @WrapUpResponseBody
     @RequestMapping(value="/users/{formulaCode}",method = RequestMethod.GET)
-    public JSONArray viewRoleFormulaUsers(@PathVariable String formulaCode){
-        JSONArray listObjects = roleFormulaService.viewRoleFormulaUsers(formulaCode);
+    public JSONArray viewRoleFormulaUsers(@PathVariable String formulaCode,
+                                          HttpServletRequest request){
+        JSONArray listObjects = roleFormulaService.viewRoleFormulaUsers(
+            formulaCode, WebOptUtils.getCurrentUserCode(request),
+            WebOptUtils.getCurrentUnitCode(request));
         return listObjects;
     }
 
@@ -90,8 +94,11 @@ public class RoleFormulaController extends BaseController {
             "* RO 根据用户角色过滤 RO(\"系统角色代码常量\" [,\"系统角色代码常量\"])" )
     @WrapUpResponseBody
     @RequestMapping(value="/calcUsers",method = RequestMethod.GET)
-    public JSONArray viewFormulaUsers(String formula){
-        return roleFormulaService.viewFormulaUsers(StringEscapeUtils.unescapeHtml4(formula));
+    public JSONArray viewFormulaUsers(String formula, HttpServletRequest request){
+        return roleFormulaService.viewFormulaUsers(
+            StringEscapeUtils.unescapeHtml4(formula),
+            WebOptUtils.getCurrentUserCode(request),
+            WebOptUtils.getCurrentUnitCode(request));
     }
 
     private static List<? extends IUserInfo> truncateUsers(List<? extends IUserInfo> allusers, Integer maxSize){

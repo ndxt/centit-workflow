@@ -1,7 +1,6 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.components.SysUserFilterEngine;
-import com.centit.framework.components.UserUnitParamBuilder;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
@@ -18,6 +17,7 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -364,43 +364,42 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         }
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        context.setVarTrans(varTrans);
         //构建内置变量
-        Map<String, Set<String>> unitParams = UserUnitParamBuilder.createEmptyParamMap();
-        Map<String, Set<String>> userParams = UserUnitParamBuilder.createEmptyParamMap();
         NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(nextOptNode.getNodeId(), preNodeInst, "");
         // L 上一次运行到本节点的 用户和机构
         if (oldNodeInst != null) {
-            UserUnitParamBuilder.addParamToParamMap(unitParams, "L", oldNodeInst.getUnitCode());
-            UserUnitParamBuilder.addParamToParamMap(userParams, "L", oldNodeInst.getUserCode());
+            context.addUnitParam("L", oldNodeInst.getUnitCode());
+            context.addUserParam("L", oldNodeInst.getUserCode());
         }
         // P 前面一个节点的 用户和机构
         NodeInstance preNode = flowInst.getNearestNode(preNodeInst, nodeToken);
         if (preNode != null) {
-            UserUnitParamBuilder.addParamToParamMap(unitParams, "P", preNode.getUnitCode());
-            UserUnitParamBuilder.addParamToParamMap(userParams, "P", preNode.getUserCode());
+            context.addUnitParam( "P", preNode.getUnitCode());
+            context.addUserParam("P", preNode.getUserCode());
         }
         // C 参数指定的，就是提交的人和机构
-        UserUnitParamBuilder.addParamToParamMap(unitParams, "C",
+        context.addUnitParam( "C",
             options.getUnitCode() == null ?
                 context.getUserInfoByCode(options.getUserCode()).getPrimaryUnit():
                 options.getUnitCode());
-        UserUnitParamBuilder.addParamToParamMap(userParams, "C",
+        context.addUserParam("C",
             options.getUserCode());
         // F 流程的 用户 和 机构
-        UserUnitParamBuilder.addParamToParamMap(unitParams, "F", flowInst.getUnitCode());
-        UserUnitParamBuilder.addParamToParamMap(userParams, "F", flowInst.getUserCode());
+        context.addUnitParam( "F", flowInst.getUnitCode());
+        context.addUserParam("F", flowInst.getUserCode());
 
         //调用机构引擎来计算 unitCode
         // 如果指定机构 就不需要再进行计算了
-        if (nodeUnits == null) {
-            nodeUnits = UserUnitCalcEngine.calcUnitsByExp(
-                context,
-                nextOptNode.getUnitExp(),
-                unitParams,
-                varTrans);
+        if (CollectionUtils.isEmpty(nodeUnits)) {
+            nodeUnits = UserUnitCalcEngine.calcUnitsByExp(context,
+                nextOptNode.getUnitExp());
             //nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext, nextOptNode.getUnitExp(),unitParams, varTrans);
         }
-
+        if(CollectionUtils.isNotEmpty(nodeUnits)) {
+            // 将 机构表达式
+            context.addUnitParam("N", nodeUnits);
+        }
         // 强制锁定用户 优先级最好
         if(options.isLockOptUser()){
             String optUser = options.getWorkUserCode();
@@ -408,6 +407,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 return new LeftRightPair<>(nodeUnits, CollectionsOpt.createHashSet(optUser));
             }
         }
+
         // 通过节点 映射
         Set<String> optUsers = null;
         if(options.getNodeOptUsers() != null){
@@ -433,8 +433,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
             //如果节点的角色类别为 权限引擎则要调用权限引擎来分配角色
             //根据权限表达式创建任务列表
-            optUsers = UserUnitCalcEngine.calcOperators(context, roleFormula,
-                unitParams, userParams, null, varTrans);
+            optUsers = UserUnitCalcEngine.calcOperators(context, roleFormula);
             if (optUsers == null || optUsers.size() == 0) {
                 logger.error("权限引擎没有识别出符合表达式的操作人员！ wid:" + flowInst.getFlowInstId() + " nid" + nextOptNode.getNodeId());
             }

@@ -20,9 +20,9 @@ public interface RoleFormulaService {
 
     void deleteRoleFormulaByCode(String formulaCode);
 
-    JSONArray viewFormulaUsers(String formula);
+    JSONArray viewFormulaUsers(String formula, String userCode, String unitCode);
 
-    JSONArray viewRoleFormulaUsers(String formulaCode);
+    JSONArray viewRoleFormulaUsers(String formulaCode, String userCode, String unitCode);
 
     List<? extends IUserInfo> listAllUserInfo();
 

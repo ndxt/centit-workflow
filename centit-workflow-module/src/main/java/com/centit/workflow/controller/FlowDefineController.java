@@ -2,6 +2,7 @@ package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
@@ -503,8 +504,11 @@ public class FlowDefineController extends BaseController {
         name = "itemRoleCode", value="办件角色代码",
         required= true, paramType = "path", dataType= "String"
     )})
-    @RequestMapping(value="/itemRoleFilter/{flowCode}/{version}/{itemRoleCode}",method = RequestMethod.GET)
-    public JSONArray viewRoleFormulaUsers(@PathVariable String flowCode, @PathVariable Long version, @PathVariable String itemRoleCode){
+    @RequestMapping(value="/itemRoleFilter/{flowCode}/{version}/{itemRoleCode}", method = RequestMethod.GET)
+    public JSONArray viewRoleFormulaUsers(@PathVariable String flowCode,
+                                          @PathVariable Long version,
+                                          @PathVariable String itemRoleCode,
+                                          HttpServletRequest request){
         if(version == null || version < 1){
             version = flowDefine.getFlowLastVersion(flowCode);
         }
@@ -512,6 +516,9 @@ public class FlowDefineController extends BaseController {
         if(StringUtils.isBlank(itemRole.getFormulaCode())){
             return null;
         }
-        return roleFormulaService.viewRoleFormulaUsers(itemRole.getFormulaCode());
+        return roleFormulaService.viewRoleFormulaUsers(
+            itemRole.getFormulaCode(),
+            WebOptUtils.getCurrentUserCode(request),
+            WebOptUtils.getCurrentUnitCode(request));
     }
 }

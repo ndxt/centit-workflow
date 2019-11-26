@@ -61,11 +61,13 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     }
 
     @Override
-    public JSONArray viewFormulaUsers(String formula) {
+    public JSONArray viewFormulaUsers(String formula, String userCode, String unitCode) {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        context.addUserParam("C", userCode);
+        context.addUnitParam("C", unitCode);
+        context.addUnitParam("N", unitCode);
         Set<String> sUsers = UserUnitCalcEngine.calcOperators(
-            context,
-            formula, null, null, null,null);
+            context, formula);
 
         List<IUserInfo> userInfos = new ArrayList<>();
         for(String uc : sUsers){
@@ -75,18 +77,17 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     }
 
     @Override
-    public JSONArray viewRoleFormulaUsers(String formulaCode) {
+    public JSONArray viewRoleFormulaUsers(String formulaCode, String userCode, String unitCode) {
         RoleFormula flowRole = flowRoleDao.getObjectById(formulaCode);
         if(flowRole==null){
             return null;
         }
-        return viewFormulaUsers(flowRole.getRoleFormula());
+        return viewFormulaUsers(flowRole.getRoleFormula(), userCode, unitCode);
     }
 
     @Override
     public List<? extends IUserInfo> listAllUserInfo() {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
-
         return context.listAllUserInfo();
     }
 
