@@ -36,7 +36,7 @@ public class FlowOptServiceImpl implements FlowOptService {
     @Override
     @Transactional
     public JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc) {
-        return flowOptInfoDao.listObjectsAsJson(filterMap,pageDesc);
+        return flowOptInfoDao.listObjectsAsJson(filterMap, pageDesc);
     }
 
     @Override

@@ -61,7 +61,7 @@ public class FlowOptController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     public PageQueryResult listOptInfo(PageDesc pageDesc, HttpServletRequest request){
         Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
-        JSONArray objList = wfOptService.listOptInfo(filterMap,pageDesc);
+        JSONArray objList = wfOptService.listOptInfo(filterMap, pageDesc);
         return PageQueryResult.createResult(objList,pageDesc);
     }
 

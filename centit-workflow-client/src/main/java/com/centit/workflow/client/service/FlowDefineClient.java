@@ -3,6 +3,7 @@ package com.centit.workflow.client.service;
 import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
+import com.centit.workflow.po.FlowOptInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,14 @@ public interface FlowDefineClient {
      */
     FlowInfo getFlowInfo(String flowCode, long version);
 
+    /**
+     * 获取全部流程业务
+     * @param filterMap 过滤条件
+     * @param pageDesc 分页信息
+     * @return 返回列表
+     */
+    List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap,
+                                  PageDesc pageDesc);
     /**
      * 获取全部最新版本流程
      * @param filterMap 过滤条件

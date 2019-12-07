@@ -10,6 +10,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowDefineClient;
 import com.centit.workflow.po.FlowInfo;
+import com.centit.workflow.po.FlowOptInfo;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,16 @@ public class FlowDefineClientImpl implements FlowDefineClient {
         return receiveJSON.getDataAsArray("objList",FlowInfo.class);
     }
 
+    @Override
+    public List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap,
+                                  PageDesc pageDesc){
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/opt",
+                    filterMap), (JSONObject)JSON.toJSON(pageDesc)));
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getDataAsArray("objList",FlowOptInfo.class);
+    }
 
     /**
      * 获取 流程信息

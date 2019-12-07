@@ -665,7 +665,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         Map<String, Object> filterMap, PageDesc pageDesc) {
         List<FlowInfo> flows = flowDefineDao
             .listLastVersionFlows(filterMap, pageDesc);
-
         //获取草稿版本的状态（0版本的状态）
         for (FlowInfo def : flows) {
             FlowInfo wfDef = flowDefineDao
@@ -673,9 +672,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             if (wfDef != null) {
                 def.setFlowState(wfDef.getFlowState());
             }
-
         }
-        return new ArrayList<FlowInfo>(flows);
+        return flows;
     }
 
     @Override
