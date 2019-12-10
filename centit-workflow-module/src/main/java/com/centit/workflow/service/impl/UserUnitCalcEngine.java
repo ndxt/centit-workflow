@@ -3,6 +3,8 @@ package com.centit.workflow.service.impl;
 import com.centit.framework.components.SysUnitFilterEngine;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
+import com.centit.support.common.ObjectException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,26 +40,34 @@ public abstract class UserUnitCalcEngine {
 
     public static Set<String> calcUnitsByExp(
                     UserUnitFilterCalcContext ecc, String unitExp) {
-        if (unitExp == null)
+        if (StringUtils.isBlank(unitExp)) {
             return null;
+        }
         //UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
         ecc.setFormula(unitExp);
         Set<String> units = SysUnitFilterEngine.calcUnitsExp(ecc);
-        if (ecc.hasError())
-            logger.error(ecc.getLastErrMsg());
+        if (ecc.hasError()) {
+            logger.error(unitExp +":"+ ecc.getLastErrMsg());
+            throw new ObjectException(ecc, ObjectException.FORMULA_GRAMMAR_ERROE,
+                unitExp +":"+ ecc.getLastErrMsg());
+        }
         return units;
     }
 
     public static Set<String> calcOperators(
                     UserUnitFilterCalcContext ecc,
                     String roleExp) {
-        if (roleExp == null)
+        if (StringUtils.isBlank(roleExp)) {
             return null;
+        }
         //UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
         ecc.setFormula(roleExp);
         Set<String> sUsers = SysUserFilterEngine.calcRolesExp(ecc);
-        if (sUsers == null || ecc.hasError())
-            logger.error(ecc.getLastErrMsg());
+        if (ecc.hasError()) {
+            logger.error(roleExp +":"+ ecc.getLastErrMsg());
+            throw new ObjectException(ecc, ObjectException.FORMULA_GRAMMAR_ERROE,
+                roleExp +":"+ ecc.getLastErrMsg());
+        }
         return sUsers;
     }
 }
