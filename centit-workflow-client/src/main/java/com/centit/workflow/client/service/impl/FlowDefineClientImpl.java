@@ -3,7 +3,6 @@ package com.centit.workflow.client.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.database.utils.PageDesc;
@@ -11,11 +10,9 @@ import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowDefineClient;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowOptInfo;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 
@@ -24,31 +21,16 @@ import java.util.Map;
  */
 @Service
 public class FlowDefineClientImpl implements FlowDefineClient {
-    @Value("${workflow.server:}")
-    private String workFlowServerUrl;
-    @Value("${workflow.server.login:}")
-    private String workFlowServerLoginUrl;
 
     public FlowDefineClientImpl() {
 
     }
 
-    private AppSession appSession;
+    private WorkflowAppSession appSession;
 
-
-    private CloseableHttpClient allocHttpClient() throws Exception {
-        return appSession.allocHttpClient();
-    }
-
-    private void makeAppSession() {
-        appSession = new AppSession(workFlowServerUrl,false,null,null);
-        appSession.setAppLoginUrl(workFlowServerLoginUrl);
-    }
-
-    @PostConstruct
-    public void init(){
-        //this.setWorkFlowServerUrl(workFlowServerUrl);
-        makeAppSession();
+    @Autowired
+    public void setAppSession(WorkflowAppSession appSession) {
+        this.appSession = appSession;
     }
 
     @Override
@@ -151,8 +133,4 @@ public class FlowDefineClientImpl implements FlowDefineClient {
         return receiveJSON.getJSONArray();
     }
 
-
-    public void setWorkFlowServerUrl(String workFlowServerUrl) {
-        this.workFlowServerUrl = workFlowServerUrl;
-    }
 }

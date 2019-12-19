@@ -29,7 +29,7 @@ public interface FlowEngineClient {
      * @param options SubmitOptOptions 提交流程操作选项编码
      * @return  节点实例编号列表
      */
-    Map<String, Object> submitOpt(SubmitOptOptions options);
+    List<String> submitOpt(SubmitOptOptions options);
 
     /**
      * 获取流程实例信息

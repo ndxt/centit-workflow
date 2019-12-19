@@ -3,7 +3,6 @@ package com.centit.workflow.client.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.centit.framework.appclient.AppSession;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.algorithm.BooleanBaseOpt;
@@ -14,11 +13,9 @@ import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**
@@ -27,32 +24,14 @@ import java.util.*;
 @Service
 public class FlowEngineClientImpl implements FlowEngineClient {
 
-    @Value("${workflow.server:}")
-    private String workFlowServerUrl;
-    @Value("${workflow.server.login:}")
-    private String workFlowServerLoginUrl;
-
     public FlowEngineClientImpl() {
-
     }
 
-    private AppSession appSession;
+    private WorkflowAppSession appSession;
 
-    public CloseableHttpClient getHttpClient()  throws Exception{
-        return appSession.allocHttpClient();
-    }
-
-
-    public void makeAppSession() {
-        appSession = new AppSession(workFlowServerUrl, false, null, null);
-        appSession.setAppLoginUrl(workFlowServerLoginUrl);
-    }
-
-
-    @PostConstruct
-    public void init() {
-        //this.setWorkFlowServerUrl(workFlowServerUrl);
-        makeAppSession();
+    @Autowired
+    public void setAppSession(WorkflowAppSession appSession) {
+        this.appSession = appSession;
     }
 
     @Override
@@ -154,12 +133,12 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public Map<String, Object> submitOpt(SubmitOptOptions options) throws WorkflowException {
+    public List<String> submitOpt(SubmitOptOptions options) throws WorkflowException {
         String returnJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/submitOpt", options);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(returnJson);
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
-        return receiveJSON.getJSONObject();
+        return receiveJSON.getDataAsArray(String.class);
     }
 
     /**
