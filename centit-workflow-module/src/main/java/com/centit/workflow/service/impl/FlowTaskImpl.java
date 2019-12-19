@@ -4,6 +4,7 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.NotificationCenter;
+import com.centit.framework.model.basedata.NoticeMessage;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
@@ -63,11 +64,13 @@ public class FlowTaskImpl {
                 QueryUtils.createSqlParamsMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
         int nn = 0;
         for (UserTask task : taskList) {
-            notificationCenter.sendMessage("admin",
-                task.getUserCode(), "节点预报警提示",
-                "业务" + task.getFlowOptName() + "的" +
+            notificationCenter.sendMessage("system",
+                task.getUserCode(),
+                NoticeMessage.create().subject("节点预报警提示")
+                .content("业务" + task.getFlowOptName() + "的" +
                     task.getNodeName() + "节点超时预警，请尽快处理。办理链接为" +
-                    task.getNodeOptUrl(), "WF_WARNING", "NOTIFY", String.valueOf(nodeInstId));
+                    task.getNodeOptUrl())
+                .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInstId)));
             nn++;
         }
         return nn;
