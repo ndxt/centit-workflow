@@ -1,5 +1,8 @@
 package com.centit.workflow.po;
 
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,6 +17,7 @@ public class ApprRole implements Serializable {
 
     @Id
     @Column(name = "ROLE_CODE")
+    @ValueGenerator(strategy = GeneratorType.UUID)
     private String roleCode;
 
     @Column(name = "ROLE_NAME")
@@ -46,6 +50,14 @@ public class ApprRole implements Serializable {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getRoleState() {
+        return roleState;
+    }
+
+    public void setRoleState(String roleState) {
+        this.roleState = roleState;
     }
 }
 
