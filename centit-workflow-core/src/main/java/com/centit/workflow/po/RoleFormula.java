@@ -32,7 +32,7 @@ public class RoleFormula implements Serializable {
     private String formulaName;
 
     /**
-     * 权限表达式
+     * 权限表达式 varchar(2000)
      */
     @Column(name = "ROLE_FORMULA")
     private String roleFormula;
