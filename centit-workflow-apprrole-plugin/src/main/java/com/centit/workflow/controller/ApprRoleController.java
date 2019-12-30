@@ -12,10 +12,7 @@ import com.centit.workflow.po.ApprRoleDefine;
 import com.centit.workflow.service.ApprRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,14 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/apprRole")
+@RequestMapping("/appr/role")
 public class ApprRoleController extends BaseController {
 
     @Autowired
     private ApprRoleService apprRoleService;
 
     //审批角色列表
-    @RequestMapping("/listApprRole")
+    @GetMapping("/list")
     @WrapUpResponseBody
     public PageQueryResult<ApprRole> listAllApprRole(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
         Map<String, Object> filterMap = collectRequestParameters(request);
@@ -38,19 +35,19 @@ public class ApprRoleController extends BaseController {
         return PageQueryResult.createResult(objList, pageDesc);
     }
 
-    @RequestMapping(value = "/getApprRoleByCode", method = RequestMethod.GET)
+    @GetMapping("/{roleCode}")
     public void getApprRoleByCode(String roleCode, HttpServletRequest request, HttpServletResponse response){
         ApprRole apprRole = apprRoleService.getApprRoleByCode(roleCode);
-        JsonResultUtils.writeSingleDataJson(apprRole,response);
+        JsonResultUtils.writeSingleDataJson(apprRole, response);
     }
 
-    @RequestMapping(value = "/saveApprRole", method = RequestMethod.POST)
+    @PostMapping()
     public void saveApprRole(@RequestBody ApprRole apprRole, HttpServletRequest request, HttpServletResponse response){
         apprRoleService.saveApprRole(apprRole);
         JsonResultUtils.writeBlankJson(response);
     }
 
-    @RequestMapping("/deleteApprRoleByCode")
+    @DeleteMapping("/{roleCode}")
     public void deleteApprRoleByCode(String roleCode, HttpServletRequest request, HttpServletResponse response) {
         apprRoleService.deleteApprRoleByCode(roleCode);
         JsonResultUtils.writeSuccessJson(response);
@@ -59,7 +56,7 @@ public class ApprRoleController extends BaseController {
     /**
      * 获取审批角色的明细
      */
-    @RequestMapping(value = {"/getApprRoleDefineListByCode/{roleCode}"}, method = {RequestMethod.GET})
+    @GetMapping("/detail/{roleCode}")
     public void getApprRoleDefineListByCode(@PathVariable String roleCode, HttpServletResponse response) {
         List<ApprRoleDefine> apprRoleDefineList = this.apprRoleService.getApprRoleDefineListByCode(roleCode);
         ApprRole apprRole = new ApprRole();
@@ -67,13 +64,13 @@ public class ApprRoleController extends BaseController {
         JsonResultUtils.writeSingleDataJson(apprRole, response);
     }
 
-    @RequestMapping({"/deleteApprRoleDefineByCode"})
-    public void deleteApprRoleDefineByCode(String id, HttpServletRequest request, HttpServletResponse response) {
+    @DeleteMapping({"/detail/{id}"})
+    public void deleteApprRoleDefineByCode(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
         this.apprRoleService.deleteApprRoleDefineById(id);
         JsonResultUtils.writeSuccessJson(response);
     }
 
-    @RequestMapping({"/saveApprRoleDefineList"})
+    @PutMapping({"/saveList"})
     public void saveApprRoleDefineList(@RequestBody JSONObject paramData, HttpServletRequest request, HttpServletResponse response) {
         JSONArray apprRoleDefineList = paramData.getJSONArray("apprRoleDefineList");
         for(int i = 0; i < apprRoleDefineList.size(); ++i) {
