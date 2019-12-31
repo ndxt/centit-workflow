@@ -17,10 +17,14 @@ public interface ApprRoleService {
 
     void deleteApprRoleByCode(String roleCode);
 
+    void updateApprRole(ApprRole apprRole);
+
     List<ApprRoleDefine> getApprRoleDefineListByCode(String roleCode);
 
     void deleteApprRoleDefineById(String id);
 
     void saveApprRoleDefine(ApprRoleDefine apprRoleDefine);
+
+    void updateFormula(String roleCode);
 
 }
