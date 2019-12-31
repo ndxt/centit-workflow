@@ -99,4 +99,11 @@ public class ApprRoleController extends BaseController {
         this.apprRoleService.updateFormula(roleCode);
         JsonResultUtils.writeBlankJson(response);
     }
+
+    @ApiOperation(value = "同步审批角色到权限表达式", notes = "同步审批角色到权限表达式。")
+    @GetMapping("/sync")
+    @WrapUpResponseBody
+    public Boolean syncApprRoleToFormula() {
+        return this.apprRoleService.syncApprRoleToFormula();
+    }
 }

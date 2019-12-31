@@ -1,6 +1,7 @@
 package com.centit.workflow.dao;
 
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.workflow.po.ApprRole;
 import org.springframework.stereotype.Repository;
 
@@ -31,6 +32,15 @@ public class ApprRoleDao extends BaseDaoImpl<ApprRole,String> {
         }
 
         return roleMap;
+    }
+
+    /**
+     * 将WF_NODE表中ROLE_TYPE为sp的记录改为SF
+     * @return
+     */
+    public boolean updateNodeSPToSF() {
+        String sql = "update WF_NODE set ROLE_TYPE='SF' where ROLE_TYPE='sp'";
+        return DatabaseOptUtils.doExecuteSql(this, sql);
     }
 }
 

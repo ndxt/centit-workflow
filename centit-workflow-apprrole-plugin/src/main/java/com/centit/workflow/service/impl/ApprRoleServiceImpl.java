@@ -140,12 +140,37 @@ public class ApprRoleServiceImpl implements ApprRoleService {
         if (!roleTypeAndCode.isEmpty()) {
             String formula = "";
             for (Map.Entry<String, String> ent : roleTypeAndCode.entrySet()) {
-                String itemExp = ent.getKey().equalsIgnoreCase("js") ? "RO" : "XZ"; // 用户角色 or 行政职务
+                String itemExp = ent.getKey().equalsIgnoreCase("js") ? "D(N)RO" : "D(N)XZ"; // 用户角色 or 行政职务
                 formula += itemExp + "(" + ent.getValue() + ")||";
             }
             return formula.substring(0, formula.lastIndexOf("||"));
         }
 
         return null;
+    }
+
+    /**
+     * 将审批角色表里的旧数据 同步到 权限表达式表
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean syncApprRoleToFormula() {
+        List<ApprRole> apprRoles = apprRoleDao.listObjects();
+        for (ApprRole apprRole : apprRoles) {
+            RoleFormula formula = roleFormulaDao.getObjectById(apprRole.getRoleCode());
+            if (null == formula) {
+                RoleFormula newFormula = new RoleFormula();
+                newFormula.setFormulaCode(apprRole.getRoleCode());
+                newFormula.setFormulaName(apprRole.getRoleName());
+                newFormula.setRoleLevel(0);
+                newFormula.setRoleFormula(getFormula(apprRole.getRoleCode()));
+                roleFormulaDao.saveNewObject(newFormula);
+            }
+        }
+
+        apprRoleDao.updateNodeSPToSF();
+
+        return true;
     }
 }

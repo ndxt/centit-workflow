@@ -27,4 +27,6 @@ public interface ApprRoleService {
 
     void updateFormula(String roleCode);
 
+    boolean syncApprRoleToFormula();
+
 }
