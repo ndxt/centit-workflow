@@ -78,7 +78,7 @@ public class NodeEventSupportFactory {
         OsInfo osInfo = StringUtils.isBlank(nodeInfo.getOsId()) ?
             null : integrationEnvironment.getOsInfo(nodeInfo.getOsId());
 
-        if (osInfo != null || StringUtils.isBlank(osInfo.getOsUrl())) {
+        if (osInfo != null && StringUtils.isNotBlank(osInfo.getOsUrl())) {
             RemoteBeanNodeEventSupport remoteNodeEventExecutor = new RemoteBeanNodeEventSupport();
             remoteNodeEventExecutor.setAppSession(fetchAppSession(osInfo.getOsUrl()));
             return remoteNodeEventExecutor;

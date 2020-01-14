@@ -41,7 +41,7 @@ public interface NodeEventSupport {
      * @param nodeInst 节点实例
      * @param nodeInfo 用户自定义操作参数
      * @param optUserCode 当前操作用户
-     * @return true 需要运行后需要调用自动提交，false 则不需要，一般在函数内部已经调用submitNode
+     * @return true 需要运行后调用自动提交，false 则不需要，一般在函数内部已经调用submitNode
      */
     boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                             NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
