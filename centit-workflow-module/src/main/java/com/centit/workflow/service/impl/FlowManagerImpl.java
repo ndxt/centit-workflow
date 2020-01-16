@@ -987,10 +987,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     QueryUtils.createSqlParamsMap("nodeInstId", nodeInst.getNodeInstId()), new PageDesc(-1, -1));
 
                 List<String> trainsUsers = new ArrayList<String>();
+                String optUrl = null;
                 for (UserTask userTask : taskList) {
                     trainsUsers.add(userTask.getUserCode());
+                    optUrl = userTask.getOptUrl();
                 }
                 nodeInst.setTrainsUsers(trainsUsers);
+                nodeInst.setOptUrl(optUrl);
             }
             nodeInstList.add(nodeInst);
         }

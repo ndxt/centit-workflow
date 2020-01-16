@@ -113,6 +113,8 @@ public class NodeInstance implements java.io.Serializable {
     private String isRecycle;//yes:可以回收；no：不可以回收
     @Transient
     private List<String> trainsUsers;
+    @Transient
+    private String optUrl; // 暂时用于返回数据，后面有好的解决方案再修改
     // Constructors
     /** default constructor */
     public NodeInstance() {
@@ -791,5 +793,11 @@ public class NodeInstance implements java.io.Serializable {
         this.node = node;
     }
 
+    public String getOptUrl() {
+        return optUrl;
+    }
 
+    public void setOptUrl(String optUrl) {
+        this.optUrl = optUrl;
+    }
 }
