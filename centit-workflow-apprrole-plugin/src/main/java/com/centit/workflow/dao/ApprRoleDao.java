@@ -39,7 +39,25 @@ public class ApprRoleDao extends BaseDaoImpl<ApprRole,String> {
      * @return
      */
     public boolean updateNodeSPToSF() {
-        String sql = "update WF_NODE set ROLE_TYPE='SF' where ROLE_TYPE='sp'";
+        String sql = "update WF_NODE set ROLE_TYPE='SF' where (ROLE_TYPE='sp' or ROLE_TYPE='SP')";
+        return DatabaseOptUtils.doExecuteSql(this, sql);
+    }
+
+    /**
+     * 将WF_NODE表中unit_exp为P的记录改为D(P)
+     * @return
+     */
+    public boolean updateNodeUnitExp() {
+        String sql = "update WF_NODE set unit_exp='D(P)' where (unit_exp='P' or unit_exp='p')";
+        return DatabaseOptUtils.doExecuteSql(this, sql);
+    }
+
+    /**
+     * 将WF_NODE表中unit_exp为D(U)的记录改为D(C)
+     * @return
+     */
+    public boolean updateNodeUnitExp2() {
+        String sql = "update WF_NODE set unit_exp='D(C)' where (unit_exp='D(U)' and ROLE_TYPE in ('sp','SP','SF'))";
         return DatabaseOptUtils.doExecuteSql(this, sql);
     }
 }

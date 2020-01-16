@@ -759,6 +759,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         roleTypes.put(SysUserFilterEngine.ROLE_TYPE_SYSTEM, "系统角色");
         roleTypes.put(SysUserFilterEngine.ROLE_TYPE_ENGINE, "权限引擎");
         roleTypes.put(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA, "已定义表达式");
+        // roleTypes.put("sp", "审批角色(烽火)");
         return roleTypes;
     }
 

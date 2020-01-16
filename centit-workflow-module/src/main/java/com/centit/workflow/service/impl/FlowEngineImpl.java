@@ -443,7 +443,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         } else if (SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(nextOptNode.getRoleType())) {
             optUsers = new HashSet<>();
-            List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(preNodeInst.getFlowInstId(), nextOptNode.getRoleCode());
+            List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(flowInst.getFlowInstId(), nextOptNode.getRoleCode());
             for (FlowWorkTeam u : users)
                 optUsers.add(u.getUserCode());
             //流程角色（审批角色）待测试
