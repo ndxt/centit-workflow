@@ -1424,6 +1424,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else if ("R".equals(nextNode.getNodeType())) {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
                 nodeInst, flowInst,flowVariableDao,this,null);
+            // 分支节点的条件
+            flowVarTrans.setFlowVarTrans(varTrans);
             nextNodes = viewRouterNextNodeInside(nextNode, flowVarTrans);
         }
         return nextNodes;
