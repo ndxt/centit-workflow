@@ -1,15 +1,23 @@
 package com.centit.workflow.client.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
+import com.centit.framework.model.basedata.OperationLog;
+import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.database.utils.PageDesc;
+import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -214,6 +222,55 @@ public class FlowManagerClientImpl implements FlowManagerClient {
         RestfulHttpRequest.jsonPost(appSession,
             "/flow/manager/deleteNodeTask/"+nodeInstId+"/"+mangerUserCode, paramMap);
         return 0;
+    }
+
+    /**
+     * 获取节点实例的操作日志列表
+     *
+     * @param flowInstId 流程实例号
+     * @param nodeInstId 节点实例好
+     * @return List<WfActionLog>
+     */
+    @Override
+    public List<OperationLog> listNodeActionLogs(String flowInstId, String nodeInstId) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/manager/nodelogs/"+flowInstId+"/"+nodeInstId);
+        return receiveJSON.getDataAsArray(OperationLog.class);
+    }
+
+    /**
+     * 获取节点实例的操作日志列表
+
+     * @param flowInstId     流程实例号
+     * @param withNodeAction 是否包括节点的日志
+     * @return List<WfActionLog>
+     */
+    @Override
+    public List<OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/manager/flowlogs/"+flowInstId+"?withNodeAction="+withNodeAction);
+        return receiveJSON.getDataAsArray(OperationLog.class);
+    }
+
+    /**
+     * 获取用户所有的操作记录
+     *
+     * @param userCode
+     * @param pageDesc 和分页机制结合
+     * @param lastTime if null return all
+     * @return
+     */
+    @Override
+    public List<OperationLog> listUserActionLogs(String userCode, PageDesc pageDesc, Date lastTime) {
+        String url = UrlOptUtils.appendParamsToUrl("/flow/manager/userlogs/"+userCode,
+            (JSONObject) JSON.toJSON(pageDesc));
+        if(lastTime!=null){
+            UrlOptUtils.appendParamToUrl(url,
+                "lastTime="+ DatetimeOpt.convertDatetimeToString(lastTime));
+        }
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession, url);
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getDataAsArray("objList", OperationLog.class);
     }
 
 }

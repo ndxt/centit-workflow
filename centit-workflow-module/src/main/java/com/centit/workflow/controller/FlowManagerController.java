@@ -11,7 +11,10 @@ import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.basedata.IUserInfo;
+import com.centit.framework.model.basedata.OperationLog;
+import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.algorithm.GeneralAlgorithm;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JSONOpt;
@@ -349,25 +352,8 @@ public class FlowManagerController extends BaseController {
         return tokenLvbList;
     }
 
-    /**
-     * 流程操作日志
-     *
-     * @param flowInstId
-     * @param response
-     */
-    @ApiOperation(value = "流程操作日志", notes = "流程操作日志")
-    @RequestMapping(value = "/getOptLogList/{flowInstId}", method = RequestMethod.GET)
-    public void getOptLogList(@PathVariable String flowInstId, HttpServletResponse response) {
-        List<ActionLog> actionLogList = flowManager.listFlowActionLogs(flowInstId);
-        JsonResultUtils.writeSingleDataJson(actionLogList, response);
-    }
-
-    /*流程实例管理接口*/
-    /**
+    /*流程实例管理接口
      * 暂挂一个流程实例
-     *
-     * @param wfinstid
-     * @param request
      */
     @ApiOperation(value = "暂挂一个流程实例", notes = "暂挂一个流程实例")
     @WrapUpResponseBody
@@ -381,10 +367,11 @@ public class FlowManagerController extends BaseController {
         flowManager.suspendInstance(wfinstid, mangerUserCode, admindesc);
         return "已暂挂";
     }
-   @ApiOperation(value="编辑流程实例",notes="编辑流程实例")
-   @WrapUpResponseBody
-   @PostMapping
-   public void updateFlowInst(@RequestBody String json){
+
+    @ApiOperation(value="编辑流程实例",notes="编辑流程实例")
+    @WrapUpResponseBody
+    @PostMapping
+    public void updateFlowInst(@RequestBody String json){
        JSONObject jsonObject = JSON.parseObject(json);
        //流程实例ID
        String flowInstId = jsonObject.getString("flowInstId");
@@ -395,34 +382,25 @@ public class FlowManagerController extends BaseController {
        String userCode = jsonObject.getString("userCode");
        String unitCode = jsonObject.getString("unitCode");
        flowManager.updateFlowInstOptInfoAndUser(flowInstId, flowOptName, flowOptTag,userCode,unitCode);
-   }
-    /**
+    }
+    /*
      * 更改机构
-     *
-     * @param wfinstid
-     * @param unitcode
-     * @param request
-     * @param response
      */
     @ApiOperation(value = "更改机构", notes = "更改机构")
     @PutMapping(value = "/changeunit/{wfinstid}/{unitcode}")
-    public void changeUnit(@PathVariable String wfinstid, @PathVariable String unitcode, HttpServletRequest request, HttpServletResponse response) {
+    public void changeUnit(@PathVariable String wfinstid, @PathVariable String unitcode, HttpServletResponse response) {
         flowManager.updateFlowInstUnit(wfinstid, unitcode, "admin");
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
     /*流程实例状态管理api*/
 
-    /**
+    /*
      * 终止流程实例
-     *
-     * @param flowInstId
-     * @param request
-     * @param response
      */
     @ApiOperation(value = "终止流程实例", notes = "终止流程实例")
     @RequestMapping(value = "/stopinst/{flowInstId}", method = RequestMethod.GET)
-    public void stopInstance(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
+    public void stopInstance(@PathVariable String flowInstId, HttpServletResponse response) {
         flowManager.stopInstance(flowInstId, "admin", "");
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -526,10 +504,8 @@ public class FlowManagerController extends BaseController {
         return flowEng.getNodeInstById(nodeInstId);
     }
 
-    /**
+    /*
      * 从这个节点重新运行该流程，包括已经结束的流程
-     *
-     * @return
      */
     @ApiOperation(value = "从这个节点重新运行该流程，包括已经结束的流程", notes = "从这个节点重新运行该流程，包括已经结束的流程")
     @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.POST)
@@ -566,10 +542,8 @@ public class FlowManagerController extends BaseController {
         JsonResultUtils.writeSingleDataJson(objList, response);
     }
 
-    /**
+    /*
      * 返回节点的操作记录，或者日志
-     *
-     * @return
      */
     @ApiOperation(value = "返回节点的操作记录，或者日志", notes = "返回节点的操作记录，或者日志")
     @RequestMapping(value = "/viewnode/{nodeInstId}", method = RequestMethod.GET)
@@ -577,7 +551,7 @@ public class FlowManagerController extends BaseController {
         NodeInstance nodeInst = flowEng.getNodeInstById(nodeInstId);
         NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeInst.getNodeId());
         List<UserTask> tasks = flowManager.listNodeTasks(nodeInstId);
-        List<ActionLog> logs = flowManager.listNodeActionLogs(nodeInstId);
+        List<? extends OperationLog> logs = flowManager.listNodeActionLogs(nodeInstId);
         ResponseMapData resData = new ResponseMapData();
         resData.addResponseData("inst", nodeInst);
         resData.addResponseData("node", nodeInfo);
@@ -586,10 +560,8 @@ public class FlowManagerController extends BaseController {
         JsonResultUtils.writeResponseDataAsJson(resData, response);
     }
 
-    /**
+    /*
      * 返回节点的操作记录，或者日志
-     *
-     * @return
      */
     @ApiOperation(value = "返回节点的操作记录，或者日志", notes = "返回节点的操作记录，或者日志")
     @RequestMapping(value = "/viewflownode/{flowInstId}/{nodeId}", method = RequestMethod.GET)
@@ -700,18 +672,6 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     public List<ActionTask> listNodeInstTasks(@PathVariable String nodeInstId) {
         return flowManager.listNodeInstTasks(nodeInstId);
-    }
-
-    /**
-     * 查询某节点实例下的日志信息
-     *
-     * @return String
-     */
-    @ApiOperation(value = "查询某节点实例下的日志信息", notes = "查询某节点实例下的日志信息")
-    @RequestMapping(value = "/nodelogs/{nodeInstId}", method = RequestMethod.GET)
-    @WrapUpResponseBody
-    public List<ActionLog> listNodeInstLogs(@PathVariable String nodeInstId) {
-        return flowManager.listNodeActionLogs(nodeInstId);
     }
 
     //新增工作组
@@ -835,10 +795,8 @@ public class FlowManagerController extends BaseController {
         return PageQueryResult.createResult(flowInstanceGroupList, pageDesc);
     }
 
-    /**
+    /*
      * 根据id获取流程分组对象
-     *
-     * @param flowInstGroupId
      */
     @ApiOperation(value = "根据id获取流程分组对象", notes = "根据id获取流程分组对象")
     @RequestMapping(value = "/group/{flowInstGroupId}", method = RequestMethod.GET)
@@ -847,4 +805,41 @@ public class FlowManagerController extends BaseController {
         return flowManager.getFlowInstanceGroup(flowInstGroupId);
     }
 
+    /*
+     * 查询某节点实例下的日志信息
+     */
+    /*@ApiOperation(value = "节点操作日志", notes = "查询某节点实例下的日志信息")
+    @RequestMapping(value = "/nodelogs/{nodeInstId}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public List<? extends OperationLog> listNodeInstLogs(@PathVariable String nodeInstId) {
+        return flowManager.listNodeActionLogs(nodeInstId);
+    }*/
+
+    @ApiOperation(value = "节点操作日志", notes = "查询某节点实例下的日志信息")
+    @RequestMapping(value = "/nodelogs/{flowInstId}/{nodeInstId}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public List<? extends OperationLog> listNodeInstLogs(@PathVariable String flowInstId, @PathVariable String nodeInstId) {
+        return flowManager.listNodeActionLogs(flowInstId, nodeInstId);
+    }
+    /*
+     * 流程操作日志
+     */
+    @ApiOperation(value = "流程操作日志", notes = "流程操作日志")
+    @RequestMapping(value = "/flowlogs/{flowInstId}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public List<? extends OperationLog> listFlowInstLogs(@PathVariable String flowInstId, String withNodeLog) {
+        return flowManager.listFlowActionLogs(flowInstId,
+            BooleanBaseOpt.castObjectToBoolean(withNodeLog, false));
+    }
+
+    @ApiOperation(value = "用户操作日志", notes = "用户操作日志")
+    @RequestMapping(value = "/userlogs/{userCode}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public List<? extends OperationLog> listUserOptLogs(@PathVariable String userCode,
+                                                        String lastTime,
+                                                        PageDesc pageDesc) {
+        return flowManager.listUserActionLogs(userCode,
+            GeneralAlgorithm.nvl(DatetimeOpt.castObjectToDate(lastTime),
+                DatetimeOpt.addDays(DatetimeOpt.currentUtilDate(), -30)), pageDesc);
+    }
 }

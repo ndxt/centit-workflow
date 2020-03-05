@@ -1,11 +1,13 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.framework.model.basedata.NoticeMessage;
+import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.compiler.VariableFormula;
@@ -49,8 +51,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private FlowTransitionDao flowTransitionDao;
     @Autowired
     private ActionTaskDao actionTaskDao;
-    @Autowired
-    private ActionLogDao actionLogDao;
+
     @Autowired
     private FlowInfoDao flowDefDao;
     @Autowired
@@ -183,10 +184,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             null, null, null,
             options, flowVarTrans, application);
 
-        ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_LOG,
+        OperationLogCenter.log(FlowOptUtils.createActionLog(
             options.getUserCode(), flowInstId ,"创建流程，创建首节点:" +
-                StringBaseOpt.castObjectToString(nodeInsts));
-        actionLogDao.saveNewObject(wfactlog);
+                StringBaseOpt.castObjectToString(nodeInsts)));
+
         //flowInstanceDao.saveObjectReference(flowInst, "flowNodeInstances");
         //flowInstanceDao.saveObjectReference(flowInst, "flowStageInstances");
         return flowInst;
@@ -826,7 +827,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (optUsers.size() > 1) {
                     nodeInst.setTaskAssigned("T");
                     for (String uc : optUsers) {
-                        ActionTask wfactTask = FlowOptUtils.createActionTask(uc, nodeInst, nextOptNode);
+                        ActionTask wfactTask = FlowOptUtils.createActionTask(nodeInst.getNodeInstId(), uc);
                         //wfactTask.setTaskId(actionTaskDao.getNextTaskId());
                         wfactTask.setAssignTime(currentTime);
                         actionTaskDao.saveNewObject(wfactTask);
@@ -1041,16 +1042,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInst.setLastUpdateTime(updateTime);
         nodeInst.setLastUpdateUser(options.getUserCode());
         //创建节点提交日志 S:提交节点
-        ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_LOG,
+        OperationLog wfactlog = FlowOptUtils.createActionLog(
             options.getUserCode(), nodeInst,"提交节点", currNode);
-        //wfactlog.setActionId(actionLogDao.getNextActionId());
-        wfactlog.setActionTime(updateTime);
+
         if (sGrantor != null && !sGrantor.equals(options.getUserCode())) {
             nodeInst.setGrantor(sGrantor);
-            wfactlog.setGrantor(sGrantor);
+            wfactlog.setNewValue(wfactlog+" 授予 "+ options.getUserCode()
+                + ":" + currNode.getRoleType() + ":" + currNode.getRoleCode());
         }
-        nodeInst.addWfActionLog(wfactlog);
-        actionLogDao.saveNewObject(wfactlog);
+        OperationLogCenter.log(wfactlog);
         //nodeInstanceDao.updateObject(nodeInst);
         //设置阶段进 变更时间（提交时间）
         StageInstance stage = flowInst.getStageInstanceByCode(currNode.getStageCode());
@@ -1331,7 +1331,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         for (ActionTask task : prevNodeInst.getWfActionTasks()) {
                 ActionTask newtask = FlowOptUtils.createActionTask(
-                    task.getUserCode(), nextNodeInst, nodedef);
+                    nextNodeInst.getNodeInstId(), task.getUserCode());
                 //newtask.setTaskId(actionTaskDao.getNextTaskId());
                 // 要判断 过期时间的问题
                 //nextNodeInst.addWfActionTask(newtask);
