@@ -1,5 +1,6 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
@@ -159,66 +160,31 @@ public class FlowOptUtils {
         return task;
     }
 
-    /**
-     * 创建任务实例
-     */
-    public static ActionTask createActionTask(String usercode,
-                                              NodeInstance nodeInst, NodeInfo node) {
-        ActionTask actionTask = createActionTask(nodeInst.getNodeInstId(), usercode);
-        //actionTask.setIsvalid("T");
-        //actionTask.setExpireTime(new Date(System.currentTimeMillis()+1000*60*60*480));
-        return actionTask;
-    }
-
      /**
-      * @param actType
-             "S" state 流程状态变更
-             "N" node state 节点状态变更
-             "M" manager 流程流传管理  强行回退、强行提交、重新运行、从当前节点运行
-             "T" timer 流程计时管理
-             "A" attribute 流程属性维护
-             "V" variable 流程变量维护， 包括流程机构和 办件角色变更
-             "J" job 流程任务维护
-             "L" log 流程正常 创建、提交操作
      * @param usercode 操作用户
      * @param flowInstId 流程实例ID
      * @param logDetail 操作说明
      * @return ActionLog
      */
-     public static ActionLog createActionLog(String actType, String usercode,
+     public static OperationLog createActionLog(String usercode,
                                              String flowInstId, String logDetail) {
-         ActionLog actionLog = new ActionLog();
-         actionLog.setFlowInstId(flowInstId);
-         actionLog.setActionTime(DatetimeOpt.currentUtilDate());
-         actionLog.setActionType(actType);
-         actionLog.setUserCode(usercode);
-         actionLog.setLogDetail(logDetail);
-         return actionLog;
+         return OperationLog.create()
+             .operation("workflow").tag(flowInstId)
+             .method("flowOpt").user(usercode).content(logDetail);
      }
     /**
-     * @param actType
-    "S" state 流程状态变更
-    "N" node state 节点状态变更
-    "M" manager 流程流传管理  强行回退、强行提交、重新运行、从当前节点运行
-    "T" timer 流程计时管理
-    "A" attribute 流程属性维护
-    "V" variable 流程变量维护， 包括流程机构和 办件角色变更
-    "J" job 流程任务维护
-    "L" log 流程正常 创建、提交操作
      * @param usercode 操作用户
      * @param nodeInst 流程节点实例
      * @param node 节点信息
      * @param logDetail 操作说明
      * @return ActionLog
      */
-    public static ActionLog createActionLog(String actType, String usercode,
-                                            NodeInstance nodeInst, String logDetail, NodeInfo node) {
-        ActionLog actionLog = createActionLog(actType, usercode,
-            nodeInst.getFlowInstId(), logDetail);
-        actionLog.setNodeInstId(nodeInst.getNodeInstId());
+    public static OperationLog createActionLog(String usercode,
+                                               NodeInstance nodeInst, String logDetail, NodeInfo node) {
+        OperationLog actionLog = createActionLog(usercode, nodeInst.getFlowInstId(), logDetail)
+            .method(nodeInst.getNodeInstId());
         if (node != null) {
-            actionLog.setRoleType(node.getRoleType());
-            actionLog.setRoleCode(node.getRoleCode());
+            actionLog.setNewValue(usercode + ":" + node.getRoleType() + ":" + node.getRoleCode());
         }
         return actionLog;
     }

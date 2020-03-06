@@ -1,6 +1,7 @@
 package com.centit.workflow.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.*;
 
@@ -283,20 +284,21 @@ public interface FlowManager {
 
     /**
      * 获取节点实例的操作日志列表
-     *
-     * @param nodeInstId
+     * @param flowInstId 流程实例号
+     * @param nodeInstId 节点实例好
      * @return List<WfActionLog>
      */
-    List<ActionLog> listNodeActionLogs(String nodeInstId);
+    List<? extends OperationLog> listNodeActionLogs(String flowInstId, String nodeInstId);
 
-
+    List<? extends OperationLog> listNodeActionLogs(String nodeInstId);
     /**
      * 获取节点实例的操作日志列表
      *
-     * @param flowInstId
+     * @param flowInstId 流程实例号
+     * @param withNodeAction 是否包括节点的日志
      * @return List<WfActionLog>
      */
-    List<ActionLog> listFlowActionLogs(String flowInstId);
+    List<? extends OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction);
 
     /**
      * 获取用户所有的操作记录
@@ -306,24 +308,7 @@ public interface FlowManager {
      * @param lastTime if null return all
      * @return
      */
-    List<ActionLog> listUserActionLogs(String userCode, PageDesc pageDesc, Date lastTime);
-
-
-    /**
-     * 查询委托别人做的工作记录
-     *
-     * @param userCode
-     * @return
-     */
-    List<ActionLog> listGrantorActionLog(String userCode, PageDesc pageDesc);
-
-    /**
-     * 查询受委托的工作记录
-     *
-     * @param userCode
-     * @return
-     */
-    List<ActionLog> listGrantdedActionLog(String userCode, PageDesc pageDesc);
+    List<? extends OperationLog> listUserActionLogs(String userCode, Date lastTime, PageDesc pageDesc);
 
     /**
      * 获取用户参与 流程实例 按照时间倒序排列

@@ -87,10 +87,6 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name="NODE_PARAM")
     private String nodeParam;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = ActionLog.class)
-    @JoinColumn(name="nodeInstId")
-    private Set<ActionLog> wfActionLogs = null;// new ArrayList<WfActionLog>();
-
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = ActionTask.class)
     @JoinColumn(name="nodeInstId")
     private Set<ActionTask> wfActionTasks = null;// new ArrayList<WfActionTask>();
@@ -465,86 +461,12 @@ public class NodeInstance implements java.io.Serializable {
         this.nodeParam = nodeParam;
     }
 
-    public Set<ActionLog> getWfActionLogs(){
-        if(this.wfActionLogs==null)
-            this.wfActionLogs = new HashSet<ActionLog>();
-        return this.wfActionLogs;
-    }
-
     public String getNodeName() {
         return this.nodeName;
     }
 
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
-    }
-
-    public void setWfActionLogs(Set<ActionLog> wfActionLogs) {
-        this.wfActionLogs = wfActionLogs;
-    }
-
-    public void addWfActionLog(ActionLog wfActionLog ){
-        if (this.wfActionLogs==null)
-            this.wfActionLogs = new HashSet<ActionLog>();
-        this.wfActionLogs.add(wfActionLog);
-    }
-
-    public void removeWfActionLog(ActionLog wfActionLog ){
-        if (this.wfActionLogs==null)
-            return;
-        this.wfActionLogs.remove(wfActionLog);
-    }
-
-    public ActionLog newWfActionLog(){
-        ActionLog res = new ActionLog();
-
-        res.setNodeInstId(this.getNodeInstId());
-
-        return res;
-    }
-
-    public void replaceWfActionLogs(List<ActionLog> wfActionLogs) {
-        List<ActionLog> newObjs = new ArrayList<ActionLog>();
-        for(ActionLog p :wfActionLogs){
-            if(p==null)
-                continue;
-            ActionLog newdt = newWfActionLog();
-            newdt.copyNotNullProperty(p);
-            newObjs.add(newdt);
-        }
-        //delete
-        boolean found = false;
-        Set<ActionLog> oldObjs = new HashSet<ActionLog>();
-        oldObjs.addAll(getWfActionLogs());
-
-        for(Iterator<ActionLog> it = oldObjs.iterator(); it.hasNext();){
-            ActionLog odt = it.next();
-            found = false;
-            for(ActionLog newdt :newObjs){
-                if(odt.getActionId().equals( newdt.getActionId())){
-                    found = true;
-                    break;
-                }
-            }
-            if(! found)
-                removeWfActionLog(odt);
-        }
-        oldObjs.clear();
-        //insert
-        for(ActionLog newdt :newObjs){
-            found = false;
-            for(Iterator<ActionLog> it = getWfActionLogs().iterator();
-                it.hasNext();){
-                ActionLog odt = it.next();
-                if(odt.getActionId().equals( newdt.getActionId())){
-                    odt.copy(newdt);
-                    found = true;
-                    break;
-                }
-            }
-            if(! found)
-                addWfActionLog(newdt);
-        }
     }
 
     public Set<ActionTask> getWfActionTasks(){

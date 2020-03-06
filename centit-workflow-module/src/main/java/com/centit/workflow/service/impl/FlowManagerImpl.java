@@ -3,7 +3,10 @@ package com.centit.workflow.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.framework.components.OperationLogCenter;
+import com.centit.framework.model.adapter.OperationLogWriter;
+import com.centit.framework.model.basedata.OperationLog;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.common.WorkTimeSpan;
@@ -46,8 +49,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Autowired
     ActionTaskDao actionTaskDao;
-    @Autowired
-    ActionLogDao actionLogDao;
+
     @Autowired
     FlowInfoDao flowDefDao;
 
@@ -63,6 +65,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /*@Autowired
     private NotificationCenter notificationCenter;*/
+    @Autowired(required = false)
+    private OperationLogWriter optLogManager;
 
     /**
      * 查看工作流程实例状态或进度
@@ -364,11 +368,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
         flowInstanceDao.updateObject(wfFlowInst);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_CHANGE_FLOW_STATE,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             userCode, instid, "更改流程状态为" + state + ";" + admindesc);
-        managerAct.setLogDetail(actionDesc + admindesc);
-        actionLogDao.saveNewObject(managerAct);
-
+        managerAct.setNewValue(actionDesc + admindesc);
+        OperationLogCenter.log(managerAct);
         return 1;
     }
 
@@ -406,10 +409,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInst.setNodeState(newState);
         nodeInstanceDao.updateObject(nodeInst);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_CHANGE_FLOW_STATE,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst,
             "换线流程节点；" + actionDesc, null);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
         return 1;
     }
 
@@ -441,10 +444,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
         // 设置最后更新时间和更新人
         nodeInstanceDao.updateObject(nodeInst);
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TIME_LIMIT_MANAGER,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst,
             "重置节点期限：" + new WorkTimeSpan(timeLimit).getTimeSpanDesc(), null);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
 
         return 1;
     }
@@ -591,9 +594,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_CHANGE_FLOW_STATE,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "强制结束流程;" + admindesc);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
 
         return 1;
     }
@@ -624,10 +627,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flowInst.setUnitCode(unitCode);
         flowInstanceDao.updateObject(flowInst);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_FLOW_ATTRIBUTE,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             optUserCode, flowInstId, "修改流程机构代码：" + unitCode);
         //managerAct.setNodeInstId(nodeinstid);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
     }
 
     @Override
@@ -638,9 +641,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInst.setUnitCode(unitCode);
         nodeInstanceDao.updateObject(nodeInst);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_FLOW_ATTRIBUTE,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             optUserCode, nodeInst, "修改节点：" + nodeInstId + "机构代码：" + unitCode, null);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
     }
 
     /**
@@ -655,11 +658,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInst.setRoleCode(roleCode);
         nodeInstanceDao.updateObject(nodeInst);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_FLOW_ATTRIBUTE,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst,
             "修改节点：" + nodeInstId + "角色代码为：" + roleType + ":" + roleCode + "。", null);
 
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
     }
 
 
@@ -684,11 +687,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         flowInstanceDao.updateObject(wfFlowInst);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TIME_LIMIT_MANAGER,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId,
             "更改流程期限：" +
                 new WorkTimeSpan(timeLimit).getTimeSpanDesc() + ";" + admindesc);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
         return 1;
     }
 
@@ -788,7 +791,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         for (ActionTask task : thisnode.getWfActionTasks()) {
             nextNodeInst.setTaskAssigned("T");
             ActionTask newtask = FlowOptUtils.createActionTask(
-                task.getUserCode(), nextNodeInst, nodedef);
+                nextNodeInst.getNodeInstId(), task.getUserCode());
             //newtask.setTaskId(actionTaskDao.getNextTaskId());
             // 要判断 过期时间的问题
             nextNodeInst.addWfActionTask(newtask);
@@ -805,9 +808,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             .createNodeEventSupportBean(nodedef);
         nodeEventExecutor.runAfterCreate(flow, nextNodeInst, nodedef, mangerUserCode);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_FLOW_MANAGER,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nextNodeInst, "重新运行节点：" + nodeInstId, nodedef);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
         return nextNodeInst;
     }
 
@@ -839,9 +842,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
         nodeInstanceDao.updateObject(nodeInst);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_CHANGE_NODE_STATE,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst, "强制节点分支为游离分支:" + nodeInstId, null);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
         return nodeInstId;
     }
 
@@ -866,13 +869,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             nodeInst.setLastUpdateTime(updateTime);
             nodeInst.setLastUpdateUser(mangerUserCode);
             //创建节点提交日志 S:提交节点
-            ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_FLOW_MANAGER,
+            OperationLog wfactlog = FlowOptUtils.createActionLog(
                 mangerUserCode, nodeInst, "强制提交节点:" + nodeInstId, null);
             //wfactlog.setActionId(actionLogDao.getNextActionId());
-            wfactlog.setActionTime(updateTime);
-            actionLogDao.saveNewObject(wfactlog);
+            wfactlog.time(updateTime);
+            OperationLogCenter.log(wfactlog);
 
-            nodeInst.addWfActionLog(wfactlog);
             nodeInst.setNodeState("F");
             nodeInstanceDao.updateObject(nodeInst);
             return nodeInst.getRunToken().startsWith("R") ? "" : null;
@@ -923,27 +925,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flowInst.setLastUpdateTime(commitTime);
         flowInstanceDao.updateObject(flowInst);
 
-        ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_FLOW_MANAGER,
+        OperationLog wfactlog = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst, "强制提交节点:" + nodeInstId, null);
-        wfactlog.setActionTime(updateTime);
-        actionLogDao.saveNewObject(wfactlog);
+        wfactlog.time(updateTime);
+        OperationLogCenter.log(wfactlog);
         return nextNodeInstId;
-    }
-
-    /**
-     * 获取用户所有的操作记录
-     *
-     * @param userCode
-     * @param pageDesc 和分页机制结合
-     * @param lastTime if null return all
-     * @return
-     */
-    @Override
-    public List<ActionLog> listUserActionLogs(String userCode,
-                                              PageDesc pageDesc, Date lastTime) {
-        List<ActionLog> actionLogs = actionLogDao.listUserActionLogs(
-            userCode, pageDesc, lastTime);
-        return new ArrayList<ActionLog>(actionLogs);
     }
 
     /**
@@ -1012,19 +998,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         map.put("nodeInstId", nodeInstId);
         actionTaskDao.deleteObjectsByProperties(map);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TASK_MANAGER,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "删除节点所有任务:"
                 + nodeInstId);
-        managerAct.setNodeInstId(nodeInstId);
-
-        actionLogDao.saveNewObject(managerAct);
+        managerAct.method(nodeInstId);
+        OperationLogCenter.log(managerAct);
 
     }
 
-    public List<ActionLog> listNodeActionLogs(String nodeInstId) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        return new ArrayList<>(nodeInst.getWfActionLogs());
-    }
 
     /**
      * isTimer T 计时、 F 不计时 H仅环节计时 、暂停P
@@ -1033,13 +1014,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
             return -1;
-
         nodeInstanceDao.updateNodeTimerState(nodeInstId, "P", mangerUserCode);
-
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TIME_LIMIT_MANAGER,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst, "暂停节点计时:"
                 + nodeInstId, null);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
         return 1;
     }
 
@@ -1055,9 +1034,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInstanceDao.updateNodeTimerState(nodeInstId,
             node.getIsAccountTime() /* T */, mangerUserCode);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TIME_LIMIT_MANAGER,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst, "恢复节点计时:" + nodeInstId, null);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
         return 1;
     }
 
@@ -1067,9 +1046,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public int suspendFlowInstTimer(String flowInstId, String mangerUserCode) {
         flowInstanceDao.updateFlowTimerState(flowInstId, "P", mangerUserCode);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TIME_LIMIT_MANAGER,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "暂停流程计时: " + flowInstId);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
         return 1;
     }
 
@@ -1079,9 +1058,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public int activizeFlowInstTimer(String flowInstId, String mangerUserCode) {
         flowInstanceDao.updateFlowTimerState(flowInstId, "T", mangerUserCode);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TIME_LIMIT_MANAGER,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "恢复流程计时: " + flowInstId);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
         return 1;
     }
 
@@ -1096,22 +1075,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public List<FlowInstance> listPauseTimerFlowInst(String userCode, PageDesc pageDesc) {
         List<FlowInstance> tempList = flowInstanceDao.listFlowInstByTimer(
             userCode, "P", pageDesc);
-        return new ArrayList<>(tempList);
-    }
-
-    @Override
-    public List<ActionLog> listGrantorActionLog(String userCode,
-                                                PageDesc pageDesc) {
-        List<ActionLog> tempList = actionLogDao.listGrantorActionLog(
-            userCode, pageDesc);
-        return new ArrayList<>(tempList);
-    }
-
-    @Override
-    public List<ActionLog> listGrantdedActionLog(String userCode,
-                                                 PageDesc pageDesc) {
-        List<ActionLog> tempList = actionLogDao.listGrantedActionLog(
-            userCode, pageDesc);
         return new ArrayList<>(tempList);
     }
 
@@ -1138,10 +1101,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         flowInstanceDao.updateObject(wfFlowInst);
 
-        ActionLog managerAct = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TIME_LIMIT_MANAGER,
+        OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "更改阶段" + stageId + "期限：" +
                 new WorkTimeSpan(timeLimit).getTimeSpanDesc() + ";" + admindesc);
-        actionLogDao.saveNewObject(managerAct);
+        OperationLogCenter.log(managerAct);
 
         return 1;
 
@@ -1168,7 +1131,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     private void moveUserTaskTo(List<NodeInstance> nodeInstIds, String fromUserCode, String toUserCode,
                                 String optUserCode) {
         if (nodeInstIds != null && nodeInstIds.size() > 0) {
-            List<ActionLog> actionLogList = new ArrayList<ActionLog>();
             for (NodeInstance nodeInstance : nodeInstIds) {
                 //将userCode指向新用户
                 if (nodeInstance.getTaskAssigned() == "S") {
@@ -1177,9 +1139,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     nodeInstance.setLastUpdateUser(optUserCode);
                     nodeInstanceDao.updateObject(nodeInstance);
                     //日志
-                    ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TASK_MANAGER,
+                    OperationLog wfactlog = FlowOptUtils.createActionLog(
                         optUserCode, nodeInstance, "任务从 " + fromUserCode + " 转移到" + toUserCode, null);
-                    actionLogList.add(wfactlog);
+                    OperationLogCenter.log(wfactlog);
                 } else {
                     Map<String, Object> filterMap = new HashMap<>();
                     filterMap.put("userCode", fromUserCode);
@@ -1188,17 +1150,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     if (actionTasks != null && actionTasks.size() > 0) {
                         for (ActionTask actionTask : actionTasks) {
                             //如果action中只有一条记录，那就写回到nodeinstance里面
-                            ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TASK_MANAGER,
+                            OperationLog wfactlog = FlowOptUtils.createActionLog(
                                 optUserCode, nodeInstance, "任务从 " + fromUserCode + " 转移到" + toUserCode, null);
-                            actionLogList.add(wfactlog);
+                            OperationLogCenter.log(wfactlog);
                             actionTask.setUserCode(toUserCode);
                             //这儿应该还要设置新用户的 roleType 和roleCode，但是不知道怎么获取。
                             actionTaskDao.mergeObject(actionTask);
                         }
                     }
                 }
-                //nodeInstanceDao.saveNewObjects(nodeInstances);
-                DatabaseOptUtils.batchSaveNewObjects(actionLogDao, actionLogList);
             }
         }
     }
@@ -1244,9 +1204,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         node.setLastUpdateUser(mangerUserCode);
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
         nodeInstanceDao.updateObject(node);
-        ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TASK_MANAGER,
+        OperationLog wfactlog = FlowOptUtils.createActionLog(
             mangerUserCode, node, "添加操作用户" + userCode + ":" + authDesc, null);
-        actionLogDao.mergeObject(wfactlog);
+        OperationLogCenter.log(wfactlog);
         return 0;
     }
 
@@ -1296,9 +1256,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
         nodeInstanceDao.updateObject(node);
 
-        ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TASK_MANAGER,
+        OperationLog wfactlog = FlowOptUtils.createActionLog(
             mangerUserCode, node, "删除用户：" + userCode + "的任务", null);
-        actionLogDao.mergeObject(wfactlog);
+        OperationLogCenter.log(wfactlog);
         return 0;
     }
 
@@ -1351,35 +1311,79 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInstanceDao.updateObject(node);
         node.setLastUpdateUser(mangerUserCode);
         node.setLastUpdateTime(DatetimeOpt.currentUtilDate());
-        ActionLog wfactlog = FlowOptUtils.createActionLog(ActionLog.ACTION_TYPE_TASK_MANAGER,
+        OperationLog wfactlog = FlowOptUtils.createActionLog(
             mangerUserCode, node, "添加用户：" + userCode + "的任务，" + authDesc, null);
         //wfactlog.setActionId(actionLogDao.getNextActionId());
-        actionLogDao.mergeObject(wfactlog);
+        OperationLogCenter.log(wfactlog);
         return 0;
     }
 
+
+     /**
+     * 获取节点实例的操作日志列表
+     *
+     * @param flowInstId 流程实例号
+     * @param withNodeAction 是否包括节点的日志
+     * @return List<WfActionLog>
+     */
     @Override
-    public List<ActionLog> listFlowActionLogs(String flowInstId) {
-        List<ActionLog> actionLogList = new ArrayList<ActionLog>();
-        Map<String, Object> filterMap = new HashMap<String, Object>();
-        //获取该流程下所有节点
-        filterMap.put("flowInstId", flowInstId);
-        List<NodeInstance> nodeInstances = nodeInstanceDao.listObjects(filterMap);
-        if (nodeInstances == null || nodeInstances.size() == 0) {
-            return actionLogList;
+    public List<? extends OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction){
+        if(optLogManager==null)
+            return null;
+        Map<String, Object> filterMap = CollectionsOpt.createHashMap("optTag", flowInstId);
+        if(!withNodeAction){
+            filterMap.put("optMethod", "flowOpt");
         }
-        //获取所有节点的操作日志
-        for (NodeInstance nodeInstance : nodeInstances) {
-            actionLogList.addAll(listNodeActionLogs(nodeInstance.getNodeInstId()));
-        }
-        //根据时间排序
-        if (actionLogList.size() > 0) {
-            Collections.sort(actionLogList,
-                (o1, o2) ->
-                    o1.getActionTime().getTime() > o2.getActionTime().getTime() ? 1 : -1);
-        }
-        return actionLogList;
+        return optLogManager.listOptLog("workflow", filterMap, -1, -1);
     }
+
+    /**
+     * 获取节点实例的操作日志列表
+     * @param flowInstId 流程实例号
+     * @param nodeInstId 节点实例好
+     * @return List<WfActionLog>
+     */
+    @Override
+    public List<? extends OperationLog> listNodeActionLogs(String flowInstId, String nodeInstId){
+        if(optLogManager==null)
+            return null;
+         return optLogManager.listOptLog("workflow",
+            CollectionsOpt.createHashMap("optTag", flowInstId,
+                "optMethod", nodeInstId), -1, -1);
+    }
+
+    @Override
+    public List<? extends OperationLog> listNodeActionLogs(String nodeInstId){
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        if(nodeInst==null){
+            return null;
+        }
+        return listNodeActionLogs(nodeInst.getFlowInstId(), nodeInstId);
+    }
+    /**
+     * 获取用户所有的操作记录
+     *
+     * @param userCode
+     * @param pageDesc 和分页机制结合
+     * @param lastTime if null return all
+     * @return
+     */
+    @Override
+    public List<? extends OperationLog> listUserActionLogs(String userCode, Date lastTime,
+                                                 PageDesc pageDesc) {
+        if(optLogManager==null)
+            return null;
+        Map<String, Object> filterMap =
+            CollectionsOpt.createHashMap("userCode", userCode,
+                "optTime_gt",lastTime);
+
+        List<? extends OperationLog> optLogs =
+            optLogManager.listOptLog("workflow", filterMap,
+                pageDesc.getRowStart(), pageDesc.getPageSize());
+        pageDesc.setTotalRows( optLogManager.countOptLog("workflow", filterMap));
+        return optLogs;
+    }
+
 
     @Override
     public RoleRelegate getRoleRelegateById(Long relegateno) {

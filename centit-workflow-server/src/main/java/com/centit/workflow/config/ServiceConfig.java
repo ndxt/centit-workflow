@@ -1,7 +1,6 @@
 package com.centit.workflow.config;
 
 import com.centit.framework.components.impl.NotificationCenterImpl;
-import com.centit.framework.components.impl.TextOperationLogWriterImpl;
 import com.centit.framework.config.SpringSecurityCasConfig;
 import com.centit.framework.config.SpringSecurityDaoConfig;
 import com.centit.framework.ip.app.config.IPOrStaticAppSystemBeanConfig;
@@ -9,11 +8,9 @@ import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.framework.ip.service.impl.JsonIntegrationEnvironment;
 import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
-import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.security.model.CentitPasswordEncoder;
 import com.centit.framework.security.model.StandardPasswordEncoderImpl;
-import com.centit.support.file.FileSystemOpt;
 import com.centit.workflow.external.ExtFrameworkContextCacheBean;
 import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
 import com.centit.workflow.service.impl.UserUnitFilterCalcContextFactoryImpl;
@@ -81,7 +78,7 @@ public class ServiceConfig {
         return factoryBean;
     }
 
-    @Bean
+    /*@Bean 注入 opt-log-module 将操作日志持久化
     @Lazy(value = false)
     public OperationLogWriter operationLogWriter() {
         TextOperationLogWriterImpl operationLog = new TextOperationLogWriterImpl();
@@ -89,7 +86,7 @@ public class ServiceConfig {
             FileSystemOpt.appendPath(appHome , "logs"));
         operationLog.init();
         return operationLog;
-    }
+    }*/
 
     @Bean
     public InstantiationServiceBeanPostProcessor instantiationServiceBeanPostProcessor() {

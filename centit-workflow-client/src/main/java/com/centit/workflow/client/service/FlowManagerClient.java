@@ -1,8 +1,13 @@
 package com.centit.workflow.client.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.model.basedata.OperationLog;
+import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInstance;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 流程管理业务接口类
@@ -118,4 +123,33 @@ public interface FlowManagerClient {
      * @param mangerUserCode 管理用户
      * */
     int deleteNodeTask(String nodeInstId, String userCode, String mangerUserCode);
+
+
+    /**
+     * 获取节点实例的操作日志列表
+     * @param flowInstId 流程实例号
+     * @param nodeInstId 节点实例好
+     * @return List<WfActionLog>
+     */
+    List<OperationLog> listNodeActionLogs(String flowInstId, String nodeInstId);
+
+    /**
+     * 获取节点实例的操作日志列表
+     *
+     * @param flowInstId 流程实例号
+     * @param withNodeAction 是否包括节点的日志
+     * @return List<WfActionLog>
+     */
+    List<OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction);
+
+    /**
+     * 获取用户所有的操作记录
+     *
+     * @param userCode
+     * @param pageDesc 和分页机制结合
+     * @param lastTime if null return all
+     * @return
+     */
+    List<OperationLog> listUserActionLogs(String userCode, PageDesc pageDesc, Date lastTime);
+
 }
