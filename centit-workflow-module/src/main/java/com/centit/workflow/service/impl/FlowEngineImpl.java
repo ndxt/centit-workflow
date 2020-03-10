@@ -872,19 +872,20 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInst.addNodeInstance(nodeInst);
         flowInst.setLastUpdateTime(currentTime);
         flowInst.setLastUpdateUser(options.getUserCode());
-        flowInstanceDao.updateObject(flowInst);
-        //执行节点创建后 事件
-        NodeEventSupport nodeEventExecutor =
-            NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode,
-                 flowOptPageDao.getObjectById(nextOptNode.getOptCode()));
-        nodeEventExecutor.runAfterCreate(flowInst, nodeInst, nextOptNode, options.getUserCode());
 
+
+        //执行节点创建后 事件
+        FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
         //检查自动执行节点 并执行相关操作
         // 添加自动运行的处理结果
-        if ("D".equals(nextOptNode.getOptType()) || "E".equals(nextOptNode.getOptType())) {
+        if ("D".equals(nextOptNode.getOptType()) || "E".equals(nextOptNode.getOptType())
+            || "A".equals(optPage.getPageType())) {
             boolean needSubmit = true;
             SubmitOptOptions autoSubmitOptions = SubmitOptOptions.create().copy(options).nodeInst(lastNodeInstId);
-            if("D".equals(nextOptNode.getOptType()) && "B".equals(nextOptNode.getOptCode())) {
+            if("A".equals(optPage.getPageType()) ||
+                  ("D".equals(nextOptNode.getOptType()) && "B".equals(nextOptNode.getOptCode()))) {
+                NodeEventSupport nodeEventExecutor =
+                    NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage);
                 needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
                     nextOptNode, options.getUserCode());
             } else if("D".equals(nextOptNode.getOptType()) && "S".equals(nextOptNode.getOptCode())) {
@@ -910,6 +911,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     varTrans, application, false);
                 createNodes.addAll(nextNodes);
             }
+        } else if(StringUtils.isNotBlank(nextOptNode.getOptBean())) {
+            NodeEventSupport nodeEventExecutor =
+                NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage);
+            nodeEventExecutor.runAfterCreate(flowInst, nodeInst, nextOptNode, options.getUserCode());
         }
 
         return createNodes;
