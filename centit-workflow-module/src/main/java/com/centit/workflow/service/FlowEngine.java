@@ -510,7 +510,7 @@ public interface FlowEngine {
      * @param sVar 变量名
      * @param sValue 变量值
      */
-    void saveFlowVariable(String flowInstId,String sVar, String sValue);
+    void saveFlowVariable(String flowInstId,String sVar, Object sValue);
 
     /**
      * 设置流程节点上下文变量
@@ -518,7 +518,7 @@ public interface FlowEngine {
      * @param sVar 变量名
      * @param sValue 变量值
      */
-    void saveFlowNodeVariable(String nodeInstId,String sVar, String sValue);
+    void saveFlowNodeVariable(String nodeInstId, String sVar, Object sValue);
 
 
     /**
@@ -528,15 +528,7 @@ public interface FlowEngine {
      * @param sVar 变量名
      * @param sValue 变量值
      */
-    void saveFlowNodeVariable(String flowInstId,String runToken,String sVar, String sValue);
-
-    /**
-     * 设置流程全局变量
-     * @param flowInstId 工作流实例号
-     * @param sVar 变量名
-     * @param sValues Set String 中的值不能有 分号 ;
-     */
-    void saveFlowVariable(String flowInstId,String sVar, Set<String> sValues);
+    void saveFlowNodeVariable(String flowInstId,String runToken,String sVar, Object sValue);
 
     /**
      * 设置流程节点上下文变量

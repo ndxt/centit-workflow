@@ -176,7 +176,6 @@ public class FlowVariable implements java.io.Serializable {
 
     /**
      * E:集合 S:单个字符串
-     *
      * @param varType
      */
     public void setVarType(String varType) {

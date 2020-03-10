@@ -226,13 +226,13 @@ public class FlowOptUtils {
         // 优先加载本流程的变量
         if(options != null && options.getVariables() != null && !options.getVariables().isEmpty()) {
             for(Map.Entry<String, Object> ent : options.getVariables().entrySet()) {
-                flowVarTrans.setInnerVariable(ent.getKey(), StringBaseOpt.objectToStringSet(ent.getValue()) );
+                flowVarTrans.setInnerVariable(ent.getKey(), ent.getValue());
             }
         }
 
         if(options != null && options.getGlobalVariables() != null && !options.getGlobalVariables().isEmpty()) {
             for(Map.Entry<String, Object> ent : options.getGlobalVariables().entrySet()) {
-                flowVarTrans.setInnerVariable(ent.getKey(), StringBaseOpt.objectToStringSet(ent.getValue()) );
+                flowVarTrans.setInnerVariable(ent.getKey(), ent.getValue());
             }
         }
 

@@ -89,13 +89,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // 设置流程变量
         if(options.getVariables() != null && !options.getVariables().isEmpty()) {
             for(Map.Entry<String,Object> ent : options.getVariables().entrySet()) {
-                saveFlowNodeVariable(flowInstId, runToken, ent.getKey(), StringBaseOpt.castObjectToString(ent.getValue()));
+                saveFlowNodeVariable(flowInstId, runToken, ent.getKey(), ent.getValue());
             }
         }
         // 设置全局流程变量
         if(options.getGlobalVariables() != null && !options.getGlobalVariables().isEmpty()) {
             for(Map.Entry<String,Object> ent : options.getGlobalVariables().entrySet()) {
-                saveFlowVariable(flowInstId, ent.getKey(), StringBaseOpt.castObjectToString(ent.getValue()));
+                saveFlowVariable(flowInstId, ent.getKey(), ent.getValue());
             }
         }
         // 设置办件角色
@@ -1835,17 +1835,20 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void saveFlowVariable(String flowInstId, String sVar, String sValue) {
-        if (StringBaseOpt.isNvl(sValue)) {
+    public void saveFlowVariable(String flowInstId, String sVar, Object sValue) {
+        String objStr = StringBaseOpt.objectToString(sValue);
+        if (StringUtils.isBlank(objStr)) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
         } else {
+            String varType = sValue.getClass().isArray() || sValue instanceof Collection?"E":"S";
             FlowVariableId cid = new FlowVariableId(flowInstId, "A", sVar);
             FlowVariable varO = flowVariableDao.getObjectById(cid);
             if (varO == null) {
-                varO = new FlowVariable(flowInstId, "A", sVar, sValue, "S");
+                varO = new FlowVariable(flowInstId, "A", sVar, objStr, varType);
                 flowVariableDao.saveNewObject(varO);
             } else {
-                varO.setVarValue(sValue);
+                varO.setVarType(varType);
+                varO.setVarValue(objStr);
                 flowVariableDao.updateObject(varO);
             }
         }
@@ -1860,30 +1863,31 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param sValue 流程值
      */
     @Override
-    public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, String sValue) {
-
-        if (StringBaseOpt.isNvl(sValue)) {
+    public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue) {
+        String objStr = StringBaseOpt.objectToString(sValue);
+        if (StringUtils.isBlank(objStr)) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId,
                 runToken, sVar));
             return;
         }
         FlowVariableId cid = new FlowVariableId(flowInstId,
             runToken, sVar);
-
+        String varType = sValue.getClass().isArray() || sValue instanceof Collection?"E":"S";
         FlowVariable varO = flowVariableDao.getObjectById(cid);
         if (varO == null) {
             varO = new FlowVariable(flowInstId,
-                runToken, sVar, sValue, "S");
+                runToken, sVar, objStr, varType);
             flowVariableDao.saveNewObject(varO);
         } else {
-            varO.setVarValue(sValue);
+            varO.setVarType(varType);
+            varO.setVarValue(objStr);
             flowVariableDao.updateObject(varO);
         }
     }
 
 
     @Override
-    public void saveFlowNodeVariable(String nodeInstId, String sVar, String sValue) {
+    public void saveFlowNodeVariable(String nodeInstId, String sVar, Object sValue) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null) {
             logger.error("找不到节点实例：" + nodeInstId);
@@ -1891,16 +1895,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         String nodeToken = nodeInst.getRunToken();
         saveFlowNodeVariable(nodeInst.getFlowInstId(), nodeToken, sVar, sValue);
-    }
-
-    @Override
-    public void saveFlowVariable(String flowInstId, String sVar, Set<String> sValues) {
-        if (sValues == null || sValues.size() == 0) {
-            flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
-        } else {
-            FlowVariable varO = new FlowVariable(flowInstId, "A", sVar, FlowVariable.stringsetToString(sValues), "E");
-            flowVariableDao.mergeObject(varO);
-        }
     }
 
     @Override

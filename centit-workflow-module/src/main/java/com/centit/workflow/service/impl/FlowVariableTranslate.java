@@ -1,19 +1,20 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
-import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
-import com.centit.support.compiler.Lexer;
+import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInstance;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
 public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
-    private Map<String,Set<String>> innerVariable;
+    private Map<String, Object> innerVariable;
 
     private UserUnitVariableTranslate flowVarTrans;
     private List<FlowVariable> flowVariables;
@@ -58,12 +59,8 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         collectNodeUnitsAndUsers(flowInst);
     }
 
-    public void setInnerVariable(String name, String value) {
-        this.innerVariable.put(name, CollectionsOpt.createHashSet(value));
-    }
-
-    public void setInnerVariable(String name, Set<String> values) {
-        this.innerVariable.put(name, values);
+    public void setInnerVariable(String name, Object value) {
+        this.innerVariable.put(name, value);
     }
 
     public void setNodeInst(NodeInstance nodeInst) {
@@ -109,23 +106,14 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
     @Override
     public Object getVarValue(String varName) {
         // 内部变量最高优先级
-        Set<String> objs = innerVariable.get(varName);
-        if(objs!=null && !objs.isEmpty()) {
-            if(objs.size()==1){
-                return objs.iterator().next();
-            }
+        Object objs = innerVariable.get(varName);
+        if(objs != null ){
             return objs;
         }
 
         if(flowVarTrans !=null){
             Object obj =  flowVarTrans.getVarValue(varName);
             if(obj!=null) {
-                if(obj instanceof Collection){
-                    Collection objSet = (Collection<?>) obj;
-                    if(objSet.size()==1){
-                        return objSet.iterator().next();
-                    }
-                }
                 return obj;
             }
         }
@@ -133,9 +121,17 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
          * 程序设置的流程变量
          */
         FlowVariable v = findFlowVariable(varName);
-        if(v !=null)
-            return v.getVarValue();
-
+        if(v != null) {
+            String varStr = v.getVarValue();
+            if("S".equals(v.getVarType())) {
+                if (StringRegularOpt.isNumber(varStr)) {
+                    return NumberBaseOpt.castObjectToNumber(varStr);
+                }
+                return varStr;
+            } else {
+                return StringBaseOpt.objectToStringList(varStr);
+            }
+        }
         List<String> users = flowWorkTeam.get(varName);
         if(users != null)
             return users;
@@ -151,7 +147,6 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         Set<String> unitset = nodeUnits.get(varName);
         if(unitset != null)
             return unitset;
-
         /**
          * 系统内置变量
          * flowunit 流程机构
@@ -170,7 +165,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
     public Set<String> getUsersVariable(String varName){
         // 内部变量最高优先级
-        Set<String> sUsers = innerVariable.get(varName);
+        Set<String> sUsers = StringBaseOpt.objectToStringSet(innerVariable.get(varName));
         if(sUsers!=null && !sUsers.isEmpty()) {
             return sUsers;
         }
@@ -200,7 +195,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
      * @return
      */
     public Set<String> getUnitsVariable(String varName) {
-        Set<String> sUnits = innerVariable.get(varName);
+        Set<String> sUnits = StringBaseOpt.objectToStringSet(innerVariable.get(varName));
         if(sUnits!=null && !sUnits.isEmpty()) {
             return sUnits;
         }
@@ -209,6 +204,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
             if(sUnits!=null && !sUnits.isEmpty())
                 return sUnits;
         }
+
         FlowVariable v = findFlowVariable(varName);
         if(v !=null) {
             return v.getVarSet();
@@ -241,9 +237,10 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         int i=0;
         while(i<varNames.length) {
             Object retObj = formula.calcFormula();
+            String varName =  StringUtils.isBlank(varNames[i]) ? "_arg"+i : varNames[i].trim();
             if(retObj!=null){
-                retMap.put(varNames[i], retObj);
-                innerVariable.put(varNames[i], StringBaseOpt.objectToStringSet(retObj));
+                retMap.put(varName, retObj);
+                innerVariable.put(varName, retObj);
             }
             String s = formula.skipAWord();
             if(!",".equals(s)) break;
