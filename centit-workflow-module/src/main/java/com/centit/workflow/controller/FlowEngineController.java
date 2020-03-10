@@ -70,7 +70,7 @@ public class FlowEngineController extends BaseController {
     public void saveFlowVariable(@RequestBody FlowVariable flowVariableParam) {
         List<String> vars = JSON.parseArray(flowVariableParam.getVarValue(), String.class);
         if (!vars.isEmpty())
-            flowEngine.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), new HashSet<>(vars));
+            flowEngine.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), vars);
     }
 
     @ApiOperation(value = "删除流程变量", notes = "删除流程变量")

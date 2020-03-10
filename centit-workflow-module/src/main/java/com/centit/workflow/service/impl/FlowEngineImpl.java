@@ -894,7 +894,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 for(Map.Entry<String, Object> ent : objectMap.entrySet()) {
                     if(! ent.getKey().startsWith("_") && ent.getValue() != null) {
                         saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken,
-                            ent.getKey(), StringBaseOpt.castObjectToString(ent.getValue()));
+                            ent.getKey(), ent.getValue());
                     }
                 }
                 String lockUser = StringBaseOpt.castObjectToString(
