@@ -44,7 +44,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
         RestfulHttpRequest.jsonPost(appSession, "/workflowEventBean/runAfterCreate", paramMap);
 
     }
-
+    @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
                                 NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
         if (nodeInfo.getOptBean() == null || "".equals(nodeInfo.getOptBean()))

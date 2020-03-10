@@ -878,19 +878,38 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode,
                  flowOptPageDao.getObjectById(nextOptNode.getOptCode()));
         nodeEventExecutor.runAfterCreate(flowInst, nodeInst, nextOptNode, options.getUserCode());
-        boolean needSubmit = false;
+
         //检查自动执行节点 并执行相关操作
-        if ("D".equals(nextOptNode.getOptType())) {
-            needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
-                nextOptNode, options.getUserCode());
-        }
-        if (needSubmit || "E".equals(nextOptNode.getOptType())) {
+        // 添加自动运行的处理结果
+        if ("D".equals(nextOptNode.getOptType()) || "E".equals(nextOptNode.getOptType())) {
+            boolean needSubmit = true;
+            SubmitOptOptions autoSubmitOptions = SubmitOptOptions.create().copy(options).nodeInst(lastNodeInstId);
+            if("D".equals(nextOptNode.getOptType()) && "B".equals(nextOptNode.getOptCode())) {
+                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
+                    nextOptNode, options.getUserCode());
+            } else if("D".equals(nextOptNode.getOptType()) && "S".equals(nextOptNode.getOptCode())) {
+                //添加脚本的运行
+                Map<String, Object> objectMap = varTrans.calcScript(nextOptNode.getOptParam());
+                for(Map.Entry<String, Object> ent : objectMap.entrySet()) {
+                    if(! ent.getKey().startsWith("_") && ent.getValue() != null) {
+                        saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken,
+                            ent.getKey(), StringBaseOpt.castObjectToString(ent.getValue()));
+                    }
+                }
+                String lockUser = StringBaseOpt.castObjectToString(
+                    objectMap.get("_lock_user"));
+                if(StringUtils.isNotBlank(lockUser)) {
+                    autoSubmitOptions.workUser(lockUser);
+                }
+            }
             //暂时先取第一个节点实例，解决部分问题
             //varTrans改为一个空的
-            Set<String> nextNodes = this.submitOptInside(
-                SubmitOptOptions.create().copy(options).nodeInst(lastNodeInstId),
-                varTrans, application, false);
-            createNodes.addAll(nextNodes);
+            if(needSubmit) {
+                Set<String> nextNodes = this.submitOptInside(
+                    autoSubmitOptions,
+                    varTrans, application, false);
+                createNodes.addAll(nextNodes);
+            }
         }
 
         return createNodes;

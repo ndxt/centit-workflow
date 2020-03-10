@@ -138,7 +138,7 @@ public class FlowVariable implements java.io.Serializable {
             if (sRes == null)
                 sRes = s;
             else
-                sRes = sRes + ';' + s;
+                sRes = sRes + ',' + s;
         }
         return sRes;
     }
@@ -146,7 +146,7 @@ public class FlowVariable implements java.io.Serializable {
     public static Set<String> stringToStringset(String s) {
         if (s == null)
             return null;
-        String[] sSet = s.split(";");
+        String[] sSet = s.split(",");
         Set<String> sVS = new HashSet<>();
 
         for (int i = 0; i < sSet.length; i++)

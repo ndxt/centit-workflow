@@ -2,6 +2,9 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.algorithm.StringBaseOpt;
+import com.centit.support.compiler.Lexer;
+import com.centit.support.compiler.VariableFormula;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInstance;
@@ -221,5 +224,31 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
     public UserUnitVariableTranslate getFlowVarTrans() {
         return flowVarTrans;
+    }
+
+    public Map<String, Object> calcScript(String script){
+        int nPos = script.indexOf(':');
+        if(nPos<1) return null;
+        String [] varNames = script.substring(0, nPos).split(",");
+        if(/*varNames==null || */varNames.length<1){
+            return null;
+        }
+
+        VariableFormula formula = new VariableFormula();
+        formula.setFormula(script.substring(nPos+1));
+        formula.setTrans(this);
+        Map<String, Object> retMap = new HashMap<>(varNames.length*3/2+1);
+        int i=0;
+        while(i<varNames.length) {
+            Object retObj = formula.calcFormula();
+            if(retObj!=null){
+                retMap.put(varNames[i], retObj);
+                innerVariable.put(varNames[i], StringBaseOpt.objectToStringSet(retObj));
+            }
+            String s = formula.skipAWord();
+            if(!",".equals(s)) break;
+            i++;
+        }
+        return retMap;
     }
 }

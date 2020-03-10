@@ -46,7 +46,8 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "NODE_NAME")
     private String nodeName;
     /**
-     * A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行 E: 哑元（可用于嵌套汇聚） S:子流程
+     * A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行
+     * E: 哑元（可用于嵌套汇聚，等同于自动执行无动作） S:子流程
      */
     @Column(name = "OPT_TYPE")
     private String optType;
@@ -58,10 +59,18 @@ public class NodeInfo implements java.io.Serializable {
     private String optId;
     /**
      * 业务页面代码 关联到 FlowOptPage
+     *  optType = D 时； optCode 有三个选项
+     *      * N 无操作；等同于哑元
+     *      * B 事件Bean
+     *      * S 脚本Script
      */
     @Column(name = "OPT_CODE")
     private String optCode;
-
+    /**
+     * optType = D && optCode = S 时
+     * optParam 存放的是代码脚本
+     */
+    @Length(max = 2048, message = "长度不能超过{max}")
     @Column(name = "OPT_PARAM")
     private String optParam;
 
