@@ -1075,7 +1075,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 + ":" + currNode.getRoleType() + ":" + currNode.getRoleCode());
         }
         OperationLogCenter.log(wfactlog);
-        //nodeInstanceDao.updateObject(nodeInst);
+        nodeInstanceDao.updateObject(nodeInst);
         //设置阶段进 变更时间（提交时间）
         StageInstance stage = flowInst.getStageInstanceByCode(currNode.getStageCode());
         if (stage != null) {

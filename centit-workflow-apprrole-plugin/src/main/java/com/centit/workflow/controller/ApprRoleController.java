@@ -3,6 +3,7 @@ package com.centit.workflow.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
@@ -72,6 +73,7 @@ public class ApprRoleController extends BaseController {
     @GetMapping("/define/{roleCode}")
     public void getApprRoleDefineListByCode(@PathVariable String roleCode, HttpServletResponse response) {
         List<ApprRoleDefine> apprRoleDefineList = this.apprRoleService.getApprRoleDefineListByCode(roleCode);
+        changeRoleCodeToRoleName(apprRoleDefineList);
         ApprRole apprRole = new ApprRole();
         apprRole.setApprRoleDefineList(apprRoleDefineList);
         JsonResultUtils.writeSingleDataJson(apprRole, response);
@@ -105,5 +107,17 @@ public class ApprRoleController extends BaseController {
     @WrapUpResponseBody
     public Boolean syncApprRoleToFormula() {
         return this.apprRoleService.syncApprRoleToFormula();
+    }
+
+    private void changeRoleCodeToRoleName(List<ApprRoleDefine> apprRoleDefineList) {
+        for (ApprRoleDefine apprRoleDefine : apprRoleDefineList) {
+            if ("xz".equals(apprRoleDefine.getRelatedType())) {
+                apprRoleDefine.setRelatedType("行政职务");
+                apprRoleDefine.setRelatedCode(CodeRepositoryUtil.getValue("RankType", apprRoleDefine.getRelatedCode()));
+            } else if ("js".equals(apprRoleDefine.getRelatedType())) {
+                apprRoleDefine.setRelatedType("用户角色");
+                apprRoleDefine.setRelatedCode(CodeRepositoryUtil.getRoleByRoleCode(apprRoleDefine.getRelatedCode()).getRoleName());
+            }
+        }
     }
 }
