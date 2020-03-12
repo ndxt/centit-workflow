@@ -34,7 +34,7 @@ public class ApprRoleServiceImpl implements ApprRoleService {
     @Override
     @Transactional
     public List<ApprRole> listApprRoles(Map<String, Object> filterMap, PageDesc pageDesc) {
-        return apprRoleDao.listObjectsByProperties(filterMap,pageDesc);
+        return apprRoleDao.listObjects(filterMap, pageDesc);
     }
 
     @Override

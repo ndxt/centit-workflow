@@ -1,5 +1,6 @@
 package com.centit.workflow.dao;
 
+import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.workflow.po.ApprRole;
@@ -13,7 +14,12 @@ import java.util.Map;
 public class ApprRoleDao extends BaseDaoImpl<ApprRole,String> {
     @Override
     public Map<String, String> getFilterField() {
-        return null;
+        if(filterField == null) {
+            filterField = new HashMap<>();
+            filterField.put("roleName" , CodeBook.LIKE_HQL_ID);
+//            filterField.put(CodeBook.ORDER_BY_HQL_ID , " updateDate desc ");
+        }
+        return filterField;
     }
 
     /**
