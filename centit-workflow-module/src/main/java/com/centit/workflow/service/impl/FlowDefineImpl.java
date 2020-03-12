@@ -809,7 +809,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         Map<String, String> optType = new HashMap<>();
         optType.put("D(P)", "同上一个节点");
         optType.put("D(F)", "同流程");
-        optType.put("D(U)", "用户的机构");
+        optType.put("D(C)", "用户的机构");
         optType.put("D(cursor)", "多实例游标");
         optType.put("S(D(L),D(U))", "默认用上一个副本机构");
         return optType;
