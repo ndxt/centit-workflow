@@ -525,6 +525,7 @@ function createEmptyXml(){
  * @param id
  */
 function changeValue(obj,id){
+    debugger
     var k;
     if(g(o)){
         if(id=="title"){//更新文本信息
@@ -619,6 +620,9 @@ function changeValue(obj,id){
 
 function changeInputValue(obj, input){
   $('.' + input+':visible').val(obj.value)
+  if(input=='unitexp'){
+    changeValue(obj,'unitexp')
+  }
 }
 /**
  * 设置线条名称
@@ -1223,6 +1227,9 @@ function changeInsideInput(dialog, input, type) {
     }
   })
   $('.'+input+':visible').val(data !== '' ? type+'('+data+')' : '')
+  if(input=='unitexp'){
+    changeValue($('.'+input+':visible')[0],'unitexp')
+  }
 }
 
 function viewInsideDialog(dialog, display) {

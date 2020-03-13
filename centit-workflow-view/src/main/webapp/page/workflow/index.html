@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="en">
-<meta charset="UTF-8">
-<title>工作流在线编辑</title>
-<link href="css/style.css" rel="stylesheet">
-    <style>
-		.step{
-			border-radius:2px;
+	<meta charset="UTF-8">
+	<title>工作流在线编辑</title>
+	<link href="css/style.css" rel="stylesheet">
+	<style>
+		.step {
+			border-radius: 2px;
 		}
-    </style>
+	</style>
 </head>
+
 <body onselectstart="return false;">
 	<div id="tool">
 		<div id="move" class="move"></div>
@@ -32,7 +34,7 @@
 		<div class="opt" id="cursor" style="background: #888;">
 			<img id="default" src="images/default.png" title="修改选中对象" />
 		</div>
-		<div class="opt"  style="background: buttonface;">
+		<div class="opt" style="background: buttonface;">
 			<img id="selectMore" src="images/select_area.png" title="多选" />
 		</div>
 		<div class="opt">
@@ -49,8 +51,7 @@
 			<img src="images/zoomin.gif" title="放大显示比例 " />
 		</div>
 		<div style="width: 45px;">
-			<select id="zoomshow" oninput="changeZoom(this.value);"
-				style="width: 50px; margin-top: 2px;">
+			<select id="zoomshow" oninput="changeZoom(this.value);" style="width: 50px; margin-top: 2px;">
 				<option value="0.2">20%</option>
 				<option value="0.4">40%</option>
 				<option value="0.6">60%</option>
@@ -94,8 +95,7 @@
 						</td>
 						<td width="63%">
 							<div>
-								<input type="text" id="nodename" value="" style="width: 97%;"
-									   oninput="changeValue(this,'title')" />
+								<input type="text" id="nodename" value="" style="width: 97%;" oninput="changeValue(this,'title')" />
 							</div>
 						</td>
 					</tr>
@@ -107,8 +107,7 @@
 						</td>
 						<td>
 							<div>
-								<input type="text" id="nodecode" value="" style="width: 97%;"
-									   oninput="changeValue(this,'nodecode')" />
+								<input type="text" id="nodecode" value="" style="width: 97%;" oninput="changeValue(this,'nodecode')" />
 							</div>
 						</td>
 					</tr>
@@ -120,8 +119,7 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="routertype"
-									oninput="setRouteType(this,'routertype')">
+								<select style="width: 99%;" id="routertype" oninput="setRouteType(this,'routertype')">
 									<option selected value="D">分支</option>
 									<option value="E">汇聚</option>
 									<option value="G">多实例</option>
@@ -140,8 +138,7 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="flowphase"
-									oninput="changeValue(this,'flowphase')">
+								<select style="width: 99%;" id="flowphase" oninput="changeValue(this,'flowphase')">
 									<option value="0">请选择</option>
 								</select>
 							</div>
@@ -155,8 +152,7 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="isTrunkLine"
-									oninput="changeValue(this,'isTrunkLine')">
+								<select style="width: 99%;" id="isTrunkLine" oninput="changeValue(this,'isTrunkLine')">
 									<option value="T">是</option>
 									<option selected value="F">否</option>
 								</select>
@@ -177,8 +173,7 @@
 						</td>
 					</tr>
 				</table>
-				<table width="100%" cellpadding="0" cellspacing="10"
-					id="operateAttr">
+				<table width="100%" cellpadding="0" cellspacing="10" id="operateAttr">
 					<tr>
 						<td>
 							<div>
@@ -187,8 +182,7 @@
 						</td>
 						<td width="67%">
 							<div>
-								<select style="width: 99%;" id="opttype"
-										oninput="changeValue(this,'opttype')">
+								<select style="width: 99%;" id="opttype" oninput="changeValue(this,'opttype')">
 									<!--<option value="D">自动执行</option>-->
 									<!--<option value="E">哑元</option>-->
 									<!--<option value="S">子流程</option>-->
@@ -208,8 +202,8 @@
 							<div>
 								<select style="width: 99%;" id="optcode" oninput="changeValue(this,'optcode')">
 									<!--<option selected='selected'>请选择</option>-->
-									  <option value="approval/approval.html">通用审批</option>
-									  <option value="approval/zwh.html">置文号</option>
+									<option value="approval/approval.html">通用审批</option>
+									<option value="approval/zwh.html">置文号</option>
 								</select>
 							</div>
 						</td>
@@ -222,8 +216,7 @@
 						</td>
 						<td>
 							<div>
-								<input type="text" id="optparam" value="" style="width: 97%;"
-									oninput="changeValue(this,'optparam')" />
+								<input type="text" id="optparam" value="" style="width: 97%;" oninput="changeValue(this,'optparam')" />
 							</div>
 						</td>
 					</tr>
@@ -235,26 +228,25 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="subwfcode"
-									oninput="changeValue(this,'subwfcode')">
+								<select style="width: 99%;" id="subwfcode" oninput="changeValue(this,'subwfcode')">
 									<option>请选择</option>
 								</select>
 							</div>
 						</td>
 					</tr>
-          <tr id="iosid">
-            <td>
-              <div>
-                <label for="osid">业务系统</label>
-              </div>
-            </td>
-            <td>
-              <div>
-                <select style="width: 99%;" id="osid" oninput="changeValue(this,'osid')">
-                </select>
-              </div>
-            </td>
-          </tr>
+					<tr id="iosid">
+						<td>
+							<div>
+								<label for="osid">业务系统</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="osid" oninput="changeValue(this,'osid')">
+								</select>
+							</div>
+						</td>
+					</tr>
 					<tr id="nodeEvent">
 						<td>
 							<div style="white-space: nowrap;">
@@ -263,8 +255,7 @@
 						</td>
 						<td>
 							<div>
-								<input type="text" id="optbean" value="" style="width: 97%;"
-									oninput="changeValue(this,'optbean')" />
+								<input type="text" id="optbean" value="" style="width: 97%;" oninput="changeValue(this,'optbean')" />
 							</div>
 						</td>
 					</tr>
@@ -284,8 +275,7 @@
 					</tr>
 					 -->
 				</table>
-				<table width="100%" cellpadding="0" cellspacing="10"
-					id="permissionAttr">
+				<table width="100%" cellpadding="0" cellspacing="10" id="permissionAttr">
 					<tr>
 						<td>
 							<div>
@@ -294,12 +284,12 @@
 						</td>
 						<td>
 							<div style="position: relative; overflow: hidden;">
-                <select class="insideUnit" oninput="changeInputValue(this, 'unitexp')"
-                  style="width: 80%; float: left; cursor: pointer;">
-                </select>
-                <input type="text" id="unitexp" class="unitexp" value="D(P)" oninput="changeValue(this,'unitexp')"
-                       style="width: 118px; height: 18px; position: absolute; left: 5px; top: 5px; border: none;"/>
-                <button type="button" onclick="viewInsideDialog('allUnit', true)" style="cursor: pointer;">机构</button>
+								<select class="insideUnit" oninput="changeInputValue(this, 'unitexp')"
+									style="width: 80%; float: left; cursor: pointer;">
+								</select>
+								<input type="text" id="unitexp" class="unitexp" value="D(P)" oninput="changeValue(this,'unitexp')"
+									style="width: 118px; height: 18px; position: absolute; left: 5px; top: 5px; border: none;" />
+								<button type="button" onclick="viewInsideDialog('allUnit', true)" style="cursor: pointer;">机构</button>
 							</div>
 						</td>
 					</tr>
@@ -311,18 +301,19 @@
 						</td>
 						<td>
 							<div style="overflow: hidden;">
-                <select style="width: 99%; float: left;" id="roletype" class="roletype"
-                        oninput="changeValue(this,'roletype')">
+								<select style="width: 99%; float: left;" id="roletype" class="roletype"
+									oninput="changeValue(this,'roletype')">
 									<!--<option value="">不设置</option>-->
 									<!--<option value="bj">办件角色</option>-->
 									<!--<option value="gw">岗位角色</option>-->
 									<!--<option value="xz">行政角色</option>-->
-                  <!--<option value="xt">系统角色</option>-->
-                  <!--<option value="en">权限引擎</option>-->
+									<!--<option value="xt">系统角色</option>-->
+									<!--<option value="en">权限引擎</option>-->
 									<!--<option value="qx">已定义权限表达式</option>-->
 									<!--<option value="sp">审批角色</option>-->
 								</select>
-                <button class="insideUser" type="button" onclick="viewInsideDialog('allUser', true)" style="cursor: pointer; display: none;">用户</button>
+								<button class="insideUser" type="button" onclick="viewInsideDialog('allUser', true)"
+									style="cursor: pointer; display: none;">用户</button>
 							</div>
 						</td>
 					</tr>
@@ -334,8 +325,7 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="rolecode"
-									oninput="changeValue(this,'rolecode')">
+								<select style="width: 99%;" id="rolecode" oninput="changeValue(this,'rolecode')">
 									<option value="">请选择</option>
 								</select>
 							</div>
@@ -349,8 +339,7 @@
 						</td>
 						<td>
 							<div>
-								<input id="powerexp" oninput="changeValue(this,'powerexp')"
-									type="text" style="width: 99%;" />
+								<input id="powerexp" oninput="changeValue(this,'powerexp')" type="text" style="width: 99%;" />
 							</div>
 						</td>
 					</tr>
@@ -364,12 +353,11 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="isaccounttime"
-									oninput="changeValue(this,'isaccounttime')">
+								<select style="width: 99%;" id="isaccounttime" oninput="changeValue(this,'isaccounttime')">
 									<option value="H">仅环节计时</option>
 									<option value="F">不计时</option>
 									<option selected value="T">计时</option>
-                  <option value="I">继承父流程剩余时间</option>
+									<option value="I">继承父流程剩余时间</option>
 								</select>
 							</div>
 						</td>
@@ -382,8 +370,7 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="timeLimitType"
-									oninput="changeValue(this,'timeLimitType')">
+								<select style="width: 99%;" id="timeLimitType" oninput="changeValue(this,'timeLimitType')">
 									<option value="I" selected>未设置</option>
 									<option value="N">无期限</option>
 									<option value="F">每实例固定期限</option>
@@ -413,8 +400,7 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="inheritType"
-									oninput="changeValue(this,'inheritType')">
+								<select style="width: 99%;" id="inheritType" oninput="changeValue(this,'inheritType')">
 									<option value="0" selected>不继承</option>
 									<option value="1">继承前一节点</option>
 									<option value="2">继承指定节点</option>
@@ -430,8 +416,7 @@
 						</td>
 						<td>
 							<div>
-								<input type="text" id="inheritNodeCode" value=""
-									style="width: 97%;"
+								<input type="text" id="inheritNodeCode" value="" style="width: 97%;"
 									oninput="changeValue(this,'inheritNodeCode')" />
 							</div>
 						</td>
@@ -444,11 +429,10 @@
 						</td>
 						<td>
 							<div>
-                <select id="expireopt" style="width: 99%;"
-                        oninput="changeValue(this,'expireopt')">
-                  <option value="Y" selected>预警</option>
-                  <option value="E">结束流程</option>
-                </select>
+								<select id="expireopt" style="width: 99%;" oninput="changeValue(this,'expireopt')">
+									<option value="Y" selected>预警</option>
+									<option value="E">结束流程</option>
+								</select>
 								<!--<input style="width: 97%;" id="expireopt" value="预警" readonly />-->
 							</div>
 						</td>
@@ -461,8 +445,7 @@
 						</td>
 						<td>
 							<div>
-								<select id="warningrule" style="width: 99%;"
-									oninput="changeValue(this,'warningrule')">
+								<select id="warningrule" style="width: 99%;" oninput="changeValue(this,'warningrule')">
 									<option value="R" selected>运行时间预警</option>
 									<option value="L">剩余时间预警</option>
 									<option value="P">期限比例预警</option>
@@ -476,14 +459,14 @@
 								<label for="warningparam">预警时间参数</label>
 							</div>
 						</td>
-						<td><div>
-								<input type="text" id="warningparam" style="width: 97%;"
-									oninput="changeValue(this,'warningparam')" />
-							</div></td>
+						<td>
+							<div>
+								<input type="text" id="warningparam" style="width: 97%;" oninput="changeValue(this,'warningparam')" />
+							</div>
+						</td>
 					</tr>
 				</table>
-				<table width="100%" cellpadding="0" cellspacing="10"
-					id="specialAttr">
+				<table width="100%" cellpadding="0" cellspacing="10" id="specialAttr">
 					<tr class="multi-special">
 						<td>
 							<div>
@@ -492,8 +475,7 @@
 						</td>
 						<td>
 							<div>
-								<select id="multiinsttype" style="width: 99%;"
-									oninput="changeValue(this,'multiinsttype')">
+								<select id="multiinsttype" style="width: 99%;" oninput="changeValue(this,'multiinsttype')">
 									<option value="D" selected>按照机构变量</option>
 									<option value="U">按照人员</option>
 								</select>
@@ -507,14 +489,14 @@
 							</div>
 						</td>
 						<td>
-              <div style="position: relative; overflow: hidden;">
-                <select class="insideUnit" oninput="changeInputValue(this, 'unitexp')"
-                        style="width: 80%; float: left; cursor: pointer;">
-                </select>
-                <input type="text" id="route-unitexp" class="unitexp" value="D(P)" oninput="changeValue(this,'unitexp')"
-                       style="width: 118px; height: 18px; position: absolute; left: 5px; top: 5px; border: none;"/>
-                <button type="button" onclick="viewInsideDialog('allUnit', true)" style="cursor: pointer;">机构</button>
-              </div>
+							<div style="position: relative; overflow: hidden;">
+								<select class="insideUnit" oninput="changeInputValue(this, 'unitexp')"
+									style="width: 80%; float: left; cursor: pointer;">
+								</select>
+								<input type="text" id="route-unitexp" class="unitexp" value="D(P)" oninput="changeValue(this,'unitexp')"
+									style="width: 118px; height: 18px; position: absolute; left: 5px; top: 5px; border: none;" />
+								<button type="button" onclick="viewInsideDialog('allUnit', true)" style="cursor: pointer;">机构</button>
+							</div>
 						</td>
 					</tr>
 					<tr class="multi-special">
@@ -524,19 +506,20 @@
 							</div>
 						</td>
 						<td>
-              <div style="overflow: hidden;">
-                <select style="width: 99%; float: left;" id="route-roletype" class="roletype"
-                        oninput="changeValue(this,'roletype')">
-                  <!--<option value="">不设置</option>-->
-                  <!--<option value="bj">办件角色</option>-->
-                  <!--<option value="gw">岗位角色</option>-->
-                  <!--<option value="xz">行政角色</option>-->
-                  <!--<option value="xt">系统角色</option>-->
-                  <!--<option value="en">权限引擎</option>-->
-                  <!--<option value="qx">已定义权限表达式</option>-->
-                </select>
-                <button class="insideUser" type="button" onclick="viewInsideDialog('allUser', true)" style="cursor: pointer; display: none;">用户</button>
-              </div>
+							<div style="overflow: hidden;">
+								<select style="width: 99%; float: left;" id="route-roletype" class="roletype"
+									oninput="changeValue(this,'roletype')">
+									<!--<option value="">不设置</option>-->
+									<!--<option value="bj">办件角色</option>-->
+									<!--<option value="gw">岗位角色</option>-->
+									<!--<option value="xz">行政角色</option>-->
+									<!--<option value="xt">系统角色</option>-->
+									<!--<option value="en">权限引擎</option>-->
+									<!--<option value="qx">已定义权限表达式</option>-->
+								</select>
+								<button class="insideUser" type="button" onclick="viewInsideDialog('allUser', true)"
+									style="cursor: pointer; display: none;">用户</button>
+							</div>
 						</td>
 					</tr>
 					<tr id="route-roleName" class="multi-special">
@@ -547,15 +530,13 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="route-rolecode"
-									oninput="changeValue(this,'rolecode')">
+								<select style="width: 99%;" id="route-rolecode" oninput="changeValue(this,'rolecode')">
 									<option value="">请选择</option>
 								</select>
 							</div>
 						</td>
 					</tr>
-					<tr id="route-powerName" style="display: none;"
-						class="multi-special">
+					<tr id="route-powerName" style="display: none;" class="multi-special">
 						<td>
 							<div>
 								<label for="route-powerexp">权限表达式</label>
@@ -563,9 +544,7 @@
 						</td>
 						<td>
 							<div>
-								<input id="route-powerexp"
-									oninput="changeValue(this,'powerexp')" type="text"
-									style="width: 97%;" />
+								<input id="route-powerexp" oninput="changeValue(this,'powerexp')" type="text" style="width: 97%;" />
 							</div>
 						</td>
 					</tr>
@@ -577,8 +556,7 @@
 						</td>
 						<td>
 							<div>
-								<select id="convergetype" style="width: 99%;"
-									oninput="changeValue(this,'convergetype')">
+								<select id="convergetype" style="width: 99%;" oninput="changeValue(this,'convergetype')">
 									<option value="A" selected>全部完成</option>
 									<option value="L">至少完成x条路径</option>
 									<option value="M">最多有x条路径没有完成</option>
@@ -589,33 +567,42 @@
 						</td>
 					</tr>
 					<tr class="ju-special">
-						<td><div>
+						<td>
+							<div>
 								<label for="convergeparam">汇聚参数</label>
-							</div></td>
-						<td><div>
-								<input id="convergeparam" type="text" style="width: 97%"
-									oninput="setConvergeparam(this)">
-							</div></td>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input id="convergeparam" type="text" style="width: 97%" oninput="setConvergeparam(this)">
+							</div>
+						</td>
 					</tr>
 					<tr class="ju-special">
-						<td><div>
+						<td>
+							<div>
 								<label for="route-optbean">汇聚外埠判断</label>
-							</div></td>
-						<td><div>
-								<input id="route-optbean" type="text" style="width: 97%"
-									oninput="changeValue(this,'optbean')">
-							</div></td>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input id="route-optbean" type="text" style="width: 97%" oninput="changeValue(this,'optbean')">
+							</div>
+						</td>
 					</tr>
 				</table>
 				<table id="lineAttr" width="100%" cellpadding="0" cellspacing="10">
 					<tr>
-						<td><div>
+						<td>
+							<div>
 								<label for="line-name">名称</label>
-							</div></td>
-						<td><div>
-								<input id="line-name" type="text" style="width: 97%;"
-									oninput="setLineName(this)">
-							</div></td>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input id="line-name" type="text" style="width: 97%;" oninput="setLineName(this)">
+							</div>
+						</td>
 					</tr>
 					<tr>
 						<td>
@@ -631,43 +618,45 @@
 					</tr>
 					<tr>
 						<td>
-              <div>
+							<div>
 								<label for="cond">条件表达式</label>
 							</div>
-            </td>
+						</td>
 						<td>
-              <div style="overflow: hidden;">
-                <input id="cond" type="text" style="width: 80%; float: left;"
-                       oninput="changeValue(this, 'cond')">
-                <button type="button" onclick="viewInsideDialog('insideFunc', true)" style="cursor: pointer;">函数</button>
-              </div>
-            </td>
+							<div style="overflow: hidden;">
+								<input id="cond" type="text" style="width: 80%; float: left;" oninput="changeValue(this, 'cond')">
+								<button type="button" onclick="viewInsideDialog('insideFunc', true)"
+									style="cursor: pointer;">函数</button>
+							</div>
+						</td>
 					</tr>
 					<tr>
-						<td><div>
-							<label for="line-desc">描述</label>
-						</div></td>
-						<td><div>
-							<input id="line-desc" type="text" style="width: 97%;"
-								oninput="changeValue(this,'desc')">
-						</div></td>
+						<td>
+							<div>
+								<label for="line-desc">描述</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<input id="line-desc" type="text" style="width: 97%;" oninput="changeValue(this,'desc')">
+							</div>
+						</td>
 					</tr>
 				</table>
 				<table id="constraintAttr" width="100%" cellpadding="0" cellspacing="10">
 					<tr>
-	                    <td>
-	                        <div><label for="line-isaccounttime">是否计时</label></div>
-	                    </td>
-	                    <td>
-	                        <div><select style="width:99%;" id="line-isaccounttime"
-	                                     oninput="changeValue(this,'isaccounttime')">
-	                            <option value="I">忽略</option>
-	                            <option value="H">仅环节计时</option>
-		                        <option value="F">不计时</option>
-		                        <option value="T">计时</option>
-	                        </select></div>
-	                    </td>
-	                </tr>
+						<td>
+							<div><label for="line-isaccounttime">是否计时</label></div>
+						</td>
+						<td>
+							<div><select style="width:99%;" id="line-isaccounttime" oninput="changeValue(this,'isaccounttime')">
+									<option value="I">忽略</option>
+									<option value="H">仅环节计时</option>
+									<option value="F">不计时</option>
+									<option value="T">计时</option>
+								</select></div>
+						</td>
+					</tr>
 					<tr>
 						<td>
 							<div>
@@ -676,8 +665,7 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="line-timeLimitType"
-									oninput="changeValue(this,'timeLimitType')">
+								<select style="width: 99%;" id="line-timeLimitType" oninput="changeValue(this,'timeLimitType')">
 									<option value="I" selected>未设置</option>
 									<option value="N">无期限</option>
 									<option value="F">每实例固定期限</option>
@@ -694,8 +682,8 @@
 						</td>
 						<td>
 							<div>
-								<input type="text" id="line-timeLimit" value=""
-									style="width: 97%;" oninput="changeValue(this,'timeLimit')" />
+								<input type="text" id="line-timeLimit" value="" style="width: 97%;"
+									oninput="changeValue(this,'timeLimit')" />
 							</div>
 						</td>
 					</tr>
@@ -707,8 +695,7 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="line-inheritType"
-									oninput="setInheritType(this)">
+								<select style="width: 99%;" id="line-inheritType" oninput="setInheritType(this)">
 									<option value="0" selected>不继承</option>
 									<option value="1">继承前一节点</option>
 									<option value="2">继承指定节点</option>
@@ -724,8 +711,7 @@
 						</td>
 						<td>
 							<div>
-								<input type="text" id="line-inheritNodeCode" value=""
-									style="width: 97%;"
+								<input type="text" id="line-inheritNodeCode" value="" style="width: 97%;"
 									oninput="changeValue(this,'inheritNodeCode')" />
 							</div>
 						</td>
@@ -738,8 +724,7 @@
 						</td>
 						<td>
 							<div>
-								<select style="width: 99%;" id="canignore"
-									oninput="changeValue(this,'canignore')">
+								<select style="width: 99%;" id="canignore" oninput="changeValue(this,'canignore')">
 									<option value="T">是</option>
 									<option value="F">否</option>
 								</select>
@@ -752,118 +737,118 @@
 	</div>
 	<div id="canvas"></div>
 	<div id="lineCon"></div>
-  <div id="allUnit" class="insideDialog">
-    <div class="frame">
-      <label id="unit-title" class="title">
-        所有机构<span class="close" onclick="viewInsideDialog('allUnit', false)">X</span>
-      </label>
-      <div class="search">
-        <span>名称：</span>
-        <input type="text" oninput="searchInsideUnit(this)" />
-      </div>
-      <div class="content"></div>
-    </div>
-  </div>
-  <div id="allUser" class="insideDialog">
-    <div class="frame">
-      <label id="user-title" class="title">
-        所有用户<span class="close" onclick="viewInsideDialog('allUser', false)">X</span>
-      </label>
-      <div class="search">
-        <span>姓名：</span>
-        <input type="text" oninput="searchInsideUser(this)" />
-      </div>
-      <div class="content"></div>
-    </div>
-  </div>
-  <div id="insideFunc" class="insideDialog">
-    <div class="frame">
-      <label id="func-title" class="title">
-        逻辑表达式内置的函数<span class="close" onclick="viewInsideDialog('insideFunc', false)">X</span>
-      </label>
-      <div class="content">
-        <ul>
-          <li id="szjs1" class="active">数值计算</li>
-          <li id="zfcjs">字符串计算</li>
-          <li id="szjs2">数组计算</li>
-          <li id="rqjs">日期计算</li>
-          <li id="xzyj">选择语句</li>
-          <li id="variable">变量</li>
-        </ul>
-        <div id="szjs1Func" class="tabCont" style="display: block;">
-          log : 求以10为底的对数<br/>
-          ln : 求自然对数<br/>
-          sin :  求正弦<br/>
-          cos : 求余弦<br/>
-          tan : 求正切<br/>
-          ctan : 求余切<br/>
-          exp : 求以e为底的指数<br/>
-          sqrt : 求平方根<br/>
-          round : 四舍五入<br/>
-          int/integer ： 求整数部分 int (12.34)=12 int -12.34)=-12<br/>
-          frac : 求小数部分 frac (12.34)=0.34 frac (-12.34)=-0.34<br/>
-          byte : 求位值 byte (4321.789,0)=1  byte (4321.789,-2) =8  byte ("4321.789",2)=3<br/>
-          toNumber ：转换为数字
-        </div>
-        <div id="zfcjsFunc" class="tabCont">
-          upcase : 字符串大写<br/>
-          lowcase : 字符串小写<br/>
-          substr : 求字符串子串 substr ("123456",2,3)="345"<br/>
-          lpad : 左侧补充字符串<br/>
-          rpad : 右侧补充字符串<br/>
-          find ： 求子串位置 find ("123456","34")=2  find ("123456","35")=-1<br/>
-          frequence ： 求子串个数 find ("12345236","23")=2<br/>
-          capital :  capital (123.45)="壹佰贰拾叁点肆伍" capital (123.45, true)="一二三.四五"<br/>
-          concat/strcat : 连接字符串 concat ("12","34","56")="123456"<br/>
-          match ： 匹配*?为通配符 match ("abcd","a??d")=1， match ("abcd","a*d")=1<br/>
-          regexMatch : 正则表达式 regexMatch<br/>
-          regexMatchValue : 正则表达式匹配部分<br/>
-          toString ： 转换为String
-        </div>
-        <div id="szjs2Func" class="tabCont">
-          isEmpty : 判断参数是否为空 isempty("")=1<br/>
-          isNotEmpty : 判断参数是否为空 notempty("")=0<br/>
-          <br/>
-          max : 求最大值 max (1,2,3,5,4) = 5<br/>
-          min : 求最小值 min (1,2,3,5,4) = 1<br/>
-          ave : 求均值  ave (1,2,3)=2<br/>
-          count : 计数 count(1,"2",3,"5",1,1,4) = 7<br/>
-          countNotNull : 计数 非空参数 countnotnull(1,,"2",,,,1,1,4) = 5<br/>
-          countNull : 计数空参数  countnull(1,,"2",,,,1,1,4) = 4<br/>
-          sum : 求和 sum (1,2,3,4,5) = 15<br/>
-          stddev : 求标准偏差<br/>
-          getAt : 求数组中的一个值  getat (0,"2","3")= "2"  getat (0,2,3)= 2<br/>
-          singleton ： 返回新的去掉重复元素的集合（set）
-        </div>
-        <div id="rqjsFunc" class="tabCont">
-          today/currentDatetime : 当前日期 包括时间<br/>
-          currentDate ：当前日期 时间为0点<br/>
-          currentTimestamp ： 当前时间戳<br/>
-          day ：取日期在月中的序号，从1开始<br/>
-          month ： 取日期的月份<br/>
-          year ： 取日期的年份<br/>
-          week ： 取日期在当年中 第几周<br/>
-          weekday ：取日期的星期几，周日为0，周一~六为1~6<br/>
-          formatdate ： 格式化日期<br/>
-          <br/>
-          dayspan ： 求两日期之间的天数，返回整数，计算这个周期中的天数, 包括 beginTime，endTime<br/>
-          datespan ：求两日期之间的天数，返回浮点数，计算这个周期中的天数, 不足一天用小数表示<br/>
-          <br/>
-          adddays ： 加天数<br/>
-          addmonths ： 加月数<br/>
-          addyears ： 加年数<br/>
-          truncdate ：  截断日期  第二个参数  Y ，M , D 分别返回一年、月的第一天 ，或者一日的零点<br/>
-          firstofmonth ：  求这个月的第一天<br/>
-          toDate ：转换为日期
-        </div>
-        <div id="xzyjFunc" class="tabCont">
-          if : if (1,2,3)= 2  if (0,"2","3")= "3"<br/>
-          case : 第一个参数是条件，后面匹配值成对出现，不成对的为默认值 case(1,2,3)= null，case(1, 2,3, 1,"5")= "5"，case(0, 1, "2","3")= "3"
-        </div>
-        <div id="variableFunc" class="tabCont"></div>
-      </div>
-    </div>
-  </div>
+	<div id="allUnit" class="insideDialog">
+		<div class="frame">
+			<label id="unit-title" class="title">
+				所有机构<span class="close" onclick="viewInsideDialog('allUnit', false)">X</span>
+			</label>
+			<div class="search">
+				<span>名称：</span>
+				<input type="text" oninput="searchInsideUnit(this)" />
+			</div>
+			<div class="content"></div>
+		</div>
+	</div>
+	<div id="allUser" class="insideDialog">
+		<div class="frame">
+			<label id="user-title" class="title">
+				所有用户<span class="close" onclick="viewInsideDialog('allUser', false)">X</span>
+			</label>
+			<div class="search">
+				<span>姓名：</span>
+				<input type="text" oninput="searchInsideUser(this)" />
+			</div>
+			<div class="content"></div>
+		</div>
+	</div>
+	<div id="insideFunc" class="insideDialog">
+		<div class="frame">
+			<label id="func-title" class="title">
+				逻辑表达式内置的函数<span class="close" onclick="viewInsideDialog('insideFunc', false)">X</span>
+			</label>
+			<div class="content">
+				<ul>
+					<li id="szjs1" class="active">数值计算</li>
+					<li id="zfcjs">字符串计算</li>
+					<li id="szjs2">数组计算</li>
+					<li id="rqjs">日期计算</li>
+					<li id="xzyj">选择语句</li>
+					<li id="variable">变量</li>
+				</ul>
+				<div id="szjs1Func" class="tabCont" style="display: block;">
+					log : 求以10为底的对数<br />
+					ln : 求自然对数<br />
+					sin : 求正弦<br />
+					cos : 求余弦<br />
+					tan : 求正切<br />
+					ctan : 求余切<br />
+					exp : 求以e为底的指数<br />
+					sqrt : 求平方根<br />
+					round : 四舍五入<br />
+					int/integer ： 求整数部分 int (12.34)=12 int -12.34)=-12<br />
+					frac : 求小数部分 frac (12.34)=0.34 frac (-12.34)=-0.34<br />
+					byte : 求位值 byte (4321.789,0)=1 byte (4321.789,-2) =8 byte ("4321.789",2)=3<br />
+					toNumber ：转换为数字
+				</div>
+				<div id="zfcjsFunc" class="tabCont">
+					upcase : 字符串大写<br />
+					lowcase : 字符串小写<br />
+					substr : 求字符串子串 substr ("123456",2,3)="345"<br />
+					lpad : 左侧补充字符串<br />
+					rpad : 右侧补充字符串<br />
+					find ： 求子串位置 find ("123456","34")=2 find ("123456","35")=-1<br />
+					frequence ： 求子串个数 find ("12345236","23")=2<br />
+					capital : capital (123.45)="壹佰贰拾叁点肆伍" capital (123.45, true)="一二三.四五"<br />
+					concat/strcat : 连接字符串 concat ("12","34","56")="123456"<br />
+					match ： 匹配*?为通配符 match ("abcd","a??d")=1， match ("abcd","a*d")=1<br />
+					regexMatch : 正则表达式 regexMatch<br />
+					regexMatchValue : 正则表达式匹配部分<br />
+					toString ： 转换为String
+				</div>
+				<div id="szjs2Func" class="tabCont">
+					isEmpty : 判断参数是否为空 isempty("")=1<br />
+					isNotEmpty : 判断参数是否为空 notempty("")=0<br />
+					<br />
+					max : 求最大值 max (1,2,3,5,4) = 5<br />
+					min : 求最小值 min (1,2,3,5,4) = 1<br />
+					ave : 求均值 ave (1,2,3)=2<br />
+					count : 计数 count(1,"2",3,"5",1,1,4) = 7<br />
+					countNotNull : 计数 非空参数 countnotnull(1,,"2",,,,1,1,4) = 5<br />
+					countNull : 计数空参数 countnull(1,,"2",,,,1,1,4) = 4<br />
+					sum : 求和 sum (1,2,3,4,5) = 15<br />
+					stddev : 求标准偏差<br />
+					getAt : 求数组中的一个值 getat (0,"2","3")= "2" getat (0,2,3)= 2<br />
+					singleton ： 返回新的去掉重复元素的集合（set）
+				</div>
+				<div id="rqjsFunc" class="tabCont">
+					today/currentDatetime : 当前日期 包括时间<br />
+					currentDate ：当前日期 时间为0点<br />
+					currentTimestamp ： 当前时间戳<br />
+					day ：取日期在月中的序号，从1开始<br />
+					month ： 取日期的月份<br />
+					year ： 取日期的年份<br />
+					week ： 取日期在当年中 第几周<br />
+					weekday ：取日期的星期几，周日为0，周一~六为1~6<br />
+					formatdate ： 格式化日期<br />
+					<br />
+					dayspan ： 求两日期之间的天数，返回整数，计算这个周期中的天数, 包括 beginTime，endTime<br />
+					datespan ：求两日期之间的天数，返回浮点数，计算这个周期中的天数, 不足一天用小数表示<br />
+					<br />
+					adddays ： 加天数<br />
+					addmonths ： 加月数<br />
+					addyears ： 加年数<br />
+					truncdate ： 截断日期 第二个参数 Y ，M , D 分别返回一年、月的第一天 ，或者一日的零点<br />
+					firstofmonth ： 求这个月的第一天<br />
+					toDate ：转换为日期
+				</div>
+				<div id="xzyjFunc" class="tabCont">
+					if : if (1,2,3)= 2 if (0,"2","3")= "3"<br />
+					case : 第一个参数是条件，后面匹配值成对出现，不成对的为默认值 case(1,2,3)= null，case(1, 2,3, 1,"5")= "5"，case(0, 1, "2","3")= "3"
+				</div>
+				<div id="variableFunc" class="tabCont"></div>
+			</div>
+		</div>
+	</div>
 	<script type="text/javascript" src="js/url.js"></script>
 	<script type="text/javascript" src="js/svg.js"></script>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
@@ -874,14 +859,14 @@
 	<script type="text/javascript" src="js/drag.js"></script>
 	<script type="text/javascript" src="js/reundo.js"></script>
 	<script type="text/javascript">
-		var path = getQueryString('contentPath') || '/'+location.pathname.split("/")[1]+'/';
+		var path = getQueryString('contentPath') || '/' + location.pathname.split("/")[1] + '/';
 		var csrf = getQueryString('cs');
 
 		if (!csrf) {
 			$.ajax({
 				url: path + 'system/mainframe/login/csrf',
 				dataType: 'json',
-				success: function(res) {
+				success: function (res) {
 					console.log(1);
 					var data = res.data;
 					var ajaxData = {};
@@ -901,141 +886,142 @@
 			});
 		}
 
-    if (SVG.supported) {
-    	var flowCode = location.search.substr(1).split("&")[0].split("=")[1];
-      var version = location.search.substr(1).split("&")[1].split("=")[1];
-    	var Data = {};
+		if (SVG.supported) {
+			var flowCode = location.search.substr(1).split("&")[0].split("=")[1];
+			var version = location.search.substr(1).split("&")[1].split("=")[1];
+			var Data = {};
 
-        var xml;
-        $.ajax({
-			type: "get",
-			async: false,
-			url: path+loadDefineXml+flowCode + "/" + version,
-			dataType: "json",
-			success: function (data) {
-				xml = data.data;
-//				xml = data;
+			var xml;
+			$.ajax({
+				type: "get",
+				async: false,
+				url: path + loadDefineXml + flowCode + "/" + version,
+				dataType: "json",
+				success: function (data) {
+					xml = data.data;
+					//				xml = data;
+				}
+			});
+			init();
+			if (xml && xml != "0" && xml != "") {
+				loadXml((xml));
+				//createEmptyXml();//覆盖老数据，创建只有开始结束节点的流程图
 			}
-        });
-        init();
-        if (xml&&xml!="0"&&xml!="") {
-            loadXml((xml));
-        	//createEmptyXml();//覆盖老数据，创建只有开始结束节点的流程图
-        }
-        else{
-            createEmptyXml();
-        }
-        $.ajax({
-        	type:"get",
-        	async:false,
-        	url:path+loadDefineData+flowCode,
-        	success:function(data){
-        		Data = data.data;
-            setFlowVariable(Data)
-        	},
-        	error:function(data){
-        		alert("请求失败");
-        	}
-        });
+			else {
+				createEmptyXml();
+			}
+			$.ajax({
+				type: "get",
+				async: false,
+				url: path + loadDefineData + flowCode,
+				success: function (data) {
+					Data = data.data;
+					setFlowVariable(Data)
+				},
+				error: function (data) {
+					alert("请求失败");
+				}
+			});
 
-        // 角色类别
-        $.ajax({
-          type:"get",
-          async:false,
-          url:path+loadRoleType,
-          success:function(data){
-            Data.RoleType = data.data;
-            setRoleType()
-          },
-          error:function(data){
-            alert("请求失败");
-          }
-        });
+			// 角色类别
+			$.ajax({
+				type: "get",
+				async: false,
+				url: path + loadRoleType,
+				success: function (data) {
+					Data.RoleType = data.data;
+					setRoleType()
+				},
+				error: function (data) {
+					alert("请求失败");
+				}
+			});
 
-        // 内置机构表达式
-        $.ajax({
-          type:"get",
-          async:false,
-          url:path+loadInsideUnitData,
-          success:function(data){
-            Data.InsideUnit = data.data
-          },
-        });
+			// 内置机构表达式
+			$.ajax({
+				type: "get",
+				async: false,
+				url: path + loadInsideUnitData,
+				success: function (data) {
+					Data.InsideUnit = data.data
+				},
+			});
 
-        // 所有机构
-        $.ajax({
-          type:"get",
-          async:false,
-          url:path+loadAllUnitData,
-          success:function(data){
-            Data.AllUnit = data.data
-            setAllUnit()
-          },
-        });
+			// 所有机构
+			$.ajax({
+				type: "get",
+				async: false,
+				url: path + loadAllUnitData,
+				success: function (data) {
+					Data.AllUnit = data.data
+					setAllUnit()
+				},
+			});
 
-        // 所有用户
-        $.ajax({
-          type:"get",
-          async:false,
-          url:path+loadAllUserData,
-          success:function(data){
-            Data.AllUser = data.data
-            setAllUser()
-          },
-        });
-    }
-    else {
-        alert("您的浏览器不支持SVG，请换其他浏览器");
-        window.close();
-    }
-    $("#argumentTool").find("li").each(function (index) {
-        $(this).bind("click", function () {
-            if ($(this).hasClass("active")) {
-                return false;
-            }
-            $("#argumentTool").find("li").removeClass("active");
-            $(this).addClass("active");
-            if (index == 0) {
-                $("table").hide();
-               	$("polyline[stroke='#18b217']")[0] ? $("#lineAttr").show() : $("#commonAttr").show();
-            }
-            else if (index == 1) {
-                $("table").hide();
-                $("#operateAttr").show();
-            }
-            else if (index == 2) {
-                $("table").hide();
-                $("#permissionAttr").show();
-            }
-            else if (index == 3) {
-                $("table").hide();
-                $("#timeAttr").show();
-            }
-            else if (index == 4) {
-                $("table").hide();
-                $("#specialAttr").show();
-            }
-            else if (index == 5) {
-                $("table").hide();
-                $("#constraintAttr").show();
-            }
-        });
-    });
+			// 所有用户
+			$.ajax({
+				type: "get",
+				async: false,
+				url: path + loadAllUserData,
+				success: function (data) {
+					Data.AllUser = data.data
+					setAllUser()
+				},
+			});
+		}
+		else {
+			alert("您的浏览器不支持SVG，请换其他浏览器");
+			window.close();
+		}
+		$("#argumentTool").find("li").each(function (index) {
+			$(this).bind("click", function () {
+				if ($(this).hasClass("active")) {
+					return false;
+				}
+				$("#argumentTool").find("li").removeClass("active");
+				$(this).addClass("active");
+				if (index == 0) {
+					$("table").hide();
+					$("polyline[stroke='#18b217']")[0] ? $("#lineAttr").show() : $("#commonAttr").show();
+				}
+				else if (index == 1) {
+					$("table").hide();
+					$("#operateAttr").show();
+				}
+				else if (index == 2) {
+					$("table").hide();
+					$("#permissionAttr").show();
+				}
+				else if (index == 3) {
+					$("table").hide();
+					$("#timeAttr").show();
+				}
+				else if (index == 4) {
+					$("table").hide();
+					$("#specialAttr").show();
+				}
+				else if (index == 5) {
+					$("table").hide();
+					$("#constraintAttr").show();
+				}
+			});
+		});
 
-    $("#insideFunc .content li").each(function () {
-      $(this).bind("click", function () {
-        if ($(this).hasClass("active")) {
-          return
-        }
+		$("#insideFunc .content li").each(function () {
+			$(this).bind("click", function () {
+				if ($(this).hasClass("active")) {
+					return
+				}
 
-        $("#insideFunc .content li").removeClass("active");
-        $(this).addClass("active");
+				$("#insideFunc .content li").removeClass("active");
+				$(this).addClass("active");
 
-        $("#insideFunc .content .tabCont").hide()
-        $("#insideFunc .content #"+$(this).attr('id')+"Func").show()
-      });
-    });
-</script>
+				$("#insideFunc .content .tabCont").hide()
+				$("#insideFunc .content #" + $(this).attr('id') + "Func").show()
+			});
+		});
+	</script>
 
 </body>
+
 </html>
