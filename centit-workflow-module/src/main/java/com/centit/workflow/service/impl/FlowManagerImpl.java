@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.OperationLogCenter;
+import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.CollectionsOpt;
@@ -40,10 +41,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     private static final long serialVersionUID = 1L;
     @Autowired
     FlowInstanceDao flowInstanceDao;
+
     @Autowired
     NodeInstanceDao nodeInstanceDao;
+
     @Autowired
     NodeInfoDao flowNodeDao;
+
     @Autowired
     FlowTransitionDao flowTransitionDao;
 
@@ -58,13 +62,16 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Autowired
     RoleRelegateDao flowRoleRelegateDao;
+
     @Autowired
     FlowEngine flowEngine;
+
     @Autowired
     FlowInstanceGroupDao flowInstanceGroupDao;
 
-    /*@Autowired
-    private NotificationCenter notificationCenter;*/
+    @Autowired
+    private NotificationCenter notificationCenter;
+
     @Autowired(required = false)
     private OperationLogWriter optLogManager;
 
