@@ -66,6 +66,8 @@ var ybImg = "viewimage/yb.png",            //一般
     yyImg = "viewimage/yy.png",
     zdzxImg = "viewimage/zdzx.png",
     zlcImg = "viewimage/zlc.png";
+    jbImg = "viewimage/yy-jb.png";
+    beanImg = "viewimage/yy-bean.png";
 var ybClockImg = "viewimage/yb-clock.png",            //一般
     drzxClockImg = "viewimage/drzx-clock.png",
     qxjzClockImg = "viewimage/qxjz-clock.png",
@@ -1074,10 +1076,24 @@ function clearSelected(){
  *
  */
 function changeOperateImg(type,o){
-    if(g(o).getAttribute('isaccounttime') == "F") {
+    if(g(o).getAttribute('isaccounttime') == "F" && g(o).getAttribute('opttype') == "D") {
+        switch (type) {
+            case 'N':
+                g(o).setAttribute('xlink:href', yyImg);
+                break;
+            case 'S':
+                g(o).setAttribute('xlink:href', jbImg);
+                break;
+            case 'B':
+                g(o).setAttribute('xlink:href', beanImg);
+                break;
+            default:
+                break;
+        }
+    }else if(g(o).getAttribute('isaccounttime') == "F") {
         switch (type) {
             case 'D':
-                g(o).setAttribute('xlink:href', zdzxImg);
+                g(o).setAttribute('xlink:href', yyImg);
                 break;
             case 'E':
                 g(o).setAttribute('xlink:href', yyImg);

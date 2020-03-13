@@ -525,13 +525,28 @@ function createEmptyXml(){
  * @param id
  */
 function changeValue(obj,id){
-    debugger
     var k;
     if(g(o)){
         if(id=="title"){//更新文本信息
             if(SVG.get(o).attr("nodetype")!='R'){
                 setValue(g(SVG.get(o).attr("textID")),dealStr(obj.value,SVG.get(o).attr("width")));
             }
+        }
+        if(id=="optcode"){
+            if(obj.value=="S"){
+                $("#operateParam").hide();
+                $("#childNode").hide();
+                $("#iosid").hide();
+                $("#nodeEvent").hide();
+                $("#operateScript").show();
+            }else{
+                $("#operateParam").show();
+                $("#childNode").show();
+                $("#iosid").show();
+                $("#nodeEvent").show();
+                $("#operateScript").hide();
+            }
+            changeOperateImg(obj.value, o)
         }
         if(id=="opttype"){//操作类别
             // if(obj.value=="D"){//自动流程节点的时候
@@ -541,6 +556,7 @@ function changeValue(obj,id){
             if(obj.value=="S"){//子流程节点的时候
               $("#business").hide();//隐藏业务操作
               $("#childNode").show();//显示子流程
+              $("#operateMode").hide();
               $("#subwfcode").empty();//清空
               for (k in Data.SubWfcode) {
                   if (SVG.get(o).attr("subwfcode") == k) {
@@ -551,9 +567,15 @@ function changeValue(obj,id){
                   }
               }
             }
-            else{//正常的时候
+            else if(obj.value=="D"){
+                $("#business").hide();
+                $("#childNode").hide();
+                $("#operateMode").show();
+            }else{//正常的时候
                 $("#business").show();//显示业务操作
                 $("#optcode").empty();//清空
+                $("#operateMode").hide();
+                $("#childNode").hide();//隐藏子流程
                 for (k in Data.OptCode) {
                   if (k !== '') {
                     if (SVG.get(o).attr("optcode") == k) {
@@ -564,7 +586,6 @@ function changeValue(obj,id){
                     }
                   }
                 }
-                $("#childNode").hide();//隐藏子流程
             }
             changeOperateImg(obj.value,o);
         }

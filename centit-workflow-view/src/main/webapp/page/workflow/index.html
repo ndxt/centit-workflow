@@ -208,7 +208,24 @@
 							</div>
 						</td>
 					</tr>
-					<tr>
+					<tr id="operateMode" style="display: none;">
+						<td>
+							<div>
+								<label for="optcode2">运行方式</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<select style="width: 99%;" id="optcode2" oninput="changeValue(this,'optcode')">
+									<!--<option selected='selected'>请选择</option>-->
+									<option value="N">无</option>
+									<option value="B">事件bean</option>
+									<option value="S">脚本</option>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr id="operateParam">
 						<td>
 							<div>
 								<label for="optparam">操作参数</label>
@@ -217,6 +234,18 @@
 						<td>
 							<div>
 								<input type="text" id="optparam" value="" style="width: 97%;" oninput="changeValue(this,'optparam')" />
+							</div>
+						</td>
+					</tr>
+					<tr id="operateScript" style="display: none;">
+						<td>
+							<div>
+								<label for="optparam2">脚本</label>
+							</div>
+						</td>
+						<td>
+							<div>
+								<textarea id="optparam2" style="width: 97%;height: 40px;resize: none;" oninput="changeValue(this,'optparam')" ></textarea>
 							</div>
 						</td>
 					</tr>
@@ -915,6 +944,7 @@
 				async: false,
 				url: path + loadDefineData + flowCode,
 				success: function (data) {
+					delete data.data.OptType.E
 					Data = data.data;
 					setFlowVariable(Data)
 				},
