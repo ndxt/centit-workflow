@@ -61,6 +61,7 @@ function bindAttr(obj) {
 
     // 机构表达式
     $('.insideUnit').empty();//清空select
+    $(".insideUnit").append("<option selected value='' style='display:none;'></option>")
     for (k in Data.InsideUnit) {//重新添加option
       $(".insideUnit").append("<option  value='" + k + "' >" + Data.InsideUnit[k] + "</option>");
     }
