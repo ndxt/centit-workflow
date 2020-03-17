@@ -771,8 +771,9 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "流程拉回到首节点", notes = "流程拉回到首节点")
     @PutMapping(value = "/reStartFlow/{flowInstId}/{userCode}")
-    public void reStartFlow(@PathVariable String flowInstId, @PathVariable String userCode, HttpServletResponse response) {
-        Boolean result = flowManager.reStartFlow(flowInstId, userCode, false);
+    public void reStartFlow(@PathVariable String flowInstId, @PathVariable String userCode,
+                            @RequestParam(required = false,defaultValue = "false")Boolean force, HttpServletResponse response) {
+        Boolean result = flowManager.reStartFlow(flowInstId, userCode, force);
         if (result)
             JsonResultUtils.writeSuccessJson(response);
         else

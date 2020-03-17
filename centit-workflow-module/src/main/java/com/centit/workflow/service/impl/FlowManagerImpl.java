@@ -336,7 +336,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     private int updateInstanceState(String instid, String state, String userCode,
                                     String admindesc) {
 
-        FlowInstance wfFlowInst = flowInstanceDao.getObjectById(instid);
+        FlowInstance wfFlowInst = flowInstanceDao.getObjectWithReferences(instid);
         if (wfFlowInst == null)
             return 0;
         // wfFlowInst.setInststate(state);
@@ -828,7 +828,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (nodeInst == null || (!"N".equals(nodeInst.getNodeState())))
             return null;//大小于
 //            return -1;
-        FlowInstance flowinst = flowInstanceDao.getObjectById(nodeInst
+        FlowInstance flowinst = flowInstanceDao.getObjectWithReferences(nodeInst
             .getFlowInstId());
         if (flowinst == null)
             return null;//大小于
