@@ -576,7 +576,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public int stopInstance(String flowInstId, String mangerUserCode,
                             String admindesc) {
 
-        FlowInstance wfFlowInst = flowInstanceDao.getObjectById(flowInstId);
+        FlowInstance wfFlowInst = flowEngine.getFlowInstById(flowInstId);
         if (wfFlowInst == null)
             return 0;
 
@@ -807,7 +807,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
 
         flow.addNodeInstance(nextNodeInst);
-        //flowInstanceDao.updateObject(flow);
+        flowInstanceDao.updateObject(flow);
         nodeInstanceDao.saveNewObject(nextNodeInst);
         //FlowOptUtils.sendMsg("", nextNodeInsts, mangerUserCode);
         //执行节点创建后 事件
