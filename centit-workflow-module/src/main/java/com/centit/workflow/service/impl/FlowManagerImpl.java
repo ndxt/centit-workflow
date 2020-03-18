@@ -366,10 +366,20 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         wfFlowInst.setInstState(state);
         if ("N".equals(state)) {
             for (NodeInstance nodeInst : wfFlowInst.getFlowNodeInstances()) {
-                if ("P".equals(nodeInst.getNodeState())) {
-                    nodeInst.setNodeState("N");
+                if ("P".equals(nodeInst.getNodeState()) || "F".equals(nodeInst.getNodeState())) {
+                    nodeInst.setNodeState(state);
                     nodeInst.setLastUpdateTime(updateTime);
                     nodeInst.setLastUpdateUser(userCode);
+                    nodeInstanceDao.updateObject(nodeInst);
+                }
+            }
+        } else if ("P".equals(state)) { // 更新挂起的节点
+            for (NodeInstance nodeInst : wfFlowInst.getFlowNodeInstances()) {
+                if ("N".equals(nodeInst.getNodeState()) || "S".equals(nodeInst.getNodeState())) {
+                    nodeInst.setNodeState(state);
+                    nodeInst.setLastUpdateTime(updateTime);
+                    nodeInst.setLastUpdateUser(userCode);
+                    nodeInstanceDao.updateObject(nodeInst);
                 }
             }
         }
@@ -1326,19 +1336,19 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
 
-     /**
+    /**
      * 获取节点实例的操作日志列表
      *
-     * @param flowInstId 流程实例号
+     * @param flowInstId     流程实例号
      * @param withNodeAction 是否包括节点的日志
      * @return List<WfActionLog>
      */
     @Override
-    public List<? extends OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction){
-        if(optLogManager==null)
+    public List<? extends OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction) {
+        if (optLogManager == null)
             return null;
         Map<String, Object> filterMap = CollectionsOpt.createHashMap("optTag", flowInstId);
-        if(!withNodeAction){
+        if (!withNodeAction) {
             filterMap.put("optMethod", "flowOpt");
         }
         return optLogManager.listOptLog("workflow", filterMap, -1, -1);
@@ -1346,27 +1356,29 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /**
      * 获取节点实例的操作日志列表
+     *
      * @param flowInstId 流程实例号
      * @param nodeInstId 节点实例好
      * @return List<WfActionLog>
      */
     @Override
-    public List<? extends OperationLog> listNodeActionLogs(String flowInstId, String nodeInstId){
-        if(optLogManager==null)
+    public List<? extends OperationLog> listNodeActionLogs(String flowInstId, String nodeInstId) {
+        if (optLogManager == null)
             return null;
-         return optLogManager.listOptLog("workflow",
+        return optLogManager.listOptLog("workflow",
             CollectionsOpt.createHashMap("optTag", flowInstId,
                 "optMethod", nodeInstId), -1, -1);
     }
 
     @Override
-    public List<? extends OperationLog> listNodeActionLogs(String nodeInstId){
+    public List<? extends OperationLog> listNodeActionLogs(String nodeInstId) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        if(nodeInst==null){
+        if (nodeInst == null) {
             return null;
         }
         return listNodeActionLogs(nodeInst.getFlowInstId(), nodeInstId);
     }
+
     /**
      * 获取用户所有的操作记录
      *
@@ -1377,17 +1389,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     public List<? extends OperationLog> listUserActionLogs(String userCode, Date lastTime,
-                                                 PageDesc pageDesc) {
-        if(optLogManager==null)
+                                                           PageDesc pageDesc) {
+        if (optLogManager == null)
             return null;
         Map<String, Object> filterMap =
             CollectionsOpt.createHashMap("userCode", userCode,
-                "optTime_gt",lastTime);
+                "optTime_gt", lastTime);
 
         List<? extends OperationLog> optLogs =
             optLogManager.listOptLog("workflow", filterMap,
                 pageDesc.getRowStart(), pageDesc.getPageSize());
-        pageDesc.setTotalRows( optLogManager.countOptLog("workflow", filterMap));
+        pageDesc.setTotalRows(optLogManager.countOptLog("workflow", filterMap));
         return optLogs;
     }
 
@@ -1550,10 +1562,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             jsonObject.put("grantor", newRelegate.getGrantor());
             jsonObject.put("grantee", newRelegate.getGrantee());
             jsonObject.put("roleCode", roleCodeList);
-            jsonObject.put("unitCode",newRelegate.getUnitCode());
-            jsonObject.put("relegateTime",newRelegate.getRelegateTime());
-            jsonObject.put("expireTime",newRelegate.getExpireTime());
-            jsonObject.put("grantDesc",newRelegate.getGrantDesc());
+            jsonObject.put("unitCode", newRelegate.getUnitCode());
+            jsonObject.put("relegateTime", newRelegate.getRelegateTime());
+            jsonObject.put("expireTime", newRelegate.getExpireTime());
+            jsonObject.put("grantDesc", newRelegate.getGrantDesc());
             roleRelegates.add(jsonObject);
         }
         return roleRelegates;
