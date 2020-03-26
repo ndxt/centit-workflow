@@ -57,7 +57,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<Object> list(PageDesc pageDesc,
-                     HttpServletRequest request) {
+                                        HttpServletRequest request) {
         Map<String, Object> searchColumn = BaseController.collectRequestParameters(request);
         JSONArray listObjects = flowManager.listFlowInstance(searchColumn, pageDesc);
         return PageQueryResult.createJSONArrayResult(listObjects, pageDesc, FlowInstance.class);
@@ -128,7 +128,7 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "查看流程实例节点流程图", notes = "查看流程实例节点流程图")
     @RequestMapping(value = "/nodesxml/{flowInstId}", method = RequestMethod.GET)
-    public void viewNodeInstancesXml(@PathVariable String flowInstId,  HttpServletResponse response) {
+    public void viewNodeInstancesXml(@PathVariable String flowInstId, HttpServletResponse response) {
         String nodesxml = flowManager.viewFlowNodeInstance(flowInstId);
         HashMap<String, String> result = new HashMap<String, String>();
         result.put("nodesxml", nodesxml);
@@ -209,23 +209,25 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "给一个节点指定任务、用这个代替系统自动分配任务", notes = "给一个节点指定任务、用这个代替系统自动分配任务")
     @RequestMapping(value = "/assign/{nodeInstId}/{userCode}", method = RequestMethod.POST)
     @WrapUpResponseBody
-    public void assign(@PathVariable String nodeInstId,@PathVariable String userCode, ActionTask actionTask) {
+    public void assign(@PathVariable String nodeInstId, @PathVariable String userCode, ActionTask actionTask) {
         flowManager.assignNodeTask(nodeInstId,
-            actionTask.getUserCode(), StringUtils.isBlank(userCode)?"admin":userCode, actionTask.getAuthDesc());
+            actionTask.getUserCode(), StringUtils.isBlank(userCode) ? "admin" : userCode, actionTask.getAuthDesc());
     }
+
     @ApiOperation(value = "添加节点任务", notes = "添加节点任务")
     @WrapUpResponseBody
     @RequestMapping(value = "/addNodeTask/{nodeInstId}/{mangerUserCode}", method = RequestMethod.POST)
-    public void addNodeTask(@PathVariable String nodeInstId,@PathVariable String mangerUserCode, ActionTask actionTask) {
+    public void addNodeTask(@PathVariable String nodeInstId, @PathVariable String mangerUserCode, ActionTask actionTask) {
         flowManager.addNodeTask(nodeInstId,
-            actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode)?"admin":mangerUserCode, actionTask.getAuthDesc());
+            actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode) ? "admin" : mangerUserCode, actionTask.getAuthDesc());
     }
+
     @ApiOperation(value = "删除节点任务", notes = "删除节点任务")
     @WrapUpResponseBody
     @RequestMapping(value = "/deleteNodeTask/{nodeInstId}/{mangerUserCode}", method = RequestMethod.POST)
-    public void deleteNodeTask(@PathVariable String nodeInstId,@PathVariable String mangerUserCode, ActionTask actionTask) {
+    public void deleteNodeTask(@PathVariable String nodeInstId, @PathVariable String mangerUserCode, ActionTask actionTask) {
         flowManager.deleteNodeTask(nodeInstId,
-            actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode)?"admin":mangerUserCode);
+            actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode) ? "admin" : mangerUserCode);
     }
 
     /**
@@ -241,6 +243,7 @@ public class FlowManagerController extends BaseController {
     }
 
     /*tab：办件角色管理*/
+
     /**
      * 查询办件角色列表
      *
@@ -360,29 +363,30 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/suspendinst/{wfinstid}", method = RequestMethod.GET)
     public String suspendInstance(@PathVariable String wfinstid, HttpServletRequest request) {
         String mangerUserCode = request.getParameter("admin");
-        if(StringUtils.isBlank(mangerUserCode)){
-            mangerUserCode="admin";
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
         }
         String admindesc = request.getParameter("stopDesc");
         flowManager.suspendInstance(wfinstid, mangerUserCode, admindesc);
         return "已暂挂";
     }
 
-    @ApiOperation(value="编辑流程实例",notes="编辑流程实例")
+    @ApiOperation(value = "编辑流程实例", notes = "编辑流程实例")
     @WrapUpResponseBody
     @PostMapping
-    public void updateFlowInst(@RequestBody String json){
-       JSONObject jsonObject = JSON.parseObject(json);
-       //流程实例ID
-       String flowInstId = jsonObject.getString("flowInstId");
-       //流程名称
-       String flowOptName = jsonObject.getString("flowOptName");
-       //流程业务id
-       String flowOptTag = jsonObject.getString("flowOptTag");
-       String userCode = jsonObject.getString("userCode");
-       String unitCode = jsonObject.getString("unitCode");
-       flowManager.updateFlowInstOptInfoAndUser(flowInstId, flowOptName, flowOptTag,userCode,unitCode);
+    public void updateFlowInst(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        //流程实例ID
+        String flowInstId = jsonObject.getString("flowInstId");
+        //流程名称
+        String flowOptName = jsonObject.getString("flowOptName");
+        //流程业务id
+        String flowOptTag = jsonObject.getString("flowOptTag");
+        String userCode = jsonObject.getString("userCode");
+        String unitCode = jsonObject.getString("unitCode");
+        flowManager.updateFlowInstOptInfoAndUser(flowInstId, flowOptName, flowOptTag, userCode, unitCode);
     }
+
     /*
      * 更改机构
      */
@@ -416,39 +420,42 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/activizeinst/{flowInstId}", method = RequestMethod.GET)
     public void activizeInstance(@PathVariable String flowInstId, HttpServletRequest request) {
         String mangerUserCode = request.getParameter("admin");
-        if(StringUtils.isBlank(mangerUserCode)){
-            mangerUserCode="admin";
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
         }
         String admindesc = request.getParameter("stopDesc");
         flowManager.activizeInstance(flowInstId, mangerUserCode, admindesc);
     }
+
     @ApiOperation(value = "暂停流程的一个节点", notes = "暂停流程的一个节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/suspendNodeInst/{nodeInstId}", method = RequestMethod.GET)
     public void suspendNodeInstance(@PathVariable String nodeInstId, HttpServletRequest request) {
         String mangerUserCode = request.getParameter("admin");
-        if(StringUtils.isBlank(mangerUserCode)){
-            mangerUserCode="admin";
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
         }
         flowManager.suspendNodeInstance(nodeInstId, mangerUserCode);
     }
+
     @ApiOperation(value = "激活流程的一个节点", notes = "激活流程的一个节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/activizeNodeInst/{nodeInstId}", method = RequestMethod.GET)
     public void activizeNodeInstance(@PathVariable String nodeInstId, HttpServletRequest request) {
         String mangerUserCode = request.getParameter("admin");
-        if(StringUtils.isBlank(mangerUserCode)){
-            mangerUserCode="admin";
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
         }
         flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
     }
+
     @ApiOperation(value = "强制流转到下一结点", notes = "强制流转到下一结点")
     @WrapUpResponseBody
     @RequestMapping(value = "/forceCommit/{nodeInstId}", method = RequestMethod.GET)
     public String forceCommit(@PathVariable String nodeInstId, HttpServletRequest request) {
         String mangerUserCode = request.getParameter("admin");
-        if(StringUtils.isBlank(mangerUserCode)){
-            mangerUserCode="admin";
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
         }
         return flowManager.forceCommit(nodeInstId, mangerUserCode);
     }
@@ -513,7 +520,7 @@ public class FlowManagerController extends BaseController {
     public NodeInstance resetToCurrent(@PathVariable String nodeInstId, HttpServletRequest request) {
         Map<String, Object> params = BaseController.collectRequestParameters(request);
         String managerUser = StringBaseOpt.castObjectToString(params.get("userCode"));
-        if(StringUtils.isBlank(managerUser)){
+        if (StringUtils.isBlank(managerUser)) {
             managerUser = WebOptUtils.getCurrentUserCode(request);
         }
         return flowManager.resetFlowToThisNode(nodeInstId, managerUser);
@@ -528,8 +535,8 @@ public class FlowManagerController extends BaseController {
         NodeInstance nodeInstance = flowEng.getNodeInstById(nodeInstId);
         List<UserTask> objList = new ArrayList<>();
         List<UserTask> innerTask = flowManager.listNodeTasks(nodeInstId);
-        if(innerTask!=null)
-           objList.addAll(innerTask);
+        if (innerTask != null)
+            objList.addAll(innerTask);
         if ("D".equals(nodeInstance.getTaskAssigned())) {
             Map<String, Object> searchColumn = new HashMap<>();
             searchColumn.put("nodeInstId", nodeInstId);
@@ -575,7 +582,7 @@ public class FlowManagerController extends BaseController {
             int nodeInstInd = 0;
             //String nodeInstId=0;
             for (NodeInstance nodeInst : dbobject.getNodeInstances()) {
-                if (nodeInst.getNodeId().equals(nodeId) || (nodeInst.getPrevNodeInstId()!=null && nodeInst.getPrevNodeInstId().equals(nextNodeInstance.getNodeInstId()))) {
+                if (nodeInst.getNodeId().equals(nodeId) || (nodeInst.getPrevNodeInstId() != null && nodeInst.getPrevNodeInstId().equals(nextNodeInstance.getNodeInstId()))) {
                     //暂时保证一个节点保留一条查看信息
                    /* if(nodeInstId>nodeInst.getNodeInstId())
                         continue;
@@ -624,7 +631,7 @@ public class FlowManagerController extends BaseController {
                             CodeRepositoryUtil.getValue("userCode", nodeInst.getLastUpdateUser()));
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
                             DatetimeOpt.convertDatetimeToString(
-                                nodeInst.getLastUpdateTime()==null?nodeInst.getCreateTime():nodeInst.getLastUpdateTime()));
+                                nodeInst.getLastUpdateTime() == null ? nodeInst.getCreateTime() : nodeInst.getLastUpdateTime()));
                         //ActionLog的获取暂时取消
 //                        List<ActionLog> actions = flowManager.listNodeActionLogs(nodeInst.getNodeInstId());
 //                        int actionInd = 0;
@@ -707,6 +714,7 @@ public class FlowManagerController extends BaseController {
     public void addAttention(@RequestBody InstAttention instAttention) {
         flowEng.saveFlowAttention(instAttention);
     }
+
     /**
      * 将 fromUserCode 所有任务 迁移 给 toUserCode
      */
@@ -714,7 +722,7 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/moveUserTaskTo", method = RequestMethod.POST)
     public void moveUserTaskTo(@RequestBody TaskMove taskMove) {
-        flowManager.moveUserTaskTo(taskMove.getFormUser(),taskMove.getToUser(),taskMove.getOperatorUser(),
+        flowManager.moveUserTaskTo(taskMove.getFormUser(), taskMove.getToUser(), taskMove.getOperatorUser(),
             taskMove.getMoveDesc());
     }
 
@@ -722,7 +730,7 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/moveSelectedUserTaskTo", method = RequestMethod.POST)
     public void moveSelectedUserTaskTo(@RequestBody TaskMove taskMove) {
-        flowManager.moveUserTaskTo(taskMove.getNodeInstIds(), taskMove.getFormUser(),taskMove.getToUser(),taskMove.getOperatorUser(),
+        flowManager.moveUserTaskTo(taskMove.getNodeInstIds(), taskMove.getFormUser(), taskMove.getToUser(), taskMove.getOperatorUser(),
             taskMove.getMoveDesc());
     }
 
@@ -772,12 +780,13 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "流程拉回到首节点", notes = "流程拉回到首节点")
     @PutMapping(value = "/reStartFlow/{flowInstId}/{userCode}")
     public void reStartFlow(@PathVariable String flowInstId, @PathVariable String userCode,
-                            @RequestParam(required = false,defaultValue = "false")Boolean force, HttpServletResponse response) {
-        Boolean result = flowManager.reStartFlow(flowInstId, userCode, force);
-        if (result)
+                            @RequestParam(required = false, defaultValue = "false") Boolean force, HttpServletResponse response) {
+        NodeInstance startNodeInst = flowManager.reStartFlow(flowInstId, userCode, force);
+        if (startNodeInst != null) {
             JsonResultUtils.writeSuccessJson(response);
-        else
+        } else {
             JsonResultUtils.writeErrorMessageJson(1, "流程已经被审批，无法撤回", response);
+        }
     }
 
     /**
@@ -789,7 +798,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/group", method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<FlowInstanceGroup> listFlowInstGroup(PageDesc pageDesc,
-                     HttpServletRequest request) {
+                                                                HttpServletRequest request) {
         Map<String, Object> searchColumn = BaseController.collectRequestParameters(request);
         JSONArray listObjects = flowManager.listFlowInstGroup(searchColumn, pageDesc);
         List<FlowInstanceGroup> flowInstanceGroupList = listObjects.toJavaList(FlowInstanceGroup.class);
@@ -822,6 +831,7 @@ public class FlowManagerController extends BaseController {
     public List<? extends OperationLog> listNodeInstLogs(@PathVariable String flowInstId, @PathVariable String nodeInstId) {
         return flowManager.listNodeActionLogs(flowInstId, nodeInstId);
     }
+
     /*
      * 流程操作日志
      */

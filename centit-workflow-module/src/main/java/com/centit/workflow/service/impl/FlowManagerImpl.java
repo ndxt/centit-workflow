@@ -1445,18 +1445,18 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public Boolean reStartFlow(String flowInstId, String managerUserCode, Boolean force) {
+    public NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force) {
         FlowInstance flowInstance = flowInstanceDao.getObjectWithReferences(flowInstId);
         //如果不是强行拉回，需要判断是否流程最后提交人是自己
         if (!force) {
             if (!managerUserCode.equals(flowInstance.getLastUpdateUser())) {
-                return false;
+                return null;
             }
         }
-        this.resetFlowToThisNode(flowInstance.getFirstNodeInstance().getNodeInstId(), managerUserCode);
+        NodeInstance startNodeInst = this.resetFlowToThisNode(flowInstance.getFirstNodeInstance().getNodeInstId(), managerUserCode);
         //退回首节点之后，删除流程变量
         flowEngine.deleteFlowVariable(flowInstId, "", "");
-        return true;
+        return startNodeInst;
     }
 
     @Override
