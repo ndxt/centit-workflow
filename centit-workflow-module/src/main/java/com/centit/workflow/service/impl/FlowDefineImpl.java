@@ -422,7 +422,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                         if (StringRegularOpt.isNvl(nd.getPowerExp()))
                             throw new Exception("节点：" + nd.getNodeName() + ",权限表达式为空。");
                     } else {
-                        if (StringRegularOpt.isNvl(nd.getRoleCode()))
+                        if (StringRegularOpt.isNvl(nd.getRoleCode())
+                            && !SysUserFilterEngine.ROLE_TYPE_ENGINE.equals(nd.getRoleType()))
                             throw new Exception("节点：" + nd.getNodeName() + ",没有指定角色代码。");
                     }
                 } else if ("D".equals(nd.getOptType())) {
