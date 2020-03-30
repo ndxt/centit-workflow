@@ -435,7 +435,7 @@ public interface FlowManager {
      * @param managerUserCode
      * @param force 是否强制，否的话 需要判断流程最后提交人是否是自己
      */
-    Boolean reStartFlow(String flowInstId, String managerUserCode, Boolean force);
+    NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force);
 
     Boolean changeRelegateValid( String json);
 

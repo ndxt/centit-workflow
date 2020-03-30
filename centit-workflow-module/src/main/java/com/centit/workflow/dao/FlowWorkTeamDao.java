@@ -39,7 +39,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
         //DatabaseOptUtils.doExecuteHql(this,"delete WfTeam where id.flowInstId=? and id.roleCode=?",new Object[]{flowInstId, roleCode});
     }
 
-    @Transactional(propagation= Propagation.REQUIRES_NEW)
+    @Transactional
     public List<FlowWorkTeam> listFlowWorkTeam(String flowInstId)
     {
         return this.listObjectsByFilter("where flow_Inst_Id = ? order by role_Code, user_Order",new Object[]{flowInstId});
@@ -52,7 +52,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
      * @return
      */
     @SuppressWarnings("unchecked")
-    @Transactional(propagation= Propagation.REQUIRES_NEW)
+    @Transactional
     public List<FlowWorkTeam> listFlowWorkTeamByRole(String flowInstId, String roleCode)
     {
         return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? order by user_Order",new Object[]{flowInstId,roleCode});

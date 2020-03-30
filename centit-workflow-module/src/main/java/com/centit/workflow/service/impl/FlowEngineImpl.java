@@ -1208,7 +1208,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error("找不到节点实例：" + nodeInstId + "，或者实例不是正常状态的节点。");
             return;
         }
-        FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
+        FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(nodeInst.getFlowInstId());
         if (flowInst == null) {
             logger.error("找不到流程实例：" + nodeInst.getFlowInstId());
             return;
@@ -1387,7 +1387,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInstance thisnode = nodeInstanceDao.getObjectById(nodeInstId);
         if (thisnode == null)
             return false;
-        FlowInstance flow = flowInstanceDao.getObjectById(thisnode
+        FlowInstance flow = flowInstanceDao.getObjectWithReferences(thisnode
             .getFlowInstId());
         if (flow == null)
             return false;

@@ -84,7 +84,7 @@ public class NodeInfo implements java.io.Serializable {
     private String subFlowCode;
 
     /**
-     * EN GW XZ BJ RO
+     * EN GW XZ BJ RO SF
      */
     @Column(name = "ROLE_TYPE")
     private String roleType;

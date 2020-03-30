@@ -42,7 +42,7 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
         this.getJdbcTemplate().update("delete from WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ? " +
                 "and AUTH_DESC = ?",new Object[]{flowInstId, roleCode,authDesc});
     }
-    @Transactional(propagation= Propagation.REQUIRES_NEW)
+    @Transactional
     public List<FlowOrganize> listFlowOrganize(String flowInstId)
     {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? order by unit_Order",
