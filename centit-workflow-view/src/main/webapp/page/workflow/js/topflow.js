@@ -399,7 +399,7 @@ function loadXml(xml) {
     var img = $('#s3 image');
     for(var i = 0;i<img.length;i++){
         if(img[i].getAttribute('shapetype') == "roundRect"){
-            changeOperateImg(img[i].getAttribute('opttype'),img[i].id);
+            changeOperateImg(img[i].getAttribute('opttype'),img[i].id,img[i].getAttribute('optcode'));
         }
     }
 }

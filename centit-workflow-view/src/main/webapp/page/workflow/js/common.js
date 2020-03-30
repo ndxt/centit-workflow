@@ -1075,9 +1075,9 @@ function clearSelected(){
  * 改变操作类别图片
  *
  */
-function changeOperateImg(type,o){
-    if(g(o).getAttribute('isaccounttime') == "F" && g(o).getAttribute('opttype') == "D") {
-        switch (type) {
+function changeOperateImg(type,o,id){
+    if(g(o).getAttribute('isaccounttime') == "F" && type == "D" && id) {
+        switch (id) {
             case 'N':
                 g(o).setAttribute('xlink:href', yyImg);
                 break;
