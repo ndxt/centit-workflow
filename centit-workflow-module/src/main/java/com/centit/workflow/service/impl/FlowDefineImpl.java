@@ -427,8 +427,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                             throw new Exception("节点：" + nd.getNodeName() + ",没有指定角色代码。");
                     }
                 } else if ("D".equals(nd.getOptType())) {
-                    if (StringRegularOpt.isNvl(nd.getOptBean()))
+                    if ("B".equals(nd.getOptCode()) && StringRegularOpt.isNvl(nd.getOptBean()))
                         throw new Exception("自动运行节点：" + nd.getNodeName() + ",没有运行的bean。");
+                    else if ("S".equals(nd.getOptCode()) && StringRegularOpt.isNvl(nd.getOptParam()))
+                        throw new Exception("自动运行节点：" + nd.getNodeName() + ",没有运行的script。");
                 }
             } else if ("R".equals(nd.getNodeType())) {
                 if (StringRegularOpt.isNvl(nd.getRouterType())) {

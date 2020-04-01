@@ -906,8 +906,11 @@ function validate(){
             //操作类别为自动执行
             if(obj[i].getAttribute("opttype")=='D')
             {
-                if(obj[i].getAttribute("optbean")==''){
+                if(obj[i].getAttribute("optcode")=='B'&&obj[i].getAttribute("optbean")==''){
                     myerrors.push(obj[i].getAttribute("title")+"为自动执行节点，但是没有配置业务bean，请检查后保存。");
+                    flog=false;}
+                else if(obj[i].getAttribute("optcode")=='S'&&obj[i].getAttribute("optparam")==''){
+                    myerrors.push(obj[i].getAttribute("title")+"为自动执行节点，但是没有配置脚本script，请检查后保存。");
                     flog=false;}
             }
             //操作类别为子流程
