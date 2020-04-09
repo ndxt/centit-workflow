@@ -182,6 +182,7 @@ public class FlowOptUtils {
     public static OperationLog createActionLog(String usercode,
                                                NodeInstance nodeInst, String logDetail, NodeInfo node) {
         OperationLog actionLog = createActionLog(usercode, nodeInst.getFlowInstId(), logDetail)
+            .unit(nodeInst.getUnitCode())
             .method(nodeInst.getNodeInstId());
         if (node != null) {
             actionLog.setNewValue(usercode + ":" + node.getRoleType() + ":" + node.getRoleCode());
