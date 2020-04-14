@@ -578,11 +578,10 @@ public class FlowManagerController extends BaseController {
             NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeId);
             JSONObject nodeOptInfo = new JSONObject();
             nodeOptInfo.put("nodename", nodeInfo.getNodeName());
-            NodeInstance nextNodeInstance = new NodeInstance();
             int nodeInstInd = 0;
             //String nodeInstId=0;
             for (NodeInstance nodeInst : dbobject.getNodeInstances()) {
-                if (nodeInst.getNodeId().equals(nodeId) || (nodeInst.getPrevNodeInstId() != null && nodeInst.getPrevNodeInstId().equals(nextNodeInstance.getNodeInstId()))) {
+                if (nodeInst.getNodeId().equals(nodeId)) {
                     //暂时保证一个节点保留一条查看信息
                    /* if(nodeInstId>nodeInst.getNodeInstId())
                         continue;
@@ -590,7 +589,6 @@ public class FlowManagerController extends BaseController {
                         nodeOptInfo.clear();
                         nodeInstInd=0;
                     }*/
-                    nextNodeInstance = nodeInst;
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].createtime", DatetimeOpt.convertDatetimeToString(nodeInst.getCreateTime()));
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode", nodeInst.getUnitCode());
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname", CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
