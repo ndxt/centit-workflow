@@ -14,11 +14,9 @@ import java.util.Map;
 public class ApprRoleDao extends BaseDaoImpl<ApprRole,String> {
     @Override
     public Map<String, String> getFilterField() {
-        if(filterField == null) {
-            filterField = new HashMap<>();
-            filterField.put("roleName" , CodeBook.LIKE_HQL_ID);
-//            filterField.put(CodeBook.ORDER_BY_HQL_ID , " updateDate desc ");
-        }
+        Map<String, String> filterField = new HashMap<>();
+        filterField.put("roleName" , CodeBook.LIKE_HQL_ID);
+//      filterField.put(CodeBook.ORDER_BY_HQL_ID , " updateDate desc ");
         return filterField;
     }
 
