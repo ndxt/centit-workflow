@@ -96,20 +96,19 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         "[ :nodeInstId| and a.node_inst_id = :nodeInstId] " +
         " ORDER by a.create_time desc";
 
-     public Map<String, String> getFilterField() {
-        if( filterField == null){
-            filterField = new HashMap<>();
-            filterField.put(
+    public Map<String, String> getFilterField() {
+        Map<String, String> filterField = new HashMap<>();
+        filterField.put(
 
-                "taskId" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("nodeInstId" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("assignTime" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("expireTime" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("userCode" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("roleType" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("roleCode" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("taskState" , CodeBook.EQUAL_HQL_ID);
-        }
+            "taskId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("nodeInstId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("assignTime" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("expireTime" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("userCode" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("roleType" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("roleCode" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("taskState" , CodeBook.EQUAL_HQL_ID);
+
         return filterField;
     }
 

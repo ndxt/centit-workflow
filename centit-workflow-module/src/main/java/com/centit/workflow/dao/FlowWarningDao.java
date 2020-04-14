@@ -18,20 +18,18 @@ public class FlowWarningDao extends BaseDaoImpl<FlowWarning,Long>
     //public static final Logger logger = LoggerFactory.getLogger(WfRuntimeWarningDao.class);
 
     public Map<String, String> getFilterField() {
-        if( filterField == null){
-            filterField = new HashMap<String, String>();
-            filterField.put("warningId" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("nodeInstId" , CodeBook.LIKE_HQL_ID);
-            filterField.put("flowInstId" , CodeBook.LIKE_HQL_ID);
-            filterField.put("flowStage" , CodeBook.LIKE_HQL_ID);
-            filterField.put("warningType" , CodeBook.LIKE_HQL_ID);
-            filterField.put("warningCode" , CodeBook.LIKE_HQL_ID);
-            filterField.put("warningTime" , CodeBook.LIKE_HQL_ID);
-            filterField.put("warningState" , CodeBook.LIKE_HQL_ID);
-            filterField.put("warningidMsg" , CodeBook.LIKE_HQL_ID);
-            filterField.put("sendMsgTime" , CodeBook.LIKE_HQL_ID);
-            filterField.put("sendUsers" , CodeBook.LIKE_HQL_ID);
-        }
+        Map<String, String> filterField = new HashMap<String, String>();
+        filterField.put("warningId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("nodeInstId" , CodeBook.LIKE_HQL_ID);
+        filterField.put("flowInstId" , CodeBook.LIKE_HQL_ID);
+        filterField.put("flowStage" , CodeBook.LIKE_HQL_ID);
+        filterField.put("warningType" , CodeBook.LIKE_HQL_ID);
+        filterField.put("warningCode" , CodeBook.LIKE_HQL_ID);
+        filterField.put("warningTime" , CodeBook.LIKE_HQL_ID);
+        filterField.put("warningState" , CodeBook.LIKE_HQL_ID);
+        filterField.put("warningidMsg" , CodeBook.LIKE_HQL_ID);
+        filterField.put("sendMsgTime" , CodeBook.LIKE_HQL_ID);
+        filterField.put("sendUsers" , CodeBook.LIKE_HQL_ID);
         return filterField;
     }
 

@@ -132,13 +132,17 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
                 return StringBaseOpt.objectToStringList(varStr);
             }
         }
-        List<String> users = flowWorkTeam.get(varName);
-        if(users != null)
-            return users;
+        if(flowWorkTeam !=null ) {
+            List<String> users = flowWorkTeam.get(varName);
+            if (users != null)
+                return users;
+        }
 
-        List<String> units = flowOrganizes.get(varName);
-        if(units != null)
-            return units;
+        if(flowOrganizes !=null ) {
+            List<String> units = flowOrganizes.get(varName);
+            if (units != null)
+                return units;
+        }
 
         Set<String> userset = nodeUsers.get(varName);
         if(userset != null)

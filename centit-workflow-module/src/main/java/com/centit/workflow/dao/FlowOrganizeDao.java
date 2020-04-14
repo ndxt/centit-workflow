@@ -17,18 +17,15 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
     //public static final Logger logger = LoggerFactory.getLogger(WfOrganizeDao.class);
 
     public Map<String, String> getFilterField() {
-        if (filterField == null) {
-            filterField = new HashMap<>();
+        Map<String, String> filterField = new HashMap<>();
+        filterField.put("flowInstId" , "flowInstId=:flowInstId");
+        filterField.put("unitCode" , "userCode=:userCode");
+        filterField.put("roleCode" , "roleCode=:roleCode");
+        filterField.put("authDesc" , CodeBook.LIKE_HQL_ID);
+        filterField.put("authTime" , CodeBook.EQUAL_HQL_ID);
 
-            filterField.put("flowInstId" , "flowInstId=:flowInstId");
-            filterField.put("unitCode" , "userCode=:userCode");
-            filterField.put("roleCode" , "roleCode=:roleCode");
-            filterField.put("authDesc" , CodeBook.LIKE_HQL_ID);
-            filterField.put("authTime" , CodeBook.EQUAL_HQL_ID);
+        filterField.put(CodeBook.ORDER_BY_HQL_ID , "unitOrder");
 
-            filterField.put(CodeBook.ORDER_BY_HQL_ID , "unitOrder");
-
-        }
         return filterField;
     }
 

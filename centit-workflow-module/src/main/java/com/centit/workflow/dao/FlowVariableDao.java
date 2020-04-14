@@ -22,14 +22,12 @@ public class FlowVariableDao extends BaseDaoImpl<FlowVariable,FlowVariableId>
         //public static final Logger logger = LoggerFactory.getLogger(WfFlowVariableDao.class);
 
     public Map<String, String> getFilterField() {
-        if( filterField == null){
-            filterField = new HashMap<>();
-            filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("runToken" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("varName" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("varValue" , CodeBook.LIKE_HQL_ID);
-            filterField.put("varType" , CodeBook.LIKE_HQL_ID);
-        }
+        Map<String, String> filterField = new HashMap<>();
+        filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("runToken" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("varName" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("varValue" , CodeBook.LIKE_HQL_ID);
+        filterField.put("varType" , CodeBook.LIKE_HQL_ID);
         return filterField;
     }
 

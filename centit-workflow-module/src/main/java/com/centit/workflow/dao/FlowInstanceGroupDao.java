@@ -16,12 +16,10 @@ import java.util.Map;
 public class FlowInstanceGroupDao extends BaseDaoImpl<FlowInstanceGroup, String> {
 
     public Map<String, String> getFilterField() {
-        if (filterField == null) {
-            filterField = new HashMap<String, String>();
-            filterField.put("flowGroupId" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("flowGroupName" , CodeBook.LIKE_HQL_ID);
-            filterField.put("flowGroupDesc" , CodeBook.LIKE_HQL_ID);
-        }
+        Map<String, String> filterField = new HashMap<String, String>();
+        filterField.put("flowGroupId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("flowGroupName" , CodeBook.LIKE_HQL_ID);
+        filterField.put("flowGroupDesc" , CodeBook.LIKE_HQL_ID);
         return filterField;
     }
 }

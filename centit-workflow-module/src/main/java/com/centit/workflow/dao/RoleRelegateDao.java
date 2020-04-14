@@ -17,23 +17,21 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate,Long> {
     //public static final Logger logger = LoggerFactory.getLogger(WfRoleRelegateDao.class);
 
     public Map<String, String> getFilterField() {
-        if (filterField == null) {
-            filterField = new HashMap<>();
-            filterField.put("relegateNo", CodeBook.EQUAL_HQL_ID);
-            filterField.put("grantor", CodeBook.EQUAL_HQL_ID);
-            filterField.put("grantee", CodeBook.EQUAL_HQL_ID);
-            filterField.put("isValid", CodeBook.EQUAL_HQL_ID);
-            filterField.put("(date)relegateTime", "relegateTime < :relegateTime");
-            filterField.put("(date)expireTime", "expireTime > :expireTime");
-            filterField.put("unitCode", CodeBook.EQUAL_HQL_ID);
-            filterField.put("roleType", CodeBook.EQUAL_HQL_ID);
-            filterField.put("roleCode", CodeBook.EQUAL_HQL_ID);
-            filterField.put("grantDesc", CodeBook.LIKE_HQL_ID);
-            filterField.put("recorder", CodeBook.EQUAL_HQL_ID);
-            filterField.put("recordDate", CodeBook.EQUAL_HQL_ID);
+        Map<String, String> filterField = new HashMap<>();
+        filterField.put("relegateNo", CodeBook.EQUAL_HQL_ID);
+        filterField.put("grantor", CodeBook.EQUAL_HQL_ID);
+        filterField.put("grantee", CodeBook.EQUAL_HQL_ID);
+        filterField.put("isValid", CodeBook.EQUAL_HQL_ID);
+        filterField.put("(date)relegateTime", "relegateTime < :relegateTime");
+        filterField.put("(date)expireTime", "expireTime > :expireTime");
+        filterField.put("unitCode", CodeBook.EQUAL_HQL_ID);
+        filterField.put("roleType", CodeBook.EQUAL_HQL_ID);
+        filterField.put("roleCode", CodeBook.EQUAL_HQL_ID);
+        filterField.put("grantDesc", CodeBook.LIKE_HQL_ID);
+        filterField.put("recorder", CodeBook.EQUAL_HQL_ID);
+        filterField.put("recordDate", CodeBook.EQUAL_HQL_ID);
 
-            filterField.put(CodeBook.ORDER_BY_HQL_ID , "recordDate desc");
-        }
+        filterField.put(CodeBook.ORDER_BY_HQL_ID , "recordDate desc");
         return filterField;
     }
     @Transactional

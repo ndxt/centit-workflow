@@ -16,19 +16,12 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
     //public static final Logger logger = LoggerFactory.getLogger(WfStageInstanceDao.class);
 
     public Map<String, String> getFilterField() {
-        if (filterField == null) {
-            filterField = new HashMap<String, String>();
+        Map<String, String> filterField = new HashMap<String, String>();
 
-            filterField.put("flowInstId", "flowInstId = :flowInstId");
-
-            filterField.put("stageId", "stageId = :stageId");
-
-            filterField.put("promiseTime", CodeBook.LIKE_HQL_ID);
-
-            filterField.put("timeLimit", CodeBook.LIKE_HQL_ID);
-
-
-        }
+        filterField.put("flowInstId", "flowInstId = :flowInstId");
+        filterField.put("stageId", "stageId = :stageId");
+        filterField.put("promiseTime", CodeBook.LIKE_HQL_ID);
+        filterField.put("timeLimit", CodeBook.LIKE_HQL_ID);
         return filterField;
     }
     @Transactional

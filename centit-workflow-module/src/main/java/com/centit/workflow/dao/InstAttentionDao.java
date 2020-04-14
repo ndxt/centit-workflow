@@ -17,20 +17,13 @@ public class InstAttentionDao extends BaseDaoImpl<InstAttention,InstAttentionId>
         //public static final Logger logger = LoggerFactory.getLogger(WfInstAttentionDao.class);
     @Override
     public Map<String, String> getFilterField() {
-        if( filterField == null){
-            filterField = new HashMap<String, String>();
+        Map<String, String> filterField = new HashMap<String, String>();
 
-            filterField.put("userCode" , "userCode=:userCode");
-
-            filterField.put("flowInstId" , "flowInstId=:flowInstId");
-
-            filterField.put("attSetTime" , CodeBook.LIKE_HQL_ID);
-
-            filterField.put("attSetUser" , CodeBook.LIKE_HQL_ID);
-
-            filterField.put("attSetMemo" , CodeBook.LIKE_HQL_ID);
-
-        }
+        filterField.put("userCode" , "userCode=:userCode");
+        filterField.put("flowInstId" , "flowInstId=:flowInstId");
+        filterField.put("attSetTime" , CodeBook.LIKE_HQL_ID);
+        filterField.put("attSetUser" , CodeBook.LIKE_HQL_ID);
+        filterField.put("attSetMemo" , CodeBook.LIKE_HQL_ID);
         return filterField;
     }
     /**

@@ -12,33 +12,21 @@ import java.util.*;
 public class NodeInfoDao extends BaseDaoImpl<NodeInfo,Long>
     {
     public Map<String, String> getFilterField() {
-        if( filterField == null){
-            filterField = new HashMap<>();
+        Map<String, String> filterField = new HashMap<>();
 
-            filterField.put("nodeId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("nodeId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("flowCode" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("version" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("nodeType" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("nodeName" , CodeBook.LIKE_HQL_ID);
+        filterField.put("optType" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("optCode" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("subFlowCode" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("nodeCode" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("nodeDesc" , CodeBook.LIKE_HQL_ID);
+        filterField.put("roleType" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("roleCode" , CodeBook.EQUAL_HQL_ID);
 
-            filterField.put("flowCode" , CodeBook.EQUAL_HQL_ID);
-
-            filterField.put("version" , CodeBook.EQUAL_HQL_ID);
-
-            filterField.put("nodeType" , CodeBook.EQUAL_HQL_ID);
-
-            filterField.put("nodeName" , CodeBook.LIKE_HQL_ID);
-
-            filterField.put("optType" , CodeBook.EQUAL_HQL_ID);
-
-            filterField.put("optCode" , CodeBook.EQUAL_HQL_ID);
-
-            filterField.put("subFlowCode" , CodeBook.EQUAL_HQL_ID);
-            filterField.put("nodeCode" , CodeBook.EQUAL_HQL_ID);
-
-            filterField.put("nodeDesc" , CodeBook.LIKE_HQL_ID);
-
-            filterField.put("roleType" , CodeBook.EQUAL_HQL_ID);
-
-            filterField.put("roleCode" , CodeBook.EQUAL_HQL_ID);
-
-        }
         //this.getNextValueOfSequence(sequenceName)
         return filterField;
     }
