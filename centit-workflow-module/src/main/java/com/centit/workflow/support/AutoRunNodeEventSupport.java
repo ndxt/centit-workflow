@@ -1,6 +1,7 @@
 package com.centit.workflow.support;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.network.HttpExecutor;
 import com.centit.support.network.HttpExecutorContext;
@@ -47,18 +48,29 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                                    NodeInfo nodeInfo, String optUserCode)
         throws WorkflowException {
-        Map<String, Object> params =  CollectionsOpt.createHashMap("flowInstId", nodeInst.getFlowInstId(),
+        Map<String, Object> params = CollectionsOpt.createHashMap(
+            "flowInstId", nodeInst.getFlowInstId(),
             "nodeInstId", nodeInst.getNodeInstId(),
             "userCode", optUserCode);
         try {
             if ("C".equalsIgnoreCase(optMethod) || "POST".equalsIgnoreCase(optMethod)) {
-                /*JSONObject paramMap = RemoteBeanNodeEventSupport.makeRequestParams(flowInst, nodeInst,
-                    nodeInfo, optUserCode);*/
-                HttpExecutor.jsonPost(HttpExecutorContext.create(),
-                    UrlOptUtils.appendParamToUrl(optUrl, optParam), params);
+                Object paramMap = JSON.parse(optParam);
+                if(paramMap instanceof JSONObject){
+                    params.putAll((JSONObject)paramMap);
+                    HttpExecutor.jsonPost(HttpExecutorContext.create(),optUrl, params);
+                } else {
+                    HttpExecutor.jsonPost(HttpExecutorContext.create(),
+                        UrlOptUtils.appendParamToUrl(optUrl, optParam), params);
+                }
             } else if ("U".equalsIgnoreCase(optMethod) || "PUT".equalsIgnoreCase(optMethod)) {
-                HttpExecutor.jsonPut(HttpExecutorContext.create(),
-                    UrlOptUtils.appendParamToUrl(optUrl, optParam), JSON.toJSONString(params));
+                Object paramMap = JSON.parse(optParam);
+                if(paramMap instanceof JSONObject){
+                    params.putAll((JSONObject)paramMap);
+                    HttpExecutor.jsonPut(HttpExecutorContext.create(),optUrl, JSON.toJSONString(params));
+                } else {
+                    HttpExecutor.jsonPut(HttpExecutorContext.create(),
+                        UrlOptUtils.appendParamToUrl(optUrl, optParam), JSON.toJSONString(params));
+                }
             } else if ("D".equalsIgnoreCase(optMethod) || "delete".equalsIgnoreCase(optMethod)) {
                 HttpExecutor.simpleDelete(HttpExecutorContext.create(),
                     UrlOptUtils.appendParamToUrl(optUrl, optParam),params);
