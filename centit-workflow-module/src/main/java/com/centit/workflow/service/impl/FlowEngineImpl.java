@@ -873,7 +873,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInst.setLastUpdateTime(currentTime);
         flowInst.setLastUpdateUser(options.getUserCode());
 
-
         //执行节点创建后 事件
         FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
         //检查自动执行节点 并执行相关操作

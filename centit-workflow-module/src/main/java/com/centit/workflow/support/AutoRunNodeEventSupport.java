@@ -66,14 +66,20 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
                 Object paramMap = JSON.parse(optParam);
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
-                    HttpExecutor.jsonPut(HttpExecutorContext.create(),optUrl, JSON.toJSONString(params));
+                    HttpExecutor.jsonPut(HttpExecutorContext.create(),optUrl, params);
                 } else {
                     HttpExecutor.jsonPut(HttpExecutorContext.create(),
-                        UrlOptUtils.appendParamToUrl(optUrl, optParam), JSON.toJSONString(params));
+                        UrlOptUtils.appendParamToUrl(optUrl, optParam), params);
                 }
             } else if ("D".equalsIgnoreCase(optMethod) || "delete".equalsIgnoreCase(optMethod)) {
-                HttpExecutor.simpleDelete(HttpExecutorContext.create(),
-                    UrlOptUtils.appendParamToUrl(optUrl, optParam),params);
+                Object paramMap = JSON.parse(optParam);
+                if(paramMap instanceof JSONObject){
+                    params.putAll((JSONObject)paramMap);
+                    HttpExecutor.simpleDelete(HttpExecutorContext.create(), optUrl, params);
+                } else {
+                    HttpExecutor.simpleDelete(HttpExecutorContext.create(),
+                        UrlOptUtils.appendParamToUrl(optUrl, optParam),params);
+                }
             }
         } catch (IOException e){
             logger.error(e.getMessage());
