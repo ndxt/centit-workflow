@@ -882,6 +882,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             boolean needSubmit = true;
             SubmitOptOptions autoSubmitOptions = SubmitOptOptions.create().copy(options).nodeInst(lastNodeInstId);
             if("A".equals(optPage.getPageType()) ||
+                    //bean 事件
                   ("D".equals(nextOptNode.getOptType()) && "B".equals(nextOptNode.getOptCode()))) {
                 NodeEventSupport nodeEventExecutor =
                     NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage);
