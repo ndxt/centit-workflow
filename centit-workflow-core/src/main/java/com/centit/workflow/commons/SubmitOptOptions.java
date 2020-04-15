@@ -23,26 +23,26 @@ public class SubmitOptOptions implements FlowOptParamOptions{
     /**
      * 流程代码
      */
-    @ApiModelProperty(value = "流程节点实例ID，这个变量是必须的",required = true)
+    @ApiModelProperty(value = "流程节点实例ID，这个变量是必须的", required = true)
     private String nodeInstId;
 
     /**
      * 授权用户，在作为被授权人时需要
      */
-    @ApiModelProperty(value ="授权用户，在作为被授权人时需要",required = true)
+    @ApiModelProperty(value ="授权用户，在作为被授权人时需要")
     private String grantorCode;
 
 
     /**
      * 提交（操作）用户
      */
-    @ApiModelProperty(value ="提交（操作）用户",required = true)
+    @ApiModelProperty(value ="提交（操作）用户", required = true)
     private String userCode;
 
     /**
      * 提交（操作）用户当前单位（机构）
      */
-    @ApiModelProperty(value ="提交（操作）用户当前单位（机构）",required = true)
+    @ApiModelProperty(value ="提交（操作）用户当前单位（机构）", required = true)
     private String unitCode;
 
     /**

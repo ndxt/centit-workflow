@@ -19,7 +19,7 @@ public class CreateFlowOptions implements FlowOptParamOptions{
     /**
      * 流程代码
      */
-    @ApiModelProperty(value = "流程定义Code",required = true)
+    @ApiModelProperty(value = "流程定义Code", required = true)
     private String flowCode;
 
     @ApiModelProperty("自定义表单得模板id")
@@ -33,12 +33,12 @@ public class CreateFlowOptions implements FlowOptParamOptions{
     /**
      * 流程实例对应的业务名称，用于流程查看式显示
      */
-    @ApiModelProperty(value = "流程名称",required = true)
+    @ApiModelProperty(value = "流程名称", required = true)
     private String flowOptName;
     /**
      * 流程实例对应的业务主键，用于反向关联
      */
-    @ApiModelProperty(value ="流程对应的业务id",required = true)
+    @ApiModelProperty(value ="流程对应的业务id")
     private String flowOptTag;
 
     /**
@@ -71,13 +71,13 @@ public class CreateFlowOptions implements FlowOptParamOptions{
     /**
      * 提交（操作）用户
      */
-    @ApiModelProperty(value ="提交（操作）用户",required = true)
+    @ApiModelProperty(value ="提交（操作）用户", required = true)
     private String userCode;
 
     /**
      * 提交（操作）用户当前单位（机构）
      */
-    @ApiModelProperty(value ="提交（操作）用户当前单位（机构）",required = true)
+    @ApiModelProperty(value ="提交（操作）用户当前单位（机构）", required = true)
     private String unitCode;
 
     /**
