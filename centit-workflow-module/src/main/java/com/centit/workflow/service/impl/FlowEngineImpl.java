@@ -187,7 +187,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if(options.isSkipFirstNode() && !"R".equals(node.getNodeType()) && nodeInsts.size()==1){
             nodeInsts = submitOptInside(SubmitOptOptions.create()
                 .copy(options).nodeInst(nodeInsts.iterator().next()),
-                varTrans, application,false);
+                varTrans, application,false, false);
         }
 
         OperationLogCenter.log(FlowOptUtils.createActionLog(
@@ -714,7 +714,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //if (otherSubFlows == 0) {// 其他所有子流程都关闭了，则提交父流程对应的节点
                 return submitOptInside(SubmitOptOptions.create()
                         .copy(options).nodeInst(flowInst.getPareNodeInstId()),
-                    varTrans, application, true);
+                    varTrans, application, true, true);
                 // }
             }
             return new HashSet<>();
@@ -913,7 +913,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if(needSubmit) {
                 Set<String> nextNodes = this.submitOptInside(
                     autoSubmitOptions,
-                    varTrans, application, false);
+                    varTrans, application, false, true);
                 createNodes.addAll(nextNodes);
             }
         } else if(StringUtils.isNotBlank(nextOptNode.getOptBean())) {
@@ -997,12 +997,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                         UserUnitVariableTranslate varTrans,
                                         ServletContext application) throws WorkflowException {
 
-        return submitOptInside(options, varTrans, application,true);
+        return submitOptInside(options, varTrans, application,true, true);
     }
 
     private Set<String> submitOptInside(SubmitOptOptions options,
             UserUnitVariableTranslate varTrans,
-            ServletContext application, boolean saveOptions) throws WorkflowException {
+            ServletContext application, boolean saveOptions, boolean saveLog) throws WorkflowException {
         //2012-04-16 重构提交事件，添加一个多实例节点类型，这个节点类型会根据不同的机构创建不同的节点
         //根据上级节点实例编号获取节点所在父流程实例信息
         NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(options.getNodeInstId());
@@ -1071,15 +1071,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInst.setLastUpdateTime(updateTime);
         nodeInst.setLastUpdateUser(options.getUserCode());
         //创建节点提交日志 S:提交节点
-        OperationLog wfactlog = FlowOptUtils.createActionLog(
-            options.getUserCode(), nodeInst,"提交节点", currNode);
+        if(saveLog) {
+            OperationLog wfactlog = FlowOptUtils.createActionLog(
+                options.getUserCode(), nodeInst, "提交节点", currNode);
 
-        if (sGrantor != null && !sGrantor.equals(options.getUserCode())) {
-            nodeInst.setGrantor(sGrantor);
-            wfactlog.setNewValue(wfactlog+" 授予 "+ options.getUserCode()
-                + ":" + currNode.getRoleType() + ":" + currNode.getRoleCode());
+            if (sGrantor != null && !sGrantor.equals(options.getUserCode())) {
+                nodeInst.setGrantor(sGrantor);
+                wfactlog.setNewValue(wfactlog + " 授予 " + options.getUserCode()
+                    + ":" + currNode.getRoleType() + ":" + currNode.getRoleCode());
+            }
+            OperationLogCenter.log(wfactlog);
         }
-        OperationLogCenter.log(wfactlog);
         nodeInstanceDao.updateObject(nodeInst);
         //设置阶段进 变更时间（提交时间）
         StageInstance stage = flowInst.getStageInstanceByCode(currNode.getStageCode());
