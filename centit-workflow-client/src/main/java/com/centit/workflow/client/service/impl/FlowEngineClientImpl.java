@@ -188,7 +188,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public JSONArray /*List<NodeInstance>*/ listFlowActiveNodes(String flowInstId){
+    public List<NodeInstance> listFlowActiveNodes(String flowInstId){
         Map<String,Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId",String.valueOf(flowInstId));
 
@@ -196,7 +196,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/activeNodes",
             paramMap);
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
-        return receiveJSON.getJSONArray();
+        return receiveJSON.getDataAsArray(NodeInstance.class);
     }
 
     /**
