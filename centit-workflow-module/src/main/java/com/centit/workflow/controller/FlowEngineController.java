@@ -137,6 +137,13 @@ public class FlowEngineController extends BaseController {
         return flowManager.listFlowInstNodes(flowInstId);
     }
 
+    @ApiOperation(value = "查看流程活动节点", notes = "查看流程活动节点")
+    @GetMapping(value = "/activeNodes")
+    @WrapUpResponseBody
+    public List<NodeInstance> listFlowActiveNodes(String flowInstId) {
+        return flowManager.listFlowActiveNodes(flowInstId);
+    }
+
     @ApiOperation(value = "查询用户待办", notes = "查询用户待办")
     @WrapUpResponseBody
     @GetMapping(value = "/listUserTasks")

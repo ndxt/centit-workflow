@@ -80,6 +80,9 @@ public class CreateFlowOptions implements FlowOptParamOptions{
     @ApiModelProperty(value ="提交（操作）用户当前单位（机构）", required = true)
     private String unitCode;
 
+    @ApiModelProperty("是否跳过第一步，默认为false，如果第一步为路由节点无效")
+    private boolean skipFirstNode;
+
     /**
      * 提交后的节点强行指定用户
      */
@@ -130,6 +133,7 @@ public class CreateFlowOptions implements FlowOptParamOptions{
 
     private CreateFlowOptions() {
         this.lockOptUser = false;
+        this.skipFirstNode = false;
         this.flowVersion = -1;
     }
 
@@ -230,6 +234,12 @@ public class CreateFlowOptions implements FlowOptParamOptions{
         this.lockOptUser = lockFirstOpt;
         return this;
     }
+
+    public CreateFlowOptions skipFirstNode(boolean skipFirstNode){
+        this.skipFirstNode = skipFirstNode;
+        return this;
+    }
+
 
     public CreateFlowOptions workUser(String workUserCode){
         if(StringUtils.isNotBlank(workUserCode)) {

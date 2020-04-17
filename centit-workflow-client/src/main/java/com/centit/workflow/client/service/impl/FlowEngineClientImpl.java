@@ -187,6 +187,18 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/nodeInst/"+nodeInstId, NodeInstance.class);
     }
 
+    @Override
+    public JSONArray /*List<NodeInstance>*/ listFlowActiveNodes(String flowInstId){
+        Map<String,Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId",String.valueOf(flowInstId));
+
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/activeNodes",
+            paramMap);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        return receiveJSON.getJSONArray();
+    }
+
     /**
      * 获取节点定义信息
      *

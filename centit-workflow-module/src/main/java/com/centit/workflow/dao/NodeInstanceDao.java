@@ -63,7 +63,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
     @Transactional
     public List<NodeInstance> listNodeInstByState(String flowInstId, String nodeState) {
         return this.listObjectsByFilter("where node_State= ? and flow_Inst_Id= ?",
-                new Object[]{nodeState,flowInstId});
+                new Object[]{nodeState, flowInstId});
     }
 
     @Transactional

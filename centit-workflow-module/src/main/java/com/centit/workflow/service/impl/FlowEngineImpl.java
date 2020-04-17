@@ -180,14 +180,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             null, flowInst,flowVariableDao,this, options);
         flowVarTrans.setFlowVarTrans(varTrans);
 
-        Set<String> nodeInsts = submitToNextNode( node, "T", flowInst, wf,
+        Set<String> nodeInsts = submitToNextNode(node, "T", flowInst, wf,
             null, null, null,
             options, flowVarTrans, application);
+
+        if(options.isSkipFirstNode() && !"R".equals(node.getNodeType()) && nodeInsts.size()==1){
+            nodeInsts = submitOptInside(SubmitOptOptions.create()
+                .copy(options).nodeInst(nodeInsts.iterator().next()),
+                varTrans, application,false);
+        }
 
         OperationLogCenter.log(FlowOptUtils.createActionLog(
             options.getUserCode(), flowInstId ,"创建流程，创建首节点:" +
                 StringBaseOpt.castObjectToString(nodeInsts)));
-
         //flowInstanceDao.saveObjectReference(flowInst, "flowNodeInstances");
         //flowInstanceDao.saveObjectReference(flowInst, "flowStageInstances");
         return flowInst;

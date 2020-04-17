@@ -972,6 +972,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     }
 
+    @Override
+    public List<NodeInstance> listFlowActiveNodes(String wfinstid) {
+        return nodeInstanceDao.listNodeInstByState(wfinstid, "N");
+    }
+
+    @Override
     public List<NodeInstance> listFlowInstNodes(String wfinstid) {
         List<NodeInstance> nodeInstList = new ArrayList<>();
         FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(wfinstid);

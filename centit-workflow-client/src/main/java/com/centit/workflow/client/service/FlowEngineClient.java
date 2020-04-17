@@ -59,6 +59,12 @@ public interface FlowEngineClient {
     NodeInstance getNodeInstance(String nodeInstId);
 
     /**
+     * 获取流程业务信息
+     * @param flowInstId 实例id
+     * @return 流程业务活动节点
+     */
+    JSONArray /*List<NodeInstance>*/ listFlowActiveNodes(String flowInstId);
+    /**
      * 获取节点定义信息
      * @param nodeInstId 节点实例id
      * @return 节点实例信息

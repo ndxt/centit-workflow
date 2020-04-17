@@ -51,8 +51,8 @@ public class NodeInstance implements java.io.Serializable {
     private Long  timeLimit;
     /**
      *
-     * N 正常  B 已回退    C 完成   F被强制结束
-     * P 暂停   W 等待子流程返回   S 等等前置节点（可能是多个）完成
+     * N 正常  B 已回退  C 完成  F 被强制结束
+     * P 暂停  W 等待子流程返回  S 等等前置节点（可能是多个）完成
      */
     @Column(name="NODE_STATE")
     private String  nodeState;

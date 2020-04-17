@@ -143,6 +143,9 @@ public interface FlowManager {
      * @return List<NodeInstance>
      */
     List<NodeInstance> listFlowInstNodes(String wfinstid);
+
+
+    List<NodeInstance> listFlowActiveNodes(String wfinstid);
     //-----------节点状态变更-------------------------------
     /*
      * N 正常  B 已回退    C 完成   F被强制结束
