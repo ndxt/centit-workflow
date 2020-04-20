@@ -1021,6 +1021,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         map.put("nodeInstId", nodeInstId);
         actionTaskDao.deleteObjectsByProperties(map);
 
+        // 删除节点所有任务时，将节点实例taskAssigned改为T
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        nodeInst.setTaskAssigned("T");
+        nodeInstanceDao.updateObject(nodeInst);
+
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "删除节点所有任务:"
                 + nodeInstId);
