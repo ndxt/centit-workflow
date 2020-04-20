@@ -1023,8 +1023,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         // 删除节点所有任务时，将节点实例taskAssigned改为T
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        nodeInst.setTaskAssigned("T");
-        nodeInstanceDao.updateObject(nodeInst);
+        if ("S".equals(nodeInst.getTaskAssigned())) {
+            nodeInst.setTaskAssigned("T");
+            nodeInstanceDao.updateObject(nodeInst);
+        }
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "删除节点所有任务:"
