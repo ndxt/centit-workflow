@@ -5,7 +5,6 @@ import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.workflow.po.FlowWorkTeam;
 import com.centit.workflow.po.FlowWorkTeamId;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;

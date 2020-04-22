@@ -59,12 +59,11 @@ public class FlowDefineController extends BaseController {
     /*
      * 列举系统中的所有流程，只显示最新版本的
      */
+    @ApiOperation(value = "列举流程业务相关流程", notes = "列举流程业务相关流程")
     @WrapUpResponseBody
-    @RequestMapping(method = RequestMethod.GET)
-    public PageQueryResult<FlowInfo> list(PageDesc pageDesc, HttpServletRequest request) {
-        Map<String, Object> searchColumn = BaseController.collectRequestParameters(request);
-        List<FlowInfo> listObjects = flowDefine.listLastVersionFlow(searchColumn, pageDesc);
-        return PageQueryResult.createResult(listObjects, pageDesc);
+    @GetMapping(value = "/optFlow/{optId}")
+    public List<FlowInfo> listFlowByOpt(@PathVariable String optId) {
+        return flowDefine.listFlowsByOptId(optId);
     }
 
     /**
@@ -77,7 +76,7 @@ public class FlowDefineController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/allversions/{flowcode}", method = RequestMethod.GET)
     public PageQueryResult<FlowInfo> listAllVersionFlow(PageDesc pageDesc, @PathVariable String flowcode) {
-        List<FlowInfo> listObjects = flowDefine.getFlowsByCode(flowcode, pageDesc);
+        List<FlowInfo> listObjects = flowDefine.listFlowsByCode(flowcode, pageDesc);
         return PageQueryResult.createResult(listObjects, pageDesc);
     }
 

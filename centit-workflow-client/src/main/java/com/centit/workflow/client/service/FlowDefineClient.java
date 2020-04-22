@@ -53,6 +53,13 @@ public interface FlowDefineClient {
      */
     List<FlowInfo> listFlowInfoVersion(String flowCode, PageDesc pageDesc);
 
+
+    /**
+     * 根据流程业务代码 获取相关的流程（最新流程信息）
+     * @param optId 流程业务代码
+     * @return 流程信息
+     */
+    List<FlowInfo> listFlowsByOptId(String optId);
     /**
      * 获取流程所有办件角色
      * @param flowCode 流程代码

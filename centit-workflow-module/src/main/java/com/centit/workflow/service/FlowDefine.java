@@ -95,14 +95,14 @@ public interface FlowDefine {
     /**
      * 获取某个流程全部版本
      */
-    List<FlowInfo> getFlowsByCode(String wfCode,PageDesc pageDesc);
+    List<FlowInfo> listFlowsByCode(String wfCode, PageDesc pageDesc);
 
     /**
      * 根据已知的流程业务，查询对应的定义流程
      * @param optId 业务id
      * @return 流程列表
      */
-    List<FlowInfo> getFlowsByOptId(String optId);
+    List<FlowInfo> listFlowsByOptId(String optId);
 
     /**
      * 获取某一流程某一版本号中存在的所有机构表达式

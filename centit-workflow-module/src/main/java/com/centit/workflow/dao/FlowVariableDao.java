@@ -8,7 +8,6 @@ import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.FlowVariableId;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;

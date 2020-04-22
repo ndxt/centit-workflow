@@ -45,6 +45,13 @@ public class FlowDefineClientImpl implements FlowDefineClient {
     }
 
     @Override
+    public List<FlowInfo> listFlowsByOptId(String optId){
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+           "/flow/define/optFlow/"+optId);
+        return receiveJSON.getDataAsArray(FlowInfo.class);
+    }
+
+    @Override
     public List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap,
                                   PageDesc pageDesc){
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,

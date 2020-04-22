@@ -82,7 +82,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public List<FlowInfo> getFlowsByOptId(String optId) {
+    public List<FlowInfo> listFlowsByOptId(String optId) {
         List<FlowInfo> flows = flowDefineDao.listLastVersionFlowByOptId(optId);
         return new ArrayList<>(
             flows == null ? new ArrayList<>() : flows);
@@ -655,7 +655,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public List<FlowInfo> getFlowsByCode(String wfCode, PageDesc pageDesc) {
+    public List<FlowInfo> listFlowsByCode(String wfCode, PageDesc pageDesc) {
         List<FlowInfo> flows = flowDefineDao
             .getAllVersionFlowsByCode(wfCode, pageDesc);
         return new ArrayList<>(
