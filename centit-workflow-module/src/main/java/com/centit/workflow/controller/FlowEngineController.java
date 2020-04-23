@@ -307,11 +307,11 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "回退节点", notes = "回退节点")
     @WrapUpResponseBody
     @PostMapping(value = "/rollBackNode")
-    public void rollBackNode(@RequestBody String json) {
+    public String rollBackNode(@RequestBody String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         String nodeInstId = jsonObject.getString("nodeInstId");
         String managerUserCode = jsonObject.getString("managerUserCode");
-        flowEngine.rollbackOpt(nodeInstId, managerUserCode);
+        return flowEngine.rollBackNode(nodeInstId, managerUserCode);
     }
 
     @ApiOperation(value = "回退节点", notes = "回退节点")

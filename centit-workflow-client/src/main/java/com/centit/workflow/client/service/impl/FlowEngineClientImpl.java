@@ -291,12 +291,16 @@ public class FlowEngineClientImpl implements FlowEngine {
         return BooleanBaseOpt.castObjectToBoolean(receiveJSON.getData(), false);
     }
 
-    public void rollBackNode(String nodeInstId,String managerUserCode){
+    //rollBackNode
+    @Override
+    public String rollBackNode(String nodeInstId, String managerUserCode) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("managerUserCode", managerUserCode);
-        RestfulHttpRequest.jsonPost(appSession,
+        String res = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/rollBackNode", paramMap);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(res);
+        return receiveJSON.getDataAsString();
     }
 
     /**
@@ -677,10 +681,6 @@ public class FlowEngineClientImpl implements FlowEngine {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
-    @Override
-    public String rollbackOpt(String nodeInstId, String mangerUserCode) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
 
     /**
      * 更改流程的父节点，这个函数只是用来手动的将一个流程作为子流程挂到父流程的节点上，一般不会使用。

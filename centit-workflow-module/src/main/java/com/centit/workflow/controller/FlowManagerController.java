@@ -480,7 +480,7 @@ public class FlowManagerController extends BaseController {
                                             HttpServletRequest request, @PathVariable String bo) {
         switch (bo.charAt(0)) {
             case '1':
-                flowEng.rollbackOpt(nodeInstId, "admin");
+                flowEng.rollBackNode(nodeInstId, "admin");
                 break;//这儿必须有break，不然会继续往后执行的。
             case '2':
                 flowManager.forceCommit(nodeInstId, "admin");

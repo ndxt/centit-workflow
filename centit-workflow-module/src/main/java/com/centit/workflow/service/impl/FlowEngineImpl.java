@@ -1327,7 +1327,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * 新增子流程退回父流程的方法
      */
     @Override
-    public String rollbackOpt(String nodeInstId, String mangerUserCode) {
+    public String rollBackNode(String nodeInstId, String managerUserCode) {
         // 添加令牌算法
         NodeInstance thisNodeInst = nodeInstanceDao.getObjectWithReferences(nodeInstId);
         if (thisNodeInst == null)
@@ -1411,7 +1411,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         // 设置最后更新时间和更新人
-        thisNodeInst.setLastUpdateUser(mangerUserCode);
+        thisNodeInst.setLastUpdateUser(managerUserCode);
         thisNodeInst.setLastUpdateTime(updateTime);
 
         String lastNodeInstId = UuidOpt.getUuidAsString32();
@@ -1427,7 +1427,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // nextNodeInst.setTimeLimit(null);
         nextNodeInst.setNodeState("N");
         nextNodeInst.setTaskAssigned(prevNodeInst.getTaskAssigned());
-        nextNodeInst.setLastUpdateUser(mangerUserCode);
+        nextNodeInst.setLastUpdateUser(managerUserCode);
         nextNodeInst.setLastUpdateTime(updateTime);
 
         for (ActionTask task : prevNodeInst.getWfActionTasks()) {
@@ -1449,7 +1449,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
             .createNodeEventSupportBean(nodedef);
-        nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, mangerUserCode);
+        nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, managerUserCode);
         //调用发送消息接口
         Set<String> nodeInstIds = new HashSet<>();
         nodeInstIds.add(lastNodeInstId);

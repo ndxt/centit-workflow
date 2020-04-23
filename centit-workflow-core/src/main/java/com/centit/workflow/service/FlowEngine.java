@@ -265,7 +265,7 @@ public interface FlowEngine {
     /*
      * 回退操作-回退到上一个节点
      */
-    String rollbackOpt(String nodeInstId,String mangerUserCode);
+    String rollBackNode(String nodeInstId, String managerUserCode);
     /**
      * 检查后续的节点是否被操作过，包括更新和提交
      * 只有后续节点没有处理的才可以收回。true表示可以撤回，false表示不可以撤回，
