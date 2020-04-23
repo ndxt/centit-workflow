@@ -75,7 +75,7 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "列出所有的流程定义列表", notes = "列出所有的流程定义列表")
     @WrapUpResponseBody
     @RequestMapping(value = "/allversions/{flowcode}", method = RequestMethod.GET)
-    public PageQueryResult<FlowInfo> listAllVersionFlow(PageDesc pageDesc, @PathVariable String flowcode) {
+    public PageQueryResult<FlowInfo> listFlowAllVisionByCode(PageDesc pageDesc, @PathVariable String flowcode) {
         List<FlowInfo> listObjects = flowDefine.listFlowsByCode(flowcode, pageDesc);
         return PageQueryResult.createResult(listObjects, pageDesc);
     }
@@ -89,13 +89,13 @@ public class FlowDefineController extends BaseController {
     @RequestMapping(value = "/lastversion/{flowcode}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public FlowInfo listLastVersion(@PathVariable String flowcode) {
-        return flowDefine.getFlowDefObject(flowcode);
+        return flowDefine.getFlowInfo(flowcode);
     }
 
     @RequestMapping(value = "/editfromthis/{flowCode}/{version}", method = RequestMethod.POST)
     public void editFromThis(@PathVariable String flowCode, @PathVariable long version, HttpServletRequest request, HttpServletResponse response) {
-        FlowInfo flowDefine = this.flowDefine.getFlowDefObject(flowCode, version);
-        FlowInfo flowDefine_thisversion = this.flowDefine.getFlowDefObject(flowCode, 0);
+        FlowInfo flowDefine = this.flowDefine.getFlowInfo(flowCode, version);
+        FlowInfo flowDefine_thisversion = this.flowDefine.getFlowInfo(flowCode, 0);
         FlowInfo copy = new FlowInfo();
         copy.copyNotNullProperty(flowDefine_thisversion);
         copy.setFlowXmlDesc(flowDefine.getFlowXmlDesc());
@@ -113,7 +113,7 @@ public class FlowDefineController extends BaseController {
     @RequestMapping(value = "/draft/{flowcode}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public void getFlowDefineDraft(@PathVariable String flowcode, HttpServletResponse response) {
-        FlowInfo obj = flowDefine.getFlowDefObject(flowcode, 0);
+        FlowInfo obj = flowDefine.getFlowInfo(flowcode, 0);
         JsonResultUtils.writeSingleDataJson(obj, response);
     }
 
@@ -129,9 +129,9 @@ public class FlowDefineController extends BaseController {
     @WrapUpResponseBody
     public FlowInfo getFlowDefine(@PathVariable Long version, @PathVariable String flowcode, HttpServletResponse response) {
         if(version >= 0) {
-            return flowDefine.getFlowDefObject(flowcode, version);
+            return flowDefine.getFlowInfo(flowcode, version);
         } else {
-            return flowDefine.getFlowDefObject(flowcode);
+            return flowDefine.getFlowInfo(flowcode);
         }
     }
 
@@ -144,7 +144,7 @@ public class FlowDefineController extends BaseController {
      */
     @RequestMapping(value = "/copy/{flowcode}/{version}", method = RequestMethod.POST)
     public void copyFlowDefine(@PathVariable String flowcode, @PathVariable Long version, HttpServletResponse response) {
-        FlowInfo obj = flowDefine.getFlowDefObject(flowcode, version);
+        FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
         FlowInfo copy = new FlowInfo();
         copy.copyNotNullProperty(obj);
         copy.setCid(new FlowInfoId(0L, UuidOpt.getUuidAsString22()));
@@ -176,7 +176,7 @@ public class FlowDefineController extends BaseController {
     @RequestMapping(value = "/viewxml/{flowcode}/{version}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public void viewXml(@PathVariable Long version, @PathVariable String flowcode, HttpServletRequest request, HttpServletResponse response) {
-        FlowInfo obj = flowDefine.getFlowDefObject(flowcode, version);
+        FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
         JsonResultUtils.writeSingleDataJson(obj.getFlowXmlDesc(), response);
     }
 
@@ -308,7 +308,7 @@ public class FlowDefineController extends BaseController {
      */
     @RequestMapping(value = "/{oldflowcode}/{doCopyXML}", method = RequestMethod.POST)
     public void editCopyFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String oldflowcode, @PathVariable String doCopyXML, HttpServletResponse response) {
-        FlowInfo oldFlowDef = flowDefine.getFlowDefObject(oldflowcode, 0);
+        FlowInfo oldFlowDef = flowDefine.getFlowInfo(oldflowcode, 0);
         if ("F".equals(doCopyXML)) {
             flowDefine.saveDraftFlowDef(flowdefine);
         } else if ("T".equals(doCopyXML)) {
@@ -327,7 +327,7 @@ public class FlowDefineController extends BaseController {
      */
     @RequestMapping(value = "/{flowcode}/{version}", method = RequestMethod.DELETE)
     public void deleteFlowDefine(@PathVariable String flowcode, @PathVariable Long version, HttpServletResponse response) {
-        FlowInfo obj = flowDefine.getFlowDefObject(flowcode, version);
+        FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
         if (null == obj) {
             JsonResultUtils.writeErrorMessageJson("此流程不存在", response);
             return;
@@ -465,14 +465,14 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "列举所有角色")
     @RequestMapping(value = "/variable/{flowCode}/{version}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public Map<String, String> listFlowVariable(@PathVariable String flowCode, @PathVariable Long version){
+    public Map<String, String> listFlowVariableDefines(@PathVariable String flowCode, @PathVariable Long version){
         return flowDefine.listFlowVariableDefines(flowCode, version);
     }
 
     @ApiOperation(value = "列举所有角色")
     @RequestMapping(value = "/stage/{flowCode}/{version}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public Map<String, String> listFlowStage(@PathVariable String flowCode, @PathVariable Long version){
+    public Map<String, String> listFlowStages(@PathVariable String flowCode, @PathVariable Long version){
         return flowDefine.listFlowStages(flowCode, version);
     }
 

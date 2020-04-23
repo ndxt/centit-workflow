@@ -1,11 +1,14 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.algorithm.UuidOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.HtmlFormUtils;
 import com.centit.support.xml.XmlUtils;
@@ -39,7 +42,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private NodeInfoDao flowNodeDao;
 
     @Autowired
-    private FlowOptPageDao flowOptDefDao;
+    private FlowOptPageDao flowOptPageDao;
+
+    @Autowired
+    private FlowOptInfoDao flowOptInfoDao;
 
     @Autowired
     private RoleFormulaDao flowRoleDao;
@@ -586,7 +592,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public FlowInfo getFlowDefObject(String flowCode, long version) {
+    public FlowInfo getFlowInfo(String flowCode, long version) {
         try {
             return flowDefineDao.getObjectWithReferences(new FlowInfoId(version, flowCode));
         } catch (Exception e) {
@@ -596,9 +602,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public FlowInfo getFlowDefObject(String flowCode) {
+    public FlowInfo getFlowInfo(String flowCode) {
         long version = flowDefineDao.getLastVersion(flowCode);
-        return getFlowDefObject(flowCode, version);
+        return getFlowInfo(flowCode, version);
     }
 
 
@@ -685,6 +691,18 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return flowNodeDao.getUnitExp(flowCode, version);
     }
 
+    /**
+     * 获取流程业务表单，用于流程业务定义
+     *
+     * @param filterMap 过滤条件
+     * @param pageDesc  分页信息
+     * @return 流程业务信息列表
+     */
+    @Override
+    public List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc) {
+        return flowOptInfoDao.listObjects(filterMap, pageDesc);
+    }
+
     @Override
     @Transactional
     public void deleteFlowDef(String flowCode) {
@@ -731,7 +749,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private Map<String, String> listAllOptCode(String flowCode, long version) {
         FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
         //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
-        List<FlowOptPage> wfOptDefs = flowOptDefDao.listObjectsByProperty("optId", flowDef.getOptId());
+        List<FlowOptPage> wfOptDefs = flowOptPageDao.listObjectsByProperty("optId", flowDef.getOptId());
         Map<String, String> optMap = new HashMap<>();
         for (FlowOptPage f : wfOptDefs) {
             //optMap.put(flowOptInfo.getOptUrl() + f.getOptMethod(), f.getOptName());
@@ -928,4 +946,5 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         return variableValueMap;
     }
+
 }

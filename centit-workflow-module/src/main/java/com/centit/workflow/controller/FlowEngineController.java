@@ -59,7 +59,7 @@ public class FlowEngineController extends BaseController {
     }))
     @WrapUpResponseBody
     @PostMapping(value = "/submitOpt")
-    public Set<String> submitOpt(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
+    public List<String> submitOpt(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
         return flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
             BaseController.collectRequestParameters(request)),null);
     }
@@ -119,7 +119,8 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @PostMapping(value = "/addFlowWorkTeam")
     public void addFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
-        flowEngine.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), flowWorkTeam.getUserCode());
+        flowEngine.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(),
+              flowWorkTeam.getRoleCode(), flowWorkTeam.getUserCode());
     }
 
     @ApiOperation(value = "删除办件角色", notes = "删除办件角色")
@@ -167,9 +168,7 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/nodeTaskUsers")
     public List<UserTask> listNodeTaskUsers(String nodeInstId) {
-        Map<String, Object> searchColumn = new HashMap<>();
-        searchColumn.put("nodeInstId", nodeInstId);
-        return flowEngine.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
+        return flowEngine.listNodeOperator(nodeInstId);
     }
 
     @ApiOperation(value = "查询用户岗位待办", notes = "查询用户岗位待办")
@@ -369,7 +368,7 @@ public class FlowEngineController extends BaseController {
         if(instance==null){
             return null;
         }
-        return flowDefine.getFlowDefObject(instance.getFlowCode(),
+        return flowDefine.getFlowInfo(instance.getFlowCode(),
             instance.getVersion());
     }
 

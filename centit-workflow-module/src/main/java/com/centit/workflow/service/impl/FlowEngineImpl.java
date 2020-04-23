@@ -1,7 +1,9 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
+import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
@@ -39,10 +41,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private static final Logger logger = LoggerFactory.getLogger(FlowEngineImpl.class);
     @Autowired
     private FlowInstanceDao flowInstanceDao;
-
     @Autowired
     private UserUnitFilterCalcContextFactory userUnitFilterFactory;
-
     @Autowired
     private NodeInstanceDao nodeInstanceDao;
     @Autowired
@@ -51,20 +51,18 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private FlowTransitionDao flowTransitionDao;
     @Autowired
     private ActionTaskDao actionTaskDao;
-
     @Autowired
     private FlowInfoDao flowDefDao;
     @Autowired
-    FlowOptPageDao flowOptPageDao;
-
+    private FlowOptInfoDao flowOptInfoDao;
+    @Autowired
+    private FlowOptPageDao flowOptPageDao;
     @Autowired
     private FlowManager flowManager;
     @Autowired
     private FlowWorkTeamDao flowTeamDao;
-
     @Autowired
     private RoleFormulaDao roleFormulaDao;
-
     @Autowired
     private FlowOrganizeDao flowOrganizeDao;
     @Autowired
@@ -75,7 +73,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private FlowWarningDao runtimeWarningDao;
     @Autowired
     private FlowInstanceGroupDao flowInstanceGroupDao;
-
     @Autowired
     private NotificationCenter notificationCenter;
 
@@ -131,6 +128,20 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return instance;
     }
 
+    /**
+     * 创建流程实例  返回流程实例
+     * @param options NewFlowInstanceOptions 流程创建选项编码
+     * @return 流程实例
+     */
+    @Override
+    public FlowInstance createInstance(CreateFlowOptions options){
+        return createInstance(options,
+            new ObjectUserUnitVariableTranslate(
+                CollectionsOpt.unionTwoMap(
+                    options.getVariables(), options.getGlobalVariables())),
+            null);
+    }
+
     private FlowInstance createInstanceInside(CreateFlowOptions options,
                                              UserUnitVariableTranslate varTrans, ServletContext application, boolean saveOptions) {
 
@@ -180,7 +191,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             null, flowInst,flowVariableDao,this, options);
         flowVarTrans.setFlowVarTrans(varTrans);
 
-        Set<String> nodeInsts = submitToNextNode(node, "T", flowInst, wf,
+        List<String> nodeInsts = submitToNextNode(node, "T", flowInst, wf,
             null, null, null,
             options, flowVarTrans, application);
 
@@ -203,9 +214,54 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return flowInstanceDao.getObjectWithReferences(flowInstId);
     }
 
+    /**
+     * 获取流程定义信息
+     *
+     * @param flowInstId 实例id
+     * @return 流程定义信息
+     */
+    @Override
+    public FlowInfo getFlowDefine(String flowInstId) {
+        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+        if(flowInst==null){
+            return null;
+        }
+        return flowDefDao.getFlowDefineByID(
+            flowInst.getFlowCode(), flowInst.getVersion());
+    }
+
+    /**
+     * 获取流程业务信息
+     * @param flowInstId 实例id
+     * @return 流程业务信息
+     */
+    @Override
+    public FlowOptInfo getFlowOptInfo(String flowInstId){
+        FlowInfo flowInfo = getFlowDefine(flowInstId);
+        if(flowInfo==null){
+            return null;
+        }
+        return flowOptInfoDao.getObjectById(flowInfo.getOptId());
+    }
+
     @Override
     public NodeInstance getNodeInstById(String nodeInstId) {
         return nodeInstanceDao.getObjectWithReferences(nodeInstId);
+    }
+
+    /**
+     * 获取节点定义信息
+     *
+     * @param nodeInstId 节点实例id
+     * @return 节点实例信息
+     */
+    @Override
+    public NodeInfo getNodeInfo(String nodeInstId){
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        if(nodeInst==null){
+            return null;
+        }
+        return flowNodeDao.getObjectById(nodeInst.getNodeId());
     }
 
     @Override
@@ -477,7 +533,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
     }
 
-    private Set<String> submitToNextRouterNode(
+    private List<String> submitToNextRouterNode(
         NodeInfo nextRoutertNode, String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance preNodeInst/*创建首节点时为null*/, String transPath, FlowTransition trans,
         FlowOptParamOptions options,
@@ -485,7 +541,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         throws WorkflowException {
 
         String sRT = nextRoutertNode.getRouterType();
-        Set<String> resNodes = new HashSet<>();
+        List<String> resNodes = new ArrayList<>();
         String preTransPath = StringUtils.isBlank(transPath) ?
             trans.getTransId() : transPath + "," + trans.getTransId();
 
@@ -518,7 +574,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 int nNo = 1; //子令牌序号
                 for (FlowTransition tran : selTrans) {
                     String nextNodeId = tran.getEndNodeId();
-                    Set<String> nNs = submitToNextNode(
+                    List<String> nNs = submitToNextNode(
                         flowNodeDao.getObjectById(nextNodeId), nodeToken + "." + nNo,
                         flowInst, flowInfo,
                         preNodeInst, preTransPath, tran, options,
@@ -670,7 +726,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         NodeInfo rtN = selectNextNodeByNodeId(ent.getValue().getNodeId());
                         if ("R".equals(rtN.getNodeType()) && "S".equals(rtN.getRouterType())) {
                             FlowTransition nextTran = selectOptNodeTransition(rtN);
-                            Set<String> sN = submitToNextNode(
+                            List<String> sN = submitToNextNode(
                                 flowNodeDao.getObjectById(nextTran.getEndNodeId()),
                                 ent.getValue().getRunToken(), flowInst, flowInfo,
                                 ent.getValue(), preTransPath, nextTran,
@@ -687,7 +743,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return resNodes;
     }
 
-    private Set<String> submitToNextNode(
+    private List<String> submitToNextNode(
         NodeInfo nextNode , String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance preNodeInst, String transPath, FlowTransition nodeTran,
         FlowOptParamOptions options,
@@ -717,7 +773,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     varTrans, application, true, true);
                 // }
             }
-            return new HashSet<>();
+            return new ArrayList<>();
         } else {
 
             return submitToNextOptNode(
@@ -727,7 +783,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
     }
 
-    private Set<String> submitToNextOptNode(
+    private List<String> submitToNextOptNode(
         NodeInfo nextOptNode,  String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance preNodeInst, String transPath, FlowTransition trans,
         FlowOptParamOptions options,
@@ -762,7 +818,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
             }
         }
-        Set<String> createNodes = new HashSet<>();
+        List<String> createNodes = new ArrayList<>();
         createNodes.add(nodeInst.getNodeInstId());
         LeftRightPair<Set<String>, Set<String>> unitAndUser = calcNodeUnitAndOpterators(flowInst, preNodeInst, nodeToken,
             nextOptNode, options, varTrans);
@@ -911,7 +967,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //暂时先取第一个节点实例，解决部分问题
             //varTrans改为一个空的
             if(needSubmit) {
-                Set<String> nextNodes = this.submitOptInside(
+                List<String> nextNodes = this.submitOptInside(
                     autoSubmitOptions,
                     varTrans, application, false, true);
                 createNodes.addAll(nextNodes);
@@ -993,14 +1049,28 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * 记录提交日志，节点创建情况
      */
     @Override
-    public Set<String> submitOpt(SubmitOptOptions options,
+    public List<String> submitOpt(SubmitOptOptions options,
                                         UserUnitVariableTranslate varTrans,
                                         ServletContext application) throws WorkflowException {
 
         return submitOptInside(options, varTrans, application,true, true);
     }
 
-    private Set<String> submitOptInside(SubmitOptOptions options,
+    /**
+     * 返回下一步节点的节点实例ID
+     * @param options 当前节点实例编号
+     * @return  节点实例编号列表
+     */
+    @Override
+    public List<String> submitOpt(SubmitOptOptions options) throws WorkflowException{
+        return submitOpt(options,
+            new ObjectUserUnitVariableTranslate(
+                CollectionsOpt.unionTwoMap(
+                    options.getVariables(), options.getGlobalVariables())),
+            null);
+    }
+
+    private List<String> submitOptInside(SubmitOptOptions options,
             UserUnitVariableTranslate varTrans,
             ServletContext application, boolean saveOptions, boolean saveLog) throws WorkflowException {
         //2012-04-16 重构提交事件，添加一个多实例节点类型，这个节点类型会根据不同的机构创建不同的节点
@@ -1098,7 +1168,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInst.setLastUpdateUser(options.getUserCode());
         flowInstanceDao.updateObject(flowInst);
 
-        Set<String> nextNodeInsts = new HashSet<>();
+        List<String> nextNodeInsts = new ArrayList<>();
 
 
         if ("T".equals(nodeInst.getTaskAssigned())) {
@@ -1831,13 +1901,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public List<FlowOrganize> viewFlowOrganizeList(String flowInstId, String roleCode) {
-        return new ArrayList<FlowOrganize>(
+        return new ArrayList<>(
             flowOrganizeDao.listFlowOrganizeByRole(flowInstId, roleCode));
     }
 
     @Override
     public List<FlowOrganize> viewFlowOrganizeList(String flowInstId, String roleCode, String authDesc) {
-        return new ArrayList<FlowOrganize>(
+        return new ArrayList<>(
             flowOrganizeDao.listFlowOrganize(flowInstId, roleCode, authDesc));
     }
 
@@ -2073,6 +2143,18 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                                   String nodeCode, PageDesc pageDesc) {
         return actionTaskDao.listUserTaskByFilter(
             QueryUtils.createSqlParamsMap("userCode", userCode, "nodeCode", nodeCode), pageDesc);
+    }
+
+    /**
+     * 获取节点的所有操作人员
+     * @param nodeInstId 节点实例id
+     * @return 操作人员
+     */
+    @Override
+    public List<UserTask> listNodeOperator(String nodeInstId){
+        Map<String, Object> searchColumn = new HashMap<>();
+        searchColumn.put("nodeInstId", nodeInstId);
+        return this.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
     }
 
     @Override

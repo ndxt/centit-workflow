@@ -5,7 +5,7 @@
     <parent>
         <artifactId>centit-workflow</artifactId>
         <groupId>com.centit.product</groupId>
-        <version>4.5-SNAPSHOT</version>
+        <version>4.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-core</artifactId>
-            <version>${centit.workflow.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -78,5 +78,6 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 </project>

@@ -1,28 +1,33 @@
 package com.centit.workflow.client.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
+import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.algorithm.BooleanBaseOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.UrlOptUtils;
-import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
+import com.centit.workflow.service.FlowEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import javax.servlet.ServletContext;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by chen_rj on 2017/7/28.
  */
 @Service
-public class FlowEngineClientImpl implements FlowEngineClient {
+public class FlowEngineClientImpl implements FlowEngine {
 
     public FlowEngineClientImpl() {
     }
@@ -47,13 +52,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
 
 
     @Override
-    public void saveFlowVariable(String flowInstId, String varName, String varValue)  {
-        Set<String> vars = new HashSet<>(Arrays.asList(varValue));
-        saveFlowVariable(flowInstId, varName, vars);
-    }
-
-    @Override
-    public void saveFlowVariable(String flowInstId, String varName, Set<String> varValue)  {
+    public void saveFlowVariable(String flowInstId, String varName, Object varValue)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("varName", varName);
@@ -62,26 +61,9 @@ public class FlowEngineClientImpl implements FlowEngineClient {
             "/flow/engine/saveFlowVariable", paramMap);
     }
 
-    /**
-     * @param nodeInstId
-     * @param varName
-     * @param varValue   SET &lt;String&gt;
-     * @
-     */
-    @Override
-    public void saveFlowNodeVariable(String nodeInstId, String varName, String varValue)  {
-        Set<String> vars = new HashSet<>(Arrays.asList(varValue));
-        saveFlowNodeVariable(nodeInstId, varName, vars);
-    }
 
-    /**
-     * @param nodeInstId
-     * @param varName
-     * @param varValue   SET &lt;String&gt;
-     * @
-     */
     @Override
-    public void saveFlowNodeVariable(String nodeInstId, String varName, Set<String> varValue)  {
+    public void saveFlowNodeVariable(String nodeInstId, String varName, Object varValue)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
         paramMap.put("varName", varName);
@@ -101,7 +83,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void addFlowWorkTeam(String flowInstId, String roleCode, String userCode)  {
+    public void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
@@ -122,7 +104,7 @@ public class FlowEngineClientImpl implements FlowEngineClient {
     }
 
     @Override
-    public void addFlowOrganize(String flowInstId, String roleCode,
+    public void assignFlowOrganize(String flowInstId, String roleCode,
                                 String unitCode) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
@@ -148,14 +130,13 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @return 实例信息
      */
     @Override
-    public FlowInstance getFlowInstance(String flowInstId) {
+    public FlowInstance getFlowInstById(String flowInstId) {
         return RestfulHttpRequest.getResponseObject(appSession,
             "/flow/engine/inst/"+flowInstId, FlowInstance.class);
     }
 
     /**
      * 获取流程定义信息
-     *
      * @param flowInstId 实例id
      * @return 流程定义信息
      */
@@ -182,21 +163,9 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @return 节点实例信息
      */
     @Override
-    public NodeInstance getNodeInstance(String nodeInstId) {
+    public NodeInstance getNodeInstById(String nodeInstId) {
         return RestfulHttpRequest.getResponseObject(appSession,
             "/flow/engine/nodeInst/"+nodeInstId, NodeInstance.class);
-    }
-
-    @Override
-    public List<NodeInstance> listFlowActiveNodes(String flowInstId){
-        Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",String.valueOf(flowInstId));
-
-        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/engine/activeNodes",
-            paramMap);
-        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
-        return receiveJSON.getDataAsArray(NodeInstance.class);
     }
 
     /**
@@ -432,14 +401,14 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @return 流程分组
      */
     @Override
-    public JSONArray listFlowInstGroup(Map<String, Object> paramMap, PageDesc pageDesc) {
+    public List<FlowInstanceGroup> listFlowInstGroup(Map<String, Object> paramMap, PageDesc pageDesc) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             UrlOptUtils.appendParamsToUrl(
                 UrlOptUtils.appendParamsToUrl("/flow/engine/flowGroup",
                     paramMap), (JSONObject) JSON.toJSON(pageDesc)));
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
-        return receiveJSON.getJSONArray("objList"/*, FlowInstanceGroup.class*/);
+        return receiveJSON.getDataAsArray("objList", FlowInstanceGroup.class);
     }
 
     /**
@@ -450,14 +419,14 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @return 获取待办列表 这里指静态代办
      */
     @Override
-    public JSONArray listTasks(Map<String, Object> paramMap, PageDesc pageDesc) {
+    public List<UserTask> listTasks(Map<String, Object> paramMap, PageDesc pageDesc) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             UrlOptUtils.appendParamsToUrl(
                 UrlOptUtils.appendParamsToUrl("/flow/engine/listTasks",
                     paramMap), (JSONObject) JSON.toJSON(pageDesc)));
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
-        return receiveJSON.getJSONArray("objList"/*, UserTask.class*/);
+        return receiveJSON.getDataAsArray("objList", UserTask.class);
     }
 
     /**
@@ -467,11 +436,11 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @return 用户办件信息
      */
     @Override
-    public JSONArray listNodeTaskUsers(String nodeInstId) {
+    public List<UserTask> listNodeOperator(String nodeInstId) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
                 "/flow/engine/nodeTaskUsers?nodeInstId="+nodeInstId);
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
-        return receiveJSON.getJSONArray();
+        return receiveJSON.getDataAsArray(UserTask.class);
     }
 
     /**
@@ -482,27 +451,587 @@ public class FlowEngineClientImpl implements FlowEngineClient {
      * @return
      */
     @Override
-    public JSONArray listDynamicTask(Map<String, Object> paramMap, PageDesc pageDesc) {
+    public List<UserTask> listDynamicTask(Map<String, Object> paramMap, PageDesc pageDesc) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             UrlOptUtils.appendParamsToUrl(
                 UrlOptUtils.appendParamsToUrl("/flow/engine/listDynamicTasks",
                     paramMap), (JSONObject) JSON.toJSON(pageDesc)));
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
-        return receiveJSON.getJSONArray("objList"/*, UserTask.class*/);
+        return receiveJSON.getDataAsArray("objList", UserTask.class);
     }
 
     /**
-     * @param flowInstId   流程实例号
-     * @param itemRoleCode 办件角色代码
-     * @return 用户范围
+     * 创建流程实例或子流程实例
+     *
+     * @param options     NewFlowInstanceOptions 流程创建选项编码
+     * @param varTrans    UserUnitVariableTranslate 机构执行环境
+     * @param application spring上下文环境。作为独立服务后这个应该不需要了
+     * @return FlowInstance
      */
     @Override
-    public JSONArray listItemRoleFilter(String flowInstId, String itemRoleCode) {
-        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/engine/itemRoleFilter/"+flowInstId+"/"+itemRoleCode);
-        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
-        return receiveJSON.getJSONArray();
+    public FlowInstance createInstance(CreateFlowOptions options, UserUnitVariableTranslate varTrans, ServletContext application) {
+        throw new ObjectException("This function is not been implemented in client.");
     }
 
+    /**
+     * 返回下一步节点的节点实例ID
+     *
+     * @param options     SubmitOptOptions 提交流程操作选项编码
+     * @param varTrans    UserUnitVariableTranslate 机构执行环境
+     * @param application
+     * @return 节点实例编号列表
+     */
+    @Override
+    public List<String> submitOpt(SubmitOptOptions options, UserUnitVariableTranslate varTrans, ServletContext application) throws WorkflowException {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 提交节点工作 是否成功
+     * 预判下一步节点的节点编号
+     *
+     * @param nodeInstId 当前节点实例编号
+     * @param userCode   操作用户编号 对应用户表达式 O operator
+     * @param unitCode   用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
+     * @param varTrans   变量转换器
+     * @return 节点信息列表
+     */
+    @Override
+    public Set<NodeInfo> viewNextNode(String nodeInstId, String userCode, String unitCode, UserUnitVariableTranslate varTrans) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查看下一节点可以操作的人员类表
+     *
+     * @param nextNodeId    下一个节点编号
+     * @param curNodeInstId 当前节点实例编号
+     * @param userCode      操作用户编号 对应用户表达式 O operator
+     * @param unitCode      用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
+     * @param varTrans      变量转换器
+     * @return 用户代码
+     */
+    @Override
+    public Set<String> viewNextNodeOperator(String nextNodeId, String curNodeInstId, String userCode, String unitCode, UserUnitVariableTranslate varTrans) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查看某一个用户所有的待办，并且分页
+     *
+     * @param userCode 操作用户编号
+     * @param pageDesc 分页信息
+     * @return 用户任务列表
+     */
+    @Override
+    public List<UserTask> listUserTasks(String userCode, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 这个查看某个用户对用特定流程的待办
+     *
+     * @param filterMap 过滤条件，按道理 必须包括一个 userCode 条件
+     * @param pageDesc  分页信息
+     * @return 用户任务列表
+     */
+    @Override
+    public List<UserTask> listUserTasksByFilter(Map<String, Object> filterMap, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 这个查看某个用户对用特定流程的待办
+     *
+     * @param userCode 用户代码
+     * @param flowCode 流程代码
+     * @param pageDesc 分页信息
+     * @return 用户任务列表
+     */
+    @Override
+    public List<UserTask> listUserTasksByFlowCode(String userCode, String flowCode, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查看某一个用户对应某一个阶段的待办
+     *
+     * @param userCode  用户代码
+     * @param flowStage 流程阶段
+     * @param pageDesc  分页信息
+     * @return 用户任务列表
+     */
+    @Override
+    public List<UserTask> listUserTasksByFlowStage(String userCode, String flowStage, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查询某个用户的对应某一个节点的待办，这个节点可以是多个流程中的节点，只要这些节点的nodecode一致
+     *
+     * @param userCode 用户代码
+     * @param nodeCode 节点代码
+     * @param pageDesc 分页信息
+     * @return 用户任务列表
+     */
+    @Override
+    public List<UserTask> listUserTasksByNodeCode(String userCode, String nodeCode, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 获取动态待办
+     *
+     * @param searchColumn 包含nodeInstId，unitCode，userStation
+     * @param pageDesc     分页信息
+     * @return 获取待办列表 这里指动态代办
+     */
+    @Override
+    public List<UserTask> listDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查看某一个用户所有的已办，并且分页
+     *
+     * @param filterMap 过滤条件
+     * @param pageDesc  分页信息
+     * @return 用户任务列表
+     */
+    @Override
+    public List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 判断一个用户是否可以处理指定的节点,可以喝submitOpt结合使用，
+     * 判断当前操作人员是否可以访问提交后的下一个节点。
+     *
+     * @param nodeInstId 节点实例代码
+     * @param userCode   用户代码
+     * @return 是否有权限
+     */
+    @Override
+    public boolean canAccess(String nodeInstId, String userCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 获取任务授权人，如果是用户自己的任务，返回自己，否则返回授权人
+     *
+     * @param nodeInstId 节点实例id
+     * @param userCode   用户代码
+     * @return 授权人
+     */
+    @Override
+    public String getTaskGrantor(String nodeInstId, String userCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 自定义预警查询
+     *
+     * @param filterMap 过滤条件
+     * @param pageDesc  分页信息
+     * @return 预警列表
+     */
+    @Override
+    public List<FlowWarning> listFlowWarning(Map<String, Object> filterMap, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查询某个流程的预警
+     *
+     * @param flowInstId 流程实例代码
+     * @param pageDesc   分页信息
+     * @return 预警列表
+     */
+    @Override
+    public List<FlowWarning> listFlowWarningByInst(String flowInstId, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查询某个节点的预警
+     *
+     * @param nodeInstId 节点实例代码
+     * @param pageDesc   分页信息
+     * @return 预警列表
+     */
+    @Override
+    public List<FlowWarning> listFlowWarningByNodeInst(String nodeInstId, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查询某一个类别的预警
+     *
+     * @param warningCode 预警类别
+     * @param pageDesc    分页信息
+     * @return 预警列表
+     */
+    @Override
+    public List<FlowWarning> listFlowWarningByWarningCode(String warningCode, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    @Override
+    public String rollbackOpt(String nodeInstId, String mangerUserCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 更改流程的父节点，这个函数只是用来手动的将一个流程作为子流程挂到父流程的节点上，一般不会使用。
+     *
+     * @param flowInstId       子流程实例id
+     * @param parentFlowInstId 父流程实例id
+     * @param parentNodeInstId 父流程节点实例id
+     */
+    @Override
+    public void updateFlowInstParentNode(String flowInstId, String parentFlowInstId, String parentNodeInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 关闭本节点分支以外的其他分支的所有节点,特指和本节点平行的分支，就是同一个父类令牌的分支
+     *
+     * @param nodeInstId  当前活动节点
+     * @param optUserCode 操作人员
+     */
+    @Override
+    public void disableOtherBranchNodes(String nodeInstId, String optUserCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 分配工作小组 --办件角色
+     *
+     * @param flowInstId 流程实例号 不能为空
+     * @param roleCode   办件角色 不能为空
+     * @param userCode   用户代码，添加
+     * @param authdesc   角色描述
+     */
+    @Override
+    public void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode, String authdesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 分配工作小组 --办件角色
+     *
+     * @param flowInstId  流程实例号 不能为空
+     * @param roleCode    办件角色 不能为空
+     * @param userCodeSet 用户代码列表，添加
+     * @param authdesc    角色描述
+     */
+    @Override
+    public void assignFlowWorkTeam(String flowInstId, String roleCode, List<String> userCodeSet, String authdesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 删除工作小组--办件角色
+     *
+     * @param flowInstId 流程实例号 不能为空
+     * @param roleCode   办件角色 不能为空
+     * @param userCode   用户代码，添加
+     */
+    @Override
+    public void deleteFlowWorkTeam(String flowInstId, String roleCode, String userCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查看工作小组
+     *
+     * @param flowInstId 流程实例号 不能为空
+     * @return Map roleCode,Set userCode
+     */
+    @Override
+    public Map<String, List<String>> viewFlowWorkTeam(String flowInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查看工作小组中某个角色的成员
+     *
+     * @param flowInstId 工作流实例号
+     * @param roleCode   角色代码
+     * @return 流程工作组
+     */
+    @Override
+    public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查看工作小组中某个角色的成员,并且通过制定的授权说明过滤
+     *
+     * @param flowInstId 工作流实例号
+     * @param roleCode   角色代码
+     * @param authdesc   角色描述
+     * @return 流程工作组
+     */
+    @Override
+    public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode, String authdesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 分配流程组织机构
+     *
+     * @param flowInstId 流程实例号 不能为空
+     * @param roleCode   机构角色 不能为空
+     * @param unitCode   机构代码，添加
+     * @param authdesc
+     */
+    @Override
+    public void assignFlowOrganize(String flowInstId, String roleCode, String unitCode, String authdesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+   }
+
+    /**
+     * 分配工作小组 --办件角色
+     *
+     * @param flowInstId  流程实例号 不能为空
+     * @param roleCode    机构角色 不能为空
+     * @param unitCodeSet 机构代码列表，添加
+     * @param authdesc
+     */
+    @Override
+    public void assignFlowOrganize(String flowInstId, String roleCode, List<String> unitCodeSet, String authdesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 删除工作小组--办件角色
+     *
+     * @param flowInstId 流程实例号 不能为空
+     * @param roleCode   机构角色 不能为空
+     * @param unitCode   机构代码，添加
+     */
+    @Override
+    public void deleteFlowOrganize(String flowInstId, String roleCode, String unitCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 删除工作小组--办件角色
+     *
+     * @param flowInstId 流程实例号 不能为空
+     * @param roleCode   机构角色 不能为空
+     * @param authDesc
+     */
+    @Override
+    public void deleteFlowOrganizeByAuth(String flowInstId, String roleCode, String authDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查看工作小组
+     *
+     * @param flowInstId 流程实例号 不能为空
+     * @return Map roleCode,Set unitCode
+     */
+    @Override
+    public Map<String, List<String>> viewFlowOrganize(String flowInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * @param flowInstId 工作流实例号
+     * @param roleCode   机构角色代码
+     * @return 流程组织架构
+     */
+    @Override
+    public List<FlowOrganize> viewFlowOrganizeList(String flowInstId, String roleCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * @param flowInstId 工作流实例号
+     * @param roleCode   机构角色代码
+     * @param authDesc   授权信息
+     * @return 流程组织架构
+     */
+    @Override
+    public List<FlowOrganize> viewFlowOrganizeList(String flowInstId, String roleCode, String authDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 设置流程节点上下文变量
+     *
+     * @param flowInstId 工作流实例号
+     * @param runToken   令牌值
+     * @param sVar       变量名
+     * @param sValue     变量值
+     */
+    @Override
+    public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 设置流程节点上下文变量
+     *
+     * @param nodeInstId 节点实例号
+     * @param sVar       变量名
+     * @param sValues    Set String 中的值不能有 分号 ;
+     */
+    @Override
+    public void saveFlowNodeVariable(String nodeInstId, String sVar, Set<String> sValues) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查询流程变量
+     *
+     * @param flowInstId 工作流实例号
+     * @return 所有流程变量
+     */
+    @Override
+    public List<FlowVariable> listFlowVariables(String flowInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查询某个流程节点的变量
+     *
+     * @param flowInstId 工作流实例号
+     * @param runToken   令牌
+     * @param varname    变量名
+     * @return 流程变量
+     */
+    @Override
+    public FlowVariable viewNodeVariable(String flowInstId, String runToken, String varname) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 设置流程关注人员
+     *
+     * @param attObj 流程实例id
+     *               attUser 关注人员
+     *               optUser 设置人员
+     */
+    @Override
+    public void saveFlowAttention(InstAttention attObj) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 删除流程关注人员
+     *
+     * @param flowInstId 工作流实例号
+     * @param attUser    关注人员
+     */
+    @Override
+    public void deleteFlowAttention(String flowInstId, String attUser) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 删除流程关注人员
+     *
+     * @param flowInstId 工作流实例号
+     * @param optUser    关注设置人员
+     */
+    @Override
+    public void deleteFlowAttentionByOptUser(String flowInstId, String optUser) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 删除流程所有关注人员
+     *
+     * @param flowInstId 工作流实例号
+     */
+    @Override
+    public void deleteFlowAttention(String flowInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 获取流程关注人员
+     *
+     * @param flowInstId 工作流实例号
+     * @return 关注信息列表
+     */
+    @Override
+    public List<InstAttention> viewFlowAttention(String flowInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * @param flowInstId 工作流实例号
+     * @param userCode   关注人员
+     * @return 关注信息
+     */
+    @Override
+    public InstAttention getFlowAttention(String flowInstId, String userCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 返回所有关在的项目
+     *
+     * @param userCode  关注人
+     * @param instState N 正常  C 完成   P 暂停 挂起     F 强行结束  A 所有
+     * @return 流程实例信息列表
+     */
+    @Override
+    public List<FlowInstance> viewAttentionFLowInstance(String userCode, String instState) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 返回所有关在的项目
+     *
+     * @param optName
+     * @param userCode  关注人
+     * @param instState N 正常  C 完成   P 暂停 挂起     F 强行结束  A 所有
+     * @return 流程实例信息列表
+     */
+    @Override
+    public List<FlowInstance> viewAttentionFLowInstanceByOptName(String optName, String userCode, String instState) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 获取用户操作节点的Url，if ! canAccess rteurn null
+     *
+     * @param nodeInstId 节点实例代码
+     * @param userCode   用户代码
+     * @return optUrl
+     */
+    @Override
+    public String getNodeOptUrl(String nodeInstId, String userCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 根据节点实例号 获得节点实例
+     *
+     * @param flowInstId 流程实例id
+     * @param nodeCode   节点代码
+     * @return 节点信息列表
+     */
+    @Override
+    public List<NodeInstance> listNodeInstsByNodecode(String flowInstId, String nodeCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 获取节点所在阶段信息
+     *
+     * @param nodeInstId 节点实例id
+     * @return 阶段信息
+     */
+    @Override
+    public StageInstance getStageInstByNodeInstId(String nodeInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
 }

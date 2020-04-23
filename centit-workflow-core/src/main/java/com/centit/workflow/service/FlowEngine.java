@@ -36,13 +36,7 @@ public interface FlowEngine {
      * @param options NewFlowInstanceOptions 流程创建选项编码
      * @return 流程实例
      */
-    default FlowInstance createInstance(CreateFlowOptions options){
-        return createInstance(options,
-            new ObjectUserUnitVariableTranslate(
-                CollectionsOpt.unionTwoMap(
-                    options.getVariables(), options.getGlobalVariables())),
-            null);
-    }
+    FlowInstance createInstance(CreateFlowOptions options);
 
 
     //--------------------提交流程业务节点-----------------------------------
@@ -54,7 +48,7 @@ public interface FlowEngine {
      * @param varTrans 变量转换器
      * @return  节点实例编号列表
      */
-    Set<String> submitOpt(SubmitOptOptions options,
+    List<String> submitOpt(SubmitOptOptions options,
             UserUnitVariableTranslate varTrans,
             ServletContext application) throws WorkflowException;
 
@@ -64,13 +58,7 @@ public interface FlowEngine {
      * @param options 当前节点实例编号
      * @return  节点实例编号列表
      */
-    default Set<String> submitOpt(SubmitOptOptions options) throws WorkflowException{
-        return submitOpt(options,
-            new ObjectUserUnitVariableTranslate(
-                CollectionsOpt.unionTwoMap(
-                    options.getVariables(), options.getGlobalVariables())),
-            null);
-    }
+    List<String> submitOpt(SubmitOptOptions options) throws WorkflowException;
 
 
     //--------------------查看流转信息-----------------------------------
@@ -150,8 +138,14 @@ public interface FlowEngine {
      * @param pageDesc 分页信息
      * @return 用户任务列表
      */
-    List<UserTask> listUserTasksByNodeCode(String userCode,String nodeCode,PageDesc pageDesc);
+    List<UserTask> listUserTasksByNodeCode(String userCode, String nodeCode, PageDesc pageDesc);
 
+    /**
+     * 获取节点的所有操作人员
+     * @param nodeInstId 节点实例id
+     * @return 操作人员
+     */
+    List<UserTask> listNodeOperator(String nodeInstId);
 
     /**
      * 根据条件查询待办，包括flowInstId，flowOptTag
@@ -340,7 +334,7 @@ public interface FlowEngine {
      * @param roleCode 办件角色 不能为空
      * @param userCode 用户代码，添加
      */
-    void assignFlowWorkTeam(String flowInstId,String roleCode,String userCode);
+    void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode);
     /**
      * 分配工作小组 --办件角色
      * @param flowInstId  流程实例号 不能为空
@@ -358,8 +352,8 @@ public interface FlowEngine {
      * @param userCode 用户代码，添加
      * @param authdesc 角色描述
      */
-    void assignFlowWorkTeam(String flowInstId,String roleCode,
-                            String userCode,String authdesc);
+    void assignFlowWorkTeam(String flowInstId, String roleCode,
+                            String userCode, String authdesc);
     /**
      * 分配工作小组 --办件角色
      * @param flowInstId  流程实例号 不能为空
@@ -510,7 +504,7 @@ public interface FlowEngine {
      * @param sVar 变量名
      * @param sValue 变量值
      */
-    void saveFlowVariable(String flowInstId,String sVar, Object sValue);
+    void saveFlowVariable(String flowInstId, String sVar, Object sValue);
 
     /**
      * 设置流程节点上下文变量
@@ -528,7 +522,7 @@ public interface FlowEngine {
      * @param sVar 变量名
      * @param sValue 变量值
      */
-    void saveFlowNodeVariable(String flowInstId,String runToken,String sVar, Object sValue);
+    void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue);
 
     /**
      * 设置流程节点上下文变量
@@ -627,6 +621,20 @@ public interface FlowEngine {
      * @return 流程实例信息
      */
     FlowInstance getFlowInstById(String flowInstId);
+
+    /**
+     * 获取流程定义信息
+     * @param flowInstId 实例id
+     * @return 流程定义信息
+     */
+    FlowInfo getFlowDefine(String flowInstId);
+    /**
+     * 获取流程业务信息
+     * @param flowInstId 实例id
+     * @return 流程业务信息
+     */
+    FlowOptInfo getFlowOptInfo(String flowInstId);
+
     /**
      * 根据节点实例号 获得节点实例
      * @param nodeInstId 节点实例号
@@ -634,6 +642,13 @@ public interface FlowEngine {
      */
     NodeInstance getNodeInstById(String nodeInstId);
 
+    /**
+     * 获取节点定义信息
+     *
+     * @param nodeInstId 节点实例id
+     * @return 节点实例信息
+     */
+    NodeInfo getNodeInfo(String nodeInstId);
     /**
      * 获取用户操作节点的Url，if ! canAccess rteurn null
      *

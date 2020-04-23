@@ -96,7 +96,7 @@ public class FlowManagerController extends BaseController {
         String flowCode = flowInst.getFlowCode();
         Long version = flowInst.getVersion();
         if (StringUtils.isNotBlank(flowCode)) {
-            FlowInfo obj = flowDef.getFlowDefObject(flowCode, version);
+            FlowInfo obj = flowDef.getFlowInfo(flowCode, version);
             String xml = obj.getFlowXmlDesc();
             String viewXml = flowManager.viewFlowInstance(flowInstId);
             HashMap<String, String> result = new HashMap<>();
@@ -114,7 +114,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "查看流程图", notes = "查看流程图")
     @RequestMapping(value = "/viewxml/{flowCode}/{version}", method = RequestMethod.GET)
     public void viewRuntimeXml(@PathVariable String flowCode, @PathVariable Long version, HttpServletRequest request, HttpServletResponse response) {
-        FlowInfo obj = flowDef.getFlowDefObject(flowCode, version);
+        FlowInfo obj = flowDef.getFlowInfo(flowCode, version);
         String xml = obj.getFlowXmlDesc();
         HashMap<String, String> result = new HashMap<>();
         result.put("xml", xml);

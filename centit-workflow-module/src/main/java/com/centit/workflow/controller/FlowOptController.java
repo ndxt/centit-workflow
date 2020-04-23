@@ -62,7 +62,7 @@ public class FlowOptController extends BaseController {
     public PageQueryResult listOptInfo(PageDesc pageDesc, HttpServletRequest request){
         Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
         JSONArray objList = wfOptService.listOptInfo(filterMap, pageDesc);
-        return PageQueryResult.createResult(objList,pageDesc);
+        return PageQueryResult.createResult(objList, pageDesc);
     }
 
     @ApiOperation(value = "获取指定业务", notes = "获取指定业务")

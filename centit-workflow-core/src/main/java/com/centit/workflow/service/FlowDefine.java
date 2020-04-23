@@ -1,7 +1,9 @@
 package com.centit.workflow.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
+import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.FlowTeamRole;
 import com.centit.workflow.po.NodeInfo;
 
@@ -52,12 +54,12 @@ public interface FlowDefine {
     /**
      * 获取指定版本流程定义对象
      */
-    FlowInfo getFlowDefObject(String flowCode, long version );
+    FlowInfo getFlowInfo(String flowCode, long version );
 
     /**
      * 获取流程定义最新版本对象
      */
-    FlowInfo getFlowDefObject(String flowCode);
+    FlowInfo getFlowInfo(String flowCode);
 
     /**
      * 保存流程定义对象,(版本只能为0),并且只保存基本信息
@@ -112,8 +114,14 @@ public interface FlowDefine {
      */
     Set<String> getUnitExp(String flowCode, Long version);
 
-
-
+    /**
+     * 获取流程业务表单，用于流程业务定义
+     * @param filterMap 过滤条件
+     * @param pageDesc 分页信息
+     * @return 流程业务信息列表
+     */
+    List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap,
+                                  PageDesc pageDesc);
     /**
      * 根据流程code删除相关的流程定义，用于删除多余的测试数据
      * @param flowCode 流程代码
@@ -172,7 +180,7 @@ public interface FlowDefine {
      * @param version 版本 0 草稿 -1 最新版本
      * @return 流程的办件角色列表
      */
-    Map<String,String> listFlowItemRoles(String flowCode, Long version);
+    Map<String, String> listFlowItemRoles(String flowCode, Long version);
 
     /**
      * 获取某一流程某一版本号中存在的所有办件角色
@@ -205,4 +213,5 @@ public interface FlowDefine {
      * @return 流程变量信息
      */
     Map<String, String> listFlowDefaultVariables(String flowCode, Long version);
+
 }

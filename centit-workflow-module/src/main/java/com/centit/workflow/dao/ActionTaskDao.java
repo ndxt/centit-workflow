@@ -113,15 +113,6 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     }
 
     /**
-     * 生成主键编号
-     * @return
-     */
-    /*@Transactional
-    public long getNextTaskId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_ACTIONTASKNO");
-    }
-    */
-    /**
      *  根据用户编码获取用户已办任务列表
      * @param filter
      * @param pageDesc
@@ -148,23 +139,6 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         return dataList == null? null : dataList.toJavaList(UserTask.class);
     }
 
-    @Transactional
-    public List<ActionTask> getActionTaskByNodeidAndUser(String nodeInstId , String userCode){
-        String whereSql = "where NODE_INST_ID=? and USER_CODE=? and IS_VALID='T'";
-
-        return this.listObjectsByFilter(whereSql, new Object[]{nodeInstId,userCode});
-    }
-
-    @SuppressWarnings("unchecked")
-    @Transactional
-    public List<ActionTask> listActionTaskByNode(String nodeInstId){
-       // String baseHQL = "from WfActionTask t join WfNodeInstance i on i.nodeinstid = t.nodeinstid where i.nodestate <> 'C' and t.usercode = ?";
-       //return this.listObjects(baseHQL,userCode);
-        Map<String,Object> filterMap = new HashMap<>();
-        filterMap.put("nodeInstId",nodeInstId);
-        String baseSQL = "SELECT t.* FROM WF_ACTION_TASK T where T.node_inst_id = ?";
-        return this.listObjectsBySql(baseSQL,filterMap);
-    }
 
     @SuppressWarnings("unchecked")
     @Transactional
