@@ -512,8 +512,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else/*gw xz ro(system)*/
             if(StringUtils.isNotBlank(nextOptNode.getRoleType())
                 && StringUtils.isNotBlank(nextOptNode.getRoleCode())) {
+            String unitCode = CollectionUtils.isEmpty(nodeUnits)? null: nodeUnits.iterator().next();
             optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(context,
-                nextOptNode.getRoleType(), nextOptNode.getRoleCode(), options.getUnitCode());
+                nextOptNode.getRoleType(), nextOptNode.getRoleCode(), unitCode);
         }
 
         return new LeftRightPair<>(nodeUnits, optUsers);
