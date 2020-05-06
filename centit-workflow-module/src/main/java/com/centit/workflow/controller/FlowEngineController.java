@@ -446,4 +446,13 @@ public class FlowEngineController extends BaseController {
             WebOptUtils.getCurrentUserCode(request),
             WebOptUtils.getCurrentUnitCode(request));
     }
+
+    @ApiOperation(value = "根据条件查询已办", notes = "根据条件查询已办")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listCompleteTasks")
+    public PageQueryResult<UserTask> listCompleteTasks(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks = flowEngine.listUserCompleteTasks(searchColumn, pageDesc);
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
+    }
 }

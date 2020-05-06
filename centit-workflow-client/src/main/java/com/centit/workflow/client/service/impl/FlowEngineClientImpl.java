@@ -605,7 +605,14 @@ public class FlowEngineClientImpl implements FlowEngine {
      */
     @Override
     public List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap, PageDesc pageDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
+//        throw new ObjectException("This function is not been implemented in client.");
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/engine/listCompleteTasks",
+                    filterMap), (JSONObject) JSON.toJSON(pageDesc)));
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getDataAsArray("objList", UserTask.class);
     }
 
     /**
