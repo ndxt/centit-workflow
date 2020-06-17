@@ -39,7 +39,10 @@ public class NodeInfo implements java.io.Serializable {
     @Range( max = 9999, message = "版本号不能大于{max}")
     private Long version;
     /**
-     * A:开始 B:首节点 C:业务节点  F结束  R: 路由节点
+     * A:开始（这个在数据库中其实不存在）
+     * B:首节点(首节点不能是路由节点，如果是路由节点请设置为 哑元，跳转到后一个节点； B 的处理换个C一样)
+     * C:业务节点 R: 路由节点 F结束
+     * TODO 这个B类型是一个糟糕的设计，应该在flowInfo中添加一个首届点字段，
      */
     @Column(name = "NODE_TYPE")
     private String nodeType;

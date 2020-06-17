@@ -500,7 +500,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             p.setVersion(newVersion);
         }
         newFlowDef.setFlowVariableDefines(newFlowVariableDefine);
-        Map<String, String> nodeIsLeaf = new HashMap<String, String>();
+        Map<String, String> nodeIsLeaf = new HashMap<>();
         for (NodeInfo nd : newFlowDef.getFlowNodes()) {
             if (nd.getNodeId().equals(flowData.firstNodeId)) {
                 nd.setNodeType("B");//首届点
@@ -581,7 +581,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowDefineDao.updateObject(flowDef);
 
         //将非0老版本流程状态改为已过期
-        FlowInfo oldflowDef = flowDefineDao.getObjectById(new FlowInfoId((long) nCurVersion, flowCode));
+        FlowInfo oldflowDef = flowDefineDao.getObjectById(new FlowInfoId(nCurVersion, flowCode));
         if (oldflowDef != null && nCurVersion > 0) {
             oldflowDef.setFlowState("C");
             flowDefineDao.updateObject(oldflowDef);

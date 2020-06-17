@@ -776,7 +776,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
             return new ArrayList<>();
         } else {
-
             return submitToNextOptNode(
                 nextNode, nodeToken, flowInst, flowInfo,
                 preNodeInst, transPath, nodeTran, options,
@@ -1170,8 +1169,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInstanceDao.updateObject(flowInst);
 
         List<String> nextNodeInsts = new ArrayList<>();
-
-
         if ("T".equals(nodeInst.getTaskAssigned())) {
             //多人操作节点 等待所有人都提交才可以提交
             /**这个应该会不需要了，暂时保留
@@ -1486,12 +1483,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
 
     private Set<NodeInfo> viewRouterNextNodeInside(NodeInfo currNode, FlowVariableTranslate varTrans) {
-        Set<NodeInfo> nextNodes = new HashSet<NodeInfo>();
+        Set<NodeInfo> nextNodes = new HashSet<>();
         Set<FlowTransition> trans = selectTransitions(currNode, varTrans);
 
         for (FlowTransition tran : trans) {
             NodeInfo tempNode = flowNodeDao.getObjectById(tran.getEndNodeId());
-            if ("C".equals(tempNode.getNodeType()))
+            if ("C".equals(tempNode.getNodeType()) || "B".equals(tempNode.getNodeType()))
                 nextNodes.add(tempNode);
             else if ("R".equals(tempNode.getNodeType())) {
                 nextNodes.addAll(
