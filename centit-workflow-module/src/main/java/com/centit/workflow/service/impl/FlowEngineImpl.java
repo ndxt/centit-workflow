@@ -435,7 +435,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // L 上一次运行到本节点的 用户和机构
         if (oldNodeInst != null) {
             context.addUnitParam("L", oldNodeInst.getUnitCode());
-            context.addUserParam("L", oldNodeInst.getUserCode());
+            context.addUserParam("L", oldNodeInst.getLastUpdateUser());
         }
         // P 前面一个节点的 用户和机构
         NodeInstance preNode = flowInst.getNearestNode(preNodeInst, nodeToken);
