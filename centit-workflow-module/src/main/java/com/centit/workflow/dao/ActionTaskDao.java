@@ -43,6 +43,21 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
             "[ :flowCode| and FLOW_CODE = :flowCode] " +
             "[ :stageCode| and STAGE_CODE = :stageCode] ";
 
+    private final static String userCompleteTaskBaseSql = "select t.FLOW_INST_ID, t.FLOW_CODE, t.VERSION, t.FLOW_OPT_NAME, " +
+        "t.FLOW_OPT_TAG, t.UNIT_CODE, t.USER_CODE, " +
+        "t.CREATE_TIME, t.PROMISE_TIME, t.TIME_LIMIT, " +
+        "n.NODE_NAME, t.LAST_UPDATE_TIME, t.INST_STATE " +
+        " from wf_flow_instance t join wf_flow_define f on f.FLOW_CODE=t.FLOW_CODE and f.VERSION=t.VERSION" +
+        " left join (select group_concat(DISTINCT Node_Name) as node_name,FLOW_INST_ID from v_user_task_list GROUP BY FLOW_INST_ID) n " +
+        " on n.FLOW_INST_ID=t.FLOW_INST_ID " +
+        " where t.flow_inst_id in  (select w.flow_inst_id from wf_node_instance w join wf_node n " +
+        "on n.node_id=w.node_id where 1=1 [ :userCode| and w.last_update_user=:userCode] " +
+        "  [ :nodeCode| n.node_code in (:nodeCode)]  [ :(like)nodeName| and n.node_Name like :nodeName and  w.NODE_STATE='N']  )" +
+        " [ :(like)flowOptName| and t.flow_Opt_Name like :flowOptName] " +
+        " [ :(like)flowName| and f.flow_Name like :flowName]  " +
+        "  [ :osId| and f.os_id in (:osId)] " +
+        " order by t.last_update_time desc ";
+
     private final static String userTaskBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
             "FLOW_OPT_TAG,NODE_INST_ID,UNIT_CODE,USER_CODE,ROLE_TYPE," +
             "ROLE_CODE,AUTH_DESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
@@ -121,7 +136,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     @Transactional
     public List<UserTask> listUserTaskFinByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
-        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskFinBaseSql ,filter);
+        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userCompleteTaskBaseSql ,filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
                 queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
 
