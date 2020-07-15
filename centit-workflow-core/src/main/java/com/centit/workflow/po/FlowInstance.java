@@ -116,6 +116,7 @@ public class FlowInstance implements java.io.Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = NodeInstance.class)
     @JoinColumn(name = "flowInstId")
+    @JSONField(serialize = false)
     private List<NodeInstance> flowNodeInstances = null;// new ArrayList<WfNodeInstance>();
 
     @Transient
@@ -124,6 +125,7 @@ public class FlowInstance implements java.io.Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)
     @JoinColumn(name = "flowInstId")
+    @JSONField(serialize = false)
     private List<StageInstance> flowStageInstances = null;// new ArrayList<WfNodeInstance>();
 
     @Transient
