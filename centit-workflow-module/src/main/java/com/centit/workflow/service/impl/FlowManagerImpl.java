@@ -118,7 +118,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             transMap.put(String.valueOf(trans.getTransId()), trans);
         }
         //flowInstanceDao.fetchObjectReferences(wfInst);
-        List<NodeInstance> nodeInstSet = wfInst.getNodeInstances();
+        List<NodeInstance> nodeInstSet = wfInst.getFlowNodeInstances();
         List<NodeInstance> completeNodeSet = new ArrayList<>();
         List<FlowTransition> completeTrans = new ArrayList<>();
         for (NodeInstance nodeInst : nodeInstSet) {
@@ -287,7 +287,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Element baseEle = viewDoc.addElement("flow");
         Element procsEle = baseEle.addElement("nodes");
 
-        List<NodeInstance> nodeInstSet = wfInst.getNodeInstances();
+        List<NodeInstance> nodeInstSet = wfInst.getFlowNodeInstances();
         Iterator<NodeInstance> nodeInstIter = nodeInstSet.iterator();
         // 根据节点实例状态刷新流程的节点状态
         while (nodeInstIter.hasNext()) {
@@ -487,8 +487,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param flowInstance
      */
     public void initNodeInstances(FlowInstance flowInstance) {
-        if (flowInstance.getNodeInstances() != null) {
-            for (NodeInstance nodeInstance : flowInstance.getNodeInstances()) {
+        if (flowInstance.getFlowNodeInstances() != null) {
+            for (NodeInstance nodeInstance : flowInstance.getFlowNodeInstances()) {
                 NodeInfo node = flowNodeDao.getObjectById(nodeInstance.getNodeId());
                 if (node != null) {
                     nodeInstance.setNodeName(node.getNodeName());

@@ -342,7 +342,7 @@ public class FlowInstance implements java.io.Serializable {
     }
 
     public Set<NodeInstance> getActiveNodeInstances() {
-        Set<NodeInstance> nodeInstSet = new HashSet<NodeInstance>();
+        Set<NodeInstance> nodeInstSet = new HashSet<>();
         if (this.flowNodeInstances == null)
             return nodeInstSet;
         for (NodeInstance nodeInst : flowNodeInstances)
@@ -351,36 +351,16 @@ public class FlowInstance implements java.io.Serializable {
         return nodeInstSet;
     }
 
-    public List<NodeInstance> getNodeInstances() {
-        if (flowNodeInstances == null)
-            return null;
-
-        flowNodeInstances.sort(Comparator.comparing(NodeInstance::getCreateTime));
-
-
-        /*Collections.sort(flowNodeInstances, new Comparator<NodeInstance>() {
-
-            @Override
-            public int compare(NodeInstance o1, NodeInstance o2) {
-                if(o1.getLastUpdateTime()==null)
-                    return -1;
-                if(o2.getLastUpdateTime()==null)
-                    return -1;
-                if(o1.getLastUpdateTime().after(o2.getLastUpdateTime()))
-                    return 1;
-                if(o1.getLastUpdateTime().before(o2.getLastUpdateTime()))
-                    return -1;
-                return 0;
-            }
-        });*/
-        return new ArrayList<>(flowNodeInstances);
-    }
-
     public List<NodeInstance> getFlowNodeInstances() {
-        if (this.flowNodeInstances == null)
+        if (flowNodeInstances == null) {
             this.flowNodeInstances = new ArrayList<>();
+            return this.flowNodeInstances;
+        }
+
+        this.flowNodeInstances.sort(Comparator.comparing(NodeInstance::getCreateTime));
         return this.flowNodeInstances;
     }
+
 
     public void setFlowNodeInstances(List<NodeInstance> flowNodeInstances) {
         this.flowNodeInstances = flowNodeInstances;
@@ -824,7 +804,7 @@ public class FlowInstance implements java.io.Serializable {
         }
         //delete
         boolean found = false;
-        Set<NodeInstance> oldObjs = new HashSet<NodeInstance>();
+        Set<NodeInstance> oldObjs = new HashSet<>();
         oldObjs.addAll(getFlowNodeInstances());
 
         for (Iterator<NodeInstance> it = oldObjs.iterator(); it.hasNext(); ) {

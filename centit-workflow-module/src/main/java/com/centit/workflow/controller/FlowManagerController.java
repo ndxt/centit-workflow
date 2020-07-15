@@ -580,7 +580,7 @@ public class FlowManagerController extends BaseController {
             nodeOptInfo.put("nodename", nodeInfo.getNodeName());
             int nodeInstInd = 0;
             //String nodeInstId=0;
-            for (NodeInstance nodeInst : dbobject.getNodeInstances()) {
+            for (NodeInstance nodeInst : dbobject.getFlowNodeInstances()) {
                 if (nodeInst.getNodeId().equals(nodeId)) {
                     //暂时保证一个节点保留一条查看信息
                    /* if(nodeInstId>nodeInst.getNodeInstId())

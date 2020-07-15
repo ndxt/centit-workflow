@@ -31,8 +31,8 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         nodeUsers = new HashMap<>();
 
         String token = nodeInst == null? "T" : nodeInst.getRunToken();
-        if (null != flowInst.getNodeInstances()) {
-            for (NodeInstance ni : flowInst.getNodeInstances()) {
+        if (null != flowInst.getFlowNodeInstances()) {
+            for (NodeInstance ni : flowInst.getFlowNodeInstances()) {
                 String nc = ni.getNodeCode();
                 if (nc != null && (token.equals(ni.getRunToken()) || token.startsWith(ni.getRunToken() + "."))) {
                     Set<String> nUnits = nodeUnits.get(nc);
