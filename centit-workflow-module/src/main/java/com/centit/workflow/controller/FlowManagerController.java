@@ -209,7 +209,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "给一个节点指定任务、用这个代替系统自动分配任务", notes = "给一个节点指定任务、用这个代替系统自动分配任务")
     @RequestMapping(value = "/assign/{nodeInstId}/{userCode}", method = RequestMethod.POST)
     @WrapUpResponseBody
-    public void assign(@PathVariable String nodeInstId, @PathVariable String userCode, ActionTask actionTask) {
+    public void assign(@PathVariable String nodeInstId, @PathVariable String userCode, @RequestBody ActionTask actionTask) {
         flowManager.assignNodeTask(nodeInstId,
             actionTask.getUserCode(), StringUtils.isBlank(userCode) ? "admin" : userCode, actionTask.getAuthDesc());
     }
@@ -217,7 +217,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "添加节点任务", notes = "添加节点任务")
     @WrapUpResponseBody
     @RequestMapping(value = "/addNodeTask/{nodeInstId}/{mangerUserCode}", method = RequestMethod.POST)
-    public void addNodeTask(@PathVariable String nodeInstId, @PathVariable String mangerUserCode, ActionTask actionTask) {
+    public void addNodeTask(@PathVariable String nodeInstId, @PathVariable String mangerUserCode, @RequestBody ActionTask actionTask) {
         flowManager.addNodeTask(nodeInstId,
             actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode) ? "admin" : mangerUserCode, actionTask.getAuthDesc());
     }
@@ -225,7 +225,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "删除节点任务", notes = "删除节点任务")
     @WrapUpResponseBody
     @RequestMapping(value = "/deleteNodeTask/{nodeInstId}/{mangerUserCode}", method = RequestMethod.POST)
-    public void deleteNodeTask(@PathVariable String nodeInstId, @PathVariable String mangerUserCode, ActionTask actionTask) {
+    public void deleteNodeTask(@PathVariable String nodeInstId, @PathVariable String mangerUserCode, @RequestBody ActionTask actionTask) {
         flowManager.deleteNodeTask(nodeInstId,
             actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode) ? "admin" : mangerUserCode);
     }
