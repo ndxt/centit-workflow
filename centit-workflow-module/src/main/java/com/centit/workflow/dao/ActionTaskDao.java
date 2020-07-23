@@ -46,7 +46,8 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
     private final static String userCompleteTaskBaseSql = "select t.FLOW_INST_ID, t.FLOW_CODE, t.VERSION, t.FLOW_OPT_NAME, " +
         "t.FLOW_OPT_TAG, t.UNIT_CODE, t.USER_CODE, " +
         "t.CREATE_TIME, t.PROMISE_TIME, t.TIME_LIMIT, " +
-        "n.NODE_NAME, t.LAST_UPDATE_TIME, t.INST_STATE " +
+        "n.NODE_NAME, t.LAST_UPDATE_TIME, t.INST_STATE, " +
+        "t.LAST_UPDATE_USER " +
         " from wf_flow_instance t join wf_flow_define f on f.FLOW_CODE=t.FLOW_CODE and f.VERSION=t.VERSION" +
         " left join (select group_concat(DISTINCT Node_Name) as node_name,FLOW_INST_ID from v_user_task_list GROUP BY FLOW_INST_ID) n " +
         " on n.FLOW_INST_ID=t.FLOW_INST_ID " +
