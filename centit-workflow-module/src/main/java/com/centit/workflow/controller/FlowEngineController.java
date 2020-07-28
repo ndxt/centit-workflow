@@ -314,9 +314,9 @@ public class FlowEngineController extends BaseController {
         return flowEngine.rollBackNode(nodeInstId, managerUserCode);
     }
 
-    @ApiOperation(value = "回退节点", notes = "回退节点")
+    @ApiOperation(value = "检查后续的节点是否被操作过，包括更新和提交", notes = "检查后续的节点是否被操作过，包括更新和提交")
     @WrapUpResponseBody(contentType = WrapUpContentType.RAW)
-    @GetMapping(value = "nodeCanBeReclaim")
+    @GetMapping(value = "/nodeCanBeReclaim/{nodeInstId}")
     public Boolean checkNodeCanBeReclaim(@PathVariable String nodeInstId) {
         return flowEngine.nodeCanBeReclaim(nodeInstId);
     }
@@ -350,7 +350,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "获取流程实例信息", notes = "获取流程实例信息")
     @WrapUpResponseBody
     @GetMapping(value = "/inst/{flowInstId}")
-    public FlowInstance getFlowInstance(String flowInstId) {
+    public FlowInstance getFlowInstance(@PathVariable String flowInstId) {
         return flowEngine.getFlowInstById(flowInstId);
     }
 
@@ -363,7 +363,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "获取流程定义信息", notes = "获取流程定义信息")
     @WrapUpResponseBody
     @GetMapping(value = "/instDef/{flowInstId}")
-    public FlowInfo getFlowDefine(String flowInstId) {
+    public FlowInfo getFlowDefine(@PathVariable String flowInstId) {
         FlowInstance instance = flowEngine.getFlowInstById(flowInstId);
         if(instance==null){
             return null;
@@ -380,7 +380,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "获取流程定义信息", notes = "获取流程定义信息")
     @WrapUpResponseBody
     @GetMapping(value = "/optInfo/{flowInstId}")
-    public FlowOptInfo getFlowOptInfo(String flowInstId) {
+    public FlowOptInfo getFlowOptInfo(@PathVariable String flowInstId) {
         FlowInfo flowInfo = getFlowDefine(flowInstId);
         if(flowInfo==null){
             return null;
@@ -397,7 +397,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "获取节点实例信息", notes = "获取节点实例信息")
     @WrapUpResponseBody
     @GetMapping(value = "/nodeInst/{nodeInstId}")
-    public NodeInstance getNodeInstance(String nodeInstId) {
+    public NodeInstance getNodeInstance(@PathVariable String nodeInstId) {
         return flowEngine.getNodeInstById(nodeInstId);
     }
 
@@ -410,7 +410,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "获取节点实例信息", notes = "获取节点实例信息")
     @WrapUpResponseBody
     @GetMapping(value = "/nodeDef/{nodeInstId}")
-    public NodeInfo getNodeInfo(String nodeInstId) {
+    public NodeInfo getNodeInfo(@PathVariable String nodeInstId) {
         NodeInstance inst = flowEngine.getNodeInstById(nodeInstId);
         if(inst==null){
             return null;
