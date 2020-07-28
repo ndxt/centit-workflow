@@ -300,8 +300,8 @@ public class FlowEngineController extends BaseController {
         String userCode = jsonObject.getString("userCode");
         String nodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
-        return /*NodeInstance =*/ flowEngine.createPrepNodeInst(flowInstId, curNodeInstId, createUser,
-            nodeCode, userCode, unitCode);
+        return /*NodeInstance =*/ flowEngine.createPrepNodeInst(flowInstId, curNodeInstId, nodeCode,
+            createUser, userCode, unitCode);
     }
 
     @ApiOperation(value = "回退节点", notes = "回退节点")
