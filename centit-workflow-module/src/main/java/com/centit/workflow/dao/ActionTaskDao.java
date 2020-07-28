@@ -52,8 +52,8 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
         " left join (select group_concat(DISTINCT Node_Name) as node_name,FLOW_INST_ID from v_user_task_list GROUP BY FLOW_INST_ID) n " +
         " on n.FLOW_INST_ID=t.FLOW_INST_ID " +
         " where t.flow_inst_id in  (select w.flow_inst_id from wf_node_instance w join wf_node n " +
-        "on n.node_id=w.node_id where 1=1 [ :userCode| and w.last_update_user=:userCode] " +
-        "  [ :nodeCode| n.node_code in (:nodeCode)]  [ :(like)nodeName| and n.node_Name like :nodeName and  w.NODE_STATE='N']  )" +
+        "on n.node_id=w.node_id where w.NODE_STATE in ('C', 'F', 'P') [ :userCode| and w.last_update_user=:userCode] " +
+        "  [ :nodeCode| and n.node_code in (:nodeCode)]  [ :(like)nodeName| and n.node_Name like :nodeName]  )" +
         " [ :(like)flowOptName| and t.flow_Opt_Name like :flowOptName] " +
         " [ :(like)flowName| and f.flow_Name like :flowName]  " +
         "  [ :osId| and f.os_id in (:osId)] " +
