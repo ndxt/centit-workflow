@@ -1277,7 +1277,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public int deleteNodeTask(String nodeInstId, String userCode,
                               String mangerUserCode) {
-        NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId);
+//        NodeInstance node = nodeInstanceDao.getObjectById(nodeInstId); 20200818 by zhangbin
+        NodeInstance node = nodeInstanceDao.getObjectWithReferences(nodeInstId);
         if (node == null)
             return -1;
         Set<ActionTask> taskList = node.getWfActionTasks();
