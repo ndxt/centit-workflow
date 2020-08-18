@@ -14,6 +14,7 @@ import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.NodeEventSupport;
+import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
@@ -908,7 +909,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (nextNode == null)
             return null;//大小于
 //            return -3;
-        if (!"C".equals(nextNode.getNodeType()))
+        if (!"C".equals(nextNode.getNodeType()) && !"B".equals(nextNode.getNodeType()))
             return null;//大小于
 //            return -4;
 
@@ -934,6 +935,19 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nextNodeInst.setPrevNodeInstId(nodeInst.getNodeInstId());
         nextNodeInst.setRunToken(nodeInst.getRunToken());// 添加令牌算法
         nextNodeInst.setTransPath(String.valueOf(trans.getTransId()));
+
+        // 能计算出下一步操作人时 使用下一步操作人
+        Set<String> nextUsers = flowEngine.viewNextNodeOperator(nextCode,
+            SubmitOptOptions.create().user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()).nodeInst(nodeInstId));
+        if (null != nextUsers && !nextUsers.isEmpty()) {
+            nextNodeInst.setTaskAssigned("T");
+            nextUsers.forEach(nextUser -> {
+                ActionTask wfactTask = FlowOptUtils.createActionTask(nextNodeInst.getNodeInstId(), nextUser);
+                wfactTask.setAssignTime(commitTime);
+                actionTaskDao.saveNewObject(wfactTask);
+                nextNodeInst.addWfActionTask(wfactTask);
+            });
+        }
 
         //创建节点提交日志 S:提交节点
         nodeInstanceDao.updateObject(nodeInst);

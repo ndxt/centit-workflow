@@ -455,4 +455,21 @@ public class FlowEngineController extends BaseController {
         List<UserTask> userTasks = flowEngine.listUserCompleteTasks(searchColumn, pageDesc);
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
+
+    @ApiOperation(value = "预判下一步节点的节点编号", notes = "预判下一步节点的节点编号")
+    @WrapUpResponseBody
+    @PostMapping(value = "/viewNextNode")
+    public Set<NodeInfo> viewNextNode(@RequestBody SubmitOptOptions options) {
+        return flowEngine.viewNextNode(options);
+    }
+
+    @ApiOperation(value = "查看下一节点可以操作的人员类表", notes = "查看下一节点可以操作的人员类表")
+    @WrapUpResponseBody
+    @PostMapping(value = "/viewNextNodeOperator")
+    public Set<String> viewNextNodeOperator(@RequestBody String json) {
+        JSONObject jsonObject = JSON.parseObject(json);
+        String nextNodeId = jsonObject.getString("nextNodeId");
+        SubmitOptOptions options = JSON.parseObject(jsonObject.getString("options"), SubmitOptOptions.class);
+        return flowEngine.viewNextNodeOperator(nextNodeId, options);
+    }
 }

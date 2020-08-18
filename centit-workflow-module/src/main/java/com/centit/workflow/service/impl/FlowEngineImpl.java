@@ -1499,12 +1499,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public Set<NodeInfo> viewNextNode(String nodeInstId, String userCode,
-                                      String unitCode, UserUnitVariableTranslate varTrans) {
+    public Set<NodeInfo> viewNextNode(SubmitOptOptions options) {
         //根据上级节点实例编号获取节点所在父流程实例信息
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(options.getNodeInstId());
         if (nodeInst == null) {
-            logger.error("找不到节点实例：" + nodeInstId);
+            logger.error("找不到节点实例：" + options.getNodeInstId());
             return null;
         }
         FlowInstance flowInst = flowManager.getFlowInstance(nodeInst.getFlowInstId());
@@ -1524,6 +1523,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
                 nodeInst, flowInst,flowVariableDao,this,null);
             // 分支节点的条件
+            UserUnitVariableTranslate varTrans = new ObjectUserUnitVariableTranslate(
+                CollectionsOpt.unionTwoMap(
+                    options.getVariables() == null ? new HashMap<>() : options.getVariables(),
+                    options.getGlobalVariables() == null ? new HashMap<>() : options.getGlobalVariables()));
             flowVarTrans.setFlowVarTrans(varTrans);
             nextNodes = viewRouterNextNodeInside(nextNode, flowVarTrans);
         }
@@ -1531,14 +1534,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public Set<String> viewNextNodeOperator(String nextNodeId,
-                                            String curNodeInstId,
-                                            String userCode, String unitCode,
-                                            UserUnitVariableTranslate varTrans) {
+    public Set<String> viewNextNodeOperator(String nextNodeId, SubmitOptOptions options) {
 
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(options.getNodeInstId());
         if (nodeInst == null) {
-            logger.error("找不到节点实例：" + curNodeInstId);
+            logger.error("找不到节点实例：" + options.getNodeInstId());
             return null;
         }
         FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
@@ -1553,11 +1553,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (!"S".equals(nextNode.getOptType())) {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
                 nodeInst, flowInst, flowVariableDao,this,null);
+            UserUnitVariableTranslate varTrans = new ObjectUserUnitVariableTranslate(
+                CollectionsOpt.unionTwoMap(
+                    options.getVariables() == null ? new HashMap<>() : options.getVariables(),
+                    options.getGlobalVariables() == null ? new HashMap<>() : options.getGlobalVariables()));
             flowVarTrans.setFlowVarTrans(varTrans);
 
             LeftRightPair<Set<String>, Set<String>> unitAndUser =
             calcNodeUnitAndOpterators(flowInst, nodeInst, nodeInst.getRunToken(),
-                nextNode, SubmitOptOptions.create().user(userCode).unit(unitCode),
+                nextNode, SubmitOptOptions.create().user(options.getUserCode()).unit(options.getUnitCode()),
                 flowVarTrans);
 
             return unitAndUser.getRight();

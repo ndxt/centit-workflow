@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletContext;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by chen_rj on 2017/7/28.
@@ -492,33 +489,38 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     /**
-     * 提交节点工作 是否成功
      * 预判下一步节点的节点编号
-     *
-     * @param nodeInstId 当前节点实例编号
-     * @param userCode   操作用户编号 对应用户表达式 O operator
-     * @param unitCode   用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
-     * @param varTrans   变量转换器
+     * @param options
      * @return 节点信息列表
      */
     @Override
-    public Set<NodeInfo> viewNextNode(String nodeInstId, String userCode, String unitCode, UserUnitVariableTranslate varTrans) {
-        throw new ObjectException("This function is not been implemented in client.");
+    public Set<NodeInfo> viewNextNode(SubmitOptOptions options) {
+//        throw new ObjectException("This function is not been implemented in client.");
+        String json =  RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/viewNextNode", options);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        return new HashSet<>(receiveJSON.getDataAsArray(NodeInfo.class));
     }
 
     /**
      * 查看下一节点可以操作的人员类表
      *
      * @param nextNodeId    下一个节点编号
-     * @param curNodeInstId 当前节点实例编号
-     * @param userCode      操作用户编号 对应用户表达式 O operator
-     * @param unitCode      用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
-     * @param varTrans      变量转换器
+     * @param options
      * @return 用户代码
      */
     @Override
-    public Set<String> viewNextNodeOperator(String nextNodeId, String curNodeInstId, String userCode, String unitCode, UserUnitVariableTranslate varTrans) {
-        throw new ObjectException("This function is not been implemented in client.");
+    public Set<String> viewNextNodeOperator(String nextNodeId, SubmitOptOptions options) {
+//        throw new ObjectException("This function is not been implemented in client.");
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("nextNodeId", nextNodeId);
+        paramMap.put("options", options);
+        String json =  RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/viewNextNodeOperator", paramMap);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        return new HashSet<>(receiveJSON.getDataAsArray(String.class));
     }
 
     /**

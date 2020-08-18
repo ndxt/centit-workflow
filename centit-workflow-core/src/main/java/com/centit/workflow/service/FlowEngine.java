@@ -63,28 +63,19 @@ public interface FlowEngine {
 
     //--------------------查看流转信息-----------------------------------
     /**
-     * 提交节点工作 是否成功
      * 预判下一步节点的节点编号
-     * @param nodeInstId 当前节点实例编号
-     * @param userCode 操作用户编号 对应用户表达式 O operator
-     * @param unitCode 用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
-     * @param varTrans 变量转换器
+     * @param options
      * @return 节点信息列表
      */
-    Set<NodeInfo> viewNextNode(String nodeInstId, String userCode,
-                               String unitCode, UserUnitVariableTranslate varTrans);
+    Set<NodeInfo> viewNextNode(SubmitOptOptions options);
 
     /**
      * 查看下一节点可以操作的人员类表
      * @param nextNodeId 下一个节点编号
-     * @param curNodeInstId 当前节点实例编号
-     * @param userCode 操作用户编号 对应用户表达式 O operator
-     * @param unitCode 用户机构，如果为空系统会自动负责为 操作用户的主机构，机构表达式要为 U
-     * @param varTrans 变量转换器
+     * @param options
      * @return 用户代码
      */
-    Set<String> viewNextNodeOperator(String nextNodeId,String curNodeInstId,
-                                     String userCode,String unitCode,UserUnitVariableTranslate varTrans);
+    Set<String> viewNextNodeOperator(String nextNodeId, SubmitOptOptions options);
 
 
     //-------------------------用户待办接口---------------------------------------
