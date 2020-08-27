@@ -158,9 +158,24 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "根据条件查询待办", notes = "根据条件查询待办")
     @WrapUpResponseBody
     @GetMapping(value = "/listTasks")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userCode", value = "用户编码"),
+        @ApiImplicitParam(name = "flowInstId", value = "流程实例ID"),
+        @ApiImplicitParam(name = "nodeInstId", value = "节点实例ID"),
+        @ApiImplicitParam(name = "flowCode", value = "流程定义Code"),
+        @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)"),
+        @ApiImplicitParam(name = "flowOptTag", value = "流程实例对应的业务主键"),
+        @ApiImplicitParam(name = "nodeName", value = "节点名称"),
+        @ApiImplicitParam(name = "osId", value = "业务系统ID"),
+        @ApiImplicitParam(name = "nodeCode", value = "环节代码"),
+        @ApiImplicitParam(name = "stageCode", value = "阶段代码"),
+        @ApiImplicitParam(name = "stageArr", value = "STAGE_CODE in (:stageArr)"),
+        @ApiImplicitParam(name = "notNodeCode", value = "NODE_CODE not in  (:notNodeCode)")
+    })
     public PageQueryResult<UserTask> listTasks(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, pageDesc);
+
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
@@ -174,6 +189,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查询用户岗位待办", notes = "查询用户岗位待办")
     @WrapUpResponseBody
     @GetMapping(value = "/listDynamicTasks")
+    @ApiParam
     public PageQueryResult<UserTask> listUserDynamicTasks(HttpServletRequest request, PageDesc pageDesc ) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         List<UserTask> userTasks =  flowEngine.listDynamicTask(searchColumn, pageDesc);
