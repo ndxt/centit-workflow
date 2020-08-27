@@ -189,7 +189,6 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查询用户岗位待办", notes = "查询用户岗位待办")
     @WrapUpResponseBody
     @GetMapping(value = "/listDynamicTasks")
-    @ApiParam
     public PageQueryResult<UserTask> listUserDynamicTasks(HttpServletRequest request, PageDesc pageDesc ) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         List<UserTask> userTasks =  flowEngine.listDynamicTask(searchColumn, pageDesc);
