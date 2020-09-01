@@ -1,6 +1,5 @@
 package com.centit.workflow.service.impl;
 
-import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
@@ -774,7 +773,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     varTrans, application, true, true);
                 // }
             }
-            return new ArrayList<>();
+            //返回一个不存在的id表示0流程结束
+            return CollectionsOpt.createList("0");
         } else {
             return submitToNextOptNode(
                 nextNode, nodeToken, flowInst, flowInfo,
