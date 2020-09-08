@@ -76,7 +76,7 @@ public class SubmitOptOptions implements FlowOptParamOptions{
      * 流程机构
      * Map String 机构角色 String（机构代码）
      */
-    @ApiModelProperty("指定后续节点机构")
+    @ApiModelProperty("流程办件机构，类似于办件角色")
     private Map<String, List<String>> flowOrganizes;
     /**
      * 后续节点机构
