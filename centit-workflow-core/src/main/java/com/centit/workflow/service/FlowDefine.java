@@ -1,11 +1,7 @@
 package com.centit.workflow.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.FlowInfo;
-import com.centit.workflow.po.FlowOptInfo;
-import com.centit.workflow.po.FlowTeamRole;
-import com.centit.workflow.po.NodeInfo;
+import com.centit.workflow.po.*;
 
 import java.util.List;
 import java.util.Map;
@@ -189,7 +185,7 @@ public interface FlowDefine {
      * @param roleCode 办件角色代码
      * @return 流程的办件角色
      */
-    FlowTeamRole getFlowItemRole(String flowCode, Long version, String roleCode);
+    OptTeamRole getFlowItemRole(String flowCode, Long version, String roleCode);
     /**
      * 获取流程阶段信息
      * @param flowCode 流程代码和名称对应表
@@ -213,5 +209,34 @@ public interface FlowDefine {
      * @return 流程变量信息
      */
     Map<String, String> listFlowDefaultVariables(String flowCode, Long version);
+
+    /**
+     * 获取流程业务中存在的所有办件角色
+     * @param optId 流程业务id
+     * @return 流程的办件角色列表
+     */
+    Map<String, String> listOptItemRoles(String optId);
+
+    /**
+     * 获取流程业务中的某个办件角色
+     * @param optId 流程业务id
+     * @param roleCode 办件角色代码
+     * @return 流程的办件角色
+     */
+    OptTeamRole getOptItemRole(String optId, String roleCode);
+
+    /**
+     * 根据流程业务id获取业务变量信息
+     * @param optId 流程业务id
+     * @return
+     */
+    Map<String, String> listOptVariableDefines(String optId);
+
+    /**
+     * 根据流程业务id获取业务变量默认值
+     * @param optId 流程业务id
+     * @return
+     */
+    Map<String, String> listOptDefaultVariables(String optId);
 
 }

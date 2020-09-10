@@ -14,6 +14,7 @@ import java.util.Map;
  * Created by chen_rj on 2017-10-9.
  */
 @Repository
+@Deprecated
 public class FlowVariableDefineDao extends BaseDaoImpl<FlowVariableDefine, Long> {
     @Override
     public Map<String, String> getFilterField() {

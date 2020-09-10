@@ -1,11 +1,11 @@
 package com.centit.workflow.po;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.support.database.orm.GeneratorCondition;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,66 +13,61 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Created by chen_rj on 2017-9-19.
- * 这个更名为 WF_FLOW_TEAM_ROLE
- * 和流程关联
+ * 和流程业务关联
  */
 @Data
 @Entity
-@Table(name = "WF_FLOW_TEAM_ROLE")
-@Deprecated
-public class FlowTeamRole implements Serializable {
+@Table(name = "WF_OPT_TEAM_ROLE")
+@ApiModel("办件角色表")
+public class OptTeamRole implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @NotNull
     @ValueGenerator(strategy = GeneratorType.UUID)
-    @Column(name = "FLOW_TEAM_ROLE_ID")
-    private String flowTeamRoleId;
+    @Column(name = "OPT_TEAM_ROLE_ID")
+    @ApiModelProperty(value = "主键id")
+    private String optTeamRoleId;
 
     @NotNull
-    @Column(name = "FLOW_CODE")
-    private String flowCode;
-
-    @Column(name = "VERSION")
-    @NotNull(message = "字段不能为空")
-    @Range( max = 9999, message = "版本号不能大于{max}")
-    private Long version;
+    @Column(name = "OPT_ID")
+    @ApiModelProperty(value = "关联的流程业务id")
+    private String optId;
 
     @NotNull
     @Column(name = "ROLE_CODE")
+    @ApiModelProperty(value = "办件角色code")
     private String roleCode;
 
     @NotNull
     @Column(name = "ROLE_NAME")
+    @ApiModelProperty(value = "办件角色名称")
     private String roleName;
 
-    /**
-     * 办件角色的约束范围
-     */
     @Column(name = "FORMULA_CODE")
+    @ApiModelProperty(value = "办件角色的约束范围")
     private String formulaCode;
 
     @Column(name = "TEAM_ROLE_ORDER")
     @OrderBy(value = "ASC")
-    private Integer teamRoleOrder;
+    @ApiModelProperty(value = "办件角色排序")
+    private Long teamRoleOrder;
 
     @Column(name = "MODIFY_TIME")
     @ValueGenerator(strategy = GeneratorType.FUNCTION, condition = GeneratorCondition.ALWAYS,
         value = "today()")
+    @ApiModelProperty(value = "修改时间")
     private Date modifyTime;
 
-    @JSONField(serialize=false)
-    private FlowInfo flowDefine;
 
-    public void copyNotNullProperty(FlowTeamRole other){
+    public void copyNotNullProperty(OptTeamRole other){
 
-        if( other.getFlowTeamRoleId() != null)
-            this.setFlowTeamRoleId(other.getFlowTeamRoleId());
+        if( other.getOptTeamRoleId() != null)
+            this.setOptTeamRoleId(other.getOptTeamRoleId());
         if( other.getFormulaCode() != null)
             this.formulaCode = other.getFormulaCode();
-        if( other.getFlowCode() != null)
-            this.flowCode= other.getFlowCode();
+        if( other.getOptId() != null)
+            this.optId= other.getOptId();
         if( other.getRoleCode() != null)
             this.roleCode= other.getRoleCode();
         if( other.getRoleName() != null)
@@ -81,14 +76,12 @@ public class FlowTeamRole implements Serializable {
             this.teamRoleOrder= other.getTeamRoleOrder();
     }
 
-    public void copy(FlowTeamRole other){
-        this.setFlowTeamRoleId(other.getFlowTeamRoleId());
-        //this.setVersion(other.getVersion());
-        //this.setFlowCode(other.getFlowCode());
+    public void copy(OptTeamRole other){
+        this.setOptTeamRoleId(other.getOptTeamRoleId());
         this.roleName= other.getRoleName();
         this.roleCode= other.getRoleCode();
         this.teamRoleOrder= other.getTeamRoleOrder();
-        this.flowCode= other.getFlowCode();
+        this.optId= other.getOptId();
         this.formulaCode= other.getFormulaCode();
         this.modifyTime= other.getModifyTime();
     }

@@ -511,7 +511,7 @@ public class FlowDefineController extends BaseController {
         if(version == null || version < 1){
             version = flowDefine.getFlowLastVersion(flowCode);
         }
-        FlowTeamRole itemRole = flowDefine.getFlowItemRole(flowCode, version, itemRoleCode);
+        OptTeamRole itemRole = flowDefine.getFlowItemRole(flowCode, version, itemRoleCode);
         if(StringUtils.isBlank(itemRole.getFormulaCode())){
             return null;
         }

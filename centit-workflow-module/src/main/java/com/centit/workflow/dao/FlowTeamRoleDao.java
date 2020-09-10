@@ -13,6 +13,7 @@ import java.util.Map;
 /**
  * Created by chen_rj on 2017-10-9.
  */
+@Deprecated
 @Repository
 public class FlowTeamRoleDao extends BaseDaoImpl<FlowTeamRole,Long>{
     @Override

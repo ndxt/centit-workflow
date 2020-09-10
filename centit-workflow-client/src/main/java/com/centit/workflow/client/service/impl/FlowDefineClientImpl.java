@@ -1,7 +1,6 @@
 package com.centit.workflow.client.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
@@ -10,7 +9,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowOptInfo;
-import com.centit.workflow.po.FlowTeamRole;
+import com.centit.workflow.po.OptTeamRole;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.service.FlowDefine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -388,7 +387,7 @@ public class FlowDefineClientImpl implements FlowDefine {
      * @return 流程的办件角色
      */
     @Override
-    public FlowTeamRole getFlowItemRole(String flowCode, Long version, String roleCode) {
+    public OptTeamRole getFlowItemRole(String flowCode, Long version, String roleCode) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -401,6 +400,47 @@ public class FlowDefineClientImpl implements FlowDefine {
      */
     @Override
     public Map<String, String> listFlowDefaultVariables(String flowCode, Long version) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 获取流程业务中存在的所有办件角色
+     * @param optId 流程业务id
+     * @return 流程的办件角色列表
+     */
+    @Override
+    public Map<String, String> listOptItemRoles(String optId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 获取流程业务中的某个办件角色
+     * @param optId 流程业务id
+     * @param roleCode 办件角色代码
+     * @return 流程的办件角色
+     */
+    @Override
+    public OptTeamRole getOptItemRole(String optId, String roleCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 根据流程业务id获取业务变量信息
+     * @param optId 流程业务id
+     * @return
+     */
+    @Override
+    public Map<String, String> listOptVariableDefines(String optId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 根据流程业务id获取业务变量默认值
+     * @param optId 流程业务id
+     * @return
+     */
+    @Override
+    public Map<String, String> listOptDefaultVariables(String optId) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 }

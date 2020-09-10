@@ -21,6 +21,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "WF_FLOW_VARIABLE_DEFINE")
+@Deprecated
 public class FlowVariableDefine implements Serializable {
     private static final long serialVersionUID = 1L;
 

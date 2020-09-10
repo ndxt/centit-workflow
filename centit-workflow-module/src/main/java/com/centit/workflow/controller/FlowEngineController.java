@@ -451,7 +451,7 @@ public class FlowEngineController extends BaseController {
         if(instance==null){
             return null;
         }
-        FlowTeamRole itemRole = flowDefine.getFlowItemRole(instance.getFlowCode(),
+        OptTeamRole itemRole = flowDefine.getFlowItemRole(instance.getFlowCode(),
             instance.getVersion(), itemRoleCode);
         if(StringUtils.isBlank(itemRole.getFormulaCode())){
             return null;

@@ -39,6 +39,8 @@ public class FlowStage implements java.io.Serializable {
     private String  timeLimit;
     @Column(name = "EXPIRE_OPT")
     private String  expireOpt;
+    @Column(name = "STAGE_ORDER")
+    private Long  stageOrder;
 
     /**
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
@@ -77,7 +79,7 @@ public class FlowStage implements java.io.Serializable {
 /** full constructor */
     public FlowStage(
             String stageId
-    , FlowInfo flowDefine, String  stageCode, String  stageName, String  isAccountTime, String  limitType, String  timeLimit, String  expireOpt) {
+    , FlowInfo flowDefine, String  stageCode, String  stageName, String  isAccountTime, String  limitType, String  timeLimit, String  expireOpt, Long stageOrder) {
 
         this.stageId = stageId;
         this.flowDefine = flowDefine;
@@ -87,6 +89,7 @@ public class FlowStage implements java.io.Serializable {
         this.limitType= limitType;
         this.timeLimit= timeLimit;
         this.expireOpt= expireOpt;
+        this.stageOrder= stageOrder;
     }
 
 
@@ -178,7 +181,13 @@ public class FlowStage implements java.io.Serializable {
         this.expireOpt = expireOpt;
     }
 
+    public Long getStageOrder() {
+        return stageOrder;
+    }
 
+    public void setStageOrder(Long stageOrder) {
+        this.stageOrder = stageOrder;
+    }
 
     public void copy(FlowStage other){
         this.setStageId(other.getStageId());
@@ -190,6 +199,7 @@ public class FlowStage implements java.io.Serializable {
         this.limitType= other.getLimitType();
         this.timeLimit= other.getTimeLimit();
         this.expireOpt= other.getExpireOpt();
+        this.stageOrder= other.getStageOrder();
 
     }
 
@@ -211,6 +221,8 @@ public class FlowStage implements java.io.Serializable {
             this.timeLimit= other.getTimeLimit();
         if( other.getExpireOpt() != null)
             this.expireOpt= other.getExpireOpt();
+        if( other.getStageOrder() != null)
+            this.stageOrder= other.getStageOrder();
     }
 
     public void clearProperties(){
@@ -222,6 +234,7 @@ public class FlowStage implements java.io.Serializable {
         this.limitType= null;
         this.timeLimit= null;
         this.expireOpt= null;
+        this.stageOrder= null;
 
     }
 

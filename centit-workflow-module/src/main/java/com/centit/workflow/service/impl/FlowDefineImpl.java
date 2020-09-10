@@ -1,14 +1,11 @@
 package com.centit.workflow.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.algorithm.UuidOpt;
-import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.HtmlFormUtils;
 import com.centit.support.xml.XmlUtils;
@@ -51,10 +48,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private RoleFormulaDao flowRoleDao;
 
     @Autowired
-    private FlowVariableDefineDao flowVariableDefineDao;
+    private OptVariableDefineDao optVariableDefineDao;
 
     @Autowired
-    private FlowTeamRoleDao flowTeamRoleDao;
+    private OptTeamRoleDao optTeamRoleDao;
 
     @Autowired
     private UserUnitFilterCalcContextFactory userUnitFilterFactory;
@@ -863,13 +860,13 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if(version == null || version < 0){
             version = flowDefineDao.getLastVersion(flowCode);
         }
-        return flowTeamRoleDao.getRoleByFlowCode(flowCode, version);
+        return optTeamRoleDao.getRoleByFlowCode(flowCode, version);
     }
 
     @Override
     @Transactional
-    public FlowTeamRole getFlowItemRole(String flowCode, Long version, String roleCode){
-        return flowTeamRoleDao.getItemRole(flowCode, version, roleCode);
+    public OptTeamRole getFlowItemRole(String flowCode, Long version, String roleCode){
+        return optTeamRoleDao.getItemRole(flowCode, version, roleCode);
     }
 
     /**
@@ -902,12 +899,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return optmap;
     }
 
-    private List<FlowVariableDefine> listFlowVariables(String flowCode, Long version) {
+    private List<OptVariableDefine> listOptVariables(String flowCode, Long version) {
         if(version == null || version < 0){
             version = flowDefineDao.getLastVersion(flowCode);
         }
 
-        return flowVariableDefineDao.getFlowVariableByFlowCode(flowCode, version);
+        return optVariableDefineDao.getOptVariableByFlowCode(flowCode, version);
     }
 
     /**
@@ -918,13 +915,13 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     @Transactional
     public Map<String, String> listFlowVariableDefines(String flowCode, Long version) {
-        List<FlowVariableDefine> flowVariableDefines
-            = listFlowVariables(flowCode, version);
+        List<OptVariableDefine> optVariableDefines
+            = listOptVariables(flowCode, version);
 
         Map<String, String> variableDefineMap = new HashMap<>();
-        if(flowVariableDefines!=null) {
-            for (FlowVariableDefine flowVariableDefine : flowVariableDefines) {
-                variableDefineMap.put(flowVariableDefine.getVariableName(), flowVariableDefine.getVariableDesc());
+        if(optVariableDefines != null) {
+            for (OptVariableDefine optVariableDefine : optVariableDefines) {
+                variableDefineMap.put(optVariableDefine.getVariableName(), optVariableDefine.getVariableDesc());
             }
         }
         return variableDefineMap;
@@ -933,14 +930,63 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     @Transactional
     public Map<String, String> listFlowDefaultVariables(String flowCode, Long version){
-        List<FlowVariableDefine> flowVariableDefines
-            = listFlowVariables(flowCode, version);
+        List<OptVariableDefine> optVariableDefines
+            = listOptVariables(flowCode, version);
 
         Map<String, String> variableValueMap = new HashMap<>();
-        if(flowVariableDefines!=null) {
-            for (FlowVariableDefine flowVariableDefine : flowVariableDefines) {
-                if (StringUtils.isNotBlank(flowVariableDefine.getDefaultValue())) {
-                    variableValueMap.put(flowVariableDefine.getVariableName(), flowVariableDefine.getDefaultValue());
+        if(optVariableDefines != null) {
+            for (OptVariableDefine optVariableDefine : optVariableDefines) {
+                if (StringUtils.isNotBlank(optVariableDefine.getDefaultValue())) {
+                    variableValueMap.put(optVariableDefine.getVariableName(), optVariableDefine.getDefaultValue());
+                }
+            }
+        }
+        return variableValueMap;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, String> listOptItemRoles(String optId) {
+        return optTeamRoleDao.getRoleByOptId(optId);
+    }
+
+    @Override
+    @Transactional
+    public OptTeamRole getOptItemRole(String optId, String roleCode) {
+        return optTeamRoleDao.getItemRole(optId, roleCode);
+    }
+
+    /**
+     * 根据流程业务id获取流程变量信息
+     * @param optId 流程代码
+     * @return 流程变量信息
+     */
+    @Override
+    @Transactional
+    public Map<String, String> listOptVariableDefines(String optId) {
+        List<OptVariableDefine> optVariableDefines
+            = optVariableDefineDao.getOptVariableByOptId(optId);
+
+        Map<String, String> variableDefineMap = new HashMap<>();
+        if(optVariableDefines != null) {
+            for (OptVariableDefine optVariableDefine : optVariableDefines) {
+                variableDefineMap.put(optVariableDefine.getVariableName(), optVariableDefine.getVariableDesc());
+            }
+        }
+        return variableDefineMap;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, String> listOptDefaultVariables(String optId) {
+        List<OptVariableDefine> optVariableDefines
+            = optVariableDefineDao.getOptVariableByOptId(optId);
+
+        Map<String, String> variableValueMap = new HashMap<>();
+        if(optVariableDefines != null) {
+            for (OptVariableDefine optVariableDefine : optVariableDefines) {
+                if (StringUtils.isNotBlank(optVariableDefine.getDefaultValue())) {
+                    variableValueMap.put(optVariableDefine.getVariableName(), optVariableDefine.getDefaultValue());
                 }
             }
         }
