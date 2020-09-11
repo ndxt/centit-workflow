@@ -19,7 +19,7 @@ import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
-import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
+import com.centit.workflow.service.UserUnitCalcContextFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private FlowInstanceDao flowInstanceDao;
     @Autowired
-    private UserUnitFilterCalcContextFactory userUnitFilterFactory;
+    private UserUnitCalcContextFactory userUnitFilterFactory;
     @Autowired
     private NodeInstanceDao nodeInstanceDao;
     @Autowired

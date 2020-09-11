@@ -10,7 +10,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.RoleFormulaDao;
 import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.service.RoleFormulaService;
-import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
+import com.centit.workflow.service.UserUnitCalcContextFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ import java.util.Set;
 public class RoleFormulaServiceImpl implements RoleFormulaService {
 
     @Autowired
-    private UserUnitFilterCalcContextFactory userUnitFilterFactory;
+    private UserUnitCalcContextFactory userUnitFilterFactory;
 
     @Autowired
     private RoleFormulaDao flowRoleDao;

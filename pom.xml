@@ -81,6 +81,7 @@
         <module>centit-workflow-client</module>
         <module>centit-workflow-core</module>
         <module>centit-workflow-apprrole-plugin</module>
+        <module>workflow-userunit-jdbc-context</module>
     </modules>
 
     <!-- mvn deploy -DpomFile=pom.xml -->

@@ -20,6 +20,12 @@
     <dependencies>
         <dependency>
             <groupId>com.centit.product</groupId>
+            <artifactId>workflow-userunit-jdbc-context</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-module</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -144,7 +150,7 @@
 
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>framework-session</artifactId>
+            <artifactId>framework-session-redis</artifactId>
         </dependency>
 
         <!--&lt;!&ndash; https://mvnrepository.com/artifact/com.h2database/h2 &ndash;&gt;-->

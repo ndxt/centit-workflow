@@ -9,11 +9,12 @@ import com.centit.framework.ip.service.impl.JsonIntegrationEnvironment;
 import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.PlatformEnvironment;
+import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.security.model.CentitPasswordEncoder;
 import com.centit.framework.security.model.StandardPasswordEncoderImpl;
-import com.centit.workflow.external.ExtFrameworkContextCacheBean;
-import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
-import com.centit.workflow.service.impl.UserUnitFilterCalcContextFactoryImpl;
+import com.centit.workflow.context.ExtFrameworkContextCacheBean;
+import com.centit.workflow.context.JdbcUserUnitCalcContextFactoryImpl;
+import com.centit.workflow.service.impl.SystemUserUnitCalcContextFactoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -64,18 +65,16 @@ public class ServiceConfig {
     }
 
     @Bean
-    public ExtFrameworkContextCacheBean extFrameworkContextCacheBean(){
-        ExtFrameworkContextCacheBean contextCacheBean = new ExtFrameworkContextCacheBean();
-        contextCacheBean.setDatabaseSource(externalJdbcUrl, externalJdbcUser, externalJdbcPassword);
-        return contextCacheBean;
-    }
-
-    @Bean
-    public UserUnitFilterCalcContextFactory userUnitFilterFactory(@Autowired ExtFrameworkContextCacheBean extFrameworkContextCacheBean){
-        UserUnitFilterCalcContextFactoryImpl factoryBean = new UserUnitFilterCalcContextFactoryImpl();
-        factoryBean.setEngineType(engineType);
-        factoryBean.setExtFrameworkContextCacheBean(extFrameworkContextCacheBean);
-        return factoryBean;
+    public UserUnitFilterCalcContextFactory userUnitFilterFactory() {
+        if ("external".equalsIgnoreCase(engineType)) { //jdbc
+            ExtFrameworkContextCacheBean contextCacheBean = new ExtFrameworkContextCacheBean();
+            contextCacheBean.setDatabaseSource(externalJdbcUrl, externalJdbcUser, externalJdbcPassword);
+            JdbcUserUnitCalcContextFactoryImpl factoryBean = new JdbcUserUnitCalcContextFactoryImpl();
+            factoryBean.setExtFrameworkContextCacheBean(contextCacheBean);
+            return factoryBean;
+        } else{
+            return new SystemUserUnitCalcContextFactoryImpl();
+        }
     }
 
     /*@Bean 注入 opt-log-module 将操作日志持久化

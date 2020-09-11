@@ -12,7 +12,7 @@ import com.centit.support.xml.XmlUtils;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
-import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
+import com.centit.workflow.service.UserUnitCalcContextFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -54,7 +54,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private OptTeamRoleDao optTeamRoleDao;
 
     @Autowired
-    private UserUnitFilterCalcContextFactory userUnitFilterFactory;
+    private UserUnitCalcContextFactory userUnitFilterFactory;
 
     private static Logger logger = LoggerFactory.getLogger(FlowDefineImpl.class);
     public static final String BEGINNODETAG = "begin";

@@ -12,7 +12,7 @@ import com.centit.framework.security.model.CentitUserDetails;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleRelegate;
 import com.centit.workflow.service.FlowManager;
-import com.centit.workflow.service.UserUnitFilterCalcContextFactory;
+import com.centit.workflow.service.UserUnitCalcContextFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +36,7 @@ public class RoleRelegateController extends BaseController {
     private FlowManager flowManager;
 
     @Autowired
-    private UserUnitFilterCalcContextFactory userUnitFilterFactory;
+    private UserUnitCalcContextFactory userUnitFilterFactory;
 
     @ApiOperation(value = "获取用户角色", notes = "获取用户角色")
     @ApiImplicitParam(
