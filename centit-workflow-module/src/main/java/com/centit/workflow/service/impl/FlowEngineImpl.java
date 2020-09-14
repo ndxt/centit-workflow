@@ -5,6 +5,7 @@ import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
+import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.framework.model.basedata.NoticeMessage;
@@ -19,7 +20,6 @@ import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
-import com.centit.workflow.service.UserUnitCalcContextFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private FlowInstanceDao flowInstanceDao;
     @Autowired
-    private UserUnitCalcContextFactory userUnitFilterFactory;
+    private UserUnitFilterCalcContextFactory userUnitFilterFactory;
     @Autowired
     private NodeInstanceDao nodeInstanceDao;
     @Autowired
