@@ -73,20 +73,6 @@ public class FlowInfo implements java.io.Serializable {
     })
     private List<FlowStage> flowStages;// new ArrayList<WfFlowStage>();
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowTeamRole.class)
-    @JoinColumns({
-            @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
-            @JoinColumn(name="version", referencedColumnName="version")
-    })
-    private List<FlowTeamRole> flowTeamRoles;// new ArrayList<WfFlowStage>();
-
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowVariableDefine.class)
-    @JoinColumns({
-            @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
-            @JoinColumn(name="version", referencedColumnName="version"),
-    })
-    private List<FlowVariableDefine> flowVariableDefines;// new ArrayList<WfFlowStage>();
-
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = NodeInfo.class)
     @JoinColumns({
             @JoinColumn(name="flowCode"),
@@ -413,47 +399,6 @@ public class FlowInfo implements java.io.Serializable {
         return flowStages;
     }
 
-    @JSONField(serialize=false)
-    public Set<FlowTeamRole> getFlowRolesSet(){
-        Set<FlowTeamRole> flowTeamRoles = new HashSet<FlowTeamRole>();
-        if(this.flowTeamRoles !=null){
-            for(FlowTeamRole fs: this.flowTeamRoles)
-                flowTeamRoles.add(fs);
-        }
-        return flowTeamRoles;
-    }
-
-    public List<FlowTeamRole> getFlowTeamRoles() {
-        if(this.flowTeamRoles ==null)
-            this.flowTeamRoles = new ArrayList<FlowTeamRole>();
-        return flowTeamRoles;
-    }
-
-    public void setFlowTeamRoles(List<FlowTeamRole> flowTeamRoles) {
-        this.flowTeamRoles = flowTeamRoles;
-    }
-
-    public void setFlowVariableDefines(List<FlowVariableDefine> flowVariableDefines) {
-        this.flowVariableDefines = flowVariableDefines;
-    }
-
-
-    public List<FlowVariableDefine> getFlowVariableDefines(){
-        if(this.flowVariableDefines ==null)
-            this.flowVariableDefines = new ArrayList<>();
-        return flowVariableDefines;
-    }
-
-    @JSONField(serialize=false)
-    public Set<FlowVariableDefine> getFlowVariableDefSet(){
-        Set<FlowVariableDefine> flowVariableDefines = new HashSet<>();
-        if(this.flowVariableDefines !=null){
-            for(FlowVariableDefine fs: this.flowVariableDefines)
-                flowVariableDefines.add(fs);
-        }
-        return flowVariableDefines;
-    }
-
     public List<FlowStage> getFlowStages(){
         if(this.flowStages ==null)
             this.flowStages = new ArrayList<FlowStage>();
@@ -482,34 +427,8 @@ public class FlowInfo implements java.io.Serializable {
         this.getFlowStages().add(wfFlowStage);
     }
 
-    public void addFlowRole(FlowTeamRole flowTeamRole ){
-        //wfFlowStage.setFlowDefine(this);
-        flowTeamRole.setFlowCode(this.getFlowCode());
-        flowTeamRole.setVersion(this.getVersion());
-
-        //wfFlowStage.setVersion(this.getVersion());
-        this.getFlowTeamRoles().add(flowTeamRole);
-    }
-
-    public void addFlowVariableDef(FlowVariableDefine flowVariableDefine){
-        //wfFlowStage.setFlowDefine(this);
-        flowVariableDefine.setFlowCode(this.getFlowCode());
-        flowVariableDefine.setVersion(this.getVersion());
-
-        //wfFlowStage.setVersion(this.getVersion());
-        this.getFlowVariableDefines().add(flowVariableDefine);
-    }
-
     public void removeFlowStage(FlowStage wfFlowStage ){
         this.getFlowStages().remove(wfFlowStage);
-    }
-
-    public void removeFlowRole(FlowTeamRole flowTeamRole){
-        this.getFlowTeamRoles().remove(flowTeamRole);
-    }
-
-    public void removeFlowVariableDef(FlowVariableDefine flowVariableDefine){
-        this.getFlowVariableDefines().remove(flowVariableDefine);
     }
 
     public FlowStage newFlowStage(){
@@ -575,106 +494,6 @@ public class FlowInfo implements java.io.Serializable {
         }
     }
 
-    /**
-     * 替换子类对象数组，这个函数主要是考虑hibernate中的对象的状态，以避免对象状态不一致的问题
-     *
-     */
-    public void replaceFlowRoles(Collection<? extends FlowTeamRole> flowTeamRoles) {
-        List<FlowTeamRole> newObjs = new ArrayList<>();
-        for(FlowTeamRole p :flowTeamRoles){
-            if(p==null)
-                continue;
-            FlowTeamRole newdt = new FlowTeamRole();
-            newdt.copyNotNullProperty(p);
-            newdt.setFlowDefine(this);
-            newObjs.add(newdt);
-        }
-        //delete
-        Set<FlowTeamRole> oldObjs = new HashSet<>();
-        oldObjs.addAll(getFlowTeamRoles());
-
-        for(Iterator<FlowTeamRole> it = oldObjs.iterator(); it.hasNext();){
-            FlowTeamRole odt = it.next();
-            boolean found = false;
-            for(FlowTeamRole newdt :newObjs){
-                if(odt.getFlowTeamRoleId().equals( newdt.getFlowTeamRoleId())){
-                    found = true;
-                    break;
-                }
-            }
-            if(! found)
-                removeFlowRole(odt);
-        }
-        oldObjs.clear();
-        //insert or update
-        for(FlowTeamRole newdt :newObjs){
-            boolean found = false;
-            for(Iterator<FlowTeamRole> it = getFlowTeamRoles().iterator();
-                it.hasNext();){
-                FlowTeamRole odt = it.next();
-                if(odt.getFlowTeamRoleId().equals( newdt.getFlowTeamRoleId())){
-                    odt.copy(newdt);
-                    found = true;
-                    break;
-                }
-            }
-            if(! found)
-                addFlowRole(newdt);
-        }
-    }
-
-    /**
-     * 替换子类对象数组，这个函数主要是考虑hibernate中的对象的状态，以避免对象状态不一致的问题
-     *
-     */
-    public void replaceFlowVariableDefs(Collection<? extends FlowVariableDefine>
-                                        flowVariableDefines) {
-        List<FlowVariableDefine> newObjs = new ArrayList<>();
-        for(FlowVariableDefine p :flowVariableDefines){
-            if(p==null)
-                continue;
-            FlowVariableDefine newdt = new FlowVariableDefine();
-            newdt.copyNotNullProperty(p);
-            newdt.setFlowDefine(this);
-            newObjs.add(newdt);
-        }
-        //delete
-        boolean found = false;
-        Set<FlowVariableDefine> oldObjs = new HashSet<>();
-        oldObjs.addAll(getFlowVariableDefines());
-
-        for(Iterator<FlowVariableDefine> it = oldObjs.iterator(); it.hasNext();){
-            FlowVariableDefine odt = it.next();
-            found = false;
-            for(FlowVariableDefine newdt :newObjs){
-                if(odt.getFlowVariableId().equals( newdt.getFlowVariableId())){
-                    found = true;
-                    break;
-                }
-            }
-            if(! found)
-                removeFlowVariableDef(odt);
-        }
-        oldObjs.clear();
-        //insert or update
-        for(FlowVariableDefine newdt :newObjs){
-            found = false;
-            for(Iterator<FlowVariableDefine> it = getFlowVariableDefines().iterator();
-                it.hasNext();){
-                FlowVariableDefine odt = it.next();
-                if(odt.getFlowVariableId().equals( newdt.getFlowVariableId())){
-                    odt.copy(newdt);
-                    found = true;
-                    break;
-                }
-            }
-            if(! found)
-                addFlowVariableDef(newdt);
-        }
-    }
-
-
-
     public void copy(FlowInfo other){
 
         this.setVersion(other.getVersion());
@@ -725,38 +544,37 @@ public class FlowInfo implements java.io.Serializable {
         /*if(other.getFlowStages() !=null)
             this.replaceFlowStages(other.getFlowStages());*/
     }
-    public void ifNullCopyProperty(FlowInfo other){
 
+    public void ifNullCopyProperty(FlowInfo other){
         if(this.getVersion() == null)
             this.setVersion(other.getVersion());
         if( this.getFlowCode() == null)
             this.setFlowCode(other.getFlowCode());
-
-            if( this.getFlowName() == null)
-                this.flowName = other.getFlowName();
-            if( this.getFlowClass() == null)
-                this.flowClass = other.getFlowClass();
-            if( this.getFlowState() == null)
-                this.flowState = other.getFlowState();
-            if( this.getFlowDesc() == null)
-                this.flowDesc = other.getFlowDesc();
-            if( this.getFlowXmlDesc() == null)
-                this.flowXmlDesc = other.getFlowXmlDesc();
-            if( this.getFlowPublishDate() == null)
-                this.flowPublishDate = other.getFlowPublishDate();
-            if (this.getOsId() ==null)
-                this.osId = other.getOsId();
-            if( this.getOptId() == null)
-                this.optId = other.getOptId();
-            if( this.getTimeLimit() == null)
-                this.timeLimit = other.getTimeLimit();
-            if (this.getExpireOpt() == null)
-                this.expireOpt = other.getExpireOpt();
-            if(this.getAtPublishDate() == null)
-                this.atPublishDate = other.getAtPublishDate();
-            /*if(null==this.getFlowStages())
-                this.replaceFlowStages(other.getFlowStages());*/
-        }
+        if( this.getFlowName() == null)
+            this.flowName = other.getFlowName();
+        if( this.getFlowClass() == null)
+            this.flowClass = other.getFlowClass();
+        if( this.getFlowState() == null)
+            this.flowState = other.getFlowState();
+        if( this.getFlowDesc() == null)
+            this.flowDesc = other.getFlowDesc();
+        if( this.getFlowXmlDesc() == null)
+            this.flowXmlDesc = other.getFlowXmlDesc();
+        if( this.getFlowPublishDate() == null)
+            this.flowPublishDate = other.getFlowPublishDate();
+        if (this.getOsId() ==null)
+            this.osId = other.getOsId();
+        if( this.getOptId() == null)
+            this.optId = other.getOptId();
+        if( this.getTimeLimit() == null)
+            this.timeLimit = other.getTimeLimit();
+        if (this.getExpireOpt() == null)
+            this.expireOpt = other.getExpireOpt();
+        if(this.getAtPublishDate() == null)
+            this.atPublishDate = other.getAtPublishDate();
+        /*if(null==this.getFlowStages())
+            this.replaceFlowStages(other.getFlowStages());*/
+    }
 
     public void clearProperties(){
         this.setVersion(null);

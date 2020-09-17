@@ -361,7 +361,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
-        flowDef.replaceFlowRoles(wfDef.getFlowRolesSet());
+        //flowDef.replaceFlowRoles(wfDef.getFlowRolesSet());
         flowDefineDao.saveObjectReferences(flowDef);
         return true;
     }
@@ -376,7 +376,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
-        flowDef.replaceFlowVariableDefs(wfDef.getFlowVariableDefSet());
+        //flowDef.replaceFlowVariableDefs(wfDef.getFlowVariableDefSet());
         flowDefineDao.saveObjectReferences(flowDef);
         return true;
     }
@@ -482,21 +482,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             p.setVersion(newVersion);
         }
         newFlowDef.setFlowStages(newStages);
-        List<FlowTeamRole> newTeamRole = flowDef.getFlowTeamRoles();
-        for(FlowTeamRole p:newTeamRole){
-            if (p == null)
-                continue;
-            p.setFlowTeamRoleId(UuidOpt.getUuidAsString32());
-            p.setVersion(newVersion);
-        }
-        newFlowDef.setFlowTeamRoles(newTeamRole);
-        List<FlowVariableDefine> newFlowVariableDefine=flowDef.getFlowVariableDefines();
-        for(FlowVariableDefine p:newFlowVariableDefine){
-            if(p==null) continue;
-            p.setFlowVariableId(UuidOpt.getUuidAsString32());
-            p.setVersion(newVersion);
-        }
-        newFlowDef.setFlowVariableDefines(newFlowVariableDefine);
+
         Map<String, String> nodeIsLeaf = new HashMap<>();
         for (NodeInfo nd : newFlowDef.getFlowNodes()) {
             if (nd.getNodeId().equals(flowData.firstNodeId)) {

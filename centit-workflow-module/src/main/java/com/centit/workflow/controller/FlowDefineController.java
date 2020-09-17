@@ -10,7 +10,10 @@ import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.*;
+import com.centit.workflow.po.FlowInfo;
+import com.centit.workflow.po.FlowInfoId;
+import com.centit.workflow.po.FlowStage;
+import com.centit.workflow.po.OptTeamRole;
 import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.RoleFormulaService;
 import io.swagger.annotations.Api;
@@ -250,15 +253,7 @@ public class FlowDefineController extends BaseController {
      */
     @PostMapping(value = "/role/{flowcode}")
     public void editRole(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
-        if (null != flowdefine.getFlowTeamRoles()) {
-            for (FlowTeamRole role : flowdefine.getFlowTeamRoles()) {
-                if (null == role.getFlowTeamRoleId()) {
-                    role.setFlowTeamRoleId(UuidOpt.getUuidAsString32());
-//                    role.setFlowTeamRoleId(flowDefine.getNextRoleId());
-                }
-                role.setFlowDefine(flowdefine);
-            }
-        }
+
         flowdefine.setFlowCode(flowcode);
         flowdefine.setVersion(0l);
 
@@ -280,15 +275,6 @@ public class FlowDefineController extends BaseController {
     @PostMapping(value = "/variableDefine/{flowcode}")
     @WrapUpResponseBody
     public void editVariable(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
-        if (null != flowdefine.getFlowVariableDefines()) {
-            for (FlowVariableDefine variableDefine : flowdefine.getFlowVariableDefines()) {
-                if (null == variableDefine.getFlowVariableId()) {
-                    variableDefine.setFlowVariableId(UuidOpt.getUuidAsString32());
-//                    variableDefine.setFlowVariableId(flowDefine.getNextVariableDefId());
-                }
-                variableDefine.setFlowDefine(flowdefine);
-            }
-        }
         flowdefine.setFlowCode(flowcode);
         flowdefine.setVersion(0l);
 
