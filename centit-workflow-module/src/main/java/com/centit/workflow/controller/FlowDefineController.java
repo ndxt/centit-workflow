@@ -173,14 +173,13 @@ public class FlowDefineController extends BaseController {
      * 查看流程图
      * @param version 版本号
      * @param flowcode 流程代码
-     * @param response HttpServletResponse
      */
     @ApiOperation(value = "查看流程图",notes = "查看流程图")
     @RequestMapping(value = "/viewxml/{flowcode}/{version}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public void viewXml(@PathVariable Long version, @PathVariable String flowcode, HttpServletRequest request, HttpServletResponse response) {
+    public String viewXml(@PathVariable Long version, @PathVariable String flowcode) {
         FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
-        JsonResultUtils.writeSingleDataJson(obj.getFlowXmlDesc(), response);
+        return obj.getFlowXmlDesc();
     }
 
     /**
