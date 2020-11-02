@@ -32,6 +32,7 @@ public class InstantiationServiceBeanPostProcessor implements ApplicationListene
     public void onApplicationEvent(ContextRefreshedEvent event)
     {
         CodeRepositoryCache.setPlatformEnvironment(platformEnvironment);
+        CodeRepositoryCache.refreshAsyncCache();
 
         if(innerMessageManager!=null)
             notificationCenter.registerMessageSender("innerMsg", innerMessageManager);
