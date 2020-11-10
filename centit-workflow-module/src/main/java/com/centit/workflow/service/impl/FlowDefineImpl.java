@@ -1,5 +1,7 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
@@ -7,6 +9,8 @@ import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.algorithm.UuidOpt;
+import com.centit.support.common.ObjectException;
+import com.centit.support.compiler.Lexer;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.HtmlFormUtils;
 import com.centit.support.xml.XmlUtils;
@@ -409,35 +413,35 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return getFlowDefXML(flowCode, 0);
     }
 
-    private void checkFlowDef(FlowInfo newFlowDef) throws Exception {
+    private void checkFlowDef(FlowInfo newFlowDef){
         //验证流程节点定义
         for (NodeInfo nd : newFlowDef.getFlowNodes()) {
             if ("C".equals(nd.getNodeType()) || "B".equals(nd.getNodeType())) {
                 if ("S".equals(nd.getOptType())) {
                     if (StringRegularOpt.isNvl(nd.getSubFlowCode()))
-                        throw new Exception("子流程节点：" + nd.getNodeName() + ",没有指定流程代码。");
+                        throw new ObjectException("子流程节点：" + nd.getNodeName() + ",没有指定流程代码。");
                 } else if (!"E".equals(nd.getOptType()) && !"D".equals(nd.getOptType())) {
                     if (StringRegularOpt.isNvl(nd.getOptCode()))
-                        throw new Exception("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
+                        throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
                     if (StringRegularOpt.isNvl(nd.getRoleType()))
-                        throw new Exception("节点：" + nd.getNodeName() + ",没有指定角色类别。");
+                        throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定角色类别。");
                     else if ("en".equals(nd.getRoleType())) {
                         if (StringRegularOpt.isNvl(nd.getPowerExp()))
-                            throw new Exception("节点：" + nd.getNodeName() + ",权限表达式为空。");
+                            throw new ObjectException("节点：" + nd.getNodeName() + ",权限表达式为空。");
                     } else {
                         if (StringRegularOpt.isNvl(nd.getRoleCode())
                             && !SysUserFilterEngine.ROLE_TYPE_ENGINE.equals(nd.getRoleType()))
-                            throw new Exception("节点：" + nd.getNodeName() + ",没有指定角色代码。");
+                            throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定角色代码。");
                     }
                 } else if ("D".equals(nd.getOptType())) {
                     if ("B".equals(nd.getOptCode()) && StringRegularOpt.isNvl(nd.getOptBean()))
-                        throw new Exception("自动运行节点：" + nd.getNodeName() + ",没有运行的bean。");
+                        throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的bean。");
                     else if ("S".equals(nd.getOptCode()) && StringRegularOpt.isNvl(nd.getOptParam()))
-                        throw new Exception("自动运行节点：" + nd.getNodeName() + ",没有运行的script。");
+                        throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的script。");
                 }
             } else if ("R".equals(nd.getNodeType())) {
                 if (StringRegularOpt.isNvl(nd.getRouterType())) {
-                    throw new Exception("路由节点：" + nd.getNodeName() + ",没有指定路由类型。");
+                    throw new ObjectException("路由节点：" + nd.getNodeName() + ",没有指定路由类型。");
                 }
             }
         }
@@ -446,7 +450,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             if (tran.getTransCondition() == null || "".equals(tran.getTransCondition())) {
                 NodeInfo nd = newFlowDef.getFlowNodeById(tran.getStartNodeId());
                 if (nd != null && !"A".equals(nd.getNodeType()) && !"C".equals(nd.getNodeType())) {
-                    throw new Exception("流转：" + tran.getTransName() + ",没有指定流转条件。");
+                    throw new ObjectException("流转：" + tran.getTransName() + ",没有指定流转条件。");
                 }
             }
         }
@@ -454,23 +458,37 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @SuppressWarnings("unchecked")
     @Transactional
-    public long publishFlowDef(String flowCode) throws Exception {
-        FlowDataDetail flowData = new FlowDataDetail();
+    @Override
+    public long publishFlowDef(String flowCode) {
+
         // 将流程从 XML 格式中解析出来
         FlowInfo flowDef = flowDefineDao.getObjectWithReferences(new FlowInfoId(0L, flowCode));
         if (flowDef == null) {
             return 0L;
         }
-        // 获取新的版本号
-        long nCurVersion = flowDefineDao.getLastVersion(flowCode);
-        Long newVersion = nCurVersion + 1L;
-
         //WfFlowDefine newFlowDef = new WfFlowDefine();
         String wfDefXML = flowDef.getFlowXmlDesc();
         if (StringUtils.isBlank(wfDefXML)) {
-            throw new Exception("流程没有内容");
+            throw new ObjectException("流程没有内容");
         }
-        FlowInfo newFlowDef = createFlowDefByXML(wfDefXML, flowCode, newVersion, flowData);
+        if ("<".equals(Lexer.getFirstWord(wfDefXML))) {
+            return publishFlowDefAsXML(flowDef);
+        } else {
+            return publishFlowDefAsJSON(flowDef);
+        }
+
+    }
+    private long publishFlowDefAsJSON(FlowInfo flowDef) {
+        JSONObject flowJson = (JSONObject) JSON.parse(flowDef.getFlowXmlDesc());
+        //TODO 参照XML发布json的工作流版本
+        return 1l;
+    }
+    private long publishFlowDefAsXML(FlowInfo flowDef){
+        FlowDataDetail flowData = new FlowDataDetail();
+        // 获取新的版本号
+        long nCurVersion = flowDefineDao.getLastVersion(flowDef.getFlowCode());
+        Long newVersion = nCurVersion + 1L;
+        FlowInfo newFlowDef = createFlowDefByXML(flowDef.getFlowXmlDesc(), flowDef.getFlowCode(), newVersion, flowData);
         // 添加验证流程定义验证
         checkFlowDef(newFlowDef);
 
@@ -498,7 +516,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
 
         // 替换 流程XML格式中的节点、流转编码 对照表在 ndMap 和 trMap 中
-        Document wfDefDoc = XmlUtils.string2xml(wfDefXML);
+        Document wfDefDoc = XmlUtils.string2xml(flowDef.getFlowXmlDesc());
         List<Node> nodeList = wfDefDoc.selectNodes("//Nodes/Node");
 
         for (Node tmpNode : nodeList) {
@@ -564,7 +582,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowDefineDao.updateObject(flowDef);
 
         //将非0老版本流程状态改为已过期
-        FlowInfo oldflowDef = flowDefineDao.getObjectById(new FlowInfoId(nCurVersion, flowCode));
+        FlowInfo oldflowDef = flowDefineDao.getObjectById(new FlowInfoId(nCurVersion, flowDef.getFlowCode()));
         if (oldflowDef != null && nCurVersion > 0) {
             oldflowDef.setFlowState("C");
             flowDefineDao.updateObject(oldflowDef);

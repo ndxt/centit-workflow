@@ -182,7 +182,7 @@ public class FlowDefineClientImpl implements FlowDefine {
      * @param flowCode
      */
     @Override
-    public long publishFlowDef(String flowCode) throws Exception {
+    public long publishFlowDef(String flowCode) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

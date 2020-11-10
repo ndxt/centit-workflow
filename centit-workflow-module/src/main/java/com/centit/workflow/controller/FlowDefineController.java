@@ -340,7 +340,7 @@ public class FlowDefineController extends BaseController {
      * @throws Exception 异常
      */
     @RequestMapping(value = "/publish/{flowcode}", method = RequestMethod.POST)
-    public void publishFlow(@PathVariable String flowcode, HttpServletResponse response) throws Exception {
+    public void publishFlow(@PathVariable String flowcode, HttpServletResponse response){
         flowDefine.publishFlowDef(flowcode);
         JsonResultUtils.writeSingleDataJson("已发布！", response);
     }
