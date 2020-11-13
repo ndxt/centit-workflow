@@ -289,6 +289,11 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return wfTranSet;
     }
 
+    private FlowInfo createFlowDefByJSON(String jsonDef, String flowCode, Long version, FlowDataDetail flowData) {
+        FlowInfo flowDef = JSON.parseObject(jsonDef, FlowInfo.class);// new FlowInfo();
+        flowDef.setCid(new FlowInfoId(version, flowCode));
+        return flowDef;
+    }
 
     @SuppressWarnings("unchecked")
     private FlowInfo createFlowDefByXML(String sXMLdef, String flowCode, Long version, FlowDataDetail flowData) {
@@ -471,29 +476,15 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if (StringUtils.isBlank(wfDefXML)) {
             throw new ObjectException("流程没有内容");
         }
-        if ("<".equals(Lexer.getFirstWord(wfDefXML))) {
-            return publishFlowDefAsXML(flowDef);
-        } else {
-            return publishFlowDefAsJSON(flowDef);
-        }
-
-    }
-
-    private long publishFlowDefAsJSON(FlowInfo flowDef) {
-        JSONObject flowJson = (JSONObject) JSON.parse(flowDef.getFlowXmlDesc());
-        //TODO 参照XML发布json的工作流版本
-        long nCurVersion = flowDefineDao.getLastVersion(flowDef.getFlowCode());
-        Long newVersion = nCurVersion + 1L;
-
-        return 1l;
-    }
-
-    private long publishFlowDefAsXML(FlowInfo flowDef){
-        FlowDataDetail flowData = new FlowDataDetail();
+        boolean defineAsXML = "<".equals(Lexer.getFirstWord(wfDefXML));
         // 获取新的版本号
         long nCurVersion = flowDefineDao.getLastVersion(flowDef.getFlowCode());
         Long newVersion = nCurVersion + 1L;
-        FlowInfo newFlowDef = createFlowDefByXML(flowDef.getFlowXmlDesc(), flowDef.getFlowCode(), newVersion, flowData);
+
+        FlowDataDetail flowData = new FlowDataDetail();
+        FlowInfo newFlowDef =defineAsXML?
+            createFlowDefByXML(flowDef.getFlowXmlDesc(), flowDef.getFlowCode(), newVersion, flowData):
+            createFlowDefByJSON(flowDef.getFlowXmlDesc(), flowDef.getFlowCode(), newVersion, flowData);
         // 添加验证流程定义验证
         checkFlowDef(newFlowDef);
 
@@ -504,24 +495,56 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             p.setStageId(UuidOpt.getUuidAsString32());
             p.setVersion(newVersion);
         }
-        newFlowDef.setFlowStages(newStages);
 
-        Map<String, String> nodeIsLeaf = new HashMap<>();
+        newFlowDef.setFlowStages(newStages);
         for (NodeInfo nd : newFlowDef.getFlowNodes()) {
-            if (nd.getNodeId().equals(flowData.firstNodeId)) {
+            /*if (nd.getNodeId().equals(flowData.firstNodeId)) {
                 nd.setNodeType("B");//首届点
-            }
+            }*/
             if (StringUtils.isBlank(nd.getOsId())) {
                 nd.setOsId(flowDef.getOsId());
             }
         }
-        //检查 孤立的节点
-        for (FlowTransition tran : newFlowDef.getFlowTransitions()) {
-            nodeIsLeaf.put(tran.getStartNodeId(), "F");
+        if(defineAsXML){
+            resetNodeTransIdToXML(flowDef.getFlowXmlDesc(), newFlowDef, flowData);
         }
 
+        // 保存新版本的流程,状态设置为正常
+        newFlowDef.setFlowDesc(flowDef.getFlowDesc());
+        newFlowDef.setOsId(flowDef.getOsId());
+        newFlowDef.setFlowName(flowDef.getFlowName());
+        newFlowDef.setFlowClass(flowDef.getFlowClass());
+        newFlowDef.setOptId(flowDef.getOptId());
+        newFlowDef.setTimeLimit(flowDef.getTimeLimit());
+        newFlowDef.setExpireOpt(flowDef.getExpireOpt());
+        newFlowDef.setFlowPublishDate(DatetimeOpt.currentUtilDate());
+        newFlowDef.setFirstNodeId(flowData.firstNodeId);
+        newFlowDef.setFlowState("B");
+        //复制相关节点信息
+        //newFlowDef.getWfFlowStages()
+
+        flowDefineDao.saveNewObject(newFlowDef);
+        flowDefineDao.saveObjectReferences(newFlowDef);
+
+        //将0版本更新为已发布
+        flowDef.setFlowState("E");
+        flowDefineDao.updateObject(flowDef);
+
+        //将非0老版本流程状态改为已过期
+        if(nCurVersion>0) {
+            FlowInfo oldflowDef = flowDefineDao.getObjectById(new FlowInfoId(nCurVersion, flowDef.getFlowCode()));
+            if (oldflowDef != null) {
+                oldflowDef.setFlowState("C");
+                flowDefineDao.updateObject(oldflowDef);
+            }
+        }
+        return newVersion;
+    }
+
+    private void resetNodeTransIdToXML(String xmlDefineDesc, FlowInfo newFlowDef, FlowDataDetail flowData){
+
         // 替换 流程XML格式中的节点、流转编码 对照表在 ndMap 和 trMap 中
-        Document wfDefDoc = XmlUtils.string2xml(flowDef.getFlowXmlDesc());
+        Document wfDefDoc = XmlUtils.string2xml(xmlDefineDesc);//flowDef.getFlowXmlDesc());
         List<Node> nodeList = wfDefDoc.selectNodes("//Nodes/Node");
 
         for (Node tmpNode : nodeList) {
@@ -565,36 +588,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
         }
         newFlowDef.setFlowXmlDesc(wfDefDoc.asXML());
-
-        // 保存新版本的流程,状态设置为正常
-        newFlowDef.setFlowDesc(flowDef.getFlowDesc());
-        newFlowDef.setOsId(flowDef.getOsId());
-        newFlowDef.setFlowName(flowDef.getFlowName());
-        newFlowDef.setFlowClass(flowDef.getFlowClass());
-        newFlowDef.setOptId(flowDef.getOptId());
-        newFlowDef.setTimeLimit(flowDef.getTimeLimit());
-        newFlowDef.setExpireOpt(flowDef.getExpireOpt());
-        newFlowDef.setFlowPublishDate(DatetimeOpt.currentUtilDate());
-        newFlowDef.setFirstNodeId(flowData.firstNodeId);
-        newFlowDef.setFlowState("B");
-        //复制相关节点信息
-        //newFlowDef.getWfFlowStages()
-
-        flowDefineDao.saveNewObject(newFlowDef);
-        flowDefineDao.saveObjectReferences(newFlowDef);
-
-        //将0版本更新为已发布
-        flowDef.setFlowState("E");
-        flowDefineDao.updateObject(flowDef);
-
-        //将非0老版本流程状态改为已过期
-        FlowInfo oldflowDef = flowDefineDao.getObjectById(new FlowInfoId(nCurVersion, flowDef.getFlowCode()));
-        if (oldflowDef != null && nCurVersion > 0) {
-            oldflowDef.setFlowState("C");
-            flowDefineDao.updateObject(oldflowDef);
-        }
-
-        return nCurVersion + 1;
     }
 
     @Override
