@@ -40,6 +40,7 @@ CREATE TABLE `wf_flow_define` (
   `FLOW_NAME` varchar(120) ,
   `FLOW_CLASS` varchar(4) ,
   `FLOW_Publish_Date` datetime DEFAULT NULL,
+  `FIRST_NODE_ID` varchar(32),
   `FLOW_STATE` char(1) ,
   `FLOW_DESC` varchar(500) ,
   `FLOW_XML_DESC` text,

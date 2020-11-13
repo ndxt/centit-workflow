@@ -35,8 +35,15 @@
         </developer>
 
         <developer>
-            <name>陈芮军</name>
-            <email>chen_rj@centit.com</email>
+            <name>郭锐</name>
+            <email>gr@centit.com</email>
+            <organization>centit.com</organization>
+            <organizationUrl>http://www.centit.com</organizationUrl>
+        </developer>
+
+        <developer>
+            <name>刘灿灿</name>
+            <email>liu_cc@centit.com</email>
             <organization>centit.com</organization>
             <organizationUrl>http://www.centit.com</organizationUrl>
         </developer>
@@ -44,6 +51,14 @@
         <developer>
             <name>张凯</name>
             <email>zk@centit.com</email>
+            <organization>centit.com</organization>
+            <organizationUrl>http://www.centit.com</organizationUrl>
+        </developer>
+
+
+        <developer>
+            <name>陈芮军</name>
+            <email>chen_rj@centit.com</email>
             <organization>centit.com</organization>
             <organizationUrl>http://www.centit.com</organizationUrl>
         </developer>

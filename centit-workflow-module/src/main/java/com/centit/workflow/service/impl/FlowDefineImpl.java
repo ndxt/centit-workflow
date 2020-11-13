@@ -478,11 +478,14 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
 
     }
+
     private long publishFlowDefAsJSON(FlowInfo flowDef) {
         JSONObject flowJson = (JSONObject) JSON.parse(flowDef.getFlowXmlDesc());
         //TODO 参照XML发布json的工作流版本
+
         return 1l;
     }
+
     private long publishFlowDefAsXML(FlowInfo flowDef){
         FlowDataDetail flowData = new FlowDataDetail();
         // 获取新的版本号
@@ -570,6 +573,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         newFlowDef.setTimeLimit(flowDef.getTimeLimit());
         newFlowDef.setExpireOpt(flowDef.getExpireOpt());
         newFlowDef.setFlowPublishDate(DatetimeOpt.currentUtilDate());
+        newFlowDef.setFirstNodeId(flowData.firstNodeId);
         newFlowDef.setFlowState("B");
         //复制相关节点信息
         //newFlowDef.getWfFlowStages()

@@ -83,6 +83,7 @@ CREATE TABLE wf_flow_define (
   FLOW_STATE char(1) DEFAULT NULL ,
   FLOW_DESC varchar(500) DEFAULT NULL,
   FLOW_XML_DESC text ,
+  FIRST_NODE_ID varchar(32),
   Time_Limit varchar(20) DEFAULT NULL ,
   Expire_Opt char(1) DEFAULT NULL ,
   Opt_ID varchar(32) DEFAULT NULL,
