@@ -21,6 +21,8 @@ public class ApprRoleDefine implements Serializable {
     @Column(name = "RELATED_CODE")
     private String relatedCode;
 
+    private String relatedName;
+
     public String getId() {
         return id;
     }
@@ -51,5 +53,13 @@ public class ApprRoleDefine implements Serializable {
 
     public void setRelatedCode(String relatedCode) {
         this.relatedCode = relatedCode;
+    }
+
+    public String getRelatedName() {
+        return relatedName;
+    }
+
+    public void setRelatedName(String relatedName) {
+        this.relatedName = relatedName;
     }
 }

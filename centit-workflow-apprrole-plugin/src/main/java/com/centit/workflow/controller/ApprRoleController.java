@@ -7,6 +7,7 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.model.basedata.IRoleInfo;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.ApprRole;
 import com.centit.workflow.po.ApprRoleDefine;
@@ -113,10 +114,13 @@ public class ApprRoleController extends BaseController {
         for (ApprRoleDefine apprRoleDefine : apprRoleDefineList) {
             if ("xz".equals(apprRoleDefine.getRelatedType())) {
                 apprRoleDefine.setRelatedType("行政职务");
-                apprRoleDefine.setRelatedCode(CodeRepositoryUtil.getValue("RankType", apprRoleDefine.getRelatedCode()));
+                apprRoleDefine.setRelatedName(CodeRepositoryUtil.getValue("RankType", apprRoleDefine.getRelatedCode()));
             } else if ("js".equals(apprRoleDefine.getRelatedType())) {
                 apprRoleDefine.setRelatedType("用户角色");
-                apprRoleDefine.setRelatedCode(CodeRepositoryUtil.getRoleByRoleCode(apprRoleDefine.getRelatedCode()).getRoleName());
+                IRoleInfo roleInfo = CodeRepositoryUtil.getRoleByRoleCode(apprRoleDefine.getRelatedCode());
+                if (null != roleInfo) {
+                    apprRoleDefine.setRelatedName(roleInfo.getRoleName());
+                }
             }
         }
     }

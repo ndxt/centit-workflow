@@ -35,4 +35,9 @@ public class ApprRoleDefineDao extends BaseDaoImpl<ApprRoleDefine,String> {
             return null;
         }
     }
+
+    public int deleteApprRoleDefineByRoleCode(String roleCode) {
+        String sql = "delete from WF_FLOW_ROLE_DEFINE where role_code = ?";
+        return DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{roleCode});
+    }
 }
