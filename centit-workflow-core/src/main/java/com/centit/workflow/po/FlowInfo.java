@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -307,6 +308,13 @@ public class FlowInfo implements java.io.Serializable {
     public NodeInfo getFirstNode(){
         if (this.flowNodes ==null)
             return null;
+        if(StringUtils.isNotBlank(this.getFirstNodeId())) {
+            NodeInfo node = getFlowNodeById(this.getFirstNodeId());
+            if(node!=null){
+                return node;
+            }
+        }
+        //这段代码为了兼容老的版本
         for(NodeInfo node : flowNodes){
             if("B".equals(node.getNodeType()))
                 return node;

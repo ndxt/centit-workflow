@@ -482,6 +482,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private long publishFlowDefAsJSON(FlowInfo flowDef) {
         JSONObject flowJson = (JSONObject) JSON.parse(flowDef.getFlowXmlDesc());
         //TODO 参照XML发布json的工作流版本
+        long nCurVersion = flowDefineDao.getLastVersion(flowDef.getFlowCode());
+        Long newVersion = nCurVersion + 1L;
 
         return 1l;
     }
