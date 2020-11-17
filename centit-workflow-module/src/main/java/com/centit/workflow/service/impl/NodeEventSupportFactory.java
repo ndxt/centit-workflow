@@ -60,7 +60,7 @@ public class NodeEventSupportFactory {
 
     public static NodeEventSupport createNodeEventSupportBean(NodeInfo nodeInfo,
                                                               FlowOptPage optPage) {
-        if ("A".equals(optPage.getPageType())) {
+        if (optPage!=null && "A".equals(optPage.getPageType())) {
             return new AutoRunNodeEventSupport(
                 optPage.getPageUrl(),
                 nodeInfo.getOptParam(),

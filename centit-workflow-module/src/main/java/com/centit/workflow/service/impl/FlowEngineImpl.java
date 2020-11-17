@@ -939,10 +939,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //检查自动执行节点 并执行相关操作
         // 添加自动运行的处理结果
         if ("D".equals(nextOptNode.getOptType()) || "E".equals(nextOptNode.getOptType())
-            || "A".equals(optPage.getPageType())) {
+            || (optPage!=null && "A".equals(optPage.getPageType()))) {
             boolean needSubmit = true;
             SubmitOptOptions autoSubmitOptions = SubmitOptOptions.create().copy(options).nodeInst(lastNodeInstId);
-            if("A".equals(optPage.getPageType()) ||
+            if((optPage!=null && "A".equals(optPage.getPageType())) ||
                     //bean 事件
                   ("D".equals(nextOptNode.getOptType()) && "B".equals(nextOptNode.getOptCode()))) {
                 NodeEventSupport nodeEventExecutor =
