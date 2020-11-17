@@ -62,10 +62,11 @@ public class NodeInfo implements java.io.Serializable {
     private String optId;
     /**
      * 业务页面代码 关联到 FlowOptPage
-     *  optType = D 时； optCode 有三个选项
+     *  optType = D 时； optCode 有4个选项
      *      * N 无操作；等同于哑元
      *      * B 事件Bean
      *      * S 脚本Script
+     *      * flowOptPage 的 pageType=='A' 的optCode
      */
     @Column(name = "OPT_CODE")
     private String optCode;
