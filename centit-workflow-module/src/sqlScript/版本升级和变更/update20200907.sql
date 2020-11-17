@@ -28,4 +28,4 @@ create table WF_OPT_VARIABLE_DEFINE (
 );
 
 -- 流程阶段添加排序字段STAGE_ORDER
-alter table WF_FLOW_STAGE add STAGE_ORDER numeric(4,0),
+alter table WF_FLOW_STAGE add STAGE_ORDER numeric(4,0);
