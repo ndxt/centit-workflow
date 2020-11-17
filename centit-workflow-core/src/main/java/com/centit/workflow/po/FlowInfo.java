@@ -66,6 +66,10 @@ public class FlowInfo implements java.io.Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date  atPublishDate;
 
+    @Column(name = "FIRST_NODE_ID")
+    @Length(max = 32, message = "字段长度不能大于{max}")
+    private String firstNodeId;
+
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowStage.class)
     @JoinColumns({
             @JoinColumn(name="flowCode", referencedColumnName="flowCode"),
@@ -242,6 +246,14 @@ public class FlowInfo implements java.io.Serializable {
         if(this.flowNodes ==null)
             this.flowNodes = new HashSet<NodeInfo>();
         return this.flowNodes;
+    }
+
+    public String getFirstNodeId() {
+        return firstNodeId;
+    }
+
+    public void setFirstNodeId(String firstNodeId) {
+        this.firstNodeId = firstNodeId;
     }
 
     public Set<NodeInfo> listNodesByNodeCode(String nodeCode){
@@ -510,6 +522,7 @@ public class FlowInfo implements java.io.Serializable {
         this.expireOpt = other.getExpireOpt();
         this.atPublishDate = other.getAtPublishDate();
         this.osId = other.getOsId();
+        this.firstNodeId = other.getFirstNodeId();
         //this.replaceFlowStages(other.getFlowStages());
     }
 
@@ -541,6 +554,8 @@ public class FlowInfo implements java.io.Serializable {
             this.atPublishDate = other.getAtPublishDate();
         if (other.getOsId()!=null)
             this.osId = other.getOsId();
+        if (other.getFirstNodeId()!=null)
+            this.firstNodeId = other.getFirstNodeId();
         /*if(other.getFlowStages() !=null)
             this.replaceFlowStages(other.getFlowStages());*/
     }
@@ -572,6 +587,8 @@ public class FlowInfo implements java.io.Serializable {
             this.expireOpt = other.getExpireOpt();
         if(this.getAtPublishDate() == null)
             this.atPublishDate = other.getAtPublishDate();
+        if (this.getFirstNodeId() == null)
+            this.firstNodeId = other.getFirstNodeId();
         /*if(null==this.getFlowStages())
             this.replaceFlowStages(other.getFlowStages());*/
     }
@@ -591,6 +608,7 @@ public class FlowInfo implements java.io.Serializable {
         this.expireOpt = null;
         this.atPublishDate = null;
         this.getFlowStages().clear();
+        this.firstNodeId = null;
     }
 
 }

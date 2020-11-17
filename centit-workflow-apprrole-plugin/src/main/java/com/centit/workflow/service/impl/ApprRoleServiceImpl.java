@@ -66,6 +66,7 @@ public class ApprRoleServiceImpl implements ApprRoleService {
     public void deleteApprRoleByCode(String roleCode) {
         apprRoleDao.deleteObjectById(roleCode);
         roleFormulaDao.deleteObjectById(roleCode);
+        apprRoleDefineDao.deleteApprRoleDefineByRoleCode(roleCode);
     }
 
     @Override

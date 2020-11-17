@@ -19,6 +19,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-core</artifactId>
+            <version>4.6-asyn-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>workflow-userunit-jdbc-context</artifactId>
             <version>${project.version}</version>
