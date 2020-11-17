@@ -946,7 +946,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     //bean 事件
                   ("D".equals(nextOptNode.getOptType()) && "B".equals(nextOptNode.getOptCode()))) {
                 NodeEventSupport nodeEventExecutor =
-                    NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage);
+                    NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage, this);
                 needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
                     nextOptNode, options.getUserCode());
             } else if("D".equals(nextOptNode.getOptType()) && "S".equals(nextOptNode.getOptCode())) {
@@ -974,7 +974,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         } else if(StringUtils.isNotBlank(nextOptNode.getOptBean())) {
             NodeEventSupport nodeEventExecutor =
-                NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage);
+                NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage, this);
             nodeEventExecutor.runAfterCreate(flowInst, nodeInst, nextOptNode, options.getUserCode());
         }
 
@@ -1209,7 +1209,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
          * 节点提交前事件
          */
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
-            .createNodeEventSupportBean(currNode);
+            .createNodeEventSupportBean(currNode, this);
         nodeEventExecutor.runBeforeSubmit(flowInst, nodeInst, currNode, options.getUserCode());
 
         //判断是否为临时插入节点
@@ -1446,7 +1446,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
-            .createNodeEventSupportBean(nodedef);
+            .createNodeEventSupportBean(nodedef, this);
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, managerUserCode);
         //调用发送消息接口
         Set<String> nodeInstIds = new HashSet<>();
@@ -1974,23 +1974,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         String nodeToken = nodeInst.getRunToken();
         saveFlowNodeVariable(nodeInst.getFlowInstId(), nodeToken, sVar, sValue);
-    }
-
-    @Override
-    public void saveFlowNodeVariable(String nodeInstId, String sVar, Set<String> sValues) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        if (nodeInst == null) {
-            logger.error("找不到节点实例：" + nodeInstId);
-            return;
-        }
-        if (sValues == null || sValues.size() == 0) {
-            flowVariableDao.deleteObjectById(new FlowVariableId(nodeInst.getFlowInstId(),
-                nodeInst.getRunToken(), sVar));
-            return;
-        }
-        FlowVariable varO = new FlowVariable(nodeInst.getFlowInstId(),
-            nodeInst.getRunToken(), sVar, FlowVariable.stringsetToString(sValues), "E");
-        flowVariableDao.mergeObject(varO);
     }
 
     @Override

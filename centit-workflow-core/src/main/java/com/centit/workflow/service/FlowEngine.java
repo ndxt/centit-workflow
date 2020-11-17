@@ -514,14 +514,6 @@ public interface FlowEngine {
     void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue);
 
     /**
-     * 设置流程节点上下文变量
-     * @param nodeInstId 节点实例号
-     * @param sVar 变量名
-     * @param sValues Set String 中的值不能有 分号 ;
-     */
-    void saveFlowNodeVariable(String nodeInstId,String sVar, Set<String> sValues);
-
-    /**
      * 查询流程变量
      * @param flowInstId 工作流实例号
      * @return 所有流程变量

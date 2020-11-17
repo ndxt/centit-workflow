@@ -12,6 +12,7 @@ import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.service.FlowEngine;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,14 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     private String optParam;
     private String optMethod;
 
-    public AutoRunNodeEventSupport(String optUrl, String optParam, String optMethod){
+    private FlowEngine flowEngine;
+
+    public AutoRunNodeEventSupport(String optUrl, String optParam, String optMethod,
+            FlowEngine flowEngine){
         this.optUrl = optUrl;
         this.optParam = optParam;
         this.optMethod = optMethod;
+        this.flowEngine = flowEngine;
     }
 
     @Override
@@ -56,8 +61,8 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             "userCode", optUserCode);
         String httpRet = null;
         try {
+            Object paramMap = JSON.parse(optParam);
             if ("R".equalsIgnoreCase(optMethod) || "GET".equalsIgnoreCase(optMethod)) {
-                Object paramMap = JSON.parse(optParam);
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
                     httpRet = HttpExecutor.simpleGet(HttpExecutorContext.create(), optUrl, params);
@@ -66,7 +71,6 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
                         UrlOptUtils.appendParamToUrl(optUrl, optParam),params);
                 }
             } else if ("C".equalsIgnoreCase(optMethod) || "POST".equalsIgnoreCase(optMethod)) {
-                Object paramMap = JSON.parse(optParam);
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
                     httpRet = HttpExecutor.jsonPost(HttpExecutorContext.create(),optUrl, params);
@@ -75,7 +79,6 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
                         UrlOptUtils.appendParamToUrl(optUrl, optParam), params);
                 }
             } else if ("U".equalsIgnoreCase(optMethod) || "PUT".equalsIgnoreCase(optMethod)) {
-                Object paramMap = JSON.parse(optParam);
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
                     httpRet = HttpExecutor.jsonPut(HttpExecutorContext.create(),optUrl, params);
@@ -84,7 +87,6 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
                         UrlOptUtils.appendParamToUrl(optUrl, optParam), params);
                 }
             } else if ("D".equalsIgnoreCase(optMethod) || "delete".equalsIgnoreCase(optMethod)) {
-                Object paramMap = JSON.parse(optParam);
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
                     httpRet = HttpExecutor.simpleDelete(HttpExecutorContext.create(), optUrl, params);
@@ -98,7 +100,18 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
         }
         if(StringUtils.isNotBlank(httpRet)){
             HttpReceiveJSON json = HttpReceiveJSON.valueOfJson(httpRet);
-            //TODO 自动运行节点添加流程变量设定
+            if(json.getCode() != 0){
+                logger.error(json.getMessage()+":"+JSON.toJSONString(nodeInst));
+                return false;
+            }
+            // 将返回结果设置为流程变量
+            JSONObject jo = json.getJSONObject();
+            if(jo != null){
+                for(Map.Entry<String, Object> ent : jo.entrySet()) {
+                    flowEngine.saveFlowNodeVariable(nodeInst.getNodeInstId(),
+                        ent.getKey(), ent.getValue());
+                }
+            }
         }
         return true;
     }

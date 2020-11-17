@@ -69,6 +69,19 @@ public class FlowEngineClientImpl implements FlowEngine {
             "/flow/engine/saveFlowNodeVariable", paramMap);
     }
 
+    /**
+     * 设置流程节点上下文变量
+     *
+     * @param flowInstId 工作流实例号
+     * @param runToken   令牌值
+     * @param sVar       变量名
+     * @param sValue     变量值
+     */
+    @Override
+    public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
     @Override
     public void assignFlowWorkTeam(String flowInstId, String roleCode, List<String> userCodes)  {
         HashMap<String, Object> paramMap = new HashMap<>();
@@ -867,31 +880,6 @@ public class FlowEngineClientImpl implements FlowEngine {
      */
     @Override
     public List<FlowOrganize> viewFlowOrganizeList(String flowInstId, String roleCode, String authDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 设置流程节点上下文变量
-     *
-     * @param flowInstId 工作流实例号
-     * @param runToken   令牌值
-     * @param sVar       变量名
-     * @param sValue     变量值
-     */
-    @Override
-    public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 设置流程节点上下文变量
-     *
-     * @param nodeInstId 节点实例号
-     * @param sVar       变量名
-     * @param sValues    Set String 中的值不能有 分号 ;
-     */
-    @Override
-    public void saveFlowNodeVariable(String nodeInstId, String sVar, Set<String> sValues) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

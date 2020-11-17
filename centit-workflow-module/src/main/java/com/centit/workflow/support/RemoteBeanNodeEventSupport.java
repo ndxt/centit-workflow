@@ -10,6 +10,7 @@ import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.service.FlowEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,11 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
 
     private static Logger logger = LoggerFactory.getLogger(RemoteBeanNodeEventSupport.class);
     private AppSession appSession ;
+    private FlowEngine flowEngine;
 
+    public RemoteBeanNodeEventSupport(FlowEngine flowEngine){
+        this.flowEngine = flowEngine;
+    }
     public static JSONObject makeRequestParams(FlowInstance flowInst, NodeInstance nodeInst,
                                                NodeInfo nodeInfo, String optUserCode){
         JSONObject paramMap = new JSONObject();
