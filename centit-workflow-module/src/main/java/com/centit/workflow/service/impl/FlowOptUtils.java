@@ -74,7 +74,7 @@ public class FlowOptUtils {
             }
         } else if ("2".equals(node.getInheritType())) {
             //flowInst.
-            Set<NodeInfo> nodes = flowInfo.listNodesByNodeCode(node.getInheritNodeCode());
+            List<NodeInfo> nodes = flowInfo.listNodesByNodeCode(node.getInheritNodeCode());
             NodeInstance inhertInst = null;
             for (NodeInfo thisNode : nodes) {
                 NodeInstance tempInst = flowInst.findLastSameNodeInst

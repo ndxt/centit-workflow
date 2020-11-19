@@ -1,7 +1,6 @@
 package com.centit.workflow.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
@@ -127,9 +126,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @param flowDef
      * @return wfSet
      */
-    private Set<NodeInfo> mapWfNodeSet(List<Node> nodeList, FlowInfo flowDef, FlowDataDetail flowData) {
+    private List<NodeInfo> attachNodeList(List<Node> nodeList, FlowInfo flowDef, FlowDataDetail flowData) {
         flowData.nodeTagToId.clear();
-        Set<NodeInfo> wfSet = new HashSet<NodeInfo>();
+        List<NodeInfo> wfSet = new ArrayList<>();
 
         if (nodeList == null || nodeList.size() == 0) {
             return null;
@@ -142,7 +141,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                 continue;
             thisNodeId = UuidOpt.getUuidAsString32();
 //            thisNodeId = flowDefineDao.getNextNodeId();
-            //这个对应关系 留给下面的 getWfTransitionSet 使用，有一定的耦合性
+            //这个对应关系 留给下面的 attachTransitionList 使用，有一定的耦合性
             flowData.nodeTagToId.put(sId, thisNodeId);
 
         }
@@ -239,8 +238,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @param flowDef
      * @return wfTranSet
      */
-    private Set<FlowTransition> getWfTransitionSet(List<Node> transList, FlowInfo flowDef, FlowDataDetail flowData) {
-        Set<FlowTransition> wfTranSet = new HashSet<FlowTransition>();
+    private List<FlowTransition> attachTransitionList(List<Node> transList, FlowInfo flowDef, FlowDataDetail flowData) {
+        List<FlowTransition> wfTranSet = new ArrayList<>();
         flowData.transTagToId.clear();
 
         if (transList == null || transList.size() == 0) {
@@ -318,10 +317,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowDef.setFlowXmlDesc(sXMLdef);
         // 流程节点定义  必需先调用 getWfNodeSet 再调用 getWfTransitionSet因为nodeTagToId的耦合性
         List<Node> nodeList = flowEle.selectNodes("//Nodes/Node");
-        flowDef.setFlowNodes(mapWfNodeSet(nodeList, flowDef, flowData));
+        flowDef.setNodeList(attachNodeList(nodeList, flowDef, flowData));
         // 流程流转路径定义
         List<Node> transList = flowEle.selectNodes("//Transitions/Transition");
-        flowDef.setFlowTransitions(getWfTransitionSet(transList, flowDef, flowData));
+        flowDef.setTransList(attachTransitionList(transList, flowDef, flowData));
 
         return flowDef;
     }
@@ -420,7 +419,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     private void checkFlowDef(FlowInfo newFlowDef){
         //验证流程节点定义
-        for (NodeInfo nd : newFlowDef.getFlowNodes()) {
+        for (NodeInfo nd : newFlowDef.getNodeList()) {
             if ("C".equals(nd.getNodeType()) || "B".equals(nd.getNodeType())) {
                 if ("S".equals(nd.getOptType())) {
                     if (StringRegularOpt.isNvl(nd.getSubFlowCode()))
@@ -451,7 +450,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             }
         }
         //检查 流转定义
-        for (FlowTransition tran : newFlowDef.getFlowTransitions()) {
+        for (FlowTransition tran : newFlowDef.getTransList()) {
             if (tran.getTransCondition() == null || "".equals(tran.getTransCondition())) {
                 NodeInfo nd = newFlowDef.getFlowNodeById(tran.getStartNodeId());
                 if (nd != null && !"A".equals(nd.getNodeType()) && !"C".equals(nd.getNodeType())) {
@@ -497,7 +496,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
 
         newFlowDef.setFlowStages(newStages);
-        for (NodeInfo nd : newFlowDef.getFlowNodes()) {
+        for (NodeInfo nd : newFlowDef.getNodeList()) {
             /*if (nd.getNodeId().equals(flowData.firstNodeId)) {
                 nd.setNodeType("B");//首届点
             }*/

@@ -70,8 +70,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Autowired
     FlowInstanceGroupDao flowInstanceGroupDao;
 
-    @Autowired
-    private NotificationCenter notificationCenter;
+    /*@Autowired
+    private NotificationCenter notificationCenter;*/
 
     @Autowired(required = false)
     private OperationLogWriter optLogManager;
@@ -92,7 +92,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Map<String, NodeInfo> nodeMap = new HashMap<>();
         Map<String, String> transState = new HashMap<>();
         Map<String, FlowTransition> transMap = new HashMap<>();
-        Set<NodeInfo> nodeSet = wfDef.getFlowNodes();
+        List<NodeInfo> nodeSet = wfDef.getNodeList();
         Boolean findTran = true;
         String benginNodeId = "";
         String endNodeID = "";
@@ -109,7 +109,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
         //System.out.println(benginNodeId);
         //flowDefDao.fetchObjectReferences(wfDef);
-        Set<FlowTransition> transSet = wfDef.getFlowTransitions();
+        List<FlowTransition> transSet = wfDef.getTransList();
         for (FlowTransition trans : transSet) {
             //首节点必然通过
             if (trans.getStartNodeId().equals(benginNodeId)) {

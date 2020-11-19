@@ -629,7 +629,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
                     FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
                     String nextNodeId = nodeTran.getEndNodeId();
-                    for (FlowTransition f : flowInfo.getFlowTransitions()) {
+                    for (FlowTransition f : flowInfo.getTransList()) {
                         if (nextRoutertNode.getNodeId().equals(f.getEndNodeId()) && !f.getTransId().equals(trans.getTransId())) {
                             preTransPath += "," + f.getTransId();
                         }

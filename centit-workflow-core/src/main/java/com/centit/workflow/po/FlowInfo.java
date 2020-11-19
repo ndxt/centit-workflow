@@ -86,7 +86,7 @@ public class FlowInfo implements java.io.Serializable {
             @JoinColumn(name="flowCode"),
             @JoinColumn(name="version")
     })
-    private Set<NodeInfo> flowNodes;// new ArrayList<WfNode>();
+    private List<NodeInfo> nodeList;// new ArrayList<WfNode>();
 
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowTransition.class)
@@ -95,7 +95,7 @@ public class FlowInfo implements java.io.Serializable {
             @JoinColumn(name="version", referencedColumnName="version")
     })
 
-    private Set<FlowTransition> flowTransitions;// new ArrayList<WfTransition>();
+    private List<FlowTransition> transList;// new ArrayList<WfTransition>();
 
     // Constructors
     /** default constructor */
@@ -246,17 +246,18 @@ public class FlowInfo implements java.io.Serializable {
     public void setAtPublishDate(Date atPublishDate) {
         this.atPublishDate = atPublishDate;
     }
-    public Set<NodeInfo> getFlowNodes(){
-        if(this.flowNodes ==null)
-            this.flowNodes = new HashSet<NodeInfo>();
-        return this.flowNodes;
+
+    public List<NodeInfo> getNodeList(){
+        if(this.nodeList ==null)
+            this.nodeList = new ArrayList<>();
+        return this.nodeList;
     }
 
-    public Set<NodeInfo> listNodesByNodeCode(String nodeCode){
-        Set<NodeInfo> nodes = new HashSet<NodeInfo>();
-        if(nodeCode == null || flowNodes ==null)
+    public List<NodeInfo> listNodesByNodeCode(String nodeCode){
+        List<NodeInfo> nodes = new ArrayList<>();
+        if(nodeCode == null || nodeList ==null)
             return nodes;
-        for(NodeInfo node : flowNodes){
+        for(NodeInfo node : nodeList){
             if(nodeCode.equals( node.getNodeCode()))
                 nodes.add(node);
         }
@@ -265,38 +266,38 @@ public class FlowInfo implements java.io.Serializable {
 
 
     public NodeInfo getFlowNodeById(String nodeId){
-        if(this.flowNodes ==null)
+        if(this.nodeList ==null)
             return null;
-        for(NodeInfo nd : flowNodes)
+        for(NodeInfo nd : nodeList)
             if(nd.getNodeId().equals(nodeId))
                 return nd;
         return null;
     }
 
-    public void setFlowNodes(Set<NodeInfo> wfNodes) {
+    public void setNodeList(List<NodeInfo> wfNodes) {
         if(wfNodes == null || wfNodes.size() == 0){
-            this.flowNodes = wfNodes;
+            this.nodeList = wfNodes;
             return;
         }
         for(NodeInfo nodeInfo:wfNodes){
             addFlowNode(nodeInfo);
         }
-        this.flowNodes = wfNodes;
+        this.nodeList = wfNodes;
     }
 
     public void addFlowNode(NodeInfo wfNode ){
-        if (this.flowNodes ==null)
-            this.flowNodes = new HashSet<>();
+        if (this.nodeList ==null)
+            this.nodeList = new ArrayList<>();
         //wfNode.setFlowDefine(this);
         wfNode.setFlowCode(this.getFlowCode());
         wfNode.setVersion(this.getVersion());
-        this.flowNodes.add(wfNode);
+        this.nodeList.add(wfNode);
     }
 
     public void removeFlowNode(NodeInfo wfNode ){
-        if (this.flowNodes ==null)
+        if (this.nodeList ==null)
             return;
-        this.flowNodes.remove(wfNode);
+        this.nodeList.remove(wfNode);
     }
 
     public NodeInfo newFlowNode(){
@@ -306,7 +307,7 @@ public class FlowInfo implements java.io.Serializable {
     }
 
     public NodeInfo getFirstNode(){
-        if (this.flowNodes ==null)
+        if (this.nodeList ==null)
             return null;
         if(StringUtils.isNotBlank(this.getFirstNodeId())) {
             NodeInfo node = getFlowNodeById(this.getFirstNodeId());
@@ -315,43 +316,43 @@ public class FlowInfo implements java.io.Serializable {
             }
         }
         //这段代码为了兼容老的版本
-        for(NodeInfo node : flowNodes){
+        for(NodeInfo node : nodeList){
             if("B".equals(node.getNodeType()))
                 return node;
         }
         return null;
     }
 
-    public Set<FlowTransition> getFlowTransitions(){
-        if(this.flowTransitions ==null)
-            this.flowTransitions = new HashSet<>();
-        return this.flowTransitions;
+    public List<FlowTransition> getTransList(){
+        if(this.transList ==null)
+            this.transList = new ArrayList<>();
+        return this.transList;
     }
 
-    public void setFlowTransitions(Set<FlowTransition> wfTransitions) {
+    public void setTransList(List<FlowTransition> wfTransitions) {
         if(wfTransitions == null || wfTransitions.size() == 0){
-            this.flowTransitions = wfTransitions;
+            this.transList = wfTransitions;
             return;
         }
         for(FlowTransition flowTransition:wfTransitions){
             addFlowTransition(flowTransition);
         }
-        this.flowTransitions = wfTransitions;
+        this.transList = wfTransitions;
     }
 
     public void addFlowTransition(FlowTransition wfTransition ){
-        if (this.flowTransitions ==null)
-            this.flowTransitions = new HashSet<>();
+        if (this.transList ==null)
+            this.transList = new ArrayList<>();
         //wfTransition.setFlowDefine(this);
         wfTransition.setFlowCode(this.getFlowCode());
         wfTransition.setVersion(this.getVersion());
-        this.flowTransitions.add(wfTransition);
+        this.transList.add(wfTransition);
     }
 
     public void removeFlowTransition(FlowTransition wfTransition ){
-        if (this.flowTransitions ==null)
+        if (this.transList ==null)
             return;
-        this.flowTransitions.remove(wfTransition);
+        this.transList.remove(wfTransition);
     }
 
     public FlowTransition newFlowTransition(){
@@ -372,7 +373,7 @@ public class FlowInfo implements java.io.Serializable {
         //delete
         boolean found = false;
         Set<FlowTransition> oldObjs = new HashSet<>();
-        oldObjs.addAll(getFlowTransitions());
+        oldObjs.addAll(getTransList());
 
         for(Iterator<FlowTransition> it = oldObjs.iterator(); it.hasNext();){
             FlowTransition odt = it.next();
@@ -390,7 +391,7 @@ public class FlowInfo implements java.io.Serializable {
         //insert
         for(FlowTransition newdt :newObjs){
             found = false;
-            for(Iterator<FlowTransition> it = getFlowTransitions().iterator();
+            for(Iterator<FlowTransition> it = getTransList().iterator();
                 it.hasNext();){
                 FlowTransition odt = it.next();
                 if(odt.getTransId().equals( newdt.getTransId())){
