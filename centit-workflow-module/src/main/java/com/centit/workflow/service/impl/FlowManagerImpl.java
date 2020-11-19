@@ -823,7 +823,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         //FlowOptUtils.sendMsg("", nextNodeInsts, mangerUserCode);
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
-            .createNodeEventSupportBean(nodedef);
+            .createNodeEventSupportBean(nodedef, flowEngine);
         nodeEventExecutor.runAfterCreate(flow, nextNodeInst, nodedef, mangerUserCode);
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
