@@ -28,7 +28,12 @@ public class FlowInfo implements java.io.Serializable {
     @Column(name = "FLOW_CLASS")
     @Length(max = 4, message = "字段长度不能大于{max}")
     private String flowClass;
-
+     // A 草稿 B 正常 C 过期 D 禁用  E 已发布
+    public static final String FLOW_STATE_DRAFT     = "A";
+    public static final String FLOW_STATE_NOrMAL    = "B";
+    public static final String FLOW_STATE_INVALID   = "C";
+    public static final String FLOW_STATE_FORBIDDEN = "D";
+    public static final String FLOW_STATE_PUBLISHED = "E";
     @Column(name = "FLOW_STATE")
     @Length(max = 1, message = "字段长度不能大于{max}")
     private String flowState;
@@ -59,6 +64,10 @@ public class FlowInfo implements java.io.Serializable {
     @Length(max = 20, message = "字段长度不能大于{max}")
     private String  timeLimit;
 
+    public static final String FLOW_EXPIRE_OPT_NOTICE    = "N";
+    public static final String FLOW_EXPIRE_OPT_NONE      = "O";
+    public static final String FLOW_EXPIRE_OPT_SUSPENSE  = "X";
+    public static final String FLOW_EXPIRE_OPT_TERMINATE = "E";
     /**
      *  获取流程超期后处理方式
      * N：通知， O:不处理 ，X：挂起，E：终止（流程）
@@ -187,7 +196,7 @@ public class FlowInfo implements java.io.Serializable {
 
 
     /**
-     * A 草稿 B 正常 C 过期 D 禁用
+     * A 草稿 B 正常 C 过期 D 禁用  E 已发布
      * @param wfstate
      */
     public void setFlowState(String wfstate) {

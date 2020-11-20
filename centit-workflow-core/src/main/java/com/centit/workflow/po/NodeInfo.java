@@ -38,6 +38,12 @@ public class NodeInfo implements java.io.Serializable {
     @NotNull(message = "字段不能为空")
     @Range( max = 9999, message = "版本号不能大于{max}")
     private Long version;
+
+    public static final String NODE_TYPE_START    = "A";
+    public static final String NODE_TYPE_LEAD     = "B";
+    public static final String NODE_TYPE_OPT      = "C";
+    public static final String NODE_TYPE_ROUTE    = "R";
+    public static final String NODE_TYPE_END      = "F";
     /**
      * A:开始（这个在数据库中其实不存在）
      * B:首节点(首节点不能是路由节点，如果是路由节点请设置为 哑元，跳转到后一个节点； B 的处理换个C一样)
@@ -48,6 +54,14 @@ public class NodeInfo implements java.io.Serializable {
     private String nodeType;
     @Column(name = "NODE_NAME")
     private String nodeName;
+
+
+    public static final String NODE_OPT_NORMAL    = "A";
+    public static final String NODE_OPT_LEAD      = "B";
+    public static final String NODE_OPT_TEAMWORK  = "C";
+    public static final String NODE_OPT_AUTO      = "D";
+    public static final String NODE_OPT_NONE      = "E";
+    public static final String NODE_OPT_SUBFLOW   = "S";
     /**
      * A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行
      * E: 哑元（可用于嵌套汇聚，等同于自动执行无动作） S:子流程
@@ -60,6 +74,10 @@ public class NodeInfo implements java.io.Serializable {
      */
     @Column(name = "OPT_ID")
     private String optId;
+
+    public static final String NODE_OPT_CODE_NONE    = "N";
+    public static final String NODE_OPT_CODE_BEAN    = "B";
+    public static final String NODE_OPT_CODE_SCRIPT  = "S";
     /**
      * 业务页面代码 关联到 FlowOptPage
      *  optType = D 时； optCode 有4个选项
@@ -89,6 +107,7 @@ public class NodeInfo implements java.io.Serializable {
 
     /**
      * EN GW XZ BJ RO SF
+     * @see com.centit.framework.components.SysUserFilterEngine
      */
     @Column(name = "ROLE_TYPE")
     private String roleType;
@@ -105,6 +124,11 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "NODE_DESC")
     private String nodeDesc;
 
+    public static final String TIME_LIMIT_IGNORE    = "I";
+    public static final String TIME_LIMIT_NONE      = "N";
+    public static final String TIME_LIMIT_FIX       = "F";
+    public static final String TIME_LIMIT_CYCLE     = "C";
+    public static final String TIME_LIMIT_HIERARCHICAL = "H";
     /**
      * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、
      * C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
@@ -114,6 +138,10 @@ public class NodeInfo implements java.io.Serializable {
 
     @Column(name = "TIME_LIMIT")
     private String timeLimit;
+
+    public static final String TIME_LIMIT_INHERIT_NONE    = "0";
+    public static final String TIME_LIMIT_INHERIT_LEAD    = "1";
+    public static final String TIME_LIMIT_INHERIT_ASSIGNED = "2";
     /**
      *  0：不继承， 1 ：继承前节点 2 ：继承指定节点；
      */
@@ -131,10 +159,10 @@ public class NodeInfo implements java.io.Serializable {
     private String expireOpt;
 
     @Column(name = "IS_ACCOUNT_TIME")
-    private String isAccountTime;
+    private Boolean isAccountTime;
 
     @Column(name = "IS_TRUNK_LINE")
-    private String isTrunkLine;
+    private Boolean isTrunkLine;
     /**
      * 环节代码
      */
@@ -146,11 +174,23 @@ public class NodeInfo implements java.io.Serializable {
 
     @Column(name = "STAGE_CODE")
     private String stageCode;
+
+    public static final String ROUTER_TYPE_BRANCH    = "D";
+    public static final String ROUTER_TYPE_COLLECT   = "E";
+    public static final String ROUTER_TYPE_PARALLEL  = "H";
+    public static final String ROUTER_TYPE_MULTI_INST= "G";
+    public static final String ROUTER_TYPE_ISOLATED  = "R";
+    public static final String ROUTER_TYPE_SYNC      = "S";
     /**
      * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
      */
     @Column(name = "ROUTER_TYPE")
     private String routerType;
+
+    public static final String ROUTER_MULTI_TYPE_UNIT  = "D";
+    public static final String ROUTER_MULTI_TYPE_USER  = "U";
+    public static final String ROUTER_MULTI_TYPE_VALUE = "V";
+
     /**
      * D 机构， U 人员 (权限表达式)， V 变量(暂时未实现，没有找到应用场景)
      */
@@ -161,6 +201,12 @@ public class NodeInfo implements java.io.Serializable {
      */
     @Column(name = "MULTI_INST_PARAM")
     private String multiInstParam;
+
+    public static final String ROUTER_COLLECT_TYPE_ALL_COMPLETED  = "A";
+    public static final String ROUTER_COLLECT_TYPE_LEAST_COMPLETED  = "R";
+    public static final String ROUTER_COLLECT_TYPE_MOST_UNCOMPLETED = "L";
+    public static final String ROUTER_COLLECT_TYPE_RATE  = "V";
+    public static final String ROUTER_COLLECT_TYPE_EXTRA = "E";
 
     /**
      * A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X ，E  外埠判断
@@ -186,7 +232,7 @@ public class NodeInfo implements java.io.Serializable {
     // Constructors
     /** default constructor */
     public NodeInfo() {
-        this.isAccountTime = "T";
+        this.isAccountTime = true;
         this.inheritType = "0";
     }
 
@@ -196,7 +242,7 @@ public class NodeInfo implements java.io.Serializable {
         this.nodeId = nodeid;
 
         this.nodeType = nodetype;
-        this.isAccountTime = "T";
+        this.isAccountTime = true;
         this.inheritType = "0";
     }
 
@@ -317,8 +363,8 @@ public class NodeInfo implements java.io.Serializable {
         this.timeLimit = null;
         this.stageCode =null;
         this.expireOpt =  null;
-        this.isAccountTime = "T";
-        this.isTrunkLine ="F";
+        this.isAccountTime = true;
+        this.isTrunkLine = false;
 
         this.routerType=null;
         this.multiInstType=null;
