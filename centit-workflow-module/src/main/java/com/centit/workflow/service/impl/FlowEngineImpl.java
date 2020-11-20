@@ -172,7 +172,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 // 子流程继承父流程的 流程实例组
                 flowInst.setFlowGroupId(parentInst.getFlowGroupId());
             }
-            flowInst.setIsSubInst("Y");
+            flowInst.setIsSubInst(true);
         }
         flowInst.setFlowOptName(options.getFlowOptName());
         flowInst.setFlowOptTag(options.getFlowOptTag());
@@ -194,7 +194,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             null, null, null,
             options, flowVarTrans, application);
 
-        if(options.isSkipFirstNode() && !"R".equals(node.getNodeType()) && nodeInsts.size()==1){
+        if(options.isSkipFirstNode() && !NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType()) && nodeInsts.size()==1){
             nodeInsts = submitOptInside(SubmitOptOptions.create()
                 .copy(options).nodeInst(nodeInsts.iterator().next()),
                 varTrans, application,false, false);
@@ -545,7 +545,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String preTransPath = StringUtils.isBlank(transPath) ?
             trans.getTransId() : transPath + "," + trans.getTransId();
 
-        if ("H".equals(sRT) || "D".equals(sRT)) {//D 分支和 H 并行
+        if (NodeInfo.ROUTER_TYPE_PARALLEL.equals(sRT) || NodeInfo.ROUTER_TYPE_BRANCH.equals(sRT)) {//D 分支和 H 并行
             //提交游离分支上的叶子节点 将不会向后流转
             //获取下一批流转节点
             Set<FlowTransition> selTrans = selectTransitions(nextRoutertNode, flowVarTrans);
@@ -561,7 +561,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
             }
             // D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
-            if ("D".equals(sRT)) {
+            if (NodeInfo.ROUTER_TYPE_BRANCH.equals(sRT)) {
                 // 分支节点只执行第一个符合条件的，如果有多个符合条件的 按道理应该报异常
                 // 这里为了最大可运行不报异常
                 FlowTransition nodeTran = selTrans.iterator().next();
@@ -584,7 +584,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
             }
         } else {
-            if ("E".equals(sRT)) {//汇聚
+            if (NodeInfo.ROUTER_TYPE_COLLECT.equals(sRT)) {//汇聚
                 String preRunToken = NodeInstance.calcSuperToken(nodeToken);
                 Set<String> nNs = // 所有未提交的需要等待的 子节点令牌
                     flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
@@ -592,24 +592,24 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 boolean canSubmit = nNs == null || nNs.size() == 0 || (nNs.size() == 1 && nNs.contains(nodeToken));
                 //A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X
                 String sCT = nextRoutertNode.getConvergeType();
-                if (! canSubmit && !"A".equals(sCT)) {
+                if (! canSubmit && ! NodeInfo.ROUTER_COLLECT_TYPE_ALL_COMPLETED.equals(sCT)) {
                     Set<String> submitNodeIds = flowInst.calcSubmitSubNodeIdByToken(preRunToken);
                     List<FlowTransition> transList =
                         flowTransitionDao.getNodeInputTrans(nextRoutertNode.getNodeId());
                     canSubmit = true;
                     for (FlowTransition tran : transList) {
-                        if ("F".equals(tran.getCanIgnore()) && !submitNodeIds.contains(tran.getStartNodeId()))
+                        if (!tran.getCanIgnore() && !submitNodeIds.contains(tran.getStartNodeId()))
                             canSubmit = false;
                     }
 
                     if (canSubmit) {
                         if (StringRegularOpt.isNumber(nextRoutertNode.getConvergeParam())) {
-                            if ("R".equals(sCT)) {
+                            if (NodeInfo.ROUTER_COLLECT_TYPE_LEAST_COMPLETED.equals(sCT)) {
                                 canSubmit = submitNodeIds.size() >=
                                     Integer.valueOf(nextRoutertNode.getConvergeParam());
-                            } else if ("L".equals(sCT)) {
+                            } else if (NodeInfo.ROUTER_COLLECT_TYPE_MOST_UNCOMPLETED.equals(sCT)) {
                                 canSubmit = nNs.size() <= Integer.valueOf(nextRoutertNode.getConvergeParam());
-                            } else if ("V".equals(sCT)) {
+                            } else if (NodeInfo.ROUTER_COLLECT_TYPE_RATE.equals(sCT)) {
                                 canSubmit = (double) submitNodeIds.size() / (double) (submitNodeIds.size() + nNs.size())
                                     >= Double.valueOf(nextRoutertNode.getConvergeParam());
                             } else
@@ -639,12 +639,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         preNodeInst, preTransPath, nodeTran, options,
                         flowVarTrans, application);
                 }
-            } else if ("G".equals(sRT)) {//多实例
+            } else if (NodeInfo.ROUTER_TYPE_MULTI_INST.equals(sRT)) {//多实例
                 FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
                 String nextNodeId = nodeTran.getEndNodeId();
                 NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
 
-                if (!"C".equals(nextNode.getNodeType())) { //报错
+                if (!NodeInfo.NODE_TYPE_OPT.equals(nextNode.getNodeType())) { //报错
                     throw new WorkflowException(WorkflowException.FlowDefineError,
                         "多实例路由后面必须是业务节点：" +  flowInst.getFlowInstId() +
                             (preNodeInst!=null? "; 节点：" + preNodeInst.getNodeInstId() :";") +
@@ -654,7 +654,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     nextRoutertNode, options,
                     flowVarTrans);
                 //D 机构， U  人员（权限表达式） V 变量
-                if ("D".equals(nextRoutertNode.getMultiInstType())) {
+                if (NodeInfo.ROUTER_MULTI_TYPE_UNIT.equals(nextRoutertNode.getMultiInstType())) {
                     Set<String> nextNodeUnits = unitAndUsers.getLeft();
 
                     if (nextNodeUnits == null || nextNodeUnits.size() == 0) { //报错
@@ -678,7 +678,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             nRn++;
                         }
                     }
-                } else if ("U".equals(nextRoutertNode.getMultiInstType())) {
+                } else if (NodeInfo.ROUTER_MULTI_TYPE_USER.equals(nextRoutertNode.getMultiInstType())) {
                     Set<String> optUsers = unitAndUsers.getRight();
                     if (optUsers == null || optUsers.size() == 0) {
                         throw new WorkflowException(WorkflowException.NoValueForMultiInst,
@@ -707,14 +707,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 } /*else if ("V".equals(nextRoutertNode.getMultiInstType())) {
                     // 实现变量多实例 这个没有实际意义
                 }*/
-            } else if ("R".equals(sRT)) {//游离
+            } else if (NodeInfo.ROUTER_TYPE_ISOLATED.equals(sRT)) {//游离
                 FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
                 String nextNodeId = nodeTran.getEndNodeId();
                 resNodes = submitToNextNode(
                     flowNodeDao.getObjectById(nextNodeId), "R" + nodeToken, flowInst, flowInfo,
                     preNodeInst, preTransPath, nodeTran, options,
                     flowVarTrans, application);
-            } else if ("S".equals(sRT)) {//同步 保留
+            } else if (NodeInfo.ROUTER_TYPE_SYNC.equals(sRT)) {//同步 保留
                 String preRunToken = NodeInstance.calcSuperToken(nodeToken);
                 Set<String> nNs =
                     flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
@@ -724,7 +724,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         flowInst.findSubmitSubNodeInstByToken(preRunToken);
                     for (Map.Entry<String, NodeInstance> ent : syncNodes.entrySet()) {
                         NodeInfo rtN = selectNextNodeByNodeId(ent.getValue().getNodeId());
-                        if ("R".equals(rtN.getNodeType()) && "S".equals(rtN.getRouterType())) {
+                        if (NodeInfo.NODE_TYPE_ROUTE.equals(rtN.getNodeType()) && NodeInfo.ROUTER_TYPE_SYNC.equals(rtN.getRouterType())) {
                             FlowTransition nextTran = selectOptNodeTransition(rtN);
                             List<String> sN = submitToNextNode(
                                 flowNodeDao.getObjectById(nextTran.getEndNodeId()),
@@ -754,22 +754,22 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
         // A:开始 B:首节点(首节点不能是路由节点，如果是路由节点请设置为 哑元，跳转到后一个节点； B 的处理换个C一样)
         // C:业务节点  F结束  R: 路由节点
-        if ("R".equals(nextNode.getNodeType())) { // 后续节点为路由节点
+        if (NodeInfo.NODE_TYPE_ROUTE.equals(nextNode.getNodeType())) { // 后续节点为路由节点
             return submitToNextRouterNode(
                 nextNode, nodeToken, flowInst, flowInfo,
                 preNodeInst, transPath, nodeTran, options,
                 varTrans, application);
-        } else if ("F".equals(nextNode.getNodeType())) {
+        } else if (NodeInfo.NODE_TYPE_END.equals(nextNode.getNodeType())) {
             //如果是最后一个节点，则要结束整个流程 调用 endInstance
             this.endFlowInstance(flowInst, flowInfo, nextNode, transPath,
                 nodeTran, preNodeInst.getNodeInstId(), options.getUserCode(), options.getUnitCode());
-            if ("Y".equals(flowInst.getIsSubInst())) {
+            if (flowInst.getIsSubInst()) {
                 //long otherSubFlows = flowInstanceDao.calcOtherSubflowSum(
                     //flowInst.getPareNodeInstId(), flowInst.getFlowInstId());
                 // 这个应该始终为 0
                 //if (otherSubFlows == 0) {// 其他所有子流程都关闭了，则提交父流程对应的节点
                 return submitOptInside(SubmitOptOptions.create()
-                        .copy(options).nodeInst(flowInst.getPareNodeInstId()),
+                        .copy(options).nodeInst(flowInst.getPreNodeInstId()),
                     varTrans, application, true, true);
                 // }
             }
@@ -1488,9 +1488,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         for (FlowTransition tran : trans) {
             NodeInfo tempNode = flowNodeDao.getObjectById(tran.getEndNodeId());
-            if ("C".equals(tempNode.getNodeType()) || "B".equals(tempNode.getNodeType()))
+            if (NodeInfo.NODE_TYPE_OPT.equals(tempNode.getNodeType()) || NodeInfo.NODE_TYPE_FIRST.equals(tempNode.getNodeType()))
                 nextNodes.add(tempNode);
-            else if ("R".equals(tempNode.getNodeType())) {
+            else if (NodeInfo.NODE_TYPE_ROUTE.equals(tempNode.getNodeType())) {
                 nextNodes.addAll(
                     viewRouterNextNodeInside(tempNode, varTrans));
             }
@@ -1513,13 +1513,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         NodeInfo currNode = flowNodeDao.getObjectById(nodeInst.getNodeId());
-
-
         Set<NodeInfo> nextNodes = new HashSet<>();
         NodeInfo nextNode = selectNextNodeByNodeId(currNode.getNodeId());
-        if ("C".equals(nextNode.getNodeType())) {
+        if (NodeInfo.NODE_TYPE_OPT.equals(nextNode.getNodeType())) {
             nextNodes.add(nextNode);
-        } else if ("R".equals(nextNode.getNodeType())) {
+        } else if (NodeInfo.NODE_TYPE_ROUTE.equals(nextNode.getNodeType())) {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
                 nodeInst, flowInst,flowVariableDao,this,null);
             // 分支节点的条件

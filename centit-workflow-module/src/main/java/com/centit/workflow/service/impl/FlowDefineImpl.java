@@ -5,6 +5,7 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
+import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.algorithm.UuidOpt;
@@ -143,11 +144,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 //            thisNodeId = flowDefineDao.getNextNodeId();
             //这个对应关系 留给下面的 attachTransitionList 使用，有一定的耦合性
             flowData.nodeTagToId.put(sId, thisNodeId);
-
         }
 
         for (Node tmpNode : nodeList) {
-
             Element baseNode = (Element) tmpNode.selectSingleNode("BaseProperties");
             String sId = getXmlNodeAttrAsStr(baseNode, "id");
             if (sId == null)
@@ -157,12 +156,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
             sId = sId.toLowerCase();
             if (sId.equals(BEGINNODETAG)) {
-                wfNode.setNodeType("A");
+                wfNode.setNodeType(NodeInfo.NODE_TYPE_START);
                 flowData.beginNodeId = thisNodeId;
             } else if (sId.equals(ENDNODETAG)) {
-                wfNode.setNodeType("F");
+                wfNode.setNodeType(NodeInfo.NODE_TYPE_END);
             } else {
-                wfNode.setNodeType("C");
+                wfNode.setNodeType(NodeInfo.NODE_TYPE_OPT);
             }
 
             wfNode.setNodeId(thisNodeId);
@@ -191,7 +190,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             wfNode.setRoleType(getXmlNodeAttrAsStr(baseNode, "roletype"));
             wfNode.setRoleCode(getXmlNodeAttrAsStr(baseNode, "rolecode"));
             wfNode.setLimitType(getXmlNodeAttrAsStr(baseNode, "timeLimitType"));
-            wfNode.setIsTrunkLine(getXmlNodeAttrAsStr(baseNode, "isTrunkLine"));
+            wfNode.setIsTrunkLine(BooleanBaseOpt.castObjectToBoolean(
+                getXmlNodeAttrAsStr(baseNode, "isTrunkLine"), false));
             String timelimit = getXmlNodeAttrAsStr(baseNode, "timeLimit");
             if (timelimit != null && timelimit.length() > 0) {
                 wfNode.setTimeLimit(getXmlNodeAttrAsStr(baseNode, "timeLimit"));
@@ -202,7 +202,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             wfNode.setUnitExp(getXmlNodeAttrAsStr(baseNode, "unitexp"));
             wfNode.setPowerExp(getXmlNodeAttrAsStr(baseNode, "powerexp"));
             wfNode.setSubFlowCode(getXmlNodeAttrAsStr(baseNode, "subwfcode"));
-            wfNode.setIsAccountTime(getXmlNodeAttrAsStr(baseNode, "isaccounttime"));
+            wfNode.setIsAccountTime(
+                    getXmlNodeAttrAsStr(baseNode, "isaccounttime"));
 
             //codefan@sina.com 2015-4-8 添加路由相关属性
             wfNode.setRouterType(getXmlNodeAttrAsStr(baseNode, "routertype"));
@@ -270,7 +271,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
             //codefan@sina.com 2015-4-8 添加路由计时相关属性
             wfTran.setIsAccountTime(getXmlNodeAttrAsStr(baseNode, "isaccounttime"));
-            wfTran.setCanIgnore(getXmlNodeAttrAsStr(baseNode, "canignore"));
+            wfTran.setCanIgnore(
+                BooleanBaseOpt.castObjectToBoolean(
+                    getXmlNodeAttrAsStr(baseNode, "canignore"),true));
 
             sId = getXmlNodeAttrAsStr(baseNode, "from");
             String fromNodeId = flowData.nodeTagToId.get(sId);
@@ -284,13 +287,26 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
             wfTranSet.add(wfTran);
         }
-
         return wfTranSet;
     }
 
     private FlowInfo createFlowDefByJSON(String jsonDef, String flowCode, Long version, FlowDataDetail flowData) {
         FlowInfo flowDef = JSON.parseObject(jsonDef, FlowInfo.class);// new FlowInfo();
         flowDef.setCid(new FlowInfoId(version, flowCode));
+        //getStartNode
+        NodeInfo startNode = null;
+        for(NodeInfo node : flowDef.getNodeList()){
+            if(NodeInfo.NODE_TYPE_START.equals(node.getNodeType())){
+                startNode = node;
+                break;
+            }
+        }
+        for(FlowTransition tran : flowDef.getTransList()){
+            if(startNode.getNodeId().equals(tran.getStartNodeId())){
+                flowDef.setFirstNodeId(tran.getEndNodeId());
+                break;
+            }
+        }
         return flowDef;
     }
 
@@ -337,7 +353,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowDef.copyNotNullProperty(wfDef);
         flowDef.setVersion(0L);//wfDef.getVersion()==null ? 0L : wfDef.getVersion());
 
-        flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
+        flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
 
         flowDefineDao.mergeObject(flowDef);
@@ -352,7 +368,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if (flowDef == null) {
             return false;
         }
-        flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
+        flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
         flowDef.replaceFlowStages(wfDef.getFlowStagesSet());
         flowDefineDao.saveObjectReferences(flowDef);
@@ -367,7 +383,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if (flowDef == null) {
             return false;
         }
-        flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
+        flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
         //flowDef.replaceFlowRoles(wfDef.getFlowRolesSet());
         flowDefineDao.saveObjectReferences(flowDef);
@@ -382,7 +398,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if (flowDef == null) {
             return false;
         }
-        flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
+        flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
         //flowDef.replaceFlowVariableDefs(wfDef.getFlowVariableDefSet());
         flowDefineDao.saveObjectReferences(flowDef);
@@ -401,7 +417,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         flowDef.setVersion(0L);//wfDef.getVersion()==null ? 0L : wfDef.getVersion());
 
-        flowDef.setFlowState("A");//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
+        flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
 
         flowDef.setFlowXmlDesc(flowDefXML);
@@ -420,16 +436,16 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private void checkFlowDef(FlowInfo newFlowDef){
         //验证流程节点定义
         for (NodeInfo nd : newFlowDef.getNodeList()) {
-            if ("C".equals(nd.getNodeType()) || "B".equals(nd.getNodeType())) {
-                if ("S".equals(nd.getOptType())) {
+            if (NodeInfo.NODE_TYPE_OPT.equals(nd.getNodeType()) || NodeInfo.NODE_TYPE_FIRST.equals(nd.getNodeType())) {
+                if (NodeInfo.NODE_OPT_SUBFLOW.equals(nd.getOptType())) {
                     if (StringRegularOpt.isNvl(nd.getSubFlowCode()))
                         throw new ObjectException("子流程节点：" + nd.getNodeName() + ",没有指定流程代码。");
-                } else if (!"E".equals(nd.getOptType()) && !"D".equals(nd.getOptType())) {
+                } else if (!NodeInfo.NODE_OPT_AUTO.equals(nd.getOptType()) && !NodeInfo.NODE_OPT_NONE.equals(nd.getOptType())) {
                     if (StringRegularOpt.isNvl(nd.getOptCode()))
                         throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
                     if (StringRegularOpt.isNvl(nd.getRoleType()))
                         throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定角色类别。");
-                    else if ("en".equals(nd.getRoleType())) {
+                    else if (SysUserFilterEngine.ROLE_TYPE_ENGINE.equalsIgnoreCase(nd.getRoleType())) {
                         if (StringRegularOpt.isNvl(nd.getPowerExp()))
                             throw new ObjectException("节点：" + nd.getNodeName() + ",权限表达式为空。");
                     } else {
@@ -437,23 +453,26 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                             && !SysUserFilterEngine.ROLE_TYPE_ENGINE.equals(nd.getRoleType()))
                             throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定角色代码。");
                     }
-                } else if ("D".equals(nd.getOptType())) {
-                    if ("B".equals(nd.getOptCode()) && StringRegularOpt.isNvl(nd.getOptBean()))
+                } else if (NodeInfo.NODE_OPT_AUTO.equals(nd.getOptType())) {
+                    if (NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nd.getOptCode()) && StringRegularOpt.isNvl(nd.getOptBean()))
                         throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的bean。");
-                    else if ("S".equals(nd.getOptCode()) && StringRegularOpt.isNvl(nd.getOptParam()))
+                    else if (NodeInfo.AUTO_NODE_OPT_CODE_SCRIPT.equals(nd.getOptCode()) && StringRegularOpt.isNvl(nd.getOptParam()))
                         throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的script。");
                 }
-            } else if ("R".equals(nd.getNodeType())) {
+            } else if (NodeInfo.NODE_TYPE_ROUTE.equals(nd.getNodeType())) {
                 if (StringRegularOpt.isNvl(nd.getRouterType())) {
                     throw new ObjectException("路由节点：" + nd.getNodeName() + ",没有指定路由类型。");
                 }
             }
         }
+
         //检查 流转定义
         for (FlowTransition tran : newFlowDef.getTransList()) {
-            if (tran.getTransCondition() == null || "".equals(tran.getTransCondition())) {
+            if (StringUtils.isBlank(tran.getTransCondition())) {
                 NodeInfo nd = newFlowDef.getFlowNodeById(tran.getStartNodeId());
-                if (nd != null && !"A".equals(nd.getNodeType()) && !"C".equals(nd.getNodeType())) {
+                if (nd != null && NodeInfo.NODE_TYPE_ROUTE.equals (nd.getNodeType()) &&
+                    (NodeInfo.ROUTER_TYPE_BRANCH.equals(nd.getRouterType())
+                     || NodeInfo.ROUTER_TYPE_PARALLEL.equals(nd.getRouterType()))) {
                     throw new ObjectException("流转：" + tran.getTransName() + ",没有指定流转条件。");
                 }
             }
@@ -464,7 +483,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     @Override
     public long publishFlowDef(String flowCode) {
-
         // 将流程从 XML 格式中解析出来
         FlowInfo flowDef = flowDefineDao.getObjectWithReferences(new FlowInfoId(0L, flowCode));
         if (flowDef == null) {
@@ -518,7 +536,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         newFlowDef.setExpireOpt(flowDef.getExpireOpt());
         newFlowDef.setFlowPublishDate(DatetimeOpt.currentUtilDate());
         newFlowDef.setFirstNodeId(flowData.firstNodeId);
-        newFlowDef.setFlowState("B");
+        newFlowDef.setFlowState(FlowInfo.FLOW_STATE_NORMAL);
         //复制相关节点信息
         //newFlowDef.getWfFlowStages()
 
@@ -526,14 +544,14 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowDefineDao.saveObjectReferences(newFlowDef);
 
         //将0版本更新为已发布
-        flowDef.setFlowState("E");
+        flowDef.setFlowState(FlowInfo.FLOW_STATE_PUBLISHED);
         flowDefineDao.updateObject(flowDef);
 
         //将非0老版本流程状态改为已过期
         if(nCurVersion>0) {
             FlowInfo oldflowDef = flowDefineDao.getObjectById(new FlowInfoId(nCurVersion, flowDef.getFlowCode()));
             if (oldflowDef != null) {
-                oldflowDef.setFlowState("C");
+                oldflowDef.setFlowState(FlowInfo.FLOW_STATE_INVALID);
                 flowDefineDao.updateObject(oldflowDef);
             }
         }
@@ -645,7 +663,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     public void disableFlow(String flowCode) {
         //将最新版本的流程定义的状态更改为禁用 D
         FlowInfo flowDef = flowDefineDao.getLastVersionFlowByCode(flowCode);
-        flowDef.setFlowState("D");
+        flowDef.setFlowState(FlowInfo.FLOW_STATE_FORBIDDEN);
         flowDefineDao.updateObject(flowDef);
     }
 
@@ -654,7 +672,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     public void enableFlow(String flowCode) {
         //将最新版本的流程定义的状态更改为正常 B
         FlowInfo flowDef = flowDefineDao.getLastVersionFlowByCode(flowCode);
-        flowDef.setFlowState("B");
+        flowDef.setFlowState(FlowInfo.FLOW_STATE_NORMAL);
         flowDefineDao.updateObject(flowDef);
     }
 

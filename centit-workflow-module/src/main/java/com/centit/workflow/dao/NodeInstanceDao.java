@@ -112,7 +112,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
      * @param isTimer 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
      */
     @Transactional
-    public void updateNodeTimerState(String instid,String isTimer,String mangerUserCode){
+    public void updateNodeTimerState(String instid, String isTimer,String mangerUserCode){
         NodeInstance nodeInst = this.getObjectById(instid);
         nodeInst.setIsTimer(isTimer);
         nodeInst.setLastUpdateUser(mangerUserCode);

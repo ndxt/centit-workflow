@@ -30,7 +30,7 @@ public class FlowOptUtils {
         flowInst.setUserCode(usercode);
         flowInst.setPreNodeInstId("");
         flowInst.setPreInstId("");
-        flowInst.setIsSubInst("N");
+        flowInst.setIsSubInst(false);
         flowInst.setInstState("N");
         flowInst.setCreateTime(new Date(System.currentTimeMillis()));
         String timeLimit = wf.getTimeLimit();

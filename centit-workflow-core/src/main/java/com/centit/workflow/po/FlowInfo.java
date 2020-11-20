@@ -30,7 +30,7 @@ public class FlowInfo implements java.io.Serializable {
     private String flowClass;
      // A 草稿 B 正常 C 过期 D 禁用  E 已发布
     public static final String FLOW_STATE_DRAFT     = "A";
-    public static final String FLOW_STATE_NOrMAL    = "B";
+    public static final String FLOW_STATE_NORMAL = "B";
     public static final String FLOW_STATE_INVALID   = "C";
     public static final String FLOW_STATE_FORBIDDEN = "D";
     public static final String FLOW_STATE_PUBLISHED = "E";
@@ -326,7 +326,7 @@ public class FlowInfo implements java.io.Serializable {
         }
         //这段代码为了兼容老的版本
         for(NodeInfo node : nodeList){
-            if("B".equals(node.getNodeType()))
+            if(NodeInfo.NODE_TYPE_FIRST.equals(node.getNodeType()))
                 return node;
         }
         return null;

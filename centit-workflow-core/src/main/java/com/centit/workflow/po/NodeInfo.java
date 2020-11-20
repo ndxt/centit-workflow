@@ -40,7 +40,8 @@ public class NodeInfo implements java.io.Serializable {
     private Long version;
 
     public static final String NODE_TYPE_START    = "A";
-    public static final String NODE_TYPE_LEAD     = "B";
+    @Deprecated
+    public static final String NODE_TYPE_FIRST    = "B";
     public static final String NODE_TYPE_OPT      = "C";
     public static final String NODE_TYPE_ROUTE    = "R";
     public static final String NODE_TYPE_END      = "F";
@@ -75,9 +76,9 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "OPT_ID")
     private String optId;
 
-    public static final String NODE_OPT_CODE_NONE    = "N";
-    public static final String NODE_OPT_CODE_BEAN    = "B";
-    public static final String NODE_OPT_CODE_SCRIPT  = "S";
+    public static final String AUTO_NODE_OPT_CODE_NONE    = "N";
+    public static final String AUTO_NODE_OPT_CODE_BEAN    = "B";
+    public static final String AUTO_NODE_OPT_CODE_SCRIPT  = "S";
     /**
      * 业务页面代码 关联到 FlowOptPage
      *  optType = D 时； optCode 有4个选项
@@ -159,7 +160,7 @@ public class NodeInfo implements java.io.Serializable {
     private String expireOpt;
 
     @Column(name = "IS_ACCOUNT_TIME")
-    private Boolean isAccountTime;
+    private String isAccountTime;
 
     @Column(name = "IS_TRUNK_LINE")
     private Boolean isTrunkLine;
@@ -232,7 +233,7 @@ public class NodeInfo implements java.io.Serializable {
     // Constructors
     /** default constructor */
     public NodeInfo() {
-        this.isAccountTime = true;
+        this.isAccountTime = "T";
         this.inheritType = "0";
     }
 
@@ -242,7 +243,7 @@ public class NodeInfo implements java.io.Serializable {
         this.nodeId = nodeid;
 
         this.nodeType = nodetype;
-        this.isAccountTime = true;
+        this.isAccountTime = "T";
         this.inheritType = "0";
     }
 
@@ -363,7 +364,7 @@ public class NodeInfo implements java.io.Serializable {
         this.timeLimit = null;
         this.stageCode =null;
         this.expireOpt =  null;
-        this.isAccountTime = true;
+        this.isAccountTime = "T";
         this.isTrunkLine = false;
 
         this.routerType=null;

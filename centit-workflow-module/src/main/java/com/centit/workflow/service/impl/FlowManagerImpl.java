@@ -98,10 +98,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         String endNodeID = "";
         for (NodeInfo node : nodeSet) {
             nodeState.put(node.getNodeId(), "ready");
-            if (node.getNodeType().equals("A")) {
+            if (node.getNodeType().equals(NodeInfo.NODE_TYPE_START)) {
                 nodeState.put(node.getNodeId(), "complete");
                 benginNodeId = node.getNodeId();
-            } else if (node.getNodeType().equals("F")) {
+            } else if (node.getNodeType().equals(NodeInfo.NODE_TYPE_END)) {
                 endNodeID = node.getNodeId();
             }
             nodeInstCount.put(node.getNodeId(), 0);
@@ -157,13 +157,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     completeTrans.add(trans);
                     if (trans != null) {
                         NodeInfo node = nodeMap.get(trans.getStartNodeId());
-                        if (node != null && "R".equals(node.getNodeType())) {
+                        if (node != null && NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType())) {
                             nodeState.put(trans.getStartNodeId(), "complete");
                             //nc = nodeInstCount.get(trans.getStartNodeId());
                             //nodeInstCount.put(trans.getStartNodeId(), (nc==null)?1:nc+1);
                         }
                         node = nodeMap.get(trans.getEndNodeId());
-                        if (node != null && "R".equals(node.getNodeType())) {
+                        if (node != null && NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType())) {
                             nodeState.put(trans.getEndNodeId(), "complete");
                             nc = nodeInstCount.get(trans.getEndNodeId());
                             nodeInstCount.put(trans.getEndNodeId(), (nc == null) ? 1 : nc + 1);
@@ -197,7 +197,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     for (NodeInfo node : nodeSet) {
                         if (trans.getStartNodeId().equals(node.getNodeId())) {
                             //如果最后一个节点之前的节点是路由节点
-                            if ("R".equals(node.getNodeType())) {
+                            if (NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType())) {
                                 Map<NodeInfo, FlowTransition> map = new HashMap<>();
                                 map.put(node, trans);
                                 finalTrans.add(map);
@@ -738,8 +738,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 //            return -6;
         }
         NodeInfo nodedef = flowNodeDao.getObjectById(thisnode.getNodeId());
-        if ("A".equals(nodedef.getNodeType())
-            || "F".equals(nodedef.getNodeType())) {
+        if (NodeInfo.NODE_TYPE_START.equals(nodedef.getNodeType())
+            || NodeInfo.NODE_TYPE_END.equals(nodedef.getNodeType())) {
             // 不能设定到开始或者结束节点
             return null;
 //            return -5;//大小于
@@ -909,7 +909,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (nextNode == null)
             return null;//大小于
 //            return -3;
-        if (!"C".equals(nextNode.getNodeType()) && !"B".equals(nextNode.getNodeType()))
+        if (!NodeInfo.NODE_TYPE_OPT.equals(nextNode.getNodeType())
+             && !NodeInfo.NODE_TYPE_FIRST.equals(nextNode.getNodeType()))
             return null;//大小于
 //            return -4;
 
