@@ -1,6 +1,8 @@
 package com.centit.workflow.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
@@ -294,18 +296,29 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         FlowInfo flowDef = JSON.parseObject(jsonDef, FlowInfo.class);// new FlowInfo();
         flowDef.setCid(new FlowInfoId(version, flowCode));
         //getStartNode
-        NodeInfo startNode = null;
+        flowData.nodeTagToId.clear();
+        flowData.transTagToId.clear();
+        String startNodeId = null;
         for(NodeInfo node : flowDef.getNodeList()){
             if(NodeInfo.NODE_TYPE_START.equals(node.getNodeType())){
-                startNode = node;
-                break;
+                startNodeId = node.getNodeId();
             }
+            String thisNodeId = UuidOpt.getUuidAsString32();
+            flowData.nodeTagToId.put(node.getNodeId(), thisNodeId);
+            node.setNodeId(thisNodeId);
         }
+
         for(FlowTransition tran : flowDef.getTransList()){
-            if(startNode.getNodeId().equals(tran.getStartNodeId())){
-                flowDef.setFirstNodeId(tran.getEndNodeId());
-                break;
+            String fromNodeId = flowData.nodeTagToId.get(tran.getStartNodeId());
+            String toNodeId = flowData.nodeTagToId.get(tran.getEndNodeId());
+            if(StringUtils.equals(startNodeId, tran.getStartNodeId())){
+                flowDef.setFirstNodeId(toNodeId);
             }
+            tran.setStartNodeId(fromNodeId);
+            tran.setEndNodeId(toNodeId);
+            String thisTransId = UuidOpt.getUuidAsString32();
+            flowData.transTagToId.put(tran.getTransId(), thisTransId);
+            tran.setTransId(thisTransId);
         }
         return flowDef;
     }
@@ -524,6 +537,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         if(defineAsXML){
             resetNodeTransIdToXML(flowDef.getFlowXmlDesc(), newFlowDef, flowData);
+        } else {
+            resetNodeTransIdToJSON(flowDef.getFlowXmlDesc(), newFlowDef, flowData);
         }
 
         // 保存新版本的流程,状态设置为正常
@@ -558,6 +573,28 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return newVersion;
     }
 
+    private void resetNodeTransIdToJSON(String xmlDefineDesc, FlowInfo newFlowDef, FlowDataDetail flowData){
+        JSONObject defJson = JSON.parseObject(xmlDefineDesc);
+        JSONArray nodes = defJson.getJSONArray("nodeList");
+        for(Object nodeObj : nodes){
+            String nodeId = ((JSONObject)nodeObj).getString("nodeId");
+            ((JSONObject)nodeObj).put("nodeId", flowData.nodeTagToId.get(nodeId));
+        }
+
+        JSONArray trans = defJson.getJSONArray("transList");
+        for(Object tranObj : trans){
+            JSONObject transJson = (JSONObject)tranObj;
+            String transId = transJson.getString("transId");
+            transJson.put("transId", flowData.transTagToId.get(transId));
+            String startNodeId = transJson.getString("startNodeId");
+            transJson.put("startNodeId", flowData.nodeTagToId.get(startNodeId));
+            String endNodeId = transJson.getString("endNodeId");
+            transJson.put("endNodeId", flowData.nodeTagToId.get(endNodeId));
+        }
+
+        newFlowDef.setFlowXmlDesc(defJson.toJSONString());
+    }
+
     private void resetNodeTransIdToXML(String xmlDefineDesc, FlowInfo newFlowDef, FlowDataDetail flowData){
 
         // 替换 流程XML格式中的节点、流转编码 对照表在 ndMap 和 trMap 中
@@ -570,7 +607,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             Attribute nodeIdAttr = baseNode.attribute("id");
             String sId = nodeIdAttr.getValue();
             if (BEGINNODETAG.compareToIgnoreCase(sId) != 0 && ENDNODETAG.compareToIgnoreCase(sId) != 0)
-                nodeIdAttr.setValue(flowData.nodeTagToId.get(sId).toString());
+                nodeIdAttr.setValue(flowData.nodeTagToId.get(sId));
         }
 
         List<Node> transList = wfDefDoc.selectNodes("//Transitions/Transition");
@@ -587,14 +624,14 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             if (fromAttr != null) {
                 String sId = fromAttr.getValue();
                 if (BEGINNODETAG.compareToIgnoreCase(sId) != 0 && ENDNODETAG.compareToIgnoreCase(sId) != 0)
-                    fromAttr.setValue(flowData.nodeTagToId.get(sId).toString());
+                    fromAttr.setValue(flowData.nodeTagToId.get(sId));
             }
 
             Attribute toAttr = baseNode.attribute("to");
             if (toAttr != null) {
                 String sId = toAttr.getValue();
                 if (BEGINNODETAG.compareToIgnoreCase(sId) != 0 && ENDNODETAG.compareToIgnoreCase(sId) != 0)
-                    toAttr.setValue(flowData.nodeTagToId.get(sId).toString());
+                    toAttr.setValue(flowData.nodeTagToId.get(sId));
             }
 
             Element labNode = (Element) transNode
