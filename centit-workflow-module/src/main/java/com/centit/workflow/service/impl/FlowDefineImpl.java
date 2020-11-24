@@ -771,8 +771,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         optType.put("A", "一般");
         optType.put("B", "抢先机制");
         optType.put("C", "多人操作");
-        //optType.put("D", "自动执行");
-        //optType.put("S", "子流程");
+        optType.put("D", "自动执行");
+        optType.put("S", "子流程");
         //optType.put("E", "哑元");
         return optType;
     }
