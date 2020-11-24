@@ -71,7 +71,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         public Map<String, String> nodeTagToId;
         public Map<String, String> transTagToId;
         public String beginNodeId;
-        public String firstNodeId;
 
         public FlowDataDetail() {
             nodeTagToId = new HashMap<>();
@@ -241,12 +240,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @param flowDef
      * @return wfTranSet
      */
-    private List<FlowTransition> attachTransitionList(List<Node> transList, FlowInfo flowDef, FlowDataDetail flowData) {
+    private void attachTransitionList(List<Node> transList, FlowInfo flowDef, FlowDataDetail flowData) {
         List<FlowTransition> wfTranSet = new ArrayList<>();
         flowData.transTagToId.clear();
 
         if (transList == null || transList.size() == 0) {
-            return null;
+            return;
         }
         for (Node tmpNode : transList) {
             FlowTransition wfTran = flowDef.newFlowTransition();
@@ -283,13 +282,14 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             sId = getXmlNodeAttrAsStr(baseNode, "to");
             String toNodeId = flowData.nodeTagToId.get(sId);
             wfTran.setEndNodeId(toNodeId);
-            if (fromNodeId == flowData.beginNodeId)
-                flowData.firstNodeId = toNodeId;
+            if (fromNodeId == flowData.beginNodeId) {
+                flowDef.setFirstNodeId(toNodeId);
+            }
             wfTran.setTransDesc(getXmlNodeAttrAsStr(baseNode, "desc"));
 
             wfTranSet.add(wfTran);
         }
-        return wfTranSet;
+        flowDef.setTransList(wfTranSet);
     }
 
     private FlowInfo createFlowDefByJSON(String jsonDef, String flowCode, Long version, FlowDataDetail flowData) {
@@ -349,7 +349,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowDef.setNodeList(attachNodeList(nodeList, flowDef, flowData));
         // 流程流转路径定义
         List<Node> transList = flowEle.selectNodes("//Transitions/Transition");
-        flowDef.setTransList(attachTransitionList(transList, flowDef, flowData));
+        attachTransitionList(transList, flowDef, flowData);
 
         return flowDef;
     }
@@ -417,7 +417,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowDefineDao.saveObjectReferences(flowDef);
         return true;
     }
-
 
     @Override
     @Transactional
@@ -550,7 +549,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         newFlowDef.setTimeLimit(flowDef.getTimeLimit());
         newFlowDef.setExpireOpt(flowDef.getExpireOpt());
         newFlowDef.setFlowPublishDate(DatetimeOpt.currentUtilDate());
-        newFlowDef.setFirstNodeId(flowData.firstNodeId);
+        //newFlowDef.setFirstNodeId(flowData.firstNodeId);
         newFlowDef.setFlowState(FlowInfo.FLOW_STATE_NORMAL);
         //复制相关节点信息
         //newFlowDef.getWfFlowStages()
