@@ -772,9 +772,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         optType.put("A", "一般");
         optType.put("B", "抢先机制");
         optType.put("C", "多人操作");
-        optType.put("D", "自动执行");
-        optType.put("S", "子流程");
-        optType.put("E", "哑元");
+        //optType.put("D", "自动执行");
+        //optType.put("S", "子流程");
+        //optType.put("E", "哑元");
         return optType;
     }
 
@@ -785,12 +785,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     public Map<String, String> listAllNoteType() {
         Map<String, String> nodeType = new HashMap<>();
-        //nodeType.put("A", "开始");
+        nodeType.put("A", "开始");
         //nodeType.put("B", "首节点");
         nodeType.put("C", "业务");
         nodeType.put("R", "路由");
         //nodeType.put("E", "汇聚 ");
-        //nodeType.put("F", "结束");
+        nodeType.put("F", "结束");
         return nodeType;
     }
 
