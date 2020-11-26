@@ -97,7 +97,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // 设置办件角色
         if(options.getFlowRoleUsers() != null && !options.getFlowRoleUsers().isEmpty()) {
             for(Map.Entry<String,List<String>> ent : options.getFlowRoleUsers().entrySet()) {
-                assignFlowWorkTeam(flowInstId, ent.getKey(), ent.getValue());
+                assignFlowWorkTeam(flowInstId, ent.getKey(), runToken, ent.getValue());
             }
         }
         // 设置流程机构
