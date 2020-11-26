@@ -54,10 +54,10 @@ public class FlowWorkTeam implements java.io.Serializable {
         this.authTime= authtime;
     }
 
-    public FlowWorkTeam(String wfinstid, String usercode, String rolecode, Date  authtime) {
-           this.cid = new FlowWorkTeamId(wfinstid,  usercode,  rolecode);
-           this.authTime= authtime;
-       }
+    public FlowWorkTeam(String wfinstid, String usercode, String rolecode, String runToken, Date  authtime) {
+        this.cid = new FlowWorkTeamId(wfinstid,  usercode,  rolecode, runToken);
+        this.authTime= authtime;
+    }
 
     public FlowWorkTeamId getCid() {
         return this.cid;
@@ -103,6 +103,19 @@ public class FlowWorkTeam implements java.io.Serializable {
         this.cid.setRoleCode(rolecode);
     }
 
+    public String getRunToken() {
+        if(this.cid==null)
+            this.cid = new FlowWorkTeamId();
+        return this.cid.getRunToken();
+    }
+
+    public void setRunToken(String runToken) {
+        if(this.cid==null)
+            this.cid = new FlowWorkTeamId();
+        this.cid.setRunToken(runToken);
+    }
+
+
     public Long getUserOrder() {
         return userOrder;
     }
@@ -134,7 +147,7 @@ public class FlowWorkTeam implements java.io.Serializable {
         this.setFlowInstId(other.getFlowInstId());
         this.setUserCode(other.getUserCode());
         this.setRoleCode(other.getRoleCode());
-
+        this.setRunToken(other.getRunToken());
         this.authDesc= other.getAuthDesc();
         this.authTime= other.getAuthTime();
         this.userOrder = other.getUserOrder();
@@ -148,6 +161,8 @@ public class FlowWorkTeam implements java.io.Serializable {
             this.setUserCode(other.getUserCode());
         if( other.getRoleCode() != null)
             this.setRoleCode(other.getRoleCode());
+        if( other.getRunToken() != null)
+            this.setRunToken(other.getRunToken());
 
         if( other.getAuthDesc() != null)
             this.authDesc= other.getAuthDesc();

@@ -12,10 +12,8 @@ import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.framework.model.basedata.OperationLog;
-import com.centit.support.algorithm.BooleanBaseOpt;
-import com.centit.support.algorithm.DatetimeOpt;
-import com.centit.support.algorithm.GeneralAlgorithm;
-import com.centit.support.algorithm.StringBaseOpt;
+import com.centit.support.algorithm.*;
+import com.centit.support.compiler.Lexer;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JSONOpt;
 import com.centit.workflow.po.*;
@@ -25,6 +23,9 @@ import com.centit.workflow.service.FlowManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -76,9 +77,9 @@ public class FlowManagerController extends BaseController {
         Map<String, Object> result = new HashMap<>();
 
         List<StageInstance> stageList = flowManager.listStageInstByFlowInstId(flowInstId);
-        String viewFlowInst = flowManager.viewFlowInstance(flowInstId);
+        //String viewFlowInst = flowManager.viewFlowInstance(flowInstId);
         result.put("flowInst", flowInst);
-        result.put("viewFlowInst", viewFlowInst);
+        result.put("viewFlowInst", flowManager.viewFlowInstance(flowInstId));
         result.put("stageList", stageList);
         return result;
         //JsonResultUtils.writeSingleDataJson(result, response, JsonPropertyUtils.getExcludePropPreFilter(excludes));
@@ -97,16 +98,48 @@ public class FlowManagerController extends BaseController {
         Long version = flowInst.getVersion();
         if (StringUtils.isNotBlank(flowCode)) {
             FlowInfo obj = flowDef.getFlowInfo(flowCode, version);
-            String xml = obj.getFlowXmlDesc();
-            String viewXml = flowManager.viewFlowInstance(flowInstId);
-            HashMap<String, String> result = new HashMap<>();
-            result.put("xml", xml);
-            result.put("viewXml", viewXml);
+            String wfDefXML = obj.getFlowXmlDesc();
+            boolean defineAsXML = "<".equals(Lexer.getFirstWord(wfDefXML));
+            Map<String, Object> result = new HashMap<>();
+            Map<String, Object> flowInstDesc = flowManager.viewFlowInstance(flowInstId);
+            if(defineAsXML) {
+                Document viewDoc = DocumentHelper.createDocument();
+                Element baseEle = viewDoc.addElement("TopFlow");
+                Element procsEle = baseEle.addElement("Procs");
+                Element stepsEle = baseEle.addElement("Steps");
+                Object nodes = flowInstDesc.get("nodes");
+                if(nodes instanceof List) {
+                    for (Object node : (List)nodes) {
+                        Map<String, Object> nodeInst  =(Map<String, Object>)node;
+                        Element procEle = procsEle.addElement("Proc");
+                        procEle.addAttribute("id", StringBaseOpt.castObjectToString(nodeInst.get("id")));
+                        procEle.addAttribute("inststate", StringBaseOpt.castObjectToString(nodeInst.get("inststate")));
+                        procEle.addAttribute("instcount", StringBaseOpt.castObjectToString((nodeInst.get("instcount"))));
+                    }
+                }
+                Object steps = flowInstDesc.get("steps");
+                if(steps instanceof List) {
+                    for (Object step : (List)steps) {
+                        Map<String, Object> stepInst  =(Map<String, Object>)step;
+                        Element stepEle = stepsEle.addElement("Step");
+                        stepEle.addAttribute("id", StringBaseOpt.castObjectToString(stepInst.get("id")));
+                        stepEle.addAttribute("inststate", StringBaseOpt.castObjectToString(stepInst.get("inststate")));
+                    }
+                }
+
+                result.put("xml", wfDefXML);
+                result.put("viewXml", viewDoc.asXML());
+            } else {
+                result.put("json", wfDefXML);
+                result.put("viewJson", flowInstDesc);
+            }
             JsonResultUtils.writeSingleDataJson(result, response);
         }
+
+
     }
 
-    /**
+       /**
      * 查看流程图
      *
      * @param response
@@ -684,9 +717,9 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/assignFlowWorkTeam/{flowInstId}/{roleCode}/{userCode}/{authdesc}", method = RequestMethod.POST)
     @WrapUpResponseBody
     public void assignFlowWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode,
-                                   @PathVariable String userCode, @PathVariable String authdesc, HttpServletRequest request, HttpServletResponse response) {
+                                   @PathVariable String userCode, @PathVariable String authdesc) {
         flowEng.assignFlowWorkTeam(flowInstId, roleCode,
-            userCode, authdesc);
+            CollectionsOpt.createList(userCode));
     }
 
     /**

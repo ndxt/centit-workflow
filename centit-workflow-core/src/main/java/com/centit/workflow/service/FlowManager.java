@@ -50,7 +50,7 @@ public interface FlowManager {
      * @param flowInstId 流程 实例id
      * @return XML 描述的流程流转状态图
      */
-    String viewFlowInstance(String flowInstId);
+    Map<String, Object> viewFlowInstance(String flowInstId);
 
     /**
      * 查看工作流程节点示例图

@@ -78,11 +78,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /**
      * 查看工作流程实例状态或进度
-     *
-     * @return XML 描述的流程流转状态图
      */
     @Override
-    public String viewFlowInstance(String flowInstId) {
+    public Map<String, Object> viewFlowInstance(String flowInstId) {
         FlowInstance wfInst = flowInstanceDao.getObjectWithReferences(flowInstId);
         FlowInfoId id = new FlowInfoId(wfInst
             .getVersion(), wfInst.getFlowCode());
@@ -258,26 +256,16 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
 
-
-        Document viewDoc = DocumentHelper.createDocument();
-        Element baseEle = viewDoc.addElement("TopFlow");
-        Element procsEle = baseEle.addElement("Procs");
-        Element stepsEle = baseEle.addElement("Steps");
-
+        List<Map<String, Object>> nodes = new ArrayList<>();
         for (Map.Entry<String, String> ns : nodeState.entrySet()) {
-            Element procEle = procsEle.addElement("Proc");
-            procEle.addAttribute("id", ns.getKey().toString());
-            procEle.addAttribute("inststate", ns.getValue());
-            procEle.addAttribute("instcount", String.valueOf(nodeInstCount.get(ns.getKey())));
-        }
-
+            nodes.add(CollectionsOpt.createHashMap("id",ns.getKey(),
+                "inststate",ns.getValue(),"instcount",nodeInstCount.get(ns.getKey())));        }
+        List<Map<String, Object>> steps = new ArrayList<>();
         for (Map.Entry<String, String> ts : transState.entrySet()) {
-            Element stepEle = stepsEle.addElement("Step");
-            stepEle.addAttribute("id", ts.getKey());
-            stepEle.addAttribute("inststate", ts.getValue());
+            steps.add(CollectionsOpt.createHashMap("id",ts.getKey(),
+                "inststate",ts.getValue()));
         }
-
-        return viewDoc.asXML();
+        return CollectionsOpt.createHashMap("nodes",nodes, "steps", steps);
     }
 
 

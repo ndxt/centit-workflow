@@ -304,7 +304,7 @@ public class FlowManagerClientImpl implements FlowManager {
      * @return XML 描述的流程流转状态图
      */
     @Override
-    public String viewFlowInstance(String flowInstId) {
+    public Map<String, Object> viewFlowInstance(String flowInstId) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

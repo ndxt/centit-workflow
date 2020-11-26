@@ -9,6 +9,7 @@ import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
@@ -120,7 +121,8 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/addFlowWorkTeam")
     public void addFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
         flowEngine.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(),
-              flowWorkTeam.getRoleCode(), flowWorkTeam.getUserCode());
+              flowWorkTeam.getRoleCode(), flowWorkTeam.getRunToken(),
+              CollectionsOpt.createList(flowWorkTeam.getUserCode()));
     }
 
     @ApiOperation(value = "删除办件角色", notes = "删除办件角色")

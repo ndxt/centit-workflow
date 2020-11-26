@@ -123,7 +123,7 @@ CREATE TABLE wf_flow_stage (
 
 CREATE TABLE wf_flow_variable (
   FLOW_INST_ID number(12,0) NOT NULL,
-  Run_Token varchar2(20) NOT NULL,
+  Run_Token varchar2(32) NOT NULL,
   VAR_NAME varchar2(50) NOT NULL,
   VAR_VALUE varchar2(256) NOT NULL,
   Var_Type char(1) NOT NULL,
@@ -307,10 +307,11 @@ CREATE TABLE wf_team (
   FLOW_INST_ID number(12,0) NOT NULL,
   ROLE_CODE varchar2(32) NOT NULL,
   USER_CODE varchar2(8) NOT NULL,
+  Run_Token varchar2(32) NOT NULL,
   USER_ORDER number(4,0) DEFAULT NULL ,
   AUTH_DESC varchar2(255) DEFAULT NULL,
   AUTH_TIME date  DEFAULT sysdate,
-  PRIMARY KEY (FLOW_INST_ID,USER_CODE,ROLE_CODE)
+  PRIMARY KEY (FLOW_INST_ID,USER_CODE,ROLE_CODE,Run_Token)
 )  ;
 
 

@@ -505,8 +505,22 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else if (SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(nextOptNode.getRoleType())) {
             optUsers = new HashSet<>();
             List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(flowInst.getFlowInstId(), nextOptNode.getRoleCode());
-            for (FlowWorkTeam u : users)
-                optUsers.add(u.getUserCode());
+            //nodeToken
+            String currNodeToken=null;
+            for (FlowWorkTeam u : users) {
+                //匹配令牌
+                if(StringUtils.equals(currNodeToken, u.getRunToken())){
+                    optUsers.add(u.getUserCode());
+                } else                    //nodeToken , currNodeToken , u.getRunToken()
+                    if(StringUtils.equals(nodeToken, u.getRunToken())
+                    || StringUtils.isBlank(currNodeToken)
+                    || ( nodeToken.startsWith(u.getRunToken())
+                        && (!nodeToken.startsWith(currNodeToken) || u.getRunToken().length() > currNodeToken.length()) ) ){
+                        optUsers.clear();
+                        currNodeToken = u.getRunToken();
+                        optUsers.add(u.getUserCode());
+                }
+            }
             //流程角色（审批角色）待测试
         } else/*gw xz ro(system)*/
             if(StringUtils.isNotBlank(nextOptNode.getRoleType())
@@ -1710,48 +1724,37 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
 
     @Override
-    public void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode) {
+    public void assignFlowWorkTeam(String flowInstId, String roleCode, String runToken,
+                               List<String> userCodeSet){
         Date assignDate = new Date(System.currentTimeMillis());
-        flowTeamDao.mergeObject(new FlowWorkTeam(flowInstId, userCode, roleCode, assignDate));
+        if (userCodeSet != null)
+            for (String usercode : userCodeSet)
+                if (StringUtils.isNotBlank(usercode)) {
+                    flowTeamDao.mergeObject(
+                        new FlowWorkTeam(flowInstId, usercode, roleCode, runToken, assignDate));
+                }
+    }
+
+
+    @Override
+    public void assignFlowWorkTeamByNode(String nodeInstId, String roleCode,
+                                  List<String> userCodeSet){
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        assignFlowWorkTeam(nodeInst.getFlowInstId(), roleCode,
+            nodeInst.getRunToken(), userCodeSet);
     }
 
     @Override
     public void assignFlowWorkTeam(String flowInstId, String roleCode,
                                    List<String> userCodeSet) {
-        Date assignDate = new Date(System.currentTimeMillis());
-        if (userCodeSet != null)
-            for (String usercode : userCodeSet)
-                if (StringUtils.isNotBlank(usercode)) {
-                    flowTeamDao.mergeObject(new FlowWorkTeam(flowInstId, usercode, roleCode, assignDate));
-                }
-
+        assignFlowWorkTeam(flowInstId, roleCode, "T", userCodeSet);
     }
 
-    @Override
-    public void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode, String authdesc) {
-        Date assignDate = new Date(System.currentTimeMillis());
-        FlowWorkTeam team = new FlowWorkTeam(flowInstId, userCode, roleCode, assignDate);
-        team.setAuthDesc(authdesc);
-        flowTeamDao.mergeObject(team);
-    }
-
-    @Override
-    public void assignFlowWorkTeam(String flowInstId, String roleCode,
-                                   List<String> userCodeSet, String authdesc) {
-        Date assignDate = new Date(System.currentTimeMillis());
-        if (userCodeSet != null) {
-            for (String usercode : userCodeSet) {
-                if (usercode != null && !"".equals(usercode)) {
-                    FlowWorkTeam team = new FlowWorkTeam(flowInstId, usercode, roleCode, assignDate);
-                    team.setAuthDesc(authdesc);
-                    flowTeamDao.mergeObject(team);
-                }
-            }
-        }
-    }
 
     public void deleteFlowWorkTeam(String flowInstId, String roleCode, String userCode) {
-        flowTeamDao.deleteObjectById(new FlowWorkTeamId(flowInstId, userCode, roleCode));
+        flowTeamDao.deleteObjectsByProperties(
+            CollectionsOpt.createHashMap(
+                "flowInstId", flowInstId, "userCode", userCode, "roleCode", roleCode));
     }
 
     @Override
