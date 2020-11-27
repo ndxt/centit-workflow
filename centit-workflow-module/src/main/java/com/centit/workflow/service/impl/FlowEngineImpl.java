@@ -12,6 +12,7 @@ import com.centit.framework.model.basedata.NoticeMessage;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
+import com.centit.support.common.ObjectException;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
@@ -81,7 +82,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //lockObject = new Object();
     }
 
-    private void saveValueAndRoleInOptions(String flowInstId, String runToken, FlowOptParamOptions options){
+    private void saveValueAndRoleInOptions(String flowInstId, String runToken,
+                                           FlowOptParamOptions options){
         // 设置流程变量
         if(options.getVariables() != null && !options.getVariables().isEmpty()) {
             for(Map.Entry<String,Object> ent : options.getVariables().entrySet()) {
@@ -121,7 +123,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      */
     @Override
     public FlowInstance createInstance(CreateFlowOptions options,
-                                             UserUnitVariableTranslate varTrans, ServletContext application) {
+                                       UserUnitVariableTranslate varTrans,
+                                       ServletContext application) {
         FlowInstance instance = createInstanceInside(options, varTrans,  application,true);
         // 记录日志
         return instance;
@@ -142,7 +145,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     private FlowInstance createInstanceInside(CreateFlowOptions options,
-                                             UserUnitVariableTranslate varTrans, ServletContext application, boolean saveOptions) {
+                                             UserUnitVariableTranslate varTrans,
+                                              ServletContext application, boolean saveOptions) {
 
         Date createTime = new Date(System.currentTimeMillis());
         if(options.getFlowVersion()<1) {
@@ -309,7 +313,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void updateFlowInstParentNode(String flowInstId, String parentFlowInstId, String parentNodeInstId) {
+    public void updateFlowInstParentNode(String flowInstId, String parentFlowInstId,
+                                         String parentNodeInstId) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null)
             return;
@@ -390,7 +395,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
 
     private void endFlowInstance(FlowInstance flowInst, FlowInfo flowInfo, NodeInfo endNode,
-                                 String transPath, FlowTransition trans, String preNodeInstId, String userCode, String unitCode) {
+                                 String transPath, FlowTransition trans,
+                                 String preNodeInstId, String userCode, String unitCode) {
         FlowOptUtils.endInstance(flowInst, "C", userCode, flowInstanceDao);
 
         NodeInstance endNodeInst =
@@ -487,10 +493,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         // 流程引擎 权限体系
         if (SysUserFilterEngine.ROLE_TYPE_ENGINE.equalsIgnoreCase(nextOptNode.getRoleType())
-            || SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA .equalsIgnoreCase(nextOptNode.getRoleType()) ) {
+            || SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA.equalsIgnoreCase(nextOptNode.getRoleType()) ) {
             // 权限表达式
             String roleFormula = nextOptNode.getPowerExp();
-            if(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA .equalsIgnoreCase(nextOptNode.getRoleType())){
+            if(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA.equalsIgnoreCase(nextOptNode.getRoleType())){
                 RoleFormula rf = roleFormulaDao.getObjectById(nextOptNode.getRoleCode());
                 if(rf!=null){
                     roleFormula = rf.getRoleFormula();
@@ -500,11 +506,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //根据权限表达式创建任务列表
             optUsers = UserUnitCalcEngine.calcOperators(context, roleFormula);
             if (optUsers == null || optUsers.size() == 0) {
-                logger.error("权限引擎没有识别出符合表达式的操作人员！ wid:" + flowInst.getFlowInstId() + " nid:" + nextOptNode.getNodeId());
+                logger.error("权限引擎没有识别出符合表达式的操作人员！ wid:" + flowInst.getFlowInstId()
+                    + " nid:" + nextOptNode.getNodeId());
             }
         } else if (SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(nextOptNode.getRoleType())) {
             optUsers = new HashSet<>();
-            List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(flowInst.getFlowInstId(), nextOptNode.getRoleCode());
+            List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(flowInst.getFlowInstId(),
+                                            nextOptNode.getRoleCode());
             //nodeToken
             String currNodeToken=null;
             for (FlowWorkTeam u : users) {
@@ -529,7 +537,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(context,
                 nextOptNode.getRoleType(), nextOptNode.getRoleCode(), unitCode);
         }
-
         return new LeftRightPair<>(nodeUnits, optUsers);
     }
 
@@ -559,7 +566,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String preTransPath = StringUtils.isBlank(transPath) ?
             trans.getTransId() : transPath + "," + trans.getTransId();
 
-        if (NodeInfo.ROUTER_TYPE_PARALLEL.equals(sRT) || NodeInfo.ROUTER_TYPE_BRANCH.equals(sRT)) {//D 分支和 H 并行
+        if (NodeInfo.ROUTER_TYPE_PARALLEL.equals(sRT) || NodeInfo.ROUTER_TYPE_BRANCH.equals(sRT)) {
+            //D 分支和 H 并行
             //提交游离分支上的叶子节点 将不会向后流转
             //获取下一批流转节点
             Set<FlowTransition> selTrans = selectTransitions(nextRoutertNode, flowVarTrans);
@@ -603,7 +611,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 Set<String> nNs = // 所有未提交的需要等待的 子节点令牌
                     flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
                 //汇聚节点，所有节点都已提交,或者只要当前节点
-                boolean canSubmit = nNs == null || nNs.size() == 0 || (nNs.size() == 1 && nNs.contains(nodeToken));
+                boolean canSubmit = nNs == null || nNs.size() == 0 ||
+                    (nNs.size() == 1 && nNs.contains(nodeToken));
                 //A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X
                 String sCT = nextRoutertNode.getConvergeType();
                 if (! canSubmit && ! NodeInfo.ROUTER_COLLECT_TYPE_ALL_COMPLETED.equals(sCT)) {
@@ -1027,8 +1036,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return selTrans;
 
         String sRT = currNode.getRouterType();
-
-        if ("H".equals(sRT) || "D".equals(sRT)) {
+        if (NodeInfo.ROUTER_TYPE_BRANCH.equals(sRT)
+                || NodeInfo.ROUTER_TYPE_PARALLEL.equals(sRT)) {
             VariableFormula formula = new VariableFormula();
             formula.setTrans(varTrans);
             formula.addExtendFunc(
@@ -1039,20 +1048,23 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
             );
             for (FlowTransition trans : transList) {
+                if(StringUtils.isBlank(trans.getTransCondition())){
+                    throw new ObjectException(WorkflowException.FlowDefineError, "没有配置相关的条件流转参数！");
+                }
                 if (BooleanBaseOpt.castObjectToBoolean(formula.calcFormula(trans.getTransCondition()))) {
                     //保存目标节点实例
                     selTrans.add(trans);
                     // D:分支节点 只能有一个出口
-                    if ("D".equals(sRT))
+                    if (NodeInfo.ROUTER_TYPE_BRANCH.equals(sRT)) {
                         break;
+                    }
                 }
             }
-        } else
+        } else {
             selTrans.add(transList.get(0));
-
+        }
         return selTrans;
     }
-
 
     /*
      * 提交一个流程节点
