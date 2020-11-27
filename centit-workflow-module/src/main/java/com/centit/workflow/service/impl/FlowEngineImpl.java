@@ -841,6 +841,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
             }
         }
+
         List<String> createNodes = new ArrayList<>();
         createNodes.add(nodeInst.getNodeInstId());
         LeftRightPair<Set<String>, Set<String>> unitAndUser = calcNodeUnitAndOpterators(flowInst, preNodeInst, nodeToken,

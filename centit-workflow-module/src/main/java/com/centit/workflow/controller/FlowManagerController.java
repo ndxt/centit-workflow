@@ -135,8 +135,6 @@ public class FlowManagerController extends BaseController {
             }
             JsonResultUtils.writeSingleDataJson(result, response);
         }
-
-
     }
 
        /**
@@ -663,19 +661,6 @@ public class FlowManagerController extends BaseController {
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
                             DatetimeOpt.convertDatetimeToString(
                                 nodeInst.getLastUpdateTime() == null ? nodeInst.getCreateTime() : nodeInst.getLastUpdateTime()));
-                        //ActionLog的获取暂时取消
-//                        List<ActionLog> actions = flowManager.listNodeActionLogs(nodeInst.getNodeInstId());
-//                        int actionInd = 0;
-//                        for (ActionLog action : actions) {
-//                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].usercode", action.getUserCode());
-//                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].username",
-//                                CodeRepositoryUtil.getValue("userCode", action.getUserCode()));
-//                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].actiontime",
-//                                DatetimeOpt.convertDatetimeToString(action.getActionTime()));
-//                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].action[" + actionInd + "].actiontype",
-//                                CodeRepositoryUtil.getValue("WfActionType", action.getActionType()));
-//                            actionInd++;
-//                        }
                     }
                     nodeInstInd++;
                     //nodeInstId=nodeInst.getNodeInstId();
@@ -684,7 +669,7 @@ public class FlowManagerController extends BaseController {
             nodeOptInfo.put("count", nodeInstInd);
             JsonResultUtils.writeSingleDataJson(nodeOptInfo, response);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("节点的操作记录:"+e.getMessage(), e);
             JsonResultUtils.writeErrorMessageJson(e.toString(), response);
         }
     }
