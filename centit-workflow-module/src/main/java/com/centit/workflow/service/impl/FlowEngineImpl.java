@@ -1052,7 +1052,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if(StringUtils.isBlank(trans.getTransCondition())){
                     throw new ObjectException(WorkflowException.FlowDefineError, "没有配置相关的条件流转参数！");
                 }
-                if (BooleanBaseOpt.castObjectToBoolean(formula.calcFormula(trans.getTransCondition()))) {
+                if (BooleanBaseOpt.castObjectToBoolean(formula.calcFormula(trans.getTransCondition()), false)) {
                     //保存目标节点实例
                     selTrans.add(trans);
                     // D:分支节点 只能有一个出口
