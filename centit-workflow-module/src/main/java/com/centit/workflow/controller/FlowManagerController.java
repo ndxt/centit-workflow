@@ -685,6 +685,7 @@ public class FlowManagerController extends BaseController {
             JsonResultUtils.writeSingleDataJson(nodeOptInfo, response);
         } catch (Exception e) {
             e.printStackTrace();
+            JsonResultUtils.writeErrorMessageJson(e.toString(), response);
         }
     }
 
