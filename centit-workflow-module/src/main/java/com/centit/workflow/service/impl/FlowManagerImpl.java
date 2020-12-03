@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.OperationLogCenter;
-import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.CollectionsOpt;
@@ -989,8 +988,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
             if (node == null)
                 continue;
-            // 不显示 自动执行的节点 codefan@sina.com 2012-7-8
-            if ("D".equals(node.getOptType()) || "E".equals(node.getOptType()))
+            // 不显示 自动执行的节点 和 同步节点 codefan@sina.com 2012-7-8
+            if (NodeInfo.NODE_TYPE_AUTO.equals(node.getNodeType())
+                || NodeInfo.NODE_TYPE_SYNC.equals(node.getNodeType()))
                 continue;
 
             nodeInst.setNodeName(node.getNodeName());

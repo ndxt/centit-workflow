@@ -305,7 +305,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if("T".equals(nodeInst.getTaskAssigned())){
             NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
             //B: 抢先机制
-            if("B".equals(node.getOptType())){
+            if(NodeInfo.NODE_OPT_LEAD.equals(node.getOptRunType())){
                 nodeInst.setUserCode(userCode);
                 nodeInst.setTaskAssigned("S");
                 nodeInstanceDao.updateObject(nodeInst);
@@ -1131,8 +1131,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (!"N,M".contains(flowInst.getInstState()) ||
             (!"N".equals(nodeInst.getNodeState())
                 && !"W".equals(nodeInst.getNodeState()) // 等待子流程返回
-            )
-            ) {
+            )) {
             logger.error("流程节点状态不正确，流程：" + nodeInst.getFlowInstId() + " 状态：" + flowInst.getInstState() +
                 "节点：" + options.getNodeInstId() + " 状态：" + nodeInst.getNodeState());
             throw new WorkflowException(WorkflowException.IncorrectNodeState,
@@ -1149,15 +1148,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             || StringUtils.equals(options.getGrantorCode(), options.getUserCode())) {
             sGrantor = actionTaskDao.getTaskGrantor(options.getNodeInstId(), options.getUserCode());
             //哑元、自动执行以及子流程 不判断
-            if (sGrantor == null && !"E".equals(currNode.getOptType())
-                && !"D".equals(currNode.getOptType()) && !"S".equals(currNode.getOptType())) {
+            if (sGrantor == null && NodeInfo.NODE_TYPE_OPT.equals(currNode.getOptRunType())) {
                 logger.error("用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
                 throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
             }
         } else {
             sGrantor = options.getGrantorCode();
-            if (!"E".equals(currNode.getOptType()) && !"D".equals(currNode.getOptType())
-                && !"S".equals(currNode.getOptType()) &&
+            if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getOptRunType()) &&
                 !actionTaskDao.hasOptPower(options.getNodeInstId(), options.getUserCode(), options.getGrantorCode())) {
                 logger.error("用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
                 throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
@@ -1400,9 +1397,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Set<NodeInstance> pns = new HashSet<>();
         // 不能回退到 自动执行，哑元，和子流程节点
         while (true) {
-            if ("D".equals(nodedef.getOptType())
-                || "E".equals(nodedef.getOptType())
-                || "S".equals(nodedef.getOptType())) {
+            if (StringUtils.equalsAny(nodedef.getNodeType(),
+                NodeInfo.NODE_TYPE_AUTO, NodeInfo.NODE_TYPE_SYNC, NodeInfo.NODE_TYPE_SUBFLOW)) {
                 pns.add(prevNodeInst);
                 //优先通过节点表中的prenodeinstid来查找上一节点
                 String currnetNodeInstId = prevNodeInst.getPrevNodeInstId();
@@ -1579,7 +1575,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //判断是否为 结束节点 A:开始 B:首节点 C:一般 D:分支 E:汇聚 F结束
         NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
         //判断是否为子流程 A:一般 B:抢先机制 C:多人操作 S:子流程
-        if (!"S".equals(nextNode.getOptType())) {
+        if (!NodeInfo.NODE_TYPE_SUBFLOW.equals(nextNode.getNodeType())) {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
                 nodeInst, flowInst, flowVariableDao,this,null);
             UserUnitVariableTranslate varTrans = new ObjectUserUnitVariableTranslate(

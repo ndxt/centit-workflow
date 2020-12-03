@@ -44,7 +44,7 @@ public class NodeInfo implements java.io.Serializable {
     public static final String NODE_TYPE_FIRST    = "B";
     public static final String NODE_TYPE_OPT      = "C";
     public static final String NODE_TYPE_AUTO     = "D";
-    public static final String NODE_TYPE_MESSAGE  = "E";
+    public static final String NODE_TYPE_SYNC     = "E";
     public static final String NODE_TYPE_END      = "F";
     public static final String NODE_TYPE_ROUTE    = "R";
     public static final String NODE_TYPE_SUBFLOW    = "S";
