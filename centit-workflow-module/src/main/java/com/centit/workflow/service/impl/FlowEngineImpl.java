@@ -903,9 +903,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(nextOptNode.getRoleType())) {/* &&
                     "A".equals(nextOptNode.getOptType())){*/
                 nodeInst.setTaskAssigned("D");
-            } else if ("A".equals(nextOptNode.getOptType())
-                    || "C".equals(nextOptNode.getOptType())
-                    || "B".equals(nextOptNode.getOptType())) {
+            } else {
                /* if(optUsers.size()==1){
                     nextNodeInst.setTaskAssigned("S");
                 }else{*/
