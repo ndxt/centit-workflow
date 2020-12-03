@@ -79,14 +79,14 @@ public class NodeInfo implements java.io.Serializable {
     public static final String AUTO_NODE_OPT_CODE_CALL  = "C";
     /**
      * NODE_TYPE == NODE_TYPE_ROUTE
-     * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
+     * D:分支 E:汇聚  G 多实例节点  H并行  R 游离
      */
     public static final String ROUTER_TYPE_BRANCH    = "D";
     public static final String ROUTER_TYPE_COLLECT   = "E";
     public static final String ROUTER_TYPE_PARALLEL  = "H";
     public static final String ROUTER_TYPE_MULTI_INST= "G";
     public static final String ROUTER_TYPE_ISOLATED  = "R";
-    public static final String ROUTER_TYPE_SYNC      = "S";
+    //public static final String ROUTER_TYPE_SYNC      = "S";
 
     /**
      * NODE_TYPE == NODE_TYPE_SYNC*/

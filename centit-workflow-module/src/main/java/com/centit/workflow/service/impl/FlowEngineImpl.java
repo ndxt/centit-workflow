@@ -738,7 +738,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     flowNodeDao.getObjectById(nextNodeId), "R" + nodeToken, flowInst, flowInfo,
                     preNodeInst, preTransPath, nodeTran, options,
                     flowVarTrans, application);
-            } else if (NodeInfo.ROUTER_TYPE_SYNC.equals(sRT)) {//同步 保留
+            } /*else if (NodeInfo.ROUTER_TYPE_SYNC.equals(sRT)) {//同步 保留
                 String preRunToken = NodeInstance.calcSuperToken(nodeToken);
                 Set<String> nNs =
                     flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
@@ -761,7 +761,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         }
                     }
                 }
-            }
+            }*/
         }
         //WfNode routeNode =
         return resNodes;
@@ -924,7 +924,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
                         .content("您有新任务:" + nextOptNode.getNodeName()));
             }
-        }
+        } /*else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())){
+            // TODO 新建同步节点
+        }*/
         /**
          *  检查令牌冲突（自由流程，令牌的冲突有业务程序和流程图自己控制，无需检查）
          *  这段代码是检查令牌的一致性，多实例节点多次运行时会出错的，
