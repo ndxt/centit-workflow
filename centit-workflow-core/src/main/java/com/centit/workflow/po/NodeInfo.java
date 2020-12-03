@@ -89,6 +89,11 @@ public class NodeInfo implements java.io.Serializable {
     public static final String ROUTER_TYPE_SYNC      = "S";
 
     /**
+     * NODE_TYPE == NODE_TYPE_SYNC*/
+    public static final String SYNC_NODE_TYPE_TIME    = "T";
+    public static final String SYNC_NODE_TYPE_MESSAGE = "M";
+
+    /**
      * optType 为一个多种意义的字段
      */
     @Column(name = "OPT_TYPE")
@@ -273,6 +278,15 @@ public class NodeInfo implements java.io.Serializable {
     public void setRouterType(String routerType){
         this.nodeType = NODE_TYPE_ROUTE;
         this.optType = routerType;
+    }
+
+    public String getNodeSyncType(){
+        return NODE_TYPE_SYNC.equals(this.nodeType)?this.optType: null;
+    }
+
+    public void setNodeSyncType(String nodeSyncType){
+        this.nodeType = NODE_TYPE_SYNC;
+        this.optType = nodeSyncType;
     }
 
     public void copy(NodeInfo other) {
