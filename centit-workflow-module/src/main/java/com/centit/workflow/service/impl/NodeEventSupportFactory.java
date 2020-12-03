@@ -4,10 +4,8 @@ import com.centit.framework.appclient.AppSession;
 import com.centit.framework.ip.po.OsInfo;
 import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.workflow.commons.NodeEventSupport;
-import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.service.FlowEngine;
-import com.centit.workflow.support.AutoRunNodeEventSupport;
 import com.centit.workflow.support.LocalBeanNodeEventSupport;
 import com.centit.workflow.support.RemoteBeanNodeEventSupport;
 import org.apache.commons.lang3.StringUtils;
@@ -57,20 +55,6 @@ public class NodeEventSupportFactory {
             appSessionPoolMap.put(sUrl, appSession);
         }
         return appSession;
-    }
-
-    public static NodeEventSupport createNodeEventSupportBean(NodeInfo nodeInfo,
-                                                              FlowOptPage optPage,
-                                                              FlowEngine flowEngine) {
-        if (NodeInfo.AUTO_NODE_OPT_CODE_CALL.equals(nodeInfo.getAutoRunType())) {
-            return new AutoRunNodeEventSupport(
-                optPage.getPageUrl(),
-                nodeInfo.getOptParam(),
-                optPage.getOptMethod(),
-                flowEngine);
-        }
-        // 添加一个发送消息的
-        return createNodeEventSupportBean(nodeInfo, flowEngine);
     }
 
     public static NodeEventSupport createNodeEventSupportBean(NodeInfo nodeInfo, FlowEngine flowEngine) {

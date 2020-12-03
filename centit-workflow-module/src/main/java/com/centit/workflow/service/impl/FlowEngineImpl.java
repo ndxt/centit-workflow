@@ -21,6 +21,7 @@ import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
+import com.centit.workflow.support.AutoRunNodeEventSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -978,12 +979,21 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if(StringUtils.isNotBlank(lockUser)) {
                     autoSubmitOptions.workUser(lockUser);
                 }
-            } else {
+            } else if(NodeInfo.AUTO_NODE_OPT_CODE_CALL.equals(nextOptNode.getAutoRunType())){
                 NodeEventSupport nodeEventExecutor =
-                    NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage, this);
+                    new AutoRunNodeEventSupport(
+                        optPage.getPageUrl(),
+                        nextOptNode.getOptParam(),
+                        optPage.getOptMethod(),this);
                 needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
                     nextOptNode, options.getUserCode());
-            }
+            } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nextOptNode.getAutoRunType())){
+                NodeEventSupport nodeEventExecutor =
+                    NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, this);
+                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
+                    nextOptNode, options.getUserCode());
+            } // TODO 要实现一个 发送内部同步消息的 自动运行节点
+
             //暂时先取第一个节点实例，解决部分问题
             //varTrans改为一个空的
             if(needSubmit) {
@@ -994,7 +1004,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         } else if(StringUtils.isNotBlank(nextOptNode.getOptBean())) {
             NodeEventSupport nodeEventExecutor =
-                NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage, this);
+                NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, this);
             nodeEventExecutor.runAfterCreate(flowInst, nodeInst, nextOptNode, options.getUserCode());
         }
 
