@@ -76,6 +76,7 @@ public class NodeInfo implements java.io.Serializable {
     public static final String AUTO_NODE_OPT_CODE_BEAN    = "B";
     public static final String AUTO_NODE_OPT_CODE_SCRIPT  = "S";
     public static final String AUTO_NODE_OPT_CODE_MESSAGE  = "M";
+    public static final String AUTO_NODE_OPT_CODE_CALL  = "C";
     /**
      * NODE_TYPE == NODE_TYPE_ROUTE
      * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步

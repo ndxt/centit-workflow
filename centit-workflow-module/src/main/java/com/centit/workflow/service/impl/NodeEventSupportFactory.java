@@ -62,13 +62,14 @@ public class NodeEventSupportFactory {
     public static NodeEventSupport createNodeEventSupportBean(NodeInfo nodeInfo,
                                                               FlowOptPage optPage,
                                                               FlowEngine flowEngine) {
-        if (optPage!=null && "A".equals(optPage.getPageType())) {
+        if (NodeInfo.AUTO_NODE_OPT_CODE_CALL.equals(nodeInfo.getAutoRunType())) {
             return new AutoRunNodeEventSupport(
                 optPage.getPageUrl(),
                 nodeInfo.getOptParam(),
                 optPage.getOptMethod(),
                 flowEngine);
         }
+        // 添加一个发送消息的
         return createNodeEventSupportBean(nodeInfo, flowEngine);
     }
 

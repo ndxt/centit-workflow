@@ -857,7 +857,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         // A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行 E: 哑元（可用于嵌套汇聚） S:子流程
-        if ("S".equals(nextOptNode.getOptType())) {
+        if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
             //如果是子流程 启动流程
             nodeInst.setNodeState("W");
             String tempFlowTimeLimit = "";
@@ -892,10 +892,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }*/
             NodeInstance tempFirstNode = tempFlow.getFirstNodeInstance();
             createNodes.add(tempFirstNode.getNodeInstId());
-        } else {
-            //计算人员的分配策略
-            if ( (optUsers==null || optUsers.isEmpty())
-                && !"D".equals(nextOptNode.getOptType()) && !"E".equals(nextOptNode.getOptType())) {
+        } else if (NodeInfo.NODE_TYPE_OPT.equals(nextOptNode.getNodeType())){
+            //交互节点，计算人员的分配策略
+            if ( (optUsers==null || optUsers.isEmpty())) {
                 logger.error("流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员");
                 throw new WorkflowException(WorkflowException.NodeUserNotFound, "流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName() + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员");
             }
@@ -962,18 +961,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
         //检查自动执行节点 并执行相关操作
         // 添加自动运行的处理结果
-        if ("D".equals(nextOptNode.getOptType()) || "E".equals(nextOptNode.getOptType())
-            || (optPage !=null && "A".equals(optPage.getPageType()))) {
+        if (NodeInfo.NODE_TYPE_AUTO.equals(nextOptNode.getNodeType())) {
             boolean needSubmit = true;
             SubmitOptOptions autoSubmitOptions = SubmitOptOptions.create().copy(options).nodeInst(lastNodeInstId);
-            if((optPage!=null && "A".equals(optPage.getPageType())) ||
-                    //bean 事件
-                  ("D".equals(nextOptNode.getOptType()) && "B".equals(nextOptNode.getOptCode()))) {
-                NodeEventSupport nodeEventExecutor =
-                    NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage, this);
-                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
-                    nextOptNode, options.getUserCode());
-            } else if("D".equals(nextOptNode.getOptType()) && "S".equals(nextOptNode.getOptCode())) {
+            if(NodeInfo.AUTO_NODE_OPT_CODE_SCRIPT.equals(nextOptNode.getAutoRunType())) {
                 //添加脚本的运行
                 Map<String, Object> objectMap = varTrans.calcScript(nextOptNode.getOptParam());
                 for(Map.Entry<String, Object> ent : objectMap.entrySet()) {
@@ -987,6 +978,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if(StringUtils.isNotBlank(lockUser)) {
                     autoSubmitOptions.workUser(lockUser);
                 }
+            } else {
+                NodeEventSupport nodeEventExecutor =
+                    NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, optPage, this);
+                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
+                    nextOptNode, options.getUserCode());
             }
             //暂时先取第一个节点实例，解决部分问题
             //varTrans改为一个空的
