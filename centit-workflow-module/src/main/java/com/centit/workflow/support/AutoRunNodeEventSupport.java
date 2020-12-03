@@ -2,6 +2,7 @@ package com.centit.workflow.support;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.network.HttpExecutor;
 import com.centit.support.network.HttpExecutorContext;
@@ -11,6 +12,8 @@ import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.service.FlowEngine;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +31,14 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     private String optParam;
     private String optMethod;
 
-    public AutoRunNodeEventSupport(String optUrl, String optParam, String optMethod){
+    private FlowEngine flowEngine;
+
+    public AutoRunNodeEventSupport(String optUrl, String optParam, String optMethod,
+            FlowEngine flowEngine){
         this.optUrl = optUrl;
         this.optParam = optParam;
         this.optMethod = optMethod;
+        this.flowEngine = flowEngine;
     }
 
     @Override
@@ -52,37 +59,59 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             "flowInstId", nodeInst.getFlowInstId(),
             "nodeInstId", nodeInst.getNodeInstId(),
             "userCode", optUserCode);
+        String httpRet = null;
         try {
-            if ("C".equalsIgnoreCase(optMethod) || "POST".equalsIgnoreCase(optMethod)) {
-                Object paramMap = JSON.parse(optParam);
+            Object paramMap = JSON.parse(optParam);
+            if ("R".equalsIgnoreCase(optMethod) || "GET".equalsIgnoreCase(optMethod)) {
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
-                    HttpExecutor.jsonPost(HttpExecutorContext.create(),optUrl, params);
+                    httpRet = HttpExecutor.simpleGet(HttpExecutorContext.create(), optUrl, params);
                 } else {
-                    HttpExecutor.jsonPost(HttpExecutorContext.create(),
+                    httpRet = HttpExecutor.simpleGet(HttpExecutorContext.create(),
+                        UrlOptUtils.appendParamToUrl(optUrl, optParam),params);
+                }
+            } else if ("C".equalsIgnoreCase(optMethod) || "POST".equalsIgnoreCase(optMethod)) {
+                if(paramMap instanceof JSONObject){
+                    params.putAll((JSONObject)paramMap);
+                    httpRet = HttpExecutor.jsonPost(HttpExecutorContext.create(),optUrl, params);
+                } else {
+                    httpRet = HttpExecutor.jsonPost(HttpExecutorContext.create(),
                         UrlOptUtils.appendParamToUrl(optUrl, optParam), params);
                 }
             } else if ("U".equalsIgnoreCase(optMethod) || "PUT".equalsIgnoreCase(optMethod)) {
-                Object paramMap = JSON.parse(optParam);
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
-                    HttpExecutor.jsonPut(HttpExecutorContext.create(),optUrl, params);
+                    httpRet = HttpExecutor.jsonPut(HttpExecutorContext.create(),optUrl, params);
                 } else {
-                    HttpExecutor.jsonPut(HttpExecutorContext.create(),
+                    httpRet = HttpExecutor.jsonPut(HttpExecutorContext.create(),
                         UrlOptUtils.appendParamToUrl(optUrl, optParam), params);
                 }
             } else if ("D".equalsIgnoreCase(optMethod) || "delete".equalsIgnoreCase(optMethod)) {
-                Object paramMap = JSON.parse(optParam);
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
-                    HttpExecutor.simpleDelete(HttpExecutorContext.create(), optUrl, params);
+                    httpRet = HttpExecutor.simpleDelete(HttpExecutorContext.create(), optUrl, params);
                 } else {
-                    HttpExecutor.simpleDelete(HttpExecutorContext.create(),
+                    httpRet = HttpExecutor.simpleDelete(HttpExecutorContext.create(),
                         UrlOptUtils.appendParamToUrl(optUrl, optParam),params);
                 }
             }
         } catch (IOException e){
             logger.error(e.getMessage());
+        }
+        if(StringUtils.isNotBlank(httpRet)){
+            HttpReceiveJSON json = HttpReceiveJSON.valueOfJson(httpRet);
+            if(json.getCode() != 0){
+                logger.error(json.getMessage()+":"+JSON.toJSONString(nodeInst));
+                return false;
+            }
+            // 将返回结果设置为流程变量
+            JSONObject jo = json.getJSONObject();
+            if(jo != null){
+                for(Map.Entry<String, Object> ent : jo.entrySet()) {
+                    flowEngine.saveFlowNodeVariable(nodeInst.getNodeInstId(),
+                        ent.getKey(), ent.getValue());
+                }
+            }
         }
         return true;
     }
@@ -90,8 +119,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     @Override
     public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
                                  NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
-         return true;
+        return true;
     }
-
 
 }

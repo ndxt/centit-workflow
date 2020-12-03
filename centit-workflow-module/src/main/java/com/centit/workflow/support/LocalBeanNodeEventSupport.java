@@ -5,6 +5,7 @@ import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.service.FlowEngine;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,10 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
 
     private static Logger logger = LoggerFactory.getLogger(LocalBeanNodeEventSupport.class);
     private  ServletContext application;
-
+    private FlowEngine flowEngine;
+    public LocalBeanNodeEventSupport(FlowEngine flowEngine){
+        this.flowEngine = flowEngine;
+    }
     public void setApplication(ServletContext application) {
         this.application = application;
     }

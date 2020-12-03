@@ -321,38 +321,29 @@ public interface FlowEngine {
      * 分配工作小组 --办件角色
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 办件角色 不能为空
-     * @param userCode 用户代码，添加
+     * @param runToken 令牌
+     * @param userCodeSet 用户代码列表，添加
      */
-    void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode);
+    void assignFlowWorkTeam(String flowInstId, String roleCode, String runToken,
+                            List<String> userCodeSet);
     /**
      * 分配工作小组 --办件角色
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode 办件角色 不能为空
      * @param userCodeSet 用户代码列表，添加
      */
-    void assignFlowWorkTeam(String flowInstId,String roleCode,
+    void assignFlowWorkTeam(String flowInstId, String roleCode,
                             List<String> userCodeSet);
 
 
     /**
      * 分配工作小组 --办件角色
-     * @param flowInstId  流程实例号 不能为空
-     * @param roleCode 办件角色 不能为空
-     * @param userCode 用户代码，添加
-     * @param authdesc 角色描述
-     */
-    void assignFlowWorkTeam(String flowInstId, String roleCode,
-                            String userCode, String authdesc);
-    /**
-     * 分配工作小组 --办件角色
-     * @param flowInstId  流程实例号 不能为空
+     * @param nodeInstId 节点实例号 不能为空
      * @param roleCode 办件角色 不能为空
      * @param userCodeSet 用户代码列表，添加
-     * @param authdesc 角色描述
      */
-    void assignFlowWorkTeam(String flowInstId,String roleCode,
-                            List<String> userCodeSet,String authdesc);
-
+    void assignFlowWorkTeamByNode(String nodeInstId, String roleCode,
+                                  List<String> userCodeSet);
     /**
      * 删除工作小组--办件角色
      * @param flowInstId  流程实例号 不能为空
@@ -380,7 +371,7 @@ public interface FlowEngine {
      * @param roleCode 办件角色代码
      * @return Set userCode
      */
-    List<String> viewFlowWorkTeam(String flowInstId,String roleCode);
+    List<String> viewFlowWorkTeam(String flowInstId, String roleCode);
 
     /**
      * 查看工作小组中某个角色的成员
@@ -512,14 +503,6 @@ public interface FlowEngine {
      * @param sValue 变量值
      */
     void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue);
-
-    /**
-     * 设置流程节点上下文变量
-     * @param nodeInstId 节点实例号
-     * @param sVar 变量名
-     * @param sValues Set String 中的值不能有 分号 ;
-     */
-    void saveFlowNodeVariable(String nodeInstId,String sVar, Set<String> sValues);
 
     /**
      * 查询流程变量

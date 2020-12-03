@@ -4,9 +4,8 @@ import com.centit.framework.appclient.AppSession;
 import com.centit.framework.ip.po.OsInfo;
 import com.centit.framework.ip.service.IntegrationEnvironment;
 import com.centit.workflow.commons.NodeEventSupport;
-import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.po.NodeInfo;
-import com.centit.workflow.support.AutoRunNodeEventSupport;
+import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.support.LocalBeanNodeEventSupport;
 import com.centit.workflow.support.RemoteBeanNodeEventSupport;
 import org.apache.commons.lang3.StringUtils;
@@ -58,18 +57,7 @@ public class NodeEventSupportFactory {
         return appSession;
     }
 
-    public static NodeEventSupport createNodeEventSupportBean(NodeInfo nodeInfo,
-                                                              FlowOptPage optPage) {
-        if (optPage!=null && "A".equals(optPage.getPageType())) {
-            return new AutoRunNodeEventSupport(
-                optPage.getPageUrl(),
-                nodeInfo.getOptParam(),
-                optPage.getOptMethod());
-        }
-        return createNodeEventSupportBean(nodeInfo);
-    }
-
-    public static NodeEventSupport createNodeEventSupportBean(NodeInfo nodeInfo) {
+    public static NodeEventSupport createNodeEventSupportBean(NodeInfo nodeInfo, FlowEngine flowEngine) {
         WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
         if (integrationEnvironment == null) {
             integrationEnvironment = (IntegrationEnvironment) webApplicationContext.getBean("integrationEnvironment");
@@ -79,11 +67,13 @@ public class NodeEventSupportFactory {
             null : integrationEnvironment.getOsInfo(nodeInfo.getOsId());
 
         if (osInfo != null && StringUtils.isNotBlank(osInfo.getOsUrl())) {
-            RemoteBeanNodeEventSupport remoteNodeEventExecutor = new RemoteBeanNodeEventSupport();
+            RemoteBeanNodeEventSupport remoteNodeEventExecutor =
+                new RemoteBeanNodeEventSupport(flowEngine);
             remoteNodeEventExecutor.setAppSession(fetchAppSession(osInfo.getOsUrl()));
             return remoteNodeEventExecutor;
         } else {
-            LocalBeanNodeEventSupport localNodeEventExecutor = new LocalBeanNodeEventSupport();
+            LocalBeanNodeEventSupport localNodeEventExecutor =
+                new LocalBeanNodeEventSupport(flowEngine);
             localNodeEventExecutor.setApplication(webApplicationContext.getServletContext());
             return localNodeEventExecutor;
         }

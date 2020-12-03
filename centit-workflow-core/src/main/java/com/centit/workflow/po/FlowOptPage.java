@@ -34,9 +34,10 @@ public class FlowOptPage implements java.io.Serializable {
     @Column(name = "OPT_NAME")
     private String optName;
     /**
-     * C 公司开发的业务， E外部 需要IFrame嵌入，
-     * F 自定义表单， A auto 自动执行http调用，
-     * S 执行JavaScript
+     * C 内部（同源业务），公司开发的业务；
+     * E外部 需要IFrame嵌入；
+     * F 自定义表单；
+     * A auto 自动执行http调用
      */
     @Column(name = "PAGE_TYPE")
     private String pageType;

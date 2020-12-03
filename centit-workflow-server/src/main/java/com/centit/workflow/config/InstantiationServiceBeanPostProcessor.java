@@ -33,7 +33,6 @@ public class InstantiationServiceBeanPostProcessor implements ApplicationListene
     {
         CodeRepositoryCache.setPlatformEnvironment(platformEnvironment);
         CodeRepositoryCache.refreshAsyncCache();
-
         if(innerMessageManager!=null)
             notificationCenter.registerMessageSender("innerMsg", innerMessageManager);
         if(optLogManager!=null)

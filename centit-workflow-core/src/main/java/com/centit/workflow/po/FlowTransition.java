@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "WF_TRANSITION")
+@Data
 public class FlowTransition implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
 
@@ -36,14 +38,22 @@ public class FlowTransition implements java.io.Serializable {
     private String endNodeId;
     @Column(name = "TRANS_CONDITION")
     private String transCondition;
+    /**
+     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
+     */
     @Column(name = "LIMIT_TYPE")
     private String limitType;
     @Column(name = "TIME_LIMIT")
     private String timeLimit;
+    /**
+     * 改是否记入时间 T/F  I 忽略
+     */
     @Column(name = "IS_ACCOUNT_TIME")
     private String isAccountTime;
+
+    // * T可以忽略 F 不可以忽略  是否可以忽略运行
     @Column(name = "CAN_IGNORE")
-    private String canIgnore;
+    private Boolean canIgnore;
 
     /**
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
@@ -65,165 +75,10 @@ public class FlowTransition implements java.io.Serializable {
     // Constructors
     /** default constructor */
     public FlowTransition() {
-        this.canIgnore="T";
+        this.canIgnore= true;
         isAccountTime ="I";
     }
-    /** minimal constructor */
-    public FlowTransition(
-        String transid
-        ) {
-        this.canIgnore="T";
-        isAccountTime ="I";
-        this.transId = transid;
 
-    }
-
-/** full constructor */
-    public FlowTransition(
-     String transid
-    ,Long  version,String  wfcode,String  transclass,String  transname,String  transdesc,
-     String  startnodeid,String  endnodeid,String  transcondition,String limitType,String timelimit) {
-
-
-        this.transId = transid;
-
-        this.getFlowDefine().setVersion(version);
-        this.getFlowDefine().setFlowCode(wfcode);
-        this.transClass = transclass;
-        this.transName = transname;
-        this.transDesc = transdesc;
-        this.startNodeId = startnodeid;
-        this.endNodeId = endnodeid;
-        this.transCondition = transcondition;
-        this.limitType = limitType;
-        this.timeLimit = timelimit;
-        this.canIgnore="T";
-        this.isAccountTime ="I";
-    }
-
-    /**
-     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
-     * @return
-     */
-    public String getLimitType() {
-        return limitType;
-    }
-    /**
-     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
-     * @param limitType
-     */
-    public void setLimitType(String limitType) {
-        this.limitType = limitType;
-    }
-
-    public String getTimeLimit() {
-        return this.timeLimit;
-    }
-
-    public void setTimeLimit(String timelimit) {
-        this.timeLimit = timelimit;
-    }
-
-    public String getTransId() {
-        return this.transId;
-    }
-
-    public void setTransId(String transid) {
-        this.transId = transid;
-    }
-
-    public String getStartNodeId() {
-        return startNodeId;
-    }
-
-    public void setStartNodeId(String startNodeId) {
-        this.startNodeId = startNodeId;
-    }
-
-    public String getEndNodeId() {
-        return endNodeId;
-    }
-
-    public void setEndNodeId(String endNodeId) {
-        this.endNodeId = endNodeId;
-    }
-
-    public String getTransCondition() {
-        return transCondition;
-    }
-
-    public void setTransCondition(String transCondition) {
-        this.transCondition = transCondition;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public String getFlowCode() {
-        return flowCode;
-    }
-
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
-    }
-
-    public String getTransClass() {
-        return this.transClass;
-    }
-
-    public void setTransClass(String transClass) {
-        this.transClass = transClass;
-    }
-
-    public String getTransName() {
-        return this.transName;
-    }
-
-    public void setTransName(String transName) {
-        this.transName = transName;
-    }
-
-    public String getTransDesc() {
-        return this.transDesc;
-    }
-
-    public void setTransDesc(String transDesc) {
-        this.transDesc = transDesc;
-    }
-
-    /**
-     * 改是否记入时间 T/F  I 忽略
-     * @return
-     */
-    public String getIsAccountTime() {
-        return isAccountTime;
-    }
-    /**
-     * 改是否记入时间 T/F  I 忽略
-     * @param isAccountTime
-     */
-    public void setIsAccountTime(String isAccountTime) {
-        this.isAccountTime = isAccountTime;
-    }
-    /**
-     * T可以忽略 F 不可以忽略  是否可以忽略运行
-     * @return
-     */
-    public String getCanIgnore() {
-        return canIgnore;
-    }
-    /**
-     * T可以忽略 F 不可以忽略  是否可以忽略运行
-     * @param canIgnore
-     */
-    public void setCanIgnore(String canIgnore) {
-        this.canIgnore = canIgnore;
-    }
 
     public void copy(FlowTransition other){
         //this.setTransId(other.getTransId());
@@ -265,7 +120,6 @@ public class FlowTransition implements java.io.Serializable {
             this.limitType= other.getLimitType();
         if( other.getTimeLimit() != null)
             this.limitType= other.getTimeLimit();
-
         if( other.getIsAccountTime() != null)
             this.isAccountTime= other.getIsAccountTime();
         if( other.getCanIgnore() != null)
@@ -273,8 +127,6 @@ public class FlowTransition implements java.io.Serializable {
     }
 
   public void clearProperties(){
-
-
         this.flowDefine = null;
         this.transClass =null;
         this.transName = null;
@@ -284,16 +136,8 @@ public class FlowTransition implements java.io.Serializable {
         this.transCondition = null;
         this.limitType =null;
         this.timeLimit = null;
-
         this.isAccountTime= "I";
-        this.canIgnore="T";
-    }
-
-    public FlowInfo getFlowDefine() {
-        return flowDefine;
-    }
-    public void setFlowDefine(FlowInfo flowDefine) {
-        this.flowDefine = flowDefine;
+        this.canIgnore=true;
     }
 
 }

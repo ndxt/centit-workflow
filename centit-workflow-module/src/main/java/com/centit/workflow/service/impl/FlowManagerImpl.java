@@ -70,19 +70,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Autowired
     FlowInstanceGroupDao flowInstanceGroupDao;
 
-    @Autowired
-    private NotificationCenter notificationCenter;
+    /*@Autowired
+    private NotificationCenter notificationCenter;*/
 
     @Autowired(required = false)
     private OperationLogWriter optLogManager;
 
     /**
      * 查看工作流程实例状态或进度
-     *
-     * @return XML 描述的流程流转状态图
      */
     @Override
-    public String viewFlowInstance(String flowInstId) {
+    public Map<String, Object> viewFlowInstance(String flowInstId) {
         FlowInstance wfInst = flowInstanceDao.getObjectWithReferences(flowInstId);
         FlowInfoId id = new FlowInfoId(wfInst
             .getVersion(), wfInst.getFlowCode());
@@ -92,16 +90,16 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Map<String, NodeInfo> nodeMap = new HashMap<>();
         Map<String, String> transState = new HashMap<>();
         Map<String, FlowTransition> transMap = new HashMap<>();
-        Set<NodeInfo> nodeSet = wfDef.getFlowNodes();
+        List<NodeInfo> nodeSet = wfDef.getNodeList();
         Boolean findTran = true;
         String benginNodeId = "";
         String endNodeID = "";
         for (NodeInfo node : nodeSet) {
             nodeState.put(node.getNodeId(), "ready");
-            if (node.getNodeType().equals("A")) {
+            if (node.getNodeType().equals(NodeInfo.NODE_TYPE_START)) {
                 nodeState.put(node.getNodeId(), "complete");
                 benginNodeId = node.getNodeId();
-            } else if (node.getNodeType().equals("F")) {
+            } else if (node.getNodeType().equals(NodeInfo.NODE_TYPE_END)) {
                 endNodeID = node.getNodeId();
             }
             nodeInstCount.put(node.getNodeId(), 0);
@@ -109,7 +107,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
         //System.out.println(benginNodeId);
         //flowDefDao.fetchObjectReferences(wfDef);
-        Set<FlowTransition> transSet = wfDef.getFlowTransitions();
+        List<FlowTransition> transSet = wfDef.getTransList();
         for (FlowTransition trans : transSet) {
             //首节点必然通过
             if (trans.getStartNodeId().equals(benginNodeId)) {
@@ -157,13 +155,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     completeTrans.add(trans);
                     if (trans != null) {
                         NodeInfo node = nodeMap.get(trans.getStartNodeId());
-                        if (node != null && "R".equals(node.getNodeType())) {
+                        if (node != null && NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType())) {
                             nodeState.put(trans.getStartNodeId(), "complete");
                             //nc = nodeInstCount.get(trans.getStartNodeId());
                             //nodeInstCount.put(trans.getStartNodeId(), (nc==null)?1:nc+1);
                         }
                         node = nodeMap.get(trans.getEndNodeId());
-                        if (node != null && "R".equals(node.getNodeType())) {
+                        if (node != null && NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType())) {
                             nodeState.put(trans.getEndNodeId(), "complete");
                             nc = nodeInstCount.get(trans.getEndNodeId());
                             nodeInstCount.put(trans.getEndNodeId(), (nc == null) ? 1 : nc + 1);
@@ -197,7 +195,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     for (NodeInfo node : nodeSet) {
                         if (trans.getStartNodeId().equals(node.getNodeId())) {
                             //如果最后一个节点之前的节点是路由节点
-                            if ("R".equals(node.getNodeType())) {
+                            if (NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType())) {
                                 Map<NodeInfo, FlowTransition> map = new HashMap<>();
                                 map.put(node, trans);
                                 finalTrans.add(map);
@@ -258,26 +256,16 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
 
-
-        Document viewDoc = DocumentHelper.createDocument();
-        Element baseEle = viewDoc.addElement("TopFlow");
-        Element procsEle = baseEle.addElement("Procs");
-        Element stepsEle = baseEle.addElement("Steps");
-
+        List<Map<String, Object>> nodes = new ArrayList<>();
         for (Map.Entry<String, String> ns : nodeState.entrySet()) {
-            Element procEle = procsEle.addElement("Proc");
-            procEle.addAttribute("id", ns.getKey().toString());
-            procEle.addAttribute("inststate", ns.getValue());
-            procEle.addAttribute("instcount", String.valueOf(nodeInstCount.get(ns.getKey())));
-        }
-
+            nodes.add(CollectionsOpt.createHashMap("id",ns.getKey(),
+                "inststate",ns.getValue(),"instcount",nodeInstCount.get(ns.getKey())));        }
+        List<Map<String, Object>> steps = new ArrayList<>();
         for (Map.Entry<String, String> ts : transState.entrySet()) {
-            Element stepEle = stepsEle.addElement("Step");
-            stepEle.addAttribute("id", ts.getKey());
-            stepEle.addAttribute("inststate", ts.getValue());
+            steps.add(CollectionsOpt.createHashMap("id",ts.getKey(),
+                "inststate",ts.getValue()));
         }
-
-        return viewDoc.asXML();
+        return CollectionsOpt.createHashMap("nodes",nodes, "steps", steps);
     }
 
 
@@ -738,8 +726,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 //            return -6;
         }
         NodeInfo nodedef = flowNodeDao.getObjectById(thisnode.getNodeId());
-        if ("A".equals(nodedef.getNodeType())
-            || "F".equals(nodedef.getNodeType())) {
+        if (NodeInfo.NODE_TYPE_START.equals(nodedef.getNodeType())
+            || NodeInfo.NODE_TYPE_END.equals(nodedef.getNodeType())) {
             // 不能设定到开始或者结束节点
             return null;
 //            return -5;//大小于
@@ -823,7 +811,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         //FlowOptUtils.sendMsg("", nextNodeInsts, mangerUserCode);
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
-            .createNodeEventSupportBean(nodedef);
+            .createNodeEventSupportBean(nodedef, flowEngine);
         nodeEventExecutor.runAfterCreate(flow, nextNodeInst, nodedef, mangerUserCode);
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
@@ -909,7 +897,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (nextNode == null)
             return null;//大小于
 //            return -3;
-        if (!"C".equals(nextNode.getNodeType()) && !"B".equals(nextNode.getNodeType()))
+        if (!NodeInfo.NODE_TYPE_OPT.equals(nextNode.getNodeType())
+             && !NodeInfo.NODE_TYPE_FIRST.equals(nextNode.getNodeType()))
             return null;//大小于
 //            return -4;
 

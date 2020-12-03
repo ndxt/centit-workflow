@@ -5,6 +5,7 @@ import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
@@ -18,6 +19,7 @@ import java.util.*;
  * @author codefan@hotmail.com
  */
 @Entity
+@Data
 @Table(name = "WF_FLOW_INSTANCE")
 public class FlowInstance implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
@@ -85,8 +87,9 @@ public class FlowInstance implements java.io.Serializable {
      */
     @Column(name = "INST_STATE")
     private String instState;
+
     @Column(name = "IS_SUB_INST")
-    private String isSubInst;
+    private Boolean isSubInst;
 
     /**
      * 作为子流程时，其父流程 ID
@@ -140,8 +143,8 @@ public class FlowInstance implements java.io.Serializable {
      * default constructor
      */
     public FlowInstance() {
-
         this.timeLimit = null;
+        this.isSubInst = false;
     }
 
     /**
@@ -152,81 +155,10 @@ public class FlowInstance implements java.io.Serializable {
         , Date createtime) {
         this.timeLimit = null;
         this.flowInstId = wfinstid;
-
         this.createTime = createtime;
+        this.isSubInst = false;
     }
 
-    /**
-     * full constructor
-     */
-    public FlowInstance(
-        String wfinstid
-        , Long version, String wfcode, String flowOptName, String flowOptTag, Date createtime,
-        Long promiseTime, Long timeLimit, String inststate, String issubinst,
-        String preinstid, String prenodeinstid, String unitcode, String usercode,
-        Date lastUpdateTime, String lastUpdateUser, String isTimer) {
-        this.flowInstId = wfinstid;
-        this.getFlowDefine().setVersion(version);
-        this.getFlowDefine().setFlowClass(wfcode);
-        this.flowOptName = flowOptName;
-        this.flowOptTag = flowOptTag;
-        this.createTime = createtime;
-        this.promiseTime = promiseTime;
-        this.timeLimit = timeLimit;
-        this.instState = inststate;
-        this.isSubInst = issubinst;
-        this.preInstId = preinstid;
-        this.preNodeInstId = prenodeinstid;
-        this.setUnitCode(unitcode);
-        this.userCode = usercode;
-
-        this.lastUpdateTime = lastUpdateTime;
-        this.lastUpdateUser = lastUpdateUser;
-        this.isTimer = isTimer;
-    }
-
-
-    public String getFlowInstId() {
-        return this.flowInstId;
-    }
-
-    public void setFlowInstId(String wfinstid) {
-        this.flowInstId = wfinstid;
-    }
-    // Property accessors
-
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public String getFlowCode() {
-        return flowCode;
-    }
-
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
-    }
-
-    public String getFlowOptName() {
-        return flowOptName;
-    }
-
-    public void setFlowOptName(String flowOptName) {
-        this.flowOptName = flowOptName;
-    }
-
-    public Date getCreateTime() {
-        return this.createTime;
-    }
-
-    public void setCreateTime(Date createtime) {
-        this.createTime = createtime;
-    }
 
     public String getPromiseTimeStr() {
         if (promiseTime == null)
@@ -234,14 +166,6 @@ public class FlowInstance implements java.io.Serializable {
         WorkTimeSpan wts = new WorkTimeSpan();
         wts.fromNumber(promiseTime);
         return wts.getTimeSpanDesc();
-    }
-
-    public Long getPromiseTime() {
-        return promiseTime;
-    }
-
-    public void setPromiseTime(Long promiseTime) {
-        this.promiseTime = promiseTime;
     }
 
     public String getTimeLimitStr() {
@@ -252,101 +176,15 @@ public class FlowInstance implements java.io.Serializable {
         return wts.getTimeSpanDesc();
     }
 
-    public Long getTimeLimit() {
-        return timeLimit;
-    }
-
-    public void setTimeLimit(Long timeLimit) {
-        this.timeLimit = timeLimit;
-    }
-
-    /**
-     * 流程状态
-     * N 正常  C 完成   P 暂停 挂起     F 强行结束
-     */
-    public String getInstState() {
-        return this.instState;
-    }
-
-    /**
-     * @param inststate 流程状态
-     *                  N 正常  C 完成   P 暂停 挂起     F 强行结束
-     */
-    public void setInstState(String inststate) {
-        this.instState = inststate;
-    }
-
-    public boolean isSubFlow() {
-
-        return "Y".equals(isSubInst);
-    }
-
-    /**
-     * Y 子流程/ N 非子流程
-     */
-    public String getIsSubInst() {
-        return this.isSubInst;
-    }
-
-    /**
-     * @param issubinst Y 子流程/ N 非子流程
-     */
-    public void setIsSubInst(String issubinst) {
-        this.isSubInst = issubinst;
-    }
-
-    public String getPareFlowInstId() {
-        return this.preInstId;
-    }
-
-    public void setPreInstId(String preinstid) {
-        this.preInstId = preinstid;
-    }
-
-    public String getPareNodeInstId() {
-        return this.preNodeInstId;
-    }
-
-    public void setPreNodeInstId(String prenodeinstid) {
-        this.preNodeInstId = prenodeinstid;
-    }
-
-    public String getUnitCode() {
-        return this.unitCode;
-    }
-
-
-    public void setUnitCode(String unitcode) {
-        this.unitCode = unitcode;
-    }
-
-    public String getUserCode() {
-        return this.userCode;
-    }
-
-    public void setUserCode(String usercode) {
-        this.userCode = usercode;
-    }
-
-    public String getOptName() {
-
-        return optName;
-    }
-
-    public String getFlowOptTag() {
-        return flowOptTag;
-    }
-
-    public void setFlowOptTag(String flowOptTag) {
-        this.flowOptTag = flowOptTag;
-    }
 
     public Set<NodeInstance> getActiveNodeInstances() {
         Set<NodeInstance> nodeInstSet = new HashSet<>();
         if (this.flowNodeInstances == null)
             return nodeInstSet;
         for (NodeInstance nodeInst : flowNodeInstances)
-            if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState()) || "W".equals(nodeInst.getNodeState()))
+            if ("N".equals(nodeInst.getNodeState())
+                || "R".equals(nodeInst.getNodeState())
+                || "W".equals(nodeInst.getNodeState()))
                 nodeInstSet.add(nodeInst);
         return nodeInstSet;
     }
@@ -414,11 +252,6 @@ public class FlowInstance implements java.io.Serializable {
                 stageList.add(stage);
         }
         return stageList;
-    }
-
-
-    public void setFlowStageInstances(List<StageInstance> flowStageInstances) {
-        this.flowStageInstances = flowStageInstances;
     }
 
     public void addFlowStageInstance(StageInstance wfStageInstance) {
@@ -714,7 +547,6 @@ public class FlowInstance implements java.io.Serializable {
         return subTokens;
     }
 
-
     public NodeInstance getPareNodeInst(String thisNodeInstId) {
         NodeInstance nodeInst = getNodeInstanceById(thisNodeInstId);
         if (nodeInst == null)
@@ -747,7 +579,6 @@ public class FlowInstance implements java.io.Serializable {
             nodeInst = prevNodeInst;
         }*/
     }
-
 
     public void replaceFlowStageInstances(List<StageInstance> wfStageInstances) {
         List<StageInstance> newObjs = new ArrayList<StageInstance>();
@@ -837,11 +668,8 @@ public class FlowInstance implements java.io.Serializable {
         }
     }
 
-
     public void copy(FlowInstance other) {
-
         this.setFlowInstId(other.getFlowInstId());
-
         this.setVersion(other.getVersion());
         this.setFlowCode(other.getFlowCode());
         this.flowOptName = other.getFlowOptName();
@@ -849,8 +677,9 @@ public class FlowInstance implements java.io.Serializable {
         this.createTime = other.getCreateTime();
         this.instState = other.getInstState();
         this.isSubInst = other.getIsSubInst();
-        this.preInstId = other.getPareFlowInstId();
-        this.preNodeInstId = other.getPareNodeInstId();
+        this.preInstId = other.getPreInstId();
+        this.preNodeInstId = other.getPreNodeInstId();
+
         this.setUnitCode(other.getUnitCode());
         this.userCode = other.getUserCode();
 
@@ -883,10 +712,10 @@ public class FlowInstance implements java.io.Serializable {
             this.instState = other.getInstState();
         if (other.getIsSubInst() != null)
             this.isSubInst = other.getIsSubInst();
-        if (other.getPareFlowInstId() != null)
-            this.preInstId = other.getPareFlowInstId();
-        if (other.getPareNodeInstId() != null)
-            this.preNodeInstId = other.getPareNodeInstId();
+        if (other.getPreInstId() != null)
+            this.preInstId = other.getPreInstId();
+        if (other.getPreNodeInstId() != null)
+            this.preNodeInstId = other.getPreNodeInstId();
         if (other.getUnitCode() != null)
             this.setUnitCode(other.getUnitCode());
         if (other.getUserCode() != null)
@@ -928,85 +757,5 @@ public class FlowInstance implements java.io.Serializable {
         this.lastUpdateTime = null;
         this.lastUpdateUser = null;
         this.isTimer = null;
-    }
-
-    public String getFlowGroupId() {
-        return flowGroupId;
-    }
-
-    public void setFlowGroupId(String flowGroupId) {
-        this.flowGroupId = flowGroupId;
-    }
-
-    public String getFlowName() {
-        return flowName;
-    }
-
-    public void setFlowName(String flowName) {
-        this.flowName = flowName;
-    }
-
-    public String getXmlDesc() {
-        return getFlowDefine().getFlowXmlDesc();
-    }
-
-    public Date getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(Date lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
-
-    public String getLastUpdateUser() {
-        return lastUpdateUser;
-    }
-
-    public void setLastUpdateUser(String lastUpdateUser) {
-        this.lastUpdateUser = lastUpdateUser;
-    }
-
-    /**
-     * 不计时N、计时T(有期限)、暂停P
-     */
-    public String getIsTimer() {
-        return isTimer;
-    }
-
-    /**
-     * 不计时N、计时T(有期限)、暂停P
-     *
-     * @param isTimer
-     */
-    public void setIsTimer(String isTimer) {
-        this.isTimer = isTimer;
-    }
-
-    public List<NodeInstance> getActiveNodeList() {
-        return new ArrayList<NodeInstance>(activeNodeList);
-    }
-
-    public void setActiveNodeList(List<NodeInstance> activeNodeList) {
-        this.activeNodeList = activeNodeList;
-    }
-
-    public String getCurStep() {
-        return curStep;
-    }
-
-    public void setCurStep(String curStep) {
-        this.curStep = curStep;
-    }
-
-    public String getPreInstId() {
-        return preInstId;
-    }
-
-    public String getPreNodeInstId() {
-        return preNodeInstId;
-    }
-
-    public void setOptName(String optName) {
-        this.optName = optName;
     }
 }

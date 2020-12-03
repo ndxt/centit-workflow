@@ -28,16 +28,29 @@ public class FlowWorkTeamId implements java.io.Serializable {
     @ApiModelProperty(value = "办件角色编码",required = true)
     private String roleCode;
 
+    public String getRunToken() {
+        return runToken;
+    }
+
+    public void setRunToken(String runToken) {
+        this.runToken = runToken;
+    }
+
+    @Column(name = "RUN_TOKEN")
+    @ApiModelProperty(value = "运行令牌")
+    private String runToken;
+
     // Constructors
     /** default constructor */
     public FlowWorkTeamId() {
     }
     /** full constructor */
-    public FlowWorkTeamId(String wfinstid, String usercode, String rolecode) {
+    public FlowWorkTeamId(String wfinstid, String usercode, String rolecode, String runToken) {
 
         this.flowInstId = wfinstid;
         this.userCode = usercode;
         this.roleCode = rolecode;
+        this.runToken = runToken;
     }
 
 

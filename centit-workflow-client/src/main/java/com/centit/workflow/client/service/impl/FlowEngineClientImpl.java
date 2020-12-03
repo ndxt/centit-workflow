@@ -69,6 +69,19 @@ public class FlowEngineClientImpl implements FlowEngine {
             "/flow/engine/saveFlowNodeVariable", paramMap);
     }
 
+    /**
+     * 设置流程节点上下文变量
+     *
+     * @param flowInstId 工作流实例号
+     * @param runToken   令牌值
+     * @param sVar       变量名
+     * @param sValue     变量值
+     */
+    @Override
+    public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
     @Override
     public void assignFlowWorkTeam(String flowInstId, String roleCode, List<String> userCodes)  {
         HashMap<String, Object> paramMap = new HashMap<>();
@@ -79,15 +92,18 @@ public class FlowEngineClientImpl implements FlowEngine {
             "/flow/engine/assignFlowWorkTeam", paramMap);
     }
 
+    /**
+     * 分配工作小组 --办件角色
+     *
+     * @param nodeInstId  节点实例号 不能为空
+     * @param roleCode    办件角色 不能为空
+     * @param userCodeSet 用户代码列表，添加
+     */
     @Override
-    public void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode)  {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId", flowInstId);
-        paramMap.put("roleCode", roleCode);
-        paramMap.put("userCode", userCode);
-        RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/addFlowWorkTeam", paramMap);
+    public void assignFlowWorkTeamByNode(String nodeInstId, String roleCode, List<String> userCodeSet) {
+        throw new ObjectException("This function is not been implemented in client.");
     }
+
 
     @Override
     public void assignFlowOrganize(String flowInstId, String roleCode,
@@ -717,27 +733,20 @@ public class FlowEngineClientImpl implements FlowEngine {
     /**
      * 分配工作小组 --办件角色
      *
-     * @param flowInstId 流程实例号 不能为空
-     * @param roleCode   办件角色 不能为空
-     * @param userCode   用户代码，添加
-     * @param authdesc   角色描述
-     */
-    @Override
-    public void assignFlowWorkTeam(String flowInstId, String roleCode, String userCode, String authdesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 分配工作小组 --办件角色
-     *
      * @param flowInstId  流程实例号 不能为空
      * @param roleCode    办件角色 不能为空
+     * @param runToken    令牌
      * @param userCodeSet 用户代码列表，添加
-     * @param authdesc    角色描述
      */
     @Override
-    public void assignFlowWorkTeam(String flowInstId, String roleCode, List<String> userCodeSet, String authdesc) {
+    public void assignFlowWorkTeam(String flowInstId, String roleCode, String runToken, List<String> userCodeSet) {
         throw new ObjectException("This function is not been implemented in client.");
+          /*HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("roleCode", roleCode);
+        paramMap.put("userCode", userCode);
+        RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/addFlowWorkTeam", paramMap);*/
     }
 
     /**
@@ -867,31 +876,6 @@ public class FlowEngineClientImpl implements FlowEngine {
      */
     @Override
     public List<FlowOrganize> viewFlowOrganizeList(String flowInstId, String roleCode, String authDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 设置流程节点上下文变量
-     *
-     * @param flowInstId 工作流实例号
-     * @param runToken   令牌值
-     * @param sVar       变量名
-     * @param sValue     变量值
-     */
-    @Override
-    public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 设置流程节点上下文变量
-     *
-     * @param nodeInstId 节点实例号
-     * @param sVar       变量名
-     * @param sValues    Set String 中的值不能有 分号 ;
-     */
-    @Override
-    public void saveFlowNodeVariable(String nodeInstId, String sVar, Set<String> sValues) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

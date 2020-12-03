@@ -5,7 +5,7 @@
     <parent>
         <artifactId>centit-workflow</artifactId>
         <groupId>com.centit.product</groupId>
-        <version>4.7-SNAPSHOT</version>
+        <version>5.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

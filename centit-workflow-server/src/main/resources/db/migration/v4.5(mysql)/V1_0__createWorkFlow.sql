@@ -40,6 +40,7 @@ CREATE TABLE `wf_flow_define` (
   `FLOW_NAME` varchar(120) ,
   `FLOW_CLASS` varchar(4) ,
   `FLOW_Publish_Date` datetime DEFAULT NULL,
+  `FIRST_NODE_ID` varchar(32),
   `FLOW_STATE` char(1) ,
   `FLOW_DESC` varchar(500) ,
   `FLOW_XML_DESC` text,
@@ -359,10 +360,11 @@ CREATE TABLE `wf_team` (
   `FLOW_INST_ID` varchar(32) ,
   `ROLE_CODE` varchar(32) ,
   `USER_CODE` varchar(8) ,
+  `RUN_TOKEN` varchar(32) NOT NULL,
   `USER_ORDER` decimal(4,0) DEFAULT NULL,
   `AUTH_DESC` varchar(255) ,
   `AUTH_TIME` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`FLOW_INST_ID`,`USER_CODE`,`ROLE_CODE`)
+  PRIMARY KEY (`FLOW_INST_ID`,`USER_CODE`,`ROLE_CODE`,`RUN_TOKEN`)
 ) ;
 
 -- ----------------------------

@@ -30,7 +30,7 @@ public class FlowOptUtils {
         flowInst.setUserCode(usercode);
         flowInst.setPreNodeInstId("");
         flowInst.setPreInstId("");
-        flowInst.setIsSubInst("N");
+        flowInst.setIsSubInst(false);
         flowInst.setInstState("N");
         flowInst.setCreateTime(new Date(System.currentTimeMillis()));
         String timeLimit = wf.getTimeLimit();
@@ -74,7 +74,7 @@ public class FlowOptUtils {
             }
         } else if ("2".equals(node.getInheritType())) {
             //flowInst.
-            Set<NodeInfo> nodes = flowInfo.listNodesByNodeCode(node.getInheritNodeCode());
+            List<NodeInfo> nodes = flowInfo.listNodesByNodeCode(node.getInheritNodeCode());
             NodeInstance inhertInst = null;
             for (NodeInfo thisNode : nodes) {
                 NodeInstance tempInst = flowInst.findLastSameNodeInst

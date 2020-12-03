@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -27,7 +28,12 @@ public class FlowInfo implements java.io.Serializable {
     @Column(name = "FLOW_CLASS")
     @Length(max = 4, message = "字段长度不能大于{max}")
     private String flowClass;
-
+     // A 草稿 B 正常 C 过期 D 禁用  E 已发布
+    public static final String FLOW_STATE_DRAFT     = "A";
+    public static final String FLOW_STATE_NORMAL = "B";
+    public static final String FLOW_STATE_INVALID   = "C";
+    public static final String FLOW_STATE_FORBIDDEN = "D";
+    public static final String FLOW_STATE_PUBLISHED = "E";
     @Column(name = "FLOW_STATE")
     @Length(max = 1, message = "字段长度不能大于{max}")
     private String flowState;
@@ -42,6 +48,10 @@ public class FlowInfo implements java.io.Serializable {
     @Column(name = "FLOW_PUBLISH_DATE")
     private Date flowPublishDate;
 
+    @Column(name = "FIRST_NODE_ID")
+    @Length(max = 32, message = "字段长度不能大于{max}")
+    private String firstNodeId;
+
     @Column(name = "OS_ID")
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String osId;
@@ -54,6 +64,10 @@ public class FlowInfo implements java.io.Serializable {
     @Length(max = 20, message = "字段长度不能大于{max}")
     private String  timeLimit;
 
+    public static final String FLOW_EXPIRE_OPT_NOTICE    = "N";
+    public static final String FLOW_EXPIRE_OPT_NONE      = "O";
+    public static final String FLOW_EXPIRE_OPT_SUSPENSE  = "X";
+    public static final String FLOW_EXPIRE_OPT_TERMINATE = "E";
     /**
      *  获取流程超期后处理方式
      * N：通知， O:不处理 ，X：挂起，E：终止（流程）
@@ -62,13 +76,12 @@ public class FlowInfo implements java.io.Serializable {
     @Length(max = 1, message = "字段长度不能大于{max}")
     private String  expireOpt;
 
+    /**
+     * 计划发布时间（生效时间），这个字段暂未使用
+     */
     @Column(name = "AT_PUBLISH_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date  atPublishDate;
-
-    @Column(name = "FIRST_NODE_ID")
-    @Length(max = 32, message = "字段长度不能大于{max}")
-    private String firstNodeId;
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowStage.class)
     @JoinColumns({
@@ -82,7 +95,7 @@ public class FlowInfo implements java.io.Serializable {
             @JoinColumn(name="flowCode"),
             @JoinColumn(name="version")
     })
-    private Set<NodeInfo> flowNodes;// new ArrayList<WfNode>();
+    private List<NodeInfo> nodeList;// new ArrayList<WfNode>();
 
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,targetEntity = FlowTransition.class)
@@ -91,7 +104,7 @@ public class FlowInfo implements java.io.Serializable {
             @JoinColumn(name="version", referencedColumnName="version")
     })
 
-    private Set<FlowTransition> flowTransitions;// new ArrayList<WfTransition>();
+    private List<FlowTransition> transList;// new ArrayList<WfTransition>();
 
     // Constructors
     /** default constructor */
@@ -183,7 +196,7 @@ public class FlowInfo implements java.io.Serializable {
 
 
     /**
-     * A 草稿 B 正常 C 过期 D 禁用
+     * A 草稿 B 正常 C 过期 D 禁用  E 已发布
      * @param wfstate
      */
     public void setFlowState(String wfstate) {
@@ -242,25 +255,18 @@ public class FlowInfo implements java.io.Serializable {
     public void setAtPublishDate(Date atPublishDate) {
         this.atPublishDate = atPublishDate;
     }
-    public Set<NodeInfo> getFlowNodes(){
-        if(this.flowNodes ==null)
-            this.flowNodes = new HashSet<NodeInfo>();
-        return this.flowNodes;
+
+    public List<NodeInfo> getNodeList(){
+        if(this.nodeList ==null)
+            this.nodeList = new ArrayList<>();
+        return this.nodeList;
     }
 
-    public String getFirstNodeId() {
-        return firstNodeId;
-    }
-
-    public void setFirstNodeId(String firstNodeId) {
-        this.firstNodeId = firstNodeId;
-    }
-
-    public Set<NodeInfo> listNodesByNodeCode(String nodeCode){
-        Set<NodeInfo> nodes = new HashSet<NodeInfo>();
-        if(nodeCode == null || flowNodes ==null)
+    public List<NodeInfo> listNodesByNodeCode(String nodeCode){
+        List<NodeInfo> nodes = new ArrayList<>();
+        if(nodeCode == null || nodeList ==null)
             return nodes;
-        for(NodeInfo node : flowNodes){
+        for(NodeInfo node : nodeList){
             if(nodeCode.equals( node.getNodeCode()))
                 nodes.add(node);
         }
@@ -269,38 +275,38 @@ public class FlowInfo implements java.io.Serializable {
 
 
     public NodeInfo getFlowNodeById(String nodeId){
-        if(this.flowNodes ==null)
+        if(this.nodeList ==null)
             return null;
-        for(NodeInfo nd : flowNodes)
+        for(NodeInfo nd : nodeList)
             if(nd.getNodeId().equals(nodeId))
                 return nd;
         return null;
     }
 
-    public void setFlowNodes(Set<NodeInfo> wfNodes) {
+    public void setNodeList(List<NodeInfo> wfNodes) {
         if(wfNodes == null || wfNodes.size() == 0){
-            this.flowNodes = wfNodes;
+            this.nodeList = wfNodes;
             return;
         }
         for(NodeInfo nodeInfo:wfNodes){
             addFlowNode(nodeInfo);
         }
-        this.flowNodes = wfNodes;
+        this.nodeList = wfNodes;
     }
 
     public void addFlowNode(NodeInfo wfNode ){
-        if (this.flowNodes ==null)
-            this.flowNodes = new HashSet<>();
+        if (this.nodeList ==null)
+            this.nodeList = new ArrayList<>();
         //wfNode.setFlowDefine(this);
         wfNode.setFlowCode(this.getFlowCode());
         wfNode.setVersion(this.getVersion());
-        this.flowNodes.add(wfNode);
+        this.nodeList.add(wfNode);
     }
 
     public void removeFlowNode(NodeInfo wfNode ){
-        if (this.flowNodes ==null)
+        if (this.nodeList ==null)
             return;
-        this.flowNodes.remove(wfNode);
+        this.nodeList.remove(wfNode);
     }
 
     public NodeInfo newFlowNode(){
@@ -310,45 +316,52 @@ public class FlowInfo implements java.io.Serializable {
     }
 
     public NodeInfo getFirstNode(){
-        if (this.flowNodes ==null)
+        if (this.nodeList ==null)
             return null;
-        for(NodeInfo node : flowNodes){
-            if("B".equals(node.getNodeType()))
+        if(StringUtils.isNotBlank(this.getFirstNodeId())) {
+            NodeInfo node = getFlowNodeById(this.getFirstNodeId());
+            if(node!=null){
+                return node;
+            }
+        }
+        //这段代码为了兼容老的版本
+        for(NodeInfo node : nodeList){
+            if(NodeInfo.NODE_TYPE_FIRST.equals(node.getNodeType()))
                 return node;
         }
         return null;
     }
 
-    public Set<FlowTransition> getFlowTransitions(){
-        if(this.flowTransitions ==null)
-            this.flowTransitions = new HashSet<>();
-        return this.flowTransitions;
+    public List<FlowTransition> getTransList(){
+        if(this.transList ==null)
+            this.transList = new ArrayList<>();
+        return this.transList;
     }
 
-    public void setFlowTransitions(Set<FlowTransition> wfTransitions) {
+    public void setTransList(List<FlowTransition> wfTransitions) {
         if(wfTransitions == null || wfTransitions.size() == 0){
-            this.flowTransitions = wfTransitions;
+            this.transList = wfTransitions;
             return;
         }
         for(FlowTransition flowTransition:wfTransitions){
             addFlowTransition(flowTransition);
         }
-        this.flowTransitions = wfTransitions;
+        this.transList = wfTransitions;
     }
 
     public void addFlowTransition(FlowTransition wfTransition ){
-        if (this.flowTransitions ==null)
-            this.flowTransitions = new HashSet<>();
+        if (this.transList ==null)
+            this.transList = new ArrayList<>();
         //wfTransition.setFlowDefine(this);
         wfTransition.setFlowCode(this.getFlowCode());
         wfTransition.setVersion(this.getVersion());
-        this.flowTransitions.add(wfTransition);
+        this.transList.add(wfTransition);
     }
 
     public void removeFlowTransition(FlowTransition wfTransition ){
-        if (this.flowTransitions ==null)
+        if (this.transList ==null)
             return;
-        this.flowTransitions.remove(wfTransition);
+        this.transList.remove(wfTransition);
     }
 
     public FlowTransition newFlowTransition(){
@@ -369,7 +382,7 @@ public class FlowInfo implements java.io.Serializable {
         //delete
         boolean found = false;
         Set<FlowTransition> oldObjs = new HashSet<>();
-        oldObjs.addAll(getFlowTransitions());
+        oldObjs.addAll(getTransList());
 
         for(Iterator<FlowTransition> it = oldObjs.iterator(); it.hasNext();){
             FlowTransition odt = it.next();
@@ -387,7 +400,7 @@ public class FlowInfo implements java.io.Serializable {
         //insert
         for(FlowTransition newdt :newObjs){
             found = false;
-            for(Iterator<FlowTransition> it = getFlowTransitions().iterator();
+            for(Iterator<FlowTransition> it = getTransList().iterator();
                 it.hasNext();){
                 FlowTransition odt = it.next();
                 if(odt.getTransId().equals( newdt.getTransId())){
@@ -457,6 +470,14 @@ public class FlowInfo implements java.io.Serializable {
         this.osId = osId;
     }
 
+    public String getFirstNodeId() {
+        return firstNodeId;
+    }
+
+    public void setFirstNodeId(String firstNodeId) {
+        this.firstNodeId = firstNodeId;
+    }
+
     /**
      * 替换子类对象数组，这个函数主要是考虑hibernate中的对象的状态，以避免对象状态不一致的问题
      *
@@ -506,6 +527,7 @@ public class FlowInfo implements java.io.Serializable {
         }
     }
 
+
     public void copy(FlowInfo other){
 
         this.setVersion(other.getVersion());
@@ -517,12 +539,12 @@ public class FlowInfo implements java.io.Serializable {
         this.flowDesc = other.getFlowDesc();
         this.flowXmlDesc = other.getFlowXmlDesc();
         this.flowPublishDate = other.getFlowPublishDate();
+        this.firstNodeId = other.getFirstNodeId();
         this.optId = other.getOptId();
         this.timeLimit = other.getTimeLimit();
         this.expireOpt = other.getExpireOpt();
         this.atPublishDate = other.getAtPublishDate();
         this.osId = other.getOsId();
-        this.firstNodeId = other.getFirstNodeId();
         //this.replaceFlowStages(other.getFlowStages());
     }
 
@@ -544,6 +566,8 @@ public class FlowInfo implements java.io.Serializable {
             this.flowXmlDesc = other.getFlowXmlDesc();
         if( other.getFlowPublishDate() != null)
             this.flowPublishDate = other.getFlowPublishDate();
+        if( other.getFirstNodeId() != null)
+            this.firstNodeId = other.getFirstNodeId();
         if( other.getOptId() != null)
             this.optId = other.getOptId();
         if( other.getTimeLimit() != null)
@@ -554,8 +578,6 @@ public class FlowInfo implements java.io.Serializable {
             this.atPublishDate = other.getAtPublishDate();
         if (other.getOsId()!=null)
             this.osId = other.getOsId();
-        if (other.getFirstNodeId()!=null)
-            this.firstNodeId = other.getFirstNodeId();
         /*if(other.getFlowStages() !=null)
             this.replaceFlowStages(other.getFlowStages());*/
     }
@@ -577,6 +599,8 @@ public class FlowInfo implements java.io.Serializable {
             this.flowXmlDesc = other.getFlowXmlDesc();
         if( this.getFlowPublishDate() == null)
             this.flowPublishDate = other.getFlowPublishDate();
+        if( this.getFirstNodeId() == null)
+            this.firstNodeId = other.getFirstNodeId();
         if (this.getOsId() ==null)
             this.osId = other.getOsId();
         if( this.getOptId() == null)
@@ -587,8 +611,6 @@ public class FlowInfo implements java.io.Serializable {
             this.expireOpt = other.getExpireOpt();
         if(this.getAtPublishDate() == null)
             this.atPublishDate = other.getAtPublishDate();
-        if (this.getFirstNodeId() == null)
-            this.firstNodeId = other.getFirstNodeId();
         /*if(null==this.getFlowStages())
             this.replaceFlowStages(other.getFlowStages());*/
     }
@@ -604,11 +626,11 @@ public class FlowInfo implements java.io.Serializable {
         this.flowPublishDate =null;
         this.osId = null;
         this.optId = null;
+        this.firstNodeId = null;
         this.timeLimit = null;
         this.expireOpt = null;
         this.atPublishDate = null;
         this.getFlowStages().clear();
-        this.firstNodeId = null;
     }
 
 }

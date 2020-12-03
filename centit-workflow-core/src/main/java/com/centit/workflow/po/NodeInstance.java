@@ -196,7 +196,6 @@ public class NodeInstance implements java.io.Serializable {
          return this.node.getNodeCode();
      }
 
-
     public Date getCreateTime() {
         return this.createTime;
     }
