@@ -43,12 +43,20 @@ public class NodeInfo implements java.io.Serializable {
     @Deprecated
     public static final String NODE_TYPE_FIRST    = "B";
     public static final String NODE_TYPE_OPT      = "C";
-    public static final String NODE_TYPE_ROUTE    = "R";
+    public static final String NODE_TYPE_AUTO     = "D";
+    public static final String NODE_TYPE_MESSAGE  = "E";
     public static final String NODE_TYPE_END      = "F";
+    public static final String NODE_TYPE_ROUTE    = "R";
+    public static final String NODE_TYPE_SUBFLOW    = "S";
     /**
      * A:开始（这个在数据库中其实不存在）
-     * B:首节点(首节点不能是路由节点，如果是路由节点请设置为 哑元，跳转到后一个节点； B 的处理换个C一样)
-     * C:业务节点 R: 路由节点 F结束
+     * --B:首节点(首节点不能是路由节点，如果是路由节点请设置为 哑元，跳转到后一个节点； B 的处理换个C一样)
+     * C:业务节点
+     * D:自动运行节点
+     * R:路由节点
+     * E:消息相应节点（同步节点）
+     * F:结束
+     * S:子流程
      * TODO 这个B类型是一个糟糕的设计，应该在flowInfo中添加一个首届点字段，
      */
     @Column(name = "NODE_TYPE")
@@ -56,16 +64,31 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "NODE_NAME")
     private String nodeName;
 
-
+    /**NODE_TYPE == NODE_TYPE_OPT
+     * A: 唯一执行人 B: 抢先机制 C: 多人操作 */
     public static final String NODE_OPT_NORMAL    = "A";
     public static final String NODE_OPT_LEAD      = "B";
     public static final String NODE_OPT_TEAMWORK  = "C";
-    public static final String NODE_OPT_AUTO      = "D";
-    public static final String NODE_OPT_NONE      = "E";
-    public static final String NODE_OPT_SUBFLOW   = "S";
+
     /**
-     * A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行
-     * E: 哑元（可用于嵌套汇聚，等同于自动执行无动作） S:子流程
+     * NODE_TYPE == NODE_TYPE_AUTO*/
+    public static final String AUTO_NODE_OPT_CODE_NONE    = "N";
+    public static final String AUTO_NODE_OPT_CODE_BEAN    = "B";
+    public static final String AUTO_NODE_OPT_CODE_SCRIPT  = "S";
+    public static final String AUTO_NODE_OPT_CODE_MESSAGE  = "M";
+    /**
+     * NODE_TYPE == NODE_TYPE_ROUTE
+     * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
+     */
+    public static final String ROUTER_TYPE_BRANCH    = "D";
+    public static final String ROUTER_TYPE_COLLECT   = "E";
+    public static final String ROUTER_TYPE_PARALLEL  = "H";
+    public static final String ROUTER_TYPE_MULTI_INST= "G";
+    public static final String ROUTER_TYPE_ISOLATED  = "R";
+    public static final String ROUTER_TYPE_SYNC      = "S";
+
+    /**
+     * optType 为一个多种意义的字段
      */
     @Column(name = "OPT_TYPE")
     private String optType;
@@ -76,17 +99,9 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "OPT_ID")
     private String optId;
 
-    public static final String AUTO_NODE_OPT_CODE_NONE    = "N";
-    public static final String AUTO_NODE_OPT_CODE_BEAN    = "B";
-    public static final String AUTO_NODE_OPT_CODE_SCRIPT  = "S";
     /**
      * 业务页面代码 关联到 FlowOptPage
-     *  optType = D 时； optCode 有4个选项
-     *      * N 无操作；等同于哑元
-     *      * B 事件Bean
-     *      * S 脚本Script
-     *      * flowOptPage 的 pageType=='A' 的optCode
-     */
+     **/
     @Column(name = "OPT_CODE")
     private String optCode;
     /**
@@ -176,18 +191,6 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "STAGE_CODE")
     private String stageCode;
 
-    public static final String ROUTER_TYPE_BRANCH    = "D";
-    public static final String ROUTER_TYPE_COLLECT   = "E";
-    public static final String ROUTER_TYPE_PARALLEL  = "H";
-    public static final String ROUTER_TYPE_MULTI_INST= "G";
-    public static final String ROUTER_TYPE_ISOLATED  = "R";
-    public static final String ROUTER_TYPE_SYNC      = "S";
-    /**
-     * D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
-     */
-    @Column(name = "ROUTER_TYPE")
-    private String routerType;
-
     public static final String ROUTER_MULTI_TYPE_UNIT  = "D";
     public static final String ROUTER_MULTI_TYPE_USER  = "U";
     public static final String ROUTER_MULTI_TYPE_VALUE = "V";
@@ -229,7 +232,6 @@ public class NodeInfo implements java.io.Serializable {
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
 
-
     // Constructors
     /** default constructor */
     public NodeInfo() {
@@ -239,12 +241,37 @@ public class NodeInfo implements java.io.Serializable {
 
     /** minimal constructor */
     public NodeInfo(String nodeid, String nodetype) {
-
         this.nodeId = nodeid;
-
         this.nodeType = nodetype;
         this.isAccountTime = "T";
         this.inheritType = "0";
+    }
+
+    public String getOptRunType(){
+        return NODE_TYPE_OPT.equals(this.nodeType)?this.optType: null;
+    }
+
+    public void setOptRunType(String optType){
+        this.nodeType = NODE_TYPE_OPT;
+        this.optType = optType;
+    }
+
+    public String getAutoRunType(){
+        return NODE_TYPE_AUTO.equals(this.nodeType)?this.optType: null;
+    }
+
+    public void setAutoRunType(String optType){
+        this.nodeType = NODE_TYPE_AUTO;
+        this.optType = optType;
+    }
+
+    public String getRouterType(){
+        return NODE_TYPE_ROUTE.equals(this.nodeType)?this.optType: null;
+    }
+
+    public void setRouterType(String routerType){
+        this.nodeType = NODE_TYPE_ROUTE;
+        this.optType = routerType;
     }
 
     public void copy(NodeInfo other) {
@@ -270,7 +297,7 @@ public class NodeInfo implements java.io.Serializable {
         this.expireOpt = other.getExpireOpt();
         this.isAccountTime = other.getIsAccountTime();
         this.stageCode =other.getStageCode();
-        this.routerType=other.getRouterType();
+        //this.routerType=other.getRouterType();
         this.multiInstType=other.getMultiInstType();
         this.multiInstParam=other.getMultiInstParam();
         this.convergeParam=other.getConvergeParam();
@@ -327,8 +354,8 @@ public class NodeInfo implements java.io.Serializable {
         if (other.getOptId()!=null)
             this.optId = other.getOptId();
 
-        if (other.getRouterType()!=null)
-            this.routerType=other.getRouterType();
+        //if (other.getRouterType()!=null)
+        //    this.routerType=other.getRouterType();
         if (other.getMultiInstType()!=null)
             this.multiInstType=other.getMultiInstType();
         if (other.getMultiInstParam()!=null)
@@ -341,7 +368,6 @@ public class NodeInfo implements java.io.Serializable {
             this.warningRule=other.getWarningRule();
         if (other.getWarningParam()!=null)
             this.warningParam=other.getWarningParam();
-
     }
 
     public void clearProperties()
@@ -366,8 +392,7 @@ public class NodeInfo implements java.io.Serializable {
         this.expireOpt =  null;
         this.isAccountTime = "T";
         this.isTrunkLine = false;
-
-        this.routerType=null;
+        //this.routerType=null;
         this.multiInstType=null;
         this.multiInstParam=null;
         this.convergeParam=null;
