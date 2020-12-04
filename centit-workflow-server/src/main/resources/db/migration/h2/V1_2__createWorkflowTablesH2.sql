@@ -318,6 +318,19 @@ CREATE TABLE wf_stage_instance (
 )  ;
 
 
+CREATE TABLE WF_EVENT_INFO (
+   FLOW_EVENT_ID varchar(32) NOT NULL,
+   FLOW_INST_ID varchar(32) NOT NULL,
+   SENDER_USER varchar(32),
+   EVENT_NAME varchar(64) DEFAULT NULL,
+   EVENT_PARAM varchar(2000) DEFAULT NULL,
+   RECEIVE_TIME datetime,
+   OPT_TIME datetime,
+   OPT_STATE varchar(1) DEFAULT 'N',
+   OPT_RESULT varchar(2000) DEFAULT NULL,
+   PRIMARY KEY (FLOW_EVENT_ID)
+);
+
 CREATE TABLE wf_team (
   FLOW_INST_ID decimal(12,0) NOT NULL,
   ROLE_CODE varchar(32) NOT NULL,
