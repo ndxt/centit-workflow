@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by chen_rj on 2018-5-8.
  */
 @Repository
-public class FlowOptPageDao extends BaseDaoImpl<FlowOptPage,String> {
+public class FlowOptPageDao extends BaseDaoImpl<FlowOptPage, String> {
     @Override
     public Map<String, String> getFilterField() {
         return null;

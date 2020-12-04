@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 @Repository
-public class NodeInfoDao extends BaseDaoImpl<NodeInfo,Long>
+public class NodeInfoDao extends BaseDaoImpl<NodeInfo, String>
     {
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();

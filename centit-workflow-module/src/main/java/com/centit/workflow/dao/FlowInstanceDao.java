@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class FlowInstanceDao extends BaseDaoImpl<FlowInstance,Long> {
+public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();
         filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);

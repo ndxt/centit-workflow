@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @Repository
-public class NodeInstanceDao extends BaseDaoImpl<NodeInstance,Long> {
+public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
 
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<String, String>();

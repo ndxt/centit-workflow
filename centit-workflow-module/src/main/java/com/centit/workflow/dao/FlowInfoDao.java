@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class FlowInfoDao extends BaseDaoImpl<FlowInfo,FlowInfoId> {
+public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();
         filterField.put("flowCode" , "flowCode= :flowCode");

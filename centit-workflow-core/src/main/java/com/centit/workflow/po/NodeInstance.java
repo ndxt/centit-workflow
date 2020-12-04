@@ -22,7 +22,7 @@ public class NodeInstance implements java.io.Serializable {
     @ValueGenerator(strategy = GeneratorType.UUID22)
     private String nodeInstId;
     /**
-     *
+     *流程实例ID
      */
     @Column(name="FLOW_INST_ID")
     private String  flowInstId;
@@ -53,22 +53,23 @@ public class NodeInstance implements java.io.Serializable {
      *
      * N 正常  B 已回退  C 完成  F 被强制结束
      * P 暂停  W 等待子流程返回  S 等等前置节点（可能是多个）完成
+     * T 同步节点，等待消息触发
      */
     @Column(name="NODE_STATE")
-    private String  nodeState;
+    private String nodeState;
     @Column(name="SUB_FLOW_INST_ID")
     private String subFlowInstId;
     @Column(name="UNIT_CODE")
     private String unitCode;
 
     @Column(name="TRANS_PATH")
-    private String  transPath;
+    private String transPath;
     //T: 通过 tasklist 分配， D：通过 岗位角色 自动匹配 S：静态代办（usercode)
     @Column(name="TASK_ASSIGNED")
     private String taskAssigned;
 
     @Column(name="RUN_TOKEN")
-    private String  runToken;
+    private String runToken;
     @Column(name="LAST_UPDATE_USER")
     private String lastUpdateUser;
     @Column(name="GRANTOR")
@@ -105,6 +106,8 @@ public class NodeInstance implements java.io.Serializable {
     private String roleType;
     @Column(name="ROLE_CODE")
     private String roleCode;
+
+
     @Transient
     private String isRecycle;//yes:可以回收；no：不可以回收
     @Transient

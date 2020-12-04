@@ -1,0 +1,54 @@
+package com.centit.workflow.po;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Date;
+
+@Entity
+@Data
+@Table(name = "WF_EVENT_INFO")
+public class FlowEventInfo implements Serializable {
+
+    @Id
+    @Column(name = "FLOW_EVENT_ID")
+    @ApiModelProperty(value = "流程实例编号", required = true)
+    private String flowEventId;
+
+    @Column(name = "FLOW_INST_ID")
+    @ApiModelProperty(value = "流程实例编号", required = true)
+    private String flowInstId;
+
+    @Column(name = "SENDER_USER")
+    private String senderUser;
+
+    @Column(name = "EVENT_NAME")
+    private String eventName;
+
+    @Column(name = "EVENT_PARAM")
+    private String eventParam;
+
+    @Column(name = "RECEIVE_TIME")
+    private Date   receiveTime;
+
+    @Column(name = "OPT_TIME")
+    private Date   optTime;
+
+    /**
+     * N:未处理 S：处理成功 F：处理失败 P：需要再次执行
+     */
+    @Column(name = "OPT_STATE")
+    private String optState;
+
+    @Column(name = "OPT_RESULT")
+    private String optResult;
+
+    public FlowEventInfo(){
+        this.optState = "N";
+    }
+}

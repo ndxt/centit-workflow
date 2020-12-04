@@ -13,7 +13,7 @@ import java.util.Map;
  * Created by chen_rj on 2018-5-8.
  */
 @Repository
-public class FlowOptInfoDao extends BaseDaoImpl<FlowOptInfo,String> {
+public class FlowOptInfoDao extends BaseDaoImpl<FlowOptInfo, String> {
     @Override
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();

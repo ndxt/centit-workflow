@@ -27,7 +27,7 @@ import java.util.Map;
  *          $Id$
  */
 @Repository
-public class ActionTaskDao extends BaseDaoImpl<ActionTask,Long>
+public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
 {
     private final static String userTaskFinBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
             "FLOW_OPT_TAG,NODE_INST_ID,UNIT_CODE,USER_CODE,ROLE_TYPE," +

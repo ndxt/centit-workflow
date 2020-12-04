@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.NotificationCenter;
@@ -34,7 +31,7 @@ public class FlowTaskImpl {
 
     /*@Autowired
     private FlowEngine flowEngine;
-*/
+    */
     @Autowired
     ActionTaskDao actionTaskDao;
 
@@ -78,7 +75,6 @@ public class FlowTaskImpl {
 
     /**
      * 根据数据库计算出来的预报警发出对应的通知即可
-     * TODO 添加自动提交节点
      */
     @Scheduled(cron = "0 0/5 8-18 * * *")
     @Transactional

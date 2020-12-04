@@ -14,7 +14,7 @@ import java.util.Map;
  * @Version 1.0
  */
 @Repository
-public class RoleFormulaDao extends BaseDaoImpl<RoleFormula,String> {
+public class RoleFormulaDao extends BaseDaoImpl<RoleFormula, String> {
 
     @Override
     public Map<String, String> getFilterField() {

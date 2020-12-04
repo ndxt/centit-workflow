@@ -22,10 +22,10 @@ import javax.validation.constraints.NotNull;
 public class NodeInfo implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
-
     @Id
     @Column(name = "NODE_ID")
     private String nodeId;
+
     @Column(name = "FLOW_CODE")
     @NotNull(message = "字段不能为空")
     @Length(max = 32, message = "字段长度不能大于{max}")
@@ -66,9 +66,9 @@ public class NodeInfo implements java.io.Serializable {
 
     /**NODE_TYPE == NODE_TYPE_OPT
      * A: 唯一执行人 B: 抢先机制 C: 多人操作 */
-    public static final String NODE_OPT_NORMAL    = "A";
-    public static final String NODE_OPT_LEAD      = "B";
-    public static final String NODE_OPT_TEAMWORK  = "C";
+    public static final String OPT_RUN_TYPE_NORMAL = "A";
+    public static final String OPT_RUN_TYPE_LEAD = "B";
+    public static final String OPT_RUN_TYPE_TEAMWORK = "C";
 
     /**
      * NODE_TYPE == NODE_TYPE_AUTO*/

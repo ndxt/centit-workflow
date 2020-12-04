@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam,FlowWorkTeamId>
+public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam, FlowWorkTeamId>
 {
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<String, String>();

@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate,Long> {
-    //public static final Logger logger = LoggerFactory.getLogger(WfRoleRelegateDao.class);
+public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
+    //public static final Logger logger = LoggerFactory.getLogger(RoleRelegateDao.class);
 
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();
@@ -34,10 +34,7 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate,Long> {
         filterField.put(CodeBook.ORDER_BY_HQL_ID , "recordDate desc");
         return filterField;
     }
-    @Transactional
-    public long getNextReleGateId() {
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_RELEGATENO");
-    }
+
     @Transactional
     public void saveObject(RoleRelegate roleRelegate) {
         if (StringUtils.isBlank(roleRelegate.getRelegateNo())) {

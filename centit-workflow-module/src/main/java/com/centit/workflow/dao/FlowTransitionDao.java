@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @Repository
-public class FlowTransitionDao extends BaseDaoImpl<FlowTransition,Long>
+public class FlowTransitionDao extends BaseDaoImpl<FlowTransition, String>
     {
      public Map<String, String> getFilterField() {
          Map<String, String> filterField = new HashMap<String, String>();

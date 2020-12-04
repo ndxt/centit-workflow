@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class FlowVariableDao extends BaseDaoImpl<FlowVariable,FlowVariableId>
+public class FlowVariableDao extends BaseDaoImpl<FlowVariable, FlowVariableId>
 {
         //public static final Logger logger = LoggerFactory.getLogger(WfFlowVariableDao.class);
 

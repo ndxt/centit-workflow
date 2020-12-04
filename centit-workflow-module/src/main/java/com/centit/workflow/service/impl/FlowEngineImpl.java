@@ -305,7 +305,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if("T".equals(nodeInst.getTaskAssigned())){
             NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
             //B: 抢先机制
-            if(NodeInfo.NODE_OPT_LEAD.equals(node.getOptRunType())){
+            if(NodeInfo.OPT_RUN_TYPE_LEAD.equals(node.getOptRunType())){
                 nodeInst.setUserCode(userCode);
                 nodeInst.setTaskAssigned("S");
                 nodeInstanceDao.updateObject(nodeInst);
@@ -738,32 +738,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     flowNodeDao.getObjectById(nextNodeId), "R" + nodeToken, flowInst, flowInfo,
                     preNodeInst, preTransPath, nodeTran, options,
                     flowVarTrans, application);
-            } /*else if (NodeInfo.ROUTER_TYPE_SYNC.equals(sRT)) {//同步 保留
-                String preRunToken = NodeInstance.calcSuperToken(nodeToken);
-                Set<String> nNs =
-                    flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
-                //查找需要同步的节点
-                if (nNs == null || nNs.size() == 0) {
-                    Map<String, NodeInstance> syncNodes =
-                        flowInst.findSubmitSubNodeInstByToken(preRunToken);
-                    for (Map.Entry<String, NodeInstance> ent : syncNodes.entrySet()) {
-                        NodeInfo rtN = selectNextNodeByNodeId(ent.getValue().getNodeId());
-                        if (NodeInfo.NODE_TYPE_ROUTE.equals(rtN.getNodeType()) && NodeInfo.ROUTER_TYPE_SYNC.equals(rtN.getRouterType())) {
-                            FlowTransition nextTran = selectOptNodeTransition(rtN);
-                            List<String> sN = submitToNextNode(
-                                flowNodeDao.getObjectById(nextTran.getEndNodeId()),
-                                ent.getValue().getRunToken(), flowInst, flowInfo,
-                                ent.getValue(), preTransPath, nextTran,
-                                SubmitOptOptions.create().copy(options).user(ent.getValue().getLastUpdateUser())
-                                    .unit( ent.getValue().getUnitCode()),
-                                flowVarTrans, application);
-                            resNodes.addAll(sN);
-                        }
-                    }
-                }
-            }*/
+            }
         }
-        //WfNode routeNode =
         return resNodes;
     }
 
@@ -901,7 +877,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
 
             if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(nextOptNode.getRoleType())) {/* &&
-                    "A".equals(nextOptNode.getOptType())){*/
+                    "A".equals(nextOptNode.getOptRunType())){*/
                 nodeInst.setTaskAssigned("D");
             } else {
                /* if(optUsers.size()==1){
@@ -924,9 +900,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
                         .content("您有新任务:" + nextOptNode.getNodeName()));
             }
-        } /*else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())){
-            // TODO 新建同步节点
-        }*/
+        } else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())){
+            //  新建同步节点
+            nodeInst.setNodeState("T");
+        }
         /**
          *  检查令牌冲突（自由流程，令牌的冲突有业务程序和流程图自己控制，无需检查）
          *  这段代码是检查令牌的一致性，多实例节点多次运行时会出错的，
@@ -1211,7 +1188,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         //任务的完成时间在任务的活动日志中
                         task.setTaskState("C");
                     } else {
-                        if ("C".equals(currNode.getOptType()))
+                        if (NodeInfo.OPT_RUN_TYPE_TEAMWORK.equals(currNode.getOptRunType()))
                             havnotSubmit++;
                         //暂时取消这个任务作废的做法，防止在回退或者回收之后，操作人员与原本定义不符
 //                        else//不是多人操作是抢先机制的，其他人任务作废。
@@ -1228,7 +1205,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //判断是否是多人操作，如果是多人操作，最后一个人提交才正在提交
             //前面人提交只更改任务列表中的任务完成状态，多人操作一定要配合 流程活动任务单 工作
             //这个任务可以是业务填写也可以是权限引擎填写
-            if ("C".equals(currNode.getOptType()) && havnotSubmit > 0) {
+            if (NodeInfo.OPT_RUN_TYPE_TEAMWORK.equals(currNode.getOptRunType()) && havnotSubmit > 0) {
                 nodeInstanceDao.updateObject(nodeInst);
                 nextNodeInsts.clear();
                 nextNodeInsts.add(options.getNodeInstId());

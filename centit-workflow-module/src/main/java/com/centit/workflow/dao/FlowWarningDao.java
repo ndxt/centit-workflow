@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class FlowWarningDao extends BaseDaoImpl<FlowWarning,Long>
+public class FlowWarningDao extends BaseDaoImpl<FlowWarning, String>
 {
 
     //public static final Logger logger = LoggerFactory.getLogger(WfRuntimeWarningDao.class);

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize,FlowOrganizeId> {
+public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize, FlowOrganizeId> {
     //public static final Logger logger = LoggerFactory.getLogger(WfOrganizeDao.class);
 
     public Map<String, String> getFilterField() {
