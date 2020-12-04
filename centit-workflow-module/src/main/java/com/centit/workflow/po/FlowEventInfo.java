@@ -1,5 +1,8 @@
 package com.centit.workflow.po;
 
+import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -18,6 +21,7 @@ public class FlowEventInfo implements Serializable {
     @Id
     @Column(name = "FLOW_EVENT_ID")
     @ApiModelProperty(value = "流程实例编号", required = true)
+    @ValueGenerator(strategy = GeneratorType.UUID22)
     private String flowEventId;
 
     @Column(name = "FLOW_INST_ID")
@@ -50,5 +54,6 @@ public class FlowEventInfo implements Serializable {
 
     public FlowEventInfo(){
         this.optState = "N";
+        this.receiveTime = DatetimeOpt.currentUtilDate();
     }
 }

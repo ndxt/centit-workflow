@@ -20,6 +20,7 @@ import com.centit.workflow.commons.*;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
+import com.centit.workflow.service.FlowEventService;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.support.AutoRunNodeEventSupport;
 import org.apache.commons.collections4.CollectionUtils;
@@ -76,6 +77,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private FlowInstanceGroupDao flowInstanceGroupDao;
     @Autowired
     private NotificationCenter notificationCenter;
+
+    @Autowired
+    private FlowEventService flowEventService;
 
     private final static Object lockObject = new Object();
 
@@ -969,7 +973,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, this);
                 needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
                     nextOptNode, options.getUserCode());
-            } // TODO 要实现一个 发送内部同步消息的 自动运行节点
+            } // 要实现一个 发送内部同步消息的 自动运行节点
+            else if(NodeInfo.AUTO_NODE_OPT_CODE_MESSAGE.equals(nextOptNode.getAutoRunType())){
+                FlowEventInfo eventInfo = new FlowEventInfo();
+                eventInfo.setFlowInstId(flowInst.getFlowInstId());
+                eventInfo.setSenderUser(options.getUserCode());
+                eventInfo.setEventName(nextOptNode.getOptCode());
+                eventInfo.setEventParam(nextOptNode.getOptParam());
+                flowEventService.saveNewEvent(eventInfo);
+            }
 
             //暂时先取第一个节点实例，解决部分问题
             //varTrans改为一个空的

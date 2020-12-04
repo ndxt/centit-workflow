@@ -60,6 +60,12 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         this.updateObject(nodeInst);
     }
 
+    /*@Transactional
+    public List<NodeInstance> listNodeInstByState(String nodeState) {
+        return this.listObjectsByFilter("where node_State= ? ",
+            new Object[]{nodeState});
+    }*/
+
     @Transactional
     public List<NodeInstance> listNodeInstByState(String flowInstId, String nodeState) {
         return this.listObjectsByFilter("where node_State= ? and flow_Inst_Id= ?",

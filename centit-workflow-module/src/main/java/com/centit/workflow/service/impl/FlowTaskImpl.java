@@ -7,6 +7,8 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
+import com.centit.workflow.service.FlowEngine;
+import com.centit.workflow.service.FlowEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,12 @@ public class FlowTaskImpl {
 
     @Autowired
     private FlowInstanceDao flowInstanceDao;
+
+    @Autowired
+    private FlowEventService flowEventService;
+
+    @Autowired
+    private FlowEngine flowEngine;
 
     @Value("${workflow.flowTimeStart:true}")
     private Boolean flowTimeStart;
@@ -182,10 +190,16 @@ public class FlowTaskImpl {
         }
     }
 
-
     public boolean isWorkTime(Date workTime) {
         int m = DatetimeOpt.getMinute(workTime) + 100 * DatetimeOpt.getHour(workTime);
         //默认朝九晚五
         return (m > 830 && m < 1200) || (m > 1330 && m < 1800);
+    }
+
+    private void runEventTask(int maxRows){
+        // 获取所有事件 来处理
+        List<FlowEventInfo> events = flowEventService.listEventForOpt(maxRows);
+        // 获取所有 时间事件的同步节点
+        //nodeInstanceDao.listNodeInstByState("T");
     }
 }
