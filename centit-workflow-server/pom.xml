@@ -44,12 +44,6 @@
 
         <dependency>
             <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-apprrole-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-view</artifactId>
             <version>${project.version}</version>
         </dependency>
