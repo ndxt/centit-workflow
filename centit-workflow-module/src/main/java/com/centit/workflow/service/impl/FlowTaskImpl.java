@@ -3,12 +3,15 @@ package com.centit.workflow.service.impl;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.basedata.NoticeMessage;
 import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
+import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowEventService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +121,7 @@ public class FlowTaskImpl {
         //logger.info("通知中心发现 " + nw + "预警信息，并通知了" + nn + "个用户。");
     }
 
-    @Scheduled(cron = "0 1/2 8-23 * * ?")
+    @Scheduled(cron = "0 1/2 5-23 * * ?")
     @Transactional
     public void runEntity() {
 
@@ -135,6 +138,8 @@ public class FlowTaskImpl {
             //flowInstanceDao.updateTimeConsume(consumeTime);
             logger.info(runTime.toString() + "工作时间，各个在办件减少一个即时周期" + consumeTime + "分钟。");
         }
+
+        runEventTask(50);
     }
 
     private void consumeLifeTime(long consumeTime) {
@@ -182,6 +187,7 @@ public class FlowTaskImpl {
                 flowInstanceDao.updateObject(flowInst);
                 continue;
             }
+
             if (flowconsume && flowInst.getTimeLimit() != null) {
                 flowInst.setTimeLimit(flowInst.getTimeLimit() - consumeTime);
                 flowInstanceDao.updateObject(flowInst);
@@ -200,6 +206,27 @@ public class FlowTaskImpl {
         // 获取所有事件 来处理
         List<FlowEventInfo> events = flowEventService.listEventForOpt(maxRows);
         // 获取所有 时间事件的同步节点
+        if(events!=null) {
+            for (FlowEventInfo eventInfo : events) {
+                List<NodeInstance> nodes = nodeInstanceDao.listNodeInstByState(eventInfo.getFlowInstId(), "T");
+                if(nodes != null){
+                    for(NodeInstance nodeInst : nodes){
+                        nodeInstanceDao.fetchObjectReference(nodeInst, "node");
+                        if(NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nodeInst.getNode().getNodeSyncType())
+                            && StringUtils.equals(eventInfo.getEventName(), nodeInst.getNode().getOptCode())){
+                            Object ret = flowEngine.submitOpt(
+                                SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId()));
+                            eventInfo.setOptResult(StringBaseOpt.castObjectToString(ret));
+                        }
+                    }
+                    eventInfo.setOptState("S");
+                } else {
+                    eventInfo.setOptState("P");
+                }
+                eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
+                flowEventService.updateEvent(eventInfo);
+            }
+        }
         //nodeInstanceDao.listNodeInstByState("T");
     }
 }

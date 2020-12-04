@@ -22,8 +22,8 @@ public class FlowEventServiceImpl implements FlowEventService {
     @Override
     public List<FlowEventInfo> listEventForOpt(int maxRows) {
         return flowEventDao.listObjects(
-            CollectionsOpt.createHashMap("OPT_STATE_in",
-                new Object[]{"N","P"}, new PageDesc(1, maxRows))
+            CollectionsOpt.createHashMap("OPT_STATE",
+                "N", new PageDesc(1, maxRows))
         );
     }
 
