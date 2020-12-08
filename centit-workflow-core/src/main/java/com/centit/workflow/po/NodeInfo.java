@@ -183,17 +183,32 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "IS_ACCOUNT_TIME")
     private String isAccountTime;
 
-    @Column(name = "IS_TRUNK_LINE")
-    private Boolean isTrunkLine;
+    public static final String NODE_NOTICE_TYPE_NONE  = "N";
+    public static final String NODE_NOTICE_TYPE_DEFAULT  = "D";
+    /**
+     * 通知类别
+     */
+    @Column(name = "NOTICE_TYPE")
+    private String noticeType;
+
+    /**
+     * 通知消息模板
+     */
+    @Column(name = "NOTICE_MESSAGE")
+    private String noticeMessage;
     /**
      * 环节代码
      */
     @Column(name = "NODE_CODE")
     private String nodeCode;
-
+    /**
+     * 风险消息模板
+     */
     @Column(name = "RISK_INFO")
     private String riskinfo;
-
+    /**
+     * 节点所属阶段
+     */
     @Column(name = "STAGE_CODE")
     private String stageCode;
 
@@ -361,9 +376,10 @@ public class NodeInfo implements java.io.Serializable {
             this.isAccountTime = other.getIsAccountTime();
         if (other.getStageCode()!=null)
             this.stageCode =other.getStageCode();
-
-        if (other.getIsTrunkLine()!=null)
-            this.isTrunkLine=other.getIsTrunkLine();
+        if (other.getNoticeMessage()!=null)
+            this.noticeMessage=other.getNoticeMessage();
+        if (other.getNoticeType()!=null)
+            this.noticeType=other.getNoticeType();
         if (other.getOsId()!=null)
             this.osId = other.getOsId();
         if (other.getOptId()!=null)
@@ -406,7 +422,8 @@ public class NodeInfo implements java.io.Serializable {
         this.stageCode =null;
         this.expireOpt =  null;
         this.isAccountTime = "T";
-        this.isTrunkLine = false;
+        this.noticeType = null;
+        this.noticeMessage = null;
         //this.routerType=null;
         this.multiInstType=null;
         this.multiInstParam=null;

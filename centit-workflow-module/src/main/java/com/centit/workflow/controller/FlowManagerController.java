@@ -99,40 +99,11 @@ public class FlowManagerController extends BaseController {
         if (StringUtils.isNotBlank(flowCode)) {
             FlowInfo obj = flowDef.getFlowInfo(flowCode, version);
             String wfDefXML = obj.getFlowXmlDesc();
-            boolean defineAsXML = "<".equals(Lexer.getFirstWord(wfDefXML));
+
             Map<String, Object> result = new HashMap<>();
             Map<String, Object> flowInstDesc = flowManager.viewFlowInstance(flowInstId);
-            if(defineAsXML) {
-                Document viewDoc = DocumentHelper.createDocument();
-                Element baseEle = viewDoc.addElement("TopFlow");
-                Element procsEle = baseEle.addElement("Procs");
-                Element stepsEle = baseEle.addElement("Steps");
-                Object nodes = flowInstDesc.get("nodes");
-                if(nodes instanceof List) {
-                    for (Object node : (List)nodes) {
-                        Map<String, Object> nodeInst  =(Map<String, Object>)node;
-                        Element procEle = procsEle.addElement("Proc");
-                        procEle.addAttribute("id", StringBaseOpt.castObjectToString(nodeInst.get("id")));
-                        procEle.addAttribute("inststate", StringBaseOpt.castObjectToString(nodeInst.get("inststate")));
-                        procEle.addAttribute("instcount", StringBaseOpt.castObjectToString((nodeInst.get("instcount"))));
-                    }
-                }
-                Object steps = flowInstDesc.get("steps");
-                if(steps instanceof List) {
-                    for (Object step : (List)steps) {
-                        Map<String, Object> stepInst  =(Map<String, Object>)step;
-                        Element stepEle = stepsEle.addElement("Step");
-                        stepEle.addAttribute("id", StringBaseOpt.castObjectToString(stepInst.get("id")));
-                        stepEle.addAttribute("inststate", StringBaseOpt.castObjectToString(stepInst.get("inststate")));
-                    }
-                }
-
-                result.put("xml", wfDefXML);
-                result.put("viewXml", viewDoc.asXML());
-            } else {
-                result.put("json", wfDefXML);
-                result.put("viewJson", flowInstDesc);
-            }
+            result.put("json", wfDefXML);
+            result.put("viewJson", flowInstDesc);
             JsonResultUtils.writeSingleDataJson(result, response);
         }
     }

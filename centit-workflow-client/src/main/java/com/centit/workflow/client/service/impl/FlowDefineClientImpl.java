@@ -162,7 +162,7 @@ public class FlowDefineClientImpl implements FlowDefine {
      * @param flowDefXML
      */
     @Override
-    public boolean saveDraftFlowDefXML(String flowCode, String flowDefXML) {
+    public boolean saveDraftFlowDefJson(String flowCode, String flowDefXML) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -172,7 +172,7 @@ public class FlowDefineClientImpl implements FlowDefine {
      * @param flowCode
      */
     @Override
-    public String getDraftFlowDefXML(String flowCode) {
+    public String getDraftFlowDefJson(String flowCode) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

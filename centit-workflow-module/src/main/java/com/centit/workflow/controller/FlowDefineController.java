@@ -162,7 +162,7 @@ public class FlowDefineController extends BaseController {
     @RequestMapping(value = "/savexmldesc/{flowcode}", method = RequestMethod.POST)
     public void editXml(@PathVariable String flowcode, HttpServletRequest request, HttpServletResponse response) {
         String flowxmldesc = request.getParameter("flowxmldesc");
-        boolean saveSucced = flowDefine.saveDraftFlowDefXML(flowcode, flowxmldesc);
+        boolean saveSucced = flowDefine.saveDraftFlowDefJson(flowcode, flowxmldesc);
         if (saveSucced)
             JsonResultUtils.writeSingleDataJson("流程图草稿草稿保存成功！", response);
         else

@@ -13,6 +13,7 @@ import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.common.ObjectException;
+import com.centit.support.compiler.Pretreatment;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
@@ -900,9 +901,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     nodeInst.setTaskAssigned("S");
                     //nodeInst.setUserCode(optUsers.iterator().next());
                 }
-                notificationCenter.sendMessage("system", optUsers,
-                    NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
-                        .content("您有新任务:" + nextOptNode.getNodeName()));
+                // TODO 消息通知需要加强，不仅仅是通知操作人员，后续可能需要添加发送时机、发送方式，这部分应该使用策略模式
+                if(NodeInfo.NODE_NOTICE_TYPE_DEFAULT.equals(nextOptNode.getNodeSyncType())) {
+                    notificationCenter.sendMessage("system", optUsers,
+                        NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
+                            .content(
+                                Pretreatment.mapTemplateString(nextOptNode.getNoticeMessage(), options)));
+                }
             }
         } else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())){
             //  新建同步节点

@@ -29,16 +29,22 @@ public class FlowStage implements java.io.Serializable {
 
     @Column(name = "STAGE_CODE")
     private String  stageCode;
+
     @Column(name = "STAGE_NAME")
     private String  stageName;
+
     @Column(name = "IS_ACCOUNT_TIME")
     private String  isAccountTime;
+
     @Column(name = "LIMIT_TYPE")
     private String  limitType;
+
     @Column(name = "TIME_LIMIT")
     private String  timeLimit;
+
     @Column(name = "EXPIRE_OPT")
     private String  expireOpt;
+
     @Column(name = "STAGE_ORDER")
     private Long  stageOrder;
 

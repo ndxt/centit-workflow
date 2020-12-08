@@ -78,9 +78,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
     }
 
-    public FlowDefineImpl() {
-    }
-
     @PostConstruct
     public void registerDictionary(){
         CodeRepositoryUtil.registeExtendedCodeRepo(
@@ -94,202 +91,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         List<FlowInfo> flows = flowDefineDao.listLastVersionFlowByOptId(optId);
         return new ArrayList<>(
             flows == null ? new ArrayList<>() : flows);
-    }
-
-    private static String getXmlNodeAttrAsStr(Element xNode, String attrName) {
-        Attribute nameAttr = xNode.attribute(attrName);
-        if (nameAttr != null) {
-            String xmlNodeString = HtmlFormUtils.htmlString(
-                nameAttr.getValue());
-            //如果是空字符串或者null字符串
-            if (StringUtils.isBlank(xmlNodeString) || "null".equals(xmlNodeString)) {
-                xmlNodeString = "";
-            }
-            return xmlNodeString;
-        }
-        return null;
-    }
-
-    /**
-     * 获取流程节点信息
-     * 节点XML如下：
-     * <Nodes>
-     * <Node>
-     * <!--nodetype  节点类别 A:开始 B:首节点 C:一般 D:分支 E:汇聚  R:游离分支  F:结束 -->
-     * <!--OptType 操作类别 A:一般 B:抢先机制 C:多人操作  D:子流程 -->
-     * <BaseProperties id="1" name="开始" nodetype="A" desc="开始节点描述"
-     * opttype="A" optcode="" roletype="" rolecode="" />
-     * <VMLProperties shapetype="Oval" width="40" height="40"
-     * x="60" y="160" textWeight="9pt" strokeWeight="1" zIndex="1" />
-     * </Node>
-     * </Nodes>
-     *
-     * @param nodeList
-     * @param flowDef
-     * @return wfSet
-     */
-    private List<NodeInfo> attachNodeList(List<Node> nodeList, FlowInfo flowDef, FlowDataDetail flowData) {
-        flowData.nodeTagToId.clear();
-        List<NodeInfo> wfSet = new ArrayList<>();
-
-        if (nodeList == null || nodeList.size() == 0) {
-            return null;
-        }
-        String thisNodeId;
-        for (Node tmpNode : nodeList) {
-            Element baseNode = (Element) tmpNode.selectSingleNode("BaseProperties");
-            String sId = getXmlNodeAttrAsStr(baseNode, "id");
-            if (sId == null)
-                continue;
-            thisNodeId = UuidOpt.getUuidAsString32();
-//            thisNodeId = flowDefineDao.getNextNodeId();
-            //这个对应关系 留给下面的 attachTransitionList 使用，有一定的耦合性
-            flowData.nodeTagToId.put(sId, thisNodeId);
-        }
-
-        for (Node tmpNode : nodeList) {
-            Element baseNode = (Element) tmpNode.selectSingleNode("BaseProperties");
-            String sId = getXmlNodeAttrAsStr(baseNode, "id");
-            if (sId == null)
-                continue;
-            NodeInfo wfNode = flowDef.newFlowNode();
-            thisNodeId = flowData.nodeTagToId.get(sId); //获取节点ID
-
-            sId = sId.toLowerCase();
-            if (sId.equals(BEGINNODETAG)) {
-                wfNode.setNodeType(NodeInfo.NODE_TYPE_START);
-                flowData.beginNodeId = thisNodeId;
-            } else if (sId.equals(ENDNODETAG)) {
-                wfNode.setNodeType(NodeInfo.NODE_TYPE_END);
-            } else {
-                wfNode.setNodeType(NodeInfo.NODE_TYPE_OPT);
-            }
-
-            wfNode.setNodeId(thisNodeId);
-            wfNode.setNodeName(getXmlNodeAttrAsStr(baseNode, "name"));
-            //获取节点类型
-            if (!StringRegularOpt.isNvl(
-                getXmlNodeAttrAsStr(baseNode, "flowphase"))) {
-                wfNode.setStageCode(getXmlNodeAttrAsStr(baseNode, "flowphase"));
-            }
-            wfNode.setNodeType(getXmlNodeAttrAsStr(baseNode, "nodetype"));
-            wfNode.setNodeCode(getXmlNodeAttrAsStr(baseNode, "nodecode"));
-            wfNode.setRiskinfo(getXmlNodeAttrAsStr(baseNode, "riskinfo"));
-            wfNode.setNodeDesc(getXmlNodeAttrAsStr(baseNode, "desc"));
-            wfNode.setOptType(getXmlNodeAttrAsStr(baseNode, "opttype"));
-            wfNode.setOptCode(getXmlNodeAttrAsStr(baseNode, "optcode"));
-            wfNode.setOptBean(getXmlNodeAttrAsStr(baseNode, "optbean"));
-
-            String optparam = getXmlNodeAttrAsStr(baseNode, "optparam");
-
-            if (optparam != null && optparam.indexOf("&amp;") > 0) {
-                optparam = optparam.replaceAll("&amp;", "&");
-            }
-
-            wfNode.setOptParam(optparam);
-
-            wfNode.setRoleType(getXmlNodeAttrAsStr(baseNode, "roletype"));
-            wfNode.setRoleCode(getXmlNodeAttrAsStr(baseNode, "rolecode"));
-            wfNode.setLimitType(getXmlNodeAttrAsStr(baseNode, "timeLimitType"));
-            wfNode.setIsTrunkLine(BooleanBaseOpt.castObjectToBoolean(
-                getXmlNodeAttrAsStr(baseNode, "isTrunkLine"), false));
-            String timelimit = getXmlNodeAttrAsStr(baseNode, "timeLimit");
-            if (timelimit != null && timelimit.length() > 0) {
-                wfNode.setTimeLimit(getXmlNodeAttrAsStr(baseNode, "timeLimit"));
-            }
-            wfNode.setInheritType(getXmlNodeAttrAsStr(baseNode, "inheritType"));
-            wfNode.setInheritNodeCode(getXmlNodeAttrAsStr(baseNode, "inheritNodeCode"));
-            wfNode.setExpireOpt(getXmlNodeAttrAsStr(baseNode, "expireopt"));
-            wfNode.setUnitExp(getXmlNodeAttrAsStr(baseNode, "unitexp"));
-            wfNode.setPowerExp(getXmlNodeAttrAsStr(baseNode, "powerexp"));
-            wfNode.setSubFlowCode(getXmlNodeAttrAsStr(baseNode, "subwfcode"));
-            wfNode.setIsAccountTime(
-                    getXmlNodeAttrAsStr(baseNode, "isaccounttime"));
-
-            //codefan@sina.com 2015-4-8 添加路由相关属性
-            wfNode.setRouterType(getXmlNodeAttrAsStr(baseNode, "routertype"));
-            wfNode.setMultiInstType(getXmlNodeAttrAsStr(baseNode, "multiinsttype"));
-            wfNode.setMultiInstParam(getXmlNodeAttrAsStr(baseNode, "multiinstparam"));
-            wfNode.setConvergeType(getXmlNodeAttrAsStr(baseNode, "convergetype"));
-            wfNode.setConvergeParam(getXmlNodeAttrAsStr(baseNode, "convergeparam"));
-            wfNode.setWarningRule(getXmlNodeAttrAsStr(baseNode, "warningrule"));
-            wfNode.setWarningParam(getXmlNodeAttrAsStr(baseNode, "warningparam"));
-            wfNode.setOsId(getXmlNodeAttrAsStr(baseNode, "osid"));
-
-            wfSet.add(wfNode);
-        }
-        return wfSet;
-    }
-
-    /**
-     * 流程流转路径定义
-     * 路径节点信息如下：
-     * <Transitions>
-     * <Transition>
-     * <BaseProperties id="1" name="流程开始" from="1"
-     * to="3" cond="" desc="" />
-     * <VMLProperties points="75pt,135pt,135pt,135pt"
-     * fromRelX="1" fromRelY="0.5" toRelX="0" toRelY="0.5" shapetype="PolyLine"
-     * startArrow="none" endArrow="Classic" strokeWeight="1" zIndex="0" />
-     * <LabelProperties id="labstep0" width="60" height="20px"
-     * x="119px" y="186px" />
-     * </Transition>
-     * </Transitions>
-     *
-     * @param transList
-     * @param flowDef
-     * @return wfTranSet
-     */
-    private void attachTransitionList(List<Node> transList, FlowInfo flowDef, FlowDataDetail flowData) {
-        List<FlowTransition> wfTranSet = new ArrayList<>();
-        flowData.transTagToId.clear();
-
-        if (transList == null || transList.size() == 0) {
-            return;
-        }
-        for (Node tmpNode : transList) {
-            FlowTransition wfTran = flowDef.newFlowTransition();
-
-            Element baseNode = (Element) tmpNode.selectSingleNode("BaseProperties");
-            String sId = getXmlNodeAttrAsStr(baseNode, "id");
-            if (sId == null)
-                continue;
-            String thisTransId = UuidOpt.getUuidAsString32();
-//            long thisTransId = flowDefineDao.getNextTransId();
-            flowData.transTagToId.put(sId, thisTransId);
-
-            wfTran.setTransId(thisTransId);
-
-            wfTran.setTransName(getXmlNodeAttrAsStr(baseNode, "name"));
-            wfTran.setTransCondition(getXmlNodeAttrAsStr(baseNode, "cond"));
-
-            wfTran.setLimitType(getXmlNodeAttrAsStr(baseNode, "timeLimitType"));
-
-            String timelimit = getXmlNodeAttrAsStr(baseNode, "timeLimit");
-            if (timelimit != null && timelimit.length() > 0) {
-                wfTran.setTimeLimit(getXmlNodeAttrAsStr(baseNode, "timeLimit"));
-            }
-
-            //codefan@sina.com 2015-4-8 添加路由计时相关属性
-            wfTran.setIsAccountTime(getXmlNodeAttrAsStr(baseNode, "isaccounttime"));
-            wfTran.setCanIgnore(
-                BooleanBaseOpt.castObjectToBoolean(
-                    getXmlNodeAttrAsStr(baseNode, "canignore"),true));
-
-            sId = getXmlNodeAttrAsStr(baseNode, "from");
-            String fromNodeId = flowData.nodeTagToId.get(sId);
-            wfTran.setStartNodeId(fromNodeId);
-            sId = getXmlNodeAttrAsStr(baseNode, "to");
-            String toNodeId = flowData.nodeTagToId.get(sId);
-            wfTran.setEndNodeId(toNodeId);
-            if (fromNodeId == flowData.beginNodeId) {
-                flowDef.setFirstNodeId(toNodeId);
-            }
-            wfTran.setTransDesc(getXmlNodeAttrAsStr(baseNode, "desc"));
-
-            wfTranSet.add(wfTran);
-        }
-        flowDef.setTransList(wfTranSet);
     }
 
     private FlowInfo createFlowDefByJSON(String jsonDef, String flowCode, Long version, FlowDataDetail flowData) {
@@ -320,37 +121,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             flowData.transTagToId.put(tran.getTransId(), thisTransId);
             tran.setTransId(thisTransId);
         }
-        return flowDef;
-    }
-
-    @SuppressWarnings("unchecked")
-    private FlowInfo createFlowDefByXML(String sXMLdef, String flowCode, Long version, FlowDataDetail flowData) {
-
-        FlowInfo flowDef = new FlowInfo();
-        flowDef.setCid(new FlowInfoId(version, flowCode));
-        Document doc = XmlUtils.string2xml(sXMLdef);
-
-        logger.debug(doc.asXML());
-
-        // <Flow code="test" name="测试流程定义" type="n" desc="这是一个测试流程图形定义界面的示例" >
-        Element flowEle = (Element) doc.selectSingleNode("//Flow");
-        // 流程代码
-        //flowDef.setWfcode(getXmlNodeAttrAsStr(flowEle,"code"));
-        // 流程名称
-        flowDef.setFlowName(getXmlNodeAttrAsStr(flowEle, "name"));
-        // 流程类别
-        flowDef.setFlowClass(getXmlNodeAttrAsStr(flowEle, "type"));
-        // 流程描述
-        flowDef.setFlowDesc(getXmlNodeAttrAsStr(flowEle, "desc"));
-        // 流程XML串
-        flowDef.setFlowXmlDesc(sXMLdef);
-        // 流程节点定义  必需先调用 getWfNodeSet 再调用 getWfTransitionSet因为nodeTagToId的耦合性
-        List<Node> nodeList = flowEle.selectNodes("//Nodes/Node");
-        flowDef.setNodeList(attachNodeList(nodeList, flowDef, flowData));
-        // 流程流转路径定义
-        List<Node> transList = flowEle.selectNodes("//Transitions/Transition");
-        attachTransitionList(transList, flowDef, flowData);
-
         return flowDef;
     }
 
@@ -420,7 +190,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public boolean saveDraftFlowDefXML(String flowCode, String flowDefXML) {
+    public boolean saveDraftFlowDefJson(String flowCode, String flowDefXML) {
         FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(0L, flowCode));
         if (flowDef == null) {
             flowDef = new FlowInfo();
@@ -440,7 +210,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public String getDraftFlowDefXML(String flowCode) {
+    public String getDraftFlowDefJson(String flowCode) {
         // 版本号为 0 的流程定义中获得 XML
         return getFlowDefXML(flowCode, 0);
     }
@@ -506,14 +276,13 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if (StringUtils.isBlank(wfDefXML)) {
             throw new ObjectException("流程没有内容");
         }
-        boolean defineAsXML = "<".equals(Lexer.getFirstWord(wfDefXML));
+
         // 获取新的版本号
         long nCurVersion = flowDefineDao.getLastVersion(flowDef.getFlowCode());
         Long newVersion = nCurVersion + 1L;
 
         FlowDataDetail flowData = new FlowDataDetail();
-        FlowInfo newFlowDef =defineAsXML?
-            createFlowDefByXML(flowDef.getFlowXmlDesc(), flowDef.getFlowCode(), newVersion, flowData):
+        FlowInfo newFlowDef =
             createFlowDefByJSON(flowDef.getFlowXmlDesc(), flowDef.getFlowCode(), newVersion, flowData);
         // 添加验证流程定义验证
         checkFlowDef(newFlowDef);
@@ -535,12 +304,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                 nd.setOsId(flowDef.getOsId());
             }
         }
-        if(defineAsXML){
-            resetNodeTransIdToXML(flowDef.getFlowXmlDesc(), newFlowDef, flowData);
-        } else {
-            resetNodeTransIdToJSON(flowDef.getFlowXmlDesc(), newFlowDef, flowData);
-        }
-
+        resetNodeTransIdToJSON(flowDef.getFlowXmlDesc(), newFlowDef, flowData);
         // 保存新版本的流程,状态设置为正常
         newFlowDef.setFlowDesc(flowDef.getFlowDesc());
         newFlowDef.setOsId(flowDef.getOsId());
@@ -593,55 +357,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
 
         newFlowDef.setFlowXmlDesc(defJson.toJSONString());
-    }
-
-    private void resetNodeTransIdToXML(String xmlDefineDesc, FlowInfo newFlowDef, FlowDataDetail flowData){
-
-        // 替换 流程XML格式中的节点、流转编码 对照表在 ndMap 和 trMap 中
-        Document wfDefDoc = XmlUtils.string2xml(xmlDefineDesc);//flowDef.getFlowXmlDesc());
-        List<Node> nodeList = wfDefDoc.selectNodes("//Nodes/Node");
-
-        for (Node tmpNode : nodeList) {
-            Element baseNode = (Element) tmpNode
-                .selectSingleNode("BaseProperties");
-            Attribute nodeIdAttr = baseNode.attribute("id");
-            String sId = nodeIdAttr.getValue();
-            if (BEGINNODETAG.compareToIgnoreCase(sId) != 0 && ENDNODETAG.compareToIgnoreCase(sId) != 0)
-                nodeIdAttr.setValue(flowData.nodeTagToId.get(sId));
-        }
-
-        List<Node> transList = wfDefDoc.selectNodes("//Transitions/Transition");
-        for (Node transNode : transList) {
-            Element baseNode = (Element) transNode
-                .selectSingleNode("BaseProperties");
-            Attribute transIdAttr = baseNode.attribute("id");
-            if (transIdAttr == null)
-                continue;
-            String sTransId = flowData.transTagToId.get(transIdAttr.getValue()).toString();
-            transIdAttr.setValue(sTransId);
-
-            Attribute fromAttr = baseNode.attribute("from");
-            if (fromAttr != null) {
-                String sId = fromAttr.getValue();
-                if (BEGINNODETAG.compareToIgnoreCase(sId) != 0 && ENDNODETAG.compareToIgnoreCase(sId) != 0)
-                    fromAttr.setValue(flowData.nodeTagToId.get(sId));
-            }
-
-            Attribute toAttr = baseNode.attribute("to");
-            if (toAttr != null) {
-                String sId = toAttr.getValue();
-                if (BEGINNODETAG.compareToIgnoreCase(sId) != 0 && ENDNODETAG.compareToIgnoreCase(sId) != 0)
-                    toAttr.setValue(flowData.nodeTagToId.get(sId));
-            }
-
-            Element labNode = (Element) transNode
-                .selectSingleNode("LabelProperties");
-            Attribute idAttr = labNode.attribute("id");
-            if (idAttr != null)
-                idAttr.setValue("lab" + sTransId);
-
-        }
-        newFlowDef.setFlowXmlDesc(wfDefDoc.asXML());
     }
 
     @Override

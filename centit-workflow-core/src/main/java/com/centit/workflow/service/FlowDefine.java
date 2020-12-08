@@ -18,12 +18,12 @@ public interface FlowDefine {
     /**
      * 保存流程定义，内容为JS画的流程描述XML文件
      */
-    boolean saveDraftFlowDefXML(String  flowCode,String flowDefXML);
+    boolean saveDraftFlowDefJson(String  flowCode, String flowDefXML);
 
     /**
      * 获取保存的流程定义文件,就是0版本的草稿
      */
-    String getDraftFlowDefXML(String  flowCode);
+    String getDraftFlowDefJson(String  flowCode);
 
     /**
      * 发布流程，返回当前流程版本号
