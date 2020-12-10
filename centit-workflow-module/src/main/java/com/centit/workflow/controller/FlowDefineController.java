@@ -187,6 +187,7 @@ public class FlowDefineController extends BaseController {
      * @param flowdefine 流程定义信息
      * @param response HttpServletResponse
      */
+    @ApiOperation(value = "新建流程的基本信息",notes = "新建流程的基本信息")
     @RequestMapping(method = RequestMethod.POST)
     public void addFlowDefine(@Valid FlowInfo flowdefine, HttpServletResponse response) {
         boolean saveSucced = flowDefine.saveDraftFlowDef(flowdefine);
@@ -203,6 +204,7 @@ public class FlowDefineController extends BaseController {
      * @param flowcode 流程代码
      * @param response HttpServletResponse
      */
+    @ApiOperation(value = "修改流程的基本信息",notes = "修改流程的基本信息")
     @RequestMapping(value = "/{flowcode}", method = RequestMethod.POST)
     public void editFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         flowdefine.setFlowCode(flowcode);
@@ -222,6 +224,7 @@ public class FlowDefineController extends BaseController {
      * @param flowcode 流程代码
      * @param response HttpServletResponse
      */
+    @ApiOperation(value = "保存流程的阶段信息",notes = "保存流程的阶段信息，阶段信息作为流程信息的属性flowStages封装")
     @PostMapping(value = "/stage/{flowcode}")
     public void editFlowStage(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         if (null != flowdefine.getFlowStages()) {
@@ -250,6 +253,7 @@ public class FlowDefineController extends BaseController {
      * @param flowcode 流程代码
      * @param response HttpServletResponse
      */
+    @ApiOperation(value = "编辑流程角色信息",notes = "编辑流程角色信息")
     @PostMapping(value = "/role/{flowcode}")
     public void editRole(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
 
@@ -291,12 +295,13 @@ public class FlowDefineController extends BaseController {
      * @param flowdefine 流程定义信息
      * @param response HttpServletResponse
      */
+    @ApiOperation(value = "更新流程信息", notes = "更新流程信息doCopyXML为是否保留旧的流程图信息")
     @RequestMapping(value = "/{oldflowcode}/{doCopyXML}", method = RequestMethod.POST)
     public void editCopyFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String oldflowcode, @PathVariable String doCopyXML, HttpServletResponse response) {
-        FlowInfo oldFlowDef = flowDefine.getFlowInfo(oldflowcode, 0);
         if ("F".equals(doCopyXML)) {
             flowDefine.saveDraftFlowDef(flowdefine);
         } else if ("T".equals(doCopyXML)) {
+            FlowInfo oldFlowDef = flowDefine.getFlowInfo(oldflowcode, 0);
             flowdefine.setFlowXmlDesc(oldFlowDef.getFlowXmlDesc());
             flowDefine.saveDraftFlowDef(flowdefine);
         }
@@ -310,6 +315,7 @@ public class FlowDefineController extends BaseController {
      * @param flowcode 流程代码
      * @param response HttpServletResponse
      */
+    @ApiOperation(value = "删除流程", notes = "删除流程")
     @RequestMapping(value = "/{flowcode}/{version}", method = RequestMethod.DELETE)
     public void deleteFlowDefine(@PathVariable String flowcode, @PathVariable Long version, HttpServletResponse response) {
         FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
@@ -326,6 +332,7 @@ public class FlowDefineController extends BaseController {
      * @param flowcode 流程代码
      * @param response HttpServletResponse
      */
+    @ApiOperation(value = "物理删除流程定义", notes = "物理删除流程定义")
     @RequestMapping(value = "/deleteFlow/{flowcode}", method = RequestMethod.GET)
     public void deleteFlowDefine(@PathVariable String flowcode, HttpServletResponse response) {
         flowDefine.deleteFlowDef(flowcode);
@@ -339,6 +346,7 @@ public class FlowDefineController extends BaseController {
      * @param response HttpServletResponse
      * @throws Exception 异常
      */
+    @ApiOperation(value = "发布流程定义", notes = "发布流程定义")
     @RequestMapping(value = "/publish/{flowcode}", method = RequestMethod.POST)
     public void publishFlow(@PathVariable String flowcode, HttpServletResponse response){
         flowDefine.publishFlowDef(flowcode);
@@ -347,11 +355,11 @@ public class FlowDefineController extends BaseController {
 
     /**
      * 更新流程状态
-     *
      * @param flowcode 流程代码
      * @param newstate 新的状态
      * @param response HttpServletResponse
      */
+    @ApiOperation(value = "更新流程状态", notes = "更新流程状态")
     @RequestMapping(value = "/changestate/{flowcode}/{newstate}", method = RequestMethod.GET)
     public void changeState(@PathVariable String flowcode, @PathVariable String newstate, HttpServletResponse response) {
         if ("D".equals(newstate)) {
