@@ -2,7 +2,6 @@ package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
-import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.workflow.po.RoleRelegate;
 import org.apache.commons.lang3.StringUtils;

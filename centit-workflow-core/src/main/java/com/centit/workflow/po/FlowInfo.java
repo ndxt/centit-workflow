@@ -414,6 +414,7 @@ public class FlowInfo implements java.io.Serializable {
         }
     }
 
+/*
     @JSONField(serialize=false)
     public Set<FlowStage> getFlowStagesSet(){
         Set<FlowStage> flowStages = new HashSet<FlowStage>();
@@ -423,10 +424,11 @@ public class FlowInfo implements java.io.Serializable {
         }
         return flowStages;
     }
+*/
 
     public List<FlowStage> getFlowStages(){
         if(this.flowStages ==null)
-            this.flowStages = new ArrayList<FlowStage>();
+            this.flowStages = new ArrayList<>();
         return flowStages;
     }
 

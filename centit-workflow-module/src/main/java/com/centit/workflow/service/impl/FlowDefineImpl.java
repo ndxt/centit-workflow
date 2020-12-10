@@ -7,23 +7,15 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
-import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.common.ObjectException;
-import com.centit.support.compiler.Lexer;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.support.network.HtmlFormUtils;
-import com.centit.support.xml.XmlUtils;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,7 +145,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
-        flowDef.replaceFlowStages(wfDef.getFlowStagesSet());
+        flowDef.replaceFlowStages(wfDef.getFlowStages());
         flowDefineDao.saveObjectReferences(flowDef);
         return true;
     }
@@ -657,7 +649,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         FlowInfo flowDef = flowDefineDao.getFlowDefineByID(flowCode, version);//流程0版本读取
         flowDefineDao.fetchObjectReference(flowDef,"flowStages");
 
-        Set<FlowStage> stageSet = flowDef.getFlowStagesSet();
+        List<FlowStage> stageSet = flowDef.getFlowStages();
 
         Map<String, String> optmap = new HashMap<>();
 
