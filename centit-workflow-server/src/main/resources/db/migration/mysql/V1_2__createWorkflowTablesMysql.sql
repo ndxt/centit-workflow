@@ -382,7 +382,7 @@ CREATE    VIEW gitv_inner_user_task_list AS
   union all
   select a.FLOW_INST_ID AS FLOW_INST_ID,w.FLOW_CODE AS FLOW_CODE,w.VERSION AS version,w.FLOW_Opt_Name AS FLOW_OPT_NAME,
     w.FLOW_Opt_Tag AS FLOW_OPT_TAG,a.NODE_INST_ID AS NODE_INST_ID,ifnull(a.UNIT_CODE,ifnull(w.UNIT_CODE,'0000000')) AS UnitCode,b.USER_CODE AS user_code,
-    b.ROLE_TYPE AS ROLE_TYPE,b.ROLE_CODE AS ROLE_CODE,b.AUTH_DESC AS AUTH_DESC,c.NODE_CODE AS node_code,
+    c.ROLE_TYPE AS ROLE_TYPE,c.ROLE_CODE AS ROLE_CODE, cb.AUTH_DESC AS AUTH_DESC,c.NODE_CODE AS node_code,
     c.NODE_NAME AS Node_Name,c.NODE_TYPE AS Node_Type,c.OPT_TYPE AS NODE_OPT_TYPE,c.OPT_PARAM AS Opt_Param,
     a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT,c.OPT_CODE AS OPT_CODE,
     c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME,
@@ -391,8 +391,8 @@ CREATE    VIEW gitv_inner_user_task_list AS
     join wf_action_task b on a.NODE_INST_ID = b.NODE_INST_ID
     join wf_node c on a.NODE_ID = c.NODE_ID
     left join wf_optpage p on (c.OPT_CODE = p.OPT_CODE)
-  where c.Node_TYPE= 'C' and a.NODE_STATE = 'N' and w.INST_STATE = 'N' and a.TASK_ASSIGNED = 'T' and b.IS_VALID = 'T'
-    and b.TASK_STATE = 'A';
+  where c.Node_TYPE= 'C' and a.NODE_STATE = 'N' and w.INST_STATE = 'N'
+    and a.TASK_ASSIGNED = 'T' and b.TASK_STATE = 'A';
 
 -- and (b.EXPIRE_TIME is null or b.EXPIRE_TIME > NOW());
 
