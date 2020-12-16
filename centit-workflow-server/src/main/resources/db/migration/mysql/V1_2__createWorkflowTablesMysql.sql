@@ -367,7 +367,7 @@ CREATE VIEW f_v_lastversionflow AS select a.FLOW_CODE AS FLOW_CODE,b.version AS 
 
 
 DROP VIEW IF EXISTS v_inner_user_task_list;
-CREATE    VIEW v_inner_user_task_list AS
+CREATE    VIEW gitv_inner_user_task_list AS
   select a.FLOW_INST_ID AS FLOW_INST_ID,w.FLOW_CODE AS FLOW_CODE,w.VERSION AS version,w.FLOW_Opt_Name AS FLOW_OPT_NAME,
     w.FLOW_Opt_Tag AS FLOW_OPT_TAG,a.NODE_INST_ID AS NODE_INST_ID,ifnull(a.UNIT_CODE,ifnull(w.UNIT_CODE,'0000000')) AS Unit_Code,a.USER_CODE AS user_code,
     c.ROLE_TYPE AS ROLE_TYPE,c.ROLE_CODE AS ROLE_CODE,'系统指定' AS AUTH_DESC,c.NODE_CODE AS node_code,
@@ -377,8 +377,8 @@ CREATE    VIEW v_inner_user_task_list AS
     w.INST_STATE AS inst_state, a.NODE_PARAM,c.os_id, p.PAGE_URL as opt_url
   from wf_node_instance a join wf_flow_instance w on (a.FLOW_INST_ID = w.FLOW_INST_ID)
     join wf_node c on (a.NODE_ID = c.NODE_ID)
-    join wf_optpage p on (c.OPT_CODE = p.OPT_CODE)
-  where (a.NODE_STATE = 'N' and w.INST_STATE = 'N' and a.TASK_ASSIGNED = 'S')
+    left join wf_optpage p on (c.OPT_CODE = p.OPT_CODE)
+  where c.Node_TYPE= 'C' and a.NODE_STATE = 'N' and w.INST_STATE = 'N' and a.TASK_ASSIGNED = 'S'
   union all
   select a.FLOW_INST_ID AS FLOW_INST_ID,w.FLOW_CODE AS FLOW_CODE,w.VERSION AS version,w.FLOW_Opt_Name AS FLOW_OPT_NAME,
     w.FLOW_Opt_Tag AS FLOW_OPT_TAG,a.NODE_INST_ID AS NODE_INST_ID,ifnull(a.UNIT_CODE,ifnull(w.UNIT_CODE,'0000000')) AS UnitCode,b.USER_CODE AS user_code,
@@ -390,15 +390,15 @@ CREATE    VIEW v_inner_user_task_list AS
   from wf_node_instance a join wf_flow_instance w on a.FLOW_INST_ID = w.FLOW_INST_ID
     join wf_action_task b on a.NODE_INST_ID = b.NODE_INST_ID
     join wf_node c on a.NODE_ID = c.NODE_ID
-    join wf_optpage p on (c.OPT_CODE = p.OPT_CODE)
-  where a.NODE_STATE = 'N' and w.INST_STATE = 'N' and a.TASK_ASSIGNED = 'T' and b.IS_VALID = 'T'
-    and b.TASK_STATE = 'A' and (b.EXPIRE_TIME is null or b.EXPIRE_TIME > NOW());
+    left join wf_optpage p on (c.OPT_CODE = p.OPT_CODE)
+  where c.Node_TYPE= 'C' and a.NODE_STATE = 'N' and w.INST_STATE = 'N' and a.TASK_ASSIGNED = 'T' and b.IS_VALID = 'T'
+    and b.TASK_STATE = 'A';
+
+-- and (b.EXPIRE_TIME is null or b.EXPIRE_TIME > NOW());
 
 
-
-
-DROP VIEW IF EXISTS v_user_task_list_temp;
-CREATE  VIEW v_user_task_list_temp AS
+DROP VIEW IF EXISTS v_user_task_list;
+CREATE  VIEW v_user_task_list AS
     select a.FLOW_INST_ID AS FLOW_INST_ID,a.FLOW_CODE AS FLOW_CODE,a.version AS version,a.FLOW_OPT_NAME AS FLOW_OPT_NAME,
            a.FLOW_OPT_TAG AS FLOW_OPT_TAG,a.NODE_INST_ID AS NODE_INST_ID,a.Unit_Code AS Unit_Code,a.user_code AS user_code,
            a.ROLE_TYPE AS ROLE_TYPE,a.ROLE_CODE AS ROLE_CODE,a.AUTH_DESC AS AUTH_DESC,a.node_code AS node_code,
@@ -421,7 +421,7 @@ CREATE  VIEW v_user_task_list_temp AS
           and (b.UNIT_CODE is null or b.UNIT_CODE = a.Unit_Code)
           and (b.ROLE_TYPE is null or b.ROLE_TYPE = a.ROLE_TYPE)
           and (b.ROLE_CODE is null or b.ROLE_CODE = a.ROLE_CODE);
-
+/*
 DROP VIEW IF EXISTS v_user_task_list;
 CREATE VIEW v_user_task_list AS SELECT
     (
@@ -436,7 +436,7 @@ CREATE VIEW v_user_task_list AS SELECT
     ) AS TASK_ID,
     t.*
 FROM
-    v_user_task_list_temp t;
+    v_user_task_list_temp t;*/
 
 
 DROP VIEW IF EXISTS v_inner_user_task_list_fin;

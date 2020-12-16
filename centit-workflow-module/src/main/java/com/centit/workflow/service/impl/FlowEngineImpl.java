@@ -885,10 +885,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     "A".equals(nextOptNode.getOptRunType())){*/
                 nodeInst.setTaskAssigned("D");
             } else {
-               /* if(optUsers.size()==1){
-                    nextNodeInst.setTaskAssigned("S");
-                }else{*/
-                if (optUsers.size() > 1) {
+                if (optUsers.size() == 1 || NodeInfo.OPT_RUN_TYPE_NORMAL.equals(nextOptNode.getOptRunType())) {
+                    nodeInst.setTaskAssigned("S");
+                    if(optUsers.size()>1){
+                        optUsers.clear();
+                        optUsers.add(nodeInst.getUserCode());
+                    }
+                } else {
                     nodeInst.setTaskAssigned("T");
                     for (String uc : optUsers) {
                         ActionTask wfactTask = FlowOptUtils.createActionTask(nodeInst.getNodeInstId(), uc);
@@ -897,12 +900,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         actionTaskDao.saveNewObject(wfactTask);
                         nodeInst.addWfActionTask(wfactTask);
                     }
-                } else {
-                    nodeInst.setTaskAssigned("S");
-                    //nodeInst.setUserCode(optUsers.iterator().next());
                 }
                 // TODO 消息通知需要加强，不仅仅是通知操作人员，后续可能需要添加发送时机、发送方式，这部分应该使用策略模式
-                if(NodeInfo.NODE_NOTICE_TYPE_DEFAULT.equals(nextOptNode.getNodeSyncType())) {
+                if (NodeInfo.NODE_NOTICE_TYPE_DEFAULT.equals(nextOptNode.getNodeSyncType())) {
                     notificationCenter.sendMessage("system", optUsers,
                         NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
                             .content(
@@ -1135,23 +1135,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     "节点：" + options.getNodeInstId() + " 状态：" + nodeInst.getNodeState());
         }
 
-        String sGrantor;
+        String runAsUser = null;
         NodeInfo currNode = flowNodeDao.getObjectById(nodeInst.getNodeId());
         if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(currNode.getRoleType())) {
             //TODO 判断人员岗位吻合
-            sGrantor = options.getUserCode();
-        } else if (StringUtils.isBlank(options.getGrantorCode())
-            || StringUtils.equals(options.getGrantorCode(), options.getUserCode())) {
-            sGrantor = actionTaskDao.getTaskGrantor(options.getNodeInstId(), options.getUserCode());
-            //哑元、自动执行以及子流程 不判断
-            if (sGrantor == null && NodeInfo.NODE_TYPE_OPT.equals(currNode.getOptRunType())) {
-                logger.error("用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
-                throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
-            }
-        } else {
-            sGrantor = options.getGrantorCode();
-            if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getOptRunType()) &&
-                !actionTaskDao.hasOptPower(options.getNodeInstId(), options.getUserCode(), options.getGrantorCode())) {
+            runAsUser = options.getUserCode();
+        } else if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType())){
+            runAsUser = actionTaskDao.checkTaskGrantor(options.getNodeInstId(), options.getUserCode(), options.getGrantorCode());
+            if (runAsUser == null) {
                 logger.error("用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
                 throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
             }
@@ -1168,9 +1159,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if(saveLog) {
             OperationLog wfactlog = FlowOptUtils.createActionLog(
                 options.getUserCode(), nodeInst, "提交节点", currNode);
-
-            if (sGrantor != null && !sGrantor.equals(options.getUserCode())) {
-                nodeInst.setGrantor(sGrantor);
+            if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType()) &&
+                  !StringUtils.equals(runAsUser, options.getUserCode())) {
+                nodeInst.setGrantor(runAsUser);
                 wfactlog.setNewValue(wfactlog + " 授予 " + options.getUserCode()
                     + ":" + currNode.getRoleType() + ":" + currNode.getRoleCode());
             }
@@ -1193,7 +1184,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInstanceDao.updateObject(flowInst);
 
         List<String> nextNodeInsts = new ArrayList<>();
-        if ("T".equals(nodeInst.getTaskAssigned())) {
+        if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType()) && "T".equals(nodeInst.getTaskAssigned())) {
             //多人操作节点 等待所有人都提交才可以提交
             /**这个应该会不需要了，暂时保留
              * 这样的需求应该会被 按人进行多实例划分，
@@ -1201,22 +1192,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             int havnotSubmit = 0;
             for (ActionTask task : nodeInst.getWfActionTasks()) {
                 if ("A".equals(task.getTaskState())) {
-                    if (/*userCode*/sGrantor.equals(task.getUserCode())) {
+                    if (StringUtils.equals(runAsUser, task.getUserCode())) {
                         //任务的完成时间在任务的活动日志中
                         task.setTaskState("C");
                     } else {
                         if (NodeInfo.OPT_RUN_TYPE_TEAMWORK.equals(currNode.getOptRunType()))
                             havnotSubmit++;
-                        //暂时取消这个任务作废的做法，防止在回退或者回收之后，操作人员与原本定义不符
-//                        else//不是多人操作是抢先机制的，其他人任务作废。
-//                            task.setIsValid("F");
                     }
                 }
-//                else {
-//                    //其他无效任务作废，提高效率。
-//                    task.setIsValid("F");
-//                }
-                //添加actionTask保存
                 actionTaskDao.updateObject(task);
             }
             //判断是否是多人操作，如果是多人操作，最后一个人提交才正在提交
@@ -1593,7 +1576,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public String getTaskGrantor(String nodeInstId, String userCode) {
-        return actionTaskDao.getTaskGrantor(nodeInstId, userCode);
+        return actionTaskDao.checkTaskGrantor(nodeInstId, userCode, null);
     }
 
      /** 加签,并指定到人
@@ -2245,7 +2228,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public boolean canAccess(String nodeInstId, String userCode) {
         if (userCode == null)
             return false;
-        return actionTaskDao.hasOptPower(nodeInstId, userCode, null);
+        return StringUtils.isNotBlank(
+            actionTaskDao.checkTaskGrantor(nodeInstId, userCode, null));
     }
 
     @Override
@@ -2258,28 +2242,28 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public List<FlowWarning> listFlowWarning(Map<String, Object> filterMap,
                                              PageDesc pageDesc) {
-        return new ArrayList<FlowWarning>(
+        return new ArrayList<>(
             runtimeWarningDao.listObjectsByProperties(filterMap, pageDesc));
     }
 
     @Override
     public List<FlowWarning> listFlowWarningByInst(String flowInstId,
                                                    PageDesc pageDesc) {
-        return new ArrayList<FlowWarning>(
+        return new ArrayList<>(
             runtimeWarningDao.listFlowWarningByInst(flowInstId, pageDesc));
     }
 
     @Override
     public List<FlowWarning> listFlowWarningByNodeInst(String nodeInstId,
                                                        PageDesc pageDesc) {
-        return new ArrayList<FlowWarning>(
+        return new ArrayList<>(
             runtimeWarningDao.listFlowWarningByNodeInst(nodeInstId, pageDesc));
     }
 
     @Override
     public List<FlowWarning> listFlowWarningByWarningCode(String warningCode,
                                                           PageDesc pageDesc) {
-        return new ArrayList<FlowWarning>(
+        return new ArrayList<>(
             runtimeWarningDao.listFlowWarningByWarningCode(warningCode, pageDesc));
     }
 

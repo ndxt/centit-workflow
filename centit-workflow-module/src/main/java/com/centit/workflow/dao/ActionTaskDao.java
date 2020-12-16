@@ -158,47 +158,31 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
 
     @SuppressWarnings("unchecked")
     @Transactional
-    public String getTaskGrantor(String nodeInstId ,String userCode){
-        String baseSQL = "select GRANTOR  from V_USER_TASK_LIST where NODE_INST_ID = ? and USER_CODE =? ";
+    public String checkTaskGrantor(String nodeInstId, String userCode, String grantorCode){
+        String baseSQL = "select GRANTOR from V_USER_TASK_LIST where NODE_INST_ID = ? and USER_CODE =? ";
         List<String> utl = this.getJdbcTemplate().queryForList(baseSQL,
-                new Object[]{nodeInstId,userCode} ,String.class);
-        if(utl==null || utl.size()==0)
+                new Object[]{nodeInstId, userCode}, String.class);
+        if(utl==null || utl.size()==0) {
             return null;
+        }
         /**
          * 优先已自己的身份执行
          */
-        String grantor = userCode;
+        String grantor = "";
         for(String task : utl){
-            if(StringUtils.isBlank(task))
+            if(StringUtils.equals(task, userCode)){
                  return userCode;
-            else
+            } else if(StringUtils.equals(task, grantorCode) ||
+                (StringUtils.isBlank(grantor)  && StringUtils.isNotBlank(task) ) ){
                 grantor = task;
-        }
-        return grantor;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Transactional
-    public boolean hasOptPower(String nodeInstId ,String userCode,String grantorCode){
-
-        String baseSQL = "select GRANTOR  from V_USER_TASK_LIST where NODE_INST_ID = ? and USER_CODE =? ";
-        List<String> utl = this.getJdbcTemplate().queryForList(baseSQL,
-                new Object[]{nodeInstId,userCode} ,String.class);
-        if(utl==null || utl.size()==0)
-            return false;
-        /**
-         * 优先已自己的身份执行
-         */
-        if(grantorCode !=null && ! grantorCode.equals(userCode)){
-            for(String task : utl){
-                if(grantorCode.equals(task))
-                    return true;
-
             }
-            return false;
         }
-        return true;
+        if(StringUtils.isNotBlank(grantor)){
+            return grantor;
+        }
+        return userCode;
     }
+
 
     @Transactional
     public List<UserTask> queryStaticTask(String userCode){
