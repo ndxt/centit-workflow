@@ -577,19 +577,16 @@ public class FlowManagerController extends BaseController {
             JSONObject nodeOptInfo = new JSONObject();
             nodeOptInfo.put("nodename", nodeInfo.getNodeName());
             int nodeInstInd = 0;
-            //String nodeInstId=0;
+
             for (NodeInstance nodeInst : dbobject.getFlowNodeInstances()) {
                 if (nodeInst.getNodeId().equals(nodeId)) {
                     //暂时保证一个节点保留一条查看信息
-                   /* if(nodeInstId>nodeInst.getNodeInstId())
-                        continue;
-                    else {
-                        nodeOptInfo.clear();
-                        nodeInstInd=0;
-                    }*/
-                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].createtime", DatetimeOpt.convertDatetimeToString(nodeInst.getCreateTime()));
-                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode", nodeInst.getUnitCode());
-                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname", CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
+                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].createtime",
+                        DatetimeOpt.convertDatetimeToString(nodeInst.getCreateTime()));
+                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode",
+                        nodeInst.getUnitCode());
+                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname",
+                        CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
                     if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState())) {
                         List<UserTask> tasks = new ArrayList<>();
                         List<UserTask> innerTasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());

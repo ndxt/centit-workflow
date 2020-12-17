@@ -48,7 +48,7 @@ public interface FlowEngine {
      */
     List<String> submitOpt(SubmitOptOptions options,
             UserUnitVariableTranslate varTrans,
-            ServletContext application) throws WorkflowException;
+            ServletContext application) ;
 
 
     /**
@@ -56,7 +56,7 @@ public interface FlowEngine {
      * @param options 当前节点实例编号
      * @return  节点实例编号列表
      */
-    List<String> submitOpt(SubmitOptOptions options) throws WorkflowException;
+    List<String> submitOpt(SubmitOptOptions options) ;
 
 
     //--------------------查看流转信息-----------------------------------

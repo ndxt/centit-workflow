@@ -33,13 +33,13 @@ public class SetNextAuditorsBean implements NodeEventSupport {
     private ApprovalAuditorDao approvalAuditorDao;
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
-                               NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                               NodeInfo nodeInfo, String optUserCode)  {
 
     }
 
     @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
-                                NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                NodeInfo nodeInfo, String optUserCode)  {
 
     }
 
@@ -50,11 +50,11 @@ public class SetNextAuditorsBean implements NodeEventSupport {
      * @param nodeInfo 用户自定义操作参数
      * @param optUserCode 当前操作用户
      * @return
-     * @throws WorkflowException
+     * @
      */
     @Override
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
-                                   NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                   NodeInfo nodeInfo, String optUserCode)  {
         //先获取当前所在阶段
         List<ApprovalEvent> approvalEvents= approvalEventDao.getApprovalEventByFlowInstId(flowInst.getFlowInstId());
         if(approvalEvents == null || approvalEvents.size() == 0){
@@ -107,7 +107,7 @@ public class SetNextAuditorsBean implements NodeEventSupport {
     }
 
     @Override
-    public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+    public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
         return false;
     }
 }

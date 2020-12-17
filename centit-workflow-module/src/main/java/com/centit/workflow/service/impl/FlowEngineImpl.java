@@ -565,7 +565,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInstance preNodeInst/*创建首节点时为null*/, String transPath, FlowTransition trans,
         FlowOptParamOptions options,
         FlowVariableTranslate flowVarTrans, ServletContext application)
-        throws WorkflowException {
+         {
 
         String sRT = nextRoutertNode.getRouterType();
         List<String> resNodes = new ArrayList<>();
@@ -753,7 +753,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInstance preNodeInst, String transPath, FlowTransition nodeTran,
         FlowOptParamOptions options,
         FlowVariableTranslate varTrans,
-        ServletContext application) throws WorkflowException {
+        ServletContext application)  {
 
         //Set<String> resNodes = new HashSet<>();
         //NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
@@ -793,7 +793,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInstance preNodeInst, String transPath, FlowTransition trans,
         FlowOptParamOptions options,
         FlowVariableTranslate varTrans,
-        ServletContext application) throws WorkflowException {
+        ServletContext application)  {
         Date currentTime = new Date(System.currentTimeMillis());
         //long nextCode = nextOptNode.getNodeId();
 //        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
@@ -1016,7 +1016,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return flowNodeDao.getObjectById(transList.get(0).getEndNodeId());
     }
 
-    private FlowTransition selectOptNodeTransition(NodeInfo currNode) throws WorkflowException {
+    private FlowTransition selectOptNodeTransition(NodeInfo currNode)  {
         List<FlowTransition> transList = flowTransitionDao.getNodeTrans(currNode.getNodeId());
         if (transList == null || transList.size() < 1)
             return null;
@@ -1078,7 +1078,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public List<String> submitOpt(SubmitOptOptions options,
                                         UserUnitVariableTranslate varTrans,
-                                        ServletContext application) throws WorkflowException {
+                                        ServletContext application)  {
 
         return submitOptInside(options, varTrans, application,true, true);
     }
@@ -1089,7 +1089,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return  节点实例编号列表
      */
     @Override
-    public List<String> submitOpt(SubmitOptOptions options) throws WorkflowException{
+    public List<String> submitOpt(SubmitOptOptions options) {
         return submitOpt(options,
             new ObjectUserUnitVariableTranslate(
                 CollectionsOpt.unionTwoMap(
@@ -1099,7 +1099,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     private List<String> submitOptInside(SubmitOptOptions options,
             UserUnitVariableTranslate varTrans,
-            ServletContext application, boolean saveOptions, boolean saveLog) throws WorkflowException {
+            ServletContext application, boolean saveOptions, boolean saveLog)  {
         //2012-04-16 重构提交事件，添加一个多实例节点类型，这个节点类型会根据不同的机构创建不同的节点
         //根据上级节点实例编号获取节点所在父流程实例信息
         NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(options.getNodeInstId());

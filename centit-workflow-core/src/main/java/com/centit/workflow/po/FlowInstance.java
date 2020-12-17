@@ -120,7 +120,7 @@ public class FlowInstance implements java.io.Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = NodeInstance.class)
     @JoinColumn(name = "flowInstId")
     @JSONField(serialize = false)
-    private List<NodeInstance> flowNodeInstances = null;// new ArrayList<WfNodeInstance>();
+    private List<NodeInstance> flowNodeInstances;// new ArrayList<WfNodeInstance>();
 
     @Transient
     @JSONField(serialize = false)
@@ -129,7 +129,7 @@ public class FlowInstance implements java.io.Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)
     @JoinColumn(name = "flowInstId")
     @JSONField(serialize = false)
-    private List<StageInstance> flowStageInstances = null;// new ArrayList<WfNodeInstance>();
+    private List<StageInstance> flowStageInstances;// new ArrayList<WfNodeInstance>();
 
     @Transient
     private String optName;
@@ -144,19 +144,23 @@ public class FlowInstance implements java.io.Serializable {
      */
     public FlowInstance() {
         this.timeLimit = null;
+        this.flowNodeInstances = null;
+        this.flowStageInstances = null;
+        this.activeNodeList = null;
         this.isSubInst = false;
     }
 
     /**
      * minimal constructor
      */
-    public FlowInstance(
-        String wfinstid
-        , Date createtime) {
+    public FlowInstance(  String wfinstid , Date createtime) {
         this.timeLimit = null;
         this.flowInstId = wfinstid;
         this.createTime = createtime;
         this.isSubInst = false;
+        this.flowNodeInstances = null;
+        this.flowStageInstances = null;
+        this.activeNodeList = null;
     }
 
 
@@ -206,7 +210,7 @@ public class FlowInstance implements java.io.Serializable {
 
     public void addNodeInstance(NodeInstance wfNodeInstance) {
         if (this.flowNodeInstances == null)
-            this.flowNodeInstances = new ArrayList<NodeInstance>();
+            this.flowNodeInstances = new ArrayList<>();
         this.flowNodeInstances.add(wfNodeInstance);
     }
 
@@ -235,18 +239,18 @@ public class FlowInstance implements java.io.Serializable {
 
     public List<StageInstance> getFlowStageInstances() {
         if (this.flowStageInstances == null)
-            this.flowStageInstances = new ArrayList<StageInstance>();
+            this.flowStageInstances = new ArrayList<>();
         return this.flowStageInstances;
     }
 
     public List<StageInstance> getStageInstanceList() {
-        List<StageInstance> stageList = new ArrayList<StageInstance>();
+        List<StageInstance> stageList = new ArrayList<>();
         stageList.addAll(getFlowStageInstances());
         return stageList;
     }
 
     public List<StageInstance> getExpiredStageInstanceList() {
-        List<StageInstance> stageList = new ArrayList<StageInstance>();
+        List<StageInstance> stageList = new ArrayList<>();
         for (StageInstance stage : getFlowStageInstances()) {
             if (stage.getTimeLimit() < 0)
                 stageList.add(stage);
@@ -256,7 +260,7 @@ public class FlowInstance implements java.io.Serializable {
 
     public void addFlowStageInstance(StageInstance wfStageInstance) {
         if (this.flowStageInstances == null)
-            this.flowStageInstances = new ArrayList<StageInstance>();
+            this.flowStageInstances = new ArrayList<>();
         this.flowStageInstances.add(wfStageInstance);
     }
 

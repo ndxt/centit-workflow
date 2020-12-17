@@ -27,22 +27,22 @@ public class NodeEventSupportFactory {
     /*public static class DummyNodeEventSupport implements NodeEventSupport{
 
         @Override
-        public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+        public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
 
         }
 
         @Override
-        public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+        public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
 
         }
 
         @Override
-        public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+        public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
             return true;
         }
 
         @Override
-        public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+        public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
             return true;
         }
     }

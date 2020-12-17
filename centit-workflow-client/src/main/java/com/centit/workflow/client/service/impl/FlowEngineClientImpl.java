@@ -128,7 +128,7 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     @Override
-    public List<String> submitOpt(SubmitOptOptions options) throws WorkflowException {
+    public List<String> submitOpt(SubmitOptOptions options)  {
         String returnJson = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/submitOpt", options);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(returnJson);
@@ -500,7 +500,7 @@ public class FlowEngineClientImpl implements FlowEngine {
      * @return 节点实例编号列表
      */
     @Override
-    public List<String> submitOpt(SubmitOptOptions options, UserUnitVariableTranslate varTrans, ServletContext application) throws WorkflowException {
+    public List<String> submitOpt(SubmitOptOptions options, UserUnitVariableTranslate varTrans, ServletContext application)  {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

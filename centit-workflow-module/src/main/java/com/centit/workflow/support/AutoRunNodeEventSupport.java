@@ -45,18 +45,16 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
 
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
-                               NodeInfo nodeInfo, String optUserCode)
-        throws WorkflowException {
+                               NodeInfo nodeInfo, String optUserCode) {
     }
 
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
-                                NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                NodeInfo nodeInfo, String optUserCode)  {
     }
 
     @Override
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
-                                   NodeInfo nodeInfo, String optUserCode)
-        throws WorkflowException {
+                                   NodeInfo nodeInfo, String optUserCode) {
         Map<String, Object> params = CollectionsOpt.createHashMap(
             "flowInstId", nodeInst.getFlowInstId(),
             "nodeInstId", nodeInst.getNodeInstId(),

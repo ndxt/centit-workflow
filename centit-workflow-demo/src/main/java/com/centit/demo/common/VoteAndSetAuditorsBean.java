@@ -29,7 +29,7 @@ public class VoteAndSetAuditorsBean implements NodeEventSupport {
     private FlowEngineClient flowEngine;
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
-                               NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                               NodeInfo nodeInfo, String optUserCode)  {
 
     }
 
@@ -39,11 +39,11 @@ public class VoteAndSetAuditorsBean implements NodeEventSupport {
      * @param nodeInst 节点实例
      * @param nodeInfo 用户自定义操作参数
      * @param optUserCode 当前操作用户
-     * @throws WorkflowException
+     * @
      */
     @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
-                                NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                NodeInfo nodeInfo, String optUserCode)  {
         String nodeInstId = nodeInst.getNodeInstId();
         List<ApprovalProcess> approvalProcesses = null;
         try {
@@ -70,12 +70,12 @@ public class VoteAndSetAuditorsBean implements NodeEventSupport {
 
     @Override
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
-                                   NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                   NodeInfo nodeInfo, String optUserCode)  {
         return false;
     }
 
     @Override
-    public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+    public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
         return false;
     }
 }

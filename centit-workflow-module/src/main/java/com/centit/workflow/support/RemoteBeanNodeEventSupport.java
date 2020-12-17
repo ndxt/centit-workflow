@@ -28,7 +28,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
         this.flowEngine = flowEngine;
     }
     public static JSONObject makeRequestParams(FlowInstance flowInst, NodeInstance nodeInst,
-                                               NodeInfo nodeInfo, String optUserCode){
+                                               NodeInfo nodeInfo, String optUserCode) {
         JSONObject paramMap = new JSONObject();
         paramMap.put("flowInst", flowInst);
         paramMap.put("nodeInst", nodeInst);
@@ -39,8 +39,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
 
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
-                               NodeInfo nodeInfo, String optUserCode)
-        throws WorkflowException {
+                               NodeInfo nodeInfo, String optUserCode) {
         if (nodeInfo.getOptBean() == null || "".equals(nodeInfo.getOptBean()))
             return;
         //String optBeanUrl = url + "/" + nodeInfo.getOptBean();
@@ -51,7 +50,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
     }
     @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
-                                NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                NodeInfo nodeInfo, String optUserCode) {
         if (nodeInfo.getOptBean() == null || "".equals(nodeInfo.getOptBean()))
             return;
         JSONObject paramMap = makeRequestParams(flowInst,  nodeInst,
@@ -68,8 +67,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
      */
     @Override
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
-                                   NodeInfo nodeInfo, String optUserCode)
-        throws WorkflowException {
+                                   NodeInfo nodeInfo, String optUserCode) {
         JSONObject paramMap = makeRequestParams(flowInst,  nodeInst,
             nodeInfo,  optUserCode);
 

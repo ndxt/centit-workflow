@@ -54,8 +54,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
 
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
-                               NodeInfo nodeInfo, String optUserCode)
-            throws WorkflowException {
+                               NodeInfo nodeInfo, String optUserCode) {
         if(!checkRunCondition(nodeInfo, nodeInst)){
             return;
         }
@@ -70,7 +69,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
     }
 
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
-                                       NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                       NodeInfo nodeInfo, String optUserCode) {
         if(!checkRunCondition(nodeInfo, nodeInst)){
             return;
         }
@@ -87,8 +86,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
 
     @Override
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
-                                          NodeInfo nodeInfo, String optUserCode )
-            throws WorkflowException {
+                                          NodeInfo nodeInfo, String optUserCode ) {
         if(!checkRunCondition(nodeInfo, nodeInst)){
             throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
                 "自动运行节点 " + nodeInst.getNodeInstId() +"出错，流程设置时没有设置节点的自动运行bean属性。");

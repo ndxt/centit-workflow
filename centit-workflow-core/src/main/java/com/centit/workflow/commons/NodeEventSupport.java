@@ -22,7 +22,7 @@ public interface NodeEventSupport {
      * @param optUserCode 当前操作用户
      */
     void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
-                        NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
+                        NodeInfo nodeInfo, String optUserCode);
 
     /**
      * 在节点提交前的调用的的事件
@@ -33,7 +33,7 @@ public interface NodeEventSupport {
      */
 
     void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
-                         NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
+                         NodeInfo nodeInfo, String optUserCode);
 
     /**
      * 自动运行节点所指向的spring bean需要实现这个接口
@@ -44,7 +44,7 @@ public interface NodeEventSupport {
      * @return true 需要运行后调用自动提交，false 则不需要，一般在函数内部已经调用submitNode
      */
     boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
-                            NodeInfo nodeInfo, String optUserCode) throws WorkflowException;
+                            NodeInfo nodeInfo, String optUserCode);
 
     /**
      * 是否可以跳转到下一个节点，用于 汇聚节点自行判断条件
