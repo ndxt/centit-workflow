@@ -119,6 +119,9 @@ public class FlowOptUtils {
         //计算节点的期限
         nodeInst.setIsTimer(node.getIsAccountTime());
         nodeInst.setTimeLimit(0L);
+        if(preNodeInst!=null) {
+            nodeInst.setPrevNodeInstId(preNodeInst.getNodeInstId());
+        }
         //计算节点的期限
         //I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle。
         String timeLimit, timeLimitType;

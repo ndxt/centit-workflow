@@ -801,9 +801,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInstance nodeInst = FlowOptUtils.createNodeInst(options.getUnitCode(), options.getUserCode(),
             flowInst, preNodeInst, flowInfo, nextOptNode, trans);
         nodeInst.setNodeInstId(lastNodeInstId);
-        if(preNodeInst!=null) {
-            nodeInst.setPrevNodeInstId(preNodeInst.getNodeInstId());
-        }
+
         if(trans!=null) {
             nodeInst.setTransPath(
                 StringUtils.isBlank(transPath) ? String.valueOf(trans.getTransId()) :
@@ -977,7 +975,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nextOptNode.getAutoRunType())){
                 NodeEventSupport nodeEventExecutor =
                     NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, this);
-                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
+                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst,
                     nextOptNode, options.getUserCode());
             } // 要实现一个 发送内部同步消息的 自动运行节点
             else if(NodeInfo.AUTO_NODE_OPT_CODE_MESSAGE.equals(nextOptNode.getAutoRunType())){
