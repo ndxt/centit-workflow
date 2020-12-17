@@ -210,34 +210,32 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private void checkFlowDef(FlowInfo newFlowDef){
         //验证流程节点定义
         for (NodeInfo nd : newFlowDef.getNodeList()) {
-            if (NodeInfo.NODE_TYPE_OPT.equals(nd.getNodeType()) || NodeInfo.NODE_TYPE_FIRST.equals(nd.getNodeType())) {
-                if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nd.getNodeType())) {
-                    if (StringRegularOpt.isNvl(nd.getSubFlowCode()))
-                        throw new ObjectException("子流程节点：" + nd.getNodeName() + ",没有指定流程代码。");
-                } else if (NodeInfo.NODE_TYPE_OPT.equals(nd.getNodeType())){
-                    if (StringRegularOpt.isNvl(nd.getOptCode()))
+            if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nd.getNodeType())) {
+                if (StringRegularOpt.isNvl(nd.getSubFlowCode()))
+                    throw new ObjectException("子流程节点：" + nd.getNodeName() + ",没有指定流程代码。");
+            } else if (NodeInfo.NODE_TYPE_OPT.equals(nd.getNodeType())){
+                if (StringRegularOpt.isNvl(nd.getOptCode()))
+                    throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
+                if (StringRegularOpt.isNvl(nd.getRoleType()))
+                    throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定角色类别。");
+                else if (SysUserFilterEngine.ROLE_TYPE_ENGINE.equalsIgnoreCase(nd.getRoleType())) {
+                    if (StringRegularOpt.isNvl(nd.getPowerExp()))
+                        throw new ObjectException("节点：" + nd.getNodeName() + ",权限表达式为空。");
+                } else {
+                    if (StringRegularOpt.isNvl(nd.getRoleCode())
+                        && !SysUserFilterEngine.ROLE_TYPE_ENGINE.equals(nd.getRoleType()))
+                        throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定角色代码。");
+                }
+            } else if (NodeInfo.NODE_TYPE_AUTO.equals(nd.getNodeType())) {
+                if(NodeInfo.AUTO_NODE_OPT_CODE_NONE.equals(nd.getAutoRunType())
+                    && StringRegularOpt.isNvl(nd.getOptCode())){
                         throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
-                    if (StringRegularOpt.isNvl(nd.getRoleType()))
-                        throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定角色类别。");
-                    else if (SysUserFilterEngine.ROLE_TYPE_ENGINE.equalsIgnoreCase(nd.getRoleType())) {
-                        if (StringRegularOpt.isNvl(nd.getPowerExp()))
-                            throw new ObjectException("节点：" + nd.getNodeName() + ",权限表达式为空。");
-                    } else {
-                        if (StringRegularOpt.isNvl(nd.getRoleCode())
-                            && !SysUserFilterEngine.ROLE_TYPE_ENGINE.equals(nd.getRoleType()))
-                            throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定角色代码。");
-                    }
-                } else if (NodeInfo.NODE_TYPE_AUTO.equals(nd.getNodeType())) {
-                    if(NodeInfo.AUTO_NODE_OPT_CODE_NONE.equals(nd.getAutoRunType())
-                        && StringRegularOpt.isNvl(nd.getOptCode())){
-                            throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
-                    } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nd.getAutoRunType())
-                        && StringRegularOpt.isNvl(nd.getOptBean())) {
-                            throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的bean。");
-                    } else if(NodeInfo.AUTO_NODE_OPT_CODE_SCRIPT.equals(nd.getAutoRunType())
-                        && StringRegularOpt.isNvl(nd.getOptParam())) {
-                            throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的script。");
-                    }
+                } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nd.getAutoRunType())
+                    && StringRegularOpt.isNvl(nd.getOptBean())) {
+                        throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的bean。");
+                } else if(NodeInfo.AUTO_NODE_OPT_CODE_SCRIPT.equals(nd.getAutoRunType())
+                    && StringRegularOpt.isNvl(nd.getOptParam())) {
+                        throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的script。");
                 }
             } else if (NodeInfo.NODE_TYPE_ROUTE.equals(nd.getNodeType())) {
                 if (StringRegularOpt.isNvl(nd.getRouterType())) {
