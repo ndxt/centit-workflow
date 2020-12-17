@@ -75,7 +75,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
         String httpRet = null;
         try {
             Object paramMap = JSON.parse(optParam);
-            if ("R".equalsIgnoreCase(optMethod) || "GET".equalsIgnoreCase(optMethod)) {
+            if (StringUtils.isBlank(optMethod) || "R".equalsIgnoreCase(optMethod) || "GET".equalsIgnoreCase(optMethod)) {
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
                     httpRet = HttpExecutor.simpleGet(HttpExecutorContext.create(), httpUrl, params);
