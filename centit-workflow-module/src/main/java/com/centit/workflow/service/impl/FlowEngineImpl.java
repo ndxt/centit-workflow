@@ -1494,7 +1494,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         for (FlowTransition tran : trans) {
             NodeInfo tempNode = flowNodeDao.getObjectById(tran.getEndNodeId());
-            if (NodeInfo.NODE_TYPE_OPT.equals(tempNode.getNodeType()) || NodeInfo.NODE_TYPE_FIRST.equals(tempNode.getNodeType()))
+            if (NodeInfo.NODE_TYPE_OPT.equals(tempNode.getNodeType())
+                || NodeInfo.NODE_TYPE_FIRST.equals(tempNode.getNodeType()))
                 nextNodes.add(tempNode);
             else if (NodeInfo.NODE_TYPE_ROUTE.equals(tempNode.getNodeType())) {
                 nextNodes.addAll(

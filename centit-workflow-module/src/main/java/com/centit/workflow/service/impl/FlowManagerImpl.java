@@ -883,23 +883,23 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             nodeInst.setNodeState("F");
             nodeInstanceDao.updateObject(nodeInst);
             return nodeInst.getRunToken().startsWith("R") ? "" : null;
-//            return nodeInst.getRunToken().startsWith("R") ? 0 : -2;
         }
 
-        if (transList.size() != 1)
+        if (transList.size() != 1) {
             return null;//大小于
-//            return -2;
+        }
 
         FlowTransition trans = transList.get(0);
         String nextCode = transList.get(0).getEndNodeId();
         NodeInfo nextNode = flowNodeDao.getObjectById(nextCode);
-        if (nextNode == null)
+        if (nextNode == null) {
             return null;//大小于
-//            return -3;
-        if (!NodeInfo.NODE_TYPE_OPT.equals(nextNode.getNodeType())
-             && !NodeInfo.NODE_TYPE_FIRST.equals(nextNode.getNodeType()))
+        }
+
+        if (! NodeInfo.NODE_TYPE_OPT.equals(nextNode.getNodeType())
+             && ! NodeInfo.NODE_TYPE_FIRST.equals(nextNode.getNodeType())) {
             return null;//大小于
-//            return -4;
+        }
 
         Date commitTime = DatetimeOpt.currentUtilDate();
         FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst

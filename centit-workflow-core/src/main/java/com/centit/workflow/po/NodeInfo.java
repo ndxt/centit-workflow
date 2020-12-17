@@ -57,7 +57,6 @@ public class NodeInfo implements java.io.Serializable {
      * E:消息相应节点（同步节点）
      * F:结束
      * S:子流程
-     * TODO 这个B类型是一个糟糕的设计，应该在flowInfo中添加一个首届点字段，
      */
     @Column(name = "NODE_TYPE")
     private String nodeType;
@@ -65,21 +64,28 @@ public class NodeInfo implements java.io.Serializable {
     private String nodeName;
 
     /**NODE_TYPE == NODE_TYPE_OPT
-     * A: 唯一执行人 B: 抢先机制 C: 多人操作 */
-    public static final String OPT_RUN_TYPE_NORMAL = "A";
-    public static final String OPT_RUN_TYPE_LEAD = "B";
+     * A: 唯一执行人 B: 抢先机制 C: 多人操作
+     * */
+    public static final String OPT_RUN_TYPE_NORMAL   = "A";
+    public static final String OPT_RUN_TYPE_LEAD     = "B";
     public static final String OPT_RUN_TYPE_TEAMWORK = "C";
 
     /**
-     * NODE_TYPE == NODE_TYPE_AUTO*/
+     * NODE_TYPE == NODE_TYPE_AUTO
+     * N：无操作、哑元
+     * B：调用Bean包括远程Bean
+     * S：脚本
+     * M：发送消息
+     * C：接口调研
+     * */
     public static final String AUTO_NODE_OPT_CODE_NONE    = "N";
     public static final String AUTO_NODE_OPT_CODE_BEAN    = "B";
     public static final String AUTO_NODE_OPT_CODE_SCRIPT  = "S";
-    public static final String AUTO_NODE_OPT_CODE_MESSAGE  = "M";
-    public static final String AUTO_NODE_OPT_CODE_CALL  = "C";
+    public static final String AUTO_NODE_OPT_CODE_MESSAGE = "M";
+    public static final String AUTO_NODE_OPT_CODE_CALL    = "C";
     /**
      * NODE_TYPE == NODE_TYPE_ROUTE
-     * D:分支 E:汇聚  G 多实例节点  H并行  R 游离
+     * D:分支 E:汇聚  G：多实例节点  H：并行  R：游离
      */
     public static final String ROUTER_TYPE_BRANCH    = "D";
     public static final String ROUTER_TYPE_COLLECT   = "E";
@@ -89,7 +95,10 @@ public class NodeInfo implements java.io.Serializable {
     //public static final String ROUTER_TYPE_SYNC      = "S";
 
     /**
-     * NODE_TYPE == NODE_TYPE_SYNC*/
+     * NODE_TYPE == NODE_TYPE_SYNC
+     * T：时间触发
+     * M：消息触发
+     * */
     public static final String SYNC_NODE_TYPE_TIME    = "T";
     public static final String SYNC_NODE_TYPE_MESSAGE = "M";
 
@@ -110,6 +119,7 @@ public class NodeInfo implements java.io.Serializable {
      **/
     @Column(name = "OPT_CODE")
     private String optCode;
+
     /**
      * optType = D && optCode = S 时
      * optParam 存放的是代码脚本
