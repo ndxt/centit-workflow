@@ -105,7 +105,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
 
     @Override
     public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
-                                 NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                 NodeInfo nodeInfo, String optUserCode){
         if(!checkRunCondition(nodeInfo, nodeInst)){
             throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
                 "条件判断节点 " + nodeInst.getNodeInstId() +"出错，流程设置时没有设置条件判断的bean属性。");

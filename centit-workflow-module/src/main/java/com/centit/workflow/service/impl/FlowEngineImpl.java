@@ -1162,7 +1162,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType()) &&
                   !StringUtils.equals(runAsUser, options.getUserCode())) {
                 nodeInst.setGrantor(runAsUser);
-                wfactlog.setNewValue(wfactlog + " 授予 " + options.getUserCode()
+                wfactlog.setNewValue(runAsUser + " 授予 " + options.getUserCode()
                     + ":" + currNode.getRoleType() + ":" + currNode.getRoleCode());
             }
             OperationLogCenter.log(wfactlog);

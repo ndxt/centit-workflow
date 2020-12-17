@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.compiler.Lexer;
+import com.centit.support.network.HtmlFormUtils;
 import com.centit.support.network.HttpExecutor;
 import com.centit.support.network.HttpExecutorContext;
 import com.centit.support.network.UrlOptUtils;
@@ -59,45 +61,57 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             "flowInstId", nodeInst.getFlowInstId(),
             "nodeInstId", nodeInst.getNodeInstId(),
             "userCode", optUserCode);
+        String httpUrl = optUrl;
+        if(StringUtils.isNotBlank(flowInst.getFlowOptTag())){
+            if(flowInst.getFlowOptTag().indexOf("&")>0){
+                httpUrl = UrlOptUtils.appendParamToUrl(optUrl, flowInst.getFlowOptTag());
+            } if(Lexer.getFirstWord(flowInst.getFlowOptTag()).equals("{")){
+                params.putAll(JSON.parseObject(flowInst.getFlowOptTag()));
+            } else {
+                params.put("optTag", flowInst.getFlowOptTag());
+            }
+        }
+
         String httpRet = null;
         try {
             Object paramMap = JSON.parse(optParam);
             if ("R".equalsIgnoreCase(optMethod) || "GET".equalsIgnoreCase(optMethod)) {
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
-                    httpRet = HttpExecutor.simpleGet(HttpExecutorContext.create(), optUrl, params);
+                    httpRet = HttpExecutor.simpleGet(HttpExecutorContext.create(), httpUrl, params);
                 } else {
                     httpRet = HttpExecutor.simpleGet(HttpExecutorContext.create(),
-                        UrlOptUtils.appendParamToUrl(optUrl, optParam),params);
+                        UrlOptUtils.appendParamToUrl(httpUrl, optParam),params);
                 }
             } else if ("C".equalsIgnoreCase(optMethod) || "POST".equalsIgnoreCase(optMethod)) {
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
-                    httpRet = HttpExecutor.jsonPost(HttpExecutorContext.create(),optUrl, params);
+                    httpRet = HttpExecutor.jsonPost(HttpExecutorContext.create(),httpUrl, params);
                 } else {
                     httpRet = HttpExecutor.jsonPost(HttpExecutorContext.create(),
-                        UrlOptUtils.appendParamToUrl(optUrl, optParam), params);
+                        UrlOptUtils.appendParamToUrl(httpUrl, optParam), params);
                 }
             } else if ("U".equalsIgnoreCase(optMethod) || "PUT".equalsIgnoreCase(optMethod)) {
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
-                    httpRet = HttpExecutor.jsonPut(HttpExecutorContext.create(),optUrl, params);
+                    httpRet = HttpExecutor.jsonPut(HttpExecutorContext.create(),httpUrl, params);
                 } else {
                     httpRet = HttpExecutor.jsonPut(HttpExecutorContext.create(),
-                        UrlOptUtils.appendParamToUrl(optUrl, optParam), params);
+                        UrlOptUtils.appendParamToUrl(httpUrl, optParam), params);
                 }
             } else if ("D".equalsIgnoreCase(optMethod) || "delete".equalsIgnoreCase(optMethod)) {
                 if(paramMap instanceof JSONObject){
                     params.putAll((JSONObject)paramMap);
-                    httpRet = HttpExecutor.simpleDelete(HttpExecutorContext.create(), optUrl, params);
+                    httpRet = HttpExecutor.simpleDelete(HttpExecutorContext.create(), httpUrl, params);
                 } else {
                     httpRet = HttpExecutor.simpleDelete(HttpExecutorContext.create(),
-                        UrlOptUtils.appendParamToUrl(optUrl, optParam),params);
+                        UrlOptUtils.appendParamToUrl(httpUrl, optParam),params);
                 }
             }
         } catch (IOException e){
             logger.error(e.getMessage());
         }
+
         if(StringUtils.isNotBlank(httpRet)){
             HttpReceiveJSON json = HttpReceiveJSON.valueOfJson(httpRet);
             if(json.getCode() != 0){
@@ -118,7 +132,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
 
     @Override
     public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
-                                 NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                 NodeInfo nodeInfo, String optUserCode){
         return true;
     }
 

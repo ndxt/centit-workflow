@@ -80,7 +80,7 @@ public class RemoteBeanNodeEventSupport implements NodeEventSupport {
 
     @Override
     public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
-                                 NodeInfo nodeInfo, String optUserCode) throws WorkflowException {
+                                 NodeInfo nodeInfo, String optUserCode) {
         JSONObject paramMap = makeRequestParams(flowInst,  nodeInst,
             nodeInfo,  optUserCode);
 
