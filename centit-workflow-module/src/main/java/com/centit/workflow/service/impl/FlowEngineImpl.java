@@ -909,43 +909,42 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                 Pretreatment.mapTemplateString(nextOptNode.getNoticeMessage(), options)));
                 }
             }
+            /**
+             *  检查令牌冲突（自由流程，令牌的冲突有业务程序和流程图自己控制，无需检查）
+             *  这段代码是检查令牌的一致性，多实例节点多次运行时会出错的，
+             *  这个本来的目的是为了检查从分支中返回到 主干上，因为有游离节点的存在所以需要这个检查
+             *  这个算法不是判断是否相等，而是应该判断层次是否一致，只要层次一致就没有问题，如果不一致就需要截断后面的层次
+             */
+            if (! "F".equals(flowInfo.getFlowClass())) {//自由流程，令牌的冲突有业务程序和流程图自己控制，无需检查
+                //NodeInstance thisNodeInst = nodeInst;
+                //查找在同一条运行路径上的相同节点
+                NodeInstance sameInst = flowInst.findLastSameNodeInst(nodeInst.getNodeId(), nodeInst, nodeInst.getNodeInstId());
+                if (sameInst != null) {
+                    int oldGen = sameInst.getTokenGeneration();
+                    // 发现冲退
+                    if (oldGen > 0 && nodeInst.getTokenGeneration() > oldGen) {
+                        String thisToken = NodeInstance.truncTokenGeneration(
+                            nodeInst.getRunToken(), oldGen);
+                        nodeInst.setRunToken(thisToken);
+                        //将相关的分支节点设置为无效
+                        Set<NodeInstance> sameNodes = flowInst.findAllActiveSubNodeInstByToken(thisToken);
+                        if(sameNodes!=null && !sameNodes.isEmpty()) {
+                            closeNodeInstanceInside(sameNodes, currentTime, options.getUserCode());
+                        }
+                    }
+                }
+            }
         } else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())){
             //  新建同步节点
             nodeInst.setNodeState("T");
         }
-        /**
-         *  检查令牌冲突（自由流程，令牌的冲突有业务程序和流程图自己控制，无需检查）
-         *  这段代码是检查令牌的一致性，多实例节点多次运行时会出错的，
-         *  这个本来的目的是为了检查从分支中返回到 主干上，因为有游离节点的存在所以需要这个检查
-         *  这个算法不是判断是否相等，而是应该判断层次是否一致，只要层次一致就没有问题，如果不一致就需要截断后面的层次
-         */
-        if (! "F".equals(flowInfo.getFlowClass())) {//自由流程，令牌的冲突有业务程序和流程图自己控制，无需检查
-            //NodeInstance thisNodeInst = nodeInst;
-            //查找在同一条运行路径上的相同节点
-            NodeInstance sameInst = flowInst.findLastSameNodeInst(nodeInst.getNodeId(), nodeInst, nodeInst.getNodeInstId());
-            if (sameInst != null) {
-                int oldGen = sameInst.getTokenGeneration();
-                // 发现冲退
-                if (oldGen > 0 && nodeInst.getTokenGeneration() > oldGen) {
-                    String thisToken = NodeInstance.truncTokenGeneration(
-                        nodeInst.getRunToken(), oldGen);
-                    nodeInst.setRunToken(thisToken);
-                    //将相关的分支节点设置为无效
-                    Set<NodeInstance> sameNodes = flowInst.findAllActiveSubNodeInstByToken(thisToken);
-                    if(sameNodes!=null && !sameNodes.isEmpty()) {
-                        closeNodeInstanceInside(sameNodes, currentTime, options.getUserCode());
-                    }
-                }
-            }
-        }
+
 
         nodeInstanceDao.saveNewObject(nodeInst);
         flowInst.addNodeInstance(nodeInst);
         flowInst.setLastUpdateTime(currentTime);
         flowInst.setLastUpdateUser(options.getUserCode());
 
-        //执行节点创建后 事件
-        FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
         //检查自动执行节点 并执行相关操作
         // 添加自动运行的处理结果
         if (NodeInfo.NODE_TYPE_AUTO.equals(nextOptNode.getNodeType())) {
@@ -966,12 +965,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     autoSubmitOptions.workUser(lockUser);
                 }
             } else if(NodeInfo.AUTO_NODE_OPT_CODE_CALL.equals(nextOptNode.getAutoRunType())){
+                //执行节点创建后 事件
+                FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
                 NodeEventSupport nodeEventExecutor =
                     new AutoRunNodeEventSupport(
                         optPage.getPageUrl(),
                         nextOptNode.getOptParam(),
                         optPage.getOptMethod(),this);
-                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, nodeInst,
+                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst,
                     nextOptNode, options.getUserCode());
             } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nextOptNode.getAutoRunType())){
                 NodeEventSupport nodeEventExecutor =
