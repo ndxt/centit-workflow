@@ -13,6 +13,7 @@ import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.*;
+import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JSONOpt;
 import com.centit.workflow.po.*;
@@ -570,72 +571,73 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "返回节点的操作记录，或者日志", notes = "返回节点的操作记录，或者日志")
     @RequestMapping(value = "/viewflownode/{flowInstId}/{nodeId}", method = RequestMethod.GET)
-    public void viewFlowNodeInfo(@PathVariable String flowInstId, @PathVariable String nodeId, HttpServletResponse response) {
-        try {
-            FlowInstance dbobject = flowManager.getFlowInstance(flowInstId);
-            NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeId);
-            JSONObject nodeOptInfo = new JSONObject();
-            nodeOptInfo.put("nodename", nodeInfo.getNodeName());
-            int nodeInstInd = 0;
-
-            for (NodeInstance nodeInst : dbobject.getFlowNodeInstances()) {
-                if (nodeInst.getNodeId().equals(nodeId)) {
-                    //暂时保证一个节点保留一条查看信息
-                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].createtime",
-                        DatetimeOpt.convertDatetimeToString(nodeInst.getCreateTime()));
-                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode",
-                        nodeInst.getUnitCode());
-                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname",
-                        CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
-                    if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState())) {
-                        List<UserTask> tasks = new ArrayList<>();
-                        List<UserTask> innerTasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());
-                        if (innerTasks != null)
-                            tasks.addAll(innerTasks);
-                        //暂时添加一个多余判断，解决相关地方手动修改视图，把岗位待办设置成静态待办的问题
-                        if (tasks.isEmpty() && "D".equals(nodeInst.getTaskAssigned())) {
-                            int page = 1;
-                            int limit = 100;
-                            PageDesc pageDesc = new PageDesc(page, limit);
-                            Map<String, Object> searchColumn = new HashMap<>();
-                            searchColumn.put("nodeInstId", nodeInst.getNodeInstId());
-                            searchColumn.put("unitCode", nodeInst.getUnitCode());
-                            searchColumn.put("userStation", nodeInfo.getRoleCode());
-                            List<UserTask> dynamicTask = flowEng.listDynamicTaskByUnitStation(searchColumn, pageDesc);
-                            tasks.addAll(dynamicTask);
-                        }
-                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
-                        int taskInd = 0;
-                        for (UserTask task : tasks) {
-                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
-                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
-                                CodeRepositoryUtil.getValue("userCode", task.getUserCode()));
-                            IUserInfo user = CodeRepositoryUtil.getUserInfoByCode(task.getUserCode());
-                            if (user != null) {
-                                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
-                            }
-                            taskInd++;
-                        }
-                    } else {
-                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state",
-                            CodeRepositoryUtil.getValue("WFInstType", nodeInst.getNodeState()));
-                        //暂时添加当前节点的最后更新人
-                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updateuser",
-                            CodeRepositoryUtil.getValue("userCode", nodeInst.getLastUpdateUser()));
-                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
-                            DatetimeOpt.convertDatetimeToString(
-                                nodeInst.getLastUpdateTime() == null ? nodeInst.getCreateTime() : nodeInst.getLastUpdateTime()));
-                    }
-                    nodeInstInd++;
-                    //nodeInstId=nodeInst.getNodeInstId();
-                }
-            }
-            nodeOptInfo.put("count", nodeInstInd);
-            JsonResultUtils.writeSingleDataJson(nodeOptInfo, response);
-        } catch (Exception e) {
-            logger.error("节点的操作记录:"+e.getMessage(), e);
-            JsonResultUtils.writeErrorMessageJson(e.toString(), response);
+    @WrapUpResponseBody
+    public JSONObject viewFlowNodeInfo(@PathVariable String flowInstId, @PathVariable String nodeId) {
+        FlowInstance dbobject = flowManager.getFlowInstance(flowInstId);
+        if(dbobject==null) {
+            throw new ObjectException("找不到对应的流程实例信息：flowInstId=" + flowInstId);
         }
+        NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeId);
+        JSONObject nodeOptInfo = new JSONObject();
+        nodeOptInfo.put("nodename", nodeInfo.getNodeName());
+        int nodeInstInd = 0;
+        List<NodeInstance> nodeInsts = dbobject.getFlowNodeInstances();
+        int nodeCount = nodeInsts.size();
+        for (int i=0; i<nodeCount; i++){
+            NodeInstance nodeInst  = nodeInsts.get(i);
+            if (nodeInst.getNodeId().equals(nodeId)) {
+                //暂时保证一个节点保留一条查看信息
+                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].createtime",
+                    DatetimeOpt.convertDatetimeToString(nodeInst.getCreateTime()));
+                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode",
+                    nodeInst.getUnitCode());
+                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname",
+                    CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
+                if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState())) {
+                    List<UserTask> tasks = new ArrayList<>();
+                    List<UserTask> innerTasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());
+                    if (innerTasks != null)
+                        tasks.addAll(innerTasks);
+                    //暂时添加一个多余判断，解决相关地方手动修改视图，把岗位待办设置成静态待办的问题
+                    if (tasks.isEmpty() && "D".equals(nodeInst.getTaskAssigned())) {
+                        int page = 1;
+                        int limit = 100;
+                        PageDesc pageDesc = new PageDesc(page, limit);
+                        Map<String, Object> searchColumn = new HashMap<>();
+                        searchColumn.put("nodeInstId", nodeInst.getNodeInstId());
+                        searchColumn.put("unitCode", nodeInst.getUnitCode());
+                        searchColumn.put("userStation", nodeInfo.getRoleCode());
+                        List<UserTask> dynamicTask = flowEng.listDynamicTaskByUnitStation(searchColumn, pageDesc);
+                        tasks.addAll(dynamicTask);
+                    }
+                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
+                    int taskInd = 0;
+                    for (UserTask task : tasks) {
+                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
+                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
+                            CodeRepositoryUtil.getValue("userCode", task.getUserCode()));
+                        IUserInfo user = CodeRepositoryUtil.getUserInfoByCode(task.getUserCode());
+                        if (user != null) {
+                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
+                        }
+                        taskInd++;
+                    }
+                } else {
+                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state",
+                        CodeRepositoryUtil.getValue("WFInstType", nodeInst.getNodeState()));
+                    //暂时添加当前节点的最后更新人
+                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updateuser",
+                        CodeRepositoryUtil.getValue("userCode", nodeInst.getLastUpdateUser()));
+                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
+                        DatetimeOpt.convertDatetimeToString(
+                            nodeInst.getLastUpdateTime() == null ? nodeInst.getCreateTime() : nodeInst.getLastUpdateTime()));
+                }
+                nodeInstInd++;
+                //nodeInstId=nodeInst.getNodeInstId();
+            }
+        }
+        nodeOptInfo.put("count", nodeInstInd);
+        return nodeOptInfo;
     }
 
     /**
