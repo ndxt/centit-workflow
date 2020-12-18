@@ -314,6 +314,14 @@ public class NodeInfo implements java.io.Serializable {
         this.optType = nodeSyncType;
     }
 
+    public String getMessageCode(){
+        return this.optCode;
+    }
+
+    public void setMessageCode(String messageCode){
+        this.optCode = messageCode;
+    }
+
     public void copy(NodeInfo other) {
         //this.setNodeId(other.getNodeId());
         this.setFlowDefine(other.getFlowDefine());

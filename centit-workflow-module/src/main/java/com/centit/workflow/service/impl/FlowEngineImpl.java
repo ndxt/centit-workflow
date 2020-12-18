@@ -982,7 +982,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 FlowEventInfo eventInfo = new FlowEventInfo();
                 eventInfo.setFlowInstId(flowInst.getFlowInstId());
                 eventInfo.setSenderUser(options.getUserCode());
-                eventInfo.setEventName(nextOptNode.getOptCode());
+                eventInfo.setEventName(nextOptNode.getMessageCode());
                 eventInfo.setEventParam(nextOptNode.getOptParam());
                 flowEventService.saveNewEvent(eventInfo);
             }

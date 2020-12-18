@@ -213,7 +213,7 @@ public class FlowTaskImpl {
                     for(NodeInstance nodeInst : nodes){
                         nodeInstanceDao.fetchObjectReference(nodeInst, "node");
                         if(NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nodeInst.getNode().getNodeSyncType())
-                            && StringUtils.equals(eventInfo.getEventName(), nodeInst.getNode().getOptCode())){
+                            && StringUtils.equals(eventInfo.getEventName(), nodeInst.getNode().getMessageCode())){
                             Object ret = flowEngine.submitOpt(
                                 SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId()));
                             eventInfo.setOptResult(StringBaseOpt.castObjectToString(ret));
