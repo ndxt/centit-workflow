@@ -46,8 +46,8 @@ CREATE TABLE wf_flow_team_role (
 
 
 CREATE TABLE wf_action_log (
-  ACTION_ID decimal(12,0) NOT NULL,
-  NODE_INST_ID decimal(12,0) DEFAULT NULL,
+  ACTION_ID varchar(32) NOT NULL,
+  NODE_INST_ID varchar(32) DEFAULT NULL,
   ACTION_TYPE varchar(2) NOT NULL ,
   ACTION_TIME datetime NOT NULL,
   USER_CODE varchar(8) DEFAULT NULL,
@@ -59,8 +59,8 @@ CREATE TABLE wf_action_log (
 
 
 CREATE TABLE wf_action_task (
-  TASK_ID decimal(12,0) NOT NULL,
-  NODE_INST_ID decimal(12,0) DEFAULT NULL,
+  TASK_ID varchar(32) NOT NULL,
+  NODE_INST_ID varchar(32) DEFAULT NULL,
   ASSIGN_TIME datetime NOT NULL,
   EXPIRE_TIME datetime DEFAULT NULL,
   USER_CODE varchar(8) DEFAULT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE wf_flow_define (
 
 
 CREATE TABLE wf_flow_instance (
-  FLOW_INST_ID decimal(12,0) NOT NULL,
+  FLOW_INST_ID varchar(32) NOT NULL,
   VERSION decimal(4,0) DEFAULT NULL,
   FLOW_CODE varchar(32) DEFAULT NULL ,
   FLOW_Opt_Name varchar(100) DEFAULT NULL ,
@@ -116,7 +116,7 @@ CREATE TABLE wf_flow_instance (
 
 
 CREATE TABLE wf_flow_stage (
-  STAGE_ID decimal(12,0) NOT NULL,
+  STAGE_ID varchar(32) NOT NULL,
   VERSION decimal(4,0) DEFAULT NULL ,
   FLOW_CODE varchar(32) DEFAULT NULL ,
   STAGE_CODE varchar(32) NOT NULL,
@@ -131,17 +131,17 @@ CREATE TABLE wf_flow_stage (
 
 
 CREATE TABLE wf_flow_variable (
-  FLOW_INST_ID decimal(12,0) NOT NULL,
+  FLOW_INST_ID varchar(32) NOT NULL,
   Run_Token varchar(20) NOT NULL,
   VAR_NAME varchar(50) NOT NULL,
-  VAR_VALUE varchar(256) NOT NULL,
+  VAR_VALUE varchar(1024) NOT NULL,
   Var_Type char(1) NOT NULL,
   PRIMARY KEY (FLOW_INST_ID,Run_Token,VAR_NAME)
 ) ;
 
 
 CREATE TABLE wf_inst_attention (
-  FLOW_INST_ID decimal(12,0) NOT NULL,
+  FLOW_INST_ID varchar(32) NOT NULL,
   user_Code varchar(8) NOT NULL,
   att_set_time datetime DEFAULT NULL,
   att_set_user varchar(8) DEFAULT NULL,
@@ -151,9 +151,9 @@ CREATE TABLE wf_inst_attention (
 
 
 CREATE TABLE wf_manage_action (
-  ACTION_ID decimal(12,0) NOT NULL,
-  FLOW_INST_ID decimal(12,0) DEFAULT NULL,
-  NODE_INST_ID decimal(12,0) DEFAULT NULL ,
+  ACTION_ID varchar(32) NOT NULL,
+  FLOW_INST_ID varchar(32) DEFAULT NULL,
+  NODE_INST_ID varchar(32) DEFAULT NULL ,
   ACTION_TYPE varchar(2) NOT NULL ,
   ACTION_TIME datetime NOT NULL,
   USER_CODE varchar(8) DEFAULT NULL,
@@ -165,7 +165,7 @@ CREATE TABLE wf_manage_action (
 
 
 CREATE TABLE wf_node (
-  NODE_ID decimal(12,0) NOT NULL ,
+  NODE_ID varchar(32) NOT NULL ,
   FLOW_CODE varchar(32) DEFAULT NULL ,
   VERSION decimal(4,0) DEFAULT NULL,
   NODE_TYPE varchar(1) NOT NULL ,
@@ -204,24 +204,24 @@ CREATE TABLE wf_node (
 
 
 CREATE TABLE wf_node_instance (
-  NODE_INST_ID decimal(12,0) NOT NULL,
-  FLOW_INST_ID decimal(12,0) DEFAULT NULL,
-  NODE_ID decimal(12,0) DEFAULT NULL ,
+  NODE_INST_ID varchar(32) NOT NULL,
+  FLOW_INST_ID varchar(32) DEFAULT NULL,
+  NODE_ID varchar(32) DEFAULT NULL ,
   CREATE_TIME datetime DEFAULT NULL,
   START_TIME datetime DEFAULT NULL,
   is_Timer char(1) DEFAULT NULL,
   promise_Time decimal(10,0) DEFAULT NULL ,
   time_Limit decimal(10,0) DEFAULT NULL,
-  PREV_NODE_INST_ID decimal(12,0) DEFAULT NULL,
+  PREV_NODE_INST_ID varchar(32) DEFAULT NULL,
   NODE_STATE varchar(2) DEFAULT NULL ,
-  SUB_FLOW_INST_ID decimal(12,0) DEFAULT NULL,
+  SUB_FLOW_INST_ID varchar(32) DEFAULT NULL,
   UNIT_CODE varchar(8) DEFAULT NULL,
   STAGE_CODE varchar(32) DEFAULT NULL,
   ROLE_TYPE varchar(8) DEFAULT NULL ,
   ROLE_CODE varchar(32) DEFAULT NULL,
   USER_CODE varchar(8) DEFAULT NULL,
   NODE_PARAM varchar(128) DEFAULT NULL,
-  TRANS_ID decimal(12,0) DEFAULT NULL ,
+  TRANS_ID varchar(32) DEFAULT NULL ,
   TASK_ASSIGNED varchar(1) DEFAULT 'F' ,
   Run_Token varchar(20) DEFAULT NULL ,
   GRANTOR varchar(8) DEFAULT NULL,
@@ -233,7 +233,7 @@ CREATE TABLE wf_node_instance (
 
 
 CREATE TABLE wf_organize (
-  FLOW_INST_ID decimal(12,0) NOT NULL,
+  FLOW_INST_ID varchar(32) NOT NULL,
   UNIT_CODE varchar(8) NOT NULL,
   ROLE_CODE varchar(32) NOT NULL,
   UNIT_ORDER decimal(4,0) DEFAULT NULL ,
@@ -245,7 +245,7 @@ CREATE TABLE wf_organize (
 
 
 CREATE TABLE wf_role_relegate (
-  RELEGATE_NO decimal(12,0) NOT NULL,
+  RELEGATE_NO varchar(32) NOT NULL,
   GRANTOR varchar(8) NOT NULL,
   GRANTEE varchar(8) NOT NULL,
   IS_VALID char(1) NOT NULL DEFAULT 'T' ,
@@ -262,7 +262,7 @@ CREATE TABLE wf_role_relegate (
 
 
 CREATE TABLE wf_router_node (
-  NODEID decimal(12,0) NOT NULL ,
+  NODEID varchar(32) NOT NULL ,
   WFCODE varchar(32) DEFAULT NULL ,
   VERSION decimal(4,0) DEFAULT NULL,
   ROUTERTYPE varchar(1) NOT NULL ,
@@ -281,9 +281,9 @@ CREATE TABLE wf_router_node (
 
 
 CREATE TABLE wf_runtime_warning (
-  WARNING_ID decimal(12,0) NOT NULL ,
-  FLOW_INST_ID decimal(12,0) DEFAULT NULL,
-  NODE_INST_ID decimal(12,0) NOT NULL,
+  WARNING_ID varchar(32) NOT NULL ,
+  FLOW_INST_ID varchar(32) DEFAULT NULL,
+  NODE_INST_ID varchar(32) NOT NULL,
   FLOW_STAGE varchar(4) DEFAULT NULL,
   OBJ_TYPE char(1) DEFAULT NULL ,
   WARNING_TYPE char(1) DEFAULT NULL ,
@@ -299,8 +299,8 @@ CREATE TABLE wf_runtime_warning (
 
 
 CREATE TABLE wf_stage_instance (
-  FLOW_INST_ID decimal(12,0) NOT NULL,
-  STAGE_ID decimal(12,0) NOT NULL,
+  FLOW_INST_ID varchar(32) NOT NULL,
+  STAGE_ID varchar(32) NOT NULL,
   STAGE_CODE varchar(32) NOT NULL,
   STAGE_NAME varchar(60) DEFAULT NULL,
   begin_Time datetime DEFAULT NULL,
@@ -327,7 +327,7 @@ CREATE TABLE WF_EVENT_INFO (
 
 
 CREATE TABLE wf_team (
-  FLOW_INST_ID decimal(12,0) NOT NULL,
+  FLOW_INST_ID varchar(32) NOT NULL,
   ROLE_CODE varchar(32) NOT NULL,
   USER_CODE varchar(8) NOT NULL,
   RUN_TOKEN varchar(32) NOT NULL,
@@ -339,13 +339,13 @@ CREATE TABLE wf_team (
 
 
 CREATE TABLE wf_transition (
-  TRANS_ID decimal(12,0) NOT NULL,
+  TRANS_ID varchar(32) NOT NULL,
   VERSION decimal(4,0) DEFAULT NULL,
   FLOW_CODE varchar(32) DEFAULT NULL ,
   TRANS_CLASS varchar(4) DEFAULT NULL ,
   TRANS_NAME varchar(120) DEFAULT NULL,
-  START_NODE_ID decimal(12,0) DEFAULT NULL ,
-  END_NODE_ID decimal(12,0) DEFAULT NULL ,
+  START_NODE_ID varchar(32) DEFAULT NULL ,
+  END_NODE_ID varchar(32) DEFAULT NULL ,
   TRANS_CONDITION varchar(500) DEFAULT NULL ,
   TRANS_DESC varchar(500) DEFAULT NULL,
   is_Account_Time char(1) DEFAULT NULL ,

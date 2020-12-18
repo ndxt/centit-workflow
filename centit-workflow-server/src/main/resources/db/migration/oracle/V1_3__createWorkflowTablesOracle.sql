@@ -122,10 +122,10 @@ CREATE TABLE wf_flow_stage (
 
 
 CREATE TABLE wf_flow_variable (
-  FLOW_INST_ID number(12,0) NOT NULL,
+  FLOW_INST_ID varchar2(32) NOT NULL,
   Run_Token varchar2(32) NOT NULL,
   VAR_NAME varchar2(50) NOT NULL,
-  VAR_VALUE varchar2(256) NOT NULL,
+  VAR_VALUE varchar2(1024) NOT NULL,
   Var_Type char(1) NOT NULL,
   PRIMARY KEY (FLOW_INST_ID,Run_Token,VAR_NAME)
 ) ;

@@ -1,5 +1,7 @@
 package com.centit.workflow.po;
 
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -20,8 +22,7 @@ public class FlowWarning implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
     @Id
     @Column(name = "WARNING_ID")
-    //@GeneratedValue(generator = "assignedGenerator")
-    //@GenericGenerator(name = "assignedGenerator", strategy = "assigned")
+    @ValueGenerator(strategy = GeneratorType.UUID22)
     private String warningId;
 
     @Column(name="NODE_INST_ID")

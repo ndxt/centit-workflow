@@ -130,7 +130,7 @@ CREATE TABLE `wf_flow_variable` (
   `FLOW_INST_ID` varchar(32) ,
   `Run_Token` varchar(20) ,
   `VAR_NAME` varchar(50) ,
-  `VAR_VALUE` varchar(256) ,
+  `VAR_VALUE` varchar(1024) ,
   `Var_Type` char(1) ,
   PRIMARY KEY (`FLOW_INST_ID`,`Run_Token`,`VAR_NAME`)
 ) ;

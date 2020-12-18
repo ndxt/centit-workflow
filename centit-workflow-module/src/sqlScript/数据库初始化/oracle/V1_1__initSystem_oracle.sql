@@ -161,7 +161,7 @@ create table WF_FLOW_VARIABLE  (
    FLOW_INST_ID         NUMBER(12,0)                    not null,
    Run_Token          VARCHAR2(20)                    not null,
    VAR_NAME             VARCHAR2(50)                    not null,
-   VAR_VALUE            VARCHAR2(256)                   not null,
+   VAR_VALUE            VARCHAR2(1024)                   not null,
    Var_Type           CHAR(1)                         not null,
    constraint PK_WF_FLOW_VARIABLE primary key (FLOW_INST_ID, Run_Token, VAR_NAME)
 );
@@ -202,7 +202,7 @@ comment on column WF_MANAGE_ACTION.ACTION_TYPE is
 '�����̹�������ô�д��ĸ���Խڵ���������Сд��ĸ
   S s: ״̬����� ��ʱ���ѡ� ʹʧЧ�� ʹһ�������Ľڵ��Ϊ����״̬ �� ������ڵ�ʧЧ
   c: �����ڵ�  ������һ������ڵ� ���������⣩ָ���ڵ�
-  R  : ��ת��������  ǿ�л���  ��ǿ���ύ   
+  R  : ��ת��������  ǿ�л���  ��ǿ���ύ
   T t: ���޹��� �� ��������
   a: �ڵ��������  ��������  ɾ������ ��  ��������
   U u: �������''';
@@ -220,13 +220,13 @@ create table WF_NODE  (
    OPT_BEAN             VARCHAR2(100),
    OPT_PARAM            VARCHAR2(100),
    SUB_FLOW_CODE        VARCHAR2(8),
-   ROUTER_TYPE          VARCHAR2(1)                    
+   ROUTER_TYPE          VARCHAR2(1)
       constraint CKC_ROUTER_TYPE_WF_NODE check (ROUTER_TYPE is null or (ROUTER_TYPE in ('D','E','G','H','R','S'))),
    ROLE_TYPE            VARCHAR2(8),
    ROLE_CODE            VARCHAR2(32),
    UNIT_EXP             VARCHAR2(64),
    POWER_EXP            VARCHAR2(512),
-   multiInst_Type     CHAR(1)                        
+   multiInst_Type     CHAR(1)
       constraint CKC_MULTIINST_TYPE_WF_NODE check (multiInst_Type is null or (multiInst_Type in ('D','U','V'))),
    multiInst_Param    VARCHAR2(512),
    converge_Type      CHAR(1),
@@ -238,7 +238,7 @@ create table WF_NODE  (
    inherit_Type       CHAR(1),
    inherit_Node_Code  VARCHAR2(20),
    Expire_Opt         CHAR(1),
-   Warning_Rule       CHAR(1)                        
+   Warning_Rule       CHAR(1)
       constraint CKC_WARNING_RULE_WF_NODE check (Warning_Rule is null or (Warning_Rule in ('R','L','P'))),
    Warning_Param      VARCHAR2(20),
    is_Trunk_Line      CHAR(1),
@@ -357,7 +357,7 @@ comment on column WF_NODE_INSTANCE.promise_Time is
 '��ŵʱ�� 1��8Сʱ��1Сʱ60 ���� ������շ��Ӽ���';
 
 comment on column WF_NODE_INSTANCE.NODE_STATE is
-'     * N ����  B �ѻ���    C ���   F��ǿ�ƽ��� 
+'     * N ����  B �ѻ���    C ���   F��ǿ�ƽ���
      * P ��ͣ   W �ȴ������̷���   S �ȵ�ǰ�ýڵ㣨�����Ƕ�������';
 
 comment on column WF_NODE_INSTANCE.ROLE_TYPE is
@@ -435,9 +435,9 @@ create table WF_RUNTIME_WARNING  (
    FLOW_INST_ID         NUMBER(12,0),
    NODE_INST_ID         NUMBER(12,0)                    not null,
    FLOW_STAGE           VARCHAR2(4),
-   OBJ_TYPE             CHAR(1)                        
+   OBJ_TYPE             CHAR(1)
       constraint CKC_OBJ_TYPE_WF_RUNTI check (OBJ_TYPE is null or (OBJ_TYPE in ('F','N','P'))),
-   WARNING_TYPE         CHAR(1)                        
+   WARNING_TYPE         CHAR(1)
       constraint CKC_WARNING_TYPE_WF_RUNTI check (WARNING_TYPE is null or (WARNING_TYPE in ('W','A','N','O'))),
    WARNING_STATE        CHAR(1)                        default 'N'
       constraint CKC_WARNING_STATE_WF_RUNTI check (WARNING_STATE is null or (WARNING_STATE in ('D','C','F','N'))),
@@ -464,7 +464,7 @@ comment on column WF_RUNTIME_WARNING.WARNING_STATE is
 'D ժ�� C ���� F ���� N δ����';
 
 comment on column WF_RUNTIME_WARNING.WARNING_CODE is
-'ALTER_EXPIRED  : ʱ�䳬�ڱ��� 
+'ALTER_EXPIRED  : ʱ�䳬�ڱ���
 WARN_EXPIRED  : ʱ�䳬��Ԥ��';
 
 comment on column WF_RUNTIME_WARNING.NOTICE_STATE is
@@ -681,8 +681,8 @@ from F_OPTDEF b join f_optinfo c
     on (b.optid = c.optid)
  where c.OptType = 'W'
    and c.opturl <> '...' and b.optreq is not null;
-        
---��������ͼ        
+
+--��������ͼ
 create or replace view F_V_LASTVERSIONFLOW(FLOW_CODE, VERSION, FLOW_NAME, FLOW_CLASS, FLOW_STATE, FLOW_DESC, FLOW_XML_DESC, TIME_LIMIT, EXPIRE_OPT, OPT_ID, FLOW_PUBLISH_DATE, AT_PUBLISH_DATE) as
 select a.FLOW_CODE,
    b.version,
@@ -696,16 +696,16 @@ select a.FLOW_CODE,
    a.OPT_ID,
    a.FLOW_PUBLISH_DATE,
    a.AT_PUBLISH_DATE
-from (select FLOW_CODE, max(version) as version 
-            from wf_flow_define group by FLOW_CODE) 
-    lastVersion 
-    join wf_flow_define a     
-       on a.FLOW_CODE = lastVersion.FLOW_CODE and a.version=0 
-    join wf_flow_define b 
+from (select FLOW_CODE, max(version) as version
+            from wf_flow_define group by FLOW_CODE)
+    lastVersion
+    join wf_flow_define a
+       on a.FLOW_CODE = lastVersion.FLOW_CODE and a.version=0
+    join wf_flow_define b
        on lastVersion.FLOW_CODE = b.FLOW_CODE and lastVersion.version=b.version;
 
 create or replace view V_INNER_USER_TASK_LIST as
-select a.FLOW_INST_ID,w.FLOW_CODE,w.version, w.FLOW_OPT_NAME,w.FLOW_OPT_TAG,a.NODE_INST_ID, nvl(a.Unit_Code,nvl(w.Unit_Code,'0000000')) as UnitCode, 
+select a.FLOW_INST_ID,w.FLOW_CODE,w.version, w.FLOW_OPT_NAME,w.FLOW_OPT_TAG,a.NODE_INST_ID, nvl(a.Unit_Code,nvl(w.Unit_Code,'0000000')) as UnitCode,
         a.user_code,c.ROLE_TYPE,c.ROLE_CODE,'һ������' as AUTHDESC, c.node_code,
           c.Node_Name,c.Node_Type,c.Opt_Type as NODEOPTTYPE,d.optid,d.OptName,d.OptName as MethodName,
           d.optdefurl as OptUrl,d.optMethod,c.Opt_Param ,d.OptDesc,a.CREATE_TIME,a.Promise_Time,a.TIME_LIMIT,
@@ -713,10 +713,10 @@ select a.FLOW_INST_ID,w.FLOW_CODE,w.version, w.FLOW_OPT_NAME,w.FLOW_OPT_TAG,a.NO
 from WF_NODE_INSTANCE a join WF_FLOW_INSTANCE w on (a.FLOW_INST_ID=w.FLOW_INST_ID)
            join WF_NODE c on (a.NODE_ID=c.NODE_ID)
            join f_v_wf_optdef_url_map d on (c.OPT_CODE=d.OPTCODE)
-where /*c.NODETYPE<>'R' and --����ڵ㲻�ᴴ��ʱʵ��*/ 
+where /*c.NODETYPE<>'R' and --����ڵ㲻�ᴴ��ʱʵ��*/
     a.NODE_STATE='N' and w.INST_STATE='N' and a.TASK_ASSIGNED='S'
 union all
-select a.FLOW_INST_ID,w.FLOW_CODE,w.version, w.FLOW_OPT_NAME,w.FLOW_OPT_TAG,a.NODE_INST_ID, nvl(a.Unit_Code,nvl(w.Unit_Code,'0000000')) as UnitCode, 
+select a.FLOW_INST_ID,w.FLOW_CODE,w.version, w.FLOW_OPT_NAME,w.FLOW_OPT_TAG,a.NODE_INST_ID, nvl(a.Unit_Code,nvl(w.Unit_Code,'0000000')) as UnitCode,
         b.user_code,b.ROLE_TYPE,b.ROLE_CODE,b.AUTH_DESC, c.node_code,
           c.Node_Name,c.Node_Type,c.Opt_Type as NODEOPTTYPE,d.optid,d.OptName,d.OptName as MethodName,
           d.optdefurl as OptUrl,d.optMethod,c.Opt_Param ,d.OptDesc,a.CREATE_TIME,a.Promise_Time,a.TIME_LIMIT,
@@ -750,18 +750,18 @@ select rownum as taskid,t.FLOW_INST_ID,t.FLOW_CODE,t.version,t.FLOW_OPT_NAME as 
 from
    (select a.FLOW_INST_ID,a.FLOW_CODE,a.version, a.FLOW_OPT_NAME, a.FLOW_OPT_TAG, a.NODE_INST_ID, a.UnitCode, a.user_code, a.ROLE_TYPE, a.ROLE_CODE,
      a.AUTHDESC,a.node_code, a.Node_Name, a.Node_Type, a.NODEOPTTYPE, a.optid, a.OptName, a.MethodName, a.OptUrl, a.optMethod,
-      a.Opt_Param, a.OptDesc, a.CREATE_TIME, a.promise_time, a.time_limit,  a.OPT_CODE, a.Expire_Opt, a.STAGE_CODE, 
+      a.Opt_Param, a.OptDesc, a.CREATE_TIME, a.promise_time, a.time_limit,  a.OPT_CODE, a.Expire_Opt, a.STAGE_CODE,
       null as GRANTOR, a.last_update_user, a.LAST_UPDATE_TIME ,  a.inst_state
-  from V_INNER_USER_TASK_LIST a 
-  union select a.FLOW_INST_ID,a.FLOW_CODE,a.version, a.FLOW_OPT_NAME, a.FLOW_OPT_TAG, a.node_inst_id, a.UnitCode, b.grantee as user_code, a.ROLE_TYPE, a.ROLE_CODE, 
-    a.AUTHDESC,a.node_code, a.Node_Name, a.Node_Type, a.NODEOPTTYPE, a.optid, a.OptName, a.MethodName, a.OptUrl, a.optMethod, 
-    a.Opt_Param, a.OptDesc, a.CREATE_TIME, a.promise_time, a.time_limit, a.OPT_CODE, a.Expire_Opt, a.STAGE_CODE, 
+  from V_INNER_USER_TASK_LIST a
+  union select a.FLOW_INST_ID,a.FLOW_CODE,a.version, a.FLOW_OPT_NAME, a.FLOW_OPT_TAG, a.node_inst_id, a.UnitCode, b.grantee as user_code, a.ROLE_TYPE, a.ROLE_CODE,
+    a.AUTHDESC,a.node_code, a.Node_Name, a.Node_Type, a.NODEOPTTYPE, a.optid, a.OptName, a.MethodName, a.OptUrl, a.optMethod,
+    a.Opt_Param, a.OptDesc, a.CREATE_TIME, a.promise_time, a.time_limit, a.OPT_CODE, a.Expire_Opt, a.STAGE_CODE,
     b.GRANTOR, a.last_update_user, a.last_update_time ,  a.inst_state
-    from V_INNER_USER_TASK_LIST a, WF_ROLE_RELEGATE b 
-    where b.Is_Valid = 'T' and b.RELEGATE_TIME <= sysdate and 
-          ( b.EXPIRE_TIME is null or b.EXPIRE_TIME >= sysdate) and 
-          a.user_code = b.GRANTOR and ( b.UNIT_CODE is null or b.UNIT_CODE = a.UnitCode) 
-          and ( b.ROLE_TYPE is null or ( b.ROLE_TYPE = a.ROLE_TYPE and ( b.ROLE_CODE is null or b.ROLE_CODE = a.ROLE_CODE) ) )) 
+    from V_INNER_USER_TASK_LIST a, WF_ROLE_RELEGATE b
+    where b.Is_Valid = 'T' and b.RELEGATE_TIME <= sysdate and
+          ( b.EXPIRE_TIME is null or b.EXPIRE_TIME >= sysdate) and
+          a.user_code = b.GRANTOR and ( b.UNIT_CODE is null or b.UNIT_CODE = a.UnitCode)
+          and ( b.ROLE_TYPE is null or ( b.ROLE_TYPE = a.ROLE_TYPE and ( b.ROLE_CODE is null or b.ROLE_CODE = a.ROLE_CODE) ) ))
     t;
 
 create or replace view v_node_instdetail as
