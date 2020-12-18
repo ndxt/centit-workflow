@@ -671,7 +671,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             version = flowDefineDao.getLastVersion(flowCode);
         }
 
-        return optVariableDefineDao.getOptVariableByFlowCode(flowCode, version);
+        return optVariableDefineDao.listOptVariableByFlowCode(flowCode, version);
     }
 
     /**
@@ -732,7 +732,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public Map<String, String> listOptVariableDefines(String optId) {
         List<OptVariableDefine> optVariableDefines
-            = optVariableDefineDao.getOptVariableByOptId(optId);
+            = optVariableDefineDao.listOptVariableByOptId(optId);
 
         Map<String, String> variableDefineMap = new HashMap<>();
         if(optVariableDefines != null) {
@@ -747,7 +747,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Transactional
     public Map<String, String> listOptDefaultVariables(String optId) {
         List<OptVariableDefine> optVariableDefines
-            = optVariableDefineDao.getOptVariableByOptId(optId);
+            = optVariableDefineDao.listOptVariableByOptId(optId);
 
         Map<String, String> variableValueMap = new HashMap<>();
         if(optVariableDefines != null) {

@@ -10,15 +10,19 @@ import com.centit.support.network.HttpExecutor;
 import com.centit.support.network.HttpExecutorContext;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.commons.NodeEventSupport;
+import com.centit.workflow.dao.OptVariableDefineDao;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.po.OptVariableDefine;
 import com.centit.workflow.service.FlowEngine;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,15 +35,16 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     private String optUrl;
     private String optParam;
     private String optMethod;
-
+    private OptVariableDefineDao optVariableDefineDao;
     private FlowEngine flowEngine;
 
     public AutoRunNodeEventSupport(String optUrl, String optParam, String optMethod,
-            FlowEngine flowEngine){
+            FlowEngine flowEngine, OptVariableDefineDao optVariableDefineDao){
         this.optUrl = optUrl;
         this.optParam = optParam;
         this.optMethod = optMethod;
         this.flowEngine = flowEngine;
+        this.optVariableDefineDao = optVariableDefineDao;
     }
 
     @Override
@@ -118,12 +123,15 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             // 将返回结果设置为流程变量
             JSONObject jo = json.getJSONObject();
             if(jo != null){
-                for(Map.Entry<String, Object> ent : jo.entrySet()) {
-                    String value = StringBaseOpt.castObjectToString(ent.getValue());
-                    //防止超长
-                    if(value!= null && value.length()<256) {
-                        flowEngine.saveFlowNodeVariable(nodeInst.getNodeInstId(),
-                            ent.getKey(), ent.getValue());
+                List<OptVariableDefine> variables = optVariableDefineDao.listOptVariableByFlowCode(
+                    flowInst.getFlowCode(), flowInst.getVersion());
+                if(variables!= null && variables.size()>0) {
+                    for (OptVariableDefine variable : variables) {
+                        Object value = jo.get(variable.getVariableName());
+                        if (value != null) {
+                            flowEngine.saveFlowNodeVariable(nodeInst.getNodeInstId(),
+                                variable.getVariableName(), value);
+                        }
                     }
                 }
             }

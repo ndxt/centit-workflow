@@ -23,12 +23,6 @@ public class OptVariableDefineDao extends BaseDaoImpl<OptVariableDefine, String>
         return null;
     }
 
-    @Deprecated
-    @Transactional
-    public Long getNextFlowVariableId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_OPTVARIABLE");
-    }
-
     @Transactional
     public void saveNewObject(OptVariableDefine o) {
         if(o.getOptVariableId() == null || "".equals(o.getOptVariableId())){
@@ -38,10 +32,10 @@ public class OptVariableDefineDao extends BaseDaoImpl<OptVariableDefine, String>
     }
 
     @Transactional
-    public List<OptVariableDefine> getOptVariableByFlowCode(String flowCode, long version) {
+    public List<OptVariableDefine> listOptVariableByFlowCode(String flowCode, long version) {
         String sql = "select var.* from WF_OPT_VARIABLE_DEFINE var " +
             "left join WF_FLOW_DEFINE define " +
-            "on var.OPT_ID=define.OPT_ID " +
+            "on var.OPT_ID = define.OPT_ID " +
             "where 1=1 " +
             "[:flowCode | and define.FLOW_CODE=:flowCode] " +
             "[:version | and define.VERSION=:version] ";
@@ -53,7 +47,7 @@ public class OptVariableDefineDao extends BaseDaoImpl<OptVariableDefine, String>
     }
 
     @Transactional
-    public List<OptVariableDefine> getOptVariableByOptId(String optId){
+    public List<OptVariableDefine> listOptVariableByOptId(String optId){
         return this.listObjectsByFilter("where OPT_ID = ?",new Object[]{optId});
     }
 }

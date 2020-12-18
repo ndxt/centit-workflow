@@ -78,7 +78,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private FlowInstanceGroupDao flowInstanceGroupDao;
     @Autowired
     private NotificationCenter notificationCenter;
-
+    @Autowired
+    private OptVariableDefineDao optVariableDefineDao;
     @Autowired
     private FlowEventService flowEventService;
 
@@ -969,7 +970,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     new AutoRunNodeEventSupport(
                         optPage.getPageUrl(),
                         nextOptNode.getOptParam(),
-                        optPage.getOptMethod(),this);
+                        optPage.getOptMethod(),this, optVariableDefineDao);
                 needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst,
                     nextOptNode, options.getUserCode());
             } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nextOptNode.getAutoRunType())){
