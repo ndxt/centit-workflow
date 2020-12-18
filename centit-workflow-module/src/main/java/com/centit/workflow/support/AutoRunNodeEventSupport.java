@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.support.algorithm.CollectionsOpt;
-import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.compiler.Lexer;
 import com.centit.support.network.HttpExecutor;
 import com.centit.support.network.HttpExecutorContext;
@@ -19,7 +18,6 @@ import com.centit.workflow.service.FlowEngine;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.List;
