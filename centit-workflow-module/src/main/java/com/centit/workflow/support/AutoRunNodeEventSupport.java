@@ -4,13 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.compiler.Lexer;
-import com.centit.support.network.HtmlFormUtils;
 import com.centit.support.network.HttpExecutor;
 import com.centit.support.network.HttpExecutorContext;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.commons.NodeEventSupport;
-import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
@@ -120,8 +119,12 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             JSONObject jo = json.getJSONObject();
             if(jo != null){
                 for(Map.Entry<String, Object> ent : jo.entrySet()) {
-                    flowEngine.saveFlowNodeVariable(nodeInst.getNodeInstId(),
-                        ent.getKey(), ent.getValue());
+                    String value = StringBaseOpt.castObjectToString(ent.getValue());
+                    //防止超长
+                    if(value!= null && value.length()<256) {
+                        flowEngine.saveFlowNodeVariable(nodeInst.getNodeInstId(),
+                            ent.getKey(), ent.getValue());
+                    }
                 }
             }
         }

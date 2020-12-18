@@ -11,7 +11,6 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
-import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import org.springframework.beans.factory.annotation.Autowired;

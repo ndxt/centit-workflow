@@ -4,7 +4,6 @@ import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
-import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 
 import javax.servlet.ServletContext;
