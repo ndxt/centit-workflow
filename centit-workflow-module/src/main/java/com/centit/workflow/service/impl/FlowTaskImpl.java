@@ -139,7 +139,7 @@ public class FlowTaskImpl {
             logger.info(runTime.toString() + "工作时间，各个在办件减少一个即时周期" + consumeTime + "分钟。");
         }
 
-        runEventTask(50);
+        runEventTask(500);
     }
 
     private void consumeLifeTime(long consumeTime) {
@@ -209,22 +209,33 @@ public class FlowTaskImpl {
         if(events!=null) {
             for (FlowEventInfo eventInfo : events) {
                 List<NodeInstance> nodes = nodeInstanceDao.listNodeInstByState(eventInfo.getFlowInstId(), "T");
-                if(nodes != null){
-                    for(NodeInstance nodeInst : nodes){
+                boolean hasOptEvent = false;
+                if(nodes != null) {
+                    for (NodeInstance nodeInst : nodes) {
                         nodeInstanceDao.fetchObjectReference(nodeInst, "node");
-                        if(NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nodeInst.getNode().getNodeSyncType())
-                            && StringUtils.equals(eventInfo.getEventName(), nodeInst.getNode().getMessageCode())){
+                        if (NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nodeInst.getNode().getNodeSyncType())
+                            && StringUtils.equals(eventInfo.getEventName(), nodeInst.getNode().getMessageCode())) {
                             Object ret = flowEngine.submitOpt(
                                 SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId()));
                             eventInfo.setOptResult(StringBaseOpt.castObjectToString(ret));
+                            hasOptEvent = true;
                         }
                     }
-                    eventInfo.setOptState("S");
-                } else {
-                    eventInfo.setOptState("P");
                 }
-                eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
-                flowEventService.updateEvent(eventInfo);
+                if(hasOptEvent){
+                    eventInfo.setOptState("S");
+                    eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
+                    flowEventService.updateEvent(eventInfo);
+                } else {
+                    FlowInstance flowInst = flowInstanceDao.getObjectById(eventInfo.getFlowInstId());
+                    if(flowInst==null || !"N".equals(flowInst.getInstState())){
+                        eventInfo.setOptState("E");
+                        eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
+                        eventInfo.setOptResult("流程不在正常运行状态！");
+                        flowEventService.updateEvent(eventInfo);
+                    }
+                }
+
             }
         }
         //nodeInstanceDao.listNodeInstByState("T");

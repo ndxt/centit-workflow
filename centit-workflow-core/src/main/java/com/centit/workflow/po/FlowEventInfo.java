@@ -44,7 +44,7 @@ public class FlowEventInfo implements Serializable {
     private Date   optTime;
 
     /**
-     * N:未处理 S：处理成功 F：处理失败 P：需要再次执行
+     * N:未处理 S：处理成功 F：处理失败 P：需要再次执行 E： 消息失效
      */
     @Column(name = "OPT_STATE")
     private String optState;
