@@ -183,7 +183,7 @@ public class NodeInfo implements java.io.Serializable {
      * N 无 (无期限 none 默认) 、
      * F 每实例固定期限 fix 、
      * C 节点固定期限  cycle、
-     * H 继承上一个节点剩余时间 hierarchical。
+     * H 继承上继承期限 hierarchical。
      */
     @Column(name = "LIMIT_TYPE")
     private String limitType;
