@@ -156,14 +156,34 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "NODE_DESC")
     private String nodeDesc;
 
-    public static final String TIME_LIMIT_IGNORE    = "I";
-    public static final String TIME_LIMIT_NONE      = "N";
-    public static final String TIME_LIMIT_FIX       = "F";
-    public static final String TIME_LIMIT_CYCLE     = "C";
-    public static final String TIME_LIMIT_HIERARCHICAL = "H";
+
+
     /**
-     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、
-     * C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
+     * 是否计时 I ： 未设置（ignore 在流转线上默认 ）
+     * T:计时（默认）
+     * F： 不计时 （这个节点的执行时间不计算在流程内）
+     * H 仅环节计时 （流程业务的剩余时间不减，比如用在受理节点之前的节点，
+     *              这些节点本身有期限，但是时间不计入流程业务的期限内） 。
+     */
+    public static final String TIME_LIMIT_IGNORE    = "I";
+    public static final String TIME_LIMIT_NORMAL    = "T";
+    public static final String TIME_LIMIT_NONE      = "F";
+    public static final String TIME_LIMIT_ONLY_NODE      = "H";
+
+    @Column(name = "IS_ACCOUNT_TIME")
+    private String isAccountTime;
+
+    public static final String TIME_LIMIT_TYPE_IGNORE    = "I";
+    public static final String TIME_LIMIT_TYPE_NONE      = "N";
+    public static final String TIME_LIMIT_TYPE_FIX       = "F";
+    public static final String TIME_LIMIT_TYPE_CYCLE     = "C";
+    public static final String TIME_LIMIT_TYPE_HIERARCHICAL = "H";
+    /**
+     * 期限类别 I ： 未设置（ignore 在流转线上默认 ）、
+     * N 无 (无期限 none 默认) 、
+     * F 每实例固定期限 fix 、
+     * C 节点固定期限  cycle、
+     * H 继承上一个节点剩余时间 hierarchical。
      */
     @Column(name = "LIMIT_TYPE")
     private String limitType;
@@ -190,8 +210,6 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "EXPIRE_OPT")
     private String expireOpt;
 
-    @Column(name = "IS_ACCOUNT_TIME")
-    private String isAccountTime;
 
     public static final String NODE_NOTICE_TYPE_NONE  = "N";
     public static final String NODE_NOTICE_TYPE_DEFAULT  = "D";

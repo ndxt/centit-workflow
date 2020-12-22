@@ -38,15 +38,18 @@ public class FlowTransition implements java.io.Serializable {
     private String endNodeId;
     @Column(name = "TRANS_CONDITION")
     private String transCondition;
+
     /**
-     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。
+     * 期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、
+     * C 节点固定期限  cycle、 H 继承上一个节点剩余时间 hierarchical。
+     * @see com.centit.workflow.po.NodeInfo
      */
     @Column(name = "LIMIT_TYPE")
     private String limitType;
     @Column(name = "TIME_LIMIT")
     private String timeLimit;
     /**
-     * 改是否记入时间 T/F  I 忽略
+     * 改是否记入时间 T / F  I 忽略
      */
     @Column(name = "IS_ACCOUNT_TIME")
     private String isAccountTime;
