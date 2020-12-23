@@ -256,16 +256,19 @@ CREATE TABLE `wf_optinfo` (
 -- ----------------------------
 -- Table structure for wf_optpage
 -- ----------------------------
-DROP TABLE IF EXISTS `wf_optpage`;
-CREATE TABLE `wf_optpage` (
-  `opt_code` varchar(32)  not null,
-  `opt_id` varchar(32) not NULL ,
-  `opt_name` varchar(128) not NULL,
-  `opt_method` varchar(50) ,
-  `update_date` date DEFAULT NULL,
-  `page_url` varchar(500) ,
-  `page_type` char(1),
-  PRIMARY KEY (`opt_code`)
+DROP TABLE IF EXISTS `WF_OPTPAGE`;
+CREATE TABLE `WF_OPTPAGE` (
+  `OPT_CODE` VARCHAR(32)  NOT NULL,
+  `OPT_ID` VARCHAR(32) NOT NULL ,
+  `OPT_NAME` VARCHAR(128) NOT NULL,
+  `OS_ID` VARCHAR(32),
+  `OWNER_UNIT` VARCHAR(32),
+  `OPT_METHOD` VARCHAR(50) ,
+  `OPT_PARAMS` VARCHAR(2000) ,
+  `UPDATE_DATE` DATE DEFAULT NULL,
+  `PAGE_URL` VARCHAR(500) ,
+  `PAGE_TYPE` CHAR(1),
+  PRIMARY KEY (`OPT_CODE`)
 ) ;
 
 -- ----------------------------

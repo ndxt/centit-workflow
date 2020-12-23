@@ -20,8 +20,6 @@ drop table if exists WF_NODE_INSTANCE;
 
 drop table if exists WF_ROLE_RELEGATE;
 
-drop table if exists WF_ROUTER_NODE;
-
 drop table if exists WF_RUNTIME_WARNING;
 
 drop table if exists WF_STAGE_INSTANCE;
@@ -250,25 +248,6 @@ create table WF_ROLE_RELEGATE
    Record_Date          datetime,
    grant_Desc           varchar(256),
    primary key (RELEGATE_NO)
-);
-
-create table WF_ROUTER_NODE
-(
-   NODEID               numeric(12,0) not null comment '��һ������Ľڵ㴴���ڵ㣨000001��������Ӧ��Ȩ�����������Ƿ��������Ȩ��',
-   WFCODE               varchar(32) comment 'ͬһ�����������Ӧ��ֻ��һ����Ч�İ汾',
-   VERSION              numeric(4,0),
-   ROUTERTYPE           varchar(1) not null comment 'D:��֧ E:���  G ��ʵ���ڵ�  H����  R ����',
-   NODENAME             varchar(120),
-   NODEDESC             varchar(500),
-   ROLETYPE             varchar(8) comment 'xz gw bj  en',
-   ROLECODE             varchar(32),
-   UNITEXP              varchar(64),
-   POWEREXP             varchar(512),
-   SELFDEFPARAM         varchar(512) comment '�Զ�����������ڶ�ʵ���ڵ�ķ�֧',
-   convergeType         char(1) comment '���ж���ɣ� ������X��ɣ�������Xδ��ɣ���ɱ��ʴﵽX �� �Ⲻ�ж�',
-   convergeParam        varchar(64),
-   OPTBEAN              varchar(100) comment '�Զ�ִ�нڵ���Ҫ',
-   primary key (NODEID)
 );
 
 create table WF_RUNTIME_WARNING

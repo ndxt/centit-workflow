@@ -25,6 +25,18 @@ public class FlowOptPage implements java.io.Serializable {
     @Column(name = "OPT_CODE")
     @ValueGenerator(strategy = GeneratorType.UUID)
     private String optCode;
+
+    /**
+     * 对应应用的application_id用于应用隔离
+     */
+    @Column(name = "OS_ID")
+    private String osId;
+
+    /**
+     * 对应于租户id，用户应用隔离
+     */
+    @Column(name = "OWNER_UNIT")
+    private String ownerUnit;
     /**
      * 和flowOptInfo关联
      */

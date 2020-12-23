@@ -52,10 +52,6 @@ public class FlowInfo implements java.io.Serializable {
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String firstNodeId;
 
-    @Column(name = "OS_ID")
-    @Length(max = 32, message = "字段长度不能大于{max}")
-    private String osId;
-
     @Column(name = "OPT_ID")
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String optId;
@@ -464,14 +460,6 @@ public class FlowInfo implements java.io.Serializable {
         return res;
     }
 
-    public String getOsId() {
-        return osId;
-    }
-
-    public void setOsId(String osId) {
-        this.osId = osId;
-    }
-
     public String getFirstNodeId() {
         return firstNodeId;
     }
@@ -546,7 +534,6 @@ public class FlowInfo implements java.io.Serializable {
         this.timeLimit = other.getTimeLimit();
         this.expireOpt = other.getExpireOpt();
         this.atPublishDate = other.getAtPublishDate();
-        this.osId = other.getOsId();
         //this.replaceFlowStages(other.getFlowStages());
     }
 
@@ -578,8 +565,6 @@ public class FlowInfo implements java.io.Serializable {
             this.expireOpt = other.getExpireOpt();
         if(other.getAtPublishDate() != null)
             this.atPublishDate = other.getAtPublishDate();
-        if (other.getOsId()!=null)
-            this.osId = other.getOsId();
         /*if(other.getFlowStages() !=null)
             this.replaceFlowStages(other.getFlowStages());*/
     }
@@ -603,8 +588,6 @@ public class FlowInfo implements java.io.Serializable {
             this.flowPublishDate = other.getFlowPublishDate();
         if( this.getFirstNodeId() == null)
             this.firstNodeId = other.getFirstNodeId();
-        if (this.getOsId() ==null)
-            this.osId = other.getOsId();
         if( this.getOptId() == null)
             this.optId = other.getOptId();
         if( this.getTimeLimit() == null)
@@ -626,7 +609,6 @@ public class FlowInfo implements java.io.Serializable {
         this.flowDesc =null;
         this.flowXmlDesc = null;
         this.flowPublishDate =null;
-        this.osId = null;
         this.optId = null;
         this.firstNodeId = null;
         this.timeLimit = null;

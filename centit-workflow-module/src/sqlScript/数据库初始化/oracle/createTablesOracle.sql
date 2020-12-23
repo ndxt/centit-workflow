@@ -28,8 +28,6 @@ drop table WF_NODE_INSTANCE cascade constraints;
 
 drop table WF_ROLE_RELEGATE cascade constraints;
 
-drop table WF_ROUTER_NODE cascade constraints;
-
 drop table WF_RUNTIME_WARNING cascade constraints;
 
 drop table WF_STAGE_INSTANCE cascade constraints;
@@ -293,7 +291,7 @@ comment on column WF_MANAGE_ACTION.ACTIONTYPE is
 '对流程管理操作用大写字母，对节点管理操作用小写字母
   S s: 状态变更， 超时唤醒、 使失效、 使一个正常的节点变为游离状态 、 是游离节点失效
   c: 创建节点  、创建一个游离节点 创建（任意）指定节点
-  R  : 流转管理，包括  强行回退  、强行提交   
+  R  : 流转管理，包括  强行回退  、强行提交
   T t: 期限管理 、 设置期限
   a: 节点任务管理  分配任务、  删除任务 、  禁用任务
   U u: 变更属性''';
@@ -309,13 +307,13 @@ create table WF_NODE  (
    OPTBEAN              VARCHAR2(100),
    OPTPARAM             VARCHAR2(100),
    SUBWFCODE            VARCHAR2(8),
-   ROUTERTYPE           VARCHAR2(1)                    
+   ROUTERTYPE           VARCHAR2(1)
       constraint CKC_ROUTERTYPE_WF_NODE check (ROUTERTYPE is null or (ROUTERTYPE in ('D','E','G','H','R','S'))),
    ROLETYPE             VARCHAR2(8),
    ROLECODE             VARCHAR2(32),
    UNITEXP              VARCHAR2(64),
    POWEREXP             VARCHAR2(512),
-   multiInstType        CHAR                           
+   multiInstType        CHAR
       constraint CKC_MULTIINSTTYPE_WF_NODE check (multiInstType is null or (multiInstType in ('D','U','V'))),
    multiInstParam       VARCHAR2(512),
    convergeType         CHAR,
@@ -327,7 +325,7 @@ create table WF_NODE  (
    inheritType          CHAR,
    inheritNodeCode      VARCHAR2(20),
    ExpireOpt            CHAR,
-   WarningRule          CHAR                           
+   WarningRule          CHAR
       constraint CKC_WARNINGRULE_WF_NODE check (WarningRule is null or (WarningRule in ('R','L','P'))),
    WarningParam         VARCHAR2(20),
    isTrunkLine          CHAR,
@@ -435,7 +433,7 @@ comment on column WF_NODE_INSTANCE.promiseTime is
 '承诺时间 1天8小时，1小时60 分钟 这儿按照分钟计算';
 
 comment on column WF_NODE_INSTANCE.NODESTATE is
-'     * N 正常  B 已回退    C 完成   F被强制结束 
+'     * N 正常  B 已回退    C 完成   F被强制结束
      * P 暂停   W 等待子流程返回   S 等等前置节点（可能是多个）完成';
 
 comment on column WF_NODE_INSTANCE.ROLETYPE is
@@ -469,53 +467,14 @@ create table WF_ROLE_RELEGATE  (
 comment on column WF_ROLE_RELEGATE.ISVALID is
 'T:生效 F:无效';
 
-create table WF_ROUTER_NODE  (
-   NODEID               NUMBER(12)                      not null,
-   WFCODE               VARCHAR2(8),
-   VERSION              NUMBER(4),
-   ROUTERTYPE           VARCHAR2(1)                     not null,
-   NODENAME             VARCHAR2(120),
-   NODEDESC             VARCHAR2(500),
-   ROLETYPE             VARCHAR2(8),
-   ROLECODE             VARCHAR2(32),
-   UNITEXP              VARCHAR2(64),
-   POWEREXP             VARCHAR2(512),
-   SELFDEFPARAM         VARCHAR2(512),
-   convergeType         CHAR,
-   convergeParam        VARCHAR2(64),
-   OPTBEAN              VARCHAR2(100),
-   constraint PK_WF_ROUTER_NODE primary key (NODEID)
-);
-
-comment on column WF_ROUTER_NODE.NODEID is
-'有一个特殊的节点创建节点（000001），它对应的权限用来检验是否有申请的权利';
-
-comment on column WF_ROUTER_NODE.WFCODE is
-'同一个代码的流程应该只有一个有效的版本';
-
-comment on column WF_ROUTER_NODE.ROUTERTYPE is
-'D:分支 E:汇聚  G 多实例节点  H并行  R 游离';
-
-comment on column WF_ROUTER_NODE.ROLETYPE is
-'xz gw bj  en';
-
-comment on column WF_ROUTER_NODE.SELFDEFPARAM is
-'自定义变量表达，用于多实例节点的分支';
-
-comment on column WF_ROUTER_NODE.convergeType is
-'所有都完成， 至少有X完成，至多有X未完成，完成比率达到X ， 外埠判断';
-
-comment on column WF_ROUTER_NODE.OPTBEAN is
-'自动执行节点需要';
-
 create table WF_RUNTIME_WARNING  (
    WARNINGID            NUMBER(12)                      not null,
    WFINSTID             NUMBER(12),
    NODEINSTID           NUMBER(12)                      not null,
    FLOWSTAGE            VARCHAR2(4),
-   OBJTYPE              CHAR                           
+   OBJTYPE              CHAR
       constraint CKC_OBJTYPE_WF_RUNTI check (OBJTYPE is null or (OBJTYPE in ('F','N','P'))),
-   WARNINGTYPE          CHAR                           
+   WARNINGTYPE          CHAR
       constraint CKC_WARNINGTYPE_WF_RUNTI check (WARNINGTYPE is null or (WARNINGTYPE in ('W','A','N','O'))),
    WARNINGSTATE         CHAR                           default 'N'
       constraint CKC_WARNINGSTATE_WF_RUNTI check (WARNINGSTATE is null or (WARNINGSTATE in ('D','C','F','N'))),
@@ -542,7 +501,7 @@ comment on column WF_RUNTIME_WARNING.WARNINGSTATE is
 'D 摘牌 C 纠正 F 督办 N 未处理';
 
 comment on column WF_RUNTIME_WARNING.WARNINGCODE is
-'ALTER_EXPIRED  : 时间超期报警 
+'ALTER_EXPIRED  : 时间超期报警
 WARN_EXPIRED  : 时间超期预警';
 
 comment on column WF_RUNTIME_WARNING.NOTICESTATE is
@@ -672,12 +631,12 @@ select a.WFCODE,
    a.OptID,
    a.WFPublishDate,
    a.ATPUBLISHDATE
-from (select wfcode, max(version) as version 
-            from wf_flow_define group by wfcode) 
-    lastVersion 
-    join wf_flow_define a     
-       on a.wfcode = lastVersion.wfcode and a.version=0 
-    join wf_flow_define b 
+from (select wfcode, max(version) as version
+            from wf_flow_define group by wfcode)
+    lastVersion
+    join wf_flow_define a
+       on a.wfcode = lastVersion.wfcode and a.version=0
+    join wf_flow_define b
        on lastVersion.wfcode = b.wfcode and lastVersion.version=b.version;
 
 comment on column F_V_LASTVERSIONFLOW.WFCODE is
@@ -712,9 +671,9 @@ from F_OPTDEF b join f_optinfo c
  where c.OptType = 'W'
    and c.opturl <> '...' and b.optreq is not null
 ;
-   
+
 create or replace view V_INNER_USER_TASK_LIST as
-select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, nvl(a.UnitCode,nvl(w.UnitCode,'0000000')) as UnitCode, 
+select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, nvl(a.UnitCode,nvl(w.UnitCode,'0000000')) as UnitCode,
         a.usercode,c.ROLETYPE,c.ROLECODE,'一般任务' as AUTHDESC, c.nodecode,
           c.NodeName,c.NodeType,c.OptType as NODEOPTTYPE,d.optid,d.OptName,d.OptName as MethodName,
           d.optdefurl as OptUrl,d.optMethod,c.OptParam ,d.OptDesc,a.CREATETIME,a.PromiseTime,a.TIMELIMIT,
@@ -722,10 +681,10 @@ select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, nvl(a
 from WF_NODE_INSTANCE a join WF_FLOW_INSTANCE w on (a.WFINSTID=w.WFINSTID)
            join WF_NODE c on (a.NODEID=c.NODEID)
            join f_v_wf_optdef_url_map d on (c.OPTCODE=d.OPTCODE)
-where /*c.NODETYPE<>'R' and --游离节点不会创建时实例*/ 
+where /*c.NODETYPE<>'R' and --游离节点不会创建时实例*/
     a.NODESTATE='N' and w.INSTSTATE='N' and a.TASKASSIGNED='S'
 union all
-select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, nvl(a.UnitCode,nvl(w.UnitCode,'0000000')) as UnitCode, 
+select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, nvl(a.UnitCode,nvl(w.UnitCode,'0000000')) as UnitCode,
         b.usercode,b.ROLETYPE,b.ROLECODE,b.AUTHDESC, c.nodecode,
           c.NodeName,c.NodeType,c.OptType as NODEOPTTYPE,d.optid,d.OptName,d.OptName as MethodName,
           d.optdefurl as OptUrl,d.optMethod,c.OptParam ,d.OptDesc,a.CREATETIME,a.PromiseTime,a.TIMELIMIT,
@@ -758,18 +717,18 @@ create or replace view V_USER_TASK_LIST as
 from
    (select a.WFINSTID,a.WFCODE,a.version, a.WfOptName, a.wfOptTag, a.nodeinstid, a.UnitCode, a.usercode, a.ROLETYPE, a.ROLECODE,
      a.AUTHDESC,a.nodecode, a.NodeName, a.NodeType, a.NODEOPTTYPE, a.optid, a.OptName, a.MethodName, a.OptUrl, a.optMethod,
-      a.OptParam, a.OptDesc, a.CREATETIME, a.promisetime, a.timelimit,  a.OPTCODE, a.ExpireOpt, a.STAGECODE, 
+      a.OptParam, a.OptDesc, a.CREATETIME, a.promisetime, a.timelimit,  a.OPTCODE, a.ExpireOpt, a.STAGECODE,
       null as GRANTOR, a.lastupdateuser, a.lastupdatetime ,  a.inststate
-  from V_INNER_USER_TASK_LIST a 
-  union select a.WFINSTID,a.WFCODE,a.version, a.WfOptName, a.wfOptTag, a.nodeinstid, a.UnitCode, b.grantee as usercode, a.ROLETYPE, a.ROLECODE, 
-    a.AUTHDESC,a.nodecode, a.NodeName, a.NodeType, a.NODEOPTTYPE, a.optid, a.OptName, a.MethodName, a.OptUrl, a.optMethod, 
-    a.OptParam, a.OptDesc, a.CREATETIME, a.promisetime, a.timelimit, a.OPTCODE, a.ExpireOpt, a.STAGECODE, 
+  from V_INNER_USER_TASK_LIST a
+  union select a.WFINSTID,a.WFCODE,a.version, a.WfOptName, a.wfOptTag, a.nodeinstid, a.UnitCode, b.grantee as usercode, a.ROLETYPE, a.ROLECODE,
+    a.AUTHDESC,a.nodecode, a.NodeName, a.NodeType, a.NODEOPTTYPE, a.optid, a.OptName, a.MethodName, a.OptUrl, a.optMethod,
+    a.OptParam, a.OptDesc, a.CREATETIME, a.promisetime, a.timelimit, a.OPTCODE, a.ExpireOpt, a.STAGECODE,
     b.GRANTOR, a.lastupdateuser, a.lastupdatetime ,  a.inststate
-    from V_INNER_USER_TASK_LIST a, WF_ROLE_RELEGATE b 
-    where b.IsValid = 'T' and b.RELEGATETIME <= sysdate and 
-          ( b.EXPIRETIME is null or b.EXPIRETIME >= sysdate) and 
-          a.usercode = b.GRANTOR and ( b.UNITCODE is null or b.UNITCODE = a.UnitCode) 
-          and ( b.ROLETYPE is null or ( b.ROLETYPE = a.ROLETYPE and ( b.ROLECODE is null or b.ROLECODE = a.ROLECODE) ) )) 
+    from V_INNER_USER_TASK_LIST a, WF_ROLE_RELEGATE b
+    where b.IsValid = 'T' and b.RELEGATETIME <= sysdate and
+          ( b.EXPIRETIME is null or b.EXPIRETIME >= sysdate) and
+          a.usercode = b.GRANTOR and ( b.UNITCODE is null or b.UNITCODE = a.UnitCode)
+          and ( b.ROLETYPE is null or ( b.ROLETYPE = a.ROLETYPE and ( b.ROLECODE is null or b.ROLECODE = a.ROLECODE) ) ))
       t;
 
 create or replace view v_node_instdetail as

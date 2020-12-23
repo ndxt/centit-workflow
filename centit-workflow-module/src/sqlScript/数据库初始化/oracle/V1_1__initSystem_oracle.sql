@@ -391,45 +391,6 @@ create table WF_ROLE_RELEGATE  (
 comment on column WF_ROLE_RELEGATE.IS_VALID is
 'T:��Ч F:��Ч';
 
-create table WF_ROUTER_NODE  (
-   NODEID               NUMBER(12,0)                    not null,
-   WFCODE               VARCHAR2(32),
-   VERSION              NUMBER(4,0),
-   ROUTERTYPE           VARCHAR2(1)                     not null,
-   NODENAME             VARCHAR2(120),
-   NODEDESC             VARCHAR2(500),
-   ROLETYPE             VARCHAR2(8),
-   ROLECODE             VARCHAR2(32),
-   UNITEXP              VARCHAR2(64),
-   POWEREXP             VARCHAR2(512),
-   SELFDEFPARAM         VARCHAR2(512),
-   convergeType       CHAR(1),
-   convergeParam      VARCHAR2(64),
-   OPTBEAN              VARCHAR2(100),
-   constraint PK_WF_ROUTER_NODE primary key (NODEID)
-);
-
-comment on column WF_ROUTER_NODE.NODEID is
-'��һ������Ľڵ㴴���ڵ㣨000001��������Ӧ��Ȩ�����������Ƿ��������Ȩ��';
-
-comment on column WF_ROUTER_NODE.WFCODE is
-'ͬһ�����������Ӧ��ֻ��һ����Ч�İ汾';
-
-comment on column WF_ROUTER_NODE.ROUTERTYPE is
-'D:��֧ E:���  G ��ʵ���ڵ�  H����  R ����';
-
-comment on column WF_ROUTER_NODE.ROLETYPE is
-'xz gw bj  en';
-
-comment on column WF_ROUTER_NODE.SELFDEFPARAM is
-'�Զ�����������ڶ�ʵ���ڵ�ķ�֧';
-
-comment on column WF_ROUTER_NODE.convergeType is
-'���ж���ɣ� ������X��ɣ�������Xδ��ɣ���ɱ��ʴﵽX �� �Ⲻ�ж�';
-
-comment on column WF_ROUTER_NODE.OPTBEAN is
-'�Զ�ִ�нڵ���Ҫ';
-
 create table WF_RUNTIME_WARNING  (
    WARNING_ID           NUMBER(12,0)                    not null,
    FLOW_INST_ID         NUMBER(12,0),

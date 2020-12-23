@@ -33,8 +33,6 @@ CREATE TABLE wf_flow_team_role (
 ) ;
 
 
-
-
 CREATE TABLE wf_action_log (
   ACTION_ID number(12,0) NOT NULL,
   NODE_INST_ID number(12,0) DEFAULT NULL,
@@ -46,8 +44,6 @@ CREATE TABLE wf_action_log (
   GRANTOR varchar2(8) DEFAULT NULL,
   PRIMARY KEY (ACTION_ID)
 ) ;
-
-
 
 CREATE TABLE wf_action_task (
   TASK_ID number(12,0) NOT NULL,
@@ -63,6 +59,19 @@ CREATE TABLE wf_action_task (
   PRIMARY KEY (TASK_ID)
 ) ;
 
+CREATE TABLE WF_OPTPAGE (
+    OPT_CODE VARCHAR2(32)  NOT NULL,
+    OPT_ID VARCHAR2(32) NOT NULL ,
+    OPT_NAME VARCHAR2(128) NOT NULL,
+    OS_ID VARCHAR2(32),
+    OWNER_UNIT VARCHAR2(32),
+    OPT_METHOD VARCHAR2(50) ,
+    OPT_PARAMS VARCHAR(2000) ,
+    UPDATE_DATE DATE DEFAULT NULL,
+    PAGE_URL VARCHAR2(500),
+    PAGE_TYPE CHAR(1),
+    PRIMARY KEY (OPT_CODE)
+);
 
 
 CREATE TABLE wf_flow_define (
@@ -249,25 +258,6 @@ CREATE TABLE wf_role_relegate (
   Record_Date date DEFAULT NULL,
   grant_Desc varchar2(256) DEFAULT NULL,
   PRIMARY KEY (RELEGATE_NO)
-) ;
-
-
-CREATE TABLE wf_router_node (
-  NODEID number(12,0) NOT NULL ,
-  WFCODE varchar2(32) DEFAULT NULL ,
-  VERSION number(4,0) DEFAULT NULL,
-  ROUTERTYPE varchar2(1) NOT NULL ,
-  NODENAME varchar2(120) DEFAULT NULL,
-  NODEDESC varchar2(500) DEFAULT NULL,
-  ROLETYPE varchar2(8) DEFAULT NULL ,
-  ROLECODE varchar2(32) DEFAULT NULL,
-  UNITEXP varchar2(64) DEFAULT NULL,
-  POWEREXP varchar2(512) DEFAULT NULL,
-  SELFDEFPARAM varchar2(512) DEFAULT NULL ,
-  convergeType char(1) DEFAULT NULL ,
-  convergeParam varchar2(64) DEFAULT NULL,
-  OPTBEAN varchar2(100) DEFAULT NULL ,
-  PRIMARY KEY (NODEID)
 ) ;
 
 

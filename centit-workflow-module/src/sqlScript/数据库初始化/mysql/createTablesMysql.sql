@@ -28,8 +28,6 @@ drop table  if exists WF_NODE_INSTANCE ;
 
 drop table  if exists WF_ROLE_RELEGATE ;
 
-drop table if exists  WF_ROUTER_NODE ;
-
 drop table  if exists WF_RUNTIME_WARNING ;
 
 drop table  if exists WF_STAGE_INSTANCE ;
@@ -63,31 +61,31 @@ delete from f_mysql_sequence where name='S_WARNING_NO' ;
 
 
 
-INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_FLOWDEFINE', 0, 1);
 
-INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_ACTIONLOGNO', 0, 1);
 
-INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_ACTIONTASKNO', 0, 1);
 
-INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_FLOWDEFNO', 0, 1);
 
-INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_FLOWINSTNO', 0, 1);
 
-INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_MANAGERACTIONNO', 0, 1);
 
-INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_NODEINSTNO', 0, 1);
 
-INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_RELEGATENO', 0, 1);
 
-INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES    
+INSERT INTO f_mysql_sequence (name, currvalue , increment) VALUES
 ('S_WARNING_NO', 0, 1);
 
 
@@ -143,7 +141,7 @@ create table WF_FLOW_DEFINE  (
    constraint PK_WF_FLOW_DEFINE primary key (WFCODE,VERSION)
 );
 
-alter table WF_FLOW_DEFINE comment 
+alter table WF_FLOW_DEFINE comment
 '现有 业务后有流程，一个流程必需绑定到一个业务，否则，无法找到对应的业务变量来进行流转';
 
 
@@ -200,7 +198,7 @@ create table WF_INST_ATTENTION  (
    constraint PK_WF_INST_ATTENTION primary key (userCode, WFINSTID)
 );
 
- alter table WF_INST_ATTENTION comment 
+ alter table WF_INST_ATTENTION comment
 '关注有个问题，就是一个关注人如何才可写多条意见，看来还是要写到 OPT_IDEA_INFO 中
 
 
@@ -214,7 +212,7 @@ create table WF_MANAGE_ACTION  (
    ACTIONTYPE           VARCHAR(2)                     not null comment '对流程管理操作用大写字母，对节点管理操作用小写字母
   S s: 状态变更， 超时唤醒、 使失效、 使一个正常的节点变为游离状态 、 是游离节点失效
   c: 创建节点  、创建一个游离节点 创建（任意）指定节点
-  R  : 流转管理，包括  强行回退  、强行提交   
+  R  : 流转管理，包括  强行回退  、强行提交
   T t: 期限管理 、 设置期限
   a: 节点任务管理  分配任务、  删除任务 、  禁用任务
   U u: 变更属性''',
@@ -238,13 +236,13 @@ create table WF_NODE  (
    OPTBEAN              VARCHAR(100) comment '自动执行节点需要,或者路由判断bean' ,
    OPTPARAM             VARCHAR(100),
    SUBWFCODE            VARCHAR(8) comment '子流程和业务操作只有一个有效，都是为了指定业务节点的活动' ,
-   ROUTERTYPE           VARCHAR(1)                    
+   ROUTERTYPE           VARCHAR(1)
       comment 'D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步' ,
    ROLETYPE             VARCHAR(8) comment 'xz gw bj  en' ,
    ROLECODE             VARCHAR(32),
    UNITEXP              VARCHAR(64),
    POWEREXP             VARCHAR(512),
-   multiInstType        CHAR                           
+   multiInstType        CHAR
       comment 'D 机构， U 人员 ， V 变量' ,
    multiInstParam       VARCHAR(512) comment '自定义变量表达，用于多实例节点的分支',
    convergeType         CHAR comment '所有都完成， 至少有X完成，至多有X未完成，完成比率达到X ， 外埠判断' ,
@@ -258,7 +256,7 @@ create table WF_NODE  (
    inheritType          CHAR comment '0 不集成 1 继承前一个节点 2 继承指定节点' ,
    inheritNodeCode      VARCHAR(20) comment  '继承环节代码'  ,
    ExpireOpt            CHAR comment  'N：通知， O:不处理 ， S：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）' ,
-   WarningRule          CHAR                           
+   WarningRule          CHAR
       comment 'R：运行时间  L:剩余时间 P：比率',
    WarningParam         VARCHAR(20) comment '是一个时间字符串 或者 数值' ,
    isTrunkLine          CHAR comment 'T / F',
@@ -281,7 +279,7 @@ create table WF_NODE_INSTANCE  (
    promiseTime          numeric(10)    comment   '承诺时间 1天8小时，1小时60 分钟 这儿按照分钟计算',
    timeLimit            numeric(10),
    PREVNODEINSTID       numeric(12),
-   NODESTATE            VARCHAR(2)    comment  '     * N 正常  B 已回退    C 完成   F被强制结束 
+   NODESTATE            VARCHAR(2)    comment  '     * N 正常  B 已回退    C 完成   F被强制结束
      * P 暂停   W 等待子流程返回   S 等等前置节点（可能是多个）完成' ,
    SUBWFINSTID          numeric(12),
    UNITCODE             VARCHAR(8),
@@ -315,44 +313,26 @@ create table WF_ROLE_RELEGATE  (
    constraint PK_WF_ROLE_RELEGATE primary key (RELEGATENO)
 );
 
-create table WF_ROUTER_NODE  (
-   NODEID               numeric(12)                      not null     comment  '有一个特殊的节点创建节点（000001），它对应的权限用来检验是否有申请的权利' ,
-   WFCODE               VARCHAR(8)     comment   '同一个代码的流程应该只有一个有效的版本',
-   VERSION              numeric(4),
-   ROUTERTYPE           VARCHAR(1)                     not null    comment   'D:分支 E:汇聚  G 多实例节点  H并行  R 游离',
-   NODENAME             VARCHAR(120),
-   NODEDESC             VARCHAR(500),
-   ROLETYPE             VARCHAR(8)    comment 'xz gw bj  en'  ,
-   ROLECODE             VARCHAR(32),
-   UNITEXP              VARCHAR(64),
-   POWEREXP             VARCHAR(512),
-   SELFDEFPARAM         VARCHAR(512)    comment  '自定义变量表达，用于多实例节点的分支' ,
-   convergeType         CHAR    comment  '所有都完成， 至少有X完成，至多有X未完成，完成比率达到X ， 外埠判断' ,
-   convergeParam        VARCHAR(64),
-   OPTBEAN              VARCHAR(100)    comment   '自动执行节点需要',
-   constraint PK_WF_ROUTER_NODE primary key (NODEID)
-);
-
 create table WF_RUNTIME_WARNING  (
    WARNINGID            numeric(12)                      not null      comment   'sequence : S_WARNING_NO'   ,
    WFINSTID             numeric(12),
    NODEINSTID           numeric(12)                      not null,
    FLOWSTAGE            VARCHAR(4),
-   OBJTYPE              CHAR                           
-    
+   OBJTYPE              CHAR
+
             comment   'F ： 工作流 N ：节点 P：阶段'   ,
-   WARNINGTYPE          CHAR                           
-   
+   WARNINGTYPE          CHAR
+
             comment     'W，预警  A  报警 N 提醒  O 其他'   ,
    WARNINGSTATE         CHAR                           default 'N'
-          
+
              comment       'D 摘牌 C 纠正 F 督办 N 未处理'  ,
-   WARNINGCODE          VARCHAR(16)       comment    'ALTER_EXPIRED  : 时间超期报警 
+   WARNINGCODE          VARCHAR(16)       comment    'ALTER_EXPIRED  : 时间超期报警
 WARN_EXPIRED  : 时间超期预警'    ,
    WARNINGTIME          DATE,
    WARNINGIDMSG         VARCHAR(500),
    NOTICESTATE          CHAR                           default '0'
-      
+
             comment        '0 待发送 1 已发送 2 发送消息失败',
    SENDMSGTIME          DATE,
    SENDUSERS            VARCHAR(100)       comment   '可以是多个人用逗号隔开'     ,
@@ -409,7 +389,7 @@ create table WF_TRANSITION  (
    inheritType          CHAR       comment   '0 不集成 1 继承前一个节点 2 继承指定节点',
    inheritNodeCode      VARCHAR(20)       comment   '继承环节代码',
    canignore            CHAR                           default 'T' not null
-    
+
              comment  'T可以忽略 F 不可以忽略  是否可以忽略运行' ,
    constraint PK_WF_TRANSITION primary key (TRANSID)
 );
@@ -435,10 +415,10 @@ create table WF_organize  (
 );
 
 create or replace view F_V_LASTVERSIONFLOW_temp as
-select wfcode, max(version) as version 
+select wfcode, max(version) as version
             from wf_flow_define group by wfcode;
-           
-            
+
+
 create or replace view F_V_LASTVERSIONFLOW as
 select a.WFCODE,
    b.version,
@@ -453,10 +433,10 @@ select a.WFCODE,
    a.WFPublishDate,
    a.ATPUBLISHDATE
 from F_V_LASTVERSIONFLOW_temp
-    lastVersion 
-    join wf_flow_define a     
-       on a.wfcode = lastVersion.wfcode and a.version=0 
-    join wf_flow_define b 
+    lastVersion
+    join wf_flow_define a
+       on a.wfcode = lastVersion.wfcode and a.version=0
+    join wf_flow_define b
        on lastVersion.wfcode = b.wfcode and lastVersion.version=b.version;
 
 create or replace view f_v_wf_optdef_url_map as
@@ -467,9 +447,9 @@ from F_OPTDEF b join f_optinfo c
  where c.OptType = 'W'
    and c.opturl <> '...' and b.optreq is not null
 ;
-   
+
 create or replace view V_INNER_USER_TASK_LIST as
-select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, ifnull(a.UnitCode,ifnull(w.UnitCode,'0000000')) as UnitCode, 
+select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, ifnull(a.UnitCode,ifnull(w.UnitCode,'0000000')) as UnitCode,
         a.usercode,c.ROLETYPE,c.ROLECODE,'一般任务' as AUTHDESC, c.nodecode,
           c.NodeName,c.NodeType,c.OptType as NODEOPTTYPE,d.optid,d.OptName,d.OptName as MethodName,
           d.optdefurl as OptUrl,d.optMethod,c.OptParam ,d.OptDesc,a.CREATETIME,a.PromiseTime,a.TIMELIMIT,
@@ -477,10 +457,10 @@ select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, ifnul
 from WF_NODE_INSTANCE a join WF_FLOW_INSTANCE w on (a.WFINSTID=w.WFINSTID)
            join WF_NODE c on (a.NODEID=c.NODEID)
            join f_v_wf_optdef_url_map d on (c.OPTCODE=d.OPTCODE)
-where /*c.NODETYPE<>'R' and --游离节点不会创建时实例*/ 
+where /*c.NODETYPE<>'R' and --游离节点不会创建时实例*/
     a.NODESTATE='N' and w.INSTSTATE='N' and a.TASKASSIGNED='S'
 union all
-select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, ifnull(a.UnitCode,ifnull(w.UnitCode,'0000000')) as UnitCode, 
+select a.WFINSTID,w.WFCODE,w.version, w.WfOptName,w.wfOptTag,a.nodeinstid, ifnull(a.UnitCode,ifnull(w.UnitCode,'0000000')) as UnitCode,
         b.usercode,b.ROLETYPE,b.ROLECODE,b.AUTHDESC, c.nodecode,
           c.NodeName,c.NodeType,c.OptType as NODEOPTTYPE,d.optid,d.OptName,d.OptName as MethodName,
           d.optdefurl as OptUrl,d.optMethod,c.OptParam ,d.OptDesc,a.CREATETIME,a.PromiseTime,a.TIMELIMIT,
@@ -508,17 +488,17 @@ where a.NODESTATE='N' and w.INSTSTATE='N'  and a.TASKASSIGNED='D' and
 create or replace view V_USER_TASK_LIST as
 select round(round(rand(),8)*100000000) as taskid,a.WFINSTID,a.WFCODE,a.version, a.WfOptName as WFNAME, a.WfOptName,a.wfOptTag, a.nodeinstid, a.UnitCode, a.usercode, a.ROLETYPE, a.ROLECODE,
      a.AUTHDESC,a.nodecode, a.NodeName, a.NodeType, a.NODEOPTTYPE, a.optid, a.OptName, a.MethodName, a.OptUrl, a.optMethod,
-      a.OptParam, a.OptDesc, a.CREATETIME, a.promisetime, a.timelimit,  a.OPTCODE, a.ExpireOpt, a.STAGECODE, 
+      a.OptParam, a.OptDesc, a.CREATETIME, a.promisetime, a.timelimit,  a.OPTCODE, a.ExpireOpt, a.STAGECODE,
       null as GRANTOR, a.lastupdateuser, a.lastupdatetime ,  a.inststate
-  from V_INNER_USER_TASK_LIST a 
-  union select round(round(rand(),8)*100000000) as taskid,a.WFINSTID,a.WFCODE,a.version, a.WfOptName as WFNAME, a.WfOptName,a.wfOptTag, a.nodeinstid, a.UnitCode, b.grantee as usercode, a.ROLETYPE, a.ROLECODE, 
-    a.AUTHDESC,a.nodecode, a.NodeName, a.NodeType, a.NODEOPTTYPE, a.optid, a.OptName, a.MethodName, a.OptUrl, a.optMethod, 
-    a.OptParam, a.OptDesc, a.CREATETIME, a.promisetime, a.timelimit, a.OPTCODE, a.ExpireOpt, a.STAGECODE, 
+  from V_INNER_USER_TASK_LIST a
+  union select round(round(rand(),8)*100000000) as taskid,a.WFINSTID,a.WFCODE,a.version, a.WfOptName as WFNAME, a.WfOptName,a.wfOptTag, a.nodeinstid, a.UnitCode, b.grantee as usercode, a.ROLETYPE, a.ROLECODE,
+    a.AUTHDESC,a.nodecode, a.NodeName, a.NodeType, a.NODEOPTTYPE, a.optid, a.OptName, a.MethodName, a.OptUrl, a.optMethod,
+    a.OptParam, a.OptDesc, a.CREATETIME, a.promisetime, a.timelimit, a.OPTCODE, a.ExpireOpt, a.STAGECODE,
     b.GRANTOR, a.lastupdateuser, a.lastupdatetime ,  a.inststate
-    from V_INNER_USER_TASK_LIST a, WF_ROLE_RELEGATE b 
-    where b.IsValid = 'T' and b.RELEGATETIME <= now() and 
-          ( b.EXPIRETIME is null or b.EXPIRETIME >= now()) and 
-          a.usercode = b.GRANTOR and ( b.UNITCODE is null or b.UNITCODE = a.UnitCode) 
+    from V_INNER_USER_TASK_LIST a, WF_ROLE_RELEGATE b
+    where b.IsValid = 'T' and b.RELEGATETIME <= now() and
+          ( b.EXPIRETIME is null or b.EXPIRETIME >= now()) and
+          a.usercode = b.GRANTOR and ( b.UNITCODE is null or b.UNITCODE = a.UnitCode)
           and ( b.ROLETYPE is null or ( b.ROLETYPE = a.ROLETYPE and ( b.ROLECODE is null or b.ROLECODE = a.ROLECODE) ) )
       ;
 
