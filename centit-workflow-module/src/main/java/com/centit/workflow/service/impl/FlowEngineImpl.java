@@ -1126,6 +1126,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //校验节点状态 流程和节点状态都要为正常
         if (!"N,M".contains(flowInst.getInstState()) ||
             (!"N".equals(nodeInst.getNodeState())
+                && !"T".equals(nodeInst.getNodeState()) // 同步节点状态
                 && !"W".equals(nodeInst.getNodeState()) // 等待子流程返回
             )) {
             logger.error("流程节点状态不正确，流程：" + nodeInst.getFlowInstId() + " 状态：" + flowInst.getInstState() +
