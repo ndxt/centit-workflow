@@ -340,6 +340,15 @@ public class NodeInfo implements java.io.Serializable {
         this.optCode = messageCode;
     }
 
+    public String getSyncTimeDesc(){
+        return this.timeLimit;
+    }
+
+    public void setSyncTimeDesc(String syncTimeDesc){
+        this.timeLimit = syncTimeDesc;
+    }
+
+
     public void copy(NodeInfo other) {
         //this.setNodeId(other.getNodeId());
         this.setFlowDefine(other.getFlowDefine());
