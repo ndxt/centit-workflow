@@ -291,18 +291,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
 
         newFlowDef.setFlowStages(newStages);
-        for (NodeInfo nd : newFlowDef.getNodeList()) {
-            /*if (nd.getNodeId().equals(flowData.firstNodeId)) {
-                nd.setNodeType("B");//首届点
-            }*/
-            if (StringUtils.isBlank(nd.getOsId())) {
-                nd.setOsId(flowDef.getOsId());
-            }
-        }
+
         resetNodeTransIdToJSON(flowDef.getFlowXmlDesc(), newFlowDef, flowData);
         // 保存新版本的流程,状态设置为正常
         newFlowDef.setFlowDesc(flowDef.getFlowDesc());
-        newFlowDef.setOsId(flowDef.getOsId());
         newFlowDef.setFlowName(flowDef.getFlowName());
         newFlowDef.setFlowClass(flowDef.getFlowClass());
         newFlowDef.setOptId(flowDef.getOptId());
