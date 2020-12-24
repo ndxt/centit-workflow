@@ -4,6 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.util.*;
@@ -256,11 +257,23 @@ public class NodeInstance implements java.io.Serializable {
     /**
      *
      * N 正常  B 已回退    C 完成   F被强制结束
+     * T 同步节点等待 事件触发
      * P 暂停   W 等待子流程返回   S 等等前置节点（可能是多个）完成
      */
     public String getNodeState() {
         return this.nodeState;
     }
+
+    public boolean checkIsInRunning(){
+        return StringUtils.equalsAny(this.nodeState,
+            "N","W","T");
+    }
+
+    public boolean checkIsNotCompleted(){
+        return StringUtils.equalsAny(this.nodeState,
+            "N","W","T","S","P");
+    }
+
     /**
      *
      * N 正常  B 已回退    C 完成   F被强制结束

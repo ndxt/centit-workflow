@@ -4,6 +4,7 @@ import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.basedata.NoticeMessage;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.SubmitOptOptions;
@@ -210,20 +211,26 @@ public class FlowTaskImpl {
             for (FlowEventInfo eventInfo : events) {
                 List<NodeInstance> nodes = nodeInstanceDao.listNodeInstByState(eventInfo.getFlowInstId(), "T");
                 boolean hasOptEvent = false;
-                if(nodes != null) {
-                    for (NodeInstance nodeInst : nodes) {
-                        nodeInstanceDao.fetchObjectReference(nodeInst, "node");
-                        if (NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nodeInst.getNode().getNodeSyncType())
-                            && StringUtils.equals(eventInfo.getEventName(), nodeInst.getNode().getMessageCode())) {
-                            Object ret = flowEngine.submitOpt(
-                                SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId()));
-                            eventInfo.setOptResult(StringBaseOpt.castObjectToString(ret));
-                            hasOptEvent = true;
+                String  successOpt = "S";
+                try {
+                    if (nodes != null) {
+                        for (NodeInstance nodeInst : nodes) {
+                            nodeInstanceDao.fetchObjectReference(nodeInst, "node");
+                            if (NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nodeInst.getNode().getNodeSyncType())
+                                && StringUtils.equals(eventInfo.getEventName(), nodeInst.getNode().getMessageCode())) {
+                                hasOptEvent = true;
+                                Object ret = flowEngine.submitOpt(
+                                    SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId()));
+                                eventInfo.setOptResult(StringBaseOpt.castObjectToString(ret));
+                            }
                         }
                     }
+                } catch (ObjectException e){
+                    successOpt= "F";
+                    eventInfo.setOptResult(e.getMessage());
                 }
                 if(hasOptEvent){
-                    eventInfo.setOptState("S");
+                    eventInfo.setOptState(successOpt);
                     eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
                     flowEventService.updateEvent(eventInfo);
                 } else {

@@ -7,13 +7,14 @@ import com.centit.workflow.po.FlowEventInfo;
 import com.centit.workflow.service.FlowEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
 @Service
-@Transactional
+
 public class FlowEventServiceImpl implements FlowEventService {
 
     @Autowired
@@ -28,10 +29,12 @@ public class FlowEventServiceImpl implements FlowEventService {
     }
 
     @Override
+    @Transactional
     public void saveNewEvent(FlowEventInfo event) {
         flowEventDao.saveNewObject(event);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void updateEvent(FlowEventInfo event) {
         flowEventDao.updateObject(event);

@@ -6,6 +6,7 @@ import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
@@ -83,7 +84,7 @@ public class FlowInstance implements java.io.Serializable {
     private Long timeLimit;
     /**
      * 流程状态
-     * N 正常  C 完成  P 暂停 挂起  F 强行结束
+     * N 正常  C 完成  P 暂停 挂起  F 强行结束  M
      */
     @Column(name = "INST_STATE")
     private String instState;
@@ -163,6 +164,9 @@ public class FlowInstance implements java.io.Serializable {
         this.activeNodeList = null;
     }
 
+    public boolean checkIsInRunning(){
+        return StringUtils.equalsAny(this.getInstState(), "N","M");
+    }
 
     public String getPromiseTimeStr() {
         if (promiseTime == null)
@@ -452,9 +456,9 @@ public class FlowInstance implements java.io.Serializable {
         for (NodeInstance nodeInst : flowNodeInstances) {
             String thisToken = nodeInst.getRunToken();
             if (thisToken != null && thisToken.startsWith(token + '.') &&
-                ("N".equals(nodeInst.getNodeState()) || "S".equals(nodeInst.getNodeState()) ||
-                    "W".equals(nodeInst.getNodeState()) || "P".equals(nodeInst.getNodeState())))
+                nodeInst.checkIsNotCompleted()) {
                 sameNodes.add(nodeInst);
+            }
         }
         return sameNodes;
     }
@@ -471,10 +475,10 @@ public class FlowInstance implements java.io.Serializable {
             return sameNodes;
         for (NodeInstance nodeInst : flowNodeInstances) {
             String thisToken = nodeInst.getTrunkToken();
-            if (thisToken != null && thisToken.startsWith(token + '.') &&
-                ("N".equals(nodeInst.getNodeState()) || "S".equals(nodeInst.getNodeState()) ||
-                    "W".equals(nodeInst.getNodeState()) || "P".equals(nodeInst.getNodeState())))
+            if (thisToken != null && thisToken.startsWith(token + '.')
+                && nodeInst.checkIsNotCompleted()) {
                 sameNodes.add(nodeInst);
+            }
         }
         return sameNodes;
     }

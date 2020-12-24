@@ -7,6 +7,7 @@ import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
+import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.framework.model.basedata.NoticeMessage;
 import com.centit.framework.model.basedata.OperationLog;
@@ -456,10 +457,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             context.addUserParam("P", preNode.getUserCode());
         }
         // C 参数指定的，就是提交的人和机构
-        context.addUnitParam( "C",
-            options.getUnitCode() == null ?
-                context.getUserInfoByCode(options.getUserCode()).getPrimaryUnit():
-                options.getUnitCode());
+        String currUnitCode = options.getUnitCode();
+        if(options.getUnitCode()==null && options.getUserCode()!=null){
+            IUserInfo ui = context.getUserInfoByCode(options.getUserCode());
+            if(ui!=null){
+                currUnitCode = ui.getPrimaryUnit();
+            }
+        }
+        context.addUnitParam( "C",currUnitCode);
         context.addUserParam("C",
             options.getUserCode());
         // F 流程的 用户 和 机构
@@ -1124,11 +1129,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     "节点：" + options.getNodeInstId());
         }
         //校验节点状态 流程和节点状态都要为正常
-        if (!"N,M".contains(flowInst.getInstState()) ||
-            (!"N".equals(nodeInst.getNodeState())
-                && !"T".equals(nodeInst.getNodeState()) // 同步节点状态
-                && !"W".equals(nodeInst.getNodeState()) // 等待子流程返回
-            )) {
+        if (!flowInst.checkIsInRunning() || ! nodeInst.checkIsInRunning()) {
             logger.error("流程节点状态不正确，流程：" + nodeInst.getFlowInstId() + " 状态：" + flowInst.getInstState() +
                 "节点：" + options.getNodeInstId() + " 状态：" + nodeInst.getNodeState());
             throw new WorkflowException(WorkflowException.IncorrectNodeState,
@@ -1254,7 +1255,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         synchronized (lockObject) {
             /*WfNodeInstance*/
             nodeInst = nodeInstanceDao.getObjectWithReferences(options.getNodeInstId());
-            if (!"N".equals(nodeInst.getNodeState()) && !"W".equals(nodeInst.getNodeState())) {
+            if (!nodeInst.checkIsInRunning()) {
                 logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
                 throw new WorkflowException(WorkflowException.IncorrectNodeState,
                     "流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
