@@ -989,16 +989,16 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             if (node == null)
                 continue;
             // 不显示 自动执行的节点 和 同步节点 codefan@sina.com 2012-7-8
-            if (NodeInfo.NODE_TYPE_AUTO.equals(node.getNodeType())
+            /*if (NodeInfo.NODE_TYPE_AUTO.equals(node.getNodeType())
                 || NodeInfo.NODE_TYPE_SYNC.equals(node.getNodeType()))
-                continue;
+                continue;*/
 
             nodeInst.setNodeName(node.getNodeName());
-            if (nodeInst.getNodeState().equals("N")) {
+            if (nodeInst.checkIsNotCompleted() && NodeInfo.NODE_TYPE_OPT.equals(node.getNodeType())) {
                 List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(
                     QueryUtils.createSqlParamsMap("nodeInstId", nodeInst.getNodeInstId()), new PageDesc(-1, -1));
 
-                List<String> trainsUsers = new ArrayList<String>();
+                List<String> trainsUsers = new ArrayList<>();
                 String optUrl = null;
                 for (UserTask userTask : taskList) {
                     trainsUsers.add(userTask.getUserCode());
