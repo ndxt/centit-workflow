@@ -2,11 +2,11 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.basedata.NoticeMessage;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
@@ -70,7 +70,7 @@ public class FlowTaskImpl {
     private int sendNotifyMessage(String nodeInstId) {
         List<UserTask> taskList = actionTaskDao
             .listUserTaskByFilter(
-                QueryUtils.createSqlParamsMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
+                CollectionsOpt.createHashMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
         int nn = 0;
         for (UserTask task : taskList) {
             notificationCenter.sendMessage("system",
@@ -207,7 +207,7 @@ public class FlowTaskImpl {
         // 获取所有事件 来处理
         List<FlowEventInfo> events = flowEventService.listEventForOpt(maxRows);
         // 获取所有 时间事件的同步节点
-        if(events!=null) {
+        if(events!=null && events.size()>0) {
             for (FlowEventInfo eventInfo : events) {
                 List<NodeInstance> nodes = nodeInstanceDao.listNodeInstByState(eventInfo.getFlowInstId(), "T");
                 boolean hasOptEvent = false;
