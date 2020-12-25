@@ -26,6 +26,18 @@ public class FlowOptInfo implements java.io.Serializable {
     @ValueGenerator(strategy = GeneratorType.UUID)
     private String optId;
 
+    /**
+     * 对应应用的application_id用于应用隔离
+     */
+    @Column(name = "APPLICATION_ID")
+    private String applicationId;
+
+    /**
+     * 对应于租户id，用户应用隔离
+     */
+    @Column(name = "OWNER_UNIT")
+    private String ownerUnit;
+
     @Column(name = "OPT_NAME")
     private String optName;
 
@@ -45,10 +57,6 @@ public class FlowOptInfo implements java.io.Serializable {
      */
     @Column(name = "TITLE_TEMPLATE")
     private String titleTemplate;
-
-    //自定义表单得模板id
-    @Column(name = "MODEL_ID")
-    private String modelId;
 
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name = "UPDATE_DATE")

@@ -76,21 +76,40 @@ CREATE TABLE wf_action_task (
   PRIMARY KEY (TASK_ID)
 ) ;
 
+
+-- ----------------------------
+-- Table structure for wf_optinfo
+-- ----------------------------
+DROP TABLE IF EXISTS wf_optinfo;
+CREATE TABLE wf_optinfo (
+  OPT_ID varchar(32)  not null,
+  APPLICATION_ID VARCHAR(32),
+  OWNER_UNIT VARCHAR(32),
+  OPT_NAME varchar(100) not null,
+  OPT_URL varchar(500) ,
+  OPT_VIEW_URL varchar(500) ,
+  UPDATE_DATE date DEFAULT CURRENT_TIMESTAMP,
+  TITLE_TEMPLATE varchar(500) ,
+  DEFAULT_FLOW varchar(32),
+  PRIMARY KEY (OPT_ID)
+) ;
+
+-- ----------------------------
+-- Table structure for wf_optpage
+-- ----------------------------
 DROP TABLE IF EXISTS WF_OPTPAGE;
 CREATE TABLE WF_OPTPAGE (
-    OPT_CODE VARCHAR(32)  NOT NULL,
-    OPT_ID VARCHAR(32) NOT NULL ,
-    OPT_NAME VARCHAR(128) NOT NULL,
-    OS_ID VARCHAR(32),
-    OWNER_UNIT VARCHAR(32),
-    OPT_METHOD VARCHAR(50) ,
-    OPT_PARAMS VARCHAR(2000) ,
-    UPDATE_DATE DATE DEFAULT NULL,
-    PAGE_URL VARCHAR(500) ,
-    PAGE_TYPE CHAR(1),
-    PRIMARY KEY (OPT_CODE)
-);
-
+  OPT_CODE VARCHAR(32)  NOT NULL,
+  OPT_ID VARCHAR(32) NOT NULL ,
+  OPT_NAME VARCHAR(128) NOT NULL,
+  PAGE_TYPE CHAR(1),
+  OPT_METHOD VARCHAR(50) ,
+  PAGE_URL VARCHAR(500) ,
+  REQUEST_PARAMS VARCHAR(2000) ,
+  REQUEST_BODY VARCHAR(2000) ,
+  UPDATE_DATE DATE DEFAULT NULL,
+  PRIMARY KEY (OPT_CODE)
+) ;
 
 CREATE TABLE wf_flow_define (
   FLOW_CODE varchar(32) NOT NULL ,

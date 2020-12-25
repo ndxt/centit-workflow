@@ -10,10 +10,7 @@ import com.centit.support.network.HttpExecutorContext;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.dao.OptVariableDefineDao;
-import com.centit.workflow.po.FlowInstance;
-import com.centit.workflow.po.NodeInfo;
-import com.centit.workflow.po.NodeInstance;
-import com.centit.workflow.po.OptVariableDefine;
+import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -36,11 +33,11 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     private OptVariableDefineDao optVariableDefineDao;
     private FlowEngine flowEngine;
 
-    public AutoRunNodeEventSupport(String optUrl, String optParam, String optMethod,
-            FlowEngine flowEngine, OptVariableDefineDao optVariableDefineDao){
-        this.optUrl = optUrl;
-        this.optParam = optParam;
-        this.optMethod = optMethod;
+    public AutoRunNodeEventSupport(FlowOptPage optPage, NodeInfo nodeInfo,
+                                   FlowEngine flowEngine, OptVariableDefineDao optVariableDefineDao){
+        this.optUrl = optPage.getPageUrl();
+        this.optParam = nodeInfo.getOptParam();
+        this.optMethod = optPage.getOptMethod();
         this.flowEngine = flowEngine;
         this.optVariableDefineDao = optVariableDefineDao;
     }
