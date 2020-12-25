@@ -79,13 +79,12 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             String optMethod = optPage.getOptMethod();
             String pageParams = Pretreatment.mapTemplateString(optPage.getRequestParams(), varTrans);
             String nodeParams = Pretreatment.mapTemplateString(nodeInfo.getOptParam(), varTrans);
-            Map<String, Object> paramMap = new HashMap<>();
 
             if(StringUtils.isNotBlank(pageParams)){
                 if("{".equals(Lexer.getFirstWord(pageParams))){
                     Object object = JSON.parseObject(pageParams);
                     if (object instanceof Map) {
-                        paramMap.putAll((Map<String, Object>) object);
+                        params.putAll((Map<String, Object>) object);
                     } else {
                         httpUrl = UrlOptUtils.appendParamToUrl(httpUrl, pageParams);
                     }
@@ -98,7 +97,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
                 if("{".equals(Lexer.getFirstWord(nodeParams))){
                     Object object = JSON.parseObject(nodeParams);
                     if (object instanceof Map) {
-                        paramMap.putAll((Map<String, Object>) object);
+                        params.putAll((Map<String, Object>) object);
                     } else {
                         httpUrl = UrlOptUtils.appendParamToUrl(httpUrl, nodeParams);
                     }
