@@ -972,8 +972,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //执行节点创建后 事件
                 FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
                 NodeEventSupport nodeEventExecutor =
-                    new AutoRunNodeEventSupport(optPage,
-                        nextOptNode,this, optVariableDefineDao);
+                    new AutoRunNodeEventSupport(optPage, nextOptNode,
+                        varTrans, this, optVariableDefineDao);
                 needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst,
                     nextOptNode, options.getUserCode());
             } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nextOptNode.getAutoRunType())){
