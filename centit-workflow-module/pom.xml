@@ -42,11 +42,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-adapter</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-core</artifactId>
             <version>${project.version}</version>

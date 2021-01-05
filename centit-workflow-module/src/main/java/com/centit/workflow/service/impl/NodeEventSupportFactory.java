@@ -1,8 +1,8 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.appclient.AppSession;
-import com.centit.framework.ip.po.OsInfo;
-import com.centit.framework.ip.service.IntegrationEnvironment;
+import com.centit.framework.components.CodeRepositoryUtil;
+import com.centit.framework.model.basedata.IOsInfo;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.service.FlowEngine;
@@ -21,32 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class NodeEventSupportFactory {
 
-    private static IntegrationEnvironment integrationEnvironment = null;
+
     private static ConcurrentHashMap<String, AppSession> appSessionPoolMap = new ConcurrentHashMap<>(10);
 
-    /*public static class DummyNodeEventSupport implements NodeEventSupport{
-
-        @Override
-        public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
-
-        }
-
-        @Override
-        public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
-
-        }
-
-        @Override
-        public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
-            return true;
-        }
-
-        @Override
-        public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst, NodeInfo nodeInfo, String optUserCode)  {
-            return true;
-        }
-    }
-    */
     private static AppSession fetchAppSession(String url){
         String sUrl = StringUtils.isBlank(url)? "blank": url;
         AppSession appSession = appSessionPoolMap.get(sUrl);
@@ -59,12 +36,9 @@ public class NodeEventSupportFactory {
 
     public static NodeEventSupport createNodeEventSupportBean(NodeInfo nodeInfo, FlowEngine flowEngine) {
         WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
-        if (integrationEnvironment == null) {
-            integrationEnvironment = (IntegrationEnvironment) webApplicationContext.getBean("integrationEnvironment");
-        }
 
-        OsInfo osInfo = StringUtils.isBlank(nodeInfo.getOsId()) ?
-            null : integrationEnvironment.getOsInfo(nodeInfo.getOsId());
+        IOsInfo osInfo = StringUtils.isBlank(nodeInfo.getOsId()) ?
+            null : CodeRepositoryUtil.getOsInfo(nodeInfo.getOsId());
 
         if (osInfo != null && StringUtils.isNotBlank(osInfo.getOsUrl())) {
             RemoteBeanNodeEventSupport remoteNodeEventExecutor =
