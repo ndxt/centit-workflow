@@ -22,6 +22,8 @@ public interface RoleFormulaService {
 
     JSONArray viewFormulaUsers(String formula, String userCode, String unitCode);
 
+    JSONArray viewFormulaUnits(String formula, String userCode, String unitCode);
+
     JSONArray viewRoleFormulaUsers(String formulaCode, String userCode, String unitCode);
 
     List<? extends IUserInfo> listAllUserInfo();

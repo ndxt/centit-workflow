@@ -77,6 +77,22 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     }
 
     @Override
+    public JSONArray viewFormulaUnits(String formula, String userCode, String unitCode) {
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        context.addUserParam("C", userCode);
+        context.addUnitParam("C", unitCode);
+        context.addUnitParam("N", unitCode);
+        Set<String> sUnits = UserUnitCalcEngine.calcUnitsByExp(
+            context, formula);
+
+        List<IUnitInfo> userInfos = new ArrayList<>();
+        for(String uc : sUnits){
+            userInfos.add(context.getUnitInfoByCode(uc));
+        }
+        return (JSONArray) JSONArray.toJSON(userInfos);
+    }
+
+    @Override
     public JSONArray viewRoleFormulaUsers(String formulaCode, String userCode, String unitCode) {
         RoleFormula flowRole = flowRoleDao.getObjectById(formulaCode);
         if(flowRole==null){

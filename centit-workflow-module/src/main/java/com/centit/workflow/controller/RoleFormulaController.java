@@ -101,6 +101,22 @@ public class RoleFormulaController extends BaseController {
             WebOptUtils.getCurrentUnitCode(request));
     }
 
+    @ApiOperation(value = "预览权限表达式对应机构", notes =
+        "表达式为itemExp ([或| itemExp][与& itemExp][非! itemExp])的形式，itemExp为下列形式\n" +
+            "D()P()DT()DL()\n" +
+            "* D 根据机构代码过滤 D(机构表达式)\n" +
+            "* P 根据机构代码过滤主要机构\n" +
+            "* DT 根据机构类型过滤 DT(\"角色代码常量\" [,\"角色代码常量\"])\n" +
+            "* DL 根据机构标签过滤 DL(\"角色代码常量\" [,\"角色代码常量\"])])" )
+    @WrapUpResponseBody
+    @RequestMapping(value="/calcUnits",method = RequestMethod.GET)
+    public JSONArray viewFormulaUnits(String formula, HttpServletRequest request){
+        return roleFormulaService.viewFormulaUnits(
+            StringEscapeUtils.unescapeHtml4(formula),
+            WebOptUtils.getCurrentUserCode(request),
+            WebOptUtils.getCurrentUnitCode(request));
+    }
+
     private static List<? extends IUserInfo> truncateUsers(List<? extends IUserInfo> allusers, Integer maxSize){
         if(maxSize==null || maxSize < 1 || allusers == null || allusers.size() <= maxSize){
             return allusers;
