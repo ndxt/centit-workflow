@@ -376,7 +376,7 @@ CREATE  or replace  VIEW f_v_wf_optdef_url_map AS
 */
 
 
-CREATE   or replace VIEW v_inner_user_task_list AS
+CREATE  or replace VIEW v_inner_user_task_list AS
   select a.FLOW_INST_ID AS FLOW_INST_ID,w.FLOW_CODE AS FLOW_CODE,w.VERSION AS version,w.FLOW_Opt_Name AS FLOW_OPT_NAME,
     w.FLOW_Opt_Tag AS FLOW_OPT_TAG,a.NODE_INST_ID AS NODE_INST_ID,nvl(a.UNIT_CODE,nvl(w.UNIT_CODE,'0000000')) AS Unit_Code,a.USER_CODE AS user_code,
     c.ROLE_TYPE AS ROLE_TYPE,c.ROLE_CODE AS ROLE_CODE,'系统指定' AS AUTH_DESC,c.NODE_CODE AS node_code,
@@ -447,10 +447,3 @@ CREATE or replace   VIEW v_user_task_list AS
           and (b.ROLE_TYPE is null or b.ROLE_TYPE = a.ROLE_TYPE)
           and (b.ROLE_CODE is null or b.ROLE_CODE = a.ROLE_CODE)
   )tt;
-
-
-
-
-
-
-
