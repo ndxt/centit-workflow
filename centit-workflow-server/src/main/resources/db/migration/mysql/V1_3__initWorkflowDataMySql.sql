@@ -1,14 +1,12 @@
 ﻿
 INSERT INTO f_datacatalog(catalog_code, catalog_name, catalog_style, catalog_type, catalog_desc, field_desc, update_date, create_date, opt_id, need_cache, creator, updator) VALUES ('WFExpireOpt', '流程预期处理方法', 'S', 'L', 'N：通知， O:不处理 ， S：挂起，E：终止', '流程预期处理方法', null, null, null, '1', null, null);
 
-
 INSERT INTO f_datacatalog (catalog_code, catalog_name, catalog_style, catalog_type, catalog_desc, field_desc, update_date, create_date, opt_id, need_cache, creator, updator) VALUES ('FlowUnitRole', '机构表达式', 'U', 'L', '用户流程机构', null, null, null, null, null, null, null);
 INSERT INTO f_datacatalog (catalog_code, catalog_name, catalog_style, catalog_type, catalog_desc, field_desc, update_date, create_date, opt_id, need_cache, creator, updator) VALUES ('LIMIT_TYPE', '流程期限类别', 'S', 'L', '期限类别 I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle、H 继承上一个节点剩余时间 hierarchical。', '流程预期类别', null, null, null, '1', null, null);
 INSERT INTO f_datacatalog (catalog_code, catalog_name, catalog_style, catalog_type, catalog_desc, field_desc, update_date, create_date, opt_id, need_cache, creator, updator) VALUES ('WfActionType', '流程活动类型', 'S', 'L', '创建流程同时创建首节点  W 创建节点 C 更改数据 U 提交节点 S 挂起节点 A 唤醒节点 R  终止节点 E  唤醒超时节点 X', '流程活动类型', null, null, null, null, null, null);
 INSERT INTO f_datacatalog (catalog_code, catalog_name, catalog_style, catalog_type, catalog_desc, field_desc, update_date, create_date, opt_id, need_cache, creator, updator) VALUES ('WFFlowState', '流程状态', 'S', 'L', 'A 草稿  E 已发布 (A,E仅对0版本有效) B 正常 C 过期 D 禁用', '编码,数值', null, null, null, '1', null, null);
 INSERT INTO f_datacatalog (catalog_code, catalog_name, catalog_style, catalog_type, catalog_desc, field_desc, update_date, create_date, opt_id, need_cache, creator, updator) VALUES ('WFInstType', '流程、节点实例状态', 'S', 'L', 'N 正常/ R 运行(保留)/ C 完成/ S 挂起  / X 超时挂起eXpire / D 强制提交  /B 已回退  /E 因为流程完成而结束 / F 因为流程强制结束而被强制结束 / W 等待子流程返回  / I 失效\r\n ', '流程实例状态', null, null, null, '1', null, null);
 INSERT INTO f_datacatalog (catalog_code, catalog_name, catalog_style, catalog_type, catalog_desc, field_desc, update_date, create_date, opt_id, need_cache, creator, updator) VALUES ('WFRoleType', '流程角色类别', 'S', 'L', '流程角色类别。一共四种 en：引擎，bj：办件 gw：岗位，xz：行政', null, null, null, null, null, null, null);
-
 
 
 INSERT INTO f_datadictionary (catalog_code, data_code, extra_code, extra_code2, data_tag, data_value, data_style, data_desc, last_modify_date, create_date, data_order) VALUES ('FlowUnitRole', 'unitexp1', null, null, 'T', '机构表达式1', 'S', null, null, null, null);

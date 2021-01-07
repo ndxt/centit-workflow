@@ -25,6 +25,7 @@ public class UserTask implements java.io.Serializable {
     private String authDesc;
     private String flowOptName;
     private String flowOptTag;
+
     @DictionaryMap(value="flowCode", fieldName="flowName")
     private String flowCode;
     private String version;
@@ -35,15 +36,19 @@ public class UserTask implements java.io.Serializable {
     private String nodeParam;
     private String optParam;
     private String optCode;
+
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     private String expireOpt;
+
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date lastUpdateTime;
+
     @DictionaryMap(value="userCode", fieldName="lastUpdateUserName")
     private String lastUpdateUser;
     private Long promiseTime;
     private Long timeLimit;
+
     @DictionaryMap(value="userCode", fieldName="grantorName")
     private String grantor;
     private String roleType;
@@ -60,11 +65,8 @@ public class UserTask implements java.io.Serializable {
     private Date nodeLastUpdateTime;
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date flowExpireTime;
-
     private Long flowTimeLimit;
-
     private String osId;
-
 
     // Constructors
     /** default constructor */

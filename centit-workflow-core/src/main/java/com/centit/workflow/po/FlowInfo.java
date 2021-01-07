@@ -52,6 +52,13 @@ public class FlowInfo implements java.io.Serializable {
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String firstNodeId;
 
+    /**
+     * 等同于 wf_opt_info中的 APPLICATION_ID
+     */
+    @Column(name = "OS_ID")
+    @Length(max = 32, message = "字段长度不能大于{max}")
+    private String osId;
+
     @Column(name = "OPT_ID")
     @Length(max = 32, message = "字段长度不能大于{max}")
     private String optId;
@@ -222,6 +229,14 @@ public class FlowInfo implements java.io.Serializable {
 
     public void setFlowPublishDate(Date flowPublishDate) {
         this.flowPublishDate = flowPublishDate;
+    }
+
+    public String getOsId() {
+        return osId;
+    }
+
+    public void setOsId(String osId) {
+        this.osId = osId;
     }
 
     public String getOptId() {
@@ -519,7 +534,6 @@ public class FlowInfo implements java.io.Serializable {
 
 
     public void copy(FlowInfo other){
-
         this.setVersion(other.getVersion());
         this.setFlowCode(other.getFlowCode());
 
@@ -530,6 +544,7 @@ public class FlowInfo implements java.io.Serializable {
         this.flowXmlDesc = other.getFlowXmlDesc();
         this.flowPublishDate = other.getFlowPublishDate();
         this.firstNodeId = other.getFirstNodeId();
+        this.osId = other.getOsId();
         this.optId = other.getOptId();
         this.timeLimit = other.getTimeLimit();
         this.expireOpt = other.getExpireOpt();
@@ -557,6 +572,8 @@ public class FlowInfo implements java.io.Serializable {
             this.flowPublishDate = other.getFlowPublishDate();
         if( other.getFirstNodeId() != null)
             this.firstNodeId = other.getFirstNodeId();
+        if( other.getOsId() != null)
+            this.osId = other.getOsId();
         if( other.getOptId() != null)
             this.optId = other.getOptId();
         if( other.getTimeLimit() != null)
@@ -588,6 +605,8 @@ public class FlowInfo implements java.io.Serializable {
             this.flowPublishDate = other.getFlowPublishDate();
         if( this.getFirstNodeId() == null)
             this.firstNodeId = other.getFirstNodeId();
+        if( this.getOsId() == null)
+            this.osId = other.getOsId();
         if( this.getOptId() == null)
             this.optId = other.getOptId();
         if( this.getTimeLimit() == null)
@@ -609,6 +628,7 @@ public class FlowInfo implements java.io.Serializable {
         this.flowDesc =null;
         this.flowXmlDesc = null;
         this.flowPublishDate =null;
+        this.osId = null;
         this.optId = null;
         this.firstNodeId = null;
         this.timeLimit = null;

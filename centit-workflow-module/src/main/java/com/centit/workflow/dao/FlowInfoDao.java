@@ -24,45 +24,23 @@ import java.util.Map;
 public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();
-        filterField.put("flowCode" , "flowCode= :flowCode");
-        filterField.put("version" , "version= :version");
+        filterField.put("flowCode" , "flowCode = :flowCode");
+        filterField.put("version" , "version = :version");
         filterField.put("flowName" , CodeBook.LIKE_HQL_ID);
         filterField.put("flowState" , CodeBook.LIKE_HQL_ID);
         filterField.put("flowDesc" , CodeBook.LIKE_HQL_ID);
+        filterField.put("osId" , CodeBook.EQUAL_HQL_ID);
         filterField.put("optId" , CodeBook.EQUAL_HQL_ID);
-        filterField.put(CodeBook.ORDER_BY_HQL_ID , "version DESC,flowPublishDate DESC,flowCode DESC ");
+        filterField.put(CodeBook.ORDER_BY_HQL_ID, "version DESC, flowPublishDate DESC, flowCode DESC");
         return filterField;
     }
+
     @Transactional
     public long getLastVersion(String flowCode){
         String sql = "select max(t.VERSION) from WF_FLOW_DEFINE t where t.FLOW_CODE = ?";
         return this.getJdbcTemplate().queryForObject(sql,
                 new Object[]{flowCode} ,Long.class);
     }
-
-    @Transactional
-    public long getNextNodeId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
-    }
-    @Transactional
-    public long getNextTransId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
-    }
-    @Transactional
-    public long getNextStageId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
-    }
-    @Transactional
-    public long getNextRoleId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
-    }
-    @Transactional
-    public long getNextVariableDefId(){
-        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
-//        return DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWDEFNO");
-    }
-
-    @SuppressWarnings({ "unchecked", "deprecation" })
 
     @Transactional
     public List<FlowInfo> getAllVersionFlowsByCode(String wfCode, PageDesc pageDesc){
