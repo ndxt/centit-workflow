@@ -370,7 +370,19 @@ CREATE TABLE wf_transition (
   PRIMARY KEY (TRANS_ID)
 ) ;
 
-select `a`.`FLOW_CODE` AS `FLOW_CODE`,`b`.`version` AS `VERSION`,`a`.`FLOW_NAME` AS `FLOW_NAME`,`a`.`FLOW_CLASS` AS `FLOW_CLASS`,`b`.`FLOW_STATE` AS `FLOW_STATE`,`a`.`FLOW_DESC` AS `FLOW_DESC`,`a`.`FLOW_XML_DESC` AS `FLOW_XML_DESC`,`a`.`Time_Limit` AS `TIME_LIMIT`,`a`.`Expire_Opt` AS `EXPIRE_OPT`,`a`.`Opt_ID` AS `OPT_ID`,`a`.`OS_ID` AS `OS_ID`,`a`.`FLOW_Publish_Date` AS `FLOW_PUBLISH_DATE`,`a`.`AT_PUBLISH_DATE` AS `AT_PUBLISH_DATE` from ((((select `stat`.`wf_flow_define`.`FLOW_CODE` AS `FLOW_CODE`,max(`stat`.`wf_flow_define`.`version`) AS `version` from `stat`.`wf_flow_define` group by `stat`.`wf_flow_define`.`FLOW_CODE`)) `lastversion` join `stat`.`wf_flow_define` `a` on(((`a`.`FLOW_CODE` = `lastversion`.`FLOW_CODE`) and (`a`.`version` = 0)))) join `stat`.`wf_flow_define` `b` on(((`lastversion`.`FLOW_CODE` = `b`.`FLOW_CODE`) and (`lastversion`.`version` = `b`.`version`))))
+DROP VIEW IF EXISTS f_v_lastversionflow;
+CREATE VIEW f_v_lastversionflow AS
+select a.FLOW_CODE AS FLOW_CODE,b.version AS VERSION,a.FLOW_NAME AS FLOW_NAME,a.FLOW_CLASS AS FLOW_CLASS,
+       b.FLOW_STATE AS FLOW_STATE,a.FLOW_DESC AS FLOW_DESC,a.FLOW_XML_DESC AS FLOW_XML_DESC,a.Time_Limit AS TIME_LIMIT,
+       a.Expire_Opt AS EXPIRE_OPT,a.Opt_ID AS OPT_ID,a.OS_ID AS OS_ID,a.FLOW_Publish_Date AS FLOW_PUBLISH_DATE,
+       a.AT_PUBLISH_DATE AS AT_PUBLISH_DATE
+from ((((select stat.wf_flow_define.FLOW_CODE AS FLOW_CODE,max(stat.wf_flow_define.version) AS version
+    from stat.wf_flow_define group by stat.wf_flow_define.FLOW_CODE)) lastversion
+    join stat.wf_flow_define a on (((a.FLOW_CODE = lastversion.FLOW_CODE) and (a.version = 0))))
+    join stat.wf_flow_define b on (((lastversion.FLOW_CODE = b.FLOW_CODE) and (lastversion.version = b.version))))
+;
+
+/*
 DROP VIEW IF EXISTS lastversion;
 CREATE  VIEW lastversion AS select wf_flow_define.FLOW_CODE AS FLOW_CODE,max(wf_flow_define.version) AS version
 from wf_flow_define group by wf_flow_define.FLOW_CODE ;
@@ -385,7 +397,7 @@ CREATE VIEW f_v_lastversionflow AS
     from ((lastversion join wf_flow_define a on(((a.FLOW_CODE = lastversion.FLOW_CODE) and (a.version = 0))))
      join wf_flow_define b on(((lastversion.FLOW_CODE = b.FLOW_CODE) and (lastversion.version = b.version)))) ;
 
-
+*/
 
 DROP VIEW IF EXISTS v_inner_user_task_list;
 CREATE    VIEW gitv_inner_user_task_list AS
@@ -420,7 +432,6 @@ CREATE    VIEW gitv_inner_user_task_list AS
     and a.TASK_ASSIGNED = 'T' and b.TASK_STATE = 'A';
 
 -- and (b.EXPIRE_TIME is null or b.EXPIRE_TIME > NOW());
-
 
 DROP VIEW IF EXISTS v_user_task_list;
 CREATE  VIEW v_user_task_list AS
@@ -661,7 +672,7 @@ UNION ALL
 					)
 				)
 			)
-
+;
 
 DROP VIEW IF EXISTS v_user_task_list_fin;
 CREATE  VIEW v_user_task_list_fin AS
@@ -761,5 +772,5 @@ UNION
 				)
 			)
 		)
-
+;
 
