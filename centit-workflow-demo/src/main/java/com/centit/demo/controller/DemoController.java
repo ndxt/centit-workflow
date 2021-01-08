@@ -1,16 +1,16 @@
 package com.centit.demo.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.client.service.FlowDefineClient;
-import com.centit.workflow.client.service.FlowEngineClient;
-import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.FlowInfo;
+import com.centit.workflow.po.UserTask;
+import com.centit.workflow.service.FlowDefine;
+import com.centit.workflow.service.FlowEngine;
+import com.centit.workflow.service.FlowManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,13 +28,13 @@ import java.util.List;
 public class DemoController {
 
     @Autowired
-    private FlowEngineClient flowEngine;
+    private FlowEngine flowEngine;
 
     @Autowired
-    private FlowManagerClient flowManager;
+    private FlowManager flowManager;
 
     @Autowired
-    private FlowDefineClient flowDefineClient;
+    private FlowDefine flowDefineClient;
 
     @Autowired
     private PlatformEnvironment platformEnvironment;
@@ -53,7 +53,7 @@ public class DemoController {
 
     @RequestMapping(value = "/listTasks", method = RequestMethod.GET)
     public void listTaskByUserCode(String userCode,HttpServletResponse response,HttpServletRequest request){
-        JSONArray userTasks = flowEngine.listTasks(
+        List<UserTask> userTasks = flowEngine.listTasks(
             CollectionsOpt.createHashMap("userCode", userCode), new PageDesc(-1,-1));
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }

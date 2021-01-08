@@ -1,17 +1,17 @@
 package com.centit.demo.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.centit.demo.po.ApprovalAuditor;
 import com.centit.demo.po.ApprovalEvent;
 import com.centit.demo.po.ApprovalProcess;
 import com.centit.demo.service.ApprovalService;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
-import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
 import com.centit.workflow.commons.SubmitOptOptions;
+import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.po.UserTask;
+import com.centit.workflow.service.FlowEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +29,7 @@ import java.util.*;
 @RequestMapping("/approval")
 public class ApprovalController {
     @Autowired
-    private FlowEngineClient flowEngine;
+    private FlowEngine flowEngine;
     @Autowired
     private ApprovalService approvalService;
     @Autowired
@@ -67,11 +67,11 @@ public class ApprovalController {
         String flowInstId = approvalService.startProcess(request,approvalEvent,auditors,phaseCount,
                 auditors.get(0).getUserCode());
         try {
-            JSONArray nodeInstances = flowManager.listFlowInstNodes(flowInstId);
+            List<NodeInstance>  nodeInstances = flowManager.listFlowInstNodes(flowInstId);
             if(nodeInstances != null && nodeInstances.size()>0){
                 flowEngine.submitOpt(
                     SubmitOptOptions.create().nodeInst(
-                        ((JSONObject)nodeInstances.get(0)).getString("nodeInstId"))
+                        nodeInstances.get(0).getNodeInstId())
                     .user("u0000000"));
             }
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class ApprovalController {
     }
     @RequestMapping(value = "/getUserTasksByUserCode/{userCode}",method = RequestMethod.GET)
     public void getUserTasksByUserCode(HttpServletResponse response,@PathVariable String userCode) throws Exception{
-        JSONArray userTasks = approvalService.getUserTasksByUserCode(userCode);
+        List<UserTask> userTasks = approvalService.getUserTasksByUserCode(userCode);
         JsonResultUtils.writeSingleDataJson(userTasks,response);
     }
 }

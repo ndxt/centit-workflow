@@ -5,12 +5,12 @@ import com.centit.demo.dao.ApprovalAuditorDao;
 import com.centit.demo.dao.ApprovalEventDao;
 import com.centit.demo.po.ApprovalAuditor;
 import com.centit.demo.po.ApprovalEvent;
-import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.service.FlowEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +24,9 @@ import java.util.List;
 @Transactional
 @Component
 public class SetNextAuditorsBean implements NodeEventSupport {
+
     @Autowired
-    private FlowEngineClient flowEngine;
+    private FlowEngine flowEngine;
     @Autowired
     private ApprovalEventDao approvalEventDao;
     @Autowired

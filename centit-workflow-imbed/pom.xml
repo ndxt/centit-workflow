@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.centit.framework</groupId>
-        <artifactId>framework-snapshot-dependencies</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <groupId>com.centit.product</groupId>
+        <artifactId>centit-workflow</artifactId>
+        <version>5.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -17,22 +17,19 @@
         这个工程也做为示例工程。
     </description>
 
-    <properties>
-        <centit.workflow.version>4.5-SNAPSHOT</centit.workflow.version>
-    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-module</artifactId>
-            <version>${centit.workflow.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-workflow-view</artifactId>
-            <version>${centit.workflow.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

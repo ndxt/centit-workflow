@@ -3,11 +3,11 @@ package com.centit.demo.common;
 import com.centit.demo.dao.ApprovalEventDao;
 import com.centit.demo.dao.ApprovalProcessDao;
 import com.centit.demo.po.ApprovalProcess;
-import com.centit.workflow.client.service.FlowEngineClient;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
+import com.centit.workflow.service.FlowEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ public class VoteAndSetAuditorsBean implements NodeEventSupport {
     @Autowired
     private ApprovalProcessDao approvalProcessDao;
     @Autowired
-    private FlowEngineClient flowEngine;
+    private FlowEngine flowEngine;
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
                                NodeInfo nodeInfo, String optUserCode)  {

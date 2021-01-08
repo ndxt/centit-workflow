@@ -3,14 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.centit.framework</groupId>
-        <artifactId>framework-snapshot-dependencies</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <groupId>com.centit.product</groupId>
+        <artifactId>centit-workflow</artifactId>
+        <version>5.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>centit-workflow-server</artifactId>
-    <version>5.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>com.centit.product:centit-workflow-server</name>
     <description>工作流引擎服务，可以独立运行;这个工程也做为示例工程;

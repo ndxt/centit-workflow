@@ -1,6 +1,5 @@
 package com.centit.demo.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.centit.demo.dao.ApprovalAuditorDao;
 import com.centit.demo.dao.ApprovalEventDao;
 import com.centit.demo.dao.ApprovalProcessDao;
@@ -10,11 +9,12 @@ import com.centit.demo.po.ApprovalProcess;
 import com.centit.demo.service.ApprovalService;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.client.service.FlowEngineClient;
-import com.centit.workflow.client.service.FlowManagerClient;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.FlowInstance;
+import com.centit.workflow.po.UserTask;
+import com.centit.workflow.service.FlowEngine;
+import com.centit.workflow.service.FlowManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,9 +37,9 @@ public class ApprovalServiceImpl implements ApprovalService {
     @Autowired
     private ApprovalProcessDao approvalProcessDao;
     @Autowired
-    private FlowEngineClient flowEngine;
+    private FlowEngine flowEngine;
     @Autowired
-    private FlowManagerClient flowManager;
+    private FlowManager flowManager;
 
     @Override
     public String startProcess(HttpServletRequest request, ApprovalEvent approvalEvent,
@@ -97,7 +97,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     }
 
     @Override
-    public JSONArray getUserTasksByUserCode(String userCode) throws Exception {
+    public List<UserTask>  getUserTasksByUserCode(String userCode) throws Exception {
         return flowEngine.listTasks(
             CollectionsOpt.createHashMap("userCode",userCode),
             new PageDesc(-1,-1));
