@@ -416,10 +416,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         endNodeInst.setLastUpdateTime(updateTime);
         endNodeInst.setLastUpdateUser(userCode);
         endNodeInst.setPrevNodeInstId(preNodeInstId);
-        if (StringUtils.isBlank(transPath))
-            endNodeInst.setTransPath(trans.getTransId());
-        else
-            endNodeInst.setTransPath(transPath + "," + trans.getTransId());
+        if(trans!=null) {
+            if (StringUtils.isBlank(transPath))
+                endNodeInst.setTransPath(trans.getTransId());
+            else
+                endNodeInst.setTransPath(transPath + "," + trans.getTransId());
+        } else {
+            endNodeInst.setTransPath(transPath);
+        }
         nodeInstanceDao.saveNewObject(endNodeInst);
         //FlowOptUtils.sendFinishMsg(flowInst.getFlowInstId(), userCode);
     }
@@ -570,13 +574,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInfo nextRoutertNode, String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance preNodeInst/*创建首节点时为null*/, String transPath, FlowTransition trans,
         FlowOptParamOptions options,
-        FlowVariableTranslate flowVarTrans, ServletContext application)
-         {
+        FlowVariableTranslate flowVarTrans, ServletContext application) {
 
         String sRT = nextRoutertNode.getRouterType();
         List<String> resNodes = new ArrayList<>();
-        String preTransPath = StringUtils.isBlank(transPath) ?
-            trans.getTransId() : transPath + "," + trans.getTransId();
+
+        String preTransPath = transPath;
+        if(trans!=null) {
+            preTransPath = StringUtils.isBlank(transPath) ?
+                trans.getTransId() : transPath + "," + trans.getTransId();
+        }
 
         if (NodeInfo.ROUTER_TYPE_PARALLEL.equals(sRT) || NodeInfo.ROUTER_TYPE_BRANCH.equals(sRT)) {
             //D 分支和 H 并行
@@ -810,7 +817,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         if(trans!=null) {
             nodeInst.setTransPath(
-                StringUtils.isBlank(transPath) ? String.valueOf(trans.getTransId()) :
+                StringUtils.isBlank(transPath) ? trans.getTransId() :
                     transPath + "," + trans.getTransId());
         }
         nodeInst.setRunToken(nodeToken);
