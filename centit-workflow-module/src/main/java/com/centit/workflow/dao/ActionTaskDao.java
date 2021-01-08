@@ -29,19 +29,22 @@ import java.util.Map;
 @Repository
 public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
 {
-    private final static String userTaskFinBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
+    /*private final static String userTaskFinBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
             "FLOW_OPT_TAG,NODE_INST_ID,UNIT_CODE,USER_CODE,ROLE_TYPE," +
             "ROLE_CODE,AUTH_DESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
             "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
             "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
-            "LAST_UPDATE_TIME,INST_STATE,OPT_URL, NODE_PARAM" +
+            "LAST_UPDATE_TIME,INST_STATE, OPT_URL, NODE_PARAM" +
             "from V_USER_TASK_LIST_FIN " +
             "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
             "[ :userCode| and USER_CODE = :userCode] " +
+            "[ :osId| and OS_ID = :osId] " +
+            "[ :optId| and OPT_ID = :optId] " +
+            "[ :optCode| and OPT_CODE = :optCode] " +
             "[ :nodeCode| and NODE_CODE = :nodeCode] " +
             "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
             "[ :flowCode| and FLOW_CODE = :flowCode] " +
-            "[ :stageCode| and STAGE_CODE = :stageCode] ";
+            "[ :stageCode| and STAGE_CODE = :stageCode] ";*/
 
     private final static String userCompleteTaskBaseSql = "select t.FLOW_INST_ID, t.FLOW_CODE, t.VERSION, t.FLOW_OPT_NAME, " +
         "t.FLOW_OPT_TAG, t.UNIT_CODE, t.USER_CODE, " +
@@ -56,7 +59,8 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
         "  [ :nodeCode| and n.node_code in (:nodeCode)]  [ :(like)nodeName| and n.node_Name like :nodeName]  )" +
         " [ :(like)flowOptName| and t.flow_Opt_Name like :flowOptName] " +
         " [ :(like)flowName| and f.flow_Name like :flowName]  " +
-        "  [ :osId| and f.os_id in (:osId)] " +
+        "  [ :osId| and f.os_id = :osId] " +
+        "  [ :osIds| and f.os_id in (:osIds)] " +
         " order by t.last_update_time desc ";
 
     private final static String userTaskBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
@@ -71,20 +75,23 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
             "[ :stageArr | and STAGE_CODE in (:stageArr) ] "+
             "[ :(like)flowOptName| and FLOW_OPT_NAME like :flowOptName] " +
             "[ :userCode| and USER_CODE = :userCode] " +
+            "[ :osId| and OS_ID = :osId] " +
+            "[ :optId| and OPT_ID = :optId] " +
+            "[ :optCode| and OPT_CODE = :optCode] " +
+            "[ :osIds| and OS_ID  in (:osIds)] " +
             "[ :nodeInstId| and NODE_INST_ID = :nodeInstId] " +
             "[ :flowCode| and FLOW_CODE = :flowCode] " +
             "[ :stageCode| and STAGE_CODE = :stageCode] " +
             "[ :nodeName| and NODE_NAME = :nodeName] " +
-            "[ :osId| and os_id  in (:osId)] " +
             "[ :nodeCode| and NODE_CODE in  (:nodeCode)] " +
             "[ :notNodeCode| and NODE_CODE not in  (:notNodeCode)] " +
              " order by CREATE_TIME desc " ;
 
 
-    private final static String actionTaskBaseSql = "select TASK_ID,NODE_INST_ID," +
+    /*private final static String actionTaskBaseSql = "select TASK_ID,NODE_INST_ID," +
             "ASSIGN_TIME,EXPIRE_TIME,USER_CODE,ROLE_TYPE,ROLE_CODE,TASK_STATE,IS_VALID,AUTH_DESC" +
             "from WF_ACTION_TASK " +
-            "where 1=1 ";
+            "where 1=1 ";*/
 
     private final static String dynamicSql = "select w.flow_inst_id,w.flow_code,w.version,w.flow_opt_name,w.flow_opt_tag," +
         "  a.node_inst_id,a.unit_code,a.user_code,c.node_code, " +
@@ -93,10 +100,11 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
         " c.expire_opt,c.stage_code,'' as GRANTOR,a.last_update_user," +
         " a.last_update_time,w.inst_state,c.opt_code as opt_url, a.NODE_PARAM "+
         "from wf_node_instance a " +
-        "left join wf_flow_instance w " +
+        "join wf_flow_instance w " +
         " on a.flow_inst_id = w.flow_inst_id " +
-        "left join wf_node c " +
+        "join wf_node c " +
         " on a.node_Id = c.node_id " +
+        "join wf_flow_define f on(w.FLOW_CODE = f.FLOW_CODE and w.VERSION = f.version) "+
         "where a.node_state = 'N' " +
         " and w.inst_state = 'N' " +
         " and a.task_assigned = 'D' " +
@@ -110,13 +118,18 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
         "[ :flowCode| and w.FLOW_CODE = :flowCode] " +
         "[ :nodeCode| and a.NODE_CODE = :nodeCode] " +
         "[ :nodeInstId| and a.node_inst_id = :nodeInstId] " +
+        "[ :osId| and f.OS_ID = :osId] " +
+        //"[ :optId| and OPT_ID = :optId] " +
+        //"[ :optCode| and OPT_CODE = :optCode] " +
+        "[ :osIds| and f.OS_ID  in (:osIds)] " +
         " ORDER by a.create_time desc";
 
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();
-        filterField.put(
-
-            "taskId" , CodeBook.EQUAL_HQL_ID);
+        //filterField.put("taskId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("osId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("optId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("optCode" , CodeBook.EQUAL_HQL_ID);
         filterField.put("nodeInstId" , CodeBook.EQUAL_HQL_ID);
         filterField.put("assignTime" , CodeBook.EQUAL_HQL_ID);
         filterField.put("expireTime" , CodeBook.EQUAL_HQL_ID);
