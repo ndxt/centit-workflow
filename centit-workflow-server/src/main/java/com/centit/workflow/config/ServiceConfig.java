@@ -4,8 +4,6 @@ import com.centit.framework.components.impl.NotificationCenterImpl;
 import com.centit.framework.config.SpringSecurityCasConfig;
 import com.centit.framework.config.SpringSecurityDaoConfig;
 import com.centit.framework.ip.app.config.IPOrStaticAppSystemBeanConfig;
-import com.centit.framework.ip.service.IntegrationEnvironment;
-import com.centit.framework.ip.service.impl.JsonIntegrationEnvironment;
 import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.PlatformEnvironment;
@@ -50,10 +48,6 @@ public class ServiceConfig {
         return new StandardPasswordEncoderImpl();
     }
 
-    @Bean
-    public IntegrationEnvironment integrationEnvironment(){
-        return new JsonIntegrationEnvironment();
-    }
 
     @Bean
     public NotificationCenter notificationCenter(@Autowired PlatformEnvironment platformEnvironment) {
