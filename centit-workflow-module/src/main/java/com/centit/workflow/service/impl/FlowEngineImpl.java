@@ -1106,6 +1106,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     }
                 }
             }
+            //如果没有后续分支检测是否有else分支
+            if(selTrans.size()<1){
+                for (FlowTransition trans : transList) {
+                    if("else".equalsIgnoreCase(trans.getTransCondition())){
+                        selTrans.add(trans);
+                        break;
+                    }
+                }
+            }
         } else {
             selTrans.add(transList.get(0));
         }

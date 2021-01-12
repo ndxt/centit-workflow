@@ -37,8 +37,14 @@
 
         <dependency>
             <groupId>com.centit.product</groupId>
+            <artifactId>message-sender-utils</artifactId>
+            <version>${centit.oa.modules.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.product</groupId>
             <artifactId>opt-log-module</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${centit.log.modules.version}</version>
         </dependency>
 
         <dependency>

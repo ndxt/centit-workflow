@@ -48,9 +48,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.centit.support</groupId>
+            <groupId>com.centit.product</groupId>
             <artifactId>enterprise-calendar</artifactId>
-            <version>1.0-RELEASE</version>
+            <version>${centit.oa.modules.version}</version>
         </dependency>
 
         <dependency>
