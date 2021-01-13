@@ -925,7 +925,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     }
                 }
                 // TODO 消息通知需要加强，不仅仅是通知操作人员，后续可能需要添加发送时机、发送方式，这部分应该使用策略模式
-                if (NodeInfo.NODE_NOTICE_TYPE_DEFAULT.equals(nextOptNode.getNodeSyncType())) {
+                if (NodeInfo.NODE_NOTICE_TYPE_DEFAULT.equals(nextOptNode.getNoticeType())) {
                     notificationCenter.sendMessage("system", optUsers,
                         NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
                             .content(
