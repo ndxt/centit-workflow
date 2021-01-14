@@ -25,6 +25,8 @@ public class FlowOptUtils {
         flowInst.setFlowInstId(flowInstId);
         flowInst.setFlowCode(wf.getFlowCode());
         flowInst.setVersion(wf.getVersion());
+        flowInst.setOsId(wf.getOsId());
+        flowInst.setOptId(wf.getOptId());
         flowInst.setUnitCode(unitcode);
         flowInst.setUserCode(usercode);
         flowInst.setPreNodeInstId("");

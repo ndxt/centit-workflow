@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
@@ -11,6 +12,7 @@ import java.util.*;
  * create by scaffold
  * @author codefan@hotmail.com
  */
+@Data
 @Entity
 @Table(name = "WF_FLOW_DEFINE")
 public class FlowInfo implements java.io.Serializable {
@@ -42,6 +44,7 @@ public class FlowInfo implements java.io.Serializable {
     @Length(max = 500, message = "字段长度不能大于{max}")
     private String flowDesc;
 
+    @JSONField(serialize=false)
     @Column(name = "FLOW_XML_DESC")
     private String flowXmlDesc;
 
@@ -136,14 +139,6 @@ public class FlowInfo implements java.io.Serializable {
         this.atPublishDate = atPublishDate;
     }
 
-    public FlowInfoId getCid() {
-        return this.cid;
-    }
-
-    public void setCid(FlowInfoId id) {
-        this.cid = id;
-    }
-
     public Long getVersion() {
         if(this.cid==null)
             this.cid = new FlowInfoId();
@@ -166,105 +161,6 @@ public class FlowInfo implements java.io.Serializable {
         if(this.cid==null)
             this.cid = new FlowInfoId();
         this.cid.setFlowCode(wfcode);
-    }
-
-    // Property accessors
-    public String getFlowName() {
-        return this.flowName;
-    }
-
-    public void setFlowName(String wfname) {
-        this.flowName = wfname;
-    }
-
-    /**
-     *
-     * N 普通流程，F 自由流程
-     */
-    public String getFlowClass() {
-        return this.flowClass;
-    }
-
-    public void setFlowClass(String flowClass) {
-        this.flowClass = flowClass;
-    }
-
-    /**
-     * A 草稿  E 已发布 (A,E仅对0版本有效) B 正常 C 过期 D 禁用
-     * @return
-     */
-    public String getFlowState() {
-        return this.flowState;
-    }
-
-
-    /**
-     * A 草稿 B 正常 C 过期 D 禁用  E 已发布
-     * @param wfstate
-     */
-    public void setFlowState(String wfstate) {
-        this.flowState = wfstate;
-    }
-
-    public String getFlowDesc() {
-        return this.flowDesc;
-    }
-
-    public void setFlowDesc(String wfdesc) {
-        this.flowDesc = wfdesc;
-    }
-
-    @JSONField(serialize=false)
-    public String getFlowXmlDesc() {
-        return this.flowXmlDesc;
-    }
-
-    public void setFlowXmlDesc(String wfxmldesc) {
-        this.flowXmlDesc = wfxmldesc;
-    }
-
-    public Date getFlowPublishDate() {
-        return flowPublishDate;
-    }
-
-    public void setFlowPublishDate(Date flowPublishDate) {
-        this.flowPublishDate = flowPublishDate;
-    }
-
-    public String getOsId() {
-        return osId;
-    }
-
-    public void setOsId(String osId) {
-        this.osId = osId;
-    }
-
-    public String getOptId() {
-        return this.optId;
-    }
-
-    public void setOptId(String optid) {
-        this.optId = optid;
-    }
-
-    public String getTimeLimit() {
-        return timeLimit;
-    }
-    public void setTimeLimit(String timeLimit) {
-        this.timeLimit = timeLimit;
-    }
-
-    public String getExpireOpt() {
-        return expireOpt;
-    }
-    public void setExpireOpt(String expireOpt) {
-        this.expireOpt = expireOpt;
-    }
-    public Date getAtPublishDate() {
-        return atPublishDate;
-    }
-    public void setAtPublishDate(Date atPublishDate) {
-        this.atPublishDate = atPublishDate;
     }
 
     public List<NodeInfo> getNodeList(){
@@ -473,14 +369,6 @@ public class FlowInfo implements java.io.Serializable {
         FlowStage res = new FlowStage();
         res.setFlowDefine(this);
         return res;
-    }
-
-    public String getFirstNodeId() {
-        return firstNodeId;
-    }
-
-    public void setFirstNodeId(String firstNodeId) {
-        this.firstNodeId = firstNodeId;
     }
 
     /**

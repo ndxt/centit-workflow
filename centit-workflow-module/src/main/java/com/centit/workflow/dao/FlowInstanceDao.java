@@ -22,7 +22,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
         filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
         filterField.put("flowId" , CodeBook.EQUAL_HQL_ID);
         filterField.put("version" , CodeBook.EQUAL_HQL_ID);
-
+        filterField.put("osId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("optId" , CodeBook.EQUAL_HQL_ID);
         filterField.put("(date)createTimeBeg",
             " createTime>= :createTimeBeg");
         filterField.put("(date)createTimeEnd",

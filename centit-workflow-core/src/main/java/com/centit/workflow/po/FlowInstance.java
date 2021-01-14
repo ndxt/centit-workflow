@@ -55,6 +55,17 @@ public class FlowInstance implements java.io.Serializable {
     @DictionaryMap(value = "flowCode", fieldName = "flowName")
     private String flowCode;
     /**
+     * 等同于 wf_opt_info中的 APPLICATION_ID
+     */
+    @Column(name = "OS_ID")
+    @Length(max = 32, message = "字段长度不能大于{max}")
+    private String osId;
+
+    @Column(name = "OPT_ID")
+    @Length(max = 32, message = "字段长度不能大于{max}")
+    private String optId;
+
+    /**
      * varchar(800)
      */
     @Column(name = "FLOW_OPT_NAME")
@@ -690,7 +701,8 @@ public class FlowInstance implements java.io.Serializable {
 
         this.setUnitCode(other.getUnitCode());
         this.userCode = other.getUserCode();
-
+        this.osId = other.getOsId();
+        this.optId = other.getOptId();
         this.promiseTime = other.getPromiseTime();
         this.timeLimit = other.getTimeLimit();
         this.flowNodeInstances = other.getFlowNodeInstances();
@@ -713,7 +725,10 @@ public class FlowInstance implements java.io.Serializable {
             this.flowOptName = other.getFlowOptName();
         if (other.getFlowOptTag() != null)
             this.flowOptTag = other.getFlowOptTag();
-
+        if( other.getOsId() != null)
+            this.osId = other.getOsId();
+        if( other.getOptId() != null)
+            this.optId = other.getOptId();
         if (other.getCreateTime() != null)
             this.createTime = other.getCreateTime();
         if (other.getInstState() != null)
