@@ -312,6 +312,15 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         newFlowDef.setFlowState(FlowInfo.FLOW_STATE_NORMAL);
         //复制相关节点信息
         //newFlowDef.getWfFlowStages()
+        //修复数据遗漏的bug
+        if(StringUtils.isBlank(flowDef.getOsId())) {
+            FlowOptInfo optInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
+            if (optInfo != null) {
+                newFlowDef.setOsId(optInfo.getApplicationId());
+            }
+        } else {
+            newFlowDef.setOsId(flowDef.getOsId());
+        }
 
         flowDefineDao.saveNewObject(newFlowDef);
         flowDefineDao.saveObjectReferences(newFlowDef);

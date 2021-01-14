@@ -18,6 +18,9 @@ public class FlowOptInfoDao extends BaseDaoImpl<FlowOptInfo, String> {
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();
         filterField.put("optName" , CodeBook.LIKE_HQL_ID);
+        filterField.put("optId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("applicationId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("ownerUnit" , CodeBook.EQUAL_HQL_ID);
         filterField.put(CodeBook.ORDER_BY_HQL_ID , " updateDate desc ");
         return filterField;
     }
