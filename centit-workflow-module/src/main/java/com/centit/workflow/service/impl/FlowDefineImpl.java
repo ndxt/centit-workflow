@@ -62,7 +62,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         //这个Map放在这儿有一定的耦合性 重构成一个类
         public Map<String, String> nodeTagToId;
         public Map<String, String> transTagToId;
-        public String beginNodeId;
 
         public FlowDataDetail() {
             nodeTagToId = new HashMap<>();
