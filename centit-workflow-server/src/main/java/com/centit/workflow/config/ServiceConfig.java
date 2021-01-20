@@ -10,7 +10,7 @@ import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.security.model.CentitPasswordEncoder;
 import com.centit.framework.security.model.StandardPasswordEncoderImpl;
-import com.centit.product.message.EmailMessageSenderImpl;
+import com.centit.product.oa.EmailMessageSenderImpl;
 import com.centit.workflow.context.ExtFrameworkContextCacheBean;
 import com.centit.workflow.context.JdbcUserUnitCalcContextFactoryImpl;
 import com.centit.workflow.service.impl.SystemUserUnitCalcContextFactoryImpl;
