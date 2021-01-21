@@ -58,6 +58,7 @@ public class UserTask implements java.io.Serializable {
     private String optId;
     private String optUrl;
     private String stageCode;
+    private String creatorCode;
 
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeCreateTime;

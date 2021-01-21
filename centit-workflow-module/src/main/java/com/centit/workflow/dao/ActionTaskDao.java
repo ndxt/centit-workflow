@@ -50,7 +50,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
         "t.FLOW_OPT_TAG, t.UNIT_CODE, t.USER_CODE, " +
         "t.CREATE_TIME, t.PROMISE_TIME, t.TIME_LIMIT, " +
         "n.NODE_NAME, t.LAST_UPDATE_TIME, t.INST_STATE, " +
-        "t.LAST_UPDATE_USER " +
+        "t.LAST_UPDATE_USER, t.USER_CODE as CREATOR_CODE " +
         " from wf_flow_instance t join wf_flow_define f on f.FLOW_CODE=t.FLOW_CODE and f.VERSION=t.VERSION" +
         " left join (select group_concat(DISTINCT Node_Name) as node_name,FLOW_INST_ID from v_user_task_list GROUP BY FLOW_INST_ID) n " +
         " on n.FLOW_INST_ID=t.FLOW_INST_ID " +
@@ -68,7 +68,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
             "ROLE_CODE,AUTH_DESC,NODE_CODE,NODE_NAME,NODE_TYPE," +
             "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
             "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
-            "LAST_UPDATE_TIME,INST_STATE,OPT_URL,os_id, NODE_PARAM  " +
+            "LAST_UPDATE_TIME,INST_STATE,OPT_URL,OS_ID, NODE_PARAM, CREATOR_CODE " +
             "from V_USER_TASK_LIST " +
             "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
             "[ :flowOptTag| and FLOW_OPT_TAG = :flowOptTag] " +
@@ -98,7 +98,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
         " c.node_name,c.node_type,c.opt_type as NODE_OPT_TYPE,c.opt_param,"+
         " w.create_time,w.promise_time,a.time_limit,c.opt_code, " +
         " c.expire_opt,c.stage_code,'' as GRANTOR,a.last_update_user," +
-        " a.last_update_time,w.inst_state,c.opt_code as opt_url, a.NODE_PARAM "+
+        " a.last_update_time,w.inst_state,c.opt_code as opt_url, a.NODE_PARAM, w.USER_CODE as CREATOR_CODE "+
         "from wf_node_instance a " +
         "join wf_flow_instance w " +
         " on a.flow_inst_id = w.flow_inst_id " +
