@@ -163,7 +163,8 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
             return flowInst.getUnitCode();
         else if(nodeInst != null && "nodeunit".equalsIgnoreCase(varName))
             return nodeInst.getUnitCode();
-
+        else if(nodeInst != null && "nodeuser".equalsIgnoreCase(varName))
+            return nodeInst.getUserCode();
         return null;
     }
 

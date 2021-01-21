@@ -7,10 +7,7 @@ import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
-import com.centit.framework.model.basedata.IUserInfo;
-import com.centit.framework.model.basedata.IUserUnit;
-import com.centit.framework.model.basedata.NoticeMessage;
-import com.centit.framework.model.basedata.OperationLog;
+import com.centit.framework.model.basedata.*;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.common.ObjectException;
@@ -36,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.ServletContext;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -1068,11 +1066,48 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             VariableFormula formula = new VariableFormula();
             formula.setTrans(varTrans);
             formula.addExtendFunc(
-                "rank",
+                "userRank",
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
                     return context.getUserRank(StringBaseOpt.castObjectToString(a[0]));
+                }
+            );
+
+            formula.addExtendFunc(
+                "userUnits",
+                (a) -> {
+                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
+                        preNodeInst, nodeToken, currNode, options, varTrans);
+                    List<? extends IUserUnit> userUnits =
+                        context.listUserUnits(StringBaseOpt.castObjectToString(a[0]));
+                    //return userUnits.stream().map( b->b.getUnitCode()).collect(Collectors.toList());
+                    return CollectionsOpt.mapCollectionToSet(userUnits, (uu) -> uu.getUnitCode());
+                }
+            );
+
+            formula.addExtendFunc(
+                "userRoles",
+                (a) -> {
+                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
+                        preNodeInst, nodeToken, currNode, options, varTrans);
+                    String userCode = StringBaseOpt.castObjectToString(a[0]);
+                    String userType = SysUserFilterEngine.ROLE_TYPE_XZ;
+                    if(a.length>1){
+                        userType = StringBaseOpt.castObjectToString(a[1]);
+                    }
+                    if(SysUserFilterEngine.ROLE_TYPE_SYSTEM.equals(userType)){
+                        List<? extends IUserRole> roles = context.listUserRoles(userCode);
+                        return CollectionsOpt.mapCollectionToSet(roles, (ro) -> ro.getRoleCode());
+                    } else if(SysUserFilterEngine.ROLE_TYPE_GW.equals(userType)){
+                        List<? extends IUserUnit> userUnits = context.listUserUnits(userCode);
+                        return CollectionsOpt.mapCollectionToSet(userUnits, (uu) -> uu.getUserStation());
+                    } /*else if(SysUserFilterEngine.ROLE_TYPE_ITEM.equals(userType)){
+
+                    }*/ else {// if(SysUserFilterEngine.ROLE_TYPE_XZ.equals(userType)){
+                        List<? extends IUserUnit> userUnits = context.listUserUnits(userCode);
+                        return CollectionsOpt.mapCollectionToSet(userUnits, (uu) -> uu.getUserRank());
+                    }
                 }
             );
 
