@@ -1,6 +1,7 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
@@ -191,6 +192,12 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
             if(listUsers != null && !listUsers.isEmpty())
                 return new HashSet<>(listUsers);
         }
+
+        if("flowuser".equalsIgnoreCase(varName))
+            return CollectionsOpt.createHashSet(flowInst.getUserCode());
+        else  if(nodeInst != null && "nodeuser".equalsIgnoreCase(varName))
+            return CollectionsOpt.createHashSet(nodeInst.getUserCode());
+
         return nodeUsers.get(varName);
     }
 
@@ -220,6 +227,12 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
             if(listUnits != null && !listUnits.isEmpty() )
                 return new HashSet<>(listUnits);
         }
+
+        if("flowunit".equalsIgnoreCase(varName))
+            return CollectionsOpt.createHashSet(flowInst.getUnitCode());
+        else if(nodeInst != null && "nodeunit".equalsIgnoreCase(varName))
+            return CollectionsOpt.createHashSet(nodeInst.getUnitCode());
+
         return nodeUnits.get(varName);
     }
 

@@ -156,8 +156,6 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "NODE_DESC")
     private String nodeDesc;
 
-
-
     /**
      * 是否计时 I ： 未设置（ignore 在流转线上默认 ）
      * T:计时（默认）
@@ -220,6 +218,11 @@ public class NodeInfo implements java.io.Serializable {
     private String noticeType;
 
     /**
+     * 通知对象
+     */
+    @Column(name = "NOTICE_USER_EXP")
+    private String noticeUserExp;
+    /**
      * 通知消息模板
      */
     @Column(name = "NOTICE_MESSAGE")
@@ -245,12 +248,12 @@ public class NodeInfo implements java.io.Serializable {
     public static final String ROUTER_MULTI_TYPE_VALUE = "V";
 
     /**
-     * D 机构， U 人员 (权限表达式)， V 变量(暂时未实现，没有找到应用场景)
+     * 多实例类型
      */
     @Column(name = "MULTI_INST_TYPE")
     private String multiInstType;
     /**
-     * 自定义变量表达式
+     * 多实例参数
      */
     @Column(name = "MULTI_INST_PARAM")
     private String multiInstParam;

@@ -4,6 +4,7 @@ import com.centit.framework.components.SysUnitFilterEngine;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.support.common.ObjectException;
+import com.centit.support.compiler.Lexer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,11 @@ public abstract class UserUnitCalcEngine {
             return null;
         }
         //UserUnitFilterCalcContext ecc = createWorkFlowUUFCC();
-        ecc.setFormula(roleExp);
+        if(Lexer.isSingleWord(roleExp)){
+            ecc.setFormula("U("+roleExp+")");
+        } else {
+            ecc.setFormula(roleExp);
+        }
         Set<String> sUsers = SysUserFilterEngine.calcRolesExp(ecc);
         if (ecc.hasError()) {
             logger.error(roleExp +":"+ ecc.getLastErrMsg());

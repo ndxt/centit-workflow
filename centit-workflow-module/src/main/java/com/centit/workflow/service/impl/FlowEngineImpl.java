@@ -1,5 +1,6 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
@@ -464,46 +465,59 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     private LeftRightPair<Set<String>, Set<String>>
-        calcNodeUnitAndOpterators(FlowInstance flowInst, NodeInstance preNodeInst,
-                                                         String nodeToken,
-                                                         NodeInfo nextOptNode,
-                                                         FlowOptParamOptions options,
-                                                         FlowVariableTranslate varTrans) {
+            calcNodeUnitAndOpterators(
+                              FlowInstance flowInst, NodeInstance preNodeInst,
+                              String nodeToken,
+                              NodeInfo nextOptNode,
+                              FlowOptParamOptions options,
+                              FlowVariableTranslate varTrans) {
+        UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
+            preNodeInst, nodeToken, nextOptNode, options, varTrans);
+        return calcNodeUnitAndOpterators( context, flowInst,
+                    nodeToken,nextOptNode,options, true);
+    }
+
+    private LeftRightPair<Set<String>, Set<String>>
+        calcNodeUnitAndOpterators(UserUnitFilterCalcContext context,
+                                FlowInstance flowInst,
+                                 String nodeToken,
+                                 NodeInfo nextOptNode,
+                                 FlowOptParamOptions options, boolean calcOptUserAndUnit
+                                 ) {
         // 参数指定
         Set<String> nodeUnits = null;
-        if (options.getNodeUnits() != null ) {
-            String nodeUnit = options.getNodeUnits().get(nextOptNode.getNodeId());
-            if(StringUtils.isBlank(nodeUnit)){
-                nodeUnit = options.getNodeUnits().get(nextOptNode.getNodeCode());
+        if(calcOptUserAndUnit) {
+            if (options.getNodeUnits() != null) {
+                String nodeUnit = options.getNodeUnits().get(nextOptNode.getNodeId());
+                if (StringUtils.isBlank(nodeUnit)) {
+                    nodeUnit = options.getNodeUnits().get(nextOptNode.getNodeCode());
+                }
+                if (StringUtils.isNotBlank(nodeUnit)) {
+                    nodeUnits = CollectionsOpt.createHashSet(nodeUnit);
+                }
             }
-            if(StringUtils.isNotBlank(nodeUnit)){
-                nodeUnits = CollectionsOpt.createHashSet(nodeUnit);
+
+            //调用机构引擎来计算 unitCode
+            // 如果指定机构 就不需要再进行计算了
+            if (CollectionUtils.isEmpty(nodeUnits)) {
+                nodeUnits = UserUnitCalcEngine.calcUnitsByExp(context,
+                    nextOptNode.getUnitExp());
+                //nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext,
+                // nextOptNode.getUnitExp(),unitParams, varTrans);
+            }
+            if (CollectionUtils.isNotEmpty(nodeUnits)) {
+                // 将 机构表达式
+                context.addUnitParam("N", nodeUnits);
+            }
+
+            // 强制锁定用户 优先级最好
+            if(options.isLockOptUser()){
+                String optUser = options.getWorkUserCode();
+                if(StringUtils.isNotBlank(optUser)) {
+                    return new LeftRightPair<>(nodeUnits, CollectionsOpt.createHashSet(optUser));
+                }
             }
         }
-
-        UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
-             preNodeInst, nodeToken, nextOptNode, options, varTrans);
-
-        //调用机构引擎来计算 unitCode
-        // 如果指定机构 就不需要再进行计算了
-        if (CollectionUtils.isEmpty(nodeUnits)) {
-            nodeUnits = UserUnitCalcEngine.calcUnitsByExp(context,
-                nextOptNode.getUnitExp());
-            //nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext,
-            // nextOptNode.getUnitExp(),unitParams, varTrans);
-        }
-        if(CollectionUtils.isNotEmpty(nodeUnits)) {
-            // 将 机构表达式
-            context.addUnitParam("N", nodeUnits);
-        }
-        // 强制锁定用户 优先级最好
-        if(options.isLockOptUser()){
-            String optUser = options.getWorkUserCode();
-            if(StringUtils.isNotBlank(optUser)) {
-                return new LeftRightPair<>(nodeUnits, CollectionsOpt.createHashSet(optUser));
-            }
-        }
-
         // 通过节点 映射
         Set<String> optUsers = null;
         if(options.getNodeOptUsers() != null){
@@ -811,6 +825,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
     }
 
+    /*
+     * 提交到新的节点
+     */
     private List<String> submitToNextOptNode(
         NodeInfo nextOptNode,  String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
         NodeInstance preNodeInst, String transPath, FlowTransition trans,
@@ -847,10 +864,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         List<String> createNodes = new ArrayList<>();
         createNodes.add(nodeInst.getNodeInstId());
-        LeftRightPair<Set<String>, Set<String>> unitAndUser = calcNodeUnitAndOpterators(flowInst, preNodeInst, nodeToken,
-            nextOptNode, options, varTrans);
+
+        UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
+            preNodeInst, nodeToken, nextOptNode, options, varTrans);
+
+        LeftRightPair<Set<String>, Set<String>> unitAndUser =  calcNodeUnitAndOpterators( context, flowInst,
+            nodeToken, nextOptNode, options, true);
+
         Set<String> nodeUnits = unitAndUser.getLeft();
         Set<String> optUsers = unitAndUser.getRight();
+
         if(nodeUnits!=null && !nodeUnits.isEmpty()){
             nodeInst.setUnitCode(nodeUnits.iterator().next());
         }
@@ -922,13 +945,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         nodeInst.addWfActionTask(wfactTask);
                     }
                 }
-                // TODO 消息通知需要加强，不仅仅是通知操作人员，后续可能需要添加发送时机、发送方式，这部分应该使用策略模式
-                if (NodeInfo.NODE_NOTICE_TYPE_DEFAULT.equals(nextOptNode.getNoticeType())) {
-                    notificationCenter.sendMessage("system", optUsers,
-                        NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
-                            .content(
-                                Pretreatment.mapTemplateString(nextOptNode.getNoticeMessage(), options)));
-                }
+
             }
             /**
              *  检查令牌冲突（自由流程，令牌的冲突有业务程序和流程图自己控制，无需检查）
@@ -960,6 +977,33 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInst.setNodeState("T");
         }
 
+        //消息通知需要加强，不仅仅是通知操作人员，后续可能需要添加发送时机、发送方式，这部分应该使用策略模式
+        if (NodeInfo.NODE_NOTICE_TYPE_DEFAULT.equals(nextOptNode.getNoticeType())){
+            boolean notSendMessage = true;
+            if(StringUtils.isBlank(nextOptNode.getNoticeUserExp())
+                && NodeInfo.NODE_TYPE_OPT.equals(nextOptNode.getNodeType())) {
+                notificationCenter.sendMessage("system", optUsers,
+                    NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
+                        .content(
+                            Pretreatment.mapTemplateString(nextOptNode.getNoticeMessage(), options)));
+                notSendMessage = false;
+            } else if(StringUtils.isNotBlank(nextOptNode.getNoticeUserExp())) {
+                context.addUnitParam("N", nodeUnits);
+                context.addUserParam("N", optUsers);
+                Set<String> sendMessageUser = calcNodeUnitAndOpterators(context, flowInst,
+                    nodeToken, nextOptNode, options, false).getRight();
+                if (sendMessageUser != null && sendMessageUser.size() > 0) {
+                    notificationCenter.sendMessage("system", sendMessageUser,
+                        NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
+                            .content(
+                                Pretreatment.mapTemplateString(nextOptNode.getNoticeMessage(), options)));
+                    notSendMessage = false;
+                }
+            }
+            if(notSendMessage) {
+                logger.error("发送消息找不到对应的接收人："+ JSON.toJSONString(nodeInst));
+            }
+        }
 
         nodeInstanceDao.saveNewObject(nodeInst);
         flowInst.addNodeInstance(nodeInst);

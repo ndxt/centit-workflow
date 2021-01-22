@@ -71,13 +71,10 @@ public class UserTask implements java.io.Serializable {
     private Date flowExpireTime;
     private Long flowTimeLimit;
 
-
     // Constructors
     /** default constructor */
     public UserTask() {
     }
-
-
 
     public String getPromiseTimeStr() {
         if(promiseTime==null)
@@ -86,7 +83,6 @@ public class UserTask implements java.io.Serializable {
         wts.fromNumber(promiseTime);
         return wts.getTimeSpanDesc();
     }
-
 
     public String getTimeLimitStr() {
         if(timeLimit==null)
