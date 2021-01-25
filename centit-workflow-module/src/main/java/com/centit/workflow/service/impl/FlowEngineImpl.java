@@ -1034,12 +1034,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 NodeEventSupport nodeEventExecutor =
                     new AutoRunNodeEventSupport(optPage, nextOptNode,
                         varTrans, this, optVariableDefineDao);
-                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst,
+                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst==null? nodeInst : preNodeInst,
                     nextOptNode, options.getUserCode());
             } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nextOptNode.getAutoRunType())){
                 NodeEventSupport nodeEventExecutor =
                     NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, this);
-                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst,
+                needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst==null? nodeInst : preNodeInst,
                     nextOptNode, options.getUserCode());
             } // 要实现一个 发送内部同步消息的 自动运行节点
             else if(NodeInfo.AUTO_NODE_OPT_CODE_MESSAGE.equals(nextOptNode.getAutoRunType())){

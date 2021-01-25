@@ -59,7 +59,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                                    NodeInfo nodeInfo, String optUserCode) {
         Map<String, Object> params = CollectionsOpt.createHashMap(
-            "flowInstId", nodeInst.getFlowInstId(),
+            "flowInstId", flowInst.getFlowInstId(),
             "nodeInstId", nodeInst.getNodeInstId(),
             "userCode", optUserCode);
         String httpUrl = optPage.getPageUrl();
