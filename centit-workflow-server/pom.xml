@@ -45,13 +45,7 @@
             <artifactId>rmdb-opt-log</artifactId>
         </dependency>
 
-        <!--<dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-view</artifactId>
-            <version>${project.version}</version>
-        </dependency>-->
-
-        <dependency>
+          <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-ip-app</artifactId>
         </dependency>
@@ -61,10 +55,10 @@
             <artifactId>centit-ip-app-config</artifactId>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-base-view-easyui</artifactId>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>com.centit.framework</groupId>
