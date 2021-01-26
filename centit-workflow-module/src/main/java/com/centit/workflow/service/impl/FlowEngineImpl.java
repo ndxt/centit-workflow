@@ -989,8 +989,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             } else if(StringUtils.isNotBlank(nextOptNode.getNoticeUserExp())) {
                 context.addUnitParam("N", nodeUnits);
                 context.addUserParam("N", optUsers);
-                Set<String> sendMessageUser = calcNodeUnitAndOpterators(context, flowInst,
-                    nodeToken, nextOptNode, options, false).getRight();
+                Set<String> sendMessageUser = UserUnitCalcEngine.calcOperators(context, nextOptNode.getNoticeUserExp());
                 if (sendMessageUser != null && sendMessageUser.size() > 0) {
                     notificationCenter.sendMessage("system", sendMessageUser,
                         NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
