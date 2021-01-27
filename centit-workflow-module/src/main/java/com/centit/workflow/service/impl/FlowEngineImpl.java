@@ -473,7 +473,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
             preNodeInst, nodeToken, nextOptNode, options, varTrans);
         return calcNodeUnitAndOpterators( context, flowInst,
-                    nodeToken,nextOptNode,options, true);
+                    nodeToken,nextOptNode,options);
     }
 
     private LeftRightPair<Set<String>, Set<String>>
@@ -481,42 +481,40 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                 FlowInstance flowInst,
                                  String nodeToken,
                                  NodeInfo nextOptNode,
-                                 FlowOptParamOptions options, boolean calcOptUserAndUnit
-                                 ) {
+                                 FlowOptParamOptions options) {
         // 参数指定
         Set<String> nodeUnits = null;
-        if(calcOptUserAndUnit) {
-            if (options.getNodeUnits() != null) {
-                String nodeUnit = options.getNodeUnits().get(nextOptNode.getNodeId());
-                if (StringUtils.isBlank(nodeUnit)) {
-                    nodeUnit = options.getNodeUnits().get(nextOptNode.getNodeCode());
-                }
-                if (StringUtils.isNotBlank(nodeUnit)) {
-                    nodeUnits = CollectionsOpt.createHashSet(nodeUnit);
-                }
+        if (options.getNodeUnits() != null) {
+            String nodeUnit = options.getNodeUnits().get(nextOptNode.getNodeId());
+            if (StringUtils.isBlank(nodeUnit)) {
+                nodeUnit = options.getNodeUnits().get(nextOptNode.getNodeCode());
             }
-
-            //调用机构引擎来计算 unitCode
-            // 如果指定机构 就不需要再进行计算了
-            if (CollectionUtils.isEmpty(nodeUnits)) {
-                nodeUnits = UserUnitCalcEngine.calcUnitsByExp(context,
-                    nextOptNode.getUnitExp());
-                //nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext,
-                // nextOptNode.getUnitExp(),unitParams, varTrans);
-            }
-            if (CollectionUtils.isNotEmpty(nodeUnits)) {
-                // 将 机构表达式
-                context.addUnitParam("N", nodeUnits);
-            }
-
-            // 强制锁定用户 优先级最好
-            if(options.isLockOptUser()){
-                String optUser = options.getWorkUserCode();
-                if(StringUtils.isNotBlank(optUser)) {
-                    return new LeftRightPair<>(nodeUnits, CollectionsOpt.createHashSet(optUser));
-                }
+            if (StringUtils.isNotBlank(nodeUnit)) {
+                nodeUnits = CollectionsOpt.createHashSet(nodeUnit);
             }
         }
+
+        //调用机构引擎来计算 unitCode
+        // 如果指定机构 就不需要再进行计算了
+        if (CollectionUtils.isEmpty(nodeUnits)) {
+            nodeUnits = UserUnitCalcEngine.calcUnitsByExp(context,
+                nextOptNode.getUnitExp());
+            //nextNodeUnit = UserUnitCalcEngine.calcSingleUnitByExp(userUnitFilterCalcContext,
+            // nextOptNode.getUnitExp(),unitParams, varTrans);
+        }
+        if (CollectionUtils.isNotEmpty(nodeUnits)) {
+            // 将 机构表达式
+            context.addUnitParam("N", nodeUnits);
+        }
+
+        // 强制锁定用户 优先级最好
+        if(options.isLockOptUser()){
+            String optUser = options.getWorkUserCode();
+            if(StringUtils.isNotBlank(optUser)) {
+                return new LeftRightPair<>(nodeUnits, CollectionsOpt.createHashSet(optUser));
+            }
+        }
+
         // 通过节点 映射
         Set<String> optUsers = null;
         if(options.getNodeOptUsers() != null){
@@ -868,7 +866,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             preNodeInst, nodeToken, nextOptNode, options, varTrans);
 
         LeftRightPair<Set<String>, Set<String>> unitAndUser =  calcNodeUnitAndOpterators( context, flowInst,
-            nodeToken, nextOptNode, options, true);
+            nodeToken, nextOptNode, options);
 
         Set<String> nodeUnits = unitAndUser.getLeft();
         Set<String> optUsers = unitAndUser.getRight();
