@@ -443,4 +443,13 @@ public class FlowDefineClientImpl implements FlowDefine {
     public Map<String, String> listOptDefaultVariables(String optId) {
         throw new ObjectException("This function is not been implemented in client.");
     }
+
+    /**
+     * 根据流程阶段id删除流程阶段
+     * @param stageId
+     */
+    @Override
+    public void deleteFlowStageById(String stageId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
 }

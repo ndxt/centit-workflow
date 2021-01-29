@@ -54,6 +54,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Autowired
     private UserUnitFilterCalcContextFactory userUnitFilterFactory;
 
+    @Autowired
+    private FlowStageDao flowStageDao;
+
     private static Logger logger = LoggerFactory.getLogger(FlowDefineImpl.class);
     public static final String BEGINNODETAG = "begin";
     public static final String ENDNODETAG = "end";
@@ -765,6 +768,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             }
         }
         return variableValueMap;
+    }
+
+    @Override
+    @Transactional
+    public void deleteFlowStageById(String stageId) {
+        flowStageDao.deleteObjectById(stageId);
     }
 
 }

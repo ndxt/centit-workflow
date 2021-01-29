@@ -242,4 +242,9 @@ public interface FlowDefine {
      */
     Map<String, String> listOptDefaultVariables(String optId);
 
+    /**
+     * 根据流程阶段id删除流程阶段
+     * @param stageId
+     */
+    void deleteFlowStageById(String stageId);
 }

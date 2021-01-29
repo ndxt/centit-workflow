@@ -2,6 +2,7 @@ package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.core.controller.BaseController;
@@ -225,8 +226,9 @@ public class FlowDefineController extends BaseController {
      * @param response HttpServletResponse
      */
     @ApiOperation(value = "保存流程的阶段信息",notes = "保存流程的阶段信息，阶段信息作为流程信息的属性flowStages封装")
+    @WrapUpResponseBody
     @PostMapping(value = "/stage/{flowcode}")
-    public void editFlowStage(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
+    public ResponseData editFlowStage(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
         if (null != flowdefine.getFlowStages()) {
             for (FlowStage stage : flowdefine.getFlowStages()) {
                 if (null == stage.getStageId()) {
@@ -241,10 +243,11 @@ public class FlowDefineController extends BaseController {
 
         boolean saveSucced = flowDefine.saveDraftFlowStage(flowdefine);
 
-        if (saveSucced)
-            JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
-        else
-            JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
+        if (saveSucced) {
+            return ResponseData.makeResponseData(flowdefine);
+        } else {
+            return ResponseData.makeErrorMessage("流程的阶段信息保存失败！");
+        }
     }
 
     /**
@@ -513,4 +516,12 @@ public class FlowDefineController extends BaseController {
             WebOptUtils.getCurrentUserCode(request),
             WebOptUtils.getCurrentUnitCode(request));
     }
+
+    @DeleteMapping("/stage/{stageId}")
+    @WrapUpResponseBody
+    @ApiOperation("根据流程阶段id删除流程阶段")
+    public void deleteFlowStageById(@PathVariable String stageId) {
+        flowDefine.deleteFlowStageById(stageId);
+    }
+
 }
