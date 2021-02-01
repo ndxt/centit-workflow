@@ -524,4 +524,11 @@ public class FlowDefineController extends BaseController {
         flowDefine.deleteFlowStageById(stageId);
     }
 
+    @PostMapping("/stage")
+    @WrapUpResponseBody
+    @ApiOperation("保存流程阶段")
+    public void saveFlowStage(@RequestBody FlowStage flowStage) {
+        flowDefine.saveFlowStage(flowStage);
+    }
+
 }

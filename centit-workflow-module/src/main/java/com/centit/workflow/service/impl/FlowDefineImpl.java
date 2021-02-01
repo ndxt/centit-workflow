@@ -776,4 +776,36 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowStageDao.deleteObjectById(stageId);
     }
 
+    @Override
+    public void saveFlowStage(FlowStage flowStage) {
+        if (flowStage.getFlowCode() == null) {
+            return;
+        }
+        if (flowStage.getVersion() == null) {
+            flowStage.setVersion(0L);
+        }
+        if (flowStage.getStageId() == null) {
+            // 流程阶段的stageCode不能重复
+            HashMap<String, Object> filterMap = new HashMap<>();
+            filterMap.put("flowCode",flowStage.getFlowCode());
+            filterMap.put("stageCode",flowStage.getStageCode());
+            FlowStage stage = flowStageDao.getObjectByProperties(filterMap);
+            if (stage != null) {
+                flowStage.setStageId(stage.getStageId());
+            }
+        }
+        flowStageDao.mergeObject(flowStage);
+
+        // 更新流程状态为草稿
+        FlowInfo flowDef = flowDefineDao.getFlowDefineByID(flowStage.getFlowCode(), 0L);
+        if (flowDef == null) {
+            return;
+        }
+        if (!"A".equals(flowDef.getFlowState())) {
+            flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);
+            flowDef.setFlowClass("R");
+            flowDefineDao.updateObject(flowDef);
+        }
+    }
+
 }
