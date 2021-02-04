@@ -519,14 +519,14 @@ public class FlowDefineController extends BaseController {
 
     @DeleteMapping("/stage/{stageId}")
     @WrapUpResponseBody
-    @ApiOperation("根据流程阶段id删除流程阶段")
+    @ApiOperation(value = "根据流程阶段id删除流程阶段")
     public void deleteFlowStageById(@PathVariable String stageId) {
         flowDefine.deleteFlowStageById(stageId);
     }
 
     @PostMapping("/stage")
     @WrapUpResponseBody
-    @ApiOperation("保存流程阶段")
+    @ApiOperation(value = "保存流程阶段")
     public void saveFlowStage(@RequestBody FlowStage flowStage) {
         flowDefine.saveFlowStage(flowStage);
     }
