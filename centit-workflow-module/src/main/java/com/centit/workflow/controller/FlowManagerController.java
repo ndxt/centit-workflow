@@ -152,7 +152,7 @@ public class FlowManagerController extends BaseController {
                 HashMap<String, String> unitTempMap = new HashMap<>();
                 unitTempMap.put("roleCode", entry.getKey());
                 unitTempMap.put("unitCode", unitCode);
-                unitTempMap.put("unitName", CodeRepositoryUtil.getValue("unitcode", unitCode));
+                unitTempMap.put("unitName", CodeRepositoryUtil.getValue("unitCode", unitCode));
                 organizeList.add(unitTempMap);
             }
         }
