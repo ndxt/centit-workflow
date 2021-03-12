@@ -202,7 +202,7 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     /**
-     * 添加节点任务, 添加操作人元
+     * 添加节点任务, 添加操作人员
      * Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      *
      * @param nodeInstId
@@ -251,7 +251,7 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     /**
-     * 获取节点实例的操作日志列表
+     * 获取流程实例的操作日志列表
 
      * @param flowInstId     流程实例号
      * @param withNodeAction 是否包括节点的日志

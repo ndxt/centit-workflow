@@ -448,7 +448,7 @@ public class FlowManagerController extends BaseController {
         flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
     }
 
-    @ApiOperation(value = "强制流转到下一结点", notes = "强制流转到下一结点")
+    @ApiOperation(value = "强制流转到下一节点", notes = "强制流转到下一节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/forceCommit/{nodeInstId}", method = RequestMethod.GET)
     public String forceCommit(@PathVariable String nodeInstId, HttpServletRequest request) {

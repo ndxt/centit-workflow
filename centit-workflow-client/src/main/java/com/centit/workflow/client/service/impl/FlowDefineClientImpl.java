@@ -81,7 +81,7 @@ public class FlowDefineClientImpl implements FlowDefine {
         return getFlowInfo(flowCode, -1);
     }
     /**
-     * 获取 流程所有版本
+     * 根据流程编码获取 流程所有版本
      *
      * @param flowCode 流程代码
      * @return 流程所有版本

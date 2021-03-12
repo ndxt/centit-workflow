@@ -76,7 +76,7 @@ public class FlowDefineController extends BaseController {
      * @param pageDesc 分页
      * @param flowcode 流程号
      */
-    @ApiOperation(value = "列出所有的流程定义列表", notes = "列出所有的流程定义列表")
+    @ApiOperation(value = "根据流程编码列出所有的流程定义列表", notes = "根据流程编码列出所有的流程定义列表")
     @WrapUpResponseBody
     @RequestMapping(value = "/allversions/{flowcode}", method = RequestMethod.GET)
     public PageQueryResult<FlowInfo> listFlowAllVisionByCode(PageDesc pageDesc, @PathVariable String flowcode) {
