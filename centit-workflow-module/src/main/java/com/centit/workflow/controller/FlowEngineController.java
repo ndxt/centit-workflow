@@ -489,4 +489,11 @@ public class FlowEngineController extends BaseController {
         SubmitOptOptions options = JSON.parseObject(jsonObject.getString("options"), SubmitOptOptions.class);
         return flowEngine.viewNextNodeOperator(nextNodeId, options);
     }
+
+    @ApiOperation(value = "获取流程实例的节点信息", notes = "获取流程实例的节点信息")
+    @WrapUpResponseBody
+    @GetMapping(value = "/viewFlowNodes/{flowInstId}")
+    public JSONArray listFlowNode(@PathVariable String flowInstId) {
+        return flowEngine.viewFlowNodes(flowInstId);
+    }
 }

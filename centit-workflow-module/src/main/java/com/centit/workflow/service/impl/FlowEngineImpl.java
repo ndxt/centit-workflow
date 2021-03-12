@@ -1,6 +1,8 @@
 package com.centit.workflow.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
@@ -2451,5 +2453,29 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public List<FlowInstanceGroup> listFlowInstGroup(Map<String, Object> filterMap, PageDesc pageDesc){
         return flowInstanceGroupDao.listObjects(filterMap, pageDesc);
+    }
+
+    @Override
+    public JSONArray viewFlowNodes(String flowInstId) {
+        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+
+        Map<String, Object> filterMap = new HashMap<>();
+        filterMap.put("flowInstId",flowInstId);
+        filterMap.put("flowCode",flowInst.getFlowCode());
+        filterMap.put("version",flowInst.getVersion());
+        JSONArray flowNodes = nodeInstanceDao.viewFlowNodes(filterMap);
+        for (Object flowNode : flowNodes) {
+            if (((JSONObject) flowNode).get("nodeState") == null) {
+                // 流程未流转到这个节点
+                ((JSONObject) flowNode).put("nodeState","0");
+            }
+            if ("N".equals(((JSONObject) flowNode).getString("nodeState"))) {
+                // 办理中节点添加待办用户
+                List<UserTask> userTasks = actionTaskDao.listUserTaskByFilter(
+                    QueryUtils.createSqlParamsMap("nodeInstId", ((JSONObject) flowNode).getString("nodeInstId")), null);
+                ((JSONObject) flowNode).put("userTasks",userTasks);
+            }
+        }
+        return flowNodes;
     }
 }

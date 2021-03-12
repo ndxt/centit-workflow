@@ -75,6 +75,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
             "[ :stageArr | and STAGE_CODE in (:stageArr) ] "+
             "[ :(like)flowOptName| and FLOW_OPT_NAME like :flowOptName] " +
             "[ :userCode| and USER_CODE = :userCode] " +
+            "[ :grantor| and GRANTOR = :grantor] " +
             "[ :osId| and OS_ID = :osId] " +
             "[ :optId| and OPT_ID = :optId] " +
             "[ :optCode| and OPT_CODE = :optCode] " +
