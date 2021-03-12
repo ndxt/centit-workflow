@@ -2466,7 +2466,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         JSONArray flowNodes = nodeInstanceDao.viewFlowNodes(filterMap);
         for (Object flowNode : flowNodes) {
             if (((JSONObject) flowNode).get("nodeState") == null) {
-                // 流程未流转到这个节点
+                // 流程未流转到这个节点，状态设置为0
                 ((JSONObject) flowNode).put("nodeState","0");
             }
             if ("N".equals(((JSONObject) flowNode).getString("nodeState"))) {

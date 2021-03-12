@@ -429,7 +429,7 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     /**
-     * 获取流程实例的节点信息
+     * 获取流程实例的业务节点信息
      * @param flowInstId
      * @return
      */
