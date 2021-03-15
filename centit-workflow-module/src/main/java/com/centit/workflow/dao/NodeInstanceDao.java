@@ -154,7 +154,8 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
             " left join (select * from wf_node_instance where 1=1  [ :flowInstId| and FLOW_INST_ID = :flowInstId]) t " +
             " on n.NODE_ID = t.NODE_ID  " +
             " where n.NODE_TYPE = 'C' " +
-            " [ :flowCode| and n.FLOW_CODE = :flowCode] [ :version| and n.VERSION = :version]";
+            " [ :flowCode| and n.FLOW_CODE = :flowCode] [ :version| and n.VERSION = :version] " +
+            " order by t.last_update_time is null, t.last_update_time asc ,NODE_STATE desc";
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql,filterMap);
 
         return DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,queryAndNamedParams.getQuery(),
