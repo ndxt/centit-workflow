@@ -233,7 +233,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                     nd.setRoleType(SysUserFilterEngine.ROLE_TYPE_ENGINE);
                     nd.setPowerExp("U(P)");
                 }
-                if(NodeInfo.AUTO_NODE_OPT_CODE_NONE.equals(nd.getAutoRunType())
+                if(NodeInfo.AUTO_NODE_OPT_CODE_CALL.equals(nd.getAutoRunType())
                     && StringRegularOpt.isNvl(nd.getOptCode())){
                         throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
                 } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nd.getAutoRunType())
