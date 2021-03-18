@@ -7,10 +7,7 @@ import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.UrlOptUtils;
-import com.centit.workflow.po.FlowInfo;
-import com.centit.workflow.po.FlowOptInfo;
-import com.centit.workflow.po.NodeInfo;
-import com.centit.workflow.po.OptTeamRole;
+import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,7 +81,7 @@ public class FlowDefineClientImpl implements FlowDefine {
         return getFlowInfo(flowCode, -1);
     }
     /**
-     * 获取 流程所有版本
+     * 根据流程编码获取 流程所有版本
      *
      * @param flowCode 流程代码
      * @return 流程所有版本
@@ -441,6 +438,24 @@ public class FlowDefineClientImpl implements FlowDefine {
      */
     @Override
     public Map<String, String> listOptDefaultVariables(String optId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 根据流程阶段id删除流程阶段
+     * @param stageId
+     */
+    @Override
+    public void deleteFlowStageById(String stageId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 保存流程阶段
+     * @param flowStage
+     */
+    @Override
+    public void saveFlowStage(FlowStage flowStage) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 }

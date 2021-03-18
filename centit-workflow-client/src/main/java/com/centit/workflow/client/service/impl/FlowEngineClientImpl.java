@@ -1,6 +1,7 @@
 package com.centit.workflow.client.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
@@ -428,6 +429,16 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     /**
+     * 获取流程实例的业务节点信息
+     * @param flowInstId
+     * @return
+     */
+    @Override
+    public JSONArray viewFlowNodes(String flowInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
      * 根据条件查询待办，包括flowInstId，flowOptTag
      *
      * @param paramMap 查询参数
@@ -460,7 +471,7 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     /**
-     * 获取动态待办
+     * 获取动态待办(查询用户岗位待办)
      *
      * @param paramMap 包含nodeInstId，unitCode，userStation
      * @param pageDesc     分页信息

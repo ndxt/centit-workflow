@@ -1,5 +1,6 @@
 package com.centit.workflow.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
@@ -674,4 +675,11 @@ public interface FlowEngine {
      * @return 用户任务列表
      */
     List<FlowInstanceGroup> listFlowInstGroup(Map<String, Object> filterMap, PageDesc pageDesc);
+
+    /**
+     * 获取流程实例的业务节点信息
+     * @param flowInstId
+     * @return
+     */
+    JSONArray viewFlowNodes(String flowInstId);
 }

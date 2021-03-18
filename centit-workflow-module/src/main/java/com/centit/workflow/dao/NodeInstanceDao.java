@@ -1,9 +1,12 @@
 package com.centit.workflow.dao;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.support.database.utils.QueryAndNamedParams;
+import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.NodeInstance;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -136,6 +139,27 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
     public List<NodeInstance> listActiveTimerNodeByFlowStage(String flowInstId, String flowStage){
         return this.listObjectsByFilter(" where flow_Inst_Id = ? and flow_Stage = ? and is_Timer = 'T'",
                 new Object[]{flowInstId,flowStage});
+    }
+
+    /**
+     * 获取流程实例的节点信息（流程中所有的业务节点 和 节点实例）
+     * @param filterMap
+     * @return
+     */
+    @Transactional
+    public JSONArray viewFlowNodes(Map<String, Object> filterMap) {
+        String sql = " select n.NODE_ID,n.NODE_CODE,n.NODE_NAME, " +
+            " t.NODE_INST_ID, t.NODE_STATE, t.CREATE_TIME, t.LAST_UPDATE_TIME,t.last_update_user " +
+            " from wf_node n " +
+            " left join (select * from wf_node_instance where 1=1  [ :flowInstId| and FLOW_INST_ID = :flowInstId]) t " +
+            " on n.NODE_ID = t.NODE_ID  " +
+            " where n.NODE_TYPE = 'C' " +
+            " [ :flowCode| and n.FLOW_CODE = :flowCode] [ :version| and n.VERSION = :version] " +
+            " order by t.last_update_time is null, t.last_update_time asc ,NODE_STATE desc";
+        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql,filterMap);
+
+        return DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,queryAndNamedParams.getQuery(),
+            queryAndNamedParams.getParams());
     }
 
    /* public void saveOptIdeaForAutoSubmit(Map<String,Object> paraMap){

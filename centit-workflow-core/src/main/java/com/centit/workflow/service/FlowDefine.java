@@ -1,10 +1,7 @@
 package com.centit.workflow.service;
 
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.FlowInfo;
-import com.centit.workflow.po.FlowOptInfo;
-import com.centit.workflow.po.NodeInfo;
-import com.centit.workflow.po.OptTeamRole;
+import com.centit.workflow.po.*;
 
 import java.util.List;
 import java.util.Map;
@@ -242,4 +239,15 @@ public interface FlowDefine {
      */
     Map<String, String> listOptDefaultVariables(String optId);
 
+    /**
+     * 根据流程阶段id删除流程阶段
+     * @param stageId
+     */
+    void deleteFlowStageById(String stageId);
+
+    /**
+     * 保存流程阶段
+     * @param flowStage
+     */
+    void saveFlowStage(FlowStage flowStage);
 }
