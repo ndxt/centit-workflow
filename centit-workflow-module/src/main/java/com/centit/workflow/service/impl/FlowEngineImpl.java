@@ -133,7 +133,30 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowInstance createInstance(CreateFlowOptions options,
                                        UserUnitVariableTranslate varTrans,
                                        ServletContext application) {
-        FlowInstance instance = createInstanceInside(options, varTrans,  application,true);
+        //查询重复的流程
+        HashMap<String, Object> conditions = new HashMap<>(8);
+        conditions.put("flowCode", options.getFlowCode());
+        conditions.put("instState", "N");
+        boolean hasCondition = false;
+        if(StringUtils.isNotBlank(options.getFlowInstId())){
+            conditions.put("flowInstId", options.getFlowInstId());
+            hasCondition = true;
+        }
+        if(StringUtils.isNotBlank(options.getModelId())){
+            conditions.put("optId", options.getModelId());
+        }
+        if(StringUtils.isNotBlank(options.getFlowOptTag())){
+            conditions.put("flowOptTag", options.getFlowOptTag());
+            hasCondition = true;
+        }
+
+        FlowInstance instance = null;
+        if(hasCondition) {
+            instance = flowInstanceDao.getObjectByProperties(conditions);
+        }
+        if(instance == null) {
+            instance = createInstanceInside(options, varTrans, application, true);
+        }
         // 记录日志
         return instance;
     }
@@ -169,13 +192,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         FlowInstance flowInst = FlowOptUtils.createFlowInst(
             options.getUnitCode(), options.getUserCode(), wf, flowInstId, options.getTimeLimitStr());
-
+        flowInst.setOptId(options.getModelId());
         flowInst.setCreateTime(createTime);
         flowInst.setFlowGroupId(options.getFlowGroupId());
         //节点实例编号不为空，为子流程，创建子流程时要给父节点的状态设置为 W：等待子流程返回
         if (StringUtils.isNotBlank(options.getParentNodeInstId())) {
             flowInst.setPreNodeInstId(options.getParentNodeInstId());
             flowInst.setPreInstId(options.getParentFlowInstId());
+
             FlowInstance parentInst = flowInstanceDao.getObjectById(options.getParentFlowInstId());
             //如果没有指定 分组，使用父节点分组
             if(StringUtils.isBlank(options.getFlowGroupId())

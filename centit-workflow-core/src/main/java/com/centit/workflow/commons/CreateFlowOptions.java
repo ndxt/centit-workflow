@@ -22,7 +22,10 @@ public class CreateFlowOptions implements FlowOptParamOptions{
     @ApiModelProperty(value = "流程定义Code", required = true)
     private String flowCode;
 
-    @ApiModelProperty("自定义表单得模板id")
+    /**
+     * 业务的OptId 或者 自定义表单得模板id
+     */
+    @ApiModelProperty("业务的OptId 或者 自定义表单得模板id")
     private String modelId;
 
     /**
