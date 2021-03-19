@@ -61,9 +61,9 @@ public class ServiceConfig {
         messageManager.setServerEmail("no-reply@centit.com");
 
         NotificationCenterImpl notificationCenter = new NotificationCenterImpl();
-        //notificationCenter.initDummyMsgSenders();
         notificationCenter.setPlatformEnvironment(platformEnvironment);
-        notificationCenter.registerMessageSender("email",messageManager);
+        //禁用发送email
+//        notificationCenter.registerMessageSender("email",messageManager);
         notificationCenter.appointDefaultSendType("email");
         return notificationCenter;
     }
