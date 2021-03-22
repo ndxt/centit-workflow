@@ -101,6 +101,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             String thisNodeId = UuidOpt.getUuidAsString32();
             flowData.nodeTagToId.put(node.getNodeId(), thisNodeId);
             node.setNodeId(thisNodeId);
+            // 节点的optId默认和流程的optId一致。
+            if (StringUtils.isBlank(node.getOptId())) {
+                node.setOptId(flowDef.getOptId());
+            }
         }
 
         for(FlowTransition tran : flowDef.getTransList()){

@@ -76,10 +76,10 @@ public class FlowTaskImpl {
             notificationCenter.sendMessage("system",
                 task.getUserCode(),
                 NoticeMessage.create().subject("节点预报警提示")
-                .content("业务" + task.getFlowOptName() + "的" +
-                    task.getNodeName() + "节点超时预警，请尽快处理。办理链接为" +
-                    task.getNodeOptUrl())
-                .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInstId)));
+                    .content("业务" + task.getFlowOptName() + "的" +
+                        task.getNodeName() + "节点超时预警，请尽快处理。办理链接为" +
+                        task.getNodeOptUrl())
+                    .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInstId)));
             nn++;
         }
         return nn;
@@ -160,7 +160,7 @@ public class FlowTaskImpl {
                 if (nodeInfo != null) {
                     //* N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
                     //如果超期结束流程
-                    if (nodeInst.getTimeLimit() <= 0){
+                    if (nodeInst.getTimeLimit() <= 0) {
                         if ("E".equals(nodeInfo.getExpireOpt())) {
                             stopFlow = true;
                             break;
@@ -169,6 +169,16 @@ public class FlowTaskImpl {
                         } else if ("X".equals(nodeInfo.getExpireOpt())) {
 
                         }*/
+
+                        // 同步节点的方式为时间，时间到达后提交节点
+                        if ("T".equals(nodeInst.getNodeState()) && NodeInfo.SYNC_NODE_TYPE_TIME.equals(nodeInfo.getOptType())) {
+                            flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId()));
+                            // 更新节点状态为 C
+                            nodeInst.setNodeState("C");
+                            nodeInst.setLastUpdateUser(nodeInst.getUserCode());
+                            nodeInst.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+                            nodeInstanceDao.updateObject(nodeInst);
+                        }
                     }
                 }
                 if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer())) &&
@@ -178,7 +188,7 @@ public class FlowTaskImpl {
                 }
 
                 if ("T".equals(nodeInst.getIsTimer())
-                        /*&& "T".equals( node.getIsTrunkLine())*/)
+                    /*&& "T".equals( node.getIsTrunkLine())*/)
                     flowconsume = true;
             }
 
@@ -203,15 +213,15 @@ public class FlowTaskImpl {
         return (m > 830 && m < 1200) || (m > 1330 && m < 1800);
     }
 
-    private void runEventTask(int maxRows){
+    private void runEventTask(int maxRows) {
         // 获取所有事件 来处理
         List<FlowEventInfo> events = flowEventService.listEventForOpt(maxRows);
         // 获取所有 时间事件的同步节点
-        if(events!=null && events.size()>0) {
+        if (events != null && events.size() > 0) {
             for (FlowEventInfo eventInfo : events) {
                 List<NodeInstance> nodes = nodeInstanceDao.listNodeInstByState(eventInfo.getFlowInstId(), "T");
                 boolean hasOptEvent = false;
-                String  successOpt = "S";
+                String successOpt = "S";
                 try {
                     if (nodes != null) {
                         for (NodeInstance nodeInst : nodes) {
@@ -225,17 +235,17 @@ public class FlowTaskImpl {
                             }
                         }
                     }
-                } catch (ObjectException e){
-                    successOpt= "F";
+                } catch (ObjectException e) {
+                    successOpt = "F";
                     eventInfo.setOptResult(e.getMessage());
                 }
-                if(hasOptEvent){
+                if (hasOptEvent) {
                     eventInfo.setOptState(successOpt);
                     eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
                     flowEventService.updateEvent(eventInfo);
                 } else {
                     FlowInstance flowInst = flowInstanceDao.getObjectById(eventInfo.getFlowInstId());
-                    if(flowInst==null || !"N".equals(flowInst.getInstState())){
+                    if (flowInst == null || !"N".equals(flowInst.getInstState())) {
                         eventInfo.setOptState("E");
                         eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
                         eventInfo.setOptResult("流程不在正常运行状态！");

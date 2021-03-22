@@ -14,6 +14,7 @@ import com.centit.framework.model.basedata.*;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.common.ObjectException;
+import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.compiler.Pretreatment;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
@@ -613,6 +614,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             ni.setNodeState("F");// 节点设置为无效
             ni.setLastUpdateTime(currentTime);
             ni.setLastUpdateUser(userCode);
+            nodeInstanceDao.updateObject(ni);
         }
     }
 
@@ -682,7 +684,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X
                 String sCT = nextRoutertNode.getConvergeType();
                 if (! canSubmit && ! NodeInfo.ROUTER_COLLECT_TYPE_ALL_COMPLETED.equals(sCT)) {
+                    // 除了要找到汇聚节点所有已经提交的子节点外 还要添加当前正在提交的节点（视正在提交中的节点为已办理节点）
                     Set<String> submitNodeIds = flowInst.calcSubmitSubNodeIdByToken(preRunToken);
+                    // 获取指向汇聚节点的流程线
                     List<FlowTransition> transList =
                         flowTransitionDao.getNodeInputTrans(nextRoutertNode.getNodeId());
                     canSubmit = true;
@@ -998,6 +1002,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())){
             //  新建同步节点
             nodeInst.setNodeState("T");
+            //  判断同步节点的同步方式是否为时间触发
+            if (NodeInfo.SYNC_NODE_TYPE_TIME.equals(nextOptNode.getOptType())) {
+                // 设置时间
+                nodeInst.setIsTimer(NodeInfo.TIME_LIMIT_NORMAL);
+                nodeInst.setTimeLimit(new WorkTimeSpan(nextOptNode.getTimeLimit()).toNumber());
+                nodeInst.setPromiseTime(nodeInst.getTimeLimit());
+            }
         }
 
         //消息通知需要加强，不仅仅是通知操作人员，后续可能需要添加发送时机、发送方式，这部分应该使用策略模式
