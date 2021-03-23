@@ -190,7 +190,7 @@ public class FlowDefineController extends BaseController {
      */
     @ApiOperation(value = "新建流程的基本信息",notes = "新建流程的基本信息")
     @RequestMapping(method = RequestMethod.POST)
-    public void addFlowDefine(@Valid FlowInfo flowdefine, HttpServletResponse response) {
+    public void addFlowDefine(@RequestBody FlowInfo flowdefine, HttpServletResponse response) {
         boolean saveSucced = flowDefine.saveDraftFlowDef(flowdefine);
         if (saveSucced)
             JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
