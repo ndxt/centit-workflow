@@ -497,11 +497,12 @@ public class FlowInstance implements java.io.Serializable {
 
     /**
      * 找到汇聚节点所有已经提交的子节点
-     *
+     * （preNodeInst不为null时，视正在提交中的节点为已办理节点）
      * @param token
+     * @param preNodeInst 汇聚节点的父节点实例
      * @return token, NodeInst
      */
-    public Map<String, NodeInstance> findSubmitSubNodeInstByToken(String token) {
+    public Map<String, NodeInstance> findSubmitSubNodeInstByToken(String token, NodeInstance preNodeInst) {
         Map<String, NodeInstance> sameNodes = new HashMap<String, NodeInstance>();
         if (token == null || this.flowNodeInstances == null)
             return sameNodes;
@@ -523,9 +524,9 @@ public class FlowInstance implements java.io.Serializable {
         for (NodeInstance nodeInst : flowNodeInstances) {
             String thisToken = nodeInst.getTrunkToken();
             if (thisToken != null && thisToken.startsWith(token + '.') &&
-                "C".equals(nodeInst.getNodeState()) &&
+                ("C".equals(nodeInst.getNodeState()) || (preNodeInst !=null && preNodeInst.getNodeInstId().equals(nodeInst.getNodeInstId()))) &&
                 nodeInst.getTokenGeneration() == subg &&
-                nodeInst.getCreateTime().after(sameInst.getCreateTime()) ) {
+                !nodeInst.getCreateTime().before(sameInst.getCreateTime()) ) {
                 NodeInstance tempInst = sameNodes.get(thisToken);
                 if (tempInst == null || tempInst.getCreateTime().before(nodeInst.getCreateTime()))
                     sameNodes.put(thisToken, nodeInst);
@@ -536,12 +537,13 @@ public class FlowInstance implements java.io.Serializable {
 
     /**
      * 找到汇聚节点所有已经提交的子节点
-     *
+     *（preNodeInst不为null时，视正在提交中的节点为已办理节点）
      * @param token
+     * @param preNodeInst 汇聚节点的父节点实例
      * @return Nodeid
      */
-    public Set<String> calcSubmitSubNodeIdByToken(String token) {
-        Map<String, NodeInstance> subNodes = findSubmitSubNodeInstByToken(token);
+    public Set<String> calcSubmitSubNodeIdByToken(String token, NodeInstance preNodeInst) {
+        Map<String, NodeInstance> subNodes = findSubmitSubNodeInstByToken(token, preNodeInst);
         Set<String> subTokens = new HashSet<String>();
         for (Map.Entry<String, NodeInstance> ent : subNodes.entrySet())
             subTokens.add(ent.getValue().getNodeId());

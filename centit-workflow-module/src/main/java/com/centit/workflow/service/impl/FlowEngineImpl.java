@@ -685,7 +685,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 String sCT = nextRoutertNode.getConvergeType();
                 if (! canSubmit && ! NodeInfo.ROUTER_COLLECT_TYPE_ALL_COMPLETED.equals(sCT)) {
                     // 除了要找到汇聚节点所有已经提交的子节点外 还要添加当前正在提交的节点（视正在提交中的节点为已办理节点）
-                    Set<String> submitNodeIds = flowInst.calcSubmitSubNodeIdByToken(preRunToken);
+                    Set<String> submitNodeIds = flowInst.calcSubmitSubNodeIdByToken(preRunToken, preNodeInst);
                     // 获取指向汇聚节点的流程线
                     List<FlowTransition> transList =
                         flowTransitionDao.getNodeInputTrans(nextRoutertNode.getNodeId());
@@ -714,6 +714,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
                 if (canSubmit) {
                     Set<NodeInstance> sameNodes = flowInst.findAllActiveSubNodeInstByToken(preRunToken);
+                    // 移除待提交节点
+                    sameNodes.removeIf(
+                        nodeInst -> preNodeInst.getNodeInstId().equals(nodeInst.getNodeInstId())
+                    );
                     if(sameNodes != null && !sameNodes.isEmpty()) {
                         //结束这些节点
                         Date currentTime = new Date(System.currentTimeMillis());
