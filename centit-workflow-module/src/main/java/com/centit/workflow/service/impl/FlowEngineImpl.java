@@ -895,8 +895,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
             preNodeInst, nodeToken, nextOptNode, options, varTrans);
 
-        LeftRightPair<Set<String>, Set<String>> unitAndUser =  calcNodeUnitAndOpterators( context, flowInst,
-            nodeToken, nextOptNode, options);
+        LeftRightPair<Set<String>, Set<String>> unitAndUser =
+                calcNodeUnitAndOpterators( context, flowInst,
+                        nodeToken, nextOptNode, options);
 
         Set<String> nodeUnits = unitAndUser.getLeft();
         Set<String> optUsers = unitAndUser.getRight();
