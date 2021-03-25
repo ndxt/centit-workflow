@@ -594,3 +594,33 @@ from ((((select wf_flow_define.FLOW_CODE AS FLOW_CODE,max(wf_flow_define.version
     join wf_flow_define b on (((lastversion.FLOW_CODE = b.FLOW_CODE) and (lastversion.version = b.version))))
 ;
 
+-- 已办视图--不在代码中使用，查询效率低，只为了开发调试
+create or replace view v_user_completeTask_list as
+(select t.*,
+        w.FLOW_CODE,w.VERSION,w.FLOW_Opt_Name,
+        w.flow_opt_tag, -- 流程标题
+        w.os_id,w.opt_id,
+        w.create_time AS create_flow_time,  -- 流程创建时间
+        w.PROMISE_TIME, w.TIME_LIMIT,w.INST_STATE,
+        w.last_update_user AS flow_last_update_user,  -- 流程最后操作用户
+        w.user_code AS create_user, -- 流程创建用户
+        w.unit_code AS create_unit  -- 流程创建机构
+        -- ---- 可以通过 flow_inst_id 关联业务表
+from
+ (SELECT n.flow_inst_id,  -- 流程实例id
+         n.last_update_user as user_code,  -- 节点办理用户(节点最后操作用户)
+         max(n.last_update_time) as update_time,  -- 节点办理时间
+         group_concat(n.node_inst_id) node_inst_ids, -- 一个用户办理了流程中的多个节点时，多个节点的实例id
+         group_concat(f.node_name) node_names,  -- 一个用户办理了流程中的多个节点时，多个节点的名称
+         group_concat(f.node_code) node_codes   -- 一个用户办理了流程中的多个节点时，多个节点的环节代码
+  from wf_node_instance n JOIN wf_node f on n.node_id = f.node_id
+  where n.node_state IN ('C', 'F', 'P')  -- 已办节点实例的状态
+  -- AND n.prev_node_inst_id IS NOT NULL  -- 去除首节点
+	AND f.node_type not in ('A','F', 'D')  -- 去除开始,结束节点,自动执行节点
+  GROUP BY n.flow_inst_id, n.last_update_user  -- 一个用户可能会审批流程的多个节点
+	) t
+	left JOIN wf_flow_instance w on t.flow_inst_id = w.flow_inst_id  -- 关联流程实例表
+);
+
+
+

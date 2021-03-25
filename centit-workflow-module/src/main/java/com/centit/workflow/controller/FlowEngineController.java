@@ -467,6 +467,11 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "根据条件查询已办", notes = "根据条件查询已办")
     @WrapUpResponseBody
     @GetMapping(value = "/listCompleteTasks")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userCode", value = "用户编码"),
+        @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)"),
+        @ApiImplicitParam(name = "osId", value = "业务系统ID")
+    })
     public PageQueryResult<UserTask> listCompleteTasks(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         List<UserTask> userTasks = flowEngine.listUserCompleteTasks(searchColumn, pageDesc);
