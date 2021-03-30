@@ -1561,8 +1561,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 pns.add(prevNodeInst);
                 //优先通过节点表中的prenodeinstid来查找上一节点
                 String currnetNodeInstId = prevNodeInst.getPrevNodeInstId();
-                prevNodeInst = nodeInstanceDao.getObjectWithReferences(currnetNodeInstId);
-                if (prevNodeInst == null) {
+                if (currnetNodeInstId != null) {
+                    prevNodeInst = nodeInstanceDao.getObjectWithReferences(currnetNodeInstId);
+                } else {
                     prevNodeInst = flowInst.getPareNodeInst(currnetNodeInstId);
                 }
                 if (prevNodeInst == null)
