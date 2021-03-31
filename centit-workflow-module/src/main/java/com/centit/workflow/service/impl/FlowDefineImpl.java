@@ -199,7 +199,14 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
         flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
         flowDef.setFlowClass("R");
-
+        // 获取流程信息
+        JSONObject flowAttr = JSONObject.parseObject(new String(flowDefXML)).getJSONObject("attr");
+        if (flowAttr != null) {
+            flowDef.setFlowName(flowAttr.getString("flowName"));
+            flowDef.setFlowDesc(flowAttr.getString("flowDesc"));
+            flowDef.setTimeLimit(flowAttr.getString("timeLimit"));
+            flowDef.setExpireOpt(flowAttr.getString("expireOpt"));
+        }
         flowDef.setFlowXmlDesc(flowDefXML);
 
         flowDefineDao.updateObject(flowDef);
