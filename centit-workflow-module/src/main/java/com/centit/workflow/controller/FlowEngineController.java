@@ -60,9 +60,20 @@ public class FlowEngineController extends BaseController {
     }))
     @WrapUpResponseBody
     @PostMapping(value = "/submitOpt")
-    public List<String> submitOpt(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
-        return flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
-            BaseController.collectRequestParameters(request)),null);
+    public Map<String, Object> submitOpt(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
+        /*return flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
+            BaseController.collectRequestParameters(request)),null);*/
+        List<String> nextNodeInstList = flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
+            BaseController.collectRequestParameters(request)), null);
+        // 返回提交后节点的名称
+        Set<String> nodeNames = new HashSet<>();
+        for (String nodeInstId : nextNodeInstList) {
+            nodeNames.add(flowEngine.getNodeInfo(nodeInstId).getNodeName());
+        }
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("nextNodeInsts",nextNodeInstList);
+        resultMap.put("nodeNames",StringUtils.join(nodeNames,","));
+        return resultMap;
     }
 
     @ApiOperation(value = "保存流程变量", notes = "保存流程变量")
