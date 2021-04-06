@@ -68,7 +68,10 @@ public class FlowEngineController extends BaseController {
         // 返回提交后节点的名称
         Set<String> nodeNames = new HashSet<>();
         for (String nodeInstId : nextNodeInstList) {
-            nodeNames.add(flowEngine.getNodeInfo(nodeInstId).getNodeName());
+            NodeInfo nodeInfo = flowEngine.getNodeInfo(nodeInstId);
+            if (nodeInfo != null) {
+                nodeNames.add(nodeInfo.getNodeName());
+            }
         }
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("nextNodeInsts",nextNodeInstList);
