@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
+import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
@@ -2514,7 +2515,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 // 办理中节点添加待办用户
                 List<UserTask> userTasks = actionTaskDao.listUserTaskByFilter(
                     QueryUtils.createSqlParamsMap("nodeInstId", ((JSONObject) flowNode).getString("nodeInstId")), null);
-                ((JSONObject) flowNode).put("userTasks",userTasks);
+                ((JSONObject) flowNode).put("userTasks",DictionaryMapUtils.objectsToJSONArray(userTasks));
             }
         }
         return flowNodes;
