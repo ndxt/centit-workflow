@@ -3,6 +3,7 @@ package com.centit.workflow.support;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.compiler.Lexer;
 import com.centit.support.compiler.Pretreatment;
@@ -62,7 +63,14 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             "flowInstId", flowInst.getFlowInstId(),
             "nodeInstId", nodeInst.getNodeInstId(),
             "userCode", optUserCode);
-        String httpUrl = optPage.getPageUrl();
+        String httpUrl;
+        if (FlowOptPage.PAGE_TYPE_API.equals(optPage.getPageType())) {
+            String apiGatawayUrl = CodeRepositoryUtil.getSysConfigValue("api.gataway.url");
+            logger.info("获取api网关的URL地址为：{}", apiGatawayUrl);
+            httpUrl = apiGatawayUrl + "/httpTask/run/" + optPage.getPageUrl();
+        } else {
+            httpUrl = optPage.getPageUrl();
+        }
         if(StringUtils.isNotBlank(flowInst.getFlowOptTag())){
             if(flowInst.getFlowOptTag().indexOf("&")>0){
                 httpUrl = UrlOptUtils.appendParamToUrl(optPage.getPageUrl(), flowInst.getFlowOptTag());
@@ -106,6 +114,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             }
 
             httpUrl = UrlOptUtils.appendParamsToUrl(httpUrl, params);
+            logger.info("httpUrl：{}", httpUrl);
 
             if (StringUtils.isBlank(optMethod) || "R".equalsIgnoreCase(optMethod) || "GET".equalsIgnoreCase(optMethod)) {
                 httpRet = HttpExecutor.simpleGet(HttpExecutorContext.create(), httpUrl);
