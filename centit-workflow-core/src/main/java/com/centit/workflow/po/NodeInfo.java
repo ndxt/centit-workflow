@@ -76,7 +76,7 @@ public class NodeInfo implements java.io.Serializable {
      * B：调用Bean包括远程Bean
      * S：脚本
      * M：发送消息
-     * C：接口调研
+     * C：接口调用
      * */
     public static final String AUTO_NODE_OPT_CODE_NONE    = "N";
     public static final String AUTO_NODE_OPT_CODE_BEAN    = "B";
@@ -303,18 +303,21 @@ public class NodeInfo implements java.io.Serializable {
         return NODE_TYPE_OPT.equals(this.nodeType)?this.optType: null;
     }
 
-    public void setOptRunType(String optType){
-        this.nodeType = NODE_TYPE_OPT;
-        this.optType = optType;
+    public void setOptRunType(String optRunType){
+        // 自动执行节点的流程图json中optRunType为D
+        if (!NODE_TYPE_AUTO.equals(optRunType)) {
+            this.nodeType = NODE_TYPE_OPT;
+            this.optType = optRunType;
+        }
     }
 
     public String getAutoRunType(){
         return NODE_TYPE_AUTO.equals(this.nodeType)?this.optType: null;
     }
 
-    public void setAutoRunType(String optType){
+    public void setAutoRunType(String autoRunType){
         this.nodeType = NODE_TYPE_AUTO;
-        this.optType = optType;
+        this.optType = autoRunType;
     }
 
     public String getRouterType(){
