@@ -534,7 +534,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private Map<String, String> listAllOptCode(String flowCode, long version) {
         FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
         //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
-        List<FlowOptPage> wfOptDefs = flowOptPageDao.listObjectsByProperty("optId", flowDef.getOptId());
+        // 新建流程时，查询不到流程定义
+        String optId = flowDef == null ? null : flowDef.getOptId();
+        List<FlowOptPage> wfOptDefs = flowOptPageDao.listObjectsByProperty("optId", optId);
         Map<String, String> optMap = new HashMap<>();
         for (FlowOptPage f : wfOptDefs) {
             //optMap.put(flowOptInfo.getOptUrl() + f.getOptMethod(), f.getOptName());
@@ -672,6 +674,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
         FlowInfo flowDef = flowDefineDao.getFlowDefineByID(flowCode, version);//流程0版本读取
         flowDefineDao.fetchObjectReference(flowDef,"flowStages");
+        // 新建流程时，查询不到流程定义
+        if (flowDef == null) {
+            flowDef = new FlowInfo();
+        }
 
         List<FlowStage> stageSet = flowDef.getFlowStages();
 
