@@ -116,9 +116,12 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "查询单个流程草稿", notes = "查询单个流程草稿")
     @RequestMapping(value = "/draft/{flowcode}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public void getFlowDefineDraft(@PathVariable String flowcode, HttpServletResponse response) {
-        FlowInfo obj = flowDefine.getFlowInfo(flowcode, 0);
-        JsonResultUtils.writeSingleDataJson(obj, response);
+    public FlowInfo getFlowDefineDraft(@PathVariable String flowcode, HttpServletResponse response) {
+        FlowInfo flowInfo = flowDefine.getFlowInfo(flowcode, 0);
+        if (flowInfo == null) {
+            flowInfo = new FlowInfo();
+        }
+        return flowInfo;
     }
 
     /**
@@ -180,7 +183,8 @@ public class FlowDefineController extends BaseController {
     @WrapUpResponseBody
     public String viewXml(@PathVariable Long version, @PathVariable String flowcode) {
         FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
-        return obj.getFlowXmlDesc();
+        String flowXmlDesc = obj == null ? "" : obj.getFlowXmlDesc();
+        return flowXmlDesc;
     }
 
     /**
