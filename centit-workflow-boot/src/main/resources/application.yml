@@ -1,0 +1,25 @@
+server:
+  port: 8086
+  servlet:
+    context-path: /workflow/workflow
+  tomcat:
+    max-threads: 800
+    uri-encoding: UTF-8
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" # * 在yaml 文件属于关键字
+spring:
+  application:
+    name: workflow
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+    servlet:
+      content-type: text/html
+    enabled: true
+    encoding: UTF-8
+    mode: HTML5
+
