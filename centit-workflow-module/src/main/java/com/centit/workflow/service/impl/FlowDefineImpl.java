@@ -209,7 +209,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
         flowDef.setFlowXmlDesc(flowDefXML);
 
-        flowDefineDao.updateObject(flowDef);
+        flowDefineDao.mergeObject(flowDef);
         return true;
     }
 
