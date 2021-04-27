@@ -572,7 +572,9 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "返回节点的操作记录，或者日志", notes = "返回节点的操作记录，或者日志")
     @RequestMapping(value = "/viewflownode/{flowInstId}/{nodeId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public JSONObject viewFlowNodeInfo(@PathVariable String flowInstId, @PathVariable String nodeId) {
+    public JSONObject viewFlowNodeInfo(@PathVariable String flowInstId,
+                                       @PathVariable String nodeId, HttpServletRequest request) {
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
         FlowInstance dbobject = flowManager.getFlowInstance(flowInstId);
         if(dbobject==null) {
             throw new ObjectException("找不到对应的流程实例信息：flowInstId=" + flowInstId);
@@ -616,7 +618,7 @@ public class FlowManagerController extends BaseController {
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
                             CodeRepositoryUtil.getValue("userCode", task.getUserCode()));
-                        IUserInfo user = CodeRepositoryUtil.getUserInfoByCode(task.getUserCode());
+                        IUserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
                         if (user != null) {
                             JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
                         }

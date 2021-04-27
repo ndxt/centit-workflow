@@ -598,9 +598,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             return context.listAllStation();
         } else if(SysUserFilterEngine.ROLE_TYPE_XZ.equalsIgnoreCase(stype)){
             return context.listAllRank();
-        } else if(SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(stype)){
-            return context.listAllProjectRole();
-        } else if(SysUserFilterEngine.ROLE_TYPE_SYSTEM.equalsIgnoreCase(stype)){
+        } /*else if(SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(stype)){
+            return flowRoleDao.
+        }*/ else if(SysUserFilterEngine.ROLE_TYPE_SYSTEM.equalsIgnoreCase(stype)){
             return context.listAllSystemRole();
         } else if(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA.equalsIgnoreCase(stype)){
             return flowRoleDao.listAllRoleMsg();

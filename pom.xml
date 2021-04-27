@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.centit.framework</groupId>
         <artifactId>framework-snapshot-dependencies</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>5.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.centit.product</groupId>
     <artifactId>centit-workflow</artifactId>
     <packaging>pom</packaging>
-    <version>5.0-SNAPSHOT</version>
+    <version>5.1-SNAPSHOT</version>
     <name>com.centit.product:centit-workflow</name>
     <description>基于职能型组织架构的 工作流引擎服务器。</description>
     <url>https://github.com/ndxt/centit-workflow</url>
