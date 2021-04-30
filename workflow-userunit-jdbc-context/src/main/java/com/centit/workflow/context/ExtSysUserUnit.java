@@ -14,6 +14,8 @@ public class ExtSysUserUnit implements IUserUnit {
     private String userStation;
     private String userRank;
     private Long userOrder;
+    private String topUnit;
+    private String relType;
 
     public ExtSysUserUnit(){
         this.userUnitId = UuidOpt.getUuidAsString32();
@@ -48,12 +50,22 @@ public class ExtSysUserUnit implements IUserUnit {
         return this.unitCode;
     }
 
+    @Override
+    public String getRelType() {
+        return this.relType;
+    }
+
+    @Override
+    public String getTopUnit() {
+        return this.topUnit;
+    }
+
     /**
      * 是否为主机构 T:主机构 F：辅机构
      *
      * @return 是否为主机构 T:主机构 F：辅机构
      */
-    @Override
+//    @Override
     public String getIsPrimary() {
         return this.isPrimary;
     }
@@ -76,6 +88,11 @@ public class ExtSysUserUnit implements IUserUnit {
     @Override
     public String getUserRank() {
         return this.userRank;
+    }
+
+    @Override
+    public String getPostRank() {
+        return null;
     }
 
     /**

@@ -14,6 +14,7 @@ public class ExtSysUserInfo implements IUserInfo {
     private String primaryUnit;
     private Long userOrder;
     private String topUnit;
+    private String userWord;
     /**
      * 用户编码，是用户的主键
      *
@@ -138,6 +139,11 @@ public class ExtSysUserInfo implements IUserInfo {
     @Override
     public String getUserTag() {
         return null;
+    }
+
+    @Override
+    public String getUserWord() {
+        return this.userWord;
     }
 
     @Override

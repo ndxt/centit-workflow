@@ -105,7 +105,7 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
         return this.extFrameworkBean.stationMapCache.getCachedTarget();
     }
 
-    @Override
+//    @Override
     public Map<String, String> listAllProjectRole() {
         return this.extFrameworkBean.projectRoleMapCache.getCachedTarget();
     }

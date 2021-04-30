@@ -38,6 +38,11 @@ public class ExtSysUserRole implements IUserRole {
         return obtainType;
     }
 
+    @Override
+    public String getChangeDesc() {
+        return null;
+    }
+
     public void setObtainType(String obtainType) {
         this.obtainType = obtainType;
     }

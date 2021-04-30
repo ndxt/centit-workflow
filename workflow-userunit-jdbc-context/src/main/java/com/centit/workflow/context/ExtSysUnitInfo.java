@@ -13,6 +13,8 @@ public class ExtSysUnitInfo implements IUnitInfo{
     private Long unitOrder;
     private String unitManager;
     private String unitPath;
+    private String topUnit;
+    private String unitWord;
     /**
      * 机构代码 是机构的主键
      *
@@ -31,6 +33,11 @@ public class ExtSysUnitInfo implements IUnitInfo{
     @Override
     public String getDepNo() {
         return getUnitCode();
+    }
+
+    @Override
+    public String getSocialCreditCode() {
+        return null;
     }
 
     /**
@@ -78,6 +85,11 @@ public class ExtSysUnitInfo implements IUnitInfo{
         return "T";
     }
 
+    @Override
+    public String getTopUnit() {
+        return this.topUnit;
+    }
+
     /**
      * 机构路径
      *
@@ -111,6 +123,11 @@ public class ExtSysUnitInfo implements IUnitInfo{
     @Override
     public String getUnitTag() {
         return null;
+    }
+
+    @Override
+    public String getUnitWord() {
+        return this.unitWord;
     }
 
 
