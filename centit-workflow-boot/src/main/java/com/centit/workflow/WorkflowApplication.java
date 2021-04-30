@@ -7,7 +7,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-//@ComponentScan(basePackages="com.centit")
+@ComponentScan(basePackages="com.centit")
 public class WorkflowApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

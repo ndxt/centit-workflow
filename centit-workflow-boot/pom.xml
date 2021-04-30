@@ -11,8 +11,7 @@
     <artifactId>centit-workflow-boot</artifactId>
     <version>5.1-SNAPSHOT</version>
 
-    <name>com.centit.product:centit-workflow-boot</name>
-
+    <name>centit-workflow-boot</name>
 
     <properties>
         <skipTests>true</skipTests>
@@ -24,18 +23,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <!--<exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>-->
-            <!--排除这个slf4j-log4j12-->
             <exclusions>
-                <!--<exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>-->
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
@@ -134,19 +122,29 @@
 
         <dependency>
             <groupId>com.centit.framework</groupId>
+            <artifactId>framework-core</artifactId>
+            <version>5.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>framework-adapter</artifactId>
+            <version>5.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centit.framework</groupId>
             <artifactId>framework-core-web</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>5.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-config</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>5.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-ip-app-config</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <version>5.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.centit.framework</groupId>
