@@ -2393,7 +2393,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         IUserUnit userUnit = null;
         if (iUserUnits != null && iUserUnits.size() > 0) {
             for (IUserUnit iUserUnit : iUserUnits) {
-                if ("T".equals(iUserUnit.getIsPrimary())) {
+                if ("T".equals(iUserUnit.getRelType()) || "O".equals(iUserUnit.getRelType())) {
                     userUnit = iUserUnit;
                     break;
                 }

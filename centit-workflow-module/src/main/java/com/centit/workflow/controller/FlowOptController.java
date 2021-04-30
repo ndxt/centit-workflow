@@ -2,6 +2,7 @@ package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
@@ -41,8 +42,9 @@ public class FlowOptController extends BaseController {
     @ApiOperation(value = "获取业务系统列表", notes = "获取业务系统列表")
     @WrapUpResponseBody
     @RequestMapping(value="/oslist" ,method = RequestMethod.GET)
-    public List<? extends IOsInfo> listAllOs(){
-        return CodeRepositoryUtil.listOsInfo();
+    public List<? extends IOsInfo> listAllOs(HttpServletRequest request){
+        return CodeRepositoryUtil.listOsInfo(
+            WebOptUtils.getCurrentTopUnit(request));
     }
 
     //工作流--流程定义--业务模块取值
