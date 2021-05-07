@@ -8,6 +8,7 @@ import com.centit.framework.model.basedata.IOsInfo;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.service.FlowEngine;
+import com.centit.workflow.support.ApplicationContextRegister;
 import com.centit.workflow.support.LocalBeanNodeEventSupport;
 import com.centit.workflow.support.RemoteBeanNodeEventSupport;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,9 @@ public class NodeEventSupportFactory {
         } else {
             LocalBeanNodeEventSupport localNodeEventExecutor =
                 new LocalBeanNodeEventSupport(flowEngine);
+            if (webApplicationContext == null) {
+                webApplicationContext = (WebApplicationContext) ApplicationContextRegister.getApplicationContext();
+            }
             localNodeEventExecutor.setApplication(webApplicationContext.getServletContext());
             return localNodeEventExecutor;
         }
