@@ -19,18 +19,18 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig extends WebMvcConfigurerAdapter {
 
     @Bean
-    public Docket buildDocket(){
+    public Docket buildDocket() {
         return new Docket(DocumentationType.SWAGGER_2)
             .apiInfo(buildApiInf())//.pathMapping("../service")
             .select()
-            .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class) )
+            .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
             //.apis(RequestHandlerSelectors.basePackage("com.centit.framework.system.controller"))//controller路径
             //.apis(RequestHandlerSelectors.basePackage("com.otherpackage.controller"))//controller路径
             .paths(PathSelectors.any())
             .build();
     }
 
-    private ApiInfo buildApiInf(){
+    private ApiInfo buildApiInf() {
         return new ApiInfoBuilder()
             .title("框架接口")
             .termsOfServiceUrl("https://ndxt.github.io")

@@ -20,8 +20,8 @@ public class TaskConfig implements SchedulingConfigurer {
         taskRegistrar.setScheduler(taskExecutor());
     }
 
-     @Bean(destroyMethod="shutdown")
-      public Executor taskExecutor() {
-          return Executors.newScheduledThreadPool(5);
-      }
+    @Bean(destroyMethod = "shutdown")
+    public Executor taskExecutor() {
+        return Executors.newScheduledThreadPool(5);
+    }
 }

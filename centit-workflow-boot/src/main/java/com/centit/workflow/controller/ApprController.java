@@ -58,6 +58,7 @@ public class ApprController {
         // 保存办理记录
         OptIdeaInfo optIdeaInfo = json.toJavaObject(OptIdeaInfo.class);
         optIdeaInfo.setNodeInstId(flowInstance.getFirstNodeInstance().getNodeInstId());
+        optIdeaInfo.setFlowInstId(flowInstance.getFlowInstId());
         optIdeaInfoService.saveOptIdeaInfo(optIdeaInfo);
         return flowInstance;
     }
@@ -77,7 +78,9 @@ public class ApprController {
             BaseController.collectRequestParameters(request)), null);
         // 返回提交后节点的名称
         Set<String> nodeNames = new HashSet<>();
+        String flowInstId = null;
         for (String nodeInstId : nextNodeInstList) {
+            flowInstId = flowEngine.getNodeInstById(nodeInstId).getFlowInstId();
             NodeInfo nodeInfo = flowEngine.getNodeInfo(nodeInstId);
             if (nodeInfo != null) {
                 nodeNames.add(nodeInfo.getNodeName());
@@ -89,6 +92,7 @@ public class ApprController {
 
         // 保存办理记录
         OptIdeaInfo optIdeaInfo = json.toJavaObject(OptIdeaInfo.class);
+        optIdeaInfo.setFlowInstId(flowInstId);
         optIdeaInfoService.saveOptIdeaInfo(optIdeaInfo);
         return resultMap;
     }
@@ -109,6 +113,7 @@ public class ApprController {
         if (optIdeaInfo.getNodeInstId().isEmpty()) {
             optIdeaInfo.setNodeInstId("0");
         }
+        optIdeaInfo.setFlowInstId(flowInstId);
         optIdeaInfoService.saveOptIdeaInfo(optIdeaInfo);
     }
 
@@ -123,6 +128,7 @@ public class ApprController {
         // 保存办理记录
         OptIdeaInfo optIdeaInfo = jsonObject.toJavaObject(OptIdeaInfo.class);
         optIdeaInfoService.saveOptIdeaInfo(optIdeaInfo);
+        optIdeaInfo.setFlowInstId(flowEngine.getNodeInstById(nodeInstId).getFlowInstId());
         return lastNodeInstId;
     }
 }

@@ -12,8 +12,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 /**
  * Created by codefan on 17-7-6.
  */
-public class InstantiationServiceBeanPostProcessor implements ApplicationListener<ContextRefreshedEvent>
-{
+public class InstantiationServiceBeanPostProcessor implements ApplicationListener<ContextRefreshedEvent> {
 
     @Autowired
     protected NotificationCenter notificationCenter;
@@ -28,8 +27,7 @@ public class InstantiationServiceBeanPostProcessor implements ApplicationListene
     private PlatformEnvironment platformEnvironment;
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent event)
-    {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         CodeRepositoryCache.setPlatformEnvironment(platformEnvironment);
         CodeRepositoryCache.refreshAsyncCache();
         if (innerMessageManager != null) {

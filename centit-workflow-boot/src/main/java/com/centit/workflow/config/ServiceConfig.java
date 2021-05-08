@@ -25,11 +25,11 @@ import org.springframework.context.annotation.*;
  */
 @Configuration
 @Import({IPOrStaticAppSystemBeanConfig.class,
-        JdbcConfig.class,
-        SpringSecurityDaoConfig.class,
+    JdbcConfig.class,
+    SpringSecurityDaoConfig.class,
     SpringSecurityCasConfig.class})
 @ComponentScan(basePackages = "com.centit",
-        excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
+    excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceConfig {
 
@@ -47,7 +47,7 @@ public class ServiceConfig {
     protected String appHome;
 
     @Bean("passwordEncoder")
-    public CentitPasswordEncoder passwordEncoder(){
+    public CentitPasswordEncoder passwordEncoder() {
         return new StandardPasswordEncoderImpl();
     }
 
@@ -57,7 +57,7 @@ public class ServiceConfig {
         messageManager.setHostName("mail.centit.com");
         messageManager.setSmtpPort(25);
         messageManager.setUserName("alertmail@centit.com");
-        messageManager.setUserPassword(AESSecurityUtils.decryptBase64String("LZhLhIlJ6gtIlUZ6/NassA==",""));
+        messageManager.setUserPassword(AESSecurityUtils.decryptBase64String("LZhLhIlJ6gtIlUZ6/NassA==", ""));
         messageManager.setServerEmail("no-reply@centit.com");
 
         NotificationCenterImpl notificationCenter = new NotificationCenterImpl();
@@ -83,7 +83,7 @@ public class ServiceConfig {
             JdbcUserUnitCalcContextFactoryImpl factoryBean = new JdbcUserUnitCalcContextFactoryImpl();
             factoryBean.setExtFrameworkContextCacheBean(contextCacheBean);
             return factoryBean;
-        } else{
+        } else {
             return new SystemUserUnitCalcContextFactoryImpl();
         }
     }

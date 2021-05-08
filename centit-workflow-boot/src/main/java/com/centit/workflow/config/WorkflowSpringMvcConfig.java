@@ -7,8 +7,8 @@ import org.springframework.context.annotation.FilterType;
 
 @Configuration
 @ComponentScan(basePackages = {"com.centit.workflow.controller"},
-        includeFilters = {@ComponentScan.Filter(type= FilterType.ANNOTATION,value= org.springframework.stereotype.Controller.class)},
-        useDefaultFilters = false)
+    includeFilters = {@ComponentScan.Filter(type = FilterType.ANNOTATION, value = org.springframework.stereotype.Controller.class)},
+    useDefaultFilters = false)
 public class WorkflowSpringMvcConfig extends BaseSpringMvcConfig {
 
 }

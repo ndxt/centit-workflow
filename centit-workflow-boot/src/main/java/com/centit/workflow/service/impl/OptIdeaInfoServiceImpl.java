@@ -25,7 +25,7 @@ public class OptIdeaInfoServiceImpl implements OptIdeaInfoService {
 
     @Override
     public String saveOptIdeaInfo(OptIdeaInfo optIdeaInfo) {
-        log.info("保存流程办理记录 nodeInstId:{}",optIdeaInfo.getNodeInstId());
+        log.info("保存流程办理记录 nodeInstId:{}", optIdeaInfo.getNodeInstId());
         optIdeaInfo.setTransDate(new Date());
         optIdeaInfoDao.mergeObject(optIdeaInfo);
         return optIdeaInfo.getProcId();
