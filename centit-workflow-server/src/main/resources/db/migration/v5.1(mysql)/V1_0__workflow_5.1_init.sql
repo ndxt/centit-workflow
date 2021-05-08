@@ -623,4 +623,22 @@ from
 );
 
 
-
+-- CREATE TABLE opt_idea_info (
+--   proc_id varchar(32)  NOT NULL      comment '主键id',
+--   node_inst_id varchar(32)  NOT NULL comment '节点id',
+--   flow_inst_id varchar(64) comment '流程id',
+--   unit_code varchar(64) comment '部门编码',
+--   unit_name varchar(64) comment '部门名称',
+--   user_code varchar(64) comment '用户编码',
+--   user_name varchar(64) comment '用户姓名',
+--   trans_date timestamp(6)comment '操作时间',
+--   idea_code varchar(32) comment  '结果代码',
+--   trans_idea varchar(32) comment '结果内容',
+--   trans_content text comment     '办理意见',
+--   node_name varchar(64) comment  '环节名称',
+--   flow_phase varchar(64) comment '流程阶段',
+--   node_code varchar(64) comment  '节点编码',
+--   grantor varchar(64) comment    '委托人',
+--   PRIMARY KEY (proc_id, node_inst_id)
+-- );
+-- ALTER TABLE opt_idea_info comment '流程日志(审批记录)表';
