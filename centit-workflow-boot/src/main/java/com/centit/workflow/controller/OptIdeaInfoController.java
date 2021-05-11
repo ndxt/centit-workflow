@@ -47,10 +47,10 @@ public class OptIdeaInfoController {
     @ApiOperation(value = "分页获取审批记录", notes = "分页获取审批记录")
     @WrapUpResponseBody
     @GetMapping(value = "/listOptIdeaInfo")
-    public PageQueryResult listOptIdeaInfo(PageDesc pageDesc, HttpServletRequest request) {
+    public PageQueryResult<OptIdeaInfo> listOptIdeaInfo(PageDesc pageDesc, HttpServletRequest request) {
         Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
         List<OptIdeaInfo> optIdeaInfos = optIdeaInfoService.listOptIdeaInfo(filterMap, pageDesc);
-        return PageQueryResult.createResult(optIdeaInfos, pageDesc);
+        return PageQueryResult.createResultMapDict(optIdeaInfos, pageDesc);
     }
 
     @ApiOperation(value = "删除审批记录", notes = "删除审批记录")
