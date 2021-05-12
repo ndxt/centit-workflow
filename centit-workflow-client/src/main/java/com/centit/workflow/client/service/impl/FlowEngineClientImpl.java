@@ -135,7 +135,7 @@ public class FlowEngineClientImpl implements FlowEngine {
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         // 返回的是下一节点的节点实例id
         JSONArray nextNodeInsts = receiveJSON.getJSONObject().getJSONArray("nextNodeInsts");
-        if (nextNodeInsts.isEmpty()) {
+        if (!nextNodeInsts.isEmpty()) {
             return nextNodeInsts.toJavaList(String.class);
         } else {
             return new ArrayList<>();
