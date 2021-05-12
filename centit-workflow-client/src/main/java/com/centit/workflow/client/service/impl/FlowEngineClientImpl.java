@@ -133,7 +133,13 @@ public class FlowEngineClientImpl implements FlowEngine {
             "/flow/engine/submitOpt", options);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(returnJson);
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
-        return receiveJSON.getDataAsArray(String.class);
+        // 返回的是下一节点的节点实例id
+        JSONArray nextNodeInsts = receiveJSON.getJSONObject().getJSONArray("nextNodeInsts");
+        if (nextNodeInsts.isEmpty()) {
+            return nextNodeInsts.toJavaList(String.class);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     /**
