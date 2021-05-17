@@ -3,6 +3,7 @@ package com.centit.workflow.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
@@ -2515,7 +2516,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 // 办理中节点添加待办用户
                 List<UserTask> userTasks = actionTaskDao.listUserTaskByFilter(
                     QueryUtils.createSqlParamsMap("nodeInstId", ((JSONObject) flowNode).getString("nodeInstId")), null);
-                ((JSONObject) flowNode).put("userTasks",DictionaryMapUtils.objectsToJSONArray(userTasks));
+                ((JSONObject) flowNode).put("userTasks", DictionaryMapUtils.objectsToJSONArray(userTasks));
+            } else {
+                String lastUpdateUserName = CodeRepositoryUtil.getValue("userCode", ((JSONObject) flowNode).getString("lastUpdateUser"));
+                ((JSONObject) flowNode).put("lastUpdateUserName", lastUpdateUserName);
             }
         }
         return flowNodes;
