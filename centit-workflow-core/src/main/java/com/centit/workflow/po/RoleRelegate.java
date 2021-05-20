@@ -56,6 +56,12 @@ public class RoleRelegate implements java.io.Serializable {
     private String recorder;
     @Column(name = "RECORD_DATE")
     private Date recordDate;
+    /**
+     * 委托业务
+     */
+    @Column(name = "OPT_ID")
+    private String optId;
+
 
     // Constructors
     /** default constructor */
@@ -78,7 +84,8 @@ public class RoleRelegate implements java.io.Serializable {
     public RoleRelegate(String relegateno, String grantor, String grantee,
                         String isvalid, Date relegatetime, Date expiretime,
                         String unitcode, String roletype, String rolecode,
-                        String grantdesc, String recorder, Date recorddate) {
+                        String grantdesc, String recorder, Date recorddate,
+                        String optId) {
 
         this.relegateNo = relegateno;
 
@@ -93,6 +100,7 @@ public class RoleRelegate implements java.io.Serializable {
         this.grantDesc = grantdesc;
         this.recorder = recorder;
         this.recordDate = recorddate;
+        this.optId = optId;
     }
 
     public String getRelegateNo() {
@@ -194,6 +202,14 @@ public class RoleRelegate implements java.io.Serializable {
         this.recordDate = recorddate;
     }
 
+    public String getOptId() {
+        return optId;
+    }
+
+    public void setOptId(String optId) {
+        this.optId = optId;
+    }
+
     public void copy(RoleRelegate other) {
 
         this.setRelegateNo(other.getRelegateNo());
@@ -209,7 +225,7 @@ public class RoleRelegate implements java.io.Serializable {
         this.grantDesc = other.getGrantDesc();
         this.recorder = other.getRecorder();
         this.recordDate = other.getRecordDate();
-
+        this.optId = other.getOptId();
     }
 
     public void copyNotNullProperty(RoleRelegate other) {
@@ -239,7 +255,8 @@ public class RoleRelegate implements java.io.Serializable {
             this.recorder = other.getRecorder();
         if (other.getRecordDate() != null)
             this.recordDate = other.getRecordDate();
-
+        if (other.getOptId() != null)
+            this.optId = other.getOptId();
     }
 
     public void clearProperties() {
@@ -255,6 +272,6 @@ public class RoleRelegate implements java.io.Serializable {
         this.grantDesc = null;
         this.recorder = null;
         this.recordDate = null;
-
+        this.optId = null;
     }
 }
