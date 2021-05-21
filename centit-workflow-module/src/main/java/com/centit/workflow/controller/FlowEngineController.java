@@ -11,6 +11,7 @@ import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.workflow.aop.NoRepeatCommit;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.*;
@@ -60,6 +61,7 @@ public class FlowEngineController extends BaseController {
     }))
     @WrapUpResponseBody
     @PostMapping(value = "/submitOpt")
+    @NoRepeatCommit(delaySeconds = 5)
     public Map<String, Object> submitOpt(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
         /*return flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
             BaseController.collectRequestParameters(request)),null);*/
