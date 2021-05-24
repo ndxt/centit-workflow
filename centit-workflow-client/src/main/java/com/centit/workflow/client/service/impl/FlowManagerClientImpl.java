@@ -677,11 +677,6 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     @Override
-    public void saveRoleRelegateList(RoleRelegate roleRelegate) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    @Override
     public RoleRelegate getRoleRelegateByPara(String json) {
         throw new ObjectException("This function is not been implemented in client.");
     }

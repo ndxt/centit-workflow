@@ -13,6 +13,7 @@ import com.centit.framework.security.model.CentitUserDetails;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleRelegate;
 import com.centit.workflow.service.FlowManager;
+import com.centit.workflow.service.RoleRelegateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -36,30 +37,22 @@ public class RoleRelegateController extends BaseController {
     private FlowManager flowManager;
 
     @Autowired
+    private RoleRelegateService roleRelegateService;
+
+    @Autowired
     private UserUnitFilterCalcContextFactory userUnitFilterFactory;
 
     @ApiOperation(value = "获取用户角色", notes = "获取用户角色")
     @ApiImplicitParam(
-        name = "userCode", value="用户代码",
-        required=true, paramType = "path", dataType= "String"
+        name = "userCode", value = "用户代码",
+        required = true, paramType = "path", dataType = "String"
     )
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/role/{userCode}")
-    public List<? extends IUserUnit> listUserRoles(@PathVariable String userCode){
+    public List<? extends IUserUnit> listUserRoles(@PathVariable String userCode) {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
-        return /* List<? extends IUserUnit> userUnits =*/ context.listUserUnits(userCode);
-       /* boolean isGwRole = SysUserFilterEngine.ROLE_TYPE_GW.equals(roleType);
-        Map<String, String> allRoles = isGwRole? context.listAllStation()
-            : context.listAllRank();
-        Map<String, String> userRoles = new HashMap<>();
-        for(IUserUnit uu : userUnits){
-            if(isGwRole){
-                userRoles.put(uu.getUserStation(), allRoles.get(uu.getUserStation()));
-            } else {
-                userRoles.put(uu.getUserRank(), allRoles.get(uu.getUserRank()));
-            }
-        }
-        return userRoles;*/
+        return context.listUserUnits(userCode);
+
     }
 
     /**
@@ -81,17 +74,21 @@ public class RoleRelegateController extends BaseController {
         }
         List<JSONObject> relegateList = flowManager.getListRoleRelegateByGrantor(userCode);
 
-        return PageQueryResult.createResult(relegateList,pageDesc);
+        return PageQueryResult.createResult(relegateList, pageDesc);
     }
 
-    /**
-     * 更新委托
-     */
-    @ApiOperation(value = "保存委托", notes = "保存委托")
+    @ApiOperation(value = "新增委托", notes = "新增委托")
     @WrapUpResponseBody
     @PostMapping
-    public void saveRelegate(@RequestBody RoleRelegate roleRelegate) {
-        flowManager.saveRoleRelegateList(roleRelegate);
+    public RoleRelegate saveRelegate(@RequestBody RoleRelegate roleRelegate) {
+        return roleRelegateService.saveRelegate(roleRelegate);
+    }
+
+    @ApiOperation(value = "修改委托", notes = "修改委托")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/updateRelegate", method = RequestMethod.POST)
+    public RoleRelegate updateRelegate(@RequestBody RoleRelegate roleRelegate) {
+        return roleRelegateService.updateRelegate(roleRelegate);
     }
 
     @ApiOperation(value = "修改委托状态", notes = "修改委托状态")
@@ -99,6 +96,7 @@ public class RoleRelegateController extends BaseController {
     public void updateRelegate(@RequestBody String json) {
         flowManager.changeRelegateValid(json);
     }
+
     /**
      * 根据id删除委托
      *
@@ -118,7 +116,6 @@ public class RoleRelegateController extends BaseController {
     public RoleRelegate getTaskDelegateByNo(@RequestBody String json) {
         return flowManager.getRoleRelegateByPara(json);
     }
-
 
 
 }

@@ -444,8 +444,6 @@ public interface FlowManager {
 
     List<com.alibaba.fastjson.JSONObject> getListRoleRelegateByGrantor(String grantor);
 
-    void saveRoleRelegateList(RoleRelegate roleRelegate);
-
     RoleRelegate getRoleRelegateByPara(String json);
 
     /**
