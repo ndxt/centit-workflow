@@ -1405,7 +1405,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (nodeInst.getRunToken().startsWith("L")) {
             //提交临时插入节点
             nodeInst.setNodeState("C");
-            if (flowInst.checkNotCommitPreNodes(nodeInst.getPrevNodeInstId()) < 1) {
+            if (flowInst.checkNotCommitPreNodes(nodeInst.getPrevNodeInstId()) > 0) {
                 NodeInstance preNodeInst =
                     flowInst.getNodeInstanceById(nodeInst.getPrevNodeInstId());
                 preNodeInst.setNodeState("N");
