@@ -613,14 +613,6 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     /**
-     * @param relegateno
-     */
-    @Override
-    public void deleteRoleRelegate(String relegateno) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
      * 将 fromUserCode 所有任务 迁移 给 toUserCode
      *
      * @param fromUserCode 任务属主
@@ -667,17 +659,7 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     @Override
-    public Boolean changeRelegateValid(String json) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    @Override
     public List<JSONObject> getListRoleRelegateByGrantor(String grantor) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    @Override
-    public RoleRelegate getRoleRelegateByPara(String json) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

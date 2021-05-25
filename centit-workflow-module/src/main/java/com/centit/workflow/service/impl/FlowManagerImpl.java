@@ -1448,11 +1448,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public void deleteRoleRelegate(String relegateno) {
-        flowRoleRelegateDao.deleteObjectById(relegateno);
-    }
-
-    @Override
     public void updateFlow(FlowInstance flowInstance) {
         flowInstanceDao.updateObject(flowInstance);
     }
@@ -1475,44 +1470,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         //退回首节点之后，删除流程变量
         flowEngine.deleteFlowVariable(flowInstId, "", "");
         return startNodeInst;
-    }
-
-    @Override
-    public Boolean changeRelegateValid(String json) {
-        JSONObject jsonObject = JSON.parseObject(json);
-        try {
-            HashMap<String, Object> map = new HashMap<>();
-            String valid = jsonObject.getString("valid");
-            map.put("grantor", jsonObject.getString("grantor"));
-            map.put("grantee", jsonObject.getString("grantee"));
-            map.put("roleCode", jsonObject.getString("roleCode"));
-            RoleRelegate relegate = flowRoleRelegateDao.getObjectByProperties(map);
-            String isValid = relegate.getIsValid();
-            if (!isValid.equalsIgnoreCase(valid)) {
-                relegate.setIsValid(valid);
-                flowRoleRelegateDao.updateObject(relegate);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public RoleRelegate getRoleRelegateByPara(String json) {
-        RoleRelegate relegate = null;
-        JSONObject jsonObject = JSON.parseObject(json);
-        try {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("grantor", jsonObject.getString("grantor"));
-            map.put("grantee", jsonObject.getString("grantee"));
-            map.put("roleCode", jsonObject.getString("roleCode"));
-            relegate = flowRoleRelegateDao.getObjectByProperties(map);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return relegate;
     }
 
     @Override
