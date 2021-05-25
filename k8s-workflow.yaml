@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
       - name: workflow
-        image: 172.29.0.13:8082/workflow:<BUILD_TAG>
+        image: hub.centit.com/ctm/workflow:<BUILD_TAG>
         imagePullPolicy: Always
         volumeMounts:
         - name: time-zone
