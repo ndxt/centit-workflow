@@ -1,6 +1,5 @@
 package com.centit.workflow.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.RoleRelegateDao;
@@ -11,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author liu_cc
@@ -30,63 +32,34 @@ public class RoleRelegateServiceImpl implements RoleRelegateService {
         if (roleRelegate.getRelegateTime() == null) {
             roleRelegate.setRelegateTime(new Date());
         }
+        if (roleRelegate.getRoleType() == null) {
+            roleRelegate.setRoleType("XZ");
+        }
+        if (roleRelegate.getIsValid() == null) {
+            roleRelegate.setIsValid("T");
+        }
         roleRelegate.setRecordDate(new Date());
+
         // 判断是否是重复委托
         Map<String, Object> filterMap = new HashMap<>();
         filterMap.put("grantor", roleRelegate.getGrantor());
         filterMap.put("grantee", roleRelegate.getGrantee());
         filterMap.put("roleType", roleRelegate.getRoleType());
-
-        // 可以委托多个角色
-//        List<String> roleCodeList = JSONArray.parseArray(roleRelegate.getRoleCode(), String.class);
-        List<String> roleCodeList = new ArrayList<>();
-        roleCodeList.add(roleRelegate.getRoleCode());
-
-        // 可以委托多个业务（业务为空 表示委托所有业务）
-//        List<String> optIdList = JSONArray.parseArray(roleRelegate.getOptId(), String.class);
-        List<String> optIdList = new ArrayList<>();
-        optIdList.add(roleRelegate.getOptId());
-
-        if (optIdList == null || optIdList.isEmpty()) {
-            saveRoleRelegateList(roleRelegate, filterMap, roleCodeList);
-        } else {
-            for (String optId : optIdList) {
-                filterMap.put("optId", optId);
-                roleRelegate.setOptId(optId);
-                saveRoleRelegateList(roleRelegate, filterMap, roleCodeList);
-            }
+        if (roleRelegate.getRoleCode() != null) {
+            filterMap.put("roleCode", roleRelegate.getRoleCode());
         }
-    }
-
-    /**
-     * 可以委托多个角色,判断是否是重复的委托
-     *
-     * @param roleRelegate
-     * @param filterMap
-     * @param roleCodeList
-     */
-    private void saveRoleRelegateList(RoleRelegate roleRelegate, Map<String, Object> filterMap, List<String> roleCodeList) {
-        for (String roleCode : roleCodeList) {
-            filterMap.put("roleCode", roleCode);
-            RoleRelegate oldRoleRelegate = roleRelegateDao.getObjectByProperties(filterMap);
-            if (oldRoleRelegate == null) {
-                // 新增委托
-                roleRelegate.setRoleCode(roleCode);
-                roleRelegate.setRelegateNo(null);
-                roleRelegateDao.saveObject(roleRelegate);
-            } else {
-                // 更新
-                roleRelegate.setRoleCode(roleCode);
-                roleRelegate.setRelegateNo(oldRoleRelegate.getRelegateNo());
-                roleRelegateDao.updateObject(roleRelegate);
-            }
+        if (roleRelegate.getOptId() != null) {
+            filterMap.put("optId", roleRelegate.getOptId());
+        }
+        RoleRelegate oldRoleRelegate = roleRelegateDao.getObjectByProperties(filterMap);
+        if (oldRoleRelegate == null) {
+            roleRelegateDao.mergeObject(roleRelegate);
         }
     }
 
     @Override
     @Transactional
     public void updateRelegate(RoleRelegate roleRelegate) {
-        roleRelegateDao.deleteObjectById(roleRelegate.getRelegateNo());
         saveRelegate(roleRelegate);
     }
 
