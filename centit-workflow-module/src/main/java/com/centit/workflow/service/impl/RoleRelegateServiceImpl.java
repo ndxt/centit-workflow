@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author liu_cc
@@ -41,10 +38,14 @@ public class RoleRelegateServiceImpl implements RoleRelegateService {
         filterMap.put("roleType", roleRelegate.getRoleType());
 
         // 可以委托多个角色
-        List<String> roleCodeList = JSONArray.parseArray(roleRelegate.getRoleCode(), String.class);
+//        List<String> roleCodeList = JSONArray.parseArray(roleRelegate.getRoleCode(), String.class);
+        List<String> roleCodeList = new ArrayList<>();
+        roleCodeList.add(roleRelegate.getRoleCode());
 
         // 可以委托多个业务（业务为空 表示委托所有业务）
-        List<String> optIdList = JSONArray.parseArray(roleRelegate.getOptId(), String.class);
+//        List<String> optIdList = JSONArray.parseArray(roleRelegate.getOptId(), String.class);
+        List<String> optIdList = new ArrayList<>();
+        optIdList.add(roleRelegate.getOptId());
 
         if (optIdList == null || optIdList.isEmpty()) {
             saveRoleRelegateList(roleRelegate, filterMap, roleCodeList);
