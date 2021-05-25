@@ -40,21 +40,8 @@ public class RoleRelegateServiceImpl implements RoleRelegateService {
         }
         roleRelegate.setRecordDate(new Date());
 
-        // 判断是否是重复委托
-        Map<String, Object> filterMap = new HashMap<>();
-        filterMap.put("grantor", roleRelegate.getGrantor());
-        filterMap.put("grantee", roleRelegate.getGrantee());
-        filterMap.put("roleType", roleRelegate.getRoleType());
-        if (roleRelegate.getRoleCode() != null) {
-            filterMap.put("roleCode", roleRelegate.getRoleCode());
-        }
-        if (roleRelegate.getOptId() != null) {
-            filterMap.put("optId", roleRelegate.getOptId());
-        }
-        RoleRelegate oldRoleRelegate = roleRelegateDao.getObjectByProperties(filterMap);
-        if (oldRoleRelegate == null) {
-            roleRelegateDao.mergeObject(roleRelegate);
-        }
+        roleRelegateDao.mergeObject(roleRelegate);
+
     }
 
     @Override
