@@ -70,10 +70,13 @@ public class RoleRelegateController extends BaseController {
     @ApiOperation(value = "获取指定用户委托列表", notes = "获取指定用户委托列表")
     @WrapUpResponseBody
     @RequestMapping(value = "/byUser/{grantor}", method = {RequestMethod.GET})
-    public PageQueryResult<Object> getRelegateListByGrantor(@PathVariable String grantor, PageDesc pageDesc) {
-        List<RoleRelegate> relegateList = roleRelegateService.getRelegateListByGrantor(grantor, pageDesc);
-        JSONArray relegates = DictionaryMapUtils.objectsToJSONArray(relegateList);
+    public PageQueryResult<Object> getRelegateListByGrantor(@PathVariable String grantor, HttpServletRequest request,
+                                                            PageDesc pageDesc) {
+        Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
+        filterMap.put("grantor", grantor);
+        List<RoleRelegate> relegateList = roleRelegateService.getRelegateListByGrantor(filterMap, pageDesc);
 
+        JSONArray relegates = DictionaryMapUtils.objectsToJSONArray(relegateList);
         List<FlowOptInfo> listOptInfo = wfOptService.getListOptInfo();
         Map<String, String> optInfoMap = listOptInfo.stream().collect(Collectors.toMap(FlowOptInfo::getOptId, FlowOptInfo::getOptName));
         for (Object relegate : relegates) {

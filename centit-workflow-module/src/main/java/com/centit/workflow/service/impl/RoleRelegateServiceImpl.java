@@ -64,9 +64,7 @@ public class RoleRelegateServiceImpl implements RoleRelegateService {
     }
 
     @Override
-    public List<RoleRelegate> getRelegateListByGrantor(String grantor, PageDesc pageDesc) {
-        Map<String, Object> filterMap = new HashMap<>();
-        filterMap.put("grantor", grantor);
+    public List<RoleRelegate> getRelegateListByGrantor(Map<String, Object> filterMap, PageDesc pageDesc) {
         filterMap.put(CodeBook.SELF_ORDER_BY, "GRANTEE, OPT_ID, RELEGATE_TIME, EXPIRE_TIME, RECORD_DATE DESC");
         return roleRelegateDao.listObjectsByProperties(filterMap, pageDesc);
     }

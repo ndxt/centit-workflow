@@ -15,7 +15,7 @@ public interface RoleRelegateService {
 
     void updateRelegate(RoleRelegate roleRelegate);
 
-    List<RoleRelegate> getRelegateListByGrantor(String grantor, PageDesc pageDesc);
+    List<RoleRelegate> getRelegateListByGrantor(Map<String, Object> filterMap, PageDesc pageDesc);
 
     List<RoleRelegate> listRoleRelegates(Map<String, Object> filterMap, PageDesc pageDesc);
 
