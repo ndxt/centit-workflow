@@ -60,7 +60,7 @@ public class RoleRelegate implements java.io.Serializable {
     private String roleType;
 
     @Column(name = "ROLE_CODE")
-    @DictionaryMap(value = "roleCode", fieldName = "roleName")
+    @DictionaryMap(value = "RankType", fieldName = "roleName")
     private String roleCode;
 
     @Column(name = "GRANT_DESC")
