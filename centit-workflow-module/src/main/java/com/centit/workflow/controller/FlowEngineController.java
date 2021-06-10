@@ -61,7 +61,7 @@ public class FlowEngineController extends BaseController {
     }))
     @WrapUpResponseBody
     @PostMapping(value = "/submitOpt")
-    @NoRepeatCommit(delaySeconds = 5)
+    @NoRepeatCommit(delaySeconds = 3)
     public Map<String, Object> submitOpt(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
         /*return flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
             BaseController.collectRequestParameters(request)),null);*/

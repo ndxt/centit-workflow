@@ -696,6 +696,7 @@ public class NodeInstance implements java.io.Serializable {
     }
     /**
      * 不计时N、计时T 、暂停 P
+     * T 计时、有期限   F 不计时   H仅环节计时  暂停P
      */
     public String getIsTimer() {
         return isTimer;
