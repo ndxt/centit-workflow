@@ -195,7 +195,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         FlowInstance flowInst = FlowOptUtils.createFlowInst(
             options.getUnitCode(), options.getUserCode(), wf, flowInstId, options.getTimeLimitStr());
-        flowInst.setOptId(options.getModelId());
+        if (options.getModelId() != null) {
+            flowInst.setOptId(options.getModelId());
+        }
         flowInst.setCreateTime(createTime);
         flowInst.setFlowGroupId(options.getFlowGroupId());
         //节点实例编号不为空，为子流程，创建子流程时要给父节点的状态设置为 W：等待子流程返回
