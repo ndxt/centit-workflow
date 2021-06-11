@@ -45,6 +45,12 @@ public class FlowWarningDao extends BaseDaoImpl<FlowWarning, String> {
     }
 
     @Transactional
+    public List<FlowWarning> listFlowWarning(String flowInstId, String nodeInstId,String warningType, PageDesc pageDesc) {
+        return this.listObjectsByFilterAsJson("where flow_Inst_Id = ? and node_Inst_Id = ? and warning_type = ?",
+            new Object[]{flowInstId, nodeInstId, warningType}, pageDesc).toJavaList(FlowWarning.class);
+    }
+
+    @Transactional
     public List<FlowWarning> listFlowWarningByNodeInst(String nodeInstId, PageDesc pageDesc) {
         return this.listObjectsByFilterAsJson("where node_Inst_Id = ?",
             new Object[]{nodeInstId}, pageDesc).toJavaList(FlowWarning.class);

@@ -157,20 +157,43 @@ public class FlowTaskImpl {
             for (NodeInstance nodeInst : nodeList) {
                 NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeId());
                 //* N：通知（预警）， O:不处理 ， X：挂起， E：终止（流程）， C：完成（强制提交,提交失败就挂起）
-                //如果节点实例超时 进行处理
-                if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer())) && nodeInst.getTimeLimit() <= 0) {
+                //如果节点实例超时或者节点满足预警规则 都进行处理
+                // 预警规则： R：运行时间  L:剩余时间  P：比率
+                String warningRule = nodeInfo.getWarningRule();
+                String warningParam = nodeInfo.getWarningParam();
+                // 是否根据预警规则进行预警
+                boolean warning = true;
+                // 预警类别  W，预警  A  报警  N 提醒  O 其他
+                String warningType = "";
+                if ("R".equals(warningRule)) {
+
+                } else if ("L".equals(warningRule)) {
+
+                } else if ("P".equals(warningRule)) {
+                    warning = parse(warningParam) >= nodeInst.getTimeLimit().doubleValue() / nodeInst.getPromiseTime().doubleValue();
+                }
+
+                if (nodeInst.getTimeLimit() <= 0) {
+                    // 超期预警
+                    warningType = "W";
+                } else if (warning) {
+                    // 预警规则预警
+                    warningType = "N";
+                }
+
+                if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer()))
+                    && (warning || nodeInst.getTimeLimit() <= 0)) {
                     if ("E".equals(nodeInfo.getExpireOpt())) {
                         stopFlow = true;
                         break;
                     } else if ("C".equals(nodeInfo.getExpireOpt())) {
-//                        flowEngine.f
                     } else if ("X".equals(nodeInfo.getExpireOpt())) {
-
                     } else if ("N".equals(nodeInfo.getExpireOpt())) {
-                        List<FlowWarning> flowWarnings = wfRuntimeWarningDao.listFlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(), null);
+                        List<FlowWarning> flowWarnings = wfRuntimeWarningDao.listFlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(),
+                            warningType, null);
                         if (flowWarnings == null || flowWarnings.isEmpty()) {
                             // 存入流程告警表 wf_runtime_warning
-                            FlowWarning flowWarning = new FlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(), "N", "N");
+                            FlowWarning flowWarning = new FlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(), warningType, "N");
                             wfRuntimeWarningDao.saveNewObject(flowWarning);
                         }
                     }
@@ -186,7 +209,7 @@ public class FlowTaskImpl {
                     }
                 }
 
-
+                // 更新节点实例剩余办理时间
                 if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer())) &&
                     (nodeInst.getTimeLimit() != null)) {
                     nodeInst.setTimeLimit(nodeInst.getTimeLimit() - consumeTime);
@@ -199,6 +222,14 @@ public class FlowTaskImpl {
                 }
             }
 
+            // 流程实例预警
+            if ("T".equals(flowInst.getIsTimer()) && flowInst.getTimeLimit() != null && flowInst.getTimeLimit() <= 0) {
+                // 存入流程告警表 wf_runtime_warning
+                FlowWarning flowWarning = new FlowWarning(flowInst.getFlowInstId(), null, "N", "N");
+                wfRuntimeWarningDao.saveNewObject(flowWarning);
+            }
+
+
             //如果关闭流程，流程状态置为C
             if (stopFlow) {
                 flowInst.setInstState("C");
@@ -206,11 +237,21 @@ public class FlowTaskImpl {
                 continue;
             }
 
+            // 更新流程实例剩余办理时间
             if (flowconsume && flowInst.getTimeLimit() != null) {
                 flowInst.setTimeLimit(flowInst.getTimeLimit() - consumeTime);
                 flowInstanceDao.updateObject(flowInst);
             }
 
+        }
+    }
+
+    private double parse(String ratio) {
+        if (ratio.contains("/")) {
+            String[] rat = ratio.split("/");
+            return Double.parseDouble(rat[0]) / Double.parseDouble(rat[1]);
+        } else {
+            return Double.parseDouble(ratio);
         }
     }
 

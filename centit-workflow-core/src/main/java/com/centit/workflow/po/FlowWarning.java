@@ -32,16 +32,24 @@ public class FlowWarning implements java.io.Serializable {
     private String flowInstId;
     @Column(name = "FLOW_STAGE")
     private String flowStage;
+
+//    F ： 工作流 N ：节点  P：阶段
     @Column(name = "OBJ_TYPE")
     private String objType;
+
+//    warningType W，预警  A  报警  N 提醒  O 其他
     @Column(name = "WARNING_TYPE")
     private String warningType;
     @Column(name = "WARNING_CODE")
     private String warningCode;
     @Column(name = "WARNING_TIME")
     private Date warningTime;
+
+//    D 摘牌 C 纠正 F 督办 N 未处理
     @Column(name = "WARNING_STATE")
     private String warningState;
+
+//    0 待发送 1 已发送 2 发送消息失败
     @Column(name = "NOTICE_STATE")
     private String noticeState;
     @Column(name = "WARNINGID_MSG")
