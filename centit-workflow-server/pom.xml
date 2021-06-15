@@ -151,6 +151,12 @@
             <!--<version>1.4.197</version>-->
             <!--<scope>test</scope>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>com.shentong</groupId>
+            <artifactId>shentongjdbc</artifactId>
+            <version>4.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

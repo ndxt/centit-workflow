@@ -73,8 +73,8 @@ public class FlowTaskImpl {
         int nn = 0;
         for (UserTask task : taskList) {
             NoticeMessage noticeMessage = NoticeMessage.create().subject("节点预报警提示")
-                .content("业务" + task.getFlowOptName() + "的" +
-                    task.getNodeName() + "节点超时预警，请尽快处理。办理链接为 " + task.getNodeOptUrl())
+                .content("业务" + task.getFlowOptName() + "(" + task.getFlowInstId() + ")的" +
+                    task.getNodeName() + "(" + task.getNodeInstId() + ")节点超时预警，请尽快处理。办理链接为 " + task.getNodeOptUrl())
                 .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInstId));
             notificationCenter.sendMessage("system", task.getUserCode(), noticeMessage);
             nn++;
@@ -163,7 +163,7 @@ public class FlowTaskImpl {
                 String warningParam = nodeInfo.getWarningParam();
                 // 是否根据预警规则进行预警
                 boolean warning = true;
-                // 预警类别  W，预警  A  报警  N 提醒  O 其他
+                // 预警类别 warningType  W，预警  A  报警  N 提醒  O 其他
                 String warningType = "";
                 if ("R".equals(warningRule)) {
 
@@ -190,7 +190,7 @@ public class FlowTaskImpl {
                     } else if ("X".equals(nodeInfo.getExpireOpt())) {
                     } else if ("N".equals(nodeInfo.getExpireOpt())) {
                         List<FlowWarning> flowWarnings = wfRuntimeWarningDao.listFlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(),
-                            warningType, null);
+                             warningType,"N", null);
                         if (flowWarnings == null || flowWarnings.isEmpty()) {
                             // 存入流程告警表 wf_runtime_warning
                             FlowWarning flowWarning = new FlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(), warningType, "N");
@@ -222,11 +222,15 @@ public class FlowTaskImpl {
                 }
             }
 
-            // 流程实例预警
+            // 流程实例预警（不支持流程实例预警规则）
             if ("T".equals(flowInst.getIsTimer()) && flowInst.getTimeLimit() != null && flowInst.getTimeLimit() <= 0) {
-                // 存入流程告警表 wf_runtime_warning
-                FlowWarning flowWarning = new FlowWarning(flowInst.getFlowInstId(), null, "N", "N");
-                wfRuntimeWarningDao.saveNewObject(flowWarning);
+                List<FlowWarning> flowWarnings = wfRuntimeWarningDao.listFlowWarning(flowInst.getFlowInstId(),
+                    "W", "F", null);
+                if (flowWarnings == null || flowWarnings.isEmpty()) {
+                    // 存入流程告警表 wf_runtime_warning
+                    FlowWarning flowWarning = new FlowWarning(flowInst.getFlowInstId(), "0", "W", "F");
+                    wfRuntimeWarningDao.saveNewObject(flowWarning);
+                }
             }
 
 
