@@ -307,8 +307,8 @@ public class NodeInfo implements java.io.Serializable {
     }
 
     public void setOptRunType(String optRunType){
-        // 自动执行节点的流程图json中optRunType为D
-        if (!NODE_TYPE_AUTO.equals(optRunType)) {
+        // 自动执行节点的流程图json中optRunType为D, 子流程节点的流程图json中optRunType为S
+        if (!NODE_TYPE_AUTO.equals(optRunType) && !NODE_TYPE_SUBFLOW.equals(optRunType)) {
             this.nodeType = NODE_TYPE_OPT;
             this.optType = optRunType;
         }
