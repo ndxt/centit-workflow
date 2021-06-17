@@ -1159,6 +1159,26 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             );
 
             formula.addExtendFunc(
+                "userType",
+                (a) -> {
+                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
+                        preNodeInst, nodeToken, currNode, options, varTrans);
+                    return context.getUserInfoByCode(StringBaseOpt.castObjectToString(a[0]))
+                        .getUserType();
+                }
+            );
+
+            formula.addExtendFunc(
+                "unitType",
+                (a) -> {
+                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
+                        preNodeInst, nodeToken, currNode, options, varTrans);
+                    return context.getUnitInfoByCode(StringBaseOpt.castObjectToString(a[0]))
+                        .getUnitType();
+                }
+            );
+
+            formula.addExtendFunc(
                 "userUnits",
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
