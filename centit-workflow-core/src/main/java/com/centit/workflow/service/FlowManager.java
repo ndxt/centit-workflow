@@ -401,10 +401,6 @@ public interface FlowManager {
      */
     List<RoleRelegate> listRoleRelegateByGrantor(String grantor);
 
-    /**
-     * @param relegateno
-     */
-    void deleteRoleRelegate(String relegateno);
     // ---------节点任务迁移--------------------
 
     /**
@@ -440,13 +436,7 @@ public interface FlowManager {
      */
     NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force);
 
-    Boolean changeRelegateValid( String json);
-
     List<com.alibaba.fastjson.JSONObject> getListRoleRelegateByGrantor(String grantor);
-
-    void saveRoleRelegateList(RoleRelegate roleRelegate);
-
-    RoleRelegate getRoleRelegateByPara(String json);
 
     /**
      * 获取所有流程分组

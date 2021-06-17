@@ -205,6 +205,9 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "INHERIT_NODE_CODE")
     private String inheritNodeCode;
 
+    /**
+     * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+     */
     @Column(name = "EXPIRE_OPT")
     private String expireOpt;
 

@@ -257,14 +257,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         List<Map<String, Object>> nodes = new ArrayList<>();
         for (Map.Entry<String, String> ns : nodeState.entrySet()) {
-            nodes.add(CollectionsOpt.createHashMap("id",ns.getKey(),
-                "inststate",ns.getValue(),"instcount",nodeInstCount.get(ns.getKey())));        }
+            nodes.add(CollectionsOpt.createHashMap("id", ns.getKey(),
+                "inststate", ns.getValue(), "instcount", nodeInstCount.get(ns.getKey())));
+        }
         List<Map<String, Object>> steps = new ArrayList<>();
         for (Map.Entry<String, String> ts : transState.entrySet()) {
-            steps.add(CollectionsOpt.createHashMap("id",ts.getKey(),
-                "inststate",ts.getValue()));
+            steps.add(CollectionsOpt.createHashMap("id", ts.getKey(),
+                "inststate", ts.getValue()));
         }
-        return CollectionsOpt.createHashMap("nodes",nodes, "steps", steps);
+        return CollectionsOpt.createHashMap("nodes", nodes, "steps", steps);
     }
 
 
@@ -896,8 +897,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return null;//大小于
         }
 
-        if (! NodeInfo.NODE_TYPE_OPT.equals(nextNode.getNodeType())
-             && ! NodeInfo.NODE_TYPE_FIRST.equals(nextNode.getNodeType())) {
+        if (!NodeInfo.NODE_TYPE_OPT.equals(nextNode.getNodeType())
+            && !NodeInfo.NODE_TYPE_FIRST.equals(nextNode.getNodeType())) {
             return null;//大小于
         }
 
@@ -1447,11 +1448,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public void deleteRoleRelegate(String relegateno) {
-        flowRoleRelegateDao.deleteObjectById(relegateno);
-    }
-
-    @Override
     public void updateFlow(FlowInstance flowInstance) {
         flowInstanceDao.updateObject(flowInstance);
     }
@@ -1474,68 +1470,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         //退回首节点之后，删除流程变量
         flowEngine.deleteFlowVariable(flowInstId, "", "");
         return startNodeInst;
-    }
-
-    @Override
-    public Boolean changeRelegateValid(String json) {
-        JSONObject jsonObject = JSON.parseObject(json);
-        try {
-            HashMap<String, Object> map = new HashMap<>();
-            String valid = jsonObject.getString("valid");
-            map.put("grantor", jsonObject.getString("grantor"));
-            map.put("grantee", jsonObject.getString("grantee"));
-            map.put("roleCode", jsonObject.getString("roleCode"));
-            RoleRelegate relegate = flowRoleRelegateDao.getObjectByProperties(map);
-            String isValid = relegate.getIsValid();
-            if (!isValid.equalsIgnoreCase(valid)) {
-                relegate.setIsValid(valid);
-                flowRoleRelegateDao.updateObject(relegate);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public RoleRelegate getRoleRelegateByPara(String json) {
-        RoleRelegate relegate = null;
-        JSONObject jsonObject = JSON.parseObject(json);
-        try {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("grantor", jsonObject.getString("grantor"));
-            map.put("grantee", jsonObject.getString("grantee"));
-            map.put("roleCode", jsonObject.getString("roleCode"));
-            relegate = flowRoleRelegateDao.getObjectByProperties(map);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return relegate;
-    }
-
-    @Override
-    public void saveRoleRelegateList(RoleRelegate roleRelegate) {
-        // List<String> roleCodeList = roleRelegate.getRoleCodeList();
-        if (roleRelegate.getRelegateTime() == null) {
-            roleRelegate.setExpireTime(new Date());
-        }
-        String json = roleRelegate.getRoleCode();
-        List<String> roleCodeList = JSONArray.parseArray(json, String.class);
-        for (String roleCode : roleCodeList) {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("grantor", roleRelegate.getGrantor());
-            map.put("grantee", roleRelegate.getGrantee());
-            map.put("role_code", roleCode);
-            RoleRelegate objectByProperties = flowRoleRelegateDao.getObjectByProperties(map);
-            if (objectByProperties == null) {
-                RoleRelegate newRoleRelegate = new RoleRelegate();
-                newRoleRelegate.copy(roleRelegate);
-                newRoleRelegate.setRoleCode(roleCode);
-                newRoleRelegate.setRecordDate(DatetimeOpt.currentSqlDate());
-                flowRoleRelegateDao.saveObject(newRoleRelegate);
-            }
-        }
     }
 
     @Override
@@ -1567,14 +1501,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         for (Map.Entry<String, Map<String, Object>> mapEntry : newList) {
             RoleRelegate newRelegate = (RoleRelegate) mapEntry.getValue().get("newRelegate");
             List<String> roleCodeList = (List<String>) mapEntry.getValue().get("roleCodeList");
-//            JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(newRelegate));
-//            jsonObject.put("roleCode", roleCodeList);
-//            jsonObject.remove("relegateNo");
-//            jsonObject.remove("isValid");
-//            jsonObject.remove("relegateTime");
-//            jsonObject.remove("relegateTime");
-//            jsonObject.remove("grantDesc");
-//            jsonObject.remove("relegateTime");
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("grantor", newRelegate.getGrantor());
             jsonObject.put("grantee", newRelegate.getGrantee());

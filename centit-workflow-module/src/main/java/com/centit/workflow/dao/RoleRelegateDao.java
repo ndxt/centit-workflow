@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -29,8 +30,9 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
         filterField.put("grantDesc", CodeBook.LIKE_HQL_ID);
         filterField.put("recorder", CodeBook.EQUAL_HQL_ID);
         filterField.put("recordDate", CodeBook.EQUAL_HQL_ID);
+        filterField.put("optId", CodeBook.EQUAL_HQL_ID);
 
-        filterField.put(CodeBook.ORDER_BY_HQL_ID , "recordDate desc");
+        filterField.put(CodeBook.ORDER_BY_HQL_ID, "recordDate desc");
         return filterField;
     }
 
@@ -40,5 +42,10 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
             roleRelegate.setRelegateNo(UuidOpt.getUuidAsString32());
         }
         super.mergeObject(roleRelegate);
+    }
+
+    public List<RoleRelegate> getRelegateListByGrantor(String grantor) {
+        return this.listObjectsByFilter(" where grantor = ? ORDER BY GRANTEE, RELEGATE_TIME, EXPIRE_TIME, RECORD_DATE DESC ",
+            new Object[]{grantor});
     }
 }

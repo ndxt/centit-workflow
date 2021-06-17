@@ -1,8 +1,10 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,9 +15,11 @@ import java.util.Date;
 /**
  * create by scaffold
  * 行政角色 委托信息
+ *
  * @author codefan@hotmail.com
  */
 @Entity
+@Data
 @Table(name = "WF_ROLE_RELEGATE")
 public class RoleRelegate implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
@@ -24,21 +28,29 @@ public class RoleRelegate implements java.io.Serializable {
     @Column(name = "RELEGATE_NO")
     @ValueGenerator(strategy = GeneratorType.UUID22)
     private String relegateNo;
+
     //委托人
     @Column(name = "GRANTOR")
+    @DictionaryMap(value = "userCode", fieldName = "grantorName")
     private String grantor;
+
     //被委托人
     @Column(name = "GRANTEE")
+    @DictionaryMap(value = "userCode", fieldName = "granteeName")
     private String grantee;
+
     @Column(name = "IS_VALID")
     private String isValid;
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+
     //失效时间
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "RELEGATE_TIME")
     private Date relegateTime;
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "EXPIRE_TIME")
     private Date expireTime;
+
     @Column(name = "UNIT_CODE")
     private String unitCode;
     /**
@@ -48,27 +60,36 @@ public class RoleRelegate implements java.io.Serializable {
     private String roleType;
 
     @Column(name = "ROLE_CODE")
+    @DictionaryMap(value = "RankType", fieldName = "roleName")
     private String roleCode;
+
     @Column(name = "GRANT_DESC")
     private String grantDesc;
+
     //记录人
     @Column(name = "RECORDER")
+    @DictionaryMap(value = "userCode", fieldName = "recorderName")
     private String recorder;
+
     @Column(name = "RECORD_DATE")
     private Date recordDate;
+
     /**
      * 委托业务
      */
     @Column(name = "OPT_ID")
+//    @DictionaryMap(value = "optId", fieldName = "optName")
     private String optId;
 
-
-    // Constructors
-    /** default constructor */
+    /**
+     * default constructor
+     */
     public RoleRelegate() {
     }
 
-    /** minimal constructor */
+    /**
+     * minimal constructor
+     */
     public RoleRelegate(String relegateno, String grantor, String grantee,
                         String isvalid, Date relegatetime) {
 
@@ -80,7 +101,9 @@ public class RoleRelegate implements java.io.Serializable {
         this.relegateTime = relegatetime;
     }
 
-    /** full constructor */
+    /**
+     * full constructor
+     */
     public RoleRelegate(String relegateno, String grantor, String grantee,
                         String isvalid, Date relegatetime, Date expiretime,
                         String unitcode, String roletype, String rolecode,

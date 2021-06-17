@@ -131,7 +131,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
 
     @Transactional
     public List<NodeInstance> listActiveTimerNodeByFlow(String flowInstId){
-        return this.listObjectsByFilter(" where flow_Inst_Id = ? and is_Timer = 'T' ",
+        return this.listObjectsByFilter(" where node_state in ('N','W','S') and flow_Inst_Id = ? and is_Timer = 'T' ",
                 new Object[]{flowInstId});
     }
 
