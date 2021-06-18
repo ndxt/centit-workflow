@@ -1165,8 +1165,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    return context.getUserInfoByCode(StringBaseOpt.castObjectToString(a[0]))
-                        .getUserType();
+                    IUserInfo ui = context.getUserInfoByCode(StringBaseOpt.castObjectToString(a[0]));
+                    if(ui==null){
+                        return "";
+                    }
+                    return ui.getUserType();
                 }
             );
 
@@ -1175,8 +1178,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    return context.getUnitInfoByCode(StringBaseOpt.castObjectToString(a[0]))
-                        .getUnitType();
+                    IUnitInfo ui = context.getUnitInfoByCode(StringBaseOpt.castObjectToString(a[0]));
+                    if(ui==null){
+                        return "";
+                    }
+                    return ui.getUnitType();
                 }
             );
 
