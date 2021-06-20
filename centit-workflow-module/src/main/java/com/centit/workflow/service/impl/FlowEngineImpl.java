@@ -487,7 +487,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         }
         context.addUnitParam("C", currUnitCode);
-        context.addUserParam("C", options.getUserCode());
+        context.addUserParam("C", StringUtils.isBlank(options.getUserCode())? preNodeInst.getUserCode() : options.getUserCode());
         // F 流程的 用户 和 机构
         context.addUnitParam("F", flowInst.getUnitCode());
         context.addUserParam("F", flowInst.getUserCode());
@@ -1247,7 +1247,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             formula.addExtendFunc(
                 "calcUsers",
                 (a) -> {
-                    UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
+                        preNodeInst, nodeToken, currNode, options, varTrans);
                     return UserUnitCalcEngine.calcOperators(context, StringBaseOpt.castObjectToString(a[0]));
                 }
             );
