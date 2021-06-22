@@ -57,14 +57,16 @@ public class ServiceConfig {
         EmailMessageSenderImpl messageManager = new EmailMessageSenderImpl();
         messageManager.setHostName("mail.centit.com");
         messageManager.setSmtpPort(25);
-        messageManager.setUserName("alertmail@centit.com");
-        messageManager.setUserPassword(AESSecurityUtils.decryptBase64String("LZhLhIlJ6gtIlUZ6/NassA==", ""));
+//        messageManager.setUserName("alertmail@centit.com");
+//        messageManager.setUserPassword(AESSecurityUtils.decryptBase64String("LZhLhIlJ6gtIlUZ6/NassA==", ""));
+        messageManager.setUserName("alertmail2@centit.com");
+        messageManager.setUserPassword(AESSecurityUtils.decryptBase64String("131511.cn", ""));
         messageManager.setServerEmail("no-reply@centit.com");
 
         NotificationCenterImpl notificationCenter = new NotificationCenterImpl();
         notificationCenter.setPlatformEnvironment(platformEnvironment);
         //禁用发送email
-        notificationCenter.registerMessageSender("email", messageManager);
+//        notificationCenter.registerMessageSender("email", messageManager);
         notificationCenter.appointDefaultSendType("email");
 
         // 测试sms
