@@ -56,8 +56,10 @@ public class FlowEngineController extends BaseController {
     }
 
     @ApiOperation(value = "提交节点", notes = "提交节点")
-    @ApiImplicitParam(name = "json", value = "{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}", paramType = "body", examples = @Example({
-        @ExampleProperty(value = "{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}", mediaType = "application/json")
+    @ApiImplicitParam(name = "json", value = "{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}",
+        paramType = "body", examples = @Example({
+        @ExampleProperty(value = "{'nodeInstId':10,'userCode':'u1','unitCode':'d1','varTrans':'jsonString,可不填'}",
+            mediaType = "application/json")
     }))
     @WrapUpResponseBody
     @PostMapping(value = "/submitOpt")
@@ -338,10 +340,10 @@ public class FlowEngineController extends BaseController {
     }
 
     @ApiOperation(value = "回退节点", notes = "回退节点")
+    @ApiImplicitParam(name = "jsonObject", paramType = "body", value = "{\"nodeInstId\":\"\",\"managerUserCode\":\"userCode\"}")
     @WrapUpResponseBody
     @PostMapping(value = "/rollBackNode")
-    public String rollBackNode(@RequestBody String json) {
-        JSONObject jsonObject = JSON.parseObject(json);
+    public String rollBackNode(@RequestBody JSONObject jsonObject) {
         String nodeInstId = jsonObject.getString("nodeInstId");
         String managerUserCode = jsonObject.getString("managerUserCode");
         return flowEngine.rollBackNode(nodeInstId, managerUserCode);

@@ -413,7 +413,7 @@ CREATE TABLE wf_role_relegate  (
   Record_Date datetime(0) DEFAULT NULL COMMENT '录入时间',
   grant_Desc varchar(256)  DEFAULT NULL COMMENT '授予说明',
   OPT_ID varchar(32)  DEFAULT NULL COMMENT '委托业务',
-  PRIMARY KEY (RELEGATE_NO) 
+  PRIMARY KEY (RELEGATE_NO)
 ) ;
 
 -- ----------------------------

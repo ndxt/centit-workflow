@@ -105,7 +105,7 @@ public class FlowManagerController extends BaseController {
         }
     }
 
-       /**
+    /**
      * 查看流程图
      *
      * @param response
@@ -458,21 +458,19 @@ public class FlowManagerController extends BaseController {
         }
         return flowManager.forceCommit(nodeInstId, mangerUserCode);
     }
-    /*节点状态管理api
+
+    /**
+     * 节点状态管理api
      * 1.回滚一个流程节点到上一节点
      * 2.提交，强制一个流程节点前进到下一个节点
      * 3.对一个正在运行的节点实例强制游离
      * 4.针对一个正在运行且被强制游离的节点实例，结束游离状态
-     * 5. 针对一个完成的节点实例，创建游离节点
+     * 5.针对一个完成的节点实例，创建游离节点
      * 6.唤醒一个暂挂节点实例
      * 7.从这个节点重新运行该流程，包括已经结束的流程
      * 8.暂挂一个节点实例
-     * */
-
-    /**
-     * 回滚一个流程节点到上一节点
      */
-    @ApiOperation(value = "回滚一个流程节点到上一节点", notes = "1.回滚一个流程节点到上一节点2.提交，强制一个流程节点前进到下一个节点3.对一个正在运行的节点实例强制游离6.唤醒一个暂挂节点实例7.从这个节点重新运行该流程，包括已经结束的流程8.暂挂一个节点实例")
+    @ApiOperation(value = "节点状态管理api", notes = "1.回滚一个流程节点到上一节点2.提交，强制一个流程节点前进到下一个节点3.对一个正在运行的节点实例强制游离6.唤醒一个暂挂节点实例7.从这个节点重新运行该流程，包括已经结束的流程8.暂挂一个节点实例")
     @RequestMapping(value = "/nodestate/{nodeInstId}/{bo}", method = RequestMethod.POST)
     @WrapUpResponseBody
     public NodeInstance changeFlowInstState(@PathVariable String nodeInstId,
@@ -576,7 +574,7 @@ public class FlowManagerController extends BaseController {
                                        @PathVariable String nodeId, HttpServletRequest request) {
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         FlowInstance dbobject = flowManager.getFlowInstance(flowInstId);
-        if(dbobject==null) {
+        if (dbobject == null) {
             throw new ObjectException("找不到对应的流程实例信息：flowInstId=" + flowInstId);
         }
         NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeId);
@@ -585,8 +583,8 @@ public class FlowManagerController extends BaseController {
         int nodeInstInd = 0;
         List<NodeInstance> nodeInsts = dbobject.getFlowNodeInstances();
         int nodeCount = nodeInsts.size();
-        for (int i=0; i<nodeCount; i++){
-            NodeInstance nodeInst  = nodeInsts.get(i);
+        for (int i = 0; i < nodeCount; i++) {
+            NodeInstance nodeInst = nodeInsts.get(i);
             if (nodeInst.getNodeId().equals(nodeId)) {
                 //暂时保证一个节点保留一条查看信息
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].createtime",
@@ -817,15 +815,16 @@ public class FlowManagerController extends BaseController {
         return flowManager.listNodeActionLogs(flowInstId, nodeInstId);
     }
 
-    /*
+    /**
      * 流程操作日志
      */
     @ApiOperation(value = "流程操作日志", notes = "流程操作日志")
     @RequestMapping(value = "/flowlogs/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public List<? extends OperationLog> listFlowInstLogs(@PathVariable String flowInstId, String withNodeLog) {
-        return flowManager.listFlowActionLogs(flowInstId,
+        List<? extends OperationLog> operationLogs = flowManager.listFlowActionLogs(flowInstId,
             BooleanBaseOpt.castObjectToBoolean(withNodeLog, false));
+        return operationLogs == null ? new ArrayList<>() : operationLogs;
     }
 
     @ApiOperation(value = "用户操作日志", notes = "用户操作日志")

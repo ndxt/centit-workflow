@@ -1670,6 +1670,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Set<String> nodeInstIds = new HashSet<>();
         nodeInstIds.add(lastNodeInstId);
         //FlowOptUtils.sendMsg(nodeInstId, nodeInstIds, mangerUserCode);
+        // 记录日志
+        OperationLogCenter.log(FlowOptUtils.createActionLog(
+            managerUserCode, flowInst.getFlowInstId(), "回退到上一个节点;"));
         return lastNodeInstId;
     }
 

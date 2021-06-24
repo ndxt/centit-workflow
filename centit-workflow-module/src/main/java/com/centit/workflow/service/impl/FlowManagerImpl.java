@@ -1357,14 +1357,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * 获取节点实例的操作日志列表
      *
-     * @param flowInstId     流程实例号
+     * @param flowInstId     流程实例id
      * @param withNodeAction 是否包括节点的日志
      * @return List<WfActionLog>
      */
     @Override
     public List<? extends OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction) {
-        if (optLogManager == null)
+        if (optLogManager == null) {
             return null;
+        }
         Map<String, Object> filterMap = CollectionsOpt.createHashMap("optTag", flowInstId);
         if (!withNodeAction) {
             filterMap.put("optMethod", "flowOpt");
