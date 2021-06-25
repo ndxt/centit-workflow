@@ -69,7 +69,7 @@ public class RoleFormulaController extends BaseController {
     }
     @ApiOperation(value = "查询权限表达式对应用户", notes = "查询权限表达式对应用户")
     @WrapUpResponseBody
-    @RequestMapping(value="/users/{formulaCode}",method = RequestMethod.GET)
+    @RequestMapping(value="/usersByFormulaCode/{formulaCode}",method = RequestMethod.GET)
     public JSONArray viewRoleFormulaUsers(@PathVariable String formulaCode,
                                           HttpServletRequest request){
         JSONArray listObjects = roleFormulaService.viewRoleFormulaUsers(
