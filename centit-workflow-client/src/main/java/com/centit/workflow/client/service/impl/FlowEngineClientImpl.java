@@ -444,6 +444,16 @@ public class FlowEngineClientImpl implements FlowEngine {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
+    @Override
+    public List<Map<String, Object>> listNodeTasks(List<String> nextNodeInstList) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    @Override
+    public Map<String, Object> getNodeTasks(String nodeInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
     /**
      * 根据条件查询待办，包括flowInstId，flowOptTag
      *

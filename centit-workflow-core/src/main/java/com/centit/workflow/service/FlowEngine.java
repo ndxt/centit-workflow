@@ -772,4 +772,8 @@ public interface FlowEngine {
      * @return
      */
     JSONArray viewFlowNodes(String flowInstId);
+
+    List<Map<String, Object>> listNodeTasks(List<String> nextNodeInstList);
+
+    Map<String, Object> getNodeTasks(String nodeInstId);
 }

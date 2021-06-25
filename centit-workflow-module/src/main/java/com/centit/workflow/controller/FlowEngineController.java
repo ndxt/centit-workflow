@@ -3,6 +3,7 @@ package com.centit.workflow.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
@@ -51,7 +52,7 @@ public class FlowEngineController extends BaseController {
         FlowInstance flowInstance =
             flowEngine.createInstance(newFlowInstanceOptions,
                 new ObjectUserUnitVariableTranslate(
-                    BaseController.collectRequestParameters(request)),null);
+                    BaseController.collectRequestParameters(request)), null);
         return flowInstance;
     }
 
@@ -75,11 +76,12 @@ public class FlowEngineController extends BaseController {
             NodeInfo nodeInfo = flowEngine.getNodeInfo(nodeInstId);
             if (nodeInfo != null) {
                 nodeNames.add(nodeInfo.getNodeName());
+
             }
         }
         HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("nextNodeInsts",nextNodeInstList);
-        resultMap.put("nodeNames",StringUtils.join(nodeNames,","));
+        resultMap.put("nextNodeInsts", nextNodeInstList);
+        resultMap.put("nodeNames", StringUtils.join(nodeNames, ","));
         return resultMap;
     }
 
@@ -139,8 +141,8 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/addFlowWorkTeam")
     public void addFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {
         flowEngine.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(),
-              flowWorkTeam.getRoleCode(), flowWorkTeam.getRunToken(),
-              CollectionsOpt.createList(flowWorkTeam.getUserCode()));
+            flowWorkTeam.getRoleCode(), flowWorkTeam.getRunToken(),
+            CollectionsOpt.createList(flowWorkTeam.getUserCode()));
     }
 
     @ApiOperation(value = "删除办件角色", notes = "删除办件角色")
@@ -209,9 +211,9 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查询用户岗位待办", notes = "查询用户岗位待办")
     @WrapUpResponseBody
     @GetMapping(value = "/listDynamicTasks")
-    public PageQueryResult<UserTask> listUserDynamicTasks(HttpServletRequest request, PageDesc pageDesc ) {
+    public PageQueryResult<UserTask> listUserDynamicTasks(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
-        List<UserTask> userTasks =  flowEngine.listDynamicTask(searchColumn, pageDesc);
+        List<UserTask> userTasks = flowEngine.listDynamicTask(searchColumn, pageDesc);
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
@@ -400,7 +402,7 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/instDef/{flowInstId}")
     public FlowInfo getFlowDefine(@PathVariable String flowInstId) {
         FlowInstance instance = flowEngine.getFlowInstById(flowInstId);
-        if(instance==null){
+        if (instance == null) {
             return null;
         }
         return flowDefine.getFlowInfo(instance.getFlowCode(),
@@ -409,6 +411,7 @@ public class FlowEngineController extends BaseController {
 
     /**
      * 获取流程业务信息
+     *
      * @param flowInstId 实例id
      * @return 流程业务信息
      */
@@ -417,7 +420,7 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/optInfo/{flowInstId}")
     public FlowOptInfo getFlowOptInfo(@PathVariable String flowInstId) {
         FlowInfo flowInfo = getFlowDefine(flowInstId);
-        if(flowInfo==null){
+        if (flowInfo == null) {
             return null;
         }
         return flowOptService.getFlowOptInfoById(flowInfo.getOptId());
@@ -447,7 +450,7 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/nodeDef/{nodeInstId}")
     public NodeInfo getNodeInfo(@PathVariable String nodeInstId) {
         NodeInstance inst = flowEngine.getNodeInstById(nodeInstId);
-        if(inst==null){
+        if (inst == null) {
             return null;
         }
         return flowDefine.getNodeInfoById(inst.getNodeId());
@@ -456,24 +459,24 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查询流程办件角色对应的用户范围，返回空表示可以选择任意人员", notes = "查询流程办件角色对应的用户范围")
     @WrapUpResponseBody
     @ApiImplicitParams({@ApiImplicitParam(
-        name = "flowInstId", value="流程实例id",
-        required = true, paramType = "path", dataType= "String"
-    ),@ApiImplicitParam(
-        name = "itemRoleCode", value="办件角色代码",
-        required= true, paramType = "path", dataType= "String"
+        name = "flowInstId", value = "流程实例id",
+        required = true, paramType = "path", dataType = "String"
+    ), @ApiImplicitParam(
+        name = "itemRoleCode", value = "办件角色代码",
+        required = true, paramType = "path", dataType = "String"
     )})
-    @RequestMapping(value="/itemRoleFilter/{flowInstId}/{itemRoleCode}",method = RequestMethod.GET)
+    @RequestMapping(value = "/itemRoleFilter/{flowInstId}/{itemRoleCode}", method = RequestMethod.GET)
     public JSONArray viewRoleFormulaUsers(@PathVariable String flowInstId,
                                           @PathVariable String itemRoleCode,
-                                          HttpServletRequest request){
+                                          HttpServletRequest request) {
 
         FlowInstance instance = flowEngine.getFlowInstById(flowInstId);
-        if(instance==null){
+        if (instance == null) {
             return null;
         }
         OptTeamRole itemRole = flowDefine.getFlowItemRole(instance.getFlowCode(),
             instance.getVersion(), itemRoleCode);
-        if(StringUtils.isBlank(itemRole.getFormulaCode())){
+        if (StringUtils.isBlank(itemRole.getFormulaCode())) {
             return null;
         }
         return roleFormulaService.viewRoleFormulaUsers(
@@ -518,5 +521,17 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/viewFlowNodes/{flowInstId}")
     public JSONArray viewFlowNodes(@PathVariable String flowInstId) {
         return flowEngine.viewFlowNodes(flowInstId);
+    }
+
+    @ApiOperation(value = "获取节点实例的待办详情", notes = "获取节点实例的待办详情")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listNodeTasks")
+    public ResponseData listNodeTasks() {
+        List<String> nextNodeInstList = new ArrayList<>();
+        nextNodeInstList.add("83d4068411aa4feebbef623dcd4f8854");
+        nextNodeInstList.add("e23aa870b85245198fb19d23b7952df7");
+        List<Map<String, Object>> nodeTasks = flowEngine.listNodeTasks(nextNodeInstList);
+
+        return ResponseData.makeResponseData(nodeTasks);
     }
 }
