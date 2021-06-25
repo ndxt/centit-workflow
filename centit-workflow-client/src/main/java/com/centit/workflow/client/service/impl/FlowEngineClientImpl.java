@@ -445,12 +445,16 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     @Override
-    public List<Map<String, Object>> listNodeTasks(List<String> nextNodeInstList) {
-        throw new ObjectException("This function is not been implemented in client.");
+    public JSONArray listNodeTasks(List<String> nodeInstList) {
+        String returnJson = RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/listNodeTasks", nodeInstList);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(returnJson);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        return receiveJSON.getJSONArray();
     }
 
     @Override
-    public Map<String, Object> getNodeTasks(String nodeInstId) {
+    public JSONArray  getNodeTasks(String nodeInstId) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

@@ -525,13 +525,10 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "获取节点实例的待办详情", notes = "获取节点实例的待办详情")
     @WrapUpResponseBody
-    @GetMapping(value = "/listNodeTasks")
-    public ResponseData listNodeTasks() {
-        List<String> nextNodeInstList = new ArrayList<>();
-        nextNodeInstList.add("83d4068411aa4feebbef623dcd4f8854");
-        nextNodeInstList.add("e23aa870b85245198fb19d23b7952df7");
-        List<Map<String, Object>> nodeTasks = flowEngine.listNodeTasks(nextNodeInstList);
-
+    @PostMapping(value = "/listNodeTasks")
+    public ResponseData listNodeTasks(@RequestBody JSONObject jsonObject) {
+        List<String> nodeInstIds = jsonObject.getJSONArray("nodeInstIds").toJavaList(String.class);
+        JSONArray nodeTasks = flowEngine.listNodeTasks(nodeInstIds);
         return ResponseData.makeResponseData(nodeTasks);
     }
 }

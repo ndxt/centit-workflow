@@ -2568,40 +2568,63 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public List<Map<String, Object>> listNodeTasks(List<String> nextNodeInstList) {
-        List<Map<String, Object>> nodeTasks = new ArrayList<>();
+    public JSONArray listNodeTasks(List<String> nextNodeInstList) {
+        JSONArray nodeTasks = null;
         for (String nodeInstId : nextNodeInstList) {
-            nodeTasks.add(getNodeTasks(nodeInstId));
+            if (nodeTasks == null) {
+                nodeTasks = getNodeTasks(nodeInstId);
+            } else {
+                nodeTasks.addAll(getNodeTasks(nodeInstId));
+            }
         }
         return nodeTasks;
     }
 
     @Override
-    public Map<String, Object> getNodeTasks(String nodeInstId) {
+    public JSONArray getNodeTasks(String nodeInstId) {
+        JSONArray nodeTaskList = new JSONArray();
         Map<String, Object> nodeTaskMap = new HashMap<>();
         NodeInstance nodeInstance = this.getNodeInstById(nodeInstId);
         if (nodeInstance == null) {
-            return nodeTaskMap;
+            return nodeTaskList;
         }
         NodeInfo nodeInfo = nodeInstance.getNode();
         nodeTaskMap.put("nodeInstId", nodeInstance.getNodeInstId());
+        nodeTaskMap.put("taskAssigned", nodeInstance.getTaskAssigned());
         nodeTaskMap.put("nodeName", nodeInfo.getNodeName());
         nodeTaskMap.put("nodeCode", nodeInfo.getNodeCode());
-
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
-        List<IUserInfo> userTasks = new ArrayList<>();
         if ("S".equals(nodeInstance.getTaskAssigned())) {
-            userTasks.add(CodeRepositoryUtil.getUserInfoByCode(topUnit, nodeInstance.getUserCode()));
+            IUserInfo userInfo = CodeRepositoryUtil.getUserInfoByCode(topUnit, nodeInstance.getUserCode());
+            Map<String, Object> userTaskMap = new HashMap<>();
+            userTaskMap.putAll(nodeTaskMap);
+            userTaskMap.put("userCode", nodeInstance.getUserCode());
+            if (userInfo != null) {
+                userTaskMap.put("userName", userInfo.getUserName());
+                userTaskMap.put("regCellPhone", userInfo.getRegCellPhone());
+                userTaskMap.put("regEmail", userInfo.getRegEmail());
+            }
+            nodeTaskList.add(userTaskMap);
         } else {
             Set<ActionTask> wfActionTasks = nodeInstance.getWfActionTasks();
             Set<String> userSet = new HashSet<>();
             wfActionTasks.forEach(t -> {
                 userSet.add(t.getUserCode());
             });
-            userTasks = CodeRepositoryUtil.getUserInfosByCodes(topUnit, userSet);
+            List<IUserInfo> userTasks = CodeRepositoryUtil.getUserInfosByCodes(topUnit, userSet);
+            userTasks.forEach(userInfo -> {
+                Map<String, Object> userTaskMap = new HashMap<>();
+                userTaskMap.putAll(nodeTaskMap);
+                userTaskMap.put("userCode", nodeInstance.getUserCode());
+                if (userInfo != null) {
+                    userTaskMap.put("userName", userInfo.getUserName());
+                    userTaskMap.put("regCellPhone", userInfo.getRegCellPhone());
+                    userTaskMap.put("regEmail", userInfo.getRegEmail());
+                }
+                nodeTaskList.add(userTaskMap);
+            });
         }
-        nodeTaskMap.put("userTasks", userTasks);
-        return nodeTaskMap;
+        return nodeTaskList;
     }
 }
