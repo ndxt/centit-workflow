@@ -30,9 +30,11 @@ public class FlowInstance implements java.io.Serializable {
     @ValueGenerator(strategy = GeneratorType.UUID22)
     private String flowInstId;
 
-    /** 流程分组id 可以为空 **/
+    /**
+     * 流程分组id 可以为空
+     **/
     @Column(name = "FLOW_GROUP_ID")
-    private String  flowGroupId;
+    private String flowGroupId;
 
     @ManyToOne
     @JoinColumns({
@@ -80,6 +82,7 @@ public class FlowInstance implements java.io.Serializable {
     public void setFlowDefine(FlowInfo flowDefine) {
         this.flowDefine = flowDefine;
     }
+
     /**
      * varchar(200)
      */
@@ -132,10 +135,10 @@ public class FlowInstance implements java.io.Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = NodeInstance.class)
     @JoinColumn(name = "flowInstId")
     @JSONField(serialize = false)
-    private List<NodeInstance> flowNodeInstances;// new ArrayList<WfNodeInstance>();
+    private List<NodeInstance> flowNodeInstances;
 
     @Transient
-    @JSONField(serialize = false)
+    @JSONField(serialize = true)
     private List<NodeInstance> activeNodeList;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)
@@ -149,7 +152,8 @@ public class FlowInstance implements java.io.Serializable {
     private String flowName;
     @Transient
     private String curStep;
-    // Constructors
+
+//    private NodeInstance firstNodeInstance;
 
     /**
      * default constructor
@@ -165,7 +169,7 @@ public class FlowInstance implements java.io.Serializable {
     /**
      * minimal constructor
      */
-    public FlowInstance(  String wfinstid , Date createtime) {
+    public FlowInstance(String wfinstid, Date createtime) {
         this.timeLimit = null;
         this.flowInstId = wfinstid;
         this.createTime = createtime;
@@ -175,8 +179,8 @@ public class FlowInstance implements java.io.Serializable {
         this.activeNodeList = null;
     }
 
-    public boolean checkIsInRunning(){
-        return StringUtils.equalsAny(this.getInstState(), "N","M");
+    public boolean checkIsInRunning() {
+        return StringUtils.equalsAny(this.getInstState(), "N", "M");
     }
 
     public String getPromiseTimeStr() {
@@ -350,7 +354,7 @@ public class FlowInstance implements java.io.Serializable {
     /**
      * 获取相同Token的最新节点所属机构
      *
-     * @param nodeInst 节点
+     * @param nodeInst  节点
      * @param thisToken 令牌
      * @return NodeInstance 实例
      */
@@ -498,6 +502,7 @@ public class FlowInstance implements java.io.Serializable {
     /**
      * 找到汇聚节点所有已经提交的子节点
      * （preNodeInst不为null时，视正在提交中的节点为已办理节点）
+     *
      * @param token
      * @param preNodeInst 汇聚节点的父节点实例
      * @return token, NodeInst
@@ -524,9 +529,9 @@ public class FlowInstance implements java.io.Serializable {
         for (NodeInstance nodeInst : flowNodeInstances) {
             String thisToken = nodeInst.getTrunkToken();
             if (thisToken != null && thisToken.startsWith(token + '.') &&
-                ("C".equals(nodeInst.getNodeState()) || (preNodeInst !=null && preNodeInst.getNodeInstId().equals(nodeInst.getNodeInstId()))) &&
+                ("C".equals(nodeInst.getNodeState()) || (preNodeInst != null && preNodeInst.getNodeInstId().equals(nodeInst.getNodeInstId()))) &&
                 nodeInst.getTokenGeneration() == subg &&
-                !nodeInst.getCreateTime().before(sameInst.getCreateTime()) ) {
+                !nodeInst.getCreateTime().before(sameInst.getCreateTime())) {
                 NodeInstance tempInst = sameNodes.get(thisToken);
                 if (tempInst == null || tempInst.getCreateTime().before(nodeInst.getCreateTime()))
                     sameNodes.put(thisToken, nodeInst);
@@ -537,7 +542,8 @@ public class FlowInstance implements java.io.Serializable {
 
     /**
      * 找到汇聚节点所有已经提交的子节点
-     *（preNodeInst不为null时，视正在提交中的节点为已办理节点）
+     * （preNodeInst不为null时，视正在提交中的节点为已办理节点）
+     *
      * @param token
      * @param preNodeInst 汇聚节点的父节点实例
      * @return Nodeid
@@ -580,7 +586,7 @@ public class FlowInstance implements java.io.Serializable {
             String tempToken = ni.getRunToken();
             if (thisToken.equals(tempToken) && "C".equals(ni.getNodeState())
                 && ni.getCreateTime().before(nodeInst.getCreateTime())) {//大小于
-                if (pareNode == null || pareNode.getCreateTime().before(ni.getCreateTime())  )//大小于
+                if (pareNode == null || pareNode.getCreateTime().before(ni.getCreateTime()))//大小于
                     pareNode = ni;
             }
         }
@@ -727,9 +733,9 @@ public class FlowInstance implements java.io.Serializable {
             this.flowOptName = other.getFlowOptName();
         if (other.getFlowOptTag() != null)
             this.flowOptTag = other.getFlowOptTag();
-        if( other.getOsId() != null)
+        if (other.getOsId() != null)
             this.osId = other.getOsId();
-        if( other.getOptId() != null)
+        if (other.getOptId() != null)
             this.optId = other.getOptId();
         if (other.getCreateTime() != null)
             this.createTime = other.getCreateTime();
