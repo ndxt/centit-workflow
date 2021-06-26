@@ -138,7 +138,7 @@ public class FlowInstance implements java.io.Serializable {
     private List<NodeInstance> flowNodeInstances;
 
     @Transient
-    @JSONField(serialize = false)
+    @JSONField(serialize = true)
     private List<NodeInstance> activeNodeList;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)

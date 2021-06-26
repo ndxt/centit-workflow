@@ -529,7 +529,7 @@ CREATE    VIEW v_inner_user_task_list AS
     c.ROLE_TYPE AS ROLE_TYPE,c.ROLE_CODE AS ROLE_CODE,'系统指定' AS AUTH_DESC,c.NODE_CODE AS node_code,
     c.NODE_NAME AS Node_Name,c.NODE_TYPE AS Node_Type,c.OPT_TYPE AS NODE_OPT_TYPE,c.OPT_PARAM AS Opt_Param,
     a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT, f.OS_ID,
-    c.OPT_ID, c.OPT_CODE AS OPT_CODE, c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,
+    f.OPT_ID, c.OPT_CODE AS OPT_CODE, c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,
     a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME, w.INST_STATE AS inst_state, a.NODE_PARAM,
     p.PAGE_URL as opt_url, w.USER_CODE as creator_code, w.promise_Time as FLOW_PROMISE_TIME, w.time_Limit as FLOW_TIME_LIMIT
   from wf_node_instance a join wf_flow_instance w on (a.FLOW_INST_ID = w.FLOW_INST_ID)
@@ -543,7 +543,7 @@ CREATE    VIEW v_inner_user_task_list AS
     c.ROLE_TYPE AS ROLE_TYPE,c.ROLE_CODE AS ROLE_CODE, b.AUTH_DESC AS AUTH_DESC,c.NODE_CODE AS node_code,
     c.NODE_NAME AS Node_Name,c.NODE_TYPE AS Node_Type,c.OPT_TYPE AS NODE_OPT_TYPE,c.OPT_PARAM AS Opt_Param,
     a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT,f.OS_ID,
-    c.OPT_ID, c.OPT_CODE AS OPT_CODE, c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,
+    f.OPT_ID, c.OPT_CODE AS OPT_CODE, c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,
     a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME,w.INST_STATE AS inst_state, a.NODE_PARAM,
     p.PAGE_URL as opt_url, w.USER_CODE as creator_code, w.promise_Time as FLOW_PROMISE_TIME, w.time_Limit as FLOW_TIME_LIMIT
   from wf_node_instance a join wf_flow_instance w on a.FLOW_INST_ID = w.FLOW_INST_ID
