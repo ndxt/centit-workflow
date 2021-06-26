@@ -455,4 +455,6 @@ public interface FlowManager {
     FlowInstanceGroup getFlowInstanceGroup(String flowInstGroupId);
 
     void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName, String flowOptTag, String userCode, String unitCode);
+
+    NodeInstance getFirstNodeInst(String flowInstId);
 }

@@ -1459,6 +1459,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
+    public NodeInstance getFirstNodeInst(String flowInstId) {
+        return this.getFlowInstance(flowInstId).getFirstNodeInstance();
+    }
+
+    @Override
     public NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force) {
         FlowInstance flowInstance = flowInstanceDao.getObjectWithReferences(flowInstId);
         //如果不是强行拉回，需要判断是否流程最后提交人是自己

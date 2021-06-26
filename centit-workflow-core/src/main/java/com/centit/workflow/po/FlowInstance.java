@@ -138,7 +138,7 @@ public class FlowInstance implements java.io.Serializable {
     private List<NodeInstance> flowNodeInstances;
 
     @Transient
-    @JSONField(serialize = true)
+    @JSONField(serialize = false)
     private List<NodeInstance> activeNodeList;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)
@@ -152,8 +152,6 @@ public class FlowInstance implements java.io.Serializable {
     private String flowName;
     @Transient
     private String curStep;
-
-//    private NodeInstance firstNodeInstance;
 
     /**
      * default constructor

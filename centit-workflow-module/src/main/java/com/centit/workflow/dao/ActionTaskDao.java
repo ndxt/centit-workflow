@@ -69,6 +69,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
             "NODE_OPT_TYPE,OPT_PARAM,CREATE_TIME,PROMISE_TIME,TIME_LIMIT," +
             "OPT_CODE,EXPIRE_OPT,STAGE_CODE,GRANTOR,LAST_UPDATE_USER," +
             "LAST_UPDATE_TIME,INST_STATE,OPT_URL,OS_ID, NODE_PARAM, CREATOR_CODE " +
+            "flow_promise_time, flow_time_limit " +
             "from V_USER_TASK_LIST " +
             "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
             "[ :flowOptTag| and FLOW_OPT_TAG = :flowOptTag] " +
@@ -162,7 +163,6 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
     public List<UserTask> listUserTaskByFilter(Map<String,Object> filter, PageDesc pageDesc){
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(userTaskBaseSql,filter);
-        //String querySql = queryAndNamedParams.getQuery()+" order by CREATE_TIME desc ";
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
             queryAndNamedParams.getQuery() ,queryAndNamedParams.getParams(),pageDesc);
 

@@ -531,7 +531,7 @@ CREATE    VIEW v_inner_user_task_list AS
     a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT, f.OS_ID,
     c.OPT_ID, c.OPT_CODE AS OPT_CODE, c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,
     a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME, w.INST_STATE AS inst_state, a.NODE_PARAM,
-    p.PAGE_URL as opt_url, w.USER_CODE as creator_code
+    p.PAGE_URL as opt_url, w.USER_CODE as creator_code, w.promise_Time as FLOW_PROMISE_TIME, w.time_Limit as FLOW_TIME_LIMIT
   from wf_node_instance a join wf_flow_instance w on (a.FLOW_INST_ID = w.FLOW_INST_ID)
     join wf_node c on (a.NODE_ID = c.NODE_ID)
     join wf_flow_define f on(w.FLOW_CODE = f.FLOW_CODE and w.VERSION = f.version)
@@ -545,7 +545,7 @@ CREATE    VIEW v_inner_user_task_list AS
     a.CREATE_TIME AS CREATE_TIME,a.promise_Time AS Promise_Time,a.time_Limit AS TIME_LIMIT,f.OS_ID,
     c.OPT_ID, c.OPT_CODE AS OPT_CODE, c.Expire_Opt AS Expire_Opt,c.STAGE_CODE AS STAGE_CODE,
     a.last_update_user AS last_update_user,a.last_update_time AS LAST_UPDATE_TIME,w.INST_STATE AS inst_state, a.NODE_PARAM,
-    p.PAGE_URL as opt_url, w.USER_CODE as creator_code
+    p.PAGE_URL as opt_url, w.USER_CODE as creator_code, w.promise_Time as FLOW_PROMISE_TIME, w.time_Limit as FLOW_TIME_LIMIT
   from wf_node_instance a join wf_flow_instance w on a.FLOW_INST_ID = w.FLOW_INST_ID
     join wf_action_task b on a.NODE_INST_ID = b.NODE_INST_ID
     join wf_node c on a.NODE_ID = c.NODE_ID
@@ -564,7 +564,7 @@ CREATE  VIEW v_user_task_list AS
            a.CREATE_TIME AS CREATE_TIME,a.Promise_Time AS promise_time,a.TIME_LIMIT AS time_limit,a.OPT_CODE AS OPT_CODE,
            a.Expire_Opt AS Expire_Opt,a.STAGE_CODE AS STAGE_CODE,NULL AS GRANTOR,a.last_update_user AS last_update_user,
            a.LAST_UPDATE_TIME AS LAST_UPDATE_TIME,a.inst_state AS inst_state,	a.OPT_URL AS OPT_URL, a.NODE_PARAM,a.os_id,
-           a.opt_id, a.creator_code
+           a.opt_id, a.creator_code, a.flow_promise_time, a.flow_time_limit
     from v_inner_user_task_list a
   union
     select a.FLOW_INST_ID AS FLOW_INST_ID,a.FLOW_CODE AS FLOW_CODE,a.version AS version,a.FLOW_OPT_NAME AS FLOW_OPT_NAME,
@@ -574,7 +574,7 @@ CREATE  VIEW v_user_task_list AS
            a.CREATE_TIME AS CREATE_TIME,a.Promise_Time AS promise_time,a.TIME_LIMIT AS time_limit,a.OPT_CODE AS OPT_CODE,
            a.Expire_Opt AS Expire_Opt,a.STAGE_CODE AS STAGE_CODE,b.GRANTOR AS GRANTOR,a.last_update_user AS last_update_user,
            a.LAST_UPDATE_TIME AS last_update_time,a.inst_state AS inst_state,a.OPT_URL AS OPT_URL, a.NODE_PARAM,a.os_id,
-           a.opt_id, a.creator_code
+           a.opt_id, a.creator_code, a.flow_promise_time, a.flow_time_limit
     from v_inner_user_task_list a join wf_role_relegate b on b.unit_code=a.UNIT_CODE
     where b.IS_VALID = 'T' and b.RELEGATE_TIME <= now() and a.user_code = b.GRANTOR
           and (b.EXPIRE_TIME is null or b.EXPIRE_TIME >= now())

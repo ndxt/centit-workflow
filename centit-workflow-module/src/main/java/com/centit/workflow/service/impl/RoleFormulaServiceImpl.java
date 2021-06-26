@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @ClassName FlowRoleServiceImpl
@@ -39,7 +36,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     @Override
     @Transactional
     public List<RoleFormula> listRoleFormulas(Map<String, Object> filterMap, PageDesc pageDesc) {
-        return flowRoleDao.listObjectsByProperties(filterMap,pageDesc);
+        return flowRoleDao.listObjectsByProperties(filterMap, pageDesc);
     }
 
     @Override
@@ -70,9 +67,18 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
             context, formula);
 
         List<IUserInfo> userInfos = new ArrayList<>();
-        for(String uc : sUsers){
+        for (String uc : sUsers) {
             userInfos.add(context.getUserInfoByCode(uc));
         }
+        // 根据userOrder增加排序
+        Collections.sort(userInfos, new Comparator<IUserInfo>() {
+            @Override
+            public int compare(IUserInfo o1, IUserInfo o2) {
+                Long i = o1.getUserOrder() - o2.getUserOrder();
+                return new Long(i).intValue();
+            }
+
+        });
         return (JSONArray) JSONArray.toJSON(userInfos);
     }
 
@@ -86,7 +92,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
             context, formula);
 
         List<IUnitInfo> userInfos = new ArrayList<>();
-        for(String uc : sUnits){
+        for (String uc : sUnits) {
             userInfos.add(context.getUnitInfoByCode(uc));
         }
         return (JSONArray) JSONArray.toJSON(userInfos);
@@ -95,7 +101,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     @Override
     public JSONArray viewRoleFormulaUsers(String formulaCode, String userCode, String unitCode) {
         RoleFormula flowRole = flowRoleDao.getObjectById(formulaCode);
-        if(flowRole==null){
+        if (flowRole == null) {
             return null;
         }
         return viewFormulaUsers(flowRole.getRoleFormula(), userCode, unitCode);
@@ -108,14 +114,14 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     }
 
     @Override
-    public List<? extends IUserInfo> listUserInfo(String prefix){
+    public List<? extends IUserInfo> listUserInfo(String prefix) {
         List<? extends IUserInfo> allUsers = listAllUserInfo();
         List<IUserInfo> selUsers = new ArrayList<>();
-        for(IUserInfo user : allUsers ){
-            if(user.getUserName().startsWith(prefix)
+        for (IUserInfo user : allUsers) {
+            if (user.getUserName().startsWith(prefix)
                 || user.getUserName().endsWith(prefix)
                 || user.getLoginName().startsWith(prefix)
-                || user.getLoginName().endsWith(prefix)){
+                || user.getLoginName().endsWith(prefix)) {
                 selUsers.add(user);
             }
         }
@@ -127,7 +133,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
         List<? extends IUnitInfo> unitInfos = context.listAllUnitInfo();
         CollectionsOpt.sortAsTree(unitInfos,
-            (p,c) -> StringUtils.equals(p.getUnitCode(),c.getParentUnit()));
+            (p, c) -> StringUtils.equals(p.getUnitCode(), c.getParentUnit()));
         return unitInfos;
     }
 

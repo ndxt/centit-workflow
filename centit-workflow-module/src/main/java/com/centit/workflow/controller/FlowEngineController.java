@@ -53,6 +53,7 @@ public class FlowEngineController extends BaseController {
             flowEngine.createInstance(newFlowInstanceOptions,
                 new ObjectUserUnitVariableTranslate(
                     BaseController.collectRequestParameters(request)), null);
+        flowInstance.setActiveNodeList(flowInstance.getFlowNodeInstances());
         return flowInstance;
     }
 
@@ -90,8 +91,9 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/saveFlowVariable")
     public void saveFlowVariable(@RequestBody FlowVariable flowVariableParam) {
         List<String> vars = JSON.parseArray(flowVariableParam.getVarValue(), String.class);
-        if (!vars.isEmpty())
+        if (!vars.isEmpty()) {
             flowEngine.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), vars);
+        }
     }
 
     @ApiOperation(value = "删除流程变量", notes = "删除流程变量")
@@ -158,6 +160,13 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     public List<NodeInstance> listFlowInstNodes(String flowInstId) {
         return flowManager.listFlowInstNodes(flowInstId);
+    }
+
+    @ApiOperation(value = "获取流程实例的首节点", notes = "获取流程实例的首节点")
+    @GetMapping(value = "/getFirstNodeInst")
+    @WrapUpResponseBody
+    public NodeInstance getFirstNodeInst(String flowInstId) {
+        return flowManager.getFirstNodeInst(flowInstId);
     }
 
     @ApiOperation(value = "查看流程活动节点", notes = "查看流程活动节点")

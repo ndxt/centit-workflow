@@ -1,6 +1,7 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.WebOptUtils;
@@ -167,10 +168,26 @@ public class FlowDefineController extends BaseController {
     public void editXml(@PathVariable String flowcode, HttpServletRequest request, HttpServletResponse response) {
         String flowxmldesc = request.getParameter("flowxmldesc");
         boolean saveSucced = flowDefine.saveDraftFlowDefJson(flowcode, flowxmldesc);
-        if (saveSucced)
+        if (saveSucced) {
             JsonResultUtils.writeSingleDataJson("流程图草稿草稿保存成功！", response);
-        else
+        } else {
             JsonResultUtils.writeSingleDataJson("保存出错！", response);
+        }
+    }
+
+    @ApiOperation(value = "根据流程xml获取流程节点",notes = "根据流程xml获取流程节点")
+    @RequestMapping(value = "/getFlowNode/{flowcode}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public ResponseData getFlowNode(@PathVariable String flowcode) {
+        FlowInfo flowInfo = flowDefine.getFlowInfo(flowcode, 0);
+        if (flowInfo == null) {
+            ResponseData.makeErrorMessage("未获取到流程节点，可能是流程没有保存。");
+        }
+        JSONArray nodeList = JSONObject.parseObject(new String(flowInfo.getFlowXmlDesc())).getJSONArray("nodeList");
+        nodeList.removeIf(
+            node -> !"C".equals(((JSONObject) node).getString("nodeType"))
+        );
+        return ResponseData.makeResponseData(nodeList);
     }
 
     /**
