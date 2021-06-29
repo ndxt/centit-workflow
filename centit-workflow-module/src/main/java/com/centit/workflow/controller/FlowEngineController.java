@@ -533,6 +533,7 @@ public class FlowEngineController extends BaseController {
     }
 
     @ApiOperation(value = "获取节点实例的待办详情", notes = "获取节点实例的待办详情")
+    @ApiImplicitParam(name = "jsonObject", paramType = "body", value = "{\"nodeInstIds\":[]}")
     @WrapUpResponseBody
     @PostMapping(value = "/listNodeTasks")
     public ResponseData listNodeTasks(@RequestBody JSONObject jsonObject) {

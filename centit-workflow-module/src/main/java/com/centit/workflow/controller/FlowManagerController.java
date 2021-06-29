@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.ResponseMapData;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.*;
@@ -532,8 +534,9 @@ public class FlowManagerController extends BaseController {
         NodeInstance nodeInstance = flowEng.getNodeInstById(nodeInstId);
         List<UserTask> objList = new ArrayList<>();
         List<UserTask> innerTask = flowManager.listNodeTasks(nodeInstId);
-        if (innerTask != null)
+        if (innerTask != null) {
             objList.addAll(innerTask);
+        }
         if ("D".equals(nodeInstance.getTaskAssigned())) {
             Map<String, Object> searchColumn = new HashMap<>();
             searchColumn.put("nodeInstId", nodeInstId);
@@ -596,8 +599,9 @@ public class FlowManagerController extends BaseController {
                 if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState())) {
                     List<UserTask> tasks = new ArrayList<>();
                     List<UserTask> innerTasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());
-                    if (innerTasks != null)
+                    if (innerTasks != null) {
                         tasks.addAll(innerTasks);
+                    }
                     //暂时添加一个多余判断，解决相关地方手动修改视图，把岗位待办设置成静态待办的问题
                     if (tasks.isEmpty() && "D".equals(nodeInst.getTaskAssigned())) {
                         int page = 1;
@@ -836,5 +840,20 @@ public class FlowManagerController extends BaseController {
         return flowManager.listUserActionLogs(userCode,
             GeneralAlgorithm.nvl(DatetimeOpt.castObjectToDate(lastTime),
                 DatetimeOpt.addDays(DatetimeOpt.currentUtilDate(), -30)), pageDesc);
+    }
+
+    @ApiOperation(value = "获取流程申请信息", notes = "获取流程申请信息（获取流程创建用户的信息）")
+    @RequestMapping(value = "/inst/{flowInstId}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public ResponseData listUserOptLogs(@PathVariable String flowInstId) {
+        HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        FlowInstance flowInstance = flowManager.getFlowInstance(flowInstId);
+        IUserInfo createFlowUser = CodeRepositoryUtil.getUserInfoByCode(topUnit, flowInstance.getUserCode());
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("createFlowUser", createFlowUser);
+        resultMap.put("flowOptName", flowInstance.getFlowOptName());
+        resultMap.put("flowInstId", flowInstance.getFlowInstId());
+        return ResponseData.makeResponseData(resultMap);
     }
 }

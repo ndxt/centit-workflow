@@ -85,7 +85,7 @@ public class FlowTaskImpl {
     /**
      * 根据数据库计算出来的预报警发出对应的通知即可
      */
-    @Scheduled(cron = "0 0/5 8-18 * * ?")
+    @Scheduled(cron = "0 1/5 8-18 * * ?")
     @Transactional
     public void notifyTimeWaring() {
         //直接从  wfRuntimeWarningDao 读取 报警信息，发送通知，设置已通知标志位
