@@ -773,7 +773,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
                                 "cd_" + nextRoutertNode.getNodeCode(), uc);
                             //flowVarTrans.setInnerVariable( "cd_" + nextRoutertNode.getNodeCode(), uc);
-                            flowVarTrans.setInnerVariable("cursor", nodeToken, uc);
+                            flowVarTrans.setInnerVariable("cursor", preNodeInst.getRunToken(), uc);
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
                                 preNodeInst, preTransPath, nodeTran, options,
@@ -797,7 +797,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
                                 "cu_" + nextRoutertNode.getNodeCode(), uc);
-                            flowVarTrans.setInnerVariable("cursor", nodeToken, uc);
+                            flowVarTrans.setInnerVariable("cursor", preNodeInst.getRunToken(), uc);
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
                                 preNodeInst, preTransPath, nodeTran,
@@ -833,7 +833,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowOptParamOptions options,
         FlowVariableTranslate varTrans,
         ServletContext application) {
-
+        //每次重置当前节点实例
+        varTrans.setNodeInst(preNodeInst);
         //Set<String> resNodes = new HashSet<>();
         //NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
         // A:开始 B:首节点(首节点不能是路由节点，如果是路由节点请设置为 哑元，跳转到后一个节点； B 的处理换个C一样)

@@ -92,7 +92,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
     private FlowVariable findFlowVariable(String varName){
         if(flowVariables==null || flowVariables.size()==0)
             return null;
-        String thisToken = nodeInst ==null? "T" : nodeInst.getRunToken();
+        String thisToken = nodeInst ==null? null : nodeInst.getRunToken();
         FlowVariable sValue = null;
         int nTL=0;
         for(FlowVariable variable : flowVariables){
@@ -111,13 +111,13 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         Map<String/*token*/, Object> varMap = this.innerVariable.get(varName);
         if(varMap==null || varMap.size()==0)
             return null;
-        String thisToken = nodeInst ==null? "T" : nodeInst.getRunToken();
+        String thisToken = nodeInst ==null? null : nodeInst.getRunToken();
         Object sValue = null;
         int nTL=0;
         for(Map.Entry<String, Object> ent : varMap.entrySet()){
             String currToken = ent.getKey();
             int cTL = currToken.length();
-            if( ( "A".equals(currToken) || thisToken==null
+            if( ( "A".equals(currToken) || "T".equals(thisToken) || thisToken==null
                 || currToken.equals(thisToken) || thisToken.startsWith(currToken+'.' )) &&  nTL< cTL){
                 nTL = cTL;
                 sValue = ent.getValue();
@@ -193,7 +193,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
     public Set<String> getUsersVariable(String varName){
         // 内部变量最高优先级
-        Set<String> sUsers = StringBaseOpt.objectToStringSet(innerVariable.get(varName));
+        Set<String> sUsers = StringBaseOpt.objectToStringSet(findInnerVariable(varName));
         if(sUsers!=null && !sUsers.isEmpty()) {
             return sUsers;
         }
@@ -229,7 +229,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
      * @return
      */
     public Set<String> getUnitsVariable(String varName) {
-        Set<String> sUnits = StringBaseOpt.objectToStringSet(innerVariable.get(varName));
+        Set<String> sUnits = StringBaseOpt.objectToStringSet(findInnerVariable(varName));
         if(sUnits!=null && !sUnits.isEmpty()) {
             return sUnits;
         }
