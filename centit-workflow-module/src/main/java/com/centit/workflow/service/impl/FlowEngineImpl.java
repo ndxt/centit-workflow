@@ -1163,6 +1163,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
+                    if(a==null || a.length<1){
+                        return null;
+                    }
                     return context.getUserRank(StringBaseOpt.castObjectToString(a[0]));
                 }
             );
@@ -1172,6 +1175,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
+                    if(a==null || a.length<1){
+                        return null;
+                    }
                     IUserInfo ui = context.getUserInfoByCode(StringBaseOpt.castObjectToString(a[0]));
                     if (ui == null) {
                         return "";
@@ -1185,6 +1191,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
+                    if(a==null || a.length<1){
+                        return null;
+                    }
                     IUnitInfo ui = context.getUnitInfoByCode(StringBaseOpt.castObjectToString(a[0]));
                     if (ui == null) {
                         return "";
@@ -1198,6 +1207,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
+                    if(a==null || a.length<1){
+                        return null;
+                    }
                     List<? extends IUserUnit> userUnits =
                         context.listUserUnits(StringBaseOpt.castObjectToString(a[0]));
                     //return userUnits.stream().map( b->b.getUnitCode()).collect(Collectors.toList());
@@ -1210,6 +1222,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
+                    if(a==null || a.length<1){
+                        return null;
+                    }
                     List<? extends IUserUnit> userUnits =
                         context.listUnitUsers(StringBaseOpt.castObjectToString(a[0]));
                     //return userUnits.stream().map( b->b.getUnitCode()).collect(Collectors.toList());
@@ -1222,6 +1237,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
+                    if(a==null || a.length<1){
+                        return null;
+                    }
                     String userCode = StringBaseOpt.castObjectToString(a[0]);
                     String userType = SysUserFilterEngine.ROLE_TYPE_XZ;
                     if (a.length > 1) {
@@ -1247,6 +1265,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
+                    if(a==null || a.length<1){
+                        return null;
+                    }
                     return UserUnitCalcEngine.calcUnitsByExp(context, StringBaseOpt.castObjectToString(a[0]));
                 }
             );
@@ -1256,6 +1277,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
+                    if(a==null || a.length<1){
+                        return null;
+                    }
                     return UserUnitCalcEngine.calcOperators(context, StringBaseOpt.castObjectToString(a[0]));
                 }
             );
