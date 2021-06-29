@@ -753,15 +753,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 String nextNodeId = nodeTran.getEndNodeId();
                 NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
 
-                if (!NodeInfo.NODE_TYPE_OPT.equals(nextNode.getNodeType())) { //报错
-                    throw new WorkflowException(WorkflowException.FlowDefineError,
-                        "多实例路由后面必须是业务节点：" + flowInst.getFlowInstId() +
-                            (preNodeInst != null ? "; 节点：" + preNodeInst.getNodeInstId() : ";") +
-                            " 路由：" + nextRoutertNode.getNodeId());
-                }
                 LeftRightPair<Set<String>, Set<String>> unitAndUsers = calcNodeUnitAndOpterators(flowInst, preNodeInst, nodeToken,
                     nextRoutertNode, options,
                     flowVarTrans);
+
                 //D 机构， U  人员（权限表达式） V 变量
                 if (NodeInfo.ROUTER_MULTI_TYPE_UNIT.equals(nextRoutertNode.getMultiInstType())) {
                     Set<String> nextNodeUnits = unitAndUsers.getLeft();
@@ -778,7 +773,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
                                 "cd_" + nextRoutertNode.getNodeCode(), uc);
                             //flowVarTrans.setInnerVariable( "cd_" + nextRoutertNode.getNodeCode(), uc);
-                            flowVarTrans.setInnerVariable("cursor", uc);
+                            flowVarTrans.setInnerVariable("cursor", nodeToken, uc);
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
                                 preNodeInst, preTransPath, nodeTran, options,
@@ -802,7 +797,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
                                 "cu_" + nextRoutertNode.getNodeCode(), uc);
-                            flowVarTrans.setInnerVariable("cursor", uc);
+                            flowVarTrans.setInnerVariable("cursor", nodeToken, uc);
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
                                 preNodeInst, preTransPath, nodeTran,
@@ -813,9 +808,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             nRn++;
                         }
                     }
-                } /*else if ("V".equals(nextRoutertNode.getMultiInstType())) {
+                } else { //if ("V".equals(nextRoutertNode.getMultiInstType())) {
                     // 实现变量多实例 这个没有实际意义
-                }*/
+                    throw new WorkflowException(WorkflowException.FlowDefineError,
+                        "多实例路由目前只支持人员和机构数组：" + flowInst.getFlowInstId() +
+                            (preNodeInst != null ? "; 节点：" + preNodeInst.getNodeInstId() : ";") +
+                            " 路由：" + nextRoutertNode.getNodeId());
+                }
             } else if (NodeInfo.ROUTER_TYPE_ISOLATED.equals(sRT)) {//游离
                 FlowTransition nodeTran = selectOptNodeTransition(nextRoutertNode);
                 String nextNodeId = nodeTran.getEndNodeId();

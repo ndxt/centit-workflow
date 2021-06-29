@@ -15,7 +15,7 @@ import java.util.*;
 
 public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
-    private Map<String, Object> innerVariable;
+    private Map<String/*varName*/, Map<String/*token*/, Object>> innerVariable;
 
     private UserUnitVariableTranslate flowVarTrans;
     private List<FlowVariable> flowVariables;
@@ -60,8 +60,13 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         collectNodeUnitsAndUsers(flowInst);
     }
 
-    public void setInnerVariable(String name, Object value) {
-        this.innerVariable.put(name, value);
+    public void setInnerVariable(String name, String token, Object value) {
+        Map<String/*token*/, Object> varMap = this.innerVariable.get(name);
+        if(varMap == null){
+            varMap = new HashMap<>(4);
+        }
+        varMap.put(token, value);
+        this.innerVariable.put(name, varMap);
     }
 
     public void setNodeInst(NodeInstance nodeInst) {
@@ -93,23 +98,40 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         for(FlowVariable variable : flowVariables){
           String currToken = variable.getRunToken();
           int cTL = currToken.length();
-          if( varName.equals(variable.getVarName()) && ( "A".equals(variable.getRunToken()) || thisToken==null
+          if( varName.equals(variable.getVarName()) && ( "A".equals(currToken) || thisToken==null
                   || currToken.equals(thisToken) || thisToken.startsWith(currToken+'.' )) &&  nTL< cTL){
               nTL = cTL;
               sValue = variable;
           }
         }
-
         return sValue;
+    }
 
+    public Object findInnerVariable(String varName) {
+        Map<String/*token*/, Object> varMap = this.innerVariable.get(varName);
+        if(varMap==null || varMap.size()==0)
+            return null;
+        String thisToken = nodeInst ==null? "T" : nodeInst.getRunToken();
+        Object sValue = null;
+        int nTL=0;
+        for(Map.Entry<String, Object> ent : varMap.entrySet()){
+            String currToken = ent.getKey();
+            int cTL = currToken.length();
+            if( ( "A".equals(currToken) || thisToken==null
+                || currToken.equals(thisToken) || thisToken.startsWith(currToken+'.' )) &&  nTL< cTL){
+                nTL = cTL;
+                sValue = ent.getValue();
+            }
+        }
+        return sValue;
     }
 
     @Override
     public Object getVarValue(String varName) {
         // 内部变量最高优先级
-        Object objs = innerVariable.get(varName);
-        if(objs != null ){
-            return objs;
+        Object objV = findInnerVariable(varName);
+        if(objV != null ){
+            return objV;
         }
 
         if(flowVarTrans !=null){
@@ -258,7 +280,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
             String varName =  StringUtils.isBlank(varNames[i]) ? "_arg"+i : varNames[i].trim();
             if(retObj!=null){
                 retMap.put(varName, retObj);
-                innerVariable.put(varName, retObj);
+                this.setInnerVariable(varName,"A", retObj);
             }
             String s = formula.skipAWord();
             if(!",".equals(s)) break;
