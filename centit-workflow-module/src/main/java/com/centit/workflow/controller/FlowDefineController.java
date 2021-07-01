@@ -185,7 +185,9 @@ public class FlowDefineController extends BaseController {
         }
         JSONArray nodeList = JSONObject.parseObject(new String(flowInfo.getFlowXmlDesc())).getJSONArray("nodeList");
         nodeList.removeIf(
-            node -> !"C".equals(((JSONObject) node).getString("nodeType"))
+            node -> !"C".equals(((JSONObject) node).getString("nodeType")) ||
+                ((JSONObject) node).getString("nodecode") == null ||
+                ((JSONObject) node).getString("nodecode").isEmpty()
         );
         return ResponseData.makeResponseData(nodeList);
     }

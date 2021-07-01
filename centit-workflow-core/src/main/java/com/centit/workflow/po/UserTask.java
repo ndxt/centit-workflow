@@ -92,6 +92,14 @@ public class UserTask implements java.io.Serializable {
         return wts.getTimeSpanDesc();
     }
 
+    public String getFlowTimeLimitStr() {
+        if(flowTimeLimit==null)
+            return "";
+        WorkTimeSpan wts = new WorkTimeSpan();
+        wts.fromNumber(flowTimeLimit);
+        return wts.getTimeSpanDesc();
+    }
+
     public String getNodeOptUrl(){
         if(this.optUrl==null) {
             //this.optUrl=this.optCode;
