@@ -70,6 +70,7 @@ public class UserTask implements java.io.Serializable {
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date flowExpireTime;
     private Long flowTimeLimit;
+    private Long flowPromiseTime;
 
     // Constructors
     /** default constructor */
@@ -97,6 +98,14 @@ public class UserTask implements java.io.Serializable {
             return "";
         WorkTimeSpan wts = new WorkTimeSpan();
         wts.fromNumber(flowTimeLimit);
+        return wts.getTimeSpanDesc();
+    }
+
+    public String getFlowPromiseTimeStr() {
+        if(flowPromiseTime==null)
+            return "";
+        WorkTimeSpan wts = new WorkTimeSpan();
+        wts.fromNumber(flowPromiseTime);
         return wts.getTimeSpanDesc();
     }
 

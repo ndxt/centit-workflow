@@ -228,6 +228,10 @@ public class FlowOptUtils {
 
         FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(nodeInstance, flowInstance);
         boolean hasFlowGroup = StringUtils.isNotBlank(flowInstance.getFlowGroupId());
+        if (nodeInstance == null) {
+            // 创建流程实例的时候，nodeInstance为null
+            nodeInstance = new NodeInstance();
+        }
         // 优先加载本流程的变量
         if(options != null && options.getVariables() != null && !options.getVariables().isEmpty()) {
             for(Map.Entry<String, Object> ent : options.getVariables().entrySet()) {
