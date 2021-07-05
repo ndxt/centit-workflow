@@ -11,11 +11,9 @@ import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.security.model.CentitPasswordEncoder;
 import com.centit.framework.security.model.StandardPasswordEncoderImpl;
 import com.centit.product.oa.EmailMessageSenderImpl;
-import com.centit.support.security.AESSecurityUtils;
 import com.centit.workflow.context.ExtFrameworkContextCacheBean;
 import com.centit.workflow.context.JdbcUserUnitCalcContextFactoryImpl;
 import com.centit.workflow.service.impl.SystemUserUnitCalcContextFactoryImpl;
-import com.centit.workflow.sms.SmsMessageSenderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -69,10 +67,6 @@ public class ServiceConfig {
 //        notificationCenter.registerMessageSender("email", messageManager);
         notificationCenter.appointDefaultSendType("email");
 
-        // 测试sms
-        SmsMessageSenderImpl smsMessageSender = new SmsMessageSenderImpl();
-        notificationCenter.registerMessageSender("sms", smsMessageSender);
-        notificationCenter.appointDefaultSendType("sms");
         return notificationCenter;
     }
 
