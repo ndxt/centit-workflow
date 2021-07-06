@@ -85,6 +85,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
             "[ :flowCode| and FLOW_CODE = :flowCode] " +
             "[ :stageCode| and STAGE_CODE = :stageCode] " +
             "[ :nodeName| and NODE_NAME in (:nodeName)] " +
+            "[ :nodeNames| and NODE_NAME in (:nodeNames)] " +
             "[ :nodeCode| and NODE_CODE in  (:nodeCode)] " +
             "[ :notNodeCode| and NODE_CODE not in  (:notNodeCode)] " +
              " order by CREATE_TIME desc " ;

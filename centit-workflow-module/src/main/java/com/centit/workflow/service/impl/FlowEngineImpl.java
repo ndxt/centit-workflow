@@ -2349,6 +2349,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public List<UserTask> listUserTasksByFilter(Map<String, Object> filterMap, PageDesc pageDesc) {
+        Object nodeNames = filterMap.get("nodeNames");
+        if (nodeNames != null) {
+            filterMap.put("nodeNames",nodeNames.toString().split(","));
+        }
         List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(filterMap, pageDesc);
         return taskList;
     }
