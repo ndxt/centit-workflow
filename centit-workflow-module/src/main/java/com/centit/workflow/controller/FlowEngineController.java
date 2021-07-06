@@ -53,6 +53,11 @@ public class FlowEngineController extends BaseController {
             flowEngine.createInstance(newFlowInstanceOptions,
                 new ObjectUserUnitVariableTranslate(
                     BaseController.collectRequestParameters(request)), null);
+
+        //  FastJson禁用循环引用
+//        List<NodeInstance> activeNodeList = JSONArray.parseArray(JSON.toJSONString(flowInstance.getFlowNodeInstances(),
+//            SerializerFeature.DisableCircularReferenceDetect)).toJavaList(NodeInstance.class);
+//        flowInstance.setActiveNodeList(activeNodeList);
         flowInstance.setActiveNodeList(flowInstance.getFlowNodeInstances());
         return flowInstance;
     }
@@ -200,6 +205,7 @@ public class FlowEngineController extends BaseController {
         @ApiImplicitParam(name = "nodeNames", value = "节点名称,多个节点以逗号分割"),
         @ApiImplicitParam(name = "osId", value = "业务系统ID"),
         @ApiImplicitParam(name = "nodeCode", value = "环节代码"),
+        @ApiImplicitParam(name = "nodeCodes", value = "环节代码,多个节点以逗号分割"),
         @ApiImplicitParam(name = "stageCode", value = "阶段代码"),
         @ApiImplicitParam(name = "stageArr", value = "STAGE_CODE in (:stageArr)"),
         @ApiImplicitParam(name = "notNodeCode", value = "NODE_CODE not in  (:notNodeCode)")

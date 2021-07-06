@@ -510,7 +510,7 @@ public class FlowManagerController extends BaseController {
         return flowEng.getNodeInstById(nodeInstId);
     }
 
-    /*
+    /**
      * 从这个节点重新运行该流程，包括已经结束的流程
      */
     @ApiOperation(value = "从这个节点重新运行该流程，包括已经结束的流程", notes = "从这个节点重新运行该流程，包括已经结束的流程")
