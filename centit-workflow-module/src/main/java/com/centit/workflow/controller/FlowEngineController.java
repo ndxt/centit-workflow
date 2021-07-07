@@ -202,13 +202,13 @@ public class FlowEngineController extends BaseController {
         @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)"),
         @ApiImplicitParam(name = "flowOptTag", value = "流程实例对应的业务主键"),
         @ApiImplicitParam(name = "nodeName", value = "节点名称"),
-        @ApiImplicitParam(name = "nodeNames", value = "节点名称,多个节点以逗号分割"),
         @ApiImplicitParam(name = "osId", value = "业务系统ID"),
         @ApiImplicitParam(name = "nodeCode", value = "环节代码"),
         @ApiImplicitParam(name = "nodeCodes", value = "环节代码,多个节点以逗号分割"),
         @ApiImplicitParam(name = "stageCode", value = "阶段代码"),
         @ApiImplicitParam(name = "stageArr", value = "STAGE_CODE in (:stageArr)"),
-        @ApiImplicitParam(name = "notNodeCode", value = "NODE_CODE not in  (:notNodeCode)")
+        @ApiImplicitParam(name = "notNodeCode", value = "NODE_CODE not in  (:notNodeCode)"),
+        @ApiImplicitParam(name = "notNodeCodes", value = "环节代码,多个节点以逗号分割")
     })
     public PageQueryResult<UserTask> listTasks(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);

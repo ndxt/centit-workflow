@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,8 @@ import java.util.*;
 @Transactional
 public class FlowManagerImpl implements FlowManager, Serializable {
     private static final long serialVersionUID = 1L;
+    private static Logger logger = LoggerFactory.getLogger(FlowManagerImpl.class);
+
     @Autowired
     FlowInstanceDao flowInstanceDao;
 
@@ -1461,6 +1465,24 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public NodeInstance getFirstNodeInst(String flowInstId) {
         return this.getFlowInstance(flowInstId).getFirstNodeInstance();
+    }
+
+    @Override
+    public boolean deleteFlowInstById(String flowInstId, String userCode) {
+        // 判断流程是否可以删除
+        HashMap<String, Object> filterMap = new HashMap<>();
+        filterMap.put("flowInstId", flowInstId);
+        filterMap.put("userCode", userCode);
+        FlowInstance flowInstance = flowInstanceDao.getObjectByProperties(filterMap);
+        if (flowInstance == null) {
+            logger.info("用户 {} 没有权限删除流程 {}", userCode, flowInstId);
+            return false;
+        }
+        flowInstanceDao.deleteObjectById(flowInstId);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("flowInstId",flowInstId);
+        nodeInstanceDao.deleteObjectsByProperties(map);
+        return true;
     }
 
     @Override

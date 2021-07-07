@@ -695,4 +695,9 @@ public class FlowManagerClientImpl implements FlowManager {
     public NodeInstance getFirstNodeInst(String flowInstId) {
         throw new ObjectException("This function is not been implemented in client.");
     }
+
+    @Override
+    public boolean deleteFlowInstById(String flowInstId, String userCode) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
 }

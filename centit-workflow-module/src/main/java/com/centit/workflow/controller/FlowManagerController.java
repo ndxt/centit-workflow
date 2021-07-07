@@ -856,4 +856,15 @@ public class FlowManagerController extends BaseController {
         resultMap.put("flowInstId", flowInstance.getFlowInstId());
         return ResponseData.makeResponseData(resultMap);
     }
+
+    @ApiOperation(value = "删除流程实例数据", notes = "删除流程实例数据")
+    @WrapUpResponseBody
+    @RequestMapping(
+        value = {"/deleteFlowInstById/{flowInstId}/{userCode}"},
+        method = {RequestMethod.DELETE}
+    )
+    public ResponseData deleteFlowInstById(@PathVariable String flowInstId, @PathVariable String userCode) {
+        boolean b = flowManager.deleteFlowInstById(flowInstId, userCode);
+        return ResponseData.makeResponseData(b);
+    }
 }

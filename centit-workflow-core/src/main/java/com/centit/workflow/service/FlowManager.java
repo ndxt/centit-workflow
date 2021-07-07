@@ -457,4 +457,12 @@ public interface FlowManager {
     void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName, String flowOptTag, String userCode, String unitCode);
 
     NodeInstance getFirstNodeInst(String flowInstId);
+
+    /**
+     * 删除流程实例数据
+     * @param flowInstId
+     * @param userCode
+     * @return
+     */
+    boolean deleteFlowInstById(String flowInstId, String userCode);
 }

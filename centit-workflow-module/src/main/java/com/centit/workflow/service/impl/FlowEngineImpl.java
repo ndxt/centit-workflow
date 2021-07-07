@@ -2349,10 +2349,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public List<UserTask> listUserTasksByFilter(Map<String, Object> filterMap, PageDesc pageDesc) {
-        Object nodeNames = filterMap.get("nodeNames");
+        Object notNodeCodes = filterMap.get("notNodeCodes");
         Object nodeCodes = filterMap.get("nodeCodes");
-        if (nodeNames != null) {
-            filterMap.put("nodeNames",nodeNames.toString().split(","));
+        if (notNodeCodes != null) {
+            filterMap.put("notNodeCodes",notNodeCodes.toString().split(","));
         }
         if (nodeCodes != null) {
             filterMap.put("nodeCodes",nodeCodes.toString().split(","));
