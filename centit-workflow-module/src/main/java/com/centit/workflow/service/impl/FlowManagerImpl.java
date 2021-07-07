@@ -1485,6 +1485,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return true;
     }
 
+    /**
+     * 办件回收列表，获取用户已办，且下一节点未进行办理的任务(发改委业务需求)
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    @Override
+    public List<UserTask> listUserCompleteTasks(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return actionTaskDao.listUserCompleteTasks(searchColumn,pageDesc);
+    }
+
     @Override
     public NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force) {
         FlowInstance flowInstance = flowInstanceDao.getObjectWithReferences(flowInstId);

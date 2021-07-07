@@ -224,4 +224,27 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
             queryAndNamedParams.getParams(),pageDesc);
         return jsonArray == null?null:jsonArray.toJavaList(UserTask.class);
     }
+
+    /**
+     * 办件回收列表，获取用户已办，且下一节点未进行办理的任务(发改委业务需求)
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    public List<UserTask> listUserCompleteTasks(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        String sql = "select t.FLOW_INST_ID,t.FLOW_Opt_Tag,t.FLOW_Opt_Name,n.NODE_INST_ID,n.NODE_ID,d.NODE_NAME, n.last_update_user,n.last_update_time" +
+            " from wf_node_instance n join wf_node d on n.NODE_ID = d.NODE_ID" +
+            " join wf_flow_instance t on t.flow_inst_id = n.flow_inst_id" +
+            " where t.inst_state = 'N' and n.node_state = 'C'" +
+            " [ :flowInstId| and t.FLOW_INST_ID = :flowInstId]" +
+            " [ :userCode| and n.last_update_user = :userCode] and d.NODE_TYPE = 'C'" +
+            " and n.node_inst_id not in " +
+            "   (select w.PREV_NODE_INST_ID from wf_node_instance w where w.PREV_NODE_INST_ID = n.node_inst_id and w.NODE_STATE != 'N' GROUP BY w.PREV_NODE_INST_ID)" +
+            " ORDER BY n.last_update_time desc";
+        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql ,searchColumn);
+        JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
+            queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
+
+        return dataList == null? null : dataList.toJavaList(UserTask.class);
+    }
 }

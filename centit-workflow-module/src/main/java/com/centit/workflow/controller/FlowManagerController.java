@@ -23,6 +23,8 @@ import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -866,5 +868,18 @@ public class FlowManagerController extends BaseController {
     public ResponseData deleteFlowInstById(@PathVariable String flowInstId, @PathVariable String userCode) {
         boolean b = flowManager.deleteFlowInstById(flowInstId, userCode);
         return ResponseData.makeResponseData(b);
+    }
+
+    @ApiOperation(value = "办件回收列表，获取用户已办，且下一节点未进行办理的任务", notes = "办件回收列表，获取用户已办，且下一节点未进行办理的任务")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listUserCompleteTasks")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userCode", value = "用户编码"),
+        @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)")
+    })
+    public PageQueryResult<UserTask> listUserCompleteTasks(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks = flowManager.listUserCompleteTasks(searchColumn, pageDesc);
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 }

@@ -700,4 +700,9 @@ public class FlowManagerClientImpl implements FlowManager {
     public boolean deleteFlowInstById(String flowInstId, String userCode) {
         throw new ObjectException("This function is not been implemented in client.");
     }
+
+    @Override
+    public List<UserTask> listUserCompleteTasks(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
 }
