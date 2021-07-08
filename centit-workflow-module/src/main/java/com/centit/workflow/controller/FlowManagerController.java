@@ -870,16 +870,35 @@ public class FlowManagerController extends BaseController {
         return ResponseData.makeResponseData(b);
     }
 
-    @ApiOperation(value = "办件回收列表，获取用户已办，且下一节点未进行办理的任务", notes = "办件回收列表，获取用户已办，且下一节点未进行办理的任务")
+    @ApiOperation(value = "办件回收列表，获取用户已办，且下一节点未进行办理的任务",
+        notes = "fgw需求：办件回收列表，获取用户已办，且下一节点未进行办理的任务")
     @WrapUpResponseBody
     @GetMapping(value = "/listUserCompleteTasks")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "userCode", value = "用户编码"),
+        @ApiImplicitParam(name = "flowCode", value = "流程编码"),
         @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)")
     })
     public PageQueryResult<UserTask> listUserCompleteTasks(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         List<UserTask> userTasks = flowManager.listUserCompleteTasks(searchColumn, pageDesc);
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
+    }
+
+    @ApiOperation(value = "获取某个节点的用户已办列表(fgw批分回收和批分追加列表)",
+        notes = "获取某个节点的用户已办列表(fgw批分回收和批分追加列表)")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listUserCompleteFlow")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userCode", value = "用户编码"),
+        @ApiImplicitParam(name = "nodeCode", value = "节点环节代码"),
+        @ApiImplicitParam(name = "flowCode", value = "流程编码"),
+        @ApiImplicitParam(name = "instState", value = "流程状态 C 已完成  N 办理中"),
+        @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)")
+    })
+    public PageQueryResult<UserTask> listUserCompleteFlow(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks = flowManager.listUserCompleteFlow(searchColumn, pageDesc);
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 }
