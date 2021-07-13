@@ -232,13 +232,14 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
      * @return
      */
     public List<UserTask> listUserCompleteTasks(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        String sql = "select t.FLOW_INST_ID,t.FLOW_Opt_Tag,t.FLOW_Opt_Name,n.NODE_INST_ID,n.NODE_ID,d.node_code,d.NODE_NAME, n.last_update_user,n.last_update_time" +
+        String sql = "select t.FLOW_INST_ID,t.FLOW_Opt_Tag,t.INST_STATE,t.FLOW_Opt_Name,n.NODE_INST_ID,n.NODE_ID,d.node_code,d.NODE_NAME, n.last_update_user,n.last_update_time" +
             " from wf_node_instance n join wf_node d on n.NODE_ID = d.NODE_ID" +
             " join wf_flow_instance t on t.flow_inst_id = n.flow_inst_id" +
             " where t.inst_state = 'N' and n.node_state = 'C'" +
             " [ :flowInstId| and t.FLOW_INST_ID = :flowInstId]" +
             " [ :(like)flowOptName| and t.FLOW_OPT_NAME like :flowOptName] " +
             " [ :flowCode| and t.FLOW_CODE = :flowCode] " +
+            " [ :instState| and t.INST_STATE = :instState] " +
             " [ :nodeCode| and d.node_code in (:nodeCode)] " +
             " [ :nodeName| and d.node_name in (:nodeName)] " +
             " [ :userCode| and n.last_update_user = :userCode] and d.NODE_TYPE = 'C'" +
@@ -259,7 +260,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
      * @return
      */
     public List<UserTask> listUserCompleteFlow(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        String sql = "select t.FLOW_Opt_Tag,t.FLOW_Opt_Name, a.*,d.NODE_CODE, d.NODE_NAME from (" +
+        String sql = "select t.FLOW_Opt_Tag,t.FLOW_Opt_Name,t.INST_STATE, a.*,d.NODE_CODE, d.NODE_NAME from (" +
             " select n.FLOW_INST_ID, max(n.NODE_INST_ID) as NODE_INST_ID, max(n.NODE_ID) as NODE_ID, max(n.last_update_time) as last_update_time " +
             "    from wf_node_instance n where n.NODE_STATE = 'C'  [ :userCode| and n.last_update_user = :userCode] GROUP BY n.FLOW_INST_ID) a" +
             "  join wf_node d on a.node_id = d.node_id" +

@@ -1939,6 +1939,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 + "）中对应环节代码为" + nodeCode + "的节点有多个，系统随机的创建一个，如有问题请和管理人员联系。");
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
+        if ("0".equals(curNodeInstId)) {
+            nodeInst = new NodeInstance();
+        }
         //必需存在且状态为正常 或者 暂停
         if (nodeInst == null
                /* || (!"N".equals(nodeInst.getNodeState())

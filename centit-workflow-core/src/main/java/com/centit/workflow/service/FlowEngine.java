@@ -405,7 +405,7 @@ public interface FlowEngine {
     void deleteFlowWorkTeam(String flowInstId, String roleCode);
 
     /**
-     * 查看工作小组
+     * 查看流程实例的办件角色
      *
      * @param flowInstId 流程实例号 不能为空
      * @return Map roleCode,Set userCode

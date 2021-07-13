@@ -38,9 +38,9 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     @Override
-    public List<NodeInstance> listFlowInstNodes(String wfinstid){
-        Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",String.valueOf(wfinstid));
+    public List<NodeInstance> listFlowInstNodes(String wfinstid) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", String.valueOf(wfinstid));
 
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/manager/listFlowInstNodes",
@@ -50,9 +50,9 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     @Override
-    public List<NodeInstance> listFlowActiveNodes(String flowInstId){
-        Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("flowInstId",String.valueOf(flowInstId));
+    public List<NodeInstance> listFlowActiveNodes(String flowInstId) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", String.valueOf(flowInstId));
 
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/engine/activeNodes",
@@ -70,15 +70,16 @@ public class FlowManagerClientImpl implements FlowManager {
     @Override
     public FlowInstance getFlowInstance(String flowInstId) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/manager/"+flowInstId);
+            "/flow/manager/" + flowInstId);
         return receiveJSON.getDataAsObject("flowInst", FlowInstance.class);
     }
 
 
     @Override
-    public int stopInstance(String flowInstId, String mangerUserCode, String admindesc){
-        /*String s = */RestfulHttpRequest.jsonPut(appSession,
-            "/flow/manager/stopInstance/"+flowInstId+"/"+mangerUserCode,null);
+    public int stopInstance(String flowInstId, String mangerUserCode, String admindesc) {
+        /*String s = */
+        RestfulHttpRequest.jsonPut(appSession,
+            "/flow/manager/stopInstance/" + flowInstId + "/" + mangerUserCode, null);
         return 0;
     }
 
@@ -93,11 +94,11 @@ public class FlowManagerClientImpl implements FlowManager {
      */
     @Override
     public int suspendInstance(String flowInstId, String mangerUserCode, String admindesc) {
-        Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("admin",mangerUserCode);
-        paramMap.put("stopDesc",admindesc);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("admin", mangerUserCode);
+        paramMap.put("stopDesc", admindesc);
         RestfulHttpRequest.getResponseData(appSession,
-            "/flow/manager/suspendinst/"+flowInstId,paramMap);
+            "/flow/manager/suspendinst/" + flowInstId, paramMap);
         return 0;
     }
 
@@ -111,11 +112,11 @@ public class FlowManagerClientImpl implements FlowManager {
      */
     @Override
     public int activizeInstance(String flowInstId, String mangerUserCode, String admindesc) {
-        Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("admin",mangerUserCode);
-        paramMap.put("stopDesc",admindesc);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("admin", mangerUserCode);
+        paramMap.put("stopDesc", admindesc);
         RestfulHttpRequest.getResponseData(appSession,
-            "/flow/manager/activizeinst/"+flowInstId,paramMap);
+            "/flow/manager/activizeinst/" + flowInstId, paramMap);
         return 0;
     }
 
@@ -128,10 +129,10 @@ public class FlowManagerClientImpl implements FlowManager {
      */
     @Override
     public long suspendNodeInstance(String nodeInstId, String mangerUserCode) {
-        Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("admin",mangerUserCode);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("admin", mangerUserCode);
         RestfulHttpRequest.getResponseData(appSession,
-            "/flow/manager/suspendNodeInst/"+nodeInstId,paramMap);
+            "/flow/manager/suspendNodeInst/" + nodeInstId, paramMap);
         return 0l;
     }
 
@@ -144,10 +145,10 @@ public class FlowManagerClientImpl implements FlowManager {
      */
     @Override
     public long activizeNodeInstance(String nodeInstId, String mangerUserCode) {
-        Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("admin",mangerUserCode);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("admin", mangerUserCode);
         RestfulHttpRequest.jsonPut(appSession,
-            "/flow/manager/activizeNodeInst/"+nodeInstId,paramMap);
+            "/flow/manager/activizeNodeInst/" + nodeInstId, paramMap);
         return 0l;
     }
 
@@ -160,10 +161,10 @@ public class FlowManagerClientImpl implements FlowManager {
      */
     @Override
     public String forceCommit(String nodeInstId, String mangerUserCode) {
-        Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("admin",mangerUserCode);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("admin", mangerUserCode);
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/manager/forceCommit/"+nodeInstId,paramMap);
+            "/flow/manager/forceCommit/" + nodeInstId, paramMap);
         return receiveJSON.getDataAsString();
     }
 
@@ -176,8 +177,8 @@ public class FlowManagerClientImpl implements FlowManager {
      */
     @Override
     public NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode) {
-        String json =  RestfulHttpRequest.jsonPost(appSession,
-            "/flow/manager/resetToCurrent/"+nodeInstId+"?userCode="+mangerUserCode, null);
+        String json = RestfulHttpRequest.jsonPost(appSession,
+            "/flow/manager/resetToCurrent/" + nodeInstId + "?userCode=" + mangerUserCode, null);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
         return receiveJSON.getDataAsObject(NodeInstance.class);
     }
@@ -186,18 +187,18 @@ public class FlowManagerClientImpl implements FlowManager {
      * 分配节点任务
      * Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      *
-     * @param nodeInstId 节点实例ID
-     * @param userCode 操作用户
+     * @param nodeInstId     节点实例ID
+     * @param userCode       操作用户
      * @param mangerUserCode 管理用户
-     * @param authDesc 授权说明
+     * @param authDesc       授权说明
      */
     @Override
     public int assignNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
         HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("userCode",userCode);
-        paramMap.put("authDesc",authDesc);
+        paramMap.put("userCode", userCode);
+        paramMap.put("authDesc", authDesc);
         RestfulHttpRequest.jsonPost(appSession,
-            "/flow/manager/assign/"+nodeInstId+"/"+mangerUserCode, paramMap);
+            "/flow/manager/assign/" + nodeInstId + "/" + mangerUserCode, paramMap);
         return 0;
     }
 
@@ -213,26 +214,26 @@ public class FlowManagerClientImpl implements FlowManager {
     @Override
     public int addNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
         HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("userCode",userCode);
-        paramMap.put("authDesc",authDesc);
+        paramMap.put("userCode", userCode);
+        paramMap.put("authDesc", authDesc);
         RestfulHttpRequest.jsonPost(appSession,
-            "/flow/manager/addNodeTask/"+nodeInstId+"/"+mangerUserCode, paramMap);
+            "/flow/manager/addNodeTask/" + nodeInstId + "/" + mangerUserCode, paramMap);
         return 0;
     }
 
     /**
      * 删除节点任务
      *
-     * @param nodeInstId 节点实例ID
-     * @param userCode 操作用户
+     * @param nodeInstId     节点实例ID
+     * @param userCode       操作用户
      * @param mangerUserCode 管理用户
      */
     @Override
     public int deleteNodeTask(String nodeInstId, String userCode, String mangerUserCode) {
         HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("userCode",userCode);
+        paramMap.put("userCode", userCode);
         RestfulHttpRequest.jsonPost(appSession,
-            "/flow/manager/deleteNodeTask/"+nodeInstId+"/"+mangerUserCode, paramMap);
+            "/flow/manager/deleteNodeTask/" + nodeInstId + "/" + mangerUserCode, paramMap);
         return 0;
     }
 
@@ -246,13 +247,13 @@ public class FlowManagerClientImpl implements FlowManager {
     @Override
     public List<OperationLog> listNodeActionLogs(String flowInstId, String nodeInstId) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/manager/nodelogs/"+flowInstId+"/"+nodeInstId);
+            "/flow/manager/nodelogs/" + flowInstId + "/" + nodeInstId);
         return receiveJSON.getDataAsArray(OperationLog.class);
     }
 
     /**
      * 获取流程实例的操作日志列表
-
+     *
      * @param flowInstId     流程实例号
      * @param withNodeAction 是否包括节点的日志
      * @return List<WfActionLog>
@@ -260,7 +261,7 @@ public class FlowManagerClientImpl implements FlowManager {
     @Override
     public List<OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/manager/flowlogs/"+flowInstId+"?withNodeAction="+withNodeAction);
+            "/flow/manager/flowlogs/" + flowInstId + "?withNodeAction=" + withNodeAction);
         return receiveJSON.getDataAsArray(OperationLog.class);
     }
 
@@ -274,11 +275,11 @@ public class FlowManagerClientImpl implements FlowManager {
      */
     @Override
     public List<? extends OperationLog> listUserActionLogs(String userCode, Date lastTime, PageDesc pageDesc) {
-        String url = UrlOptUtils.appendParamsToUrl("/flow/manager/userlogs/"+userCode,
+        String url = UrlOptUtils.appendParamsToUrl("/flow/manager/userlogs/" + userCode,
             (JSONObject) JSON.toJSON(pageDesc));
-        if(lastTime!=null){
+        if (lastTime != null) {
             UrlOptUtils.appendParamToUrl(url,
-                "lastTime="+ DatetimeOpt.convertDatetimeToString(lastTime));
+                "lastTime=" + DatetimeOpt.convertDatetimeToString(lastTime));
         }
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession, url);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
@@ -703,6 +704,7 @@ public class FlowManagerClientImpl implements FlowManager {
 
     /**
      * 办件回收列表，获取用户已办，且下一节点未进行办理的任务(发改委业务需求)
+     *
      * @param searchColumn
      * @param pageDesc
      * @return
@@ -714,12 +716,35 @@ public class FlowManagerClientImpl implements FlowManager {
 
     /**
      * 获取某个节点的用户已办列表(fgw批分回收和批分追加列表)
+     *
      * @param searchColumn
      * @param pageDesc
      * @return
      */
     @Override
     public List<UserTask> listUserCompleteFlow(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 获取节点实例列表
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    @Override
+    public List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 强制修改流程的节点状态
+     *
+     * @param nodeInstId
+     * @param newState
+     */
+    @Override
+    public void updateNodeState(String nodeInstId, String newState) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 }

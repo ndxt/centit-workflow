@@ -162,6 +162,14 @@ public interface FlowManager {
      */
     long activizeNodeInstance(String nodeInstId, String mangerUserCode);
 
+
+    /**
+     * 强制修改流程的节点状态
+     * @param nodeInstId
+     * @param newState
+     */
+    void updateNodeState(String nodeInstId, String newState);
+
     /**
      * 强制流转到下一结点，这个好像不好搞，主要是无法获得业务数据，只能提交没有分支的节点
      */
@@ -481,4 +489,12 @@ public interface FlowManager {
      * @return
      */
     List<UserTask> listUserCompleteFlow(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    /**
+     * 获取节点实例列表
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc);
 }

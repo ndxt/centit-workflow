@@ -28,6 +28,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         filterField.put("lastUpdateUser", CodeBook.EQUAL_HQL_ID);
         filterField.put("startTime", CodeBook.EQUAL_HQL_ID);
         filterField.put("nodeState", CodeBook.EQUAL_HQL_ID);
+        filterField.put("roleCode", CodeBook.EQUAL_HQL_ID);
         filterField.put("subFlowInstId", CodeBook.EQUAL_HQL_ID);
         filterField.put("unitCode", CodeBook.EQUAL_HQL_ID);
         filterField.put("transId", CodeBook.EQUAL_HQL_ID);

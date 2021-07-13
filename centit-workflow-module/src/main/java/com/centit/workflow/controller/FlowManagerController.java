@@ -452,6 +452,13 @@ public class FlowManagerController extends BaseController {
         flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
     }
 
+    @ApiOperation(value = "强制修改流程的节点状态", notes = "强制修改流程的节点状态")
+    @WrapUpResponseBody
+    @PutMapping(value = "/updateNodeState/{nodeInstId}/{newState}")
+    public void updateNodeState(@PathVariable String nodeInstId, @PathVariable String newState) {
+        flowManager.updateNodeState(nodeInstId, newState);
+    }
+
     @ApiOperation(value = "强制流转到下一节点", notes = "强制流转到下一节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/forceCommit/{nodeInstId}", method = RequestMethod.GET)
@@ -900,5 +907,22 @@ public class FlowManagerController extends BaseController {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         List<UserTask> userTasks = flowManager.listUserCompleteFlow(searchColumn, pageDesc);
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
+    }
+
+
+    @ApiOperation(value = "获取节点实例列表", notes = "获取节点实例列表")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listNodeInstance")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "roleCode", value = "角色代码"),
+        @ApiImplicitParam(name = "flowCode", value = "流程编码"),
+        @ApiImplicitParam(name = "instState", value = "流程状态 C 已完成  N 办理中"),
+        @ApiImplicitParam(name = "flowInstId", value = "流程实例id"),
+        @ApiImplicitParam(name = "userCode", value = "用户编码")
+    })
+    public PageQueryResult<NodeInstance> listNodeInstance(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<NodeInstance> nodeInstanceList = flowManager.listNodeInstance(searchColumn, pageDesc);
+        return PageQueryResult.createResultMapDict(nodeInstanceList, pageDesc);
     }
 }

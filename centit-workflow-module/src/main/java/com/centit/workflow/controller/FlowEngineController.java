@@ -328,18 +328,20 @@ public class FlowEngineController extends BaseController {
     }
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
+    @ApiImplicitParam(name = "jsonObject", paramType = "body",
+        value = "{'flowInstId':xxx,'curNodeInstId':'xxx','createUser':'xxx','userCode':'u1','unitCode':'d1','nodeCode':'xxx'}"
+    )
     @WrapUpResponseBody
     @PostMapping(value = "/isolatedNode")
-    public NodeInstance createIsolatedNodeInst(@RequestBody String json) {
-        JSONObject jsonObject = JSON.parseObject(json);
+    public NodeInstance createIsolatedNodeInst(@RequestBody JSONObject jsonObject) {
         String flowInstId = jsonObject.getString("flowInstId");
         String curNodeInstId = jsonObject.getString("curNodeInstId");
         String createUser = jsonObject.getString("createUser");
         String userCode = jsonObject.getString("userCode");
         String nodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
-        return /*NodeInstance =*/ flowEngine.createIsolatedNodeInst(flowInstId, curNodeInstId, createUser,
-            nodeCode, userCode, unitCode);
+        return /*NodeInstance =*/ flowEngine.createIsolatedNodeInst(flowInstId, curNodeInstId, nodeCode, createUser,
+            userCode, unitCode);
     }
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")

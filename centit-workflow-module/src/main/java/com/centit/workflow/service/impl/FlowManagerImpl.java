@@ -437,6 +437,29 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     /**
+     * 强制修改流程的节点状态
+     *
+     * @param nodeInstId
+     * @param newState
+     */
+    @Override
+    public void updateNodeState(String nodeInstId, String newState) {
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        if (nodeInst == null) {
+            return;
+        }
+        // 设置最后更新时间
+        nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
+        nodeInst.setNodeState(newState);
+        nodeInstanceDao.updateObject(nodeInst);
+
+        OperationLog managerAct = FlowOptUtils.createActionLog(
+            "admin", nodeInst,
+            "强制修改流程的节点状态为" + newState + "；", null);
+        OperationLogCenter.log(managerAct);
+    }
+
+    /**
      * 设置流程期限
      *
      * @param nodeInstId     流程节点实例编号
@@ -1480,31 +1503,34 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
         flowInstanceDao.deleteObjectById(flowInstId);
         HashMap<String, Object> map = new HashMap<>();
-        map.put("flowInstId",flowInstId);
+        map.put("flowInstId", flowInstId);
         nodeInstanceDao.deleteObjectsByProperties(map);
         return true;
     }
 
     /**
      * 办件回收列表，获取用户已办，且下一节点未进行办理的任务(发改委业务需求)
+     *
      * @param searchColumn
      * @param pageDesc
      * @return
      */
     @Override
     public List<UserTask> listUserCompleteTasks(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return actionTaskDao.listUserCompleteTasks(searchColumn,pageDesc);
+        return actionTaskDao.listUserCompleteTasks(searchColumn, pageDesc);
     }
 
     /**
      * 获取某个节点的用户已办列表(fgw批分回收和批分追加列表)
+     *
      * @param searchColumn
      * @param pageDesc
      * @return
      */
     @Override
     public List<UserTask> listUserCompleteFlow(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return actionTaskDao.listUserCompleteFlow(searchColumn,pageDesc);    }
+        return actionTaskDao.listUserCompleteFlow(searchColumn, pageDesc);
+    }
 
     @Override
     public NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force) {
@@ -1573,4 +1599,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return flowInstanceGroupDao.getObjectById(flowInstGroupId);
     }
 
+    /**
+     * 获取节点实例列表
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    @Override
+    public List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return nodeInstanceDao.listObjects(searchColumn, pageDesc);
+    }
 }
