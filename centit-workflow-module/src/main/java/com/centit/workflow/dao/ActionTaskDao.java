@@ -56,11 +56,12 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String>
         " on n.FLOW_INST_ID=t.FLOW_INST_ID " +
         " where t.flow_inst_id in  (select w.flow_inst_id from wf_node_instance w join wf_node n " +
         "on n.node_id=w.node_id where w.NODE_STATE in ('C', 'F', 'P') [ :userCode| and w.last_update_user=:userCode] " +
-        "  [ :nodeCode| and n.node_code in (:nodeCode)]  [ :(like)nodeName| and n.node_Name like :nodeName]  )" +
+        " [ :nodeCode| and n.node_code in (:nodeCode)]  [ :(like)nodeName| and n.node_Name like :nodeName]  )" +
         " [ :(like)flowOptName| and t.flow_Opt_Name like :flowOptName] " +
         " [ :(like)flowName| and f.flow_Name like :flowName]  " +
-        "  [ :osId| and f.os_id = :osId] " +
-        "  [ :osIds| and f.os_id in (:osIds)] " +
+        " [ :osId| and f.os_id = :osId] " +
+        " [ :optId| and t.OPT_ID = :optId] " +
+        " [ :osIds| and f.os_id in (:osIds)] " +
         " order by t.last_update_time desc ";
 
     private final static String userTaskBaseSql = "select FLOW_INST_ID, FLOW_CODE,VERSION,FLOW_OPT_NAME," +
