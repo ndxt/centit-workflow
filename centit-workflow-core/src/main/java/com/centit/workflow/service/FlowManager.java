@@ -497,4 +497,13 @@ public interface FlowManager {
      * @return
      */
     List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    /**
+     * 强制修改流程状态以及相关节点实例状态
+     * @param flowInstId
+     * @param userCode
+     * @param instState
+     * @param desc
+     */
+    void updateFlowState(String flowInstId, String userCode, String instState, String desc);
 }

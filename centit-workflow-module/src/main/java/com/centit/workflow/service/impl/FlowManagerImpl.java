@@ -1609,4 +1609,36 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
         return nodeInstanceDao.listObjects(searchColumn, pageDesc);
     }
+
+    /**
+     * 强制修改流程状态以及相关节点实例状态
+     * @param flowInstId
+     * @param mangerUserCode
+     * @param instState
+     * @param desc
+     */
+    @Override
+    public void updateFlowState(String flowInstId, String mangerUserCode, String instState, String desc) {
+        FlowInstance wfFlowInst = flowInstanceDao.getObjectById(flowInstId);
+        if (wfFlowInst == null) {
+            return;
+        }
+
+        // 只能结束未完成的流程
+        if ("C".equals(wfFlowInst.getInstState()) || "F".equals(wfFlowInst.getInstState())) {
+            return;
+        }
+
+        Date updateTime = DatetimeOpt.currentUtilDate();
+        // 更新流程实例状态
+        wfFlowInst.setInstState(instState);
+        wfFlowInst.setLastUpdateTime(updateTime);
+        wfFlowInst.setLastUpdateUser(mangerUserCode);
+        flowInstanceDao.updtFlowInstInfo(wfFlowInst);
+        nodeInstanceDao.updateNodeStateById(wfFlowInst);
+
+        OperationLog managerAct = FlowOptUtils.createActionLog(
+            mangerUserCode, flowInstId, "强制修改流程状态为"+instState+";" + desc);
+        OperationLogCenter.log(managerAct);
+    }
 }

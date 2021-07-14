@@ -738,6 +738,18 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     /**
+     * 强制修改流程状态以及相关节点实例状态
+     * @param flowInstId
+     * @param userCode
+     * @param instState
+     * @param desc
+     */
+    @Override
+    public void updateFlowState(String flowInstId, String userCode, String instState, String desc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
      * 强制修改流程的节点状态
      *
      * @param nodeInstId

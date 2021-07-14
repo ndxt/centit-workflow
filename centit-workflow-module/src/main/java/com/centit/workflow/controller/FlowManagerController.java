@@ -767,6 +767,25 @@ public class FlowManagerController extends BaseController {
         }
     }
 
+    @ApiOperation(value = "强制修改流程状态以及相关节点实例状态", notes = "强制修改流程状态以及相关节点实例状态")
+    @PostMapping(value = "/updateFlowState")
+    @WrapUpResponseBody
+    public void updateFlowState(@RequestBody JSONObject jsonObject) {
+        String flowInstId = jsonObject.getString("flowInstId");
+        JSONArray flowInstIds = jsonObject.getJSONArray("flowInstIds");
+        String userCode = jsonObject.getString("userCode");
+        String instState = jsonObject.getString("instState");
+        String desc = jsonObject.getString("desc");
+        // 判断是否需要批量修改
+        if (flowInstIds != null && !flowInstIds.isEmpty()) {
+            for (int i = 0; i < flowInstIds.size(); i++) {
+                flowManager.updateFlowState(flowInstIds.getString(i), userCode, instState, desc);
+            }
+        } else {
+            flowManager.updateFlowState(flowInstId, userCode,instState,desc);
+        }
+    }
+
     /**
      * 流程拉回到首节点
      *
@@ -908,7 +927,6 @@ public class FlowManagerController extends BaseController {
         List<UserTask> userTasks = flowManager.listUserCompleteFlow(searchColumn, pageDesc);
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
-
 
     @ApiOperation(value = "获取节点实例列表", notes = "获取节点实例列表")
     @WrapUpResponseBody

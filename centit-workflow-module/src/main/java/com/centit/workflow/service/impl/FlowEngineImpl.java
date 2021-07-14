@@ -1977,6 +1977,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public void assignFlowWorkTeam(String flowInstId, String roleCode, String runToken,
                                    List<String> userCodeSet) {
+        // 先清除重复的流程办件角色
+        flowTeamDao.deleteFlowWorkTeam(flowInstId,roleCode);
         Date assignDate = new Date(System.currentTimeMillis());
         if (userCodeSet != null)
             for (String usercode : userCodeSet)
@@ -2070,6 +2072,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public void assignFlowOrganize(String flowInstId, String roleCode,
                                    List<String> unitCodeSet) {
+        // 先清除原有的流程机构
+        flowOrganizeDao.deleteFlowOrganize(flowInstId, roleCode);
         Date assignDate = new Date(System.currentTimeMillis());
         if (unitCodeSet != null)
             for (String unitCode : unitCodeSet)
@@ -2503,6 +2507,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap, PageDesc pageDesc) {
+        Object nodeCodes = filterMap.get("nodeCodes");
+        if (nodeCodes != null) {
+            filterMap.put("nodeCodes",nodeCodes.toString().split(","));
+        }
         List<UserTask> taskList = actionTaskDao.listUserTaskFinByFilter(filterMap, pageDesc);
         return taskList;
     }
