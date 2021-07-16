@@ -928,6 +928,24 @@ public class FlowManagerController extends BaseController {
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
+    @ApiOperation(value = "获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)",
+        notes = "获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listFlowInstDetailed")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userCode", value = "流程创建用户"),
+        @ApiImplicitParam(name = "flowCode", value = "流程编码"),
+        @ApiImplicitParam(name = "optId", value = "业务编码"),
+        @ApiImplicitParam(name = "instState", value = "流程状态 C 已完成  N 办理中"),
+        @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)")
+    })
+    public PageQueryResult<Object> listFlowInstDetailed(PageDesc pageDesc,
+                                        HttpServletRequest request) {
+        Map<String, Object> searchColumn = BaseController.collectRequestParameters(request);
+        JSONArray listObjects = flowManager.listFlowInstDetailed(searchColumn, pageDesc);
+        return PageQueryResult.createJSONArrayResult(listObjects, pageDesc, FlowInstance.class);
+    }
+
     @ApiOperation(value = "获取节点实例列表", notes = "获取节点实例列表")
     @WrapUpResponseBody
     @GetMapping(value = "/listNodeInstance")

@@ -506,4 +506,6 @@ public interface FlowManager {
      * @param desc
      */
     void updateFlowState(String flowInstId, String userCode, String instState, String desc);
+
+    JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc);
 }

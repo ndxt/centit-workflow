@@ -1641,4 +1641,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             mangerUserCode, flowInstId, "强制修改流程状态为"+instState+";" + desc);
         OperationLogCenter.log(managerAct);
     }
+
+    @Override
+    public JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<FlowInstance> flowInstances = flowInstanceDao.listObjects(searchColumn, pageDesc);
+
+        return null;
+    }
 }
