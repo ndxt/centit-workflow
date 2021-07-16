@@ -17,13 +17,13 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize, FlowOrganizeId> {
 
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<>();
-        filterField.put("flowInstId" , "flowInstId=:flowInstId");
-        filterField.put("unitCode" , "userCode=:userCode");
-        filterField.put("roleCode" , "roleCode=:roleCode");
-        filterField.put("authDesc" , CodeBook.LIKE_HQL_ID);
-        filterField.put("authTime" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("flowInstId", "flowInstId=:flowInstId");
+        filterField.put("unitCode", "userCode=:userCode");
+        filterField.put("roleCode", "roleCode=:roleCode");
+        filterField.put("authDesc", CodeBook.LIKE_HQL_ID);
+        filterField.put("authTime", CodeBook.EQUAL_HQL_ID);
 
-        filterField.put(CodeBook.ORDER_BY_HQL_ID , "unitOrder");
+        filterField.put(CodeBook.ORDER_BY_HQL_ID, "unitOrder");
 
         return filterField;
     }
@@ -31,32 +31,38 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize, FlowOrganizeId> {
     @Transactional
     public void deleteFlowOrganize(String flowInstId, String roleCode) {
         this.getJdbcTemplate().update("delete from WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ?",
-                new Object[]{flowInstId, roleCode});
+            new Object[]{flowInstId, roleCode});
     }
+
     @Transactional
-    public void deleteFlowOrganize(String flowInstId, String roleCode,String authDesc) {
+    public void deleteFlowOrganize(String flowInstId, String roleCode, String authDesc) {
         this.getJdbcTemplate().update("delete from WF_ORGANIZE where FLOW_INST_ID = ? and ROLE_CODE = ? " +
-                "and AUTH_DESC = ?",new Object[]{flowInstId, roleCode,authDesc});
+            "and AUTH_DESC = ?", new Object[]{flowInstId, roleCode, authDesc});
     }
+
     @Transactional
-    public List<FlowOrganize> listFlowOrganize(String flowInstId)
-    {
+    public List<FlowOrganize> listFlowOrganize(String flowInstId) {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? order by unit_Order",
-                new Object[]{flowInstId});
+            new Object[]{flowInstId});
     }
 
     @Transactional
-    public List<FlowOrganize> listFlowOrganizeByRole(String flowInstId, String roleCode)
-    {
+    public List<FlowOrganize> listFlowOrganize(List<String> flowInstIds) {
+        Map<String, Object> filterMap = new HashMap<>();
+        filterMap.put("flowInstIds", flowInstIds.toArray());
+        return this.listObjectsByFilter("where 1=1 and FLOW_INST_ID in (:flowInstIds) order by unit_Order", filterMap);
+    }
+
+    @Transactional
+    public List<FlowOrganize> listFlowOrganizeByRole(String flowInstId, String roleCode) {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? and ROLE_CODE = ? order by unit_Order",
-                new Object[]{flowInstId, roleCode});
+            new Object[]{flowInstId, roleCode});
     }
 
     @Transactional
-    public List<FlowOrganize> listFlowOrganize(String flowInstId, String roleCode, String authDesc)
-    {
+    public List<FlowOrganize> listFlowOrganize(String flowInstId, String roleCode, String authDesc) {
         return this.listObjectsByFilter("where FLOW_INST_ID = ? and ROLE_CODE = ? and auth_Desc = ? " +
-                        "order by unit_Order",
-                new Object[]{flowInstId, roleCode, authDesc});
+                "order by unit_Order",
+            new Object[]{flowInstId, roleCode, authDesc});
     }
 }

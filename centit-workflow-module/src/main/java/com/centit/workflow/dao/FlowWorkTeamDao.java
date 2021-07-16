@@ -12,50 +12,57 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam, FlowWorkTeamId>
-{
+public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam, FlowWorkTeamId> {
     public Map<String, String> getFilterField() {
         Map<String, String> filterField = new HashMap<String, String>();
-        filterField.put("flowInstid" , "flowInstId=:flowInstId");
-        filterField.put("userCode" , "userCode=:userCode");
-        filterField.put("roleCode" , "roleCode=:roleCode");
-        filterField.put("authDesc" , CodeBook.LIKE_HQL_ID);
-        filterField.put("authTime" , CodeBook.EQUAL_HQL_ID);
-        filterField.put(CodeBook.ORDER_BY_HQL_ID , "userOrder");
+        filterField.put("flowInstid", "flowInstId=:flowInstId");
+        filterField.put("userCode", "userCode=:userCode");
+        filterField.put("roleCode", "roleCode=:roleCode");
+        filterField.put("authDesc", CodeBook.LIKE_HQL_ID);
+        filterField.put("authTime", CodeBook.EQUAL_HQL_ID);
+        filterField.put(CodeBook.ORDER_BY_HQL_ID, "userOrder");
         return filterField;
     }
 
     @Transactional
     public void deleteFlowWorkTeam(String flowInstId, String roleCode) {
-        List<FlowWorkTeam> team = listFlowWorkTeamByRole(flowInstId,  roleCode);
-        if(team==null || team.size()==0)
-            return ;
-        for(FlowWorkTeam t:team)
+        List<FlowWorkTeam> team = listFlowWorkTeamByRole(flowInstId, roleCode);
+        if (team == null || team.size() == 0)
+            return;
+        for (FlowWorkTeam t : team)
             this.deleteObject(t);
         //DatabaseOptUtils.doExecuteHql(this,"delete WfTeam where id.flowInstId=? and id.roleCode=?",new Object[]{flowInstId, roleCode});
     }
 
     @Transactional
-    public List<FlowWorkTeam> listFlowWorkTeam(String flowInstId)
-    {
-        return this.listObjectsByFilter("where flow_Inst_Id = ? order by role_Code, user_Order",new Object[]{flowInstId});
+    public List<FlowWorkTeam> listFlowWorkTeam(String flowInstId) {
+        return this.listObjectsByFilter("where flow_Inst_Id = ? order by role_Code, user_Order",
+            new Object[]{flowInstId});
+    }
+
+    @Transactional
+    public List<FlowWorkTeam> listFlowWorkTeam(List<String> flowInstIds) {
+        Map<String, Object> filterMap = new HashMap<>();
+        filterMap.put("flowInstIds", flowInstIds.toArray());
+        return this.listObjectsByFilter("where 1=1 and FLOW_INST_ID in (:flowInstIds) order by role_Code, user_Order", filterMap);
     }
 
     /**
      * 链接 F_Userinfo 是为了排序
+     *
      * @param flowInstId
      * @param roleCode
      * @return
      */
     @SuppressWarnings("unchecked")
     @Transactional
-    public List<FlowWorkTeam> listFlowWorkTeamByRole(String flowInstId, String roleCode)
-    {
-        return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? order by user_Order",new Object[]{flowInstId,roleCode});
+    public List<FlowWorkTeam> listFlowWorkTeamByRole(String flowInstId, String roleCode) {
+        return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? order by user_Order", new Object[]{flowInstId, roleCode});
     }
 
     /**
      * 链接 F_Userinfo 是为了排序
+     *
      * @param flowInstId
      * @param roleCode
      * @param authdesc
@@ -63,9 +70,8 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam, FlowWorkTeamId>
      */
     @SuppressWarnings("unchecked")
     @Transactional
-    public List<FlowWorkTeam> listFlowWorkTeam(String flowInstId, String roleCode, String authdesc)
-    {
+    public List<FlowWorkTeam> listFlowWorkTeam(String flowInstId, String roleCode, String authdesc) {
         return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? and auth_Desc = ? " +
-                "order by user_Order",new Object[]{flowInstId,roleCode,authdesc});
+            "order by user_Order", new Object[]{flowInstId, roleCode, authdesc});
     }
 }

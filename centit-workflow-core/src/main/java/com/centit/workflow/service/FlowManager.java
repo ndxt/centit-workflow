@@ -507,5 +507,11 @@ public interface FlowManager {
      */
     void updateFlowState(String flowInstId, String userCode, String instState, String desc);
 
+    /**
+     * 获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
     JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc);
 }

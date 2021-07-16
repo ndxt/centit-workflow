@@ -770,7 +770,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "强制修改流程状态以及相关节点实例状态", notes = "强制修改流程状态以及相关节点实例状态")
     @PostMapping(value = "/updateFlowState")
     @WrapUpResponseBody
-    public void updateFlowState(@RequestBody JSONObject jsonObject) {
+    public ResponseData updateFlowState(@RequestBody JSONObject jsonObject) {
         String flowInstId = jsonObject.getString("flowInstId");
         JSONArray flowInstIds = jsonObject.getJSONArray("flowInstIds");
         String userCode = jsonObject.getString("userCode");
@@ -781,8 +781,11 @@ public class FlowManagerController extends BaseController {
             for (int i = 0; i < flowInstIds.size(); i++) {
                 flowManager.updateFlowState(flowInstIds.getString(i), userCode, instState, desc);
             }
+            return ResponseData.makeResponseData(flowInstIds);
         } else {
             flowManager.updateFlowState(flowInstId, userCode,instState,desc);
+            return ResponseData.makeResponseData(flowInstId);
+
         }
     }
 
@@ -934,6 +937,7 @@ public class FlowManagerController extends BaseController {
     @GetMapping(value = "/listFlowInstDetailed")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "userCode", value = "流程创建用户"),
+        @ApiImplicitParam(name = "flowInstIds", value = "流程实例id，以逗号分割"),
         @ApiImplicitParam(name = "flowCode", value = "流程编码"),
         @ApiImplicitParam(name = "optId", value = "业务编码"),
         @ApiImplicitParam(name = "instState", value = "流程状态 C 已完成  N 办理中"),

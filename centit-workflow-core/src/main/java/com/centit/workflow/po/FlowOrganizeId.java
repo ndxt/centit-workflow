@@ -1,5 +1,7 @@
 package com.centit.workflow.po;
 
+import com.centit.framework.core.dao.DictionaryMap;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -16,6 +18,7 @@ public class FlowOrganizeId implements java.io.Serializable {
     @Column(name = "FLOW_INST_ID")
     private String flowInstId;
 
+    @DictionaryMap(value="unitCode", fieldName="unitName")
     @Column(name = "UNIT_CODE")
     private String unitCode;
 

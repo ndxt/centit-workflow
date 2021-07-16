@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.components.OperationLogCenter;
+import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.CollectionsOpt;
@@ -19,6 +20,7 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.ast.Var;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -72,6 +74,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Autowired
     FlowInstanceGroupDao flowInstanceGroupDao;
+
+    @Autowired
+    private FlowOrganizeDao flowOrganizeDao;
+
+    @Autowired
+    private FlowWorkTeamDao flowTeamDao;
 
     /*@Autowired
     private NotificationCenter notificationCenter;*/
@@ -1601,6 +1609,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /**
      * 获取节点实例列表
+     *
      * @param searchColumn
      * @param pageDesc
      * @return
@@ -1612,6 +1621,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /**
      * 强制修改流程状态以及相关节点实例状态
+     *
      * @param flowInstId
      * @param mangerUserCode
      * @param instState
@@ -1638,14 +1648,64 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nodeInstanceDao.updateNodeStateById(wfFlowInst);
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
-            mangerUserCode, flowInstId, "强制修改流程状态为"+instState+";" + desc);
+            mangerUserCode, flowInstId, "强制修改流程状态为" + instState + ";" + desc);
         OperationLogCenter.log(managerAct);
     }
 
+    /**
+     * 获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
     @Override
     public JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        Object flowInstIds = searchColumn.get("flowInstIds");
+        if (flowInstIds != null) {
+            searchColumn.put("flowInstIds",flowInstIds.toString().split(","));
+        }
+        // 获取流程实例数据
         List<FlowInstance> flowInstances = flowInstanceDao.listObjects(searchColumn, pageDesc);
-
-        return null;
+        JSONArray flowInstArray = DictionaryMapUtils.objectsToJSONArray(flowInstances);
+        if (flowInstances.isEmpty()) {
+            return flowInstArray;
+        }
+        List<String> flowInstIdList = new ArrayList<>();
+        flowInstances.forEach(f -> {
+            flowInstIdList.add(f.getFlowInstId());
+        });
+        // 获取流程机构数据
+        List<FlowOrganize> flowOrganizes = flowOrganizeDao.listFlowOrganize(flowInstIdList);
+        JSONArray flowOrganizeArray = DictionaryMapUtils.objectsToJSONArray(flowOrganizes);
+        // 获取流程办件角色数据
+        List<FlowWorkTeam> flowWorkTeams = flowTeamDao.listFlowWorkTeam(flowInstIdList);
+        JSONArray flowWorkTeamArray = DictionaryMapUtils.objectsToJSONArray(flowWorkTeams);
+        // 数据组装
+        for (int i = 0; i < flowInstArray.size(); i++) {
+            String flowInstId = flowInstArray.getJSONObject(i).getString("flowInstId");
+            // 数据组装 --> 流程机构
+            for (int j = 0; j < flowOrganizeArray.size(); j++) {
+                if (flowInstId.equals(flowOrganizeArray.getJSONObject(j).getString("flowInstId"))) {
+                    String roleCode = flowOrganizeArray.getJSONObject(j).getString("roleCode");
+                    if (flowInstArray.getJSONObject(i).getString(roleCode) == null) {
+                        flowInstArray.getJSONObject(i).put(roleCode, flowOrganizeArray.getJSONObject(j).getString("unitName"));
+                    } else {
+                        flowInstArray.getJSONObject(i).put(roleCode, flowInstArray.getJSONObject(i).getString(roleCode) + "," + flowOrganizeArray.getJSONObject(j).getString("unitName"));
+                    }
+                }
+            }
+            // 数据组装 --> 办件角色
+            for (int j = 0; j < flowWorkTeamArray.size(); j++) {
+                if (flowInstId.equals(flowWorkTeamArray.getJSONObject(j).getString("flowInstId"))) {
+                    String roleCode = flowWorkTeamArray.getJSONObject(j).getString("roleCode");
+                    if (flowInstArray.getJSONObject(i).getString(roleCode) == null) {
+                        flowInstArray.getJSONObject(i).put(roleCode, flowWorkTeamArray.getJSONObject(j).getString("userName"));
+                    } else {
+                        flowInstArray.getJSONObject(i).put(roleCode, flowInstArray.getJSONObject(i).getString(roleCode) + "," + flowWorkTeamArray.getJSONObject(j).getString("userName"));
+                    }
+                }
+            }
+        }
+        return flowInstArray;
     }
 }

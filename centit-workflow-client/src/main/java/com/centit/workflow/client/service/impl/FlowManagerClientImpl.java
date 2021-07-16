@@ -749,6 +749,12 @@ public class FlowManagerClientImpl implements FlowManager {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
+    /**
+     * 获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
     @Override
     public JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc) {
         throw new ObjectException("This function is not been implemented in client.");
