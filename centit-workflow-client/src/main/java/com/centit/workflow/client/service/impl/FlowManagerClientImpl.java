@@ -761,6 +761,19 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     /**
+     * 根据办件角色中的用户排序逐级办理节点(fgw需求),每次往一个新的办件角色中更新用户
+     * @param flowInstId
+     * @param roleCode
+     * @param newRoleCode
+     * @param topUnit
+     * @return
+     */
+    @Override
+    public List<String> saveNewWorkTeam(String flowInstId, String roleCode, String newRoleCode, String topUnit) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
      * 强制修改流程的节点状态
      *
      * @param nodeInstId

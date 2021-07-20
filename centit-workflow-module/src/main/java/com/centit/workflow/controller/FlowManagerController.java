@@ -783,10 +783,29 @@ public class FlowManagerController extends BaseController {
             }
             return ResponseData.makeResponseData(flowInstIds);
         } else {
-            flowManager.updateFlowState(flowInstId, userCode,instState,desc);
+            flowManager.updateFlowState(flowInstId, userCode, instState, desc);
             return ResponseData.makeResponseData(flowInstId);
 
         }
+    }
+
+    /**
+     * @param jsonObject flowInstId:流程实例id， roleCode：老的办件角色code  newRoleCode:新增的办件角色，逐级办理
+     *                   需求实现方法：每次往一个新的办件角色中更新用户。
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "根据办件角色中的用户排序逐级办理节点(fgw需求)", notes = "根据办件角色中的用户排序逐级办理节点(fgw需求)")
+    @PostMapping(value = "/saveNewWorkTeam")
+    @WrapUpResponseBody
+    public ResponseData saveNewWorkTeam(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+        String flowInstId = jsonObject.getString("flowInstId");
+        String roleCode = jsonObject.getString("roleCode");
+        String newRoleCode = jsonObject.getString("newRoleCode");
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+
+        List<String> userCodeSet = flowManager.saveNewWorkTeam(flowInstId, roleCode, newRoleCode, topUnit);
+        return ResponseData.makeResponseData(userCodeSet.size());
     }
 
     /**
@@ -944,7 +963,7 @@ public class FlowManagerController extends BaseController {
         @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)")
     })
     public PageQueryResult<Object> listFlowInstDetailed(PageDesc pageDesc,
-                                        HttpServletRequest request) {
+                                                        HttpServletRequest request) {
         Map<String, Object> searchColumn = BaseController.collectRequestParameters(request);
         JSONArray listObjects = flowManager.listFlowInstDetailed(searchColumn, pageDesc);
         return PageQueryResult.createJSONArrayResult(listObjects, pageDesc, FlowInstance.class);

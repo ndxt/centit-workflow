@@ -5,11 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.WebOptUtils;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.aop.NoRepeatCommit;
@@ -283,6 +285,21 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/viewFlowWorkTeam")
     public List<String> viewFlowWorkTeam(FlowWorkTeam flowWorkTeam) {
         return flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
+    }
+
+    @ApiOperation(value = "查看办件角色的用户信息", notes = "查看办件角色的用户信息")
+    @WrapUpResponseBody
+    @GetMapping(value = "/viewFlowWorkTeamUser")
+    public List<IUserUnit> viewFlowWorkTeamUser(HttpServletRequest request, FlowWorkTeam flowWorkTeam) {
+        List<String> teamUserCodes = flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
+        List<IUserUnit> teamUsers = new ArrayList<>();
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        teamUserCodes.forEach(u -> {
+            teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u));
+//            teamUsers.add(CodeRepositoryUtil.getUserInfoByCode(topUnit, u));
+        });
+
+        return teamUsers;
     }
 
     @ApiOperation(value = "查看流程组织机构", notes = "查看流程组织机构")

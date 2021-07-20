@@ -3,9 +3,11 @@ package com.centit.workflow.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.model.adapter.OperationLogWriter;
+import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -1707,5 +1709,54 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
         return flowInstArray;
+    }
+
+    /**
+     * 根据办件角色中的用户排序逐级办理节点(fgw需求),每次往一个新的办件角色中更新用户
+     * @param flowInstId
+     * @param roleCode
+     * @param newRoleCode
+     * @param topUnit
+     * @return
+     */
+    @Override
+    public List<String> saveNewWorkTeam(String flowInstId, String roleCode, String newRoleCode, String topUnit) {
+        // 获取已存在的办件角色用户
+        List<String> teamUserCodes = flowEngine.viewFlowWorkTeam(flowInstId, roleCode);
+        // 获取新设置的办件角色用户（逐级办理）
+        List<String> newTeamUserCodes = flowEngine.viewFlowWorkTeam(flowInstId, newRoleCode);
+        // 根据userCode 获取用户级别
+        List<IUserUnit> teamUsers = new ArrayList<>();
+        teamUserCodes.forEach(u -> {
+            teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u));
+        });
+        // 根据userOrder增加排序
+        Collections.sort(teamUsers, new Comparator<IUserUnit>() {
+            @Override
+            public int compare(IUserUnit o1, IUserUnit o2) {
+                Long i = o1.getUserOrder() - o2.getUserOrder();
+                return new Long(i).intValue();
+            }
+        });
+        List<String> userCodeSet = new ArrayList<>();
+        if (newTeamUserCodes == null || newTeamUserCodes.isEmpty()) {
+            // 设置userOrder最低的用户办理
+            userCodeSet.add(teamUsers.get(0).getUserCode());
+            flowEngine.assignFlowWorkTeam(flowInstId, newRoleCode, "T", userCodeSet);
+        } else if (newTeamUserCodes.size() == 1) {
+            // 设置比当前办理用户高1级的用户办理
+            Iterator<IUserUnit> iterator = teamUsers.iterator();
+            while (iterator.hasNext()) {
+                IUserUnit nestUser = iterator.next();
+                if (newTeamUserCodes.get(0).equals(nestUser.getUserCode()) && iterator.hasNext()) {
+                    userCodeSet.add(iterator.next().getUserCode());
+                    // 先清除重复的流程办件角色
+                    flowEngine.deleteFlowWorkTeam(flowInstId, newRoleCode);
+                    flowEngine.assignFlowWorkTeam(flowInstId, newRoleCode, "T", userCodeSet);
+                    break;
+                }
+            }
+        }
+        return userCodeSet;
     }
 }

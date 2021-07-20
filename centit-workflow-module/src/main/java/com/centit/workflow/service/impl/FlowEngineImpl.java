@@ -2636,6 +2636,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return nodeTaskList;
         }
         NodeInfo nodeInfo = nodeInstance.getNode();
+        // D:自动运行节点  R:路由节点  E:消息相应节点（同步节点） F:结束
+        if ("D,R,E,F".contains(nodeInfo.getNodeType())) {
+            return nodeTaskList;
+        }
+
         nodeTaskMap.put("nodeInstId", nodeInstance.getNodeInstId());
         nodeTaskMap.put("taskAssigned", nodeInstance.getTaskAssigned());
         nodeTaskMap.put("nodeName", nodeInfo.getNodeName());
