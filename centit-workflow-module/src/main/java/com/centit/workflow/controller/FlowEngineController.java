@@ -5,11 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.WebOptUtils;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.aop.NoRepeatCommit;
@@ -53,6 +55,11 @@ public class FlowEngineController extends BaseController {
             flowEngine.createInstance(newFlowInstanceOptions,
                 new ObjectUserUnitVariableTranslate(
                     BaseController.collectRequestParameters(request)), null);
+
+        //  FastJson禁用循环引用
+//        List<NodeInstance> activeNodeList = JSONArray.parseArray(JSON.toJSONString(flowInstance.getFlowNodeInstances(),
+//            SerializerFeature.DisableCircularReferenceDetect)).toJavaList(NodeInstance.class);
+//        flowInstance.setActiveNodeList(activeNodeList);
         flowInstance.setActiveNodeList(flowInstance.getFlowNodeInstances());
         return flowInstance;
     }
@@ -89,11 +96,12 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "保存流程变量", notes = "保存流程变量")
     @WrapUpResponseBody
     @PostMapping(value = "/saveFlowVariable")
-    public void saveFlowVariable(@RequestBody FlowVariable flowVariableParam) {
+    public ResponseData saveFlowVariable(@RequestBody FlowVariable flowVariableParam) {
         List<String> vars = JSON.parseArray(flowVariableParam.getVarValue(), String.class);
         if (!vars.isEmpty()) {
             flowEngine.saveFlowVariable(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName(), vars);
         }
+        return ResponseData.makeResponseData(flowVariableParam.getFlowInstId());
     }
 
     @ApiOperation(value = "删除流程变量", notes = "删除流程变量")
@@ -199,9 +207,11 @@ public class FlowEngineController extends BaseController {
         @ApiImplicitParam(name = "nodeName", value = "节点名称"),
         @ApiImplicitParam(name = "osId", value = "业务系统ID"),
         @ApiImplicitParam(name = "nodeCode", value = "环节代码"),
+        @ApiImplicitParam(name = "nodeCodes", value = "环节代码,多个节点以逗号分割"),
         @ApiImplicitParam(name = "stageCode", value = "阶段代码"),
         @ApiImplicitParam(name = "stageArr", value = "STAGE_CODE in (:stageArr)"),
-        @ApiImplicitParam(name = "notNodeCode", value = "NODE_CODE not in  (:notNodeCode)")
+        @ApiImplicitParam(name = "notNodeCode", value = "NODE_CODE not in  (:notNodeCode)"),
+        @ApiImplicitParam(name = "notNodeCodes", value = "环节代码,多个节点以逗号分割")
     })
     public PageQueryResult<UserTask> listTasks(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
@@ -277,6 +287,21 @@ public class FlowEngineController extends BaseController {
         return flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
     }
 
+    @ApiOperation(value = "查看办件角色的用户信息", notes = "查看办件角色的用户信息")
+    @WrapUpResponseBody
+    @GetMapping(value = "/viewFlowWorkTeamUser")
+    public List<IUserUnit> viewFlowWorkTeamUser(HttpServletRequest request, FlowWorkTeam flowWorkTeam) {
+        List<String> teamUserCodes = flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
+        List<IUserUnit> teamUsers = new ArrayList<>();
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        teamUserCodes.forEach(u -> {
+            teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u));
+//            teamUsers.add(CodeRepositoryUtil.getUserInfoByCode(topUnit, u));
+        });
+
+        return teamUsers;
+    }
+
     @ApiOperation(value = "查看流程组织机构", notes = "查看流程组织机构")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowOrganize")
@@ -321,18 +346,20 @@ public class FlowEngineController extends BaseController {
     }
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
+    @ApiImplicitParam(name = "jsonObject", paramType = "body",
+        value = "{'flowInstId':xxx,'curNodeInstId':'xxx','createUser':'xxx','userCode':'u1','unitCode':'d1','nodeCode':'xxx'}"
+    )
     @WrapUpResponseBody
     @PostMapping(value = "/isolatedNode")
-    public NodeInstance createIsolatedNodeInst(@RequestBody String json) {
-        JSONObject jsonObject = JSON.parseObject(json);
+    public NodeInstance createIsolatedNodeInst(@RequestBody JSONObject jsonObject) {
         String flowInstId = jsonObject.getString("flowInstId");
         String curNodeInstId = jsonObject.getString("curNodeInstId");
         String createUser = jsonObject.getString("createUser");
         String userCode = jsonObject.getString("userCode");
         String nodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
-        return /*NodeInstance =*/ flowEngine.createIsolatedNodeInst(flowInstId, curNodeInstId, createUser,
-            nodeCode, userCode, unitCode);
+        return /*NodeInstance =*/ flowEngine.createIsolatedNodeInst(flowInstId, curNodeInstId, nodeCode, createUser,
+            userCode, unitCode);
     }
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")

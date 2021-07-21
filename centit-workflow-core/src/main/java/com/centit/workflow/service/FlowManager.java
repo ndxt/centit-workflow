@@ -162,6 +162,14 @@ public interface FlowManager {
      */
     long activizeNodeInstance(String nodeInstId, String mangerUserCode);
 
+
+    /**
+     * 强制修改流程的节点状态
+     * @param nodeInstId
+     * @param newState
+     */
+    void updateNodeState(String nodeInstId, String newState);
+
     /**
      * 强制流转到下一结点，这个好像不好搞，主要是无法获得业务数据，只能提交没有分支的节点
      */
@@ -457,4 +465,64 @@ public interface FlowManager {
     void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName, String flowOptTag, String userCode, String unitCode);
 
     NodeInstance getFirstNodeInst(String flowInstId);
+
+    /**
+     * 删除流程实例数据
+     * @param flowInstId
+     * @param userCode
+     * @return
+     */
+    boolean deleteFlowInstById(String flowInstId, String userCode);
+
+    /**
+     * 办件回收列表，获取用户已办，且下一节点未进行办理的任务(发改委业务需求)
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    List<UserTask> listUserCompleteTasks(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    /**
+     * 获取某个节点的用户已办列表(fgw批分回收和批分追加列表)
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    List<UserTask> listUserCompleteFlow(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    /**
+     * 获取节点实例列表
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    /**
+     * 强制修改流程状态以及相关节点实例状态
+     * @param flowInstId
+     * @param userCode
+     * @param instState
+     * @param desc
+     */
+    void updateFlowState(String flowInstId, String userCode, String instState, String desc);
+
+    /**
+     * 获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    /**
+     * 根据办件角色中的用户排序逐级办理节点(fgw需求),每次往一个新的办件角色中更新用户
+     * @param flowInstId
+     * @param roleCode
+     * @param newRoleCode
+     * @param topUnit
+     * @return
+     */
+    List<String> saveNewWorkTeam(String flowInstId, String roleCode, String newRoleCode, String topUnit);
+
 }

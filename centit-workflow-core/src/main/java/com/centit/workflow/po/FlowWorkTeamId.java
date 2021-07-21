@@ -1,5 +1,6 @@
 package com.centit.workflow.po;
 
+import com.centit.framework.core.dao.DictionaryMap;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
@@ -20,6 +21,7 @@ public class FlowWorkTeamId implements java.io.Serializable {
     @ApiModelProperty(value = "流程实例id",required = true)
     private String flowInstId;
 
+    @DictionaryMap(value="userCode", fieldName="userName")
     @Column(name = "USER_CODE")
     @ApiModelProperty(value = "用户编号",required = true)
     private String userCode;

@@ -64,6 +64,11 @@ public class FlowTaskImpl {
     @Value("${workflow.flowTimeStart:true}")
     private Boolean flowTimeStart;
 
+    /**
+     * 发送通知消息给待办用户
+     * @param nodeInstId
+     * @return
+     */
     private int sendNotifyMessage(String nodeInstId) {
         List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(
             CollectionsOpt.createHashMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
@@ -81,6 +86,7 @@ public class FlowTaskImpl {
         }
         return nn;
     }
+
 
     /**
      * 根据数据库计算出来的预报警发出对应的通知即可

@@ -23,6 +23,8 @@ import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -450,6 +452,13 @@ public class FlowManagerController extends BaseController {
         flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
     }
 
+    @ApiOperation(value = "强制修改流程的节点状态", notes = "强制修改流程的节点状态")
+    @WrapUpResponseBody
+    @PutMapping(value = "/updateNodeState/{nodeInstId}/{newState}")
+    public void updateNodeState(@PathVariable String nodeInstId, @PathVariable String newState) {
+        flowManager.updateNodeState(nodeInstId, newState);
+    }
+
     @ApiOperation(value = "强制流转到下一节点", notes = "强制流转到下一节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/forceCommit/{nodeInstId}", method = RequestMethod.GET)
@@ -510,7 +519,7 @@ public class FlowManagerController extends BaseController {
         return flowEng.getNodeInstById(nodeInstId);
     }
 
-    /*
+    /**
      * 从这个节点重新运行该流程，包括已经结束的流程
      */
     @ApiOperation(value = "从这个节点重新运行该流程，包括已经结束的流程", notes = "从这个节点重新运行该流程，包括已经结束的流程")
@@ -758,6 +767,47 @@ public class FlowManagerController extends BaseController {
         }
     }
 
+    @ApiOperation(value = "强制修改流程状态以及相关节点实例状态", notes = "强制修改流程状态以及相关节点实例状态")
+    @PostMapping(value = "/updateFlowState")
+    @WrapUpResponseBody
+    public ResponseData updateFlowState(@RequestBody JSONObject jsonObject) {
+        String flowInstId = jsonObject.getString("flowInstId");
+        JSONArray flowInstIds = jsonObject.getJSONArray("flowInstIds");
+        String userCode = jsonObject.getString("userCode");
+        String instState = jsonObject.getString("instState");
+        String desc = jsonObject.getString("desc");
+        // 判断是否需要批量修改
+        if (flowInstIds != null && !flowInstIds.isEmpty()) {
+            for (int i = 0; i < flowInstIds.size(); i++) {
+                flowManager.updateFlowState(flowInstIds.getString(i), userCode, instState, desc);
+            }
+            return ResponseData.makeResponseData(flowInstIds);
+        } else {
+            flowManager.updateFlowState(flowInstId, userCode, instState, desc);
+            return ResponseData.makeResponseData(flowInstId);
+
+        }
+    }
+
+    /**
+     * @param jsonObject flowInstId:流程实例id， roleCode：老的办件角色code  newRoleCode:新增的办件角色，逐级办理
+     *                   需求实现方法：每次往一个新的办件角色中更新用户。
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "根据办件角色中的用户排序逐级办理节点(fgw需求)", notes = "根据办件角色中的用户排序逐级办理节点(fgw需求)")
+    @PostMapping(value = "/saveNewWorkTeam")
+    @WrapUpResponseBody
+    public ResponseData saveNewWorkTeam(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+        String flowInstId = jsonObject.getString("flowInstId");
+        String roleCode = jsonObject.getString("roleCode");
+        String newRoleCode = jsonObject.getString("newRoleCode");
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+
+        List<String> userCodeSet = flowManager.saveNewWorkTeam(flowInstId, roleCode, newRoleCode, topUnit);
+        return ResponseData.makeResponseData(userCodeSet.size());
+    }
+
     /**
      * 流程拉回到首节点
      *
@@ -855,5 +905,83 @@ public class FlowManagerController extends BaseController {
         resultMap.put("flowOptName", flowInstance.getFlowOptName());
         resultMap.put("flowInstId", flowInstance.getFlowInstId());
         return ResponseData.makeResponseData(resultMap);
+    }
+
+    @ApiOperation(value = "删除流程实例数据", notes = "删除流程实例数据")
+    @WrapUpResponseBody
+    @RequestMapping(
+        value = {"/deleteFlowInstById/{flowInstId}/{userCode}"},
+        method = {RequestMethod.DELETE}
+    )
+    public ResponseData deleteFlowInstById(@PathVariable String flowInstId, @PathVariable String userCode) {
+        boolean b = flowManager.deleteFlowInstById(flowInstId, userCode);
+        return ResponseData.makeResponseData(b);
+    }
+
+    @ApiOperation(value = "办件回收列表，获取用户已办，且下一节点未进行办理的任务",
+        notes = "fgw需求：办件回收列表，获取用户已办，且下一节点未进行办理的任务")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listUserCompleteTasks")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userCode", value = "用户编码"),
+        @ApiImplicitParam(name = "flowCode", value = "流程编码"),
+        @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)")
+    })
+    public PageQueryResult<UserTask> listUserCompleteTasks(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks = flowManager.listUserCompleteTasks(searchColumn, pageDesc);
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
+    }
+
+    @ApiOperation(value = "获取某个节点的用户已办列表(fgw批分回收和批分追加列表)",
+        notes = "获取某个节点的用户已办列表(fgw批分回收和批分追加列表)")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listUserCompleteFlow")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userCode", value = "用户编码"),
+        @ApiImplicitParam(name = "nodeCode", value = "节点环节代码"),
+        @ApiImplicitParam(name = "flowCode", value = "流程编码"),
+        @ApiImplicitParam(name = "instState", value = "流程状态 C 已完成  N 办理中"),
+        @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)")
+    })
+    public PageQueryResult<UserTask> listUserCompleteFlow(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks = flowManager.listUserCompleteFlow(searchColumn, pageDesc);
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
+    }
+
+    @ApiOperation(value = "获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)",
+        notes = "获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listFlowInstDetailed")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userCode", value = "流程创建用户"),
+        @ApiImplicitParam(name = "flowInstIds", value = "流程实例id，以逗号分割"),
+        @ApiImplicitParam(name = "flowCode", value = "流程编码"),
+        @ApiImplicitParam(name = "optId", value = "业务编码"),
+        @ApiImplicitParam(name = "instState", value = "流程状态 C 已完成  N 办理中"),
+        @ApiImplicitParam(name = "flowOptName", value = "流程实例对应的业务名称(like)")
+    })
+    public PageQueryResult<Object> listFlowInstDetailed(PageDesc pageDesc,
+                                                        HttpServletRequest request) {
+        Map<String, Object> searchColumn = BaseController.collectRequestParameters(request);
+        JSONArray listObjects = flowManager.listFlowInstDetailed(searchColumn, pageDesc);
+        return PageQueryResult.createJSONArrayResult(listObjects, pageDesc, FlowInstance.class);
+    }
+
+    @ApiOperation(value = "获取节点实例列表", notes = "获取节点实例列表")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listNodeInstance")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "roleCode", value = "角色代码"),
+        @ApiImplicitParam(name = "flowCode", value = "流程编码"),
+        @ApiImplicitParam(name = "instState", value = "流程状态 C 已完成  N 办理中"),
+        @ApiImplicitParam(name = "flowInstId", value = "流程实例id"),
+        @ApiImplicitParam(name = "userCode", value = "用户编码")
+    })
+    public PageQueryResult<NodeInstance> listNodeInstance(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<NodeInstance> nodeInstanceList = flowManager.listNodeInstance(searchColumn, pageDesc);
+        return PageQueryResult.createResultMapDict(nodeInstanceList, pageDesc);
     }
 }

@@ -80,11 +80,5 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        邮件测试，后面删除-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-email</artifactId>
-        </dependency>
-
     </dependencies>
 </project>

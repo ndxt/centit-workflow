@@ -39,7 +39,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     public AutoRunNodeEventSupport(FlowOptPage optPage, NodeInfo nodeInfo,
                                    FlowVariableTranslate varTrans,
                                    FlowEngine flowEngine,
-                                   OptVariableDefineDao optVariableDefineDao){
+                                   OptVariableDefineDao optVariableDefineDao) {
         this.optPage = optPage;
         this.nodeInfo = nodeInfo;
         this.varTrans = varTrans;
@@ -53,7 +53,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     }
 
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
-                                NodeInfo nodeInfo, String optUserCode)  {
+                                NodeInfo nodeInfo, String optUserCode) {
     }
 
     @Override
@@ -71,10 +71,11 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
         } else {
             httpUrl = optPage.getPageUrl();
         }
-        if(StringUtils.isNotBlank(flowInst.getFlowOptTag())){
-            if(flowInst.getFlowOptTag().indexOf("&")>0){
+        if (StringUtils.isNotBlank(flowInst.getFlowOptTag())) {
+            if (flowInst.getFlowOptTag().indexOf("&") > 0) {
                 httpUrl = UrlOptUtils.appendParamToUrl(optPage.getPageUrl(), flowInst.getFlowOptTag());
-            } if(Lexer.getFirstWord(flowInst.getFlowOptTag()).equals("{")){
+            }
+            if (Lexer.getFirstWord(flowInst.getFlowOptTag()).equals("{")) {
                 params.putAll(JSON.parseObject(flowInst.getFlowOptTag()));
             } else {
                 params.put("optTag", flowInst.getFlowOptTag());
@@ -87,8 +88,8 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             String pageParams = Pretreatment.mapTemplateString(optPage.getRequestParams(), varTrans);
             String nodeParams = Pretreatment.mapTemplateString(nodeInfo.getOptParam(), varTrans);
 
-            if(StringUtils.isNotBlank(pageParams)){
-                if("{".equals(Lexer.getFirstWord(pageParams))){
+            if (StringUtils.isNotBlank(pageParams)) {
+                if ("{".equals(Lexer.getFirstWord(pageParams))) {
                     Object object = JSON.parseObject(pageParams);
                     if (object instanceof Map) {
                         params.putAll((Map<String, Object>) object);
@@ -100,8 +101,8 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
                 }
             }
 
-            if(StringUtils.isNotBlank(nodeParams)){
-                if("{".equals(Lexer.getFirstWord(nodeParams))){
+            if (StringUtils.isNotBlank(nodeParams)) {
+                if ("{".equals(Lexer.getFirstWord(nodeParams))) {
                     Object object = JSON.parseObject(nodeParams);
                     if (object instanceof Map) {
                         params.putAll((Map<String, Object>) object);
@@ -122,28 +123,35 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
                 httpRet = HttpExecutor.jsonPost(HttpExecutorContext.create(), httpUrl,
                     Pretreatment.mapTemplateString(optPage.getRequestBody(), varTrans));
             } else if ("U".equalsIgnoreCase(optMethod) || "PUT".equalsIgnoreCase(optMethod)) {
-                httpRet = HttpExecutor.jsonPut(HttpExecutorContext.create(),httpUrl,
+                httpRet = HttpExecutor.jsonPut(HttpExecutorContext.create(), httpUrl,
                     Pretreatment.mapTemplateString(optPage.getRequestBody(), varTrans));
             } else if ("D".equalsIgnoreCase(optMethod) || "delete".equalsIgnoreCase(optMethod)) {
-               httpRet = HttpExecutor.simpleDelete(HttpExecutorContext.create(), httpUrl);
+                httpRet = HttpExecutor.simpleDelete(HttpExecutorContext.create(), httpUrl);
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             logger.error(e.getMessage());
         }
 
-        if(StringUtils.isNotBlank(httpRet)){
-            HttpReceiveJSON json = HttpReceiveJSON.valueOfJson(httpRet);
-            if(json.getCode() != 0){
-                logger.error(json.getMessage()+":"+JSON.toJSONString(nodeInst));
+        if (StringUtils.isNotBlank(httpRet)) {
+            logger.info("自动执行节点返回参数：{}", httpRet);
+            HttpReceiveJSON json = null;
+            try {
+                json = HttpReceiveJSON.valueOfJson(httpRet);
+            } catch (Exception e) {
+                logger.error("解析自动执行节点的返回参数异常！请检查httpUrl：{}", httpUrl);
+                return false;
+            }
+            if (json.getCode() != 0) {
+                logger.error(json.getMessage() + ":" + JSON.toJSONString(nodeInst));
                 return false;
             }
             // 将返回结果设置为流程变量
             JSONObject jo = json.getJSONObject();
-            if(jo != null){
+            if (jo != null) {
                 List<OptVariableDefine> variables =
                     optVariableDefineDao.listOptVariableByFlowCode(
-                    flowInst.getFlowCode(), flowInst.getVersion());
-                if(variables!= null && variables.size()>0) {
+                        flowInst.getFlowCode(), flowInst.getVersion());
+                if (variables != null && variables.size() > 0) {
                     for (OptVariableDefine variable : variables) {
                         Object value = jo.get(variable.getVariableName());
                         if (value != null) {
@@ -159,7 +167,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
 
     @Override
     public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
-                                 NodeInfo nodeInfo, String optUserCode){
+                                 NodeInfo nodeInfo, String optUserCode) {
         return true;
     }
 

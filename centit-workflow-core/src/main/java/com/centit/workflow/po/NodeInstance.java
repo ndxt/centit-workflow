@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
@@ -80,6 +81,7 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name = "STAGE_CODE")
     private String stageCode;
     //add by codefan@sina.com 2014-4-20
+    @DictionaryMap(value="userCode", fieldName="userName")
     @Column(name="USER_CODE")
     private String userCode;
     /**

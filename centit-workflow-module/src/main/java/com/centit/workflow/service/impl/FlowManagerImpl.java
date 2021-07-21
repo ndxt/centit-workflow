@@ -3,8 +3,11 @@ package com.centit.workflow.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
+import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.model.adapter.OperationLogWriter;
+import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -19,9 +22,12 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowManager;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.ast.Var;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +45,8 @@ import java.util.*;
 @Transactional
 public class FlowManagerImpl implements FlowManager, Serializable {
     private static final long serialVersionUID = 1L;
+    private static Logger logger = LoggerFactory.getLogger(FlowManagerImpl.class);
+
     @Autowired
     FlowInstanceDao flowInstanceDao;
 
@@ -68,6 +76,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Autowired
     FlowInstanceGroupDao flowInstanceGroupDao;
+
+    @Autowired
+    private FlowOrganizeDao flowOrganizeDao;
+
+    @Autowired
+    private FlowWorkTeamDao flowTeamDao;
 
     /*@Autowired
     private NotificationCenter notificationCenter;*/
@@ -430,6 +444,29 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     public long activizeNodeInstance(String nodeInstId, String mangerUserCode) {
         return updateNodeInstState(nodeInstId, "N", mangerUserCode);
+    }
+
+    /**
+     * 强制修改流程的节点状态
+     *
+     * @param nodeInstId
+     * @param newState
+     */
+    @Override
+    public void updateNodeState(String nodeInstId, String newState) {
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        if (nodeInst == null) {
+            return;
+        }
+        // 设置最后更新时间
+        nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
+        nodeInst.setNodeState(newState);
+        nodeInstanceDao.updateObject(nodeInst);
+
+        OperationLog managerAct = FlowOptUtils.createActionLog(
+            "admin", nodeInst,
+            "强制修改流程的节点状态为" + newState + "；", null);
+        OperationLogCenter.log(managerAct);
     }
 
     /**
@@ -1464,6 +1501,48 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
+    public boolean deleteFlowInstById(String flowInstId, String userCode) {
+        // 判断流程是否可以删除
+        HashMap<String, Object> filterMap = new HashMap<>();
+        filterMap.put("flowInstId", flowInstId);
+        filterMap.put("userCode", userCode);
+        FlowInstance flowInstance = flowInstanceDao.getObjectByProperties(filterMap);
+        if (flowInstance == null) {
+            logger.info("用户 {} 没有权限删除流程 {}", userCode, flowInstId);
+            return false;
+        }
+        flowInstanceDao.deleteObjectById(flowInstId);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("flowInstId", flowInstId);
+        nodeInstanceDao.deleteObjectsByProperties(map);
+        return true;
+    }
+
+    /**
+     * 办件回收列表，获取用户已办，且下一节点未进行办理的任务(发改委业务需求)
+     *
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    @Override
+    public List<UserTask> listUserCompleteTasks(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return actionTaskDao.listUserCompleteTasks(searchColumn, pageDesc);
+    }
+
+    /**
+     * 获取某个节点的用户已办列表(fgw批分回收和批分追加列表)
+     *
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    @Override
+    public List<UserTask> listUserCompleteFlow(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return actionTaskDao.listUserCompleteFlow(searchColumn, pageDesc);
+    }
+
+    @Override
     public NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force) {
         FlowInstance flowInstance = flowInstanceDao.getObjectWithReferences(flowInstId);
         //如果不是强行拉回，需要判断是否流程最后提交人是自己
@@ -1530,4 +1609,154 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return flowInstanceGroupDao.getObjectById(flowInstGroupId);
     }
 
+    /**
+     * 获取节点实例列表
+     *
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    @Override
+    public List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return nodeInstanceDao.listObjects(searchColumn, pageDesc);
+    }
+
+    /**
+     * 强制修改流程状态以及相关节点实例状态
+     *
+     * @param flowInstId
+     * @param mangerUserCode
+     * @param instState
+     * @param desc
+     */
+    @Override
+    public void updateFlowState(String flowInstId, String mangerUserCode, String instState, String desc) {
+        FlowInstance wfFlowInst = flowInstanceDao.getObjectById(flowInstId);
+        if (wfFlowInst == null) {
+            return;
+        }
+
+        // 只能结束未完成的流程
+        if ("C".equals(wfFlowInst.getInstState()) || "F".equals(wfFlowInst.getInstState())) {
+            return;
+        }
+
+        Date updateTime = DatetimeOpt.currentUtilDate();
+        // 更新流程实例状态
+        wfFlowInst.setInstState(instState);
+        wfFlowInst.setLastUpdateTime(updateTime);
+        wfFlowInst.setLastUpdateUser(mangerUserCode);
+        flowInstanceDao.updtFlowInstInfo(wfFlowInst);
+        nodeInstanceDao.updateNodeStateById(wfFlowInst);
+
+        OperationLog managerAct = FlowOptUtils.createActionLog(
+            mangerUserCode, flowInstId, "强制修改流程状态为" + instState + ";" + desc);
+        OperationLogCenter.log(managerAct);
+    }
+
+    /**
+     * 获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)
+     * @param searchColumn
+     * @param pageDesc
+     * @return
+     */
+    @Override
+    public JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        Object flowInstIds = searchColumn.get("flowInstIds");
+        if (flowInstIds != null) {
+            searchColumn.put("flowInstIds",flowInstIds.toString().split(","));
+        }
+        // 获取流程实例数据
+        List<FlowInstance> flowInstances = flowInstanceDao.listObjects(searchColumn, pageDesc);
+        JSONArray flowInstArray = DictionaryMapUtils.objectsToJSONArray(flowInstances);
+        if (flowInstances.isEmpty()) {
+            return flowInstArray;
+        }
+        List<String> flowInstIdList = new ArrayList<>();
+        flowInstances.forEach(f -> {
+            flowInstIdList.add(f.getFlowInstId());
+        });
+        // 获取流程机构数据
+        List<FlowOrganize> flowOrganizes = flowOrganizeDao.listFlowOrganize(flowInstIdList);
+        JSONArray flowOrganizeArray = DictionaryMapUtils.objectsToJSONArray(flowOrganizes);
+        // 获取流程办件角色数据
+        List<FlowWorkTeam> flowWorkTeams = flowTeamDao.listFlowWorkTeam(flowInstIdList);
+        JSONArray flowWorkTeamArray = DictionaryMapUtils.objectsToJSONArray(flowWorkTeams);
+        // 数据组装
+        for (int i = 0; i < flowInstArray.size(); i++) {
+            String flowInstId = flowInstArray.getJSONObject(i).getString("flowInstId");
+            // 数据组装 --> 流程机构
+            for (int j = 0; j < flowOrganizeArray.size(); j++) {
+                if (flowInstId.equals(flowOrganizeArray.getJSONObject(j).getString("flowInstId"))) {
+                    String roleCode = flowOrganizeArray.getJSONObject(j).getString("roleCode");
+                    if (flowInstArray.getJSONObject(i).getString(roleCode) == null) {
+                        flowInstArray.getJSONObject(i).put(roleCode, flowOrganizeArray.getJSONObject(j).getString("unitName"));
+                    } else {
+                        flowInstArray.getJSONObject(i).put(roleCode, flowInstArray.getJSONObject(i).getString(roleCode) + "," + flowOrganizeArray.getJSONObject(j).getString("unitName"));
+                    }
+                }
+            }
+            // 数据组装 --> 办件角色
+            for (int j = 0; j < flowWorkTeamArray.size(); j++) {
+                if (flowInstId.equals(flowWorkTeamArray.getJSONObject(j).getString("flowInstId"))) {
+                    String roleCode = flowWorkTeamArray.getJSONObject(j).getString("roleCode");
+                    if (flowInstArray.getJSONObject(i).getString(roleCode) == null) {
+                        flowInstArray.getJSONObject(i).put(roleCode, flowWorkTeamArray.getJSONObject(j).getString("userName"));
+                    } else {
+                        flowInstArray.getJSONObject(i).put(roleCode, flowInstArray.getJSONObject(i).getString(roleCode) + "," + flowWorkTeamArray.getJSONObject(j).getString("userName"));
+                    }
+                }
+            }
+        }
+        return flowInstArray;
+    }
+
+    /**
+     * 根据办件角色中的用户排序逐级办理节点(fgw需求),每次往一个新的办件角色中更新用户
+     * @param flowInstId
+     * @param roleCode
+     * @param newRoleCode
+     * @param topUnit
+     * @return
+     */
+    @Override
+    public List<String> saveNewWorkTeam(String flowInstId, String roleCode, String newRoleCode, String topUnit) {
+        // 获取已存在的办件角色用户
+        List<String> teamUserCodes = flowEngine.viewFlowWorkTeam(flowInstId, roleCode);
+        // 获取新设置的办件角色用户（逐级办理）
+        List<String> newTeamUserCodes = flowEngine.viewFlowWorkTeam(flowInstId, newRoleCode);
+        // 根据userCode 获取用户级别
+        List<IUserUnit> teamUsers = new ArrayList<>();
+        teamUserCodes.forEach(u -> {
+            teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u));
+        });
+        // 根据userOrder增加排序
+        Collections.sort(teamUsers, new Comparator<IUserUnit>() {
+            @Override
+            public int compare(IUserUnit o1, IUserUnit o2) {
+                Long i = o1.getUserOrder() - o2.getUserOrder();
+                return new Long(i).intValue();
+            }
+        });
+        List<String> userCodeSet = new ArrayList<>();
+        if (newTeamUserCodes == null || newTeamUserCodes.isEmpty()) {
+            // 设置userOrder最低的用户办理
+            userCodeSet.add(teamUsers.get(0).getUserCode());
+            flowEngine.assignFlowWorkTeam(flowInstId, newRoleCode, "T", userCodeSet);
+        } else if (newTeamUserCodes.size() == 1) {
+            // 设置比当前办理用户高1级的用户办理
+            Iterator<IUserUnit> iterator = teamUsers.iterator();
+            while (iterator.hasNext()) {
+                IUserUnit nestUser = iterator.next();
+                if (newTeamUserCodes.get(0).equals(nestUser.getUserCode()) && iterator.hasNext()) {
+                    userCodeSet.add(iterator.next().getUserCode());
+                    // 先清除重复的流程办件角色
+                    flowEngine.deleteFlowWorkTeam(flowInstId, newRoleCode);
+                    flowEngine.assignFlowWorkTeam(flowInstId, newRoleCode, "T", userCodeSet);
+                    break;
+                }
+            }
+        }
+        return userCodeSet;
+    }
 }

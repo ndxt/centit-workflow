@@ -773,7 +773,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
                                 "cd_" + nextRoutertNode.getNodeCode(), uc);
                             //flowVarTrans.setInnerVariable( "cd_" + nextRoutertNode.getNodeCode(), uc);
-                            flowVarTrans.setInnerVariable("cursor", nodeToken, uc);
+                            // 创建首节点时preNodeInst为null， 默认token为T
+                            String runToken = preNodeInst == null ? "T" : preNodeInst.getRunToken();
+                            flowVarTrans.setInnerVariable("cursor", runToken, uc);
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
                                 preNodeInst, preTransPath, nodeTran, options,
@@ -797,7 +799,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
                                 "cu_" + nextRoutertNode.getNodeCode(), uc);
-                            flowVarTrans.setInnerVariable("cursor", nodeToken, uc);
+                            // 创建首节点时preNodeInst为null， 默认token为T
+                            String runToken = preNodeInst == null ?  "T"  : preNodeInst.getRunToken();
+                            flowVarTrans.setInnerVariable("cursor", runToken, uc);
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
                                 preNodeInst, preTransPath, nodeTran,
@@ -833,7 +837,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowOptParamOptions options,
         FlowVariableTranslate varTrans,
         ServletContext application) {
-
+        //每次重置当前节点实例
+        varTrans.setNodeInst(preNodeInst);
         //Set<String> resNodes = new HashSet<>();
         //NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
         // A:开始 B:首节点(首节点不能是路由节点，如果是路由节点请设置为 哑元，跳转到后一个节点； B 的处理换个C一样)
@@ -1934,6 +1939,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 + "）中对应环节代码为" + nodeCode + "的节点有多个，系统随机的创建一个，如有问题请和管理人员联系。");
 
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
+        if ("0".equals(curNodeInstId)) {
+            nodeInst = new NodeInstance();
+        }
         //必需存在且状态为正常 或者 暂停
         if (nodeInst == null
                /* || (!"N".equals(nodeInst.getNodeState())
@@ -1969,6 +1977,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public void assignFlowWorkTeam(String flowInstId, String roleCode, String runToken,
                                    List<String> userCodeSet) {
+        // 先清除重复的流程办件角色
+        flowTeamDao.deleteFlowWorkTeam(flowInstId,roleCode);
         Date assignDate = new Date(System.currentTimeMillis());
         if (userCodeSet != null)
             for (String usercode : userCodeSet)
@@ -2062,6 +2072,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public void assignFlowOrganize(String flowInstId, String roleCode,
                                    List<String> unitCodeSet) {
+        // 先清除原有的流程机构
+        flowOrganizeDao.deleteFlowOrganize(flowInstId, roleCode);
         Date assignDate = new Date(System.currentTimeMillis());
         if (unitCodeSet != null)
             for (String unitCode : unitCodeSet)
@@ -2344,6 +2356,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public List<UserTask> listUserTasksByFilter(Map<String, Object> filterMap, PageDesc pageDesc) {
+        Object notNodeCodes = filterMap.get("notNodeCodes");
+        Object nodeCodes = filterMap.get("nodeCodes");
+        if (notNodeCodes != null) {
+            filterMap.put("notNodeCodes",notNodeCodes.toString().split(","));
+        }
+        if (nodeCodes != null) {
+            filterMap.put("nodeCodes",nodeCodes.toString().split(","));
+        }
         List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(filterMap, pageDesc);
         return taskList;
     }
@@ -2487,6 +2507,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap, PageDesc pageDesc) {
+        Object nodeCodes = filterMap.get("nodeCodes");
+        if (nodeCodes != null) {
+            filterMap.put("nodeCodes",nodeCodes.toString().split(","));
+        }
         List<UserTask> taskList = actionTaskDao.listUserTaskFinByFilter(filterMap, pageDesc);
         return taskList;
     }
@@ -2612,6 +2636,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return nodeTaskList;
         }
         NodeInfo nodeInfo = nodeInstance.getNode();
+        // D:自动运行节点  R:路由节点  E:消息相应节点（同步节点） F:结束
+        if ("D,R,E,F".contains(nodeInfo.getNodeType())) {
+            return nodeTaskList;
+        }
+
         nodeTaskMap.put("nodeInstId", nodeInstance.getNodeInstId());
         nodeTaskMap.put("taskAssigned", nodeInstance.getTaskAssigned());
         nodeTaskMap.put("nodeName", nodeInfo.getNodeName());
