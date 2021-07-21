@@ -1,5 +1,6 @@
 package com.centit.workflow.aop;
 
+import com.centit.framework.common.WebOptUtils;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.ObjectException;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -9,9 +10,12 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.lang.reflect.Method;
 
@@ -33,14 +37,18 @@ public class ResubmitDataAspect {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         //获取注解信息
         NoRepeatCommit annotation = method.getAnnotation(NoRepeatCommit.class);
-
+        //通过 类名，方法名，当前用户，参数 来确定同一个提交；
         StringBuilder sb = new StringBuilder(method.getClass()
             .getName()).append(".").append(method.getName());
+
+        HttpServletRequest request = ((ServletRequestAttributes)
+            RequestContextHolder.getRequestAttributes()).getRequest();
+        sb.append(",user:").append(WebOptUtils.getCurrentUserCode(request));
 
         Object[] pointArgs = joinPoint.getArgs();
         for(Object arg: pointArgs){
             sb.append(",");
-            if( arg instanceof ServletRequest ||
+            if(arg instanceof ServletRequest ||
                arg instanceof ServletResponse ||
              arg instanceof HttpSession){
                 sb.append(arg.getClass().getName());
