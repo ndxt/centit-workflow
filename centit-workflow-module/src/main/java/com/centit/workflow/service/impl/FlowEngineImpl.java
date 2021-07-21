@@ -1068,7 +1068,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //添加脚本的运行
                 Map<String, Object> objectMap = varTrans.calcScript(nextOptNode.getOptParam());
                 for (Map.Entry<String, Object> ent : objectMap.entrySet()) {
-                    if (!ent.getKey().startsWith("_") && ent.getValue() != null) {
+                    if (!ent.getKey().startsWith("_") /*&& ent.getValue() != null*/) {
                         saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken,
                             ent.getKey(), ent.getValue());
                     }

@@ -69,6 +69,37 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         this.innerVariable.put(name, varMap);
     }
 
+    public Object removeInnerVariable(String name, String token) {
+        Map<String/*token*/, Object> varMap = this.innerVariable.get(name);
+        if(varMap == null){
+            return null;
+        }
+        if(varMap.containsKey(token)){
+            return varMap.remove(token);
+        }
+        return null;
+    }
+    public FlowVariable removeFLowVariable(String varName) {
+        if(flowVariables==null || flowVariables.size()==0)
+            return null;
+        String thisToken = nodeInst ==null? "T" : nodeInst.getRunToken();
+        FlowVariable sValue = null;
+        int nTL=0;
+        for(FlowVariable variable : flowVariables){
+            String currToken = variable.getRunToken();
+            int cTL = currToken.length();
+            if( varName.equals(variable.getVarName()) && ( "A".equals(currToken) || thisToken==null
+                || currToken.equals(thisToken) || thisToken.startsWith(currToken+'.' )) &&  nTL< cTL){
+                nTL = cTL;
+                sValue = variable;
+            }
+        }
+        if(sValue != null) {
+            flowVariables.remove(sValue);
+        }
+        return sValue;
+    }
+
     public void setNodeInst(NodeInstance nodeInst) {
         this.nodeInst = nodeInst;
     }
@@ -278,9 +309,12 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         while(i<varNames.length) {
             Object retObj = formula.calcFormula();
             String varName =  StringUtils.isBlank(varNames[i]) ? "_arg"+i : varNames[i].trim();
+            retMap.put(varName, retObj);
             if(retObj!=null){
-                retMap.put(varName, retObj);
                 this.setInnerVariable(varName,"A", retObj);
+            } else {
+                this.removeInnerVariable(varName,"A");
+                this.removeFLowVariable(varName);
             }
             String s = formula.skipAWord();
             if(!",".equals(s)) break;
