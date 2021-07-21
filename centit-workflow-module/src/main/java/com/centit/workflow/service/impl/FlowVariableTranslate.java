@@ -82,13 +82,13 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
     public FlowVariable removeFLowVariable(String varName) {
         if(flowVariables==null || flowVariables.size()==0)
             return null;
-        String thisToken = nodeInst ==null? "T" : nodeInst.getRunToken();
+        String thisToken = nodeInst ==null? null : nodeInst.getRunToken();
         FlowVariable sValue = null;
         int nTL=0;
         for(FlowVariable variable : flowVariables){
             String currToken = variable.getRunToken();
             int cTL = currToken.length();
-            if( varName.equals(variable.getVarName()) && ( "A".equals(currToken) || thisToken==null
+            if( varName.equals(variable.getVarName()) && ( thisToken==null
                 || currToken.equals(thisToken) || thisToken.startsWith(currToken+'.' )) &&  nTL< cTL){
                 nTL = cTL;
                 sValue = variable;
@@ -129,7 +129,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         for(FlowVariable variable : flowVariables){
           String currToken = variable.getRunToken();
           int cTL = currToken.length();
-          if( varName.equals(variable.getVarName()) && ( "A".equals(currToken) || thisToken==null
+          if( varName.equals(variable.getVarName()) && ( thisToken==null
                   || currToken.equals(thisToken) || thisToken.startsWith(currToken+'.' )) &&  nTL< cTL){
               nTL = cTL;
               sValue = variable;
