@@ -459,6 +459,15 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     /**
+     * 更新办件角色
+     * @param u
+     */
+    @Override
+    public void updateFlowWorkTeam(FlowWorkTeam u) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
      * 根据条件查询待办，包括flowInstId，flowOptTag
      *
      * @param paramMap 查询参数

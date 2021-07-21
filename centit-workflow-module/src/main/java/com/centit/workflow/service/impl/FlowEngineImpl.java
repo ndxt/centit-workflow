@@ -113,12 +113,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // 设置办件角色
         if (options.getFlowRoleUsers() != null && !options.getFlowRoleUsers().isEmpty()) {
             for (Map.Entry<String, List<String>> ent : options.getFlowRoleUsers().entrySet()) {
+                // 先清除重复的流程办件角色
+                this.deleteFlowWorkTeam(flowInstId, ent.getKey());
                 assignFlowWorkTeam(flowInstId, ent.getKey(), runToken, ent.getValue());
             }
         }
         // 设置流程机构
         if (options.getFlowOrganizes() != null && !options.getFlowOrganizes().isEmpty()) {
             for (Map.Entry<String, List<String>> ent : options.getFlowOrganizes().entrySet()) {
+                // 先清除原有的流程机构
+                this.deleteFlowOrganize(flowInstId, ent.getKey());
                 assignFlowOrganize(flowInstId, ent.getKey(), ent.getValue());
             }
         }
@@ -581,8 +585,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //根据权限表达式创建任务列表
             optUsers = UserUnitCalcEngine.calcOperators(context, roleFormula);
             if (optUsers == null || optUsers.size() == 0) {
-                logger.error("权限引擎没有识别出符合表达式的操作人员："+roleFormula+"，flow_inst_id:" + flowInst.getFlowInstId()
-                    + ",node_inst_id:" + nextOptNode.getNodeId()+"。");
+                logger.error("权限引擎没有识别出符合表达式的操作人员：" + roleFormula + "，flow_inst_id:" + flowInst.getFlowInstId()
+                    + ",node_inst_id:" + nextOptNode.getNodeId() + "。");
             }
         } else if (SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(nextOptNode.getRoleType())) {
             optUsers = new HashSet<>();
@@ -800,7 +804,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
                                 "cu_" + nextRoutertNode.getNodeCode(), uc);
                             // 创建首节点时preNodeInst为null， 默认token为T
-                            String runToken = preNodeInst == null ?  "T"  : preNodeInst.getRunToken();
+                            String runToken = preNodeInst == null ? "T" : preNodeInst.getRunToken();
                             flowVarTrans.setInnerVariable("cursor", runToken, uc);
                             resNodes.addAll(submitToNextNode(
                                 nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
@@ -1168,7 +1172,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    if(a==null || a.length<1){
+                    if (a == null || a.length < 1) {
                         return null;
                     }
                     return context.getUserRank(StringBaseOpt.castObjectToString(a[0]));
@@ -1180,7 +1184,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    if(a==null || a.length<1){
+                    if (a == null || a.length < 1) {
                         return null;
                     }
                     IUserInfo ui = context.getUserInfoByCode(StringBaseOpt.castObjectToString(a[0]));
@@ -1196,7 +1200,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    if(a==null || a.length<1){
+                    if (a == null || a.length < 1) {
                         return null;
                     }
                     IUnitInfo ui = context.getUnitInfoByCode(StringBaseOpt.castObjectToString(a[0]));
@@ -1212,7 +1216,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    if(a==null || a.length<1){
+                    if (a == null || a.length < 1) {
                         return null;
                     }
                     List<? extends IUserUnit> userUnits =
@@ -1227,7 +1231,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    if(a==null || a.length<1){
+                    if (a == null || a.length < 1) {
                         return null;
                     }
                     List<? extends IUserUnit> userUnits =
@@ -1242,7 +1246,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    if(a==null || a.length<1){
+                    if (a == null || a.length < 1) {
                         return null;
                     }
                     String userCode = StringBaseOpt.castObjectToString(a[0]);
@@ -1270,7 +1274,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    if(a==null || a.length<1){
+                    if (a == null || a.length < 1) {
                         return null;
                     }
                     return UserUnitCalcEngine.calcUnitsByExp(context, StringBaseOpt.castObjectToString(a[0]));
@@ -1282,7 +1286,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 (a) -> {
                     UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
                         preNodeInst, nodeToken, currNode, options, varTrans);
-                    if(a==null || a.length<1){
+                    if (a == null || a.length < 1) {
                         return null;
                     }
                     return UserUnitCalcEngine.calcOperators(context, StringBaseOpt.castObjectToString(a[0]));
@@ -1969,7 +1973,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nextNodeInst.setTransPath("");
 
         nodeInstanceDao.saveNewObject(nextNodeInst);
-
         return nextNodeInst;
     }
 
@@ -1977,15 +1980,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public void assignFlowWorkTeam(String flowInstId, String roleCode, String runToken,
                                    List<String> userCodeSet) {
-        // 先清除重复的流程办件角色
-        flowTeamDao.deleteFlowWorkTeam(flowInstId,roleCode);
+        if (userCodeSet == null) {
+            return;
+        }
         Date assignDate = new Date(System.currentTimeMillis());
-        if (userCodeSet != null)
-            for (String usercode : userCodeSet)
-                if (StringUtils.isNotBlank(usercode)) {
-                    flowTeamDao.mergeObject(
-                        new FlowWorkTeam(flowInstId, usercode, roleCode, runToken, assignDate));
-                }
+        for (String usercode : userCodeSet) {
+            if (StringUtils.isNotBlank(usercode)) {
+                flowTeamDao.mergeObject(
+                    new FlowWorkTeam(flowInstId, usercode, roleCode, runToken, assignDate));
+            }
+        }
     }
 
 
@@ -2072,16 +2076,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public void assignFlowOrganize(String flowInstId, String roleCode,
                                    List<String> unitCodeSet) {
-        // 先清除原有的流程机构
-        flowOrganizeDao.deleteFlowOrganize(flowInstId, roleCode);
+        if (unitCodeSet == null) {
+            return;
+        }
         Date assignDate = new Date(System.currentTimeMillis());
-        if (unitCodeSet != null)
-            for (String unitCode : unitCodeSet)
-                if (unitCode != null && !"".equals(unitCode)) {
-                    FlowOrganize dbObj = flowOrganizeDao.getObjectById(new FlowOrganizeId(flowInstId, unitCode, roleCode));
-                    if (dbObj == null || StringBaseOpt.isNvl(dbObj.getUnitCode()))
-                        flowOrganizeDao.mergeObject(new FlowOrganize(flowInstId, unitCode, roleCode, assignDate));
-                }
+        for (String unitCode : unitCodeSet) {
+            if (unitCode != null && !"".equals(unitCode)) {
+                FlowOrganize dbObj = flowOrganizeDao.getObjectById(new FlowOrganizeId(flowInstId, unitCode, roleCode));
+                if (dbObj == null || StringBaseOpt.isNvl(dbObj.getUnitCode()))
+                    flowOrganizeDao.mergeObject(new FlowOrganize(flowInstId, unitCode, roleCode, assignDate));
+            }
+        }
     }
 
     @Override
@@ -2359,10 +2364,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Object notNodeCodes = filterMap.get("notNodeCodes");
         Object nodeCodes = filterMap.get("nodeCodes");
         if (notNodeCodes != null) {
-            filterMap.put("notNodeCodes",notNodeCodes.toString().split(","));
+            filterMap.put("notNodeCodes", notNodeCodes.toString().split(","));
         }
         if (nodeCodes != null) {
-            filterMap.put("nodeCodes",nodeCodes.toString().split(","));
+            filterMap.put("nodeCodes", nodeCodes.toString().split(","));
         }
         List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(filterMap, pageDesc);
         return taskList;
@@ -2509,7 +2514,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap, PageDesc pageDesc) {
         Object nodeCodes = filterMap.get("nodeCodes");
         if (nodeCodes != null) {
-            filterMap.put("nodeCodes",nodeCodes.toString().split(","));
+            filterMap.put("nodeCodes", nodeCodes.toString().split(","));
         }
         List<UserTask> taskList = actionTaskDao.listUserTaskFinByFilter(filterMap, pageDesc);
         return taskList;
@@ -2678,5 +2683,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             });
         }
         return nodeTaskList;
+    }
+
+    /**
+     * 更新办件角色
+     *
+     * @param u
+     */
+    @Override
+    public void updateFlowWorkTeam(FlowWorkTeam u) {
+        flowTeamDao.mergeObject(u);
     }
 }

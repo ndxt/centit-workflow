@@ -776,4 +776,10 @@ public interface FlowEngine {
     JSONArray listNodeTasks(List<String> nextNodeInstList);
 
     JSONArray  getNodeTasks(String nodeInstId);
+
+    /**
+     * 更新办件角色
+     * @param u
+     */
+    void updateFlowWorkTeam(FlowWorkTeam u);
 }

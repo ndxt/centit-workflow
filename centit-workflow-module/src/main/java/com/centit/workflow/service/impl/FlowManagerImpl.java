@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -1656,6 +1657,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /**
      * 获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)
+     *
      * @param searchColumn
      * @param pageDesc
      * @return
@@ -1664,7 +1666,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc) {
         Object flowInstIds = searchColumn.get("flowInstIds");
         if (flowInstIds != null) {
-            searchColumn.put("flowInstIds",flowInstIds.toString().split(","));
+            searchColumn.put("flowInstIds", flowInstIds.toString().split(","));
         }
         // 获取流程实例数据
         List<FlowInstance> flowInstances = flowInstanceDao.listObjects(searchColumn, pageDesc);
@@ -1713,6 +1715,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /**
      * 根据办件角色中的用户排序逐级办理节点(fgw需求),每次往一个新的办件角色中更新用户
+     *
      * @param flowInstId
      * @param roleCode
      * @param newRoleCode
@@ -1722,40 +1725,38 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public List<String> saveNewWorkTeam(String flowInstId, String roleCode, String newRoleCode, String topUnit) {
         // 获取已存在的办件角色用户
-        List<String> teamUserCodes = flowEngine.viewFlowWorkTeam(flowInstId, roleCode);
-        // 获取新设置的办件角色用户（逐级办理）
-        List<String> newTeamUserCodes = flowEngine.viewFlowWorkTeam(flowInstId, newRoleCode);
-        // 根据userCode 获取用户级别
-        List<IUserUnit> teamUsers = new ArrayList<>();
-        teamUserCodes.forEach(u -> {
-            teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u));
+        List<FlowWorkTeam> flowWorkTeams = flowEngine.viewFlowWorkTeamList(flowInstId, roleCode);
+        // 设置用户等级userOrder
+        flowWorkTeams.forEach(u -> {
+            if (u.getUserOrder() == null) {
+                u.setUserOrder(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u.getUserCode()).getUserOrder());
+                flowEngine.updateFlowWorkTeam(u);
+            }
         });
-        // 根据userOrder增加排序
-        Collections.sort(teamUsers, new Comparator<IUserUnit>() {
+        // 移除已办理的用户
+        flowWorkTeams.removeIf(
+            workTeam -> workTeam.getAuthDesc() != null && workTeam.getAuthDesc().contains("已办理")
+        );
+        // 根据userOrder排序,级别低的放前面
+        Collections.sort(flowWorkTeams, new Comparator<FlowWorkTeam>() {
             @Override
-            public int compare(IUserUnit o1, IUserUnit o2) {
+            public int compare(FlowWorkTeam o1, FlowWorkTeam o2) {
                 Long i = o1.getUserOrder() - o2.getUserOrder();
                 return new Long(i).intValue();
             }
         });
+        // 判断有没有办理完
         List<String> userCodeSet = new ArrayList<>();
-        if (newTeamUserCodes == null || newTeamUserCodes.isEmpty()) {
-            // 设置userOrder最低的用户办理
-            userCodeSet.add(teamUsers.get(0).getUserCode());
+        if (flowWorkTeams.size() > 0) {
+            // 未办理结束
+            // 获取新设置的办件角色用户（逐级办理）
+            userCodeSet.add(flowWorkTeams.get(0).getUserCode());
+            // 先清除重复的流程办件角色
+            flowEngine.deleteFlowWorkTeam(flowInstId, newRoleCode);
             flowEngine.assignFlowWorkTeam(flowInstId, newRoleCode, "T", userCodeSet);
-        } else if (newTeamUserCodes.size() == 1) {
-            // 设置比当前办理用户高1级的用户办理
-            Iterator<IUserUnit> iterator = teamUsers.iterator();
-            while (iterator.hasNext()) {
-                IUserUnit nestUser = iterator.next();
-                if (newTeamUserCodes.get(0).equals(nestUser.getUserCode()) && iterator.hasNext()) {
-                    userCodeSet.add(iterator.next().getUserCode());
-                    // 先清除重复的流程办件角色
-                    flowEngine.deleteFlowWorkTeam(flowInstId, newRoleCode);
-                    flowEngine.assignFlowWorkTeam(flowInstId, newRoleCode, "T", userCodeSet);
-                    break;
-                }
-            }
+            //  更新已办理的用户，增加记录desc
+            flowWorkTeams.get(0).setAuthDesc("已办理, 办理时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            flowEngine.updateFlowWorkTeam(flowWorkTeams.get(0));
         }
         return userCodeSet;
     }

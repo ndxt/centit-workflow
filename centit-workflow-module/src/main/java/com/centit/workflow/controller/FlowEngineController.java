@@ -56,12 +56,9 @@ public class FlowEngineController extends BaseController {
                 new ObjectUserUnitVariableTranslate(
                     BaseController.collectRequestParameters(request)), null);
 
-        //  FastJson禁用循环引用
-//        List<NodeInstance> activeNodeList = JSONArray.parseArray(JSON.toJSONString(flowInstance.getFlowNodeInstances(),
-//            SerializerFeature.DisableCircularReferenceDetect)).toJavaList(NodeInstance.class);
-//        flowInstance.setActiveNodeList(activeNodeList);
-        flowInstance.setActiveNodeList(flowInstance.getFlowNodeInstances());
-        return flowInstance;
+        FlowInstance instance = flowEngine.getFlowInstById(flowInstance.getFlowInstId());
+        instance.setActiveNodeList(new ArrayList<>(instance.getActiveNodeInstances()));
+        return instance;
     }
 
     @ApiOperation(value = "提交节点", notes = "提交节点")
