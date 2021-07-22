@@ -31,7 +31,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         nodeUnits = new HashMap<>();
         nodeUsers = new HashMap<>();
 
-        String token = nodeInst == null? "T" : nodeInst.getRunToken();
+        String token = nodeInst == null? NodeInstance.RUN_TOKEN_GLOBAL : nodeInst.getRunToken();
         if (null != flowInst.getFlowNodeInstances()) {
             for (NodeInstance ni : flowInst.getFlowNodeInstances()) {
                 String nc = ni.getNodeCode();
@@ -148,7 +148,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         for(Map.Entry<String, Object> ent : varMap.entrySet()){
             String currToken = ent.getKey();
             int cTL = currToken.length();
-            if( ( "A".equals(currToken) || "T".equals(thisToken) || thisToken==null
+            if( (NodeInstance.RUN_TOKEN_GLOBAL.equals(thisToken) || thisToken==null
                 || currToken.equals(thisToken) || thisToken.startsWith(currToken+'.' )) &&  nTL< cTL){
                 nTL = cTL;
                 sValue = ent.getValue();
@@ -311,9 +311,9 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
             String varName =  StringUtils.isBlank(varNames[i]) ? "_arg"+i : varNames[i].trim();
             retMap.put(varName, retObj);
             if(retObj!=null){
-                this.setInnerVariable(varName,"A", retObj);
+                this.setInnerVariable(varName,NodeInstance.RUN_TOKEN_GLOBAL, retObj);
             } else {
-                this.removeInnerVariable(varName,"A");
+                this.removeInnerVariable(varName,NodeInstance.RUN_TOKEN_GLOBAL);
                 this.removeFLowVariable(varName);
             }
             String s = formula.skipAWord();

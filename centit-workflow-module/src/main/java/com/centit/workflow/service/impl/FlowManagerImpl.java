@@ -880,7 +880,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return null;//大小于
 //            return -3;
 
-        nodeInst.setRunToken("R" + nodeInst.getRunToken());
+        nodeInst.setRunToken(nodeInst.getRunToken()+"."+NodeInstance.RUN_TOKEN_ISOLATED);
         // 设置最后更新时间和更新人
         nodeInst.setLastUpdateUser(mangerUserCode);
         nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
@@ -1735,7 +1735,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         });
         // 移除已办理的用户
         flowWorkTeams.removeIf(
-            workTeam -> workTeam.getAuthDesc() != null && workTeam.getAuthDesc().contains("已办理")
+            workTeam -> workTeam.getAuthDesc() != null && workTeam.getAuthDesc().contains(newRoleCode + "已办理")
         );
         // 根据userOrder排序,级别低的放前面
         Collections.sort(flowWorkTeams, new Comparator<FlowWorkTeam>() {
@@ -1753,10 +1753,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             userCodeSet.add(flowWorkTeams.get(0).getUserCode());
             // 先清除重复的流程办件角色
             flowEngine.deleteFlowWorkTeam(flowInstId, newRoleCode);
-            flowEngine.assignFlowWorkTeam(flowInstId, newRoleCode, "T", userCodeSet);
+            flowEngine.assignFlowWorkTeam(flowInstId, newRoleCode, NodeInstance.RUN_TOKEN_GLOBAL, userCodeSet);
             //  更新已办理的用户，增加记录desc
-            flowWorkTeams.get(0).setAuthDesc("已办理, 办理时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String authDesc = newRoleCode + "已办理, 办理时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + ";";
+            if (StringUtils.isBlank(flowWorkTeams.get(0).getAuthDesc())) {
+                flowWorkTeams.get(0).setAuthDesc(authDesc);
+            } else {
+                flowWorkTeams.get(0).setAuthDesc(flowWorkTeams.get(0).getAuthDesc() + authDesc);
+            }
             flowEngine.updateFlowWorkTeam(flowWorkTeams.get(0));
+        } else {
+            flowEngine.deleteFlowWorkTeam(flowInstId, newRoleCode);
         }
         return userCodeSet;
     }

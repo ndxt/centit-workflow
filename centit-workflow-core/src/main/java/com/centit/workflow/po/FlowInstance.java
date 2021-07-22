@@ -379,11 +379,12 @@ public class FlowInstance implements java.io.Serializable {
      */
     public int checkNotCommitPreNodes(String nodeInstId) {
         int notCommit = 0;
-        for (NodeInstance nodeInst : flowNodeInstances)
+        for (NodeInstance nodeInst : flowNodeInstances) {
             if (nodeInst.getNodeState().equals("N") && //没有提交
-                nodeInst.getRunToken().startsWith("L") && //临时节点
+                nodeInst.getRunToken().endsWith(NodeInstance.RUN_TOKEN_INSERT) && //临时节点
                 nodeInst.getPrevNodeInstId().equals(nodeInstId)) //前节点ID
                 notCommit++;
+        }
         return notCommit;
     }
 

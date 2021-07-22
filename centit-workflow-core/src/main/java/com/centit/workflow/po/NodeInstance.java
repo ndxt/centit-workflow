@@ -70,6 +70,11 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name="TASK_ASSIGNED")
     private String taskAssigned;
 
+    public static final String RUN_TOKEN_GLOBAL    = "T";
+    public static final String RUN_TOKEN_FLOW    = RUN_TOKEN_GLOBAL;
+    public static final String RUN_TOKEN_ISOLATED = "R";
+    public static final String RUN_TOKEN_INSERT = "L";
+
     @Column(name="RUN_TOKEN")
     private String runToken;
     @Column(name="LAST_UPDATE_USER")

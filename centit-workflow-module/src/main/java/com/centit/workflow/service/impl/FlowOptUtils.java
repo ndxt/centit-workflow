@@ -112,7 +112,7 @@ public class FlowOptUtils {
         //nodeInst.setIsTimer(isTimer);
         nodeInst.setTaskAssigned("S");
         //给一个默认的令牌 T
-        nodeInst.setRunToken("T");
+        nodeInst.setRunToken(NodeInstance.RUN_TOKEN_GLOBAL);
         nodeInst.setLastUpdateUser(usercode);
         nodeInst.setCreateTime(updateTime);
         nodeInst.setRoleCode(node.getRoleCode());

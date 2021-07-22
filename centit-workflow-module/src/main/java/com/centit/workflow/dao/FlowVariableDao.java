@@ -6,6 +6,7 @@ import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.FlowVariableId;
+import com.centit.workflow.po.NodeInstance;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +56,7 @@ public class FlowVariableDao extends BaseDaoImpl<FlowVariable, FlowVariableId>
         for(Object[] json : ja){
             String svarValue = StringBaseOpt.castObjectToString(json[2]);
             if(StringUtils.isNotBlank(svarValue)) {
-                variables.add(new FlowVariable(flowInstId, "T",
+                variables.add(new FlowVariable(flowInstId, NodeInstance.RUN_TOKEN_GLOBAL,
                     StringBaseOpt.castObjectToString(json[0]),
                     StringBaseOpt.castObjectToString(json[1]),
                     svarValue));
