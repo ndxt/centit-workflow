@@ -1074,16 +1074,35 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             boolean needSubmit = true;
             SubmitOptOptions autoSubmitOptions = SubmitOptOptions.create().copy(options).nodeInst(lastNodeInstId);
             if (NodeInfo.AUTO_NODE_OPT_CODE_SCRIPT.equals(nextOptNode.getAutoRunType())) {
-                //添加脚本的运行
-                Map<String, Object> objectMap = varTrans.calcScript(nextOptNode.getOptParam());
-                for (Map.Entry<String, Object> ent : objectMap.entrySet()) {
-                    if (!ent.getKey().startsWith("_") /*&& ent.getValue() != null*/) {
-                        saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken,
-                            ent.getKey(), ent.getValue());
+                String nextNodeOptParam = nextOptNode.getOptParam();
+                String lockUser = null;
+                // fgw--主任逐级需求：节点通过办件角色按照用户级别由低到高逐个办理，格式：singleUser:oleRoleCode:newRoleCode
+                // 每次办理后设置一个流程全局变量，singleUser：剩余办理的用户个数
+                if (nextNodeOptParam.startsWith("singleUser")) {
+                    String[] roleCodes = nextNodeOptParam.split(":");
+                    List<String> nextOptUsers = flowManager.saveNewWorkTeam(flowInst.getFlowInstId(), roleCodes[1], roleCodes[2], "all");
+
+                    saveFlowNodeVariable(flowInst.getFlowInstId(), "A",
+                        "singleUser", nextOptUsers.size() + "");
+                    Map<String, Object> globalVariable = new HashMap<>();
+                    globalVariable.put("singleUser",nextOptUsers.size() + "");
+                    autoSubmitOptions.setGlobalVariables(globalVariable);
+                    if (nextOptUsers.size() > 0) {
+                        lockUser = nextOptUsers.get(0);
                     }
+                } else {
+                    //添加脚本的运行
+                    Map<String, Object> objectMap = varTrans.calcScript(nextNodeOptParam);
+                    for (Map.Entry<String, Object> ent : objectMap.entrySet()) {
+                        if (!ent.getKey().startsWith("_") /*&& ent.getValue() != null*/) {
+                            saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken,
+                                ent.getKey(), ent.getValue());
+                        }
+                    }
+                    lockUser = StringBaseOpt.castObjectToString(
+                        objectMap.get("_lock_user"));
                 }
-                String lockUser = StringBaseOpt.castObjectToString(
-                    objectMap.get("_lock_user"));
+
                 if (StringUtils.isNotBlank(lockUser)) {
                     autoSubmitOptions.workUser(lockUser);
                 }
@@ -1472,7 +1491,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeEventExecutor.runBeforeSubmit(flowInst, nodeInst, currNode, options.getUserCode());
 
         //判断是否为临时插入节点
-        if (nodeInst.getRunToken().startsWith("L")) {
+        if (nodeInst.getRunToken().endsWith(NodeInstance.RUN_TOKEN_INSERT)) {
             //提交临时插入节点
             nodeInst.setNodeState("C");
             if (flowInst.checkNotCommitPreNodes(nodeInst.getPrevNodeInstId()) > 0) {
@@ -1489,7 +1508,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowTransition nodeTran = selectOptNodeTransition(currNode);
         if (nodeTran == null) {
             // 临时节点 和 游离节点都可以不管
-            if (nodeInst.getRunToken().startsWith("R") /*|| nodeInst.getRunToken().startsWith("L")*/) {
+            if (nodeInst.getRunToken().indexOf(NodeInstance.RUN_TOKEN_ISOLATED) >=0
+                 /*|| nodeInst.getRunToken().startsWith("L")*/) {
                 //logger.info("游离节点:" + nodeInstId);
                 //将节点的状态设置为已完成
                 nodeInst.setNodeState("C");
@@ -1898,7 +1918,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
-        nextNodeInst.setRunToken("L" + nodeInst.getRunToken());//设置为插入前置节点
+        nextNodeInst.setRunToken(nodeInst.getRunToken()+"."+NodeInstance.RUN_TOKEN_INSERT);//设置为插入前置节点
         nextNodeInst.setUserCode(userCode);
         nextNodeInst.setTaskAssigned("S");
         nextNodeInst.setTransPath("");
@@ -1967,7 +1987,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
-        nextNodeInst.setRunToken("RT" + nodeInst.getRunToken());//设置为游离节点
+        nextNodeInst.setRunToken(nodeInst.getRunToken()+"."+NodeInstance.RUN_TOKEN_ISOLATED);//设置为游离节点
         nextNodeInst.setUserCode(userCode);
         nextNodeInst.setTaskAssigned("S");
         nextNodeInst.setTransPath("");
@@ -2045,16 +2065,18 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return us;
     }
 
-    @Transactional
+    @Override
     public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode) {
         List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(flowInstId, roleCode);
         return users;
     }
 
+    @Override
     public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode, String authdesc) {
         return flowTeamDao.listFlowWorkTeam(flowInstId, roleCode, authdesc);
     }
 
+    @Override
     public FlowVariable viewNodeVariable(String flowInstId, String runToken,
                                          String varname) {
         FlowVariableId id = new FlowVariableId(flowInstId, runToken,
@@ -2178,13 +2200,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public void saveFlowVariable(String flowInstId, String sVar, Object sValue) {
         String objStr = StringBaseOpt.objectToString(sValue);
         if (StringUtils.isBlank(objStr)) {
-            flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, "A", sVar));
+            flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, NodeInstance.RUN_TOKEN_GLOBAL, sVar));
         } else {
             String varType = sValue.getClass().isArray() || sValue instanceof Collection ? "E" : "S";
-            FlowVariableId cid = new FlowVariableId(flowInstId, "A", sVar);
+            FlowVariableId cid = new FlowVariableId(flowInstId, NodeInstance.RUN_TOKEN_GLOBAL, sVar);
             FlowVariable varO = flowVariableDao.getObjectById(cid);
             if (varO == null) {
-                varO = new FlowVariable(flowInstId, "A", sVar, objStr, varType);
+                varO = new FlowVariable(flowInstId, NodeInstance.RUN_TOKEN_GLOBAL, sVar, objStr, varType);
                 flowVariableDao.saveNewObject(varO);
             } else {
                 varO.setVarType(varType);
