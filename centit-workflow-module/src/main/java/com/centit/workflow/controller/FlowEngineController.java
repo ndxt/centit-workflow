@@ -128,10 +128,8 @@ public class FlowEngineController extends BaseController {
         return flowVariables;
     }
 
-    /**
-     * @param flowWorkTeam
-     * @ApiOperation(value = "新增多个办件角色", notes = "新增办件角色,userCode传一个Stringlist，格式为userCode:[\"1\",\"2\"]")
-     */
+
+    @ApiOperation(value = "新增多个办件角色",notes = "新增办件角色,userCode传一个Stringlist，格式为userCode:[\"1\",\"2\"]")
     @WrapUpResponseBody
     @PostMapping(value = "/assignFlowWorkTeam")
     public void assignFlowWorkTeam(@RequestBody FlowWorkTeamId flowWorkTeam) {

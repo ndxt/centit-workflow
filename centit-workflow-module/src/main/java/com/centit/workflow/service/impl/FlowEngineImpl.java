@@ -1081,8 +1081,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (nextNodeOptParam.startsWith("singleUser")) {
                     String[] roleCodes = nextNodeOptParam.split(":");
                     List<String> nextOptUsers = flowManager.saveNewWorkTeam(flowInst.getFlowInstId(), roleCodes[1], roleCodes[2], "all");
-
-                    saveFlowNodeVariable(flowInst.getFlowInstId(), "A",
+                    saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken,
                         "singleUser", nextOptUsers.size() + "");
                     Map<String, Object> globalVariable = new HashMap<>();
                     globalVariable.put("singleUser",nextOptUsers.size() + "");
@@ -1090,6 +1089,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     if (nextOptUsers.size() > 0) {
                         lockUser = nextOptUsers.get(0);
                     }
+                } else if (false){
+                    //  其他的脚本逻辑
                 } else {
                     //添加脚本的运行
                     Map<String, Object> objectMap = varTrans.calcScript(nextNodeOptParam);
@@ -1099,8 +1100,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                 ent.getKey(), ent.getValue());
                         }
                     }
-                    lockUser = StringBaseOpt.castObjectToString(
-                        objectMap.get("_lock_user"));
+                    lockUser = StringBaseOpt.castObjectToString(objectMap.get("_lock_user"));
                 }
 
                 if (StringUtils.isNotBlank(lockUser)) {
