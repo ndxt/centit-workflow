@@ -475,22 +475,6 @@ public interface FlowManager {
     boolean deleteFlowInstById(String flowInstId, String userCode);
 
     /**
-     * 办件回收列表，获取用户已办，且下一节点未进行办理的任务(发改委业务需求)
-     * @param searchColumn
-     * @param pageDesc
-     * @return
-     */
-    List<UserTask> listUserCompleteTasks(Map<String, Object> searchColumn, PageDesc pageDesc);
-
-    /**
-     * 获取某个节点的用户已办列表(fgw批分回收和批分追加列表)
-     * @param searchColumn
-     * @param pageDesc
-     * @return
-     */
-    List<UserTask> listUserCompleteFlow(Map<String, Object> searchColumn, PageDesc pageDesc);
-
-    /**
      * 获取节点实例列表
      * @param searchColumn
      * @param pageDesc

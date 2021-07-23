@@ -126,8 +126,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             //首节点必然通过
             if (trans.getStartNodeId().equals(benginNodeId)) {
                 transState.put(String.valueOf(trans.getTransId()), "1");
-            } else
+            } else {
                 transState.put(String.valueOf(trans.getTransId()), "-1");
+            }
             transMap.put(String.valueOf(trans.getTransId()), trans);
         }
         //flowInstanceDao.fetchObjectReferences(wfInst);
@@ -159,8 +160,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             nodeInstCount.put(nodeInst.getNodeId(), (nc == null) ? 1 : nc + 1);
 
             String transPath = nodeInst.getTransPath();
-            if (transPath == null && nodeInstSet.size() > 1)
+            if (transPath == null && nodeInstSet.size() > 1) {
                 continue;
+            }
             if (StringUtils.isNotBlank(transPath)) {
                 String[] transs = transPath.split(",");
                 for (String strTransId : transs) {
@@ -322,8 +324,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public List<UserTask> listNodeTasks(String nodeInstId) {
         List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(
             QueryUtils.createSqlParamsMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
-        if (taskList == null)
+        if (taskList == null) {
             return null;
+        }
         List<UserTask> tempList = new ArrayList<UserTask>();
         tempList.addAll(taskList);
         return tempList;
@@ -438,11 +441,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
 
+    @Override
     public long suspendNodeInstance(String nodeInstId, String mangerUserCode) {
         // FlowOptUtils.sendMsg(nodeInstId, null, mangerUserCode);
         return updateNodeInstState(nodeInstId, "P", mangerUserCode);
     }
 
+    @Override
     public long activizeNodeInstance(String nodeInstId, String mangerUserCode) {
         return updateNodeInstState(nodeInstId, "N", mangerUserCode);
     }
@@ -478,6 +483,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param mangerUserCode 管理人员代码
      * @return
      */
+    @Override
     public long resetNodeTimelimt(String nodeInstId, String timeLimit,
                                   String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
@@ -497,6 +503,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
 
+    @Override
     public FlowInstance getFlowInstance(String flowInstId) {
         FlowInstance flowInstance = flowInstanceDao.getObjectWithReferences(flowInstId);
         /**
@@ -584,13 +591,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     private List<FlowInstance> convertor(List<FlowInstance> instList) {
         //TO： 刘建洋这个为什么不用一个视图，后面可以更新这个效率太低。
-        if (instList == null)
+        if (instList == null) {
             return null;
+        }
         for (FlowInstance flowInst : instList) {
             FlowInfo flowDef = flowDefDao.getFlowDefineByID(
                 flowInst.getFlowCode(), flowInst.getVersion());
-            if (flowDef != null)
+            if (flowDef != null) {
                 flowInst.setFlowName(flowDef.getFlowName());
+            }
         }
         return instList;
     }
@@ -614,12 +623,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                             String admindesc) {
 
         FlowInstance wfFlowInst = flowEngine.getFlowInstById(flowInstId);
-        if (wfFlowInst == null)
+        if (wfFlowInst == null) {
             return 0;
+        }
 
         // 只能结束未完成的流程
-        if ("C".equals(wfFlowInst.getInstState()) || "F".equals(wfFlowInst.getInstState()))
+        if ("C".equals(wfFlowInst.getInstState()) || "F".equals(wfFlowInst.getInstState())) {
             return -1;
+        }
 
         Date updateTime = DatetimeOpt.currentUtilDate();
         wfFlowInst.setLastUpdateTime(updateTime);
@@ -666,8 +677,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public void updateFlowInstUnit(String flowInstId, String unitCode, String optUserCode) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
-        if (flowInst == null)
+        if (flowInst == null) {
             return;
+        }
         flowInst.setUnitCode(unitCode);
         flowInstanceDao.updateObject(flowInst);
 
@@ -680,8 +692,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public void updateNodeInstUnit(String nodeInstId, String unitCode, String optUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        if (nodeInst == null)
+        if (nodeInst == null) {
             return;
+        }
         nodeInst.setUnitCode(unitCode);
         nodeInstanceDao.updateObject(nodeInst);
 
@@ -696,8 +709,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public void updateNodeRoleInfo(String nodeInstId, String roleType, String roleCode, String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        if (nodeInst == null)
+        if (nodeInst == null) {
             return;
+        }
         nodeInst.setRoleType(roleType);
         nodeInst.setRoleCode(roleCode);
         nodeInstanceDao.updateObject(nodeInst);
@@ -719,11 +733,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param admindesc      流程期限更改原因说明
      * @return
      */
+    @Override
     public long resetFlowTimelimt(String flowInstId, String timeLimit,
                                   String mangerUserCode, String admindesc) {
         FlowInstance wfFlowInst = flowInstanceDao.getObjectById(flowInstId);
-        if (wfFlowInst == null)
+        if (wfFlowInst == null) {
             return 0;
+        }
 
         wfFlowInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
         wfFlowInst.setLastUpdateUser(mangerUserCode);
@@ -746,14 +762,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode) {
 
         NodeInstance thisnode = nodeInstanceDao.getObjectWithReferences(nodeInstId);
-        if (thisnode == null)
+        if (thisnode == null) {
             return null;
+        }
 //            return -1;//d大小于
 
-        FlowInstance flow = flowInstanceDao.getObjectWithReferences(thisnode
-            .getFlowInstId());
-        if (flow == null)
+        FlowInstance flow = flowInstanceDao.getObjectWithReferences(thisnode.getFlowInstId());
+        if (flow == null) {
             return null;
+        }
 //            return -2;//d大小于
         // 当前节点状态必需不能为正常，如果是正常则没有必要重置
         if ("N".equals(thisnode.getNodeState())) {
@@ -880,7 +897,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return null;//大小于
 //            return -3;
 
-        nodeInst.setRunToken(nodeInst.getRunToken()+"."+NodeInstance.RUN_TOKEN_ISOLATED);
+        nodeInst.setRunToken(nodeInst.getRunToken() + "." + NodeInstance.RUN_TOKEN_ISOLATED);
         // 设置最后更新时间和更新人
         nodeInst.setLastUpdateUser(mangerUserCode);
         nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
@@ -1051,6 +1068,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return new ArrayList<>(nodeInstList);
     }
 
+    @Override
     public List<ActionTask> listNodeActionTasks(String nodeInstId) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(nodeInstId);
         if (null == nodeInst)
@@ -1058,6 +1076,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return new ArrayList<>(nodeInst.getWfActionTasks());
     }
 
+    @Override
     public void deleteNodeActionTasks(String nodeInstId, String flowInstId, String mangerUserCode) {
         Map<String, Object> map = new HashMap<>();
         map.put("nodeInstId", nodeInstId);
@@ -1082,6 +1101,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * isTimer T 计时、 F 不计时 H仅环节计时 、暂停P
      */
+    @Override
     public int suspendNodeInstTimer(String nodeInstId, String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
@@ -1098,6 +1118,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * isTimer 不计时F 、计时T(有期限)、暂停P H 仅环节计时 唤醒时要根据 wf_node 的计时类别进行修改 T 计时、有期限 F
      * 不计时 H仅环节计时
      */
+    @Override
     public int activizeNodeInstTimer(String nodeInstId, String mangerUserCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
@@ -1115,6 +1136,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * isTimer 不计时 F、计时T(有期限)、暂停P 忽略(无期限) F
      */
+    @Override
     public int suspendFlowInstTimer(String flowInstId, String mangerUserCode) {
         flowInstanceDao.updateFlowTimerState(flowInstId, "P", mangerUserCode);
 
@@ -1127,6 +1149,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * isTimer 不计时N、计时T(有期限)、暂停P 忽略(无期限) F
      */
+    @Override
     public int activizeFlowInstTimer(String flowInstId, String mangerUserCode) {
         flowInstanceDao.updateFlowTimerState(flowInstId, "T", mangerUserCode);
 
@@ -1517,30 +1540,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         map.put("flowInstId", flowInstId);
         nodeInstanceDao.deleteObjectsByProperties(map);
         return true;
-    }
-
-    /**
-     * 办件回收列表，获取用户已办，且下一节点未进行办理的任务(发改委业务需求)
-     *
-     * @param searchColumn
-     * @param pageDesc
-     * @return
-     */
-    @Override
-    public List<UserTask> listUserCompleteTasks(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return actionTaskDao.listUserCompleteTasks(searchColumn, pageDesc);
-    }
-
-    /**
-     * 获取某个节点的用户已办列表(fgw批分回收和批分追加列表)
-     *
-     * @param searchColumn
-     * @param pageDesc
-     * @return
-     */
-    @Override
-    public List<UserTask> listUserCompleteFlow(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return actionTaskDao.listUserCompleteFlow(searchColumn, pageDesc);
     }
 
     @Override
