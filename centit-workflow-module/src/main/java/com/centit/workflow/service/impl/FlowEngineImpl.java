@@ -1075,34 +1075,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             SubmitOptOptions autoSubmitOptions = SubmitOptOptions.create().copy(options).nodeInst(lastNodeInstId);
             if (NodeInfo.AUTO_NODE_OPT_CODE_SCRIPT.equals(nextOptNode.getAutoRunType())) {
                 String nextNodeOptParam = nextOptNode.getOptParam();
-                String lockUser = null;
-                // fgw--主任逐级需求：节点通过办件角色按照用户级别由低到高逐个办理，格式：singleUser:oleRoleCode:newRoleCode
-                // 每次办理后设置一个流程全局变量，singleUser：剩余办理的用户个数
-                if (nextNodeOptParam.startsWith("singleUser")) {
-                    String[] roleCodes = nextNodeOptParam.split(":");
-                    List<String> nextOptUsers = flowManager.saveNewWorkTeam(flowInst.getFlowInstId(), roleCodes[1], roleCodes[2], "all");
-
-                    saveFlowNodeVariable(flowInst.getFlowInstId(), "A",
-                        "singleUser", nextOptUsers.size() + "");
-                    Map<String, Object> globalVariable = new HashMap<>();
-                    globalVariable.put("singleUser",nextOptUsers.size() + "");
-                    autoSubmitOptions.setGlobalVariables(globalVariable);
-                    if (nextOptUsers.size() > 0) {
-                        lockUser = nextOptUsers.get(0);
+                //添加脚本的运行
+                Map<String, Object> objectMap = varTrans.calcScript(nextOptNode.getOptParam());
+                for (Map.Entry<String, Object> ent : objectMap.entrySet()) {
+                    if (!ent.getKey().startsWith("_") /*&& ent.getValue() != null*/) {
+                        saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken,
+                            ent.getKey(), ent.getValue());
                     }
-                } else {
-                    //添加脚本的运行
-                    Map<String, Object> objectMap = varTrans.calcScript(nextNodeOptParam);
-                    for (Map.Entry<String, Object> ent : objectMap.entrySet()) {
-                        if (!ent.getKey().startsWith("_") /*&& ent.getValue() != null*/) {
-                            saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken,
-                                ent.getKey(), ent.getValue());
-                        }
-                    }
-                    lockUser = StringBaseOpt.castObjectToString(
-                        objectMap.get("_lock_user"));
                 }
-
+                String lockUser = StringBaseOpt.castObjectToString(
+                    objectMap.get("_lock_user"));
                 if (StringUtils.isNotBlank(lockUser)) {
                     autoSubmitOptions.workUser(lockUser);
                 }

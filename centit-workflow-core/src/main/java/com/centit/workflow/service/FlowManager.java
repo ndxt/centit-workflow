@@ -515,14 +515,4 @@ public interface FlowManager {
      */
     JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc);
 
-    /**
-     * 根据办件角色中的用户排序逐级办理节点(fgw需求),每次往一个新的办件角色中更新用户
-     * @param flowInstId
-     * @param roleCode
-     * @param newRoleCode
-     * @param topUnit
-     * @return
-     */
-    List<String> saveNewWorkTeam(String flowInstId, String roleCode, String newRoleCode, String topUnit);
-
 }
