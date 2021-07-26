@@ -177,7 +177,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         FlowVariable v = findFlowVariable(varName);
         if(v != null) {
             String varStr = v.getVarValue();
-            if("S".equals(v.getVarType())) {
+            if(FlowVariable.FLOW_VARIABLE_TYPE_SINGLE.equals(v.getVarType())) {
                 if (StringRegularOpt.isNumber(varStr)) {
                     return NumberBaseOpt.castObjectToNumber(varStr);
                 }
@@ -238,7 +238,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
         FlowVariable v = findFlowVariable(varName);
         if(v !=null)
-            return v.getVarSet();
+            return CollectionsOpt.cloneSet(v.getVarList());
 
         if(flowWorkTeam !=null ){
             List<String> listUsers = flowWorkTeam.get(varName);
@@ -272,7 +272,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
         FlowVariable v = findFlowVariable(varName);
         if(v !=null) {
-            return v.getVarSet();
+            return CollectionsOpt.cloneSet(v.getVarList());
         }
 
         if(flowOrganizes !=null){

@@ -1,12 +1,15 @@
 package com.centit.workflow.po;
 
+import com.centit.support.algorithm.StringBaseOpt;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -33,29 +36,18 @@ public class FlowVariable implements java.io.Serializable {
 
     // Constructors
     /**
-     * 计算变量时去掉，令牌中的 L 临时 和 R 游离标记
-     * @param runToken 令牌
-     * @return 变量的令牌
-     */
-    public static String trimNodeToken(String runToken){
-        int nPos = runToken.indexOf('T');
-        if(nPos>0){
-            return runToken.substring(nPos);
-        } else {
-            return runToken;
-        }
-    }
-    /**
      * default constructor
      */
     public FlowVariable() {
     }
 
+    public static String FLOW_VARIABLE_TYPE_COLLECTION = "E";
+    public static String FLOW_VARIABLE_TYPE_SINGLE = "S";
     /**
      * full constructor
      *
-     * @param id
-     * @param varValue
+     * @param id 主键
+     * @param varValue 数值
      * @param varType  E:集合 S:单个字符串
      */
     public FlowVariable(FlowVariableId id
@@ -130,35 +122,12 @@ public class FlowVariable implements java.io.Serializable {
         return this.varValue;
     }
 
-    public static String stringsetToString(Set<String> sSet) {
-        if (sSet == null)
-            return null;
-        String sRes = null;
-        for (String s : sSet) {
-            if (sRes == null)
-                sRes = s;
-            else
-                sRes = sRes + ',' + s;
+
+    public List<String> getVarList() {
+        if (FLOW_VARIABLE_TYPE_COLLECTION.equals(varType)) {
+            return StringBaseOpt.objectToStringList(this.varValue);
         }
-        return sRes;
-    }
-
-    public static Set<String> stringToStringset(String s) {
-        if (s == null)
-            return null;
-        String[] sSet = s.split(",");
-        Set<String> sVS = new HashSet<>();
-
-        for (int i = 0; i < sSet.length; i++)
-            sVS.add(sSet[i]);
-        return sVS;
-    }
-
-    public Set<String> getVarSet() {
-        if ("E".equals(varType)) {
-            return stringToStringset(varValue);
-        }
-        Set<String> sVS = new HashSet<>();
+        List<String> sVS = new ArrayList<>();
         sVS.add(varValue);
         return sVS;
     }
