@@ -120,7 +120,8 @@ public class FlowOptUtils {
         nodeInst.setFlowStage(node.getStageCode());
         //计算节点的期限
         nodeInst.setIsTimer(node.getIsAccountTime());
-        nodeInst.setTimeLimit(0L);
+//        nodeInst.setTimeLimit(0L);
+        nodeInst.setTimeLimit(new WorkTimeSpan(node.getTimeLimit()).toNumber());
         if(preNodeInst!=null) {
             nodeInst.setPrevNodeInstId(preNodeInst.getNodeInstId());
         }
