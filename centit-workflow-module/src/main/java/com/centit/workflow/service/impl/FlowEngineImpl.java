@@ -442,14 +442,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return flowInst.getStageInstanceByCode(nodeinfo.getStageCode());
     }
 
-
     private void endFlowInstance(FlowInstance flowInst, FlowInfo flowInfo, NodeInfo endNode,
                                  String transPath, FlowTransition trans,
-                                 String preNodeInstId, String userCode, String unitCode) {
+                                 String preNodeInstId, String userCode, String unitCode,
+                                 FlowVariableTranslate varTrans) {
         FlowOptUtils.endInstance(flowInst, "C", userCode, flowInstanceDao);
-
         NodeInstance endNodeInst =
-            FlowOptUtils.createNodeInst(unitCode, userCode, flowInst, null, flowInfo, endNode, trans);
+            FlowOptUtils.createNodeInst(unitCode, userCode, flowInst,
+                null, flowInfo, endNode, trans, varTrans);
         endNodeInst.setNodeInstId(UuidOpt.getUuidAsString32());
 //        endNodeInst.setNodeInstId(nodeInstanceDao.getNextNodeInstId());
         endNodeInst.setNodeState("C");
@@ -855,7 +855,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else if (NodeInfo.NODE_TYPE_END.equals(nextNode.getNodeType())) {
             //如果是最后一个节点，则要结束整个流程 调用 endInstance
             this.endFlowInstance(flowInst, flowInfo, nextNode, transPath,
-                nodeTran, preNodeInst.getNodeInstId(), options.getUserCode(), options.getUnitCode());
+                nodeTran, preNodeInst.getNodeInstId(),
+                options.getUserCode(), options.getUnitCode(), varTrans);
             if (flowInst.getIsSubInst()) {
                 //long otherSubFlows = flowInstanceDao.calcOtherSubflowSum(
                 //flowInst.getPareNodeInstId(), flowInst.getFlowInstId());
@@ -890,7 +891,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 //        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
         String lastNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nodeInst = FlowOptUtils.createNodeInst(options.getUnitCode(), options.getUserCode(),
-            flowInst, preNodeInst, flowInfo, nextOptNode, trans);
+            flowInst, preNodeInst, flowInfo, nextOptNode, trans, varTrans);
         nodeInst.setNodeInstId(lastNodeInstId);
 
         if (trans != null) {
@@ -1896,7 +1897,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String lastNodeInstId = UuidOpt.getUuidAsString32();
 //        long lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
 
-        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, userCode, flowInst, nodeInst, flowInfo, nextNode, null);
+        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, userCode,
+            flowInst, nodeInst, flowInfo, nextNode, null, null);
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
@@ -1965,7 +1967,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String lastNodeInstId = UuidOpt.getUuidAsString32();
 //        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
 
-        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, flowInst, nodeInst, flowInfo, nextNode, null);
+        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, flowInst,
+            nodeInst, flowInfo, nextNode, null, null);
 
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);

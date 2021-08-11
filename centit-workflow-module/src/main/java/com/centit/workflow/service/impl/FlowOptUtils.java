@@ -65,14 +65,25 @@ public class FlowOptUtils {
 
     public static void setNewNodeInstTimelimit(NodeInstance nodeInst, String timeLimit,
                                                FlowInstance flowInst, NodeInstance preNodeInst,
-                                               FlowInfo flowInfo, NodeInfo node) {
-
+                                               FlowInfo flowInfo, NodeInfo node,
+                                               FlowVariableTranslate varTrans) {
+        long timeLimitInMinute = 0l;
+        if(StringUtils.isNotBlank(timeLimit)) {
+            String tlt = timeLimit.trim();
+            if (tlt.startsWith("ref:")) {
+                if(varTrans!=null){
+                    tlt = StringBaseOpt.castObjectToString(varTrans.getVarValue(tlt.substring(4)));
+                    timeLimitInMinute = new WorkTimeSpan(tlt).toNumberAsMinute();
+                }
+            } else {
+                timeLimitInMinute = new WorkTimeSpan(tlt).toNumberAsMinute();
+            }
+        }
         if ("1".equals(node.getInheritType())) {
             if (preNodeInst != null && preNodeInst.getTimeLimit() != null) {
-                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute() +
-                    preNodeInst.getTimeLimit());
+                nodeInst.setTimeLimit(timeLimitInMinute + preNodeInst.getTimeLimit());
             } else {
-                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
+                nodeInst.setTimeLimit(timeLimitInMinute);
             }
         } else if ("2".equals(node.getInheritType())) {
             //flowInst.
@@ -86,11 +97,11 @@ public class FlowOptUtils {
             }
 
             if (inhertInst == null)
-                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
+                nodeInst.setTimeLimit(timeLimitInMinute);
             else
-                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute() + inhertInst.getTimeLimit());
+                nodeInst.setTimeLimit(timeLimitInMinute + inhertInst.getTimeLimit());
         } else
-            nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
+            nodeInst.setTimeLimit(timeLimitInMinute);
     }
 
     /**
@@ -101,7 +112,8 @@ public class FlowOptUtils {
      */
     public static NodeInstance createNodeInst(String unitcode, String usercode,
                                               FlowInstance flowInst, NodeInstance preNodeInst,
-                                              FlowInfo flowInfo, NodeInfo node, FlowTransition trans) {
+                                              FlowInfo flowInfo, NodeInfo node, FlowTransition trans,
+                                              FlowVariableTranslate varTrans) {
         NodeInstance nodeInst = new NodeInstance();
         nodeInst.setFlowInstId(flowInst.getFlowInstId());
         Date updateTime = DatetimeOpt.currentUtilDate();
@@ -136,18 +148,19 @@ public class FlowOptUtils {
             timeLimit = trans.getTimeLimit();
             timeLimitType = trans.getLimitType();
         }
+
         if ("C".equals(timeLimitType)) {
             NodeInstance sameInst = flowInst.findLastSameNodeInst(nodeInst.getNodeId(), nodeInst, nodeInst.getNodeInstId());
             if (sameInst != null)
                 nodeInst.setTimeLimit(sameInst.getTimeLimit());
             else {
                 setNewNodeInstTimelimit(nodeInst, timeLimit,
-                    flowInst, preNodeInst, flowInfo, node);
+                    flowInst, preNodeInst, flowInfo, node, varTrans);
             }
         } else if ("F".equals(timeLimitType)) {
             //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
             setNewNodeInstTimelimit(nodeInst, timeLimit,
-                flowInst, preNodeInst, flowInfo, node);
+                flowInst, preNodeInst, flowInfo, node, varTrans);
         }
         nodeInst.setPromiseTime(nodeInst.getTimeLimit());
         //nodeInst.setLastUpdateTime(updateTime);

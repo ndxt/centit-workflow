@@ -972,7 +972,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         String nextNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(
             nodeInst.getUnitCode(), mangerUserCode, flowInst, nodeInst, flowInfo,
-            nextNode, trans);
+            nextNode, trans, null);
 
         nextNodeInst.setNodeInstId(nextNodeInstId);
 //        nextNodeInst.setPrevNodeInstId(nodeInst.getNodeId());?
