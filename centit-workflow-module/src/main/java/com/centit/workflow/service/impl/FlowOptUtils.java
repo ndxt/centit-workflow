@@ -45,7 +45,7 @@ public class FlowOptUtils {
             stageInst.setFlowInstId(flowInstId);
             stageInst.setStageCode(wfStage.getStageCode());
             stageInst.setStageId(wfStage.getStageId());
-            stageInst.setPromiseTime(new WorkTimeSpan(timeLimit).toNumber());
+            stageInst.setPromiseTime(new WorkTimeSpan(timeLimit).toNumberAsMinute());
             stageInst.setStageBegin("0");
             stageInst.setTimeLimit(stageInst.getPromiseTime());
             flowInst.addFlowStageInstance(stageInst);
@@ -54,7 +54,7 @@ public class FlowOptUtils {
         if (!StringBaseOpt.isNvl(timeLimit)) {
             // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
             flowInst.setIsTimer("T");
-            flowInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
+            flowInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
         } else
             flowInst.setTimeLimit(null);
 
@@ -64,14 +64,15 @@ public class FlowOptUtils {
     }
 
     public static void setNewNodeInstTimelimit(NodeInstance nodeInst, String timeLimit,
-                                               FlowInstance flowInst, NodeInstance preNodeInst, FlowInfo flowInfo, NodeInfo node) {
+                                               FlowInstance flowInst, NodeInstance preNodeInst,
+                                               FlowInfo flowInfo, NodeInfo node) {
 
         if ("1".equals(node.getInheritType())) {
             if (preNodeInst != null && preNodeInst.getTimeLimit() != null) {
-                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber() +
+                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute() +
                     preNodeInst.getTimeLimit());
             } else {
-                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
+                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
             }
         } else if ("2".equals(node.getInheritType())) {
             //flowInst.
@@ -85,11 +86,11 @@ public class FlowOptUtils {
             }
 
             if (inhertInst == null)
-                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
+                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
             else
-                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber() + inhertInst.getTimeLimit());
+                nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute() + inhertInst.getTimeLimit());
         } else
-            nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
+            nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
     }
 
     /**
@@ -121,7 +122,7 @@ public class FlowOptUtils {
         //计算节点的期限
         nodeInst.setIsTimer(node.getIsAccountTime());
 //        nodeInst.setTimeLimit(0L);
-        nodeInst.setTimeLimit(new WorkTimeSpan(node.getTimeLimit()).toNumber());
+        nodeInst.setTimeLimit(new WorkTimeSpan(node.getTimeLimit()).toNumberAsMinute());
         if(preNodeInst!=null) {
             nodeInst.setPrevNodeInstId(preNodeInst.getNodeInstId());
         }

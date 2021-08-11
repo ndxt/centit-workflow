@@ -491,7 +491,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return 0;
         }
 
-        nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
+        nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
         // 设置最后更新时间和更新人
         nodeInstanceDao.updateObject(nodeInst);
         OperationLog managerAct = FlowOptUtils.createActionLog(
@@ -743,7 +743,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         wfFlowInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
         wfFlowInst.setLastUpdateUser(mangerUserCode);
-        wfFlowInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
+        wfFlowInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
 
         flowInstanceDao.updateObject(wfFlowInst);
 
@@ -1192,7 +1192,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         StageInstance stageInst = stageInstanceDao.getObject(flowInstId, stageId);
 
         stageInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
-        stageInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumber());
+        stageInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
 
         flowInstanceDao.updateObject(wfFlowInst);
 

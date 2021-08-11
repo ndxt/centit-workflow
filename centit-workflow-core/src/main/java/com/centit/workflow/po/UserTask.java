@@ -81,7 +81,7 @@ public class UserTask implements java.io.Serializable {
         if(promiseTime==null)
             return "";
         WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumber(promiseTime);
+        wts.fromNumberAsMinute(promiseTime);
         return wts.getTimeSpanDesc();
     }
 
@@ -89,7 +89,7 @@ public class UserTask implements java.io.Serializable {
         if(timeLimit==null)
             return "";
         WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumber(timeLimit);
+        wts.fromNumberAsMinute(timeLimit);
         return wts.getTimeSpanDesc();
     }
 
@@ -97,7 +97,7 @@ public class UserTask implements java.io.Serializable {
         if(flowTimeLimit==null)
             return "";
         WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumber(flowTimeLimit);
+        wts.fromNumberAsMinute(flowTimeLimit);
         return wts.getTimeSpanDesc();
     }
 
@@ -105,7 +105,7 @@ public class UserTask implements java.io.Serializable {
         if(flowPromiseTime==null)
             return "";
         WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumber(flowPromiseTime);
+        wts.fromNumberAsMinute(flowPromiseTime);
         return wts.getTimeSpanDesc();
     }
 

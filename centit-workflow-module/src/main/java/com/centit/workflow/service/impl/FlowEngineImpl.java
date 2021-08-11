@@ -1031,7 +1031,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if (NodeInfo.SYNC_NODE_TYPE_TIME.equals(nextOptNode.getOptType())) {
                 // 设置时间
                 nodeInst.setIsTimer(NodeInfo.TIME_LIMIT_NORMAL);
-                nodeInst.setTimeLimit(new WorkTimeSpan(nextOptNode.getTimeLimit()).toNumber());
+                nodeInst.setTimeLimit(new WorkTimeSpan(nextOptNode.getTimeLimit()).toNumberAsMinute());
                 nodeInst.setPromiseTime(nodeInst.getTimeLimit());
             }
         }

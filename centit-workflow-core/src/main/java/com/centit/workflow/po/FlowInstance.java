@@ -185,7 +185,7 @@ public class FlowInstance implements java.io.Serializable {
         if (promiseTime == null)
             return "";
         WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumber(promiseTime);
+        wts.fromNumberAsMinute(promiseTime);
         return wts.getTimeSpanDesc();
     }
 
@@ -193,7 +193,7 @@ public class FlowInstance implements java.io.Serializable {
         if (timeLimit == null)
             return "";
         WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumber(timeLimit);
+        wts.fromNumberAsMinute(timeLimit);
         return wts.getTimeSpanDesc();
     }
 
