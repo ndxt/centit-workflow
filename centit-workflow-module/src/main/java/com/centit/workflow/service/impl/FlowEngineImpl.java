@@ -935,7 +935,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInst.setUserCode(optUsers.iterator().next());
         }
 
-        // A: 唯一执行人 B: 抢先机制 C: 多人操作 D: 自动执行 E: 哑元（可用于嵌套汇聚） S:子流程
+        // S：子流程
         if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
             //如果是子流程 启动流程
             nodeInst.setNodeState("W");
@@ -944,14 +944,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 && flowInst.getTimeLimit() != null
                 && "I".equals(nextOptNode.getIsAccountTime())) {
                 //子流程实例计时可以继承父流程剩余时间
-                long flowTime = flowInst.getTimeLimit();
-                //天
-                long day = flowTime / 60 / 8;
-                //小时
-                long hour = flowTime / 60 % 8;
-                //分钟
-                long minute = flowTime % 60;
-                tempFlowTimeLimit = day + "d" + hour + "h" + minute + "m";
+                WorkTimeSpan workTimeSpan = new WorkTimeSpan();
+                workTimeSpan.fromNumberAsMinute(flowInst.getTimeLimit());
+                tempFlowTimeLimit =workTimeSpan.toStringAsMinute();
             }
             //子流程的机构 要和 节点的机构一致
             FlowInstance tempFlow = createInstanceInside(
