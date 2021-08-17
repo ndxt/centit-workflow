@@ -141,7 +141,7 @@ public class FlowOptUtils {
         //计算节点的期限
         //I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle。
         String timeLimit, timeLimitType;
-        if (trans == null || "I".equals(trans.getLimitType())) {
+        if (trans==null || trans.getLimitType() == null || "I".equals(trans.getLimitType())) {
             timeLimit = node.getTimeLimit();
             timeLimitType = node.getLimitType();
         } else {
