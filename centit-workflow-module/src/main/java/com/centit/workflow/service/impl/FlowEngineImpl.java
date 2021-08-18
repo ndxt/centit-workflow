@@ -941,7 +941,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //如果是子流程 启动流程
             nodeInst.setNodeState("W");
             String tempFlowTimeLimit = "";
-            if ("T".equals(flowInst.getIsTimer())
+            if (BooleanBaseOpt.ONE_CHAR_TRUE.equals(flowInst.getIsTimer())
                 && flowInst.getTimeLimit() != null
                 && !NodeInfo.TIME_LIMIT_NONE.equals(nextOptNode.getIsAccountTime())) {
                 //子流程实例计时可以继承父流程剩余时间
