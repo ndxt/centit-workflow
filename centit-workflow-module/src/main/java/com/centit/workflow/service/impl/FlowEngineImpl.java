@@ -8,6 +8,7 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
+import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.NotificationCenter;
@@ -942,7 +943,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             String tempFlowTimeLimit = "";
             if ("T".equals(flowInst.getIsTimer())
                 && flowInst.getTimeLimit() != null
-                && "I".equals(nextOptNode.getIsAccountTime())) {
+                && !NodeInfo.TIME_LIMIT_NONE.equals(nextOptNode.getIsAccountTime())) {
                 //子流程实例计时可以继承父流程剩余时间
                 WorkTimeSpan workTimeSpan = new WorkTimeSpan();
                 workTimeSpan.fromNumberAsMinute(flowInst.getTimeLimit());
