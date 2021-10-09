@@ -10,6 +10,7 @@ import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
+import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
@@ -285,7 +286,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查看办件角色的用户信息", notes = "查看办件角色的用户信息")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowWorkTeamUser")
-    public List<IUserUnit> viewFlowWorkTeamUser(HttpServletRequest request, FlowWorkTeam flowWorkTeam) {
+    public JSONArray viewFlowWorkTeamUser(HttpServletRequest request, FlowWorkTeam flowWorkTeam) {
         List<String> teamUserCodes = flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
         List<IUserUnit> teamUsers = new ArrayList<>();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
@@ -294,7 +295,7 @@ public class FlowEngineController extends BaseController {
 //            teamUsers.add(CodeRepositoryUtil.getUserInfoByCode(topUnit, u));
         });
 
-        return teamUsers;
+        return DictionaryMapUtils.objectsToJSONArray(teamUsers);
     }
 
     @ApiOperation(value = "查看流程组织机构", notes = "查看流程组织机构")

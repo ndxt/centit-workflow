@@ -45,8 +45,13 @@ public class ServiceConfig {
     @Value("${app.home:/}")
     protected String appHome;
 
-    @Bean("passwordEncoder")
+   /* @Bean("passwordEncoder")
     public CentitPasswordEncoder passwordEncoder() {
+        return new StandardPasswordEncoderImpl();
+    }*/
+
+    @Bean("passwordEncoder")
+    public StandardPasswordEncoderImpl passwordEncoder() {
         return new StandardPasswordEncoderImpl();
     }
 

@@ -574,6 +574,7 @@ public class FlowManagerController extends BaseController {
                 if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState())) {
                     List<UserTask> tasks = new ArrayList<>();
                     List<UserTask> innerTasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());
+                    innerTasks.removeIf(userTask -> StringUtils.isNotBlank(userTask.getGrantor()));
                     if (innerTasks != null) {
                         tasks.addAll(innerTasks);
                     }

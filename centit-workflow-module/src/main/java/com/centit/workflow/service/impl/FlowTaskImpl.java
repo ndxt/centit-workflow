@@ -134,7 +134,7 @@ public class FlowTaskImpl {
          *  在数据库中执行 复杂在要重新实现 当前时间是否是工作时间的问题
          */
         Date runTime = new Date();
-        if (isWorkTime(runTime) && flowTimeStart) {
+        if (flowTimeStart && isWorkTime(runTime)) {
             long consumeTime = 2;
             consumeLifeTime(consumeTime);
             logger.info(runTime.toString() + "工作时间，各个在办件减少一个即时周期" + consumeTime + "分钟。");
