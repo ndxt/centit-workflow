@@ -3,12 +3,10 @@ package com.centit.workflow.config;
 import com.centit.framework.components.impl.NotificationCenterImpl;
 import com.centit.framework.config.SpringSecurityCasConfig;
 import com.centit.framework.config.SpringSecurityDaoConfig;
-import com.centit.framework.ip.app.config.IPOrStaticAppSystemBeanConfig;
 import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
-import com.centit.framework.security.model.CentitPasswordEncoder;
 import com.centit.framework.security.model.StandardPasswordEncoderImpl;
 import com.centit.product.oa.EmailMessageSenderImpl;
 import com.centit.workflow.context.ExtFrameworkContextCacheBean;
@@ -23,7 +21,7 @@ import org.springframework.context.annotation.*;
  * Created by codefan on 17-7-18.
  */
 @Configuration
-@Import({IPOrStaticAppSystemBeanConfig.class,
+@Import({//IPOrStaticAppSystemBeanConfig.class,
     JdbcConfig.class,
     SpringSecurityDaoConfig.class,
     SpringSecurityCasConfig.class})
