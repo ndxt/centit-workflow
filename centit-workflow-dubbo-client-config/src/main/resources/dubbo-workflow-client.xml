@@ -14,8 +14,8 @@
 <!--    <dubbo:registry address="nacos://192.168.134.10:8848"/>-->
 <!--    <dubbo:consumer check="false"/>-->
 
-    <dubbo:reference id="flowEngine" interface="com.centit.workflow.service.FlowEngine" init="false"/>
-    <dubbo:reference id="flowDefine" interface="com.centit.workflow.service.FlowDefine" check="false" init="false"/>
-    <dubbo:reference id="flowManager" interface="com.centit.workflow.service.FlowManager" check="false" init="false"/>
+    <dubbo:reference id="flowEngine" interface="com.centit.workflow.service.FlowEngine" init="false" timeout="6000"/>
+    <dubbo:reference id="flowDefine" interface="com.centit.workflow.service.FlowDefine" check="false" init="false" timeout="6000"/>
+    <dubbo:reference id="flowManager" interface="com.centit.workflow.service.FlowManager" check="false" init="false" timeout="6000"/>
 
 </beans>

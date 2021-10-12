@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,8 @@ import java.util.Set;
  * @author codefan
  */
 @Data
-public class CreateFlowOptions implements FlowOptParamOptions{
+public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
+    private static final long serialVersionUID = 1L;
     /**
      * 流程代码
      */

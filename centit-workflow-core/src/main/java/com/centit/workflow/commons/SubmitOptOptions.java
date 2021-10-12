@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,8 @@ import java.util.Set;
  *                                       Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers
  */
 @Data
-public class SubmitOptOptions implements FlowOptParamOptions{
+public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
+    private static final long serialVersionUID = 1L;
     /**
      * 流程代码
      */
