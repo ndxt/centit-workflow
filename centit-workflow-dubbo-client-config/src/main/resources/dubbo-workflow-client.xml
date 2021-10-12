@@ -9,10 +9,13 @@
 	 http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
     <!-- 消费方应用信息，用于计算依赖关系 -->
-    <dubbo:application name="consumer"/>
-    <!-- 使用zookeeper注册中心暴露服务地址 -->
-    <dubbo:registry address="nacos://192.168.134.10:8848"/>
-    <dubbo:consumer check="false"/>
+<!--    <dubbo:application name="consumer"/>-->
+<!--    &lt;!&ndash; 使用zookeeper注册中心暴露服务地址 &ndash;&gt;-->
+<!--    <dubbo:registry address="nacos://192.168.134.10:8848"/>-->
+<!--    <dubbo:consumer check="false"/>-->
+
     <dubbo:reference id="flowEngine" interface="com.centit.workflow.service.FlowEngine" init="false"/>
+    <dubbo:reference id="flowDefine" interface="com.centit.workflow.service.FlowDefine" check="false" init="false"/>
+    <dubbo:reference id="flowManager" interface="com.centit.workflow.service.FlowManager" check="false" init="false"/>
 
 </beans>

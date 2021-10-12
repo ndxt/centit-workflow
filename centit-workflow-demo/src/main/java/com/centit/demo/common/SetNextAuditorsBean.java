@@ -22,7 +22,7 @@ import java.util.List;
  * Created by chen_rj on 2017/8/4.
  */
 @Transactional
-@Component
+//@Component
 public class SetNextAuditorsBean implements NodeEventSupport {
 
     @Autowired
