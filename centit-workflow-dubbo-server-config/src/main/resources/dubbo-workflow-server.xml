@@ -7,6 +7,7 @@
 	 http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
 	 http://code.alibabatech.com/schema/dubbo
 	 http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <dubbo:protocol name="dubbo" port="20881"/>
     <dubbo:service interface="com.centit.workflow.service.FlowEngine" ref="flowEngineImpl" protocol="dubbo" timeout="6000"/>
     <dubbo:service interface="com.centit.workflow.service.FlowDefine" ref="flowDefineImpl" protocol="dubbo" timeout="6000"/>
     <dubbo:service interface="com.centit.workflow.service.FlowManager" ref="flowManagerImpl" protocol="dubbo" timeout="6000"/>
