@@ -1,6 +1,7 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.basedata.OperationLog;
+import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
@@ -45,9 +46,14 @@ public class FlowOptUtils {
             stageInst.setFlowInstId(flowInstId);
             stageInst.setStageCode(wfStage.getStageCode());
             stageInst.setStageId(wfStage.getStageId());
-            stageInst.setPromiseTime(new WorkTimeSpan(timeLimit).toNumberAsMinute());
             stageInst.setStageBegin("0");
-            stageInst.setTimeLimit(stageInst.getPromiseTime());
+            if(BooleanBaseOpt.castObjectToBoolean(wfStage.getIsAccountTime(), false)) {
+                stageInst.setPromiseTime(new WorkTimeSpan(wfStage.getTimeLimit()).toNumberAsMinute());
+                stageInst.setTimeLimit(stageInst.getPromiseTime());
+            } else {
+                stageInst.setPromiseTime(-1l);
+                stageInst.setTimeLimit(1l);
+            }
             flowInst.addFlowStageInstance(stageInst);
         }
 

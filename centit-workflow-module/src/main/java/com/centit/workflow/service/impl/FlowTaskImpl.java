@@ -2,6 +2,7 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.basedata.NoticeMessage;
+import com.centit.product.oa.service.WorkDayManager;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 工作流引擎定时检测任务期限，并发出相应的消息
@@ -61,8 +64,26 @@ public class FlowTaskImpl {
     @Autowired
     private FlowEngine flowEngine;
 
+    @Autowired
+    private StageInstanceDao stageInstanceDao;
+
+    @Autowired
+    private WorkDayManager workDayManager;
+
     @Value("${workflow.flowTimeStart:true}")
     private Boolean flowTimeStart;
+
+    @Value("${workflow.amStart:900}")
+    private int amStart;
+
+    @Value("${workflow.amEnd:1130}")
+    private int amEnd;
+
+    @Value("${workflow.pmStart:1400}")
+    private int pmStart;
+
+    @Value("${workflow.pmEnd:1800}")
+    private int pmEnd;
 
     /**
      * 发送通知消息给待办用户
@@ -160,6 +181,7 @@ public class FlowTaskImpl {
             // stopFlow 是否结束流程
             Boolean stopFlow = false;
             // T 计时、有期限   F 不计时   H仅环节计时  暂停P
+            Set<String> stageCodes = new HashSet<>();
             for (NodeInstance nodeInst : nodeList) {
                 NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeId());
                 //* N：通知（预警）， O:不处理 ， X：挂起， E：终止（流程）， C：完成（强制提交,提交失败就挂起）
@@ -222,6 +244,10 @@ public class FlowTaskImpl {
                     nodeInstanceDao.updateObject(nodeInst);
                 }
 
+                if(StringUtils.isNotBlank(nodeInst.getStageCode())) {
+                    stageCodes.add(nodeInst.getStageCode());
+                }
+
                 if ("T".equals(nodeInst.getIsTimer())
                     /*&& "T".equals( node.getIsTrunkLine())*/) {
                     flowconsume = true;
@@ -253,6 +279,28 @@ public class FlowTaskImpl {
                 flowInstanceDao.updateObject(flowInst);
             }
 
+            // 更新阶段实例剩余办理时间
+            for (String stageCode : stageCodes) {
+                StageInstance stageInstance = stageInstanceDao.getStageInstanceByCode(flowInst.getFlowInstId(), stageCode);
+                if (null != stageInstance && stageInstance.getPromiseTime() > 0) {
+                    // 阶段预警
+                    if (stageInstance.getTimeLimit() > 0 && stageInstance.getTimeLimit() - consumeTime < 0) {
+                        FlowWarning flowWarning = new FlowWarning(flowInst.getFlowInstId(), stageCode, "W", "P");
+                        wfRuntimeWarningDao.saveNewObject(flowWarning);
+                    }
+                    stageInstance.setTimeLimit(stageInstance.getTimeLimit() - consumeTime);
+                    if ("1".equals(stageInstance.getStageBegin())) {
+                        stageInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+                    } else {
+                        stageInstance.setStageBegin("1");
+                        stageInstance.setBeginTime(DatetimeOpt.currentUtilDate());
+                        stageInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+                    }
+                    stageInstanceDao.updateObject(stageInstance);
+
+                }
+            }
+
         }
     }
 
@@ -266,9 +314,13 @@ public class FlowTaskImpl {
     }
 
     public boolean isWorkTime(Date workTime) {
+        boolean workdDay =  workDayManager.isWorkDay(DatetimeOpt.convertDatetimeToString(workTime));
+        if (!workdDay) {
+            return false;
+        }
         int m = DatetimeOpt.getMinute(workTime) + 100 * DatetimeOpt.getHour(workTime);
         //默认朝九晚五
-        return (m > 830 && m < 1200) || (m > 1330 && m < 1800);
+        return (m > amStart && m < amEnd) || (m > pmStart && m < pmEnd);
     }
 
     private void runEventTask(int maxRows) {

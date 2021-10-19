@@ -8,7 +8,6 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
-import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.NotificationCenter;
@@ -41,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 @Service
@@ -90,6 +89,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private OptVariableDefineDao optVariableDefineDao;
     @Autowired
     private FlowEventService flowEventService;
+    @Autowired
+    private StageInstanceDao stageInstanceDao;
 
     private final static Object lockObject = new Object();
 
@@ -228,6 +229,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInst.setFlowOptTag(options.getFlowOptTag());
         flowInstanceDao.saveNewObject(flowInst);
         // ----------- 创建 流程 实例 结束
+        for (StageInstance flowStageInstance : flowInst.getFlowStageInstances()) {
+            stageInstanceDao.saveNewObject(flowStageInstance);
+        }
+        //----------- 创建 流程阶段实例
         if (saveOptions) {
             saveValueAndRoleInOptions(flowInstId, "T", options);
         }
@@ -912,6 +917,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     stage.setBeginTime(DatetimeOpt.currentUtilDate());
                     stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                 }
+                stageInstanceDao.updateObject(stage);
             }
         }
 
@@ -1428,6 +1434,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 stage.setBeginTime(DatetimeOpt.currentUtilDate());
                 stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
             }
+            stageInstanceDao.updateObject(stage);
+
         }
         flowInst.setLastUpdateTime(updateTime);
         flowInst.setLastUpdateUser(options.getUserCode());

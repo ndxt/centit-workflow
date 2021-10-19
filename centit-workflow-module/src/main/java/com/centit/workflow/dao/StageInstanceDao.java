@@ -32,4 +32,13 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
     public StageInstance getObject(String flowInstId, String stageId) {
         return this.getObjectById(new StageInstanceId(flowInstId,stageId));
     }
+
+    @Transactional
+    public StageInstance getStageInstanceByCode(String flowInstId, String stageCode) {
+        List<StageInstance> stageInstances = listObjectsByFilter("where flow_Inst_Id=? and stage_code=?", new Object[]{flowInstId, stageCode});
+        if (null != stageInstances && stageInstances.size() > 0) {
+            return stageInstances.get(0);
+        }
+        return null;
+    }
 }
