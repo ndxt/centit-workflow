@@ -115,16 +115,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // 设置办件角色
         if (options.getFlowRoleUsers() != null && !options.getFlowRoleUsers().isEmpty()) {
             for (Map.Entry<String, List<String>> ent : options.getFlowRoleUsers().entrySet()) {
-                // 先清除重复的流程办件角色
-                this.deleteFlowWorkTeam(flowInstId, ent.getKey());
                 assignFlowWorkTeam(flowInstId, ent.getKey(), runToken, ent.getValue());
             }
         }
         // 设置流程机构
         if (options.getFlowOrganizes() != null && !options.getFlowOrganizes().isEmpty()) {
             for (Map.Entry<String, List<String>> ent : options.getFlowOrganizes().entrySet()) {
-                // 先清除原有的流程机构
-                this.deleteFlowOrganize(flowInstId, ent.getKey());
                 assignFlowOrganize(flowInstId, ent.getKey(), ent.getValue());
             }
         }
@@ -1592,18 +1588,30 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      */
     @Override
     public String rollBackNode(String nodeInstId, String managerUserCode) {
+        String msg;
         // 添加令牌算法
         NodeInstance thisNodeInst = nodeInstanceDao.getObjectWithReferences(nodeInstId);
-        if (thisNodeInst == null)
-            return null;
+        try{
+            thisNodeInst = nodeInstanceDao.getObjectWithReferences(nodeInstId);
+        }catch (NullPointerException e){
+            msg = "流程回退 flowRollback 失败, 节点不存在： nodeInstId: " + nodeInstId;
+            logger.error(msg);
+            throw new WorkflowException(WorkflowException.NodeInstNotFound, msg);
+        }
         // 当前节点状态必需为正常
-        if (!"N".equals(thisNodeInst.getNodeState()))
-            return null;
+        if (!"N".equals(thisNodeInst.getNodeState())) {
+            msg = "流程回退 flowRollback 失败, 节点状态不是办理中： nodeInstId: " + nodeInstId + "  nodeState :" + thisNodeInst.getNodeState();
+            logger.error(msg);
+            throw new WorkflowException(WorkflowException.IncorrectNodeState, msg);
+        }
 
         FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(thisNodeInst
             .getFlowInstId());
-        if (flowInst == null)
-            return null;
+        if (flowInst == null) {
+            logger.error("找不到流程实例：" + thisNodeInst.getFlowInstId());
+            throw new WorkflowException(WorkflowException.FlowInstNotFound,
+                "找不到流程实例：" + thisNodeInst.getFlowInstId());
+        }
 
         /*
          * WfNode nodedef = flowNodeDao.getObjectById( thisnode.getNodeId());
@@ -1623,7 +1631,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (prevNodeInst == null) {
             //找不到上一节点之后，判断是否子流程
             if (flowInst.getPreNodeInstId() == null) {
-                return null;
+                msg = "流程回退 rollBackNode 失败,找不到上一节点";
+                logger.error(msg);
+                throw new WorkflowException(WorkflowException.NodeInstNotFound, msg);
             } else {
                 //是子流程的话，把流程实例中的prenodeinst取出来找到对应的前一节点
                 subProcess = true;
@@ -1645,8 +1655,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 } else {
                     prevNodeInst = flowInst.getPareNodeInst(currnetNodeInstId);
                 }
-                if (prevNodeInst == null)
-                    return null;
+                if (prevNodeInst == null) {
+                    String nodeType = "";
+                    if(StringUtils.equals(nodedef.getNodeType(),NodeInfo.NODE_TYPE_AUTO)){
+                        nodeType = "自动运行节点";
+                    }else if(StringUtils.equals(nodedef.getNodeType(),NodeInfo.NODE_TYPE_SYNC)){
+                        nodeType = "同步节点";
+                    }else if(StringUtils.equals(nodedef.getNodeType(),NodeInfo.NODE_TYPE_SUBFLOW)){
+                        nodeType = "子流程";
+                    }
+                    msg = "流程回退 rollBackNode 失败,经过"+nodeType+"后,找不到上一节点";
+                    logger.error(msg);
+                    throw new WorkflowException(WorkflowException.IncorrectNodeState, msg);
+                }
                 //判断一下父流程中的节点是否已经被退回，已经被退回之后就不能再次退回
                 if (prevFlowInst != null) {
                     for (NodeInstance no : prevFlowInst.getFlowNodeInstances()) {
@@ -1654,7 +1675,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         if ("N,S,P".contains(no.getNodeState())) {
                             //如果想要退回的节点处于正常、暂缓，无需退回
                             if (prevNodeInst.getNodeId().equals(no.getNodeId())) {
-                                return null;
+                                msg = "流程回退 rollBackNode 失败,父流程中的节点已经被退回";
+                                logger.error(msg);
+                                throw new WorkflowException(WorkflowException.IncorrectNodeState, msg);
                             }
                         }
                     }

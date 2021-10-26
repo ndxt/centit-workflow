@@ -198,7 +198,9 @@ public class FlowTaskImpl {
                 } else if ("L".equals(warningRule)) {
 
                 } else if ("P".equals(warningRule)) {
-                    warning = parse(warningParam) >= nodeInst.getTimeLimit().doubleValue() / nodeInst.getPromiseTime().doubleValue();
+                    if (StringUtils.isNotBlank(warningParam) && nodeInst.getPromiseTime() > 0) {
+                        warning = parse(warningParam) >= nodeInst.getTimeLimit().doubleValue() / nodeInst.getPromiseTime().doubleValue();
+                    }
                 }
 
                 if (nodeInst.getTimeLimit() <= 0) {
