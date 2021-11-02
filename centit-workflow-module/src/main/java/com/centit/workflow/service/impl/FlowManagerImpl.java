@@ -838,6 +838,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 // FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, mangerUserCode);
             }
         }
+        thisnode.setNodeState("B");
+        // 设置最后更新时间和更新人
+        thisnode.setLastUpdateUser(mangerUserCode);
+        thisnode.setLastUpdateTime(updateTime);
+        nodeInstanceDao.updateObject(thisnode);
         // 创建新节点
         String lastNodeInstId = UuidOpt.getUuidAsString32();
 //        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
