@@ -11,4 +11,5 @@
     <dubbo:service interface="com.centit.workflow.service.FlowEngine" ref="flowEngineImpl" protocol="dubbo" timeout="6000"/>
     <dubbo:service interface="com.centit.workflow.service.FlowDefine" ref="flowDefineImpl" protocol="dubbo" timeout="6000"/>
     <dubbo:service interface="com.centit.workflow.service.FlowManager" ref="flowManagerImpl" protocol="dubbo" timeout="6000"/>
+    <dubbo:service interface="com.centit.workflow.service.FlowOptService" ref="flowOptServiceImpl" protocol="dubbo" timeout="6000"/>
 </beans>

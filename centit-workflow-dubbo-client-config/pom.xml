@@ -17,5 +17,10 @@
             <artifactId>framework-dubbo-client-config</artifactId>
             <version>${centit.framework.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-workflow-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
