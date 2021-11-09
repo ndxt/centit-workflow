@@ -602,7 +602,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     optUsers.add(u.getUserCode());
                 } else                    //nodeToken , currNodeToken , u.getRunToken()
                     if (StringUtils.equals(nodeToken, u.getRunToken())
-                        || StringUtils.isBlank(currNodeToken)
+                        || currNodeToken == null || StringUtils.isBlank(currNodeToken)
                         || (nodeToken.startsWith(u.getRunToken())
                         && (!nodeToken.startsWith(currNodeToken) || u.getRunToken().length() > currNodeToken.length()))) {
                         optUsers.clear();

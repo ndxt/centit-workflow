@@ -185,6 +185,7 @@ public class FlowDefineController extends BaseController {
         FlowInfo flowInfo = flowDefine.getFlowInfo(flowcode, 0);
         if (flowInfo == null) {
             ResponseData.makeErrorMessage("未获取到流程节点，可能是流程没有保存。");
+            return null;
         }
         JSONArray nodeList = JSONObject.parseObject(new String(flowInfo.getFlowXmlDesc())).getJSONArray("nodeList");
         nodeList.removeIf(

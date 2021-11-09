@@ -515,10 +515,13 @@ public class FlowInstance implements java.io.Serializable {
 
         for (NodeInstance ni : flowNodeInstances) {
             if (token.endsWith(ni.getRunToken())) {
-                if (sameInst == null)
+                if(sameInst == null || ni.getCreateTime().after(sameInst.getCreateTime())){
                     sameInst = ni;
-                else if (ni.getCreateTime().after(sameInst.getCreateTime()))//大小于
-                    sameInst = ni;
+                }
+//                if (sameInst == null)
+//                    sameInst = ni;
+//                else if (ni.getCreateTime().after(sameInst.getCreateTime()))//大小于
+//                    sameInst = ni;
             }
         }
         if (sameInst == null)
