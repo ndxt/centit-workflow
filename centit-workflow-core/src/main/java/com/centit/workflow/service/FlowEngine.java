@@ -680,13 +680,6 @@ public interface FlowEngine {
      */
     FlowInfo getFlowDefine(String flowInstId);
 
-    /**
-     * 获取流程业务信息
-     *
-     * @param flowInstId 实例id
-     * @return 流程业务信息
-     */
-    FlowOptInfo getFlowOptInfo(String flowInstId);
 
     /**
      * 根据节点实例号 获得节点实例

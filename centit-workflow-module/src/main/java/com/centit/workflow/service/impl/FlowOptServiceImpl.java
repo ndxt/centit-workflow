@@ -1,12 +1,9 @@
 package com.centit.workflow.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.dao.FlowOptInfoDao;
 import com.centit.workflow.dao.FlowOptPageDao;
 import com.centit.workflow.dao.OptTeamRoleDao;
 import com.centit.workflow.dao.OptVariableDefineDao;
-import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.po.OptTeamRole;
 import com.centit.workflow.po.OptVariableDefine;
@@ -25,8 +22,6 @@ import java.util.Map;
  */
 @Service
 public class FlowOptServiceImpl implements FlowOptService {
-    @Autowired
-    private FlowOptInfoDao flowOptInfoDao;
 
     @Autowired
     private FlowOptPageDao flowOptPageDao;
@@ -37,43 +32,6 @@ public class FlowOptServiceImpl implements FlowOptService {
     @Autowired
     private OptVariableDefineDao optVariableDefineDao;
 
-    @Override
-    public List<FlowOptInfo> getListOptInfo() {
-        List<FlowOptInfo> flowOptInfos = flowOptInfoDao.listObjects();
-        return flowOptInfos;
-    }
-
-    @Override
-    @Transactional
-    public JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc) {
-        return flowOptInfoDao.listObjectsAsJson(filterMap, pageDesc);
-    }
-
-    @Override
-    public FlowOptInfo getOptByModelId(String modelId) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("modelId",modelId);
-        FlowOptInfo optInfo = flowOptInfoDao.getObjectByProperties(properties);
-        return optInfo;
-    }
-
-    @Override
-    public FlowOptInfo getFlowOptInfoById(String optId) {
-        return flowOptInfoDao.getObjectById(optId);
-    }
-
-    @Override
-    @Transactional
-    public void deleteOptInfoById(String optId) {
-        flowOptInfoDao.deleteObjectById(optId);
-    }
-
-    @Override
-    @Transactional
-    public void saveOptInfo(FlowOptInfo FlowOptInfo) {
-        FlowOptInfo.setUpdateDate(new Date());
-        flowOptInfoDao.mergeObject(FlowOptInfo);
-    }
 
     @Override
     @Transactional
@@ -129,10 +87,6 @@ public class FlowOptServiceImpl implements FlowOptService {
         return flowOptPageDao.listObjectsByProperties(filterMap,pageDesc);
     }
 
-    @Override
-    public String getOptInfoSequenceId() {
-        return flowOptInfoDao.getOptInfoSequenceId();
-    }
 
     @Override
     public String getOptDefSequenceId() {

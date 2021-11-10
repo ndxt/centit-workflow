@@ -25,7 +25,7 @@ public interface FlowDefine {
     /**
      * 发布流程，返回当前流程版本号
      */
-    long publishFlowDef(String  flowCode);
+    long publishFlowDef(String  flowCode, String appId);
 
     /**
      * 获取指定版本流程定义描述文件
@@ -110,15 +110,7 @@ public interface FlowDefine {
      */
     Set<String> getUnitExp(String flowCode, Long version);
 
-    /**
-     * 获取流程业务表单，用于流程业务定义
-     * @param filterMap 过滤条件
-     * @param pageDesc 分页信息
-     * @return 流程业务信息列表
-     */
-    List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap,
-                                  PageDesc pageDesc);
-    /**
+       /**
      * 根据流程code删除相关的流程定义，用于删除多余的测试数据
      * @param flowCode 流程代码
      */

@@ -51,16 +51,7 @@ public class FlowDefineClientImpl implements FlowDefine {
         return receiveJSON.getDataAsArray(FlowInfo.class);
     }
 
-    @Override
-    public List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap,
-                                  PageDesc pageDesc){
-        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            UrlOptUtils.appendParamsToUrl(
-                UrlOptUtils.appendParamsToUrl("/flow/opt",
-                    filterMap), (JSONObject)JSON.toJSON(pageDesc)));
-        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
-        return receiveJSON.getDataAsArray("objList",FlowOptInfo.class);
-    }
+
 
     /**
      * 获取 流程信息
@@ -179,7 +170,7 @@ public class FlowDefineClientImpl implements FlowDefine {
      * @param flowCode
      */
     @Override
-    public long publishFlowDef(String flowCode) {
+    public long publishFlowDef(String flowCode, String appId) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

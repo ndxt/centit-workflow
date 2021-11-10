@@ -7,6 +7,8 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
+import com.centit.metaform.dubbo.adapter.MetaFormModelManager;
+import com.centit.metaform.dubbo.adapter.po.MetaFormModel;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.algorithm.UuidOpt;
@@ -40,9 +42,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private FlowOptPageDao flowOptPageDao;
 
     @Autowired
-    private FlowOptInfoDao flowOptInfoDao;
-
-    @Autowired
     private RoleFormulaDao flowRoleDao;
 
     @Autowired
@@ -56,6 +55,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Autowired
     private FlowStageDao flowStageDao;
+
+    @Autowired
+    private MetaFormModelManager metaFormModelManager;
 
     private static Logger logger = LoggerFactory.getLogger(FlowDefineImpl.class);
     public static final String BEGINNODETAG = "begin";
@@ -280,7 +282,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @SuppressWarnings("unchecked")
     @Transactional
     @Override
-    public long publishFlowDef(String flowCode) {
+    public long publishFlowDef(String flowCode, String appId) {
         // 将流程从 XML 格式中解析出来
         FlowInfo flowDef = flowDefineDao.getObjectWithReferences(new FlowInfoId(0L, flowCode));
         if (flowDef == null) {
@@ -327,10 +329,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         //newFlowDef.getWfFlowStages()
         //修复数据遗漏的bug
         if(StringUtils.isBlank(flowDef.getOsId())) {
-            FlowOptInfo optInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
-            if (optInfo != null) {
-                newFlowDef.setOsId(optInfo.getApplicationId());
-            }
+            newFlowDef.setOsId(appId);
         } else {
             newFlowDef.setOsId(flowDef.getOsId());
         }
@@ -476,17 +475,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return flowNodeDao.getUnitExp(flowCode, version);
     }
 
-    /**
-     * 获取流程业务表单，用于流程业务定义
-     *
-     * @param filterMap 过滤条件
-     * @param pageDesc  分页信息
-     * @return 流程业务信息列表
-     */
-    @Override
-    public List<FlowOptInfo> listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc) {
-        return flowOptInfoDao.listObjects(filterMap, pageDesc);
-    }
 
     @Override
     @Transactional
@@ -533,14 +521,14 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      */
     private Map<String, String> listAllOptCode(String flowCode, long version) {
         FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
-        //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
-        // 新建流程时，查询不到流程定义
         String optId = flowDef == null ? null : flowDef.getOptId();
-        List<FlowOptPage> wfOptDefs = flowOptPageDao.listObjectsByProperty("optId", optId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("optId",optId);
+        JSONArray jsonArray = metaFormModelManager.listMetaFormModelsAsJson(null,map,null);
+        List<MetaFormModel> list = JSONObject.parseArray(jsonArray.toJSONString(), MetaFormModel.class);
         Map<String, String> optMap = new HashMap<>();
-        for (FlowOptPage f : wfOptDefs) {
-            //optMap.put(flowOptInfo.getOptUrl() + f.getOptMethod(), f.getOptName());
-            optMap.put(f.getOptCode(),f.getOptName());
+        for (MetaFormModel model : list) {
+            optMap.put(model.getModelId(),model.getModelName());
         }
         return optMap;
     }

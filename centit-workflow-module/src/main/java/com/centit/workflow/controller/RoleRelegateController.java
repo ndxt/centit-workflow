@@ -11,7 +11,6 @@ import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.RoleRelegate;
 import com.centit.workflow.service.FlowOptService;
 import com.centit.workflow.service.RoleRelegateService;
@@ -77,11 +76,11 @@ public class RoleRelegateController extends BaseController {
         List<RoleRelegate> relegateList = roleRelegateService.getRelegateListByGrantor(filterMap, pageDesc);
 
         JSONArray relegates = DictionaryMapUtils.objectsToJSONArray(relegateList);
-        List<FlowOptInfo> listOptInfo = wfOptService.getListOptInfo();
-        Map<String, String> optInfoMap = listOptInfo.stream().collect(Collectors.toMap(FlowOptInfo::getOptId, FlowOptInfo::getOptName));
-        for (Object relegate : relegates) {
-            ((JSONObject) relegate).put("optName", optInfoMap.get(((JSONObject) relegate).getString("optId")));
-        }
+//        List<FlowOptInfo> listOptInfo = wfOptService.getListOptInfo();
+//        Map<String, String> optInfoMap = listOptInfo.stream().collect(Collectors.toMap(FlowOptInfo::getOptId, FlowOptInfo::getOptName));
+//        for (Object relegate : relegates) {
+//            ((JSONObject) relegate).put("optName", optInfoMap.get(((JSONObject) relegate).getString("optId")));
+//        }
 
 //        List<JSONObject> relegateList2 = flowManager.getListRoleRelegateByGrantor(grantor);
 //        return PageQueryResult.createResultMapDict(relegateList, pageDesc);

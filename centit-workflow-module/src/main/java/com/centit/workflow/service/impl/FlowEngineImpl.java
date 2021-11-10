@@ -64,8 +64,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private FlowInfoDao flowDefDao;
     @Autowired
-    private FlowOptInfoDao flowOptInfoDao;
-    @Autowired
     private FlowOptPageDao flowOptPageDao;
     @Autowired
     private FlowManager flowManager;
@@ -280,20 +278,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             flowInst.getFlowCode(), flowInst.getVersion());
     }
 
-    /**
-     * 获取流程业务信息
-     *
-     * @param flowInstId 实例id
-     * @return 流程业务信息
-     */
-    @Override
-    public FlowOptInfo getFlowOptInfo(String flowInstId) {
-        FlowInfo flowInfo = getFlowDefine(flowInstId);
-        if (flowInfo == null) {
-            return null;
-        }
-        return flowOptInfoDao.getObjectById(flowInfo.getOptId());
-    }
 
     @Override
     public NodeInstance getNodeInstById(String nodeInstId) {

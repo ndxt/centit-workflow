@@ -10,7 +10,6 @@ import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.basedata.IOsInfo;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.po.OptTeamRole;
 import com.centit.workflow.po.OptVariableDefine;
@@ -47,50 +46,6 @@ public class FlowOptController extends BaseController {
             WebOptUtils.getCurrentTopUnit(request));
     }
 
-    //工作流--流程定义--业务模块取值
-    @ApiOperation(value = "获取业务列表", notes = "获取业务列表")
-    @WrapUpResponseBody
-    @RequestMapping(value="/allOptInfos" ,method = RequestMethod.GET)
-    public List<FlowOptInfo> listFlowOptInfo(){
-         return wfOptService.getListOptInfo();
-    }
-
-    @ApiOperation(value = "分页获取业务列表", notes = "分页获取业务列表")
-    @WrapUpResponseBody
-    @RequestMapping(method = RequestMethod.GET)
-    public PageQueryResult listOptInfo(PageDesc pageDesc, HttpServletRequest request){
-        Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
-        JSONArray objList = wfOptService.listOptInfo(filterMap, pageDesc);
-        return PageQueryResult.createResult(objList, pageDesc);
-    }
-
-    @ApiOperation(value = "获取指定业务", notes = "获取指定业务")
-    @WrapUpResponseBody
-    @RequestMapping(value = "/{optId}", method = RequestMethod.GET)
-    public FlowOptInfo getOptInfoById(@PathVariable String optId) {
-        return this.wfOptService.getFlowOptInfoById(optId);
-    }
-
-    @ApiOperation(value = "删除业务", notes = "删除业务")
-    @WrapUpResponseBody
-    @RequestMapping(value="/{optId}",method = RequestMethod.DELETE)
-    public void deleteOptInfoById(@PathVariable String optId){
-        wfOptService.deleteOptInfoById(optId);
-    }
-
-    @ApiOperation(value = "保存新业务", notes = "保存新业务")
-    @WrapUpResponseBody
-    @RequestMapping(method = RequestMethod.POST)
-    public void saveNewOptInfo(@RequestBody FlowOptInfo FlowOptInfo){
-        wfOptService.saveOptInfo(FlowOptInfo);
-    }
-
-    @ApiOperation(value = "更改业务", notes = "更改业务")
-    @WrapUpResponseBody
-    @RequestMapping(method = RequestMethod.PUT)
-    public void updateOptInfo(@RequestBody FlowOptInfo FlowOptInfo){
-        wfOptService.saveOptInfo(FlowOptInfo);
-    }
 
     //根据optId获取表wf_optdef中数据，分页功能没有加！
     @ApiOperation(value = "根据optId获取流程页面,用于编辑包括交互的和自动运行的",
@@ -130,14 +85,6 @@ public class FlowOptController extends BaseController {
         wfOptService.deleteOptPageByCode(optCode);
     }
 
-    @RequestMapping(value = "/newId", method = RequestMethod.GET)
-    public void getNextOptInfoId(HttpServletResponse response) {
-        String optInfoId = wfOptService.getOptInfoSequenceId();
-        FlowOptInfo copy = new FlowOptInfo();
-        copy.setOptId(optInfoId);
-        copy.setUpdateDate(new Date());
-        JsonResultUtils.writeSingleDataJson(copy, response);
-    }
 
     @RequestMapping("/newOptCode")
     public void getNextOptDefId(String optId, HttpServletResponse response) {

@@ -1,8 +1,6 @@
 package com.centit.workflow.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.po.FlowOptInfo;
 import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.po.OptTeamRole;
 import com.centit.workflow.po.OptVariableDefine;
@@ -16,14 +14,6 @@ import java.util.Map;
  *
  */
 public interface FlowOptService {
-
-    JSONArray listOptInfo(Map<String, Object> filterMap, PageDesc pageDesc);
-
-    FlowOptInfo getFlowOptInfoById(String optId);
-
-    void deleteOptInfoById(String optId);
-
-    void saveOptInfo(FlowOptInfo FlowOptInfo);
 
     void saveOptPage(FlowOptPage FlowOptDef);
 
@@ -39,13 +29,7 @@ public interface FlowOptService {
 
     List<FlowOptPage> listOptAutoRunById(String optId);
 
-    String getOptInfoSequenceId();
-
     String getOptDefSequenceId();
-
-    List<FlowOptInfo> getListOptInfo();
-
-    FlowOptInfo getOptByModelId(String modelId);
 
     /**
      * 根据过滤条件查询相关角色定义列表

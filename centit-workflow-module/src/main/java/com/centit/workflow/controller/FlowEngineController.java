@@ -239,19 +239,6 @@ public class FlowEngineController extends BaseController {
         return flowEngine.listAllFlowInstByOptTag(flowOptTag);
     }
 
-    @ApiOperation(value = "更改流程业务信息", notes = "更改流程业务信息程")
-    @WrapUpResponseBody
-    @PostMapping(value = "/updateFlowOptInfo")
-    public void updateFlowInstOptInfo(@RequestBody String json) {
-        JSONObject jsonObject = JSON.parseObject(json);
-        //流程实例ID
-        String flowInstId = jsonObject.getString("flowInstId");
-        //流程名称
-        String flowOptName = jsonObject.getString("flowOptName");
-        //流程业务id
-        String flowOptTag = jsonObject.getString("flowOptTag");
-        flowEngine.updateFlowInstOptInfo(flowInstId, flowOptName, flowOptTag);
-    }
 
 
     @ApiOperation(value = "更改流程节点参数", notes = "更改流程业务信息程")
@@ -441,22 +428,6 @@ public class FlowEngineController extends BaseController {
             instance.getVersion());
     }
 
-    /**
-     * 获取流程业务信息
-     *
-     * @param flowInstId 实例id
-     * @return 流程业务信息
-     */
-    @ApiOperation(value = "获取流程定义信息", notes = "获取流程定义信息")
-    @WrapUpResponseBody
-    @GetMapping(value = "/optInfo/{flowInstId}")
-    public FlowOptInfo getFlowOptInfo(@PathVariable String flowInstId) {
-        FlowInfo flowInfo = getFlowDefine(flowInstId);
-        if (flowInfo == null) {
-            return null;
-        }
-        return flowOptService.getFlowOptInfoById(flowInfo.getOptId());
-    }
 
     /**
      * 获取节点实例信息
