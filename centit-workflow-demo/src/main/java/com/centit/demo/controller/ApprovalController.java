@@ -6,6 +6,7 @@ import com.centit.demo.po.ApprovalEvent;
 import com.centit.demo.po.ApprovalProcess;
 import com.centit.demo.service.ApprovalService;
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.workflow.client.service.impl.FlowManagerClientImpl;
 import com.centit.workflow.commons.SubmitOptOptions;
@@ -37,8 +38,8 @@ public class ApprovalController {
     @Autowired
     private FlowManagerClientImpl flowManager;
     @RequestMapping(value = "/listAllUser", method = RequestMethod.GET)
-    public void listAllUser(HttpServletResponse response){
-        Object userList = platformEnvironment.listAllUsers();
+    public void listAllUser(HttpServletRequest request,HttpServletResponse response){
+        Object userList = platformEnvironment.listAllUsers(WebOptUtils.getCurrentTopUnit(request));
         JsonResultUtils.writeSingleDataJson(userList,response);
     }
 

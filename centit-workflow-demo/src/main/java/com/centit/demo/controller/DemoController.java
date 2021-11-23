@@ -1,6 +1,7 @@
 package com.centit.demo.controller;
 
 import com.centit.framework.common.JsonResultUtils;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
@@ -59,8 +60,8 @@ public class DemoController {
     }
 
     @RequestMapping(value = "/listAllUser", method = RequestMethod.GET)
-    public void listAllUser(HttpServletResponse response){
-        Object userList = platformEnvironment.listAllUsers();
+    public void listAllUser(HttpServletRequest request,HttpServletResponse response){
+        Object userList = platformEnvironment.listAllUsers(WebOptUtils.getCurrentTopUnit(request));
         JsonResultUtils.writeSingleDataJson(userList,response);
     }
 

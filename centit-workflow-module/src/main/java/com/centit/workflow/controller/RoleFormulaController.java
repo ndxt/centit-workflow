@@ -5,8 +5,10 @@ import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.basedata.IUnitInfo;
 import com.centit.framework.model.basedata.IUserInfo;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.service.RoleFormulaService;
@@ -44,6 +46,10 @@ public class RoleFormulaController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     public PageQueryResult<RoleFormula> listAllRoleFormula(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response){
         Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
+        if(WebOptUtils.isTenantTopUnit(request)) {
+            String topUnit = WebOptUtils.getCurrentTopUnit(request);
+            filterMap.put("topUnit", topUnit);
+        }
         List<RoleFormula> listObjects = roleFormulaService.listRoleFormulas(filterMap, pageDesc);
 
         return PageQueryResult.createResult(listObjects, pageDesc);
@@ -57,7 +63,11 @@ public class RoleFormulaController extends BaseController {
     @ApiOperation(value = "保存权限表达式", notes = "保存权限表达式")
     @WrapUpResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public RoleFormula saveFlowRole(@RequestBody RoleFormula roleFormula){
+    public RoleFormula saveFlowRole(HttpServletRequest request,@RequestBody RoleFormula roleFormula){
+        if(WebOptUtils.isTenantTopUnit(request)) {
+            String topUnit = WebOptUtils.getCurrentTopUnit(request);
+            roleFormula.setTopUnit(topUnit);
+        }
         roleFormulaService.saveRoleFormula(roleFormula);
         return roleFormula;
     }

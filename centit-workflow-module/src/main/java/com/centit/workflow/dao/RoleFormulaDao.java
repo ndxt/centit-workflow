@@ -1,6 +1,9 @@
 package com.centit.workflow.dao;
 
+import com.centit.framework.common.WebOptUtils;
+import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.workflow.po.RoleFormula;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +31,13 @@ public class RoleFormulaDao extends BaseDaoImpl<RoleFormula, String> {
     public Map<String, String> listAllRoleMsg() {
 //        FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
         //FlowOptInfo flowOptInfo = flowOptInfoDao.getObjectById(flowDef.getOptId());
-        List<RoleFormula> flowRoles = this.listObjects();
+        List<RoleFormula> flowRoles;
+        if(WebOptUtils.isTenantTopUnit(RequestThreadLocal.getLocalThreadWrapperRequest())){
+            String topUnit = WebOptUtils.getCurrentTopUnit(RequestThreadLocal.getLocalThreadWrapperRequest());
+            flowRoles= this.listObjects(CollectionsOpt.createHashMap("topUnit",topUnit));
+        }else {
+            flowRoles = this.listObjects();
+        }
         Map<String, String> roleMap = new HashMap<>();
         for (RoleFormula flowRole : flowRoles) {
             roleMap.put(flowRole.getFormulaCode(),flowRole.getFormulaName());

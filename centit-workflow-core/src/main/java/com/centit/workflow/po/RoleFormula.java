@@ -44,5 +44,7 @@ public class RoleFormula implements Serializable {
     @Column(name = "CREATE_TIME")
     @ValueGenerator(strategy = GeneratorType.FUNCTION, value = "today()")
     private Date createTime;
+    @Column(name = "TOP_UNIT")
+    private String topUnit;
 
 }
