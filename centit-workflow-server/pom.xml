@@ -15,14 +15,20 @@
     <description>工作流引擎服务，可以独立运行;这个工程也做为示例工程;
         业务需要用工作流引擎时可以复制这个工程，并对其进行改造。
     </description>
-
+    <properties>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+    </properties>
     <dependencies>
 <!--        <dependency>-->
 <!--            <groupId>com.centit.framework</groupId>-->
 <!--            <artifactId>framework-core</artifactId>-->
 <!--            <version>4.6-asyn-SNAPSHOT</version>-->
 <!--        </dependency>-->
-
+        <dependency>
+            <groupId>com.centit.framework</groupId>
+            <artifactId>centit-ip-app-base-config</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-ip-dubbo-client-config</artifactId>
@@ -51,16 +57,7 @@
             <artifactId>rmdb-opt-log</artifactId>
         </dependency>
 
-          <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-app</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-app-base-config</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!--<dependency>
             <groupId>com.centit.framework</groupId>
