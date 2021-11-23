@@ -558,5 +558,13 @@ public class FlowDefineController extends BaseController {
     public void saveFlowStage(@RequestBody FlowStage flowStage) {
         flowDefine.saveFlowStage(flowStage);
     }
-
+    @ApiOperation(value = "修改表单所属业务模块")
+    @PutMapping(value = "/batchUpdateOptId")
+    @Transactional
+    public JSONObject batchUpdateOptId(String optId , @RequestBody List<String> flowCodes) {
+        int[] flowDefineArr = flowDefine.batchUpdateOptId(optId, flowCodes);
+        JSONObject result = new JSONObject();
+        result.put("flowDefineArr",flowDefineArr);
+        return result;
+    }
 }

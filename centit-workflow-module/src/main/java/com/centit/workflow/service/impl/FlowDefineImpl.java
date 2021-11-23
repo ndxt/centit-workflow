@@ -21,11 +21,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 @Service
@@ -811,6 +814,22 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             flowDef.setFlowClass("R");
             flowDefineDao.updateObject(flowDef);
         }
+    }
+    @Override
+    public int[] batchUpdateOptId(String optId, List<String> flowCodes) {
+        String sql="UPDATE wf_flow_define SET OPT_ID=? WHERE flow_code = ? ";
+        return flowDefineDao.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, optId);
+                ps.setString(2, flowCodes.get(i));
+            }
+
+            @Override
+            public int getBatchSize() {
+                return flowCodes.size();
+            }
+        });
     }
 
 }

@@ -449,4 +449,9 @@ public class FlowDefineClientImpl implements FlowDefine {
     public void saveFlowStage(FlowStage flowStage) {
         throw new ObjectException("This function is not been implemented in client.");
     }
+
+    @Override
+    public int[] batchUpdateOptId(String optId, List<String> flowCodes) {
+        return new int[0];
+    }
 }

@@ -242,4 +242,5 @@ public interface FlowDefine {
      * @param flowStage
      */
     void saveFlowStage(FlowStage flowStage);
+    int[] batchUpdateOptId(String optId, List<String> flowCodes);
 }
