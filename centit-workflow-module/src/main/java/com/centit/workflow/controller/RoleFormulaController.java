@@ -1,6 +1,7 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
@@ -9,6 +10,8 @@ import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.basedata.IUnitInfo;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.algorithm.StringBaseOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.service.RoleFormulaService;
@@ -64,6 +67,10 @@ public class RoleFormulaController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public RoleFormula saveFlowRole(HttpServletRequest request,@RequestBody RoleFormula roleFormula){
+        String loginUser = WebOptUtils.getCurrentUserCode(RequestThreadLocal.getLocalThreadWrapperRequest());
+        if (StringBaseOpt.isNvl(loginUser)) {
+            throw new ObjectException(ResponseData.ERROR_USER_NOT_LOGIN, "您未登录！");
+        }
         if(WebOptUtils.isTenantTopUnit(request)) {
             String topUnit = WebOptUtils.getCurrentTopUnit(request);
             roleFormula.setTopUnit(topUnit);
