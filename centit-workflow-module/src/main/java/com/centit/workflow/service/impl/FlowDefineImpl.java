@@ -7,8 +7,6 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
-import com.centit.metaform.dubbo.adapter.MetaFormModelManager;
-import com.centit.metaform.dubbo.adapter.po.MetaFormModel;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.algorithm.UuidOpt;
@@ -59,9 +57,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Autowired
     private FlowStageDao flowStageDao;
 
-    @Autowired
-    private MetaFormModelManager metaFormModelManager;
-
     private static Logger logger = LoggerFactory.getLogger(FlowDefineImpl.class);
     public static final String BEGINNODETAG = "begin";
     public static final String ENDNODETAG = "end";
@@ -78,10 +73,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     }
 
     @PostConstruct
-    public void registerDictionary(){
+    public void registerDictionary() {
         CodeRepositoryUtil.registeExtendedCodeRepo(
             "flowCode", flowDefineDao.listFlowCodeNameMap()
-            );
+        );
     }
 
     @Override
@@ -99,8 +94,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowData.nodeTagToId.clear();
         flowData.transTagToId.clear();
         String startNodeId = null;
-        for(NodeInfo node : flowDef.getNodeList()){
-            if(NodeInfo.NODE_TYPE_START.equals(node.getNodeType())){
+        for (NodeInfo node : flowDef.getNodeList()) {
+            if (NodeInfo.NODE_TYPE_START.equals(node.getNodeType())) {
                 startNodeId = node.getNodeId();
             }
             String thisNodeId = UuidOpt.getUuidAsString32();
@@ -112,10 +107,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             }
         }
 
-        for(FlowTransition tran : flowDef.getTransList()){
+        for (FlowTransition tran : flowDef.getTransList()) {
             String fromNodeId = flowData.nodeTagToId.get(tran.getStartNodeId());
             String toNodeId = flowData.nodeTagToId.get(tran.getEndNodeId());
-            if(StringUtils.equals(startNodeId, tran.getStartNodeId())){
+            if (StringUtils.equals(startNodeId, tran.getStartNodeId())) {
                 flowDef.setFirstNodeId(toNodeId);
             }
             tran.setStartNodeId(fromNodeId);
@@ -225,13 +220,13 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return getFlowDefXML(flowCode, 0);
     }
 
-    private void checkFlowDef(FlowInfo newFlowDef){
+    private void checkFlowDef(FlowInfo newFlowDef) {
         //验证流程节点定义
         for (NodeInfo nd : newFlowDef.getNodeList()) {
             if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nd.getNodeType())) {
                 if (StringRegularOpt.isNvl(nd.getSubFlowCode()))
                     throw new ObjectException("子流程节点：" + nd.getNodeName() + ",没有指定流程代码。");
-            } else if (NodeInfo.NODE_TYPE_OPT.equals(nd.getNodeType())){
+            } else if (NodeInfo.NODE_TYPE_OPT.equals(nd.getNodeType())) {
                 if (StringRegularOpt.isNvl(nd.getOptCode()))
                     throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
                 if (StringRegularOpt.isNvl(nd.getRoleType()))
@@ -245,22 +240,22 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                         throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定角色代码。");
                 }
             } else if (NodeInfo.NODE_TYPE_AUTO.equals(nd.getNodeType())) {
-                if(StringUtils.isBlank(nd.getUnitExp())){
+                if (StringUtils.isBlank(nd.getUnitExp())) {
                     nd.setUnitExp("D(P)");
                 }
-                if(StringUtils.isBlank(nd.getRoleType())){
+                if (StringUtils.isBlank(nd.getRoleType())) {
                     nd.setRoleType(SysUserFilterEngine.ROLE_TYPE_ENGINE);
                     nd.setPowerExp("U(P)");
                 }
-                if(NodeInfo.AUTO_NODE_OPT_CODE_CALL.equals(nd.getAutoRunType())
-                    && StringRegularOpt.isNvl(nd.getOptCode())){
-                        throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
-                } else if(NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nd.getAutoRunType())
+                if (NodeInfo.AUTO_NODE_OPT_CODE_CALL.equals(nd.getAutoRunType())
+                    && StringRegularOpt.isNvl(nd.getOptCode())) {
+                    throw new ObjectException("节点：" + nd.getNodeName() + ",没有指定业务操作代码。");
+                } else if (NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nd.getAutoRunType())
                     && StringRegularOpt.isNvl(nd.getOptBean())) {
-                        throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的bean。");
-                } else if(NodeInfo.AUTO_NODE_OPT_CODE_SCRIPT.equals(nd.getAutoRunType())
+                    throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的bean。");
+                } else if (NodeInfo.AUTO_NODE_OPT_CODE_SCRIPT.equals(nd.getAutoRunType())
                     && StringRegularOpt.isNvl(nd.getOptParam())) {
-                        throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的script。");
+                    throw new ObjectException("自动运行节点：" + nd.getNodeName() + ",没有运行的script。");
                 }
             } else if (NodeInfo.NODE_TYPE_ROUTE.equals(nd.getNodeType())) {
                 if (StringRegularOpt.isNvl(nd.getRouterType())) {
@@ -273,9 +268,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         for (FlowTransition tran : newFlowDef.getTransList()) {
             if (StringUtils.isBlank(tran.getTransCondition())) {
                 NodeInfo nd = newFlowDef.getFlowNodeById(tran.getStartNodeId());
-                if (nd != null && NodeInfo.NODE_TYPE_ROUTE.equals (nd.getNodeType()) &&
+                if (nd != null && NodeInfo.NODE_TYPE_ROUTE.equals(nd.getNodeType()) &&
                     (NodeInfo.ROUTER_TYPE_BRANCH.equals(nd.getRouterType())
-                     || NodeInfo.ROUTER_TYPE_PARALLEL.equals(nd.getRouterType()))) {
+                        || NodeInfo.ROUTER_TYPE_PARALLEL.equals(nd.getRouterType()))) {
                     throw new ObjectException("流转：" + tran.getTransName() + ",没有指定流转条件。");
                 }
             }
@@ -331,7 +326,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         //复制相关节点信息
         //newFlowDef.getWfFlowStages()
         //修复数据遗漏的bug
-        if(StringUtils.isBlank(flowDef.getOsId())) {
+        if (StringUtils.isBlank(flowDef.getOsId())) {
             newFlowDef.setOsId(appId);
         } else {
             newFlowDef.setOsId(flowDef.getOsId());
@@ -345,7 +340,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowDefineDao.updateObject(flowDef);
 
         //将非0老版本流程状态改为已过期
-        if(nCurVersion>0) {
+        if (nCurVersion > 0) {
             FlowInfo oldflowDef = flowDefineDao.getObjectById(new FlowInfoId(nCurVersion, flowDef.getFlowCode()));
             if (oldflowDef != null) {
                 oldflowDef.setFlowState(FlowInfo.FLOW_STATE_INVALID);
@@ -355,17 +350,17 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return newVersion;
     }
 
-    private void resetNodeTransIdToJSON(String xmlDefineDesc, FlowInfo newFlowDef, FlowDataDetail flowData){
+    private void resetNodeTransIdToJSON(String xmlDefineDesc, FlowInfo newFlowDef, FlowDataDetail flowData) {
         JSONObject defJson = JSON.parseObject(xmlDefineDesc);
         JSONArray nodes = defJson.getJSONArray("nodeList");
-        for(Object nodeObj : nodes){
-            String nodeId = ((JSONObject)nodeObj).getString("nodeId");
-            ((JSONObject)nodeObj).put("nodeId", flowData.nodeTagToId.get(nodeId));
+        for (Object nodeObj : nodes) {
+            String nodeId = ((JSONObject) nodeObj).getString("nodeId");
+            ((JSONObject) nodeObj).put("nodeId", flowData.nodeTagToId.get(nodeId));
         }
 
         JSONArray trans = defJson.getJSONArray("transList");
-        for(Object tranObj : trans){
-            JSONObject transJson = (JSONObject)tranObj;
+        for (Object tranObj : trans) {
+            JSONObject transJson = (JSONObject) tranObj;
             String transId = transJson.getString("transId");
             transJson.put("transId", flowData.transTagToId.get(transId));
             String startNodeId = transJson.getString("startNodeId");
@@ -517,40 +512,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     }
 
     /**
-     * 读取工作定义的业务操作
-     * @param flowCode 流程代码
-     * @param version 版本号
-     * @return 对应的业务操作
-     */
-    private Map<String, String> listAllOptCode(String flowCode, long version) {
-        FlowInfo flowDef = this.flowDefineDao.getFlowDefineByID(flowCode, version);
-        String optId = flowDef == null ? null : flowDef.getOptId();
-        Map<String, Object> map = new HashMap<>();
-        map.put("optId",optId);
-        JSONArray jsonArray = metaFormModelManager.listMetaFormModelsAsJson(null,map,null);
-        List<MetaFormModel> list = JSONObject.parseArray(jsonArray.toJSONString(), MetaFormModel.class);
-        Map<String, String> optMap = new HashMap<>();
-        for (MetaFormModel model : list) {
-            optMap.put(model.getModelId(),model.getModelName());
-        }
-        return optMap;
-    }
-
-    /**
-     * 读取工作定义的业务操作
-     * @param flowCode 流程代码
-     * @return 对应的业务操作
-     */
-    @Override
-    @Transactional
-    public Map<String, String> listAllOptCode(String flowCode) {
-        return listAllOptCode(flowCode, 0L);
-    }
-    /**
      * 列举所有角色类别
      */
     @Override
-    public Map<String, String> listRoleType(){
+    public Map<String, String> listRoleType() {
         Map<String, String> roleTypes = new HashMap<>();
         roleTypes.put(SysUserFilterEngine.ROLE_TYPE_GW, "岗位职责");
         roleTypes.put(SysUserFilterEngine.ROLE_TYPE_XZ, "行政职位");
@@ -582,18 +547,18 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @return 角色名称和类别对应列表
      */
     @Override
-    public Map<String, String> listRoleByType(String stype){
+    public Map<String, String> listRoleByType(String stype) {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
 
-        if(SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(stype)){
+        if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(stype)) {
             return context.listAllStation();
-        } else if(SysUserFilterEngine.ROLE_TYPE_XZ.equalsIgnoreCase(stype)){
+        } else if (SysUserFilterEngine.ROLE_TYPE_XZ.equalsIgnoreCase(stype)) {
             return context.listAllRank();
         } /*else if(SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(stype)){
             return flowRoleDao.
-        }*/ else if(SysUserFilterEngine.ROLE_TYPE_SYSTEM.equalsIgnoreCase(stype)){
+        }*/ else if (SysUserFilterEngine.ROLE_TYPE_SYSTEM.equalsIgnoreCase(stype)) {
             return context.listAllSystemRole();
-        } else if(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA.equalsIgnoreCase(stype)){
+        } else if (SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA.equalsIgnoreCase(stype)) {
             return flowRoleDao.listAllRoleMsg();
         } else {
             return null;
@@ -631,14 +596,14 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public Long getFlowLastVersion(String flowCode){
+    public Long getFlowLastVersion(String flowCode) {
         return flowDefineDao.getLastVersion(flowCode);
     }
 
     @Override
     @Transactional
     public Map<String, String> listFlowItemRoles(String flowCode, Long version) {
-        if(version == null || version < 0){
+        if (version == null || version < 0) {
             version = flowDefineDao.getLastVersion(flowCode);
         }
         return optTeamRoleDao.getRoleByFlowCode(flowCode, version);
@@ -646,7 +611,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public OptTeamRole getFlowItemRole(String flowCode, Long version, String roleCode){
+    public OptTeamRole getFlowItemRole(String flowCode, Long version, String roleCode) {
         return optTeamRoleDao.getItemRole(flowCode, version, roleCode);
     }
 
@@ -659,12 +624,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     @Transactional
     public Map<String, String> listFlowStages(String flowCode, Long version) {
-        if(version == null || version < 0){
+        if (version == null || version < 0) {
             version = flowDefineDao.getLastVersion(flowCode);
         }
 
         FlowInfo flowDef = flowDefineDao.getFlowDefineByID(flowCode, version);//流程0版本读取
-        flowDefineDao.fetchObjectReference(flowDef,"flowStages");
+        flowDefineDao.fetchObjectReference(flowDef, "flowStages");
         // 新建流程时，查询不到流程定义
         if (flowDef == null) {
             flowDef = new FlowInfo();
@@ -685,7 +650,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     }
 
     private List<OptVariableDefine> listOptVariables(String flowCode, Long version) {
-        if(version == null || version < 0){
+        if (version == null || version < 0) {
             version = flowDefineDao.getLastVersion(flowCode);
         }
 
@@ -694,6 +659,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     /**
      * 根据流程代码获取流程变量信息
+     *
      * @param flowCode 流程代码
      * @return 流程变量信息
      */
@@ -704,7 +670,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             = listOptVariables(flowCode, version);
 
         Map<String, String> variableDefineMap = new HashMap<>();
-        if(optVariableDefines != null) {
+        if (optVariableDefines != null) {
             for (OptVariableDefine optVariableDefine : optVariableDefines) {
                 variableDefineMap.put(optVariableDefine.getVariableName(), optVariableDefine.getVariableDesc());
             }
@@ -714,12 +680,12 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public Map<String, String> listFlowDefaultVariables(String flowCode, Long version){
+    public Map<String, String> listFlowDefaultVariables(String flowCode, Long version) {
         List<OptVariableDefine> optVariableDefines
             = listOptVariables(flowCode, version);
 
         Map<String, String> variableValueMap = new HashMap<>();
-        if(optVariableDefines != null) {
+        if (optVariableDefines != null) {
             for (OptVariableDefine optVariableDefine : optVariableDefines) {
                 if (StringUtils.isNotBlank(optVariableDefine.getDefaultValue())) {
                     variableValueMap.put(optVariableDefine.getVariableName(), optVariableDefine.getDefaultValue());
@@ -743,6 +709,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     /**
      * 根据流程业务id获取流程变量信息
+     *
      * @param optId 流程代码
      * @return 流程变量信息
      */
@@ -753,7 +720,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             = optVariableDefineDao.listOptVariableByOptId(optId);
 
         Map<String, String> variableDefineMap = new HashMap<>();
-        if(optVariableDefines != null) {
+        if (optVariableDefines != null) {
             for (OptVariableDefine optVariableDefine : optVariableDefines) {
                 variableDefineMap.put(optVariableDefine.getVariableName(), optVariableDefine.getVariableDesc());
             }
@@ -768,7 +735,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             = optVariableDefineDao.listOptVariableByOptId(optId);
 
         Map<String, String> variableValueMap = new HashMap<>();
-        if(optVariableDefines != null) {
+        if (optVariableDefines != null) {
             for (OptVariableDefine optVariableDefine : optVariableDefines) {
                 if (StringUtils.isNotBlank(optVariableDefine.getDefaultValue())) {
                     variableValueMap.put(optVariableDefine.getVariableName(), optVariableDefine.getDefaultValue());
@@ -795,8 +762,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if (flowStage.getStageId() == null) {
             // 流程阶段的stageCode不能重复
             HashMap<String, Object> filterMap = new HashMap<>();
-            filterMap.put("flowCode",flowStage.getFlowCode());
-            filterMap.put("stageCode",flowStage.getStageCode());
+            filterMap.put("flowCode", flowStage.getFlowCode());
+            filterMap.put("stageCode", flowStage.getStageCode());
             FlowStage stage = flowStageDao.getObjectByProperties(filterMap);
             if (stage != null) {
                 flowStage.setStageId(stage.getStageId());
@@ -815,9 +782,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             flowDefineDao.updateObject(flowDef);
         }
     }
+
     @Override
     public int[] batchUpdateOptId(String optId, List<String> flowCodes) {
-        String sql="UPDATE wf_flow_define SET OPT_ID=? WHERE flow_code = ? ";
+        String sql = "UPDATE wf_flow_define SET OPT_ID=? WHERE flow_code = ? ";
         return flowDefineDao.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {

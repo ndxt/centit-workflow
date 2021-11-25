@@ -435,11 +435,7 @@ public class FlowDefineController extends BaseController {
         // 分配机制
         Map<String, String> map2 = flowDefine.listAllOptType();
         map.put("OptType", map2);
-        // 操作定义
-        Map<String, String> map3 = new LinkedHashMap<>();
-        map3.put("", "请选择");
-        map3.putAll(flowDefine.listAllOptCode(flowcode));
-        map.put("OptCode", map3);
+
         // 子流程
         Map<String, String> map4 = flowDefine.listAllSubFlow();
         map.put("SubWfcode", map4);

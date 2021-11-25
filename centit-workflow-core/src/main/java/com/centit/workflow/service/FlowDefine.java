@@ -125,10 +125,6 @@ public interface FlowDefine {
      */
     Map<String,String> listAllNoteType();
 
-    /**
-     * 根据业务类型列举所有业务代码
-     */
-    Map<String, String> listAllOptCode(String wfcode);
 
     /**
      * 列举所有角色类别

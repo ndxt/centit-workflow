@@ -2,7 +2,9 @@ package com.centit.workflow.support;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.dde.adapter.DdeDubboTaskRun;
 import com.centit.framework.appclient.HttpReceiveJSON;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.compiler.Lexer;
@@ -18,6 +20,7 @@ import com.centit.workflow.service.impl.FlowVariableTranslate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +38,8 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     private FlowVariableTranslate varTrans;
     private OptVariableDefineDao optVariableDefineDao;
     private FlowEngine flowEngine;
+    @Autowired
+    private DdeDubboTaskRun ddeDubboTaskRun;
 
     public AutoRunNodeEventSupport(FlowOptPage optPage, NodeInfo nodeInfo,
                                    FlowVariableTranslate varTrans,
@@ -52,6 +57,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
                                NodeInfo nodeInfo, String optUserCode) {
     }
 
+    @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
                                 NodeInfo nodeInfo, String optUserCode) {
     }
@@ -63,105 +69,21 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             "flowInstId", flowInst.getFlowInstId(),
             "nodeInstId", nodeInst.getNodeInstId(),
             "userCode", optUserCode);
-        String httpUrl;
-        if (FlowOptPage.PAGE_TYPE_API.equals(optPage.getPageType())) {
-            String apiGatawayUrl = CodeRepositoryUtil.getSysConfigValue("api.gataway.url");
-            logger.info("获取api网关的URL地址为：{}", apiGatawayUrl);
-            httpUrl = apiGatawayUrl + "/httpTask/run/" + optPage.getPageUrl();
-        } else {
-            httpUrl = optPage.getPageUrl();
-        }
         if (StringUtils.isNotBlank(flowInst.getFlowOptTag())) {
-            if (flowInst.getFlowOptTag().indexOf("&") > 0) {
-                httpUrl = UrlOptUtils.appendParamToUrl(optPage.getPageUrl(), flowInst.getFlowOptTag());
-            }
-            if (Lexer.getFirstWord(flowInst.getFlowOptTag()).equals("{")) {
+            if ("{".equals(Lexer.getFirstWord(flowInst.getFlowOptTag()))) {
                 params.putAll(JSON.parseObject(flowInst.getFlowOptTag()));
             } else {
                 params.put("optTag", flowInst.getFlowOptTag());
             }
         }
-
-        String httpRet = null;
-        try {
-            String optMethod = optPage.getOptMethod();
-            String pageParams = Pretreatment.mapTemplateString(optPage.getRequestParams(), varTrans);
-            String nodeParams = Pretreatment.mapTemplateString(nodeInfo.getOptParam(), varTrans);
-
-            if (StringUtils.isNotBlank(pageParams)) {
-                if ("{".equals(Lexer.getFirstWord(pageParams))) {
-                    Object object = JSON.parseObject(pageParams);
-                    if (object instanceof Map) {
-                        params.putAll((Map<String, Object>) object);
-                    } else {
-                        httpUrl = UrlOptUtils.appendParamToUrl(httpUrl, pageParams);
-                    }
-                } else {
-                    httpUrl = UrlOptUtils.appendParamToUrl(httpUrl, pageParams);
-                }
+        String nodeParams = Pretreatment.mapTemplateString(nodeInfo.getOptParam(), varTrans);
+        if (StringUtils.isNotBlank(nodeParams)) {
+            if (!"{".equals(Lexer.getFirstWord(nodeParams))) {
+                nodeParams = "{" + nodeParams + "}";
             }
-
-            if (StringUtils.isNotBlank(nodeParams)) {
-                if ("{".equals(Lexer.getFirstWord(nodeParams))) {
-                    Object object = JSON.parseObject(nodeParams);
-                    if (object instanceof Map) {
-                        params.putAll((Map<String, Object>) object);
-                    } else {
-                        httpUrl = UrlOptUtils.appendParamToUrl(httpUrl, nodeParams);
-                    }
-                } else {
-                    httpUrl = UrlOptUtils.appendParamToUrl(httpUrl, nodeParams);
-                }
-            }
-
-            httpUrl = UrlOptUtils.appendParamsToUrl(httpUrl, params);
-            logger.info("httpUrl：{}", httpUrl);
-
-            if (StringUtils.isBlank(optMethod) || "R".equalsIgnoreCase(optMethod) || "GET".equalsIgnoreCase(optMethod)) {
-                httpRet = HttpExecutor.simpleGet(HttpExecutorContext.create(), httpUrl);
-            } else if ("C".equalsIgnoreCase(optMethod) || "POST".equalsIgnoreCase(optMethod)) {
-                httpRet = HttpExecutor.jsonPost(HttpExecutorContext.create(), httpUrl,
-                    Pretreatment.mapTemplateString(optPage.getRequestBody(), varTrans));
-            } else if ("U".equalsIgnoreCase(optMethod) || "PUT".equalsIgnoreCase(optMethod)) {
-                httpRet = HttpExecutor.jsonPut(HttpExecutorContext.create(), httpUrl,
-                    Pretreatment.mapTemplateString(optPage.getRequestBody(), varTrans));
-            } else if ("D".equalsIgnoreCase(optMethod) || "delete".equalsIgnoreCase(optMethod)) {
-                httpRet = HttpExecutor.simpleDelete(HttpExecutorContext.create(), httpUrl);
-            }
-        } catch (IOException e) {
-            logger.error(e.getMessage());
+            params.putAll(JSON.parseObject(nodeParams));
         }
-
-        if (StringUtils.isNotBlank(httpRet)) {
-            logger.info("自动执行节点返回参数：{}", httpRet);
-            HttpReceiveJSON json = null;
-            try {
-                json = HttpReceiveJSON.valueOfJson(httpRet);
-            } catch (Exception e) {
-                logger.error("解析自动执行节点的返回参数异常！请检查httpUrl：{}", httpUrl);
-                return false;
-            }
-            if (json.getCode() != 0) {
-                logger.error(json.getMessage() + ":" + JSON.toJSONString(nodeInst));
-                return false;
-            }
-            // 将返回结果设置为流程变量
-            JSONObject jo = json.getJSONObject();
-            if (jo != null) {
-                List<OptVariableDefine> variables =
-                    optVariableDefineDao.listOptVariableByFlowCode(
-                        flowInst.getFlowCode(), flowInst.getVersion());
-                if (variables != null && variables.size() > 0) {
-                    for (OptVariableDefine variable : variables) {
-                        Object value = jo.get(variable.getVariableName());
-                        if (value != null) {
-                            flowEngine.saveFlowNodeVariable(nodeInst.getNodeInstId(),
-                                variable.getVariableName(), value);
-                        }
-                    }
-                }
-            }
-        }
+        ddeDubboTaskRun.runTask(nodeInfo.getOptCode(), params);
         return true;
     }
 
