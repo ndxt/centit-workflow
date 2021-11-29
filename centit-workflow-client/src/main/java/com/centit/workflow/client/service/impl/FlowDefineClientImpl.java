@@ -170,7 +170,7 @@ public class FlowDefineClientImpl implements FlowDefine {
      * @param flowCode
      */
     @Override
-    public long publishFlowDef(String flowCode, String appId) {
+    public long publishFlowDef(String flowCode) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -304,15 +304,6 @@ public class FlowDefineClientImpl implements FlowDefine {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
-    /**
-     * 根据业务类型列举所有业务代码
-     *
-     * @param wfcode
-     */
-    @Override
-    public Map<String, String> listAllOptCode(String wfcode) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
 
     /**
      * 列举所有角色类别

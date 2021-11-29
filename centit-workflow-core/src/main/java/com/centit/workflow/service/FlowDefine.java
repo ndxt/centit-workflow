@@ -25,7 +25,7 @@ public interface FlowDefine {
     /**
      * 发布流程，返回当前流程版本号
      */
-    long publishFlowDef(String  flowCode, String appId);
+    long publishFlowDef(String  flowCode);
 
     /**
      * 获取指定版本流程定义描述文件

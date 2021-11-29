@@ -378,9 +378,9 @@ public class FlowDefineController extends BaseController {
      * @throws Exception 异常
      */
     @ApiOperation(value = "发布流程定义", notes = "发布流程定义")
-    @RequestMapping(value = "/publish/{flowcode}/{appId}", method = RequestMethod.POST)
-    public void publishFlow(@PathVariable String flowcode, @PathVariable String appId, HttpServletResponse response){
-        flowDefine.publishFlowDef(flowcode, appId);
+    @RequestMapping(value = "/publish/{flowcode}", method = RequestMethod.POST)
+    public void publishFlow(@PathVariable String flowcode, HttpServletResponse response){
+        flowDefine.publishFlowDef(flowcode);
         JsonResultUtils.writeSingleDataJson("已发布！", response);
     }
 

@@ -280,7 +280,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @SuppressWarnings("unchecked")
     @Transactional
     @Override
-    public long publishFlowDef(String flowCode, String appId) {
+    public long publishFlowDef(String flowCode) {
         // 将流程从 XML 格式中解析出来
         FlowInfo flowDef = flowDefineDao.getObjectWithReferences(new FlowInfoId(0L, flowCode));
         if (flowDef == null) {
@@ -326,11 +326,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         //复制相关节点信息
         //newFlowDef.getWfFlowStages()
         //修复数据遗漏的bug
-        if (StringUtils.isBlank(flowDef.getOsId())) {
-            newFlowDef.setOsId(appId);
-        } else {
-            newFlowDef.setOsId(flowDef.getOsId());
-        }
+        newFlowDef.setOsId(flowDef.getOsId());
 
         flowDefineDao.saveNewObject(newFlowDef);
         flowDefineDao.saveObjectReferences(newFlowDef);
