@@ -21,7 +21,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
         Map<String, String> filterField = new HashMap<>();
         filterField.put("flowInstId" , CodeBook.EQUAL_HQL_ID);
         filterField.put("flowInstIds" , "flow_Inst_Id in (:flowInstIds)");
-        filterField.put("flowId" , CodeBook.EQUAL_HQL_ID);
+        filterField.put("flowCode" , CodeBook.EQUAL_HQL_ID);
         filterField.put("version" , CodeBook.EQUAL_HQL_ID);
         filterField.put("osId" , CodeBook.EQUAL_HQL_ID);
         filterField.put("optId" , CodeBook.EQUAL_HQL_ID);
