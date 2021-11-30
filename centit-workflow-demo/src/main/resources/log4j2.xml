@@ -2,7 +2,7 @@
     <Configuration status="info" monitorInterval="1800">
 
     <properties>
-        <property name="LOG_HOME">/D/Projects/RunData/workflow_home/logs</property>
+        <property name="LOG_HOME">/Users/codefan/projects/RunData/workflow_home/logs</property>
          <property name="FILE_NAME">mylog</property>
     </properties>
 

@@ -246,7 +246,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (options.isSkipFirstNode() && !NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType()) && nodeInsts.size() == 1) {
             nodeInsts = submitOptInside(SubmitOptOptions.create()
                     .copy(options).nodeInst(nodeInsts.iterator().next()),
-                varTrans, application, false, false);
+                varTrans, application, false, false, options.isSkipFirstNode());
         }
 
         OperationLogCenter.log(FlowOptUtils.createActionLog(
@@ -1339,6 +1339,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private List<String> submitOptInside(SubmitOptOptions options,
                                          UserUnitVariableTranslate varTrans,
                                          ServletContext application, boolean saveOptions, boolean saveLog) {
+        return submitOptInside(options, varTrans, application, saveOptions, saveLog, false);
+    }
+
+    private List<String> submitOptInside(SubmitOptOptions options,
+                                         UserUnitVariableTranslate varTrans,
+                                         ServletContext application, boolean saveOptions, boolean saveLog, boolean isSkipNode) {
         //2012-04-16 重构提交事件，添加一个多实例节点类型，这个节点类型会根据不同的机构创建不同的节点
         //根据上级节点实例编号获取节点所在父流程实例信息
         NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(options.getNodeInstId());
@@ -1373,14 +1379,18 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         String runAsUser = null;
         NodeInfo currNode = flowNodeDao.getObjectById(nodeInst.getNodeId());
-        if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(currNode.getRoleType())) {
-            //TODO 判断人员岗位吻合
+        if(isSkipNode){
             runAsUser = options.getUserCode();
-        } else if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType())) {
-            runAsUser = actionTaskDao.checkTaskGrantor(options.getNodeInstId(), options.getUserCode(), options.getGrantorCode());
-            if (runAsUser == null) {
-                logger.error("用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
-                throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
+        } else {
+            if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(currNode.getRoleType())) {
+                //TODO 判断人员岗位吻合
+                runAsUser = options.getUserCode();
+            } else if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType())) {
+                runAsUser = actionTaskDao.checkTaskGrantor(options.getNodeInstId(), options.getUserCode(), options.getGrantorCode());
+                if (runAsUser == null) {
+                    logger.error("用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
+                    throw new WorkflowException(WorkflowException.WithoutPermission, "用户没有权限操作该节点：" + options.getUserCode() + " -- " + options.getNodeInstId());
+                }
             }
         }
 
