@@ -38,18 +38,18 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     private FlowVariableTranslate varTrans;
     private OptVariableDefineDao optVariableDefineDao;
     private FlowEngine flowEngine;
-    @Autowired
     private DdeDubboTaskRun ddeDubboTaskRun;
 
     public AutoRunNodeEventSupport(FlowOptPage optPage, NodeInfo nodeInfo,
                                    FlowVariableTranslate varTrans,
                                    FlowEngine flowEngine,
-                                   OptVariableDefineDao optVariableDefineDao) {
+                                   OptVariableDefineDao optVariableDefineDao,DdeDubboTaskRun ddeDubboTaskRun) {
         this.optPage = optPage;
         this.nodeInfo = nodeInfo;
         this.varTrans = varTrans;
         this.flowEngine = flowEngine;
         this.optVariableDefineDao = optVariableDefineDao;
+        this.ddeDubboTaskRun = ddeDubboTaskRun;
     }
 
     @Override

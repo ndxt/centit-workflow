@@ -136,10 +136,9 @@ public class FlowOptUtils {
         nodeInst.setCreateTime(updateTime);
         nodeInst.setRoleCode(node.getRoleCode());
         nodeInst.setRoleType(node.getRoleType());
-        nodeInst.setFlowStage(node.getStageCode());
+        nodeInst.setStageCode(node.getStageCode());
         //计算节点的期限
         nodeInst.setIsTimer(node.getIsAccountTime());
-//        nodeInst.setTimeLimit(0L);
         nodeInst.setTimeLimit(new WorkTimeSpan(node.getTimeLimit()).toNumberAsMinute());
         if(preNodeInst!=null) {
             nodeInst.setPrevNodeInstId(preNodeInst.getNodeInstId());

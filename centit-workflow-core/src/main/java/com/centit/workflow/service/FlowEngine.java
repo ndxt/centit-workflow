@@ -582,7 +582,7 @@ public interface FlowEngine {
      * @param varname    变量名
      * @return 流程变量
      */
-    List<FlowVariable> viewFlowVariablesByVarname(String flowInstId, String varname);
+    List<FlowVariable> viewFlowVariablesByVarName(String flowInstId, String varname);
 
 
     /**
@@ -713,7 +713,7 @@ public interface FlowEngine {
      * @param nodeCode   节点代码
      * @return 节点信息列表
      */
-    List<NodeInstance> listNodeInstsByNodecode(String flowInstId, String nodeCode);
+    List<NodeInstance> listNodeInstanceByNodeCode(String flowInstId, String nodeCode);
 
     /**
      * 列举当前流程可以创建的所有节点

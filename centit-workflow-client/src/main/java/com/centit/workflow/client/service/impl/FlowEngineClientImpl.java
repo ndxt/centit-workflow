@@ -191,7 +191,7 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     @Override
-    public List<FlowVariable> viewFlowVariablesByVarname(String flowInstId, String varName)  {
+    public List<FlowVariable> viewFlowVariablesByVarName(String flowInstId, String varName)  {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("varName", varName);
@@ -1043,7 +1043,7 @@ public class FlowEngineClientImpl implements FlowEngine {
      * @return 节点信息列表
      */
     @Override
-    public List<NodeInstance> listNodeInstsByNodecode(String flowInstId, String nodeCode) {
+    public List<NodeInstance> listNodeInstanceByNodeCode(String flowInstId, String nodeCode) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

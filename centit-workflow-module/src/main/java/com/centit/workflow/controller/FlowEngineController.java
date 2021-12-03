@@ -125,7 +125,7 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowVariablesByVarname")
     public List<FlowVariable> viewFlowVariablesByVarname(FlowVariable flowVariableParam) {
-        List<FlowVariable> flowVariables = flowEngine.viewFlowVariablesByVarname(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName());
+        List<FlowVariable> flowVariables = flowEngine.viewFlowVariablesByVarName(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName());
         return flowVariables;
     }
 
