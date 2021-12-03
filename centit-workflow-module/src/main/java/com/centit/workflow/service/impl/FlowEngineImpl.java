@@ -610,7 +610,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String routerType = nextRouterNode.getRouterType();
         List<String> resNodes = new ArrayList<>();
 
-        StringBuilder preTransPath = new StringBuilder(transPath);
+        StringBuilder preTransPath = new StringBuilder();
         if (trans != null) {
             preTransPath = new StringBuilder(StringUtils.isBlank(transPath) ?
                 trans.getTransId() : transPath + "," + trans.getTransId());
