@@ -445,4 +445,9 @@ public class FlowDefineClientImpl implements FlowDefine {
     public int[] batchUpdateOptId(String optId, List<String> flowCodes) {
         return new int[0];
     }
+
+    @Override
+    public String copyWorkFlow(Map<String, Object> parameters) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
 }
