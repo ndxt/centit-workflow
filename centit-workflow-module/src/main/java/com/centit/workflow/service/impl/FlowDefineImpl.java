@@ -15,6 +15,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -794,6 +795,24 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                 return flowCodes.size();
             }
         });
+    }
+
+    @Override
+    @Transactional
+    public String copyWorkFlow(Map<String, Object> parameters) {
+        String flowCode = MapUtils.getString(parameters, "flowCode");
+        Long version = MapUtils.getLong(parameters, "version",0L);
+        String flowName = MapUtils.getString(parameters, "flowName");
+        FlowInfo flowInfo = flowDefineDao.getObjectById(new FlowInfoId(version, flowCode));
+        if (null == flowInfo){
+            //入参有误
+            return null;
+        }
+        flowInfo.setFlowCode(UuidOpt.getUuidAsString32());
+        flowInfo.setVersion(0L);
+        flowInfo.setFlowName(flowName);
+        flowDefineDao.saveNewObject(flowInfo);
+        return flowInfo.getFlowCode();
     }
 
 }

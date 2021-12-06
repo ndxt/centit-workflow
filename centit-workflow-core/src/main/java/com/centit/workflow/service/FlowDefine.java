@@ -239,4 +239,11 @@ public interface FlowDefine {
      */
     void saveFlowStage(FlowStage flowStage);
     int[] batchUpdateOptId(String optId, List<String> flowCodes);
+
+    /**
+     * 复制流程草稿或版本为一个新的流程
+     * @param parameters
+     * @return
+     */
+    String copyWorkFlow(Map<String, Object> parameters);
 }

@@ -22,6 +22,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -176,6 +177,39 @@ public class FlowDefineController extends BaseController {
         } else {
             JsonResultUtils.writeSingleDataJson("保存出错！", response);
         }
+    }
+
+    /**
+     * 复制流程草稿为一个新的流程
+     * @param flowcode
+     * @param request
+     * @param response
+     */
+    /**
+     * 复制流程草稿或版本为一个新的流程
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "复制流程草稿为一个新的流程")
+    @ApiImplicitParams({@ApiImplicitParam(name = "flowCode",value = "流程code",paramType = "String",dataTypeClass = String.class,required = true),
+        @ApiImplicitParam( name = "version",value = "版本号，不传默认为0", paramType = "String", dataTypeClass = String.class),
+        @ApiImplicitParam(name = "flowName",value = "新的流程名",paramType = "String",dataTypeClass = String.class,required = true)})
+    @RequestMapping(value = "/copyWorkFlow", method = RequestMethod.POST)
+    @WrapUpResponseBody
+    public ResponseData copyWorkFlow( HttpServletRequest request) {
+        Map<String, Object> parameters = collectRequestParameters(request);
+        String flowCode = MapUtils.getString(parameters, "flowCode");
+        String flowName = MapUtils.getString(parameters, "flowName");
+        if (StringUtils.isAnyBlank(flowCode,flowName)){
+            return ResponseData.makeErrorMessage("flowCode,flowName不能为空！");
+        }
+        String newFlowCode = flowDefine.copyWorkFlow(parameters);
+        if (StringUtils.isBlank(newFlowCode)){
+            return ResponseData.makeErrorMessage("flowCode有误");
+        }
+        JSONObject json = new JSONObject();
+        json.put("flowCode",newFlowCode);
+        return ResponseData.makeResponseData(json);
     }
 
     @ApiOperation(value = "根据流程xml获取流程节点",notes = "根据流程xml获取流程节点")
@@ -373,7 +407,6 @@ public class FlowDefineController extends BaseController {
      * 发布新版本流程
      *
      * @param flowcode 流程代码
-     * @param appId 外部业务系统id
      * @param response HttpServletResponse
      * @throws Exception 异常
      */
