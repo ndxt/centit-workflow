@@ -10,6 +10,7 @@ import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
+import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.basedata.IUserInfo;
@@ -26,6 +27,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -820,10 +822,13 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "流程操作日志", notes = "流程操作日志")
     @RequestMapping(value = "/flowlogs/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public List<? extends OperationLog> listFlowInstLogs(@PathVariable String flowInstId, String withNodeLog) {
+    public ResponseData listFlowInstLogs(@PathVariable String flowInstId, String withNodeLog) {
         List<? extends OperationLog> operationLogs = flowManager.listFlowActionLogs(flowInstId,
             BooleanBaseOpt.castObjectToBoolean(withNodeLog, false));
-        return operationLogs == null ? new ArrayList<>() : operationLogs;
+        if (CollectionUtils.sizeIsEmpty(operationLogs)){
+            return ResponseData.makeResponseData(Collections.emptyList());
+        }
+       return ResponseData.makeResponseData(DictionaryMapUtils.objectsToJSONArray(operationLogs));
     }
 
     @ApiOperation(value = "用户操作日志", notes = "用户操作日志")
