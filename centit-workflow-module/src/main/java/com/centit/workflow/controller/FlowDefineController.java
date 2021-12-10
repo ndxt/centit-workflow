@@ -589,7 +589,7 @@ public class FlowDefineController extends BaseController {
     }
     @ApiOperation(value = "修改表单所属业务模块")
     @PutMapping(value = "/batchUpdateOptId")
-    @Transactional
+    @WrapUpResponseBody
     public JSONObject batchUpdateOptId(String optId , @RequestBody List<String> flowCodes) {
         int[] flowDefineArr = flowDefine.batchUpdateOptId(optId, flowCodes);
         JSONObject result = new JSONObject();
