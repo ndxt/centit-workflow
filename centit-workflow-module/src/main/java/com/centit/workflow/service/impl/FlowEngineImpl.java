@@ -2602,7 +2602,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             List<IUserInfo> userTasks = CodeRepositoryUtil.getUserInfosByCodes(topUnit, userSet);
             userTasks.forEach(userInfo -> {
                 Map<String, Object> userTaskMap = new HashMap<>(nodeTaskMap);
-                userTaskMap.put("userCode", nodeInstance.getUserCode());
+                //userTaskMap.put("userCode", nodeInstance.getUserCode()); userCode改为从userInfo中获取 修改人:薛庆坤
+                userTaskMap.put("userCode", userInfo.getUserCode());
                 if (userInfo != null) {
                     userTaskMap.put("userName", userInfo.getUserName());
                     userTaskMap.put("regCellPhone", userInfo.getRegCellPhone());
