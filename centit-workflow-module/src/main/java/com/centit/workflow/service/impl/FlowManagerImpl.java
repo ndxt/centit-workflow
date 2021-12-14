@@ -145,8 +145,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     nodeState.put(nodeInst.getNodeId(), "suspend");
                 }
                 if ("ready".equals(ns)) {
-                    if (StringUtils.equalsAny(nodeInst.getNodeState(),"F","B")) {
-                        //流程 已回退 和 被强制结束 标识状态一致
+                    if (nodeInst.getNodeState().equals("F")) {
                         nodeState.put(nodeInst.getNodeId(), "suspend");
                     } else if (nodeInst.getNodeState().equals("C")) {
                         if (nodeInst.getNodeId().equals(endNodeID)) {
@@ -155,6 +154,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                         nodeState.put(nodeInst.getNodeId(), "complete");
                         completeNodeSet.add(nodeInst);
                     }
+                }
+                //流程被退回后 被看作是 已经被强制结束
+                if ("B".equals(nodeInst.getNodeState())){
+                    nodeState.put(nodeInst.getNodeId(), "suspend");
+                }
+                //节点状态等于C，被看作 节点已经完成
+                if ("C".equals(nodeInst.getNodeState())){
+                    nodeState.put(nodeInst.getNodeId(),"complete");
+                    nodeState.put(nodeInst.getNodeId(), "complete");
                 }
             }
             Integer nc = nodeInstCount.get(nodeInst.getNodeId());
