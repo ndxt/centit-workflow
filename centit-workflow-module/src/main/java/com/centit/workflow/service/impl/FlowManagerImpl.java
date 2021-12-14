@@ -147,7 +147,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 if ("ready".equals(ns)) {
                     if (nodeInst.getNodeState().equals("F")) {
                         nodeState.put(nodeInst.getNodeId(), "suspend");
-                    } else if (nodeInst.getNodeState().equals("C")) {
+                    } else if ( StringUtils.equalsAny(nodeInst.getNodeState(),"C","B")) {
+                        //流程被退回后也被看作是已经完成的
                         if (nodeInst.getNodeId().equals(endNodeID)) {
                             findTran = false;
                         }
