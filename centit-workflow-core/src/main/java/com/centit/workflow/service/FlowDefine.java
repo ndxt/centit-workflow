@@ -100,7 +100,7 @@ public interface FlowDefine {
      * @param optId 业务id
      * @return 流程列表
      */
-    List<FlowInfo> listFlowsByOptId(String optId);
+    List listFlowsByOptId(String optId);
 
     /**
      * 获取某一流程某一版本号中存在的所有机构表达式

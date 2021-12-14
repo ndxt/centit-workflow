@@ -1,5 +1,6 @@
 package com.centit.workflow.dao;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
@@ -199,5 +200,15 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
             "LAST_UPDATE_TIME=?,LAST_UPDATE_USER=? where  FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{wfFlowInst.getFlowInstId(),wfFlowInst.getInstState(),
             wfFlowInst.getLastUpdateTime(),wfFlowInst.getLastUpdateUser(),wfFlowInst.getFlowInstId()});
+    }
+
+    /**
+     * 统计工作流实例个数
+     * @param map
+     * @return
+     */
+    public JSONArray countFlowInstances(Map<String,Object> map){
+        String sql = "SELECT FLOW_CODE,count(1) FROM wf_flow_instance WHERE 1 = 1 [ :flowCode | AND FLOW_CODE in ( :flowCode ) ]  GROUP BY FLOW_CODE";
+        return DatabaseOptUtils.listObjectsByParamsDriverSqlAsJson(this, sql, map);
     }
 }

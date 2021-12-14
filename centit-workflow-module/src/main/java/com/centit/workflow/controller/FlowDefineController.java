@@ -68,7 +68,7 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "列举流程业务相关流程", notes = "列举流程业务相关流程")
     @WrapUpResponseBody
     @GetMapping(value = "/optFlow/{optId}")
-    public List<FlowInfo> listFlowByOpt(@PathVariable String optId) {
+    public List listFlowByOpt(@PathVariable String optId) {
         return flowDefine.listFlowsByOptId(optId);
     }
 

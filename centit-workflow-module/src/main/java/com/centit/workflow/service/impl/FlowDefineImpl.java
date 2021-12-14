@@ -7,6 +7,7 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.algorithm.UuidOpt;
@@ -15,6 +16,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -58,6 +60,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Autowired
     private FlowStageDao flowStageDao;
 
+    @Autowired
+    private FlowInstanceDao flowInstanceDao;
+
     private static Logger logger = LoggerFactory.getLogger(FlowDefineImpl.class);
     public static final String BEGINNODETAG = "begin";
     public static final String ENDNODETAG = "end";
@@ -82,10 +87,17 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public List<FlowInfo> listFlowsByOptId(String optId) {
+    public List listFlowsByOptId(String optId) {
         List<FlowInfo> flows = flowDefineDao.listLastVersionFlowByOptId(optId);
-        return new ArrayList<>(
-            flows == null ? new ArrayList<>() : flows);
+        if (CollectionUtils.sizeIsEmpty(flows)){
+            return Collections.emptyList();
+        }
+        //添加流程实例个数 属性
+        Object[] flowCodes = flows.stream().map(FlowInfo::getFlowCode).toArray();
+        JSONArray jsonArray = flowInstanceDao.countFlowInstances(CollectionsOpt.createHashMap("flowCode",flowCodes));
+        JSONArray flowDefineJsonArray = new JSONArray();
+        flows.forEach(flowInfo -> flowDefineJsonArray.add(combineFlowInstanceCount(jsonArray, flowInfo)));
+        return flowDefineJsonArray;
     }
 
     private FlowInfo createFlowDefByJSON(String jsonDef, String flowCode, Long version, FlowDataDetail flowData) {
@@ -816,4 +828,23 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return flowInfo.getFlowCode();
     }
 
+    /**
+     * 添加flowInfo中的实例个数
+     * @param jsonArray 实例统计详情
+     * @param flowInfo
+     * @return
+     */
+    private JSONObject combineFlowInstanceCount(JSONArray jsonArray, FlowInfo flowInfo) {
+        String flowCode = flowInfo.getFlowCode();
+        JSONObject flowInfoJsonObject = JSON.parseObject(JSON.toJSONString(flowInfo));
+        for (Object o : jsonArray) {
+            JSONObject jsonObject = (JSONObject) o;
+            if (flowCode.equals(jsonObject.getString("flowCode"))){
+                flowInfoJsonObject.put("nodeInstCount",jsonObject.getLongValue("count"));
+                return flowInfoJsonObject;
+            }
+        }
+        flowInfoJsonObject.put("nodeInstCount",0L);
+        return flowInfoJsonObject;
+    }
 }
