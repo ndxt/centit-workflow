@@ -628,6 +628,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param mangerUserCode 操作用户
      */
     @Override
+    @Transactional
     public int stopInstance(String flowInstId, String mangerUserCode,
                             String admindesc) {
 

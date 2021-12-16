@@ -28,6 +28,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -901,5 +902,23 @@ public class FlowManagerController extends BaseController {
         Map<String, Object> searchColumn = collectRequestParameters(request);
         List<NodeInstance> nodeInstanceList = flowManager.listNodeInstance(searchColumn, pageDesc);
         return PageQueryResult.createResultMapDict(nodeInstanceList, pageDesc);
+    }
+
+    @ApiOperation(value = "暂停流程计时", notes = "暂停流程计时")
+    @RequestMapping(value = "/suspendFlowInstTimer/{flowInstId}", method = RequestMethod.GET)
+    public void suspendFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> parameters = collectRequestParameters(request);
+        String userCode = MapUtils.getString(parameters,"userCode","admin");
+        flowManager.suspendFlowInstTimer(flowInstId, userCode);
+        JsonResultUtils.writeSingleDataJson("暂停节点计时成功", response);
+    }
+
+    @ApiOperation(value = "唤醒流程计时", notes = "唤醒流程计时")
+    @RequestMapping(value = "/activizeFlowInstTimer/{flowInstId}", method = RequestMethod.GET)
+    public void activizeFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> parameters = collectRequestParameters(request);
+        String userCode = MapUtils.getString(parameters,"userCode","admin");
+        flowManager.activizeFlowInstTimer(flowInstId, userCode);
+        JsonResultUtils.writeSingleDataJson("唤醒流程计时成功", response);
     }
 }
