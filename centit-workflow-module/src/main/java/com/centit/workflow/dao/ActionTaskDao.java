@@ -73,6 +73,7 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String> {
         "flow_promise_time, flow_time_limit " +
         "from V_USER_TASK_LIST " +
         "where 1=1 [ :flowInstId| and FLOW_INST_ID = :flowInstId] " +
+        " [ :(splitforin)flowInstIds| and FLOW_INST_ID in ( :flowInstIds )]  " +
         "[ :flowOptTag| and FLOW_OPT_TAG = :flowOptTag] " +
         "[ :stageArr | and STAGE_CODE in (:stageArr) ] " +
         "[ :(like)flowOptName| and FLOW_OPT_NAME like :flowOptName] " +
