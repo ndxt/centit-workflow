@@ -53,6 +53,18 @@ public interface FlowEngine {
                            UserUnitVariableTranslate varTrans,
                            ServletContext application);
 
+    /**
+     *
+     * @param options  SubmitOptOptions 提交流程操作选项编码
+     * @param varTrans UserUnitVariableTranslate 机构执行环境
+     * @param varTrans 变量转换器
+     * @return 提交后节点信息
+     */
+    default Map<String, Object> submitFlowOpt(SubmitOptOptions options,
+                                              UserUnitVariableTranslate varTrans,
+                                              ServletContext application) {
+        return null;
+    }
 
     /**
      * 返回下一步节点的节点实例ID

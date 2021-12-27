@@ -9,6 +9,7 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
+import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.NotificationCenter;
@@ -1270,6 +1271,27 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                   ServletContext application) {
 
         return submitOptInside(options, varTrans, application, true);
+    }
+
+    @Override
+    public Map<String, Object> submitFlowOpt(SubmitOptOptions options,
+                                             UserUnitVariableTranslate varTrans,
+                                             ServletContext application) {
+        List<String> nextNodeInstList = submitOpt(options, new ObjectUserUnitVariableTranslate(
+            BaseController.collectRequestParameters(RequestThreadLocal.getLocalThreadWrapperRequest())), null);
+        // 返回提交后节点的名称
+        Set<String> nodeNames = new HashSet<>();
+        for (String nodeInstId : nextNodeInstList) {
+            NodeInfo nodeInfo = getNodeInfo(nodeInstId);
+            if (nodeInfo != null) {
+                nodeNames.add(nodeInfo.getNodeName());
+
+            }
+        }
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("nextNodeInsts", nextNodeInstList);
+        resultMap.put("nodeNames", StringUtils.join(nodeNames, ","));
+        return resultMap;
     }
 
     /**
