@@ -1,5 +1,9 @@
 package com.centit.workflow.config;
 
+import com.alibaba.nacos.api.annotation.NacosProperties;
+import com.alibaba.nacos.spring.context.annotation.config.EnableNacosConfig;
+import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
+import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySources;
 import com.centit.framework.components.impl.NotificationCenterImpl;
 import com.centit.framework.config.SpringSecurityCasConfig;
 import com.centit.framework.config.SpringSecurityDaoConfig;
@@ -28,6 +32,9 @@ import org.springframework.context.annotation.*;
 @ComponentScan(basePackages = "com.centit",
     excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableNacosConfig(globalProperties = @NacosProperties(serverAddr = "${nacos.server-addr}"))
+@NacosPropertySources({@NacosPropertySource(dataId = "${nacos.system-dataid}",groupId = "CENTIT", autoRefreshed = true)}
+)
 public class ServiceConfig {
 
     @Value("${wf.external.system.jdbc.url:}")
