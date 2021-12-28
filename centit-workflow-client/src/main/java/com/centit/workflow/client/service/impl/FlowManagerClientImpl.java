@@ -736,6 +736,11 @@ public class FlowManagerClientImpl implements FlowManager {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
+    @Override
+    public void deleteFlowInstByIds(List<String> flowInstIds) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
     /**
      * 强制修改流程的节点状态
      *

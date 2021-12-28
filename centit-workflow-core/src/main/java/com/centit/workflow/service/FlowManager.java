@@ -499,4 +499,9 @@ public interface FlowManager {
      */
     JSONArray listFlowInstDetailed(Map<String, Object> searchColumn, PageDesc pageDesc);
 
+    /**
+     * 批量删除工作流实例
+     * @param flowInstIds
+     */
+    void deleteFlowInstByIds(List<String> flowInstIds);
 }

@@ -1726,4 +1726,16 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
         return flowInstArray;
     }
+
+    @Override
+    @Transactional
+    public void deleteFlowInstByIds(List<String> flowInstIds) {
+        for (String flowInstId : flowInstIds) {
+            if (StringUtils.isBlank(flowInstId)){
+                continue;
+            }
+            flowInstanceDao.deleteObjectById(flowInstId);
+            nodeInstanceDao.deleteObjectsByProperties(CollectionsOpt.createHashMap("flowInstId",flowInstId));
+        }
+    }
 }

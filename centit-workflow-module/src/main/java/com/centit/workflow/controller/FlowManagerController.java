@@ -869,6 +869,21 @@ public class FlowManagerController extends BaseController {
         return ResponseData.makeResponseData(b);
     }
 
+    @ApiOperation(value = "批量删除流程实例数据", notes = "批量删除流程实例数据,多个id之间用逗号隔开")
+    @WrapUpResponseBody
+    @RequestMapping(
+        value = {"/batchDeleteFlowInst"},
+        method = {RequestMethod.DELETE}
+    )
+    public ResponseData batchDeleteFlowInst(HttpServletRequest request) {
+        String flowInstIds = MapUtils.getString(collectRequestParameters(request), "flowInstIds");
+        if (StringUtils.isBlank(flowInstIds)){
+            return ResponseData.makeErrorMessage("flowInstIds不能为空!");
+        }
+        flowManager.deleteFlowInstByIds(CollectionsOpt.arrayToList(flowInstIds.split(",")));
+        return ResponseData.makeSuccessResponse();
+    }
+
     @ApiOperation(value = "获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)",
         notes = "获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)")
     @WrapUpResponseBody
