@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
@@ -286,6 +287,10 @@ public class NodeInfo implements java.io.Serializable {
 
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
+
+    @ApiModelProperty(value = "模板来源")
+    @JSONField(serialize = false)
+    private String sourceId;
 
     // Constructors
     /** default constructor */
