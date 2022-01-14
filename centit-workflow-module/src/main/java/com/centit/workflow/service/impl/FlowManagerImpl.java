@@ -1243,7 +1243,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (nodeInstIds != null && nodeInstIds.size() > 0) {
             for (NodeInstance nodeInstance : nodeInstIds) {
                 //将userCode指向新用户
-                if (nodeInstance.getTaskAssigned() == "S") {
+                if (nodeInstance.getTaskAssigned().equals("S")) {
                     nodeInstance.setUserCode(toUserCode);
                     nodeInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                     nodeInstance.setLastUpdateUser(optUserCode);
