@@ -181,6 +181,49 @@
 
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>test</id>
+            <properties>
+                <profiles.active>test</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profiles.active>prod</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>demo</id>
+            <properties>
+                <profiles.active>demo</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prev</id>
+            <properties>
+                <profiles.active>prev</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+			<id>dev</id>
+			<properties>
+				<profiles.active></profiles.active>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+	    </profile>
+        <profile>
+            <id>pressure-test</id>
+            <properties>
+                <profiles.active>pressure-test</profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
+
     <build>
         <finalName>${finalName}</finalName>
         <plugins>
@@ -193,8 +236,24 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>test/*</exclude>
+                    <exclude>prod/*</exclude>
+                    <exclude>system.properties</exclude>
+                    <exclude>demo/*</exclude>
+                    <exclude>pressure-test/*</exclude>
+                    <exclude>prev/*</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/${profiles.active}</directory>
+            </resource>
+        </resources>
+
     </build>
 
 </project>
