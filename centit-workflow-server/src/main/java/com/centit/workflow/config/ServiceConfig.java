@@ -13,6 +13,7 @@ import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.security.model.StandardPasswordEncoderImpl;
 import com.centit.product.oa.EmailMessageSenderImpl;
+import com.centit.support.security.AESSecurityUtils;
 import com.centit.workflow.context.ExtFrameworkContextCacheBean;
 import com.centit.workflow.context.JdbcUserUnitCalcContextFactoryImpl;
 import com.centit.workflow.service.impl.SystemUserUnitCalcContextFactoryImpl;
@@ -65,16 +66,14 @@ public class ServiceConfig {
         EmailMessageSenderImpl messageManager = new EmailMessageSenderImpl();
         messageManager.setHostName("mail.centit.com");
         messageManager.setSmtpPort(25);
-//        messageManager.setUserName("alertmail@centit.com");
-//        messageManager.setUserPassword(AESSecurityUtils.decryptBase64String("LZhLhIlJ6gtIlUZ6/NassA==", ""));
         messageManager.setUserName("alertmail2@centit.com");
-        messageManager.setUserPassword("131511.cn");
-        messageManager.setServerEmail("no-reply@centit.com");
+        messageManager.setUserPassword(AESSecurityUtils.decryptBase64String("LZhLhIlJ6gtIlUZ6/NassA==",""));
+        messageManager.setServerEmail("alertmail2@centit.com");
 
         NotificationCenterImpl notificationCenter = new NotificationCenterImpl();
         notificationCenter.setPlatformEnvironment(platformEnvironment);
         //禁用发送email
-//        notificationCenter.registerMessageSender("email", messageManager);
+        notificationCenter.registerMessageSender("email", messageManager);
         notificationCenter.appointDefaultSendType("email");
 
         return notificationCenter;
