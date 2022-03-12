@@ -79,6 +79,10 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String> {
         "[ :(like)flowOptName| and FLOW_OPT_NAME like :flowOptName] " +
         "[ :userCode| and USER_CODE = :userCode] " +
         "[ :grantor| and GRANTOR = :grantor] " +
+        "[ :creatorCode| and CREATOR_CODE = :creatorCode] " +
+        "[ :unitCode| and UNIT_CODE = :unitCode] " +
+        "[ :beginTime| and CREATE_TIME >= :beginTime] " +
+        "[ :endTime| and CREATE_TIME <= :endTime] " +
         "[ :osId| and OS_ID = :osId] " +
         "[ :optId| and OPT_ID = :optId] " +
         "[ :optCode| and OPT_CODE = :optCode] " +
