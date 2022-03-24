@@ -845,7 +845,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     private List<String> submitToNextOptNode(NodeInfo nextOptNode, String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
-                                             NodeInstance preNodeInst, String transPath, FlowTransition trans, FlowOptParamOptions options, FlowVariableTranslate varTrans, ServletContext application) {
+                                             NodeInstance preNodeInst, String transPath, FlowTransition trans, FlowOptParamOptions options,
+                                             FlowVariableTranslate varTrans, ServletContext application) {
         Date currentTime = new Date(System.currentTimeMillis());
         String lastNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nodeInst = FlowOptUtils.createNodeInst(options.getUnitCode(), options.getUserCode(),
@@ -1032,6 +1033,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (StringUtils.isNotBlank(lockUser)) {
                     autoSubmitOptions.workUser(lockUser);
                 }
+                /* 这个变量列表已经在 varTrans 的内部变量中
+                if(autoSubmitOptions.getVariables() ==null){
+                    autoSubmitOptions.setVariables(objectMap);
+                } else {
+                    autoSubmitOptions.getVariables().putAll(objectMap);
+                }*/
             } else if (NodeInfo.AUTO_NODE_OPT_CODE_CALL.equals(nextOptNode.getAutoRunType())) {
                 //执行节点创建后 事件
                 FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
