@@ -1,6 +1,10 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.support.algorithm.StringBaseOpt;
+import com.centit.support.algorithm.StringRegularOpt;
+import com.centit.support.common.LeftRightPair;
 import com.centit.support.compiler.Lexer;
+import com.centit.support.compiler.VariableFormula;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.service.FlowEngine;
@@ -25,6 +29,45 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
     @Autowired
     private FlowManager flowManager;
 
+    private LeftRightPair<String, Object> fetchFuncStringFormulaParams(Lexer lexer, FlowVariableTranslate varTrans){
+        String currWord = lexer.getAWord();
+        if (!"(".equals(currWord)) {
+            return null;
+        }
+        String valueName = lexer.getAWord();
+        currWord = lexer.getAWord();
+        if (!",".equals(currWord)) {
+            return null;
+        }
+        int formulaBeginPos = lexer.getCurrPos();
+        lexer.seekToRightBracket();
+        int formulaEndPos = lexer.getCurrPos();
+        String formula = lexer.getBuffer(formulaBeginPos, formulaEndPos);
+        Object value = VariableFormula.calculate(formula, varTrans);
+        return new LeftRightPair<>(StringRegularOpt.trimString(valueName), value);
+    }
+
+    private String fetchFuncStringParam(Lexer lexer){
+        String currWord = lexer.getAWord();
+        if (!"(".equals(currWord)) {
+            return null;
+        }
+        String valueName = lexer.getAWord();
+        lexer.seekToRightBracket();
+        return StringRegularOpt.trimString(valueName);
+    }
+
+    private Object fetchFuncFormulaParam(Lexer lexer, FlowVariableTranslate varTrans){
+        String currWord = lexer.getAWord();
+        if (!"(".equals(currWord)) {
+            return null;
+        }
+        int formulaBeginPos = lexer.getCurrPos();
+        lexer.seekToRightBracket();
+        int formulaEndPos = lexer.getCurrPos();
+        String formula = lexer.getBuffer(formulaBeginPos, formulaEndPos);
+        return VariableFormula.calculate(formula, varTrans);
+    }
     /**
      * 运行流程脚本，流程脚本包括以下几个函数
      * setValue(name, formula); // 计算变量
@@ -53,32 +96,62 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
             switch (currWord){
                 case "setValue":
                 {
-                    currWord = lexer.getAWord();
-                    if (!"(".equals(currWord)) {
+                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
+                    if(params ==null){
                         break;
                     }
-                    String valueName = lexer.getAWord();
-                    currWord = lexer.getAWord();
-                    if (!",".equals(currWord)) {
-                        break;
-                    }
-                    lexer.seekToRightBracket();
+                    varTrans.setInnerVariable(params.getLeft(), nodeInst.getRunToken(), params.getRight());
+                    retValueMap.put(params.getLeft(),params.getRight());
                 }
                     break;
                 case "saveValue":
-
+                {
+                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
+                    if(params ==null){
+                        break;
+                    }
+                    flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), nodeInst.getRunToken(),
+                        params.getLeft(),params.getRight());
+                    varTrans.setInnerVariable(params.getLeft(), nodeInst.getRunToken(), params.getRight());
+                    retValueMap.put(params.getLeft(),params.getRight());
+                }
                     break;
                 case "setNextOptUser":
+                    String lockedUser =
+                        StringBaseOpt.castObjectToString(fetchFuncFormulaParam(lexer, varTrans) );
+                    if(StringUtils.isNotBlank(lockedUser)){
+                        retValueMap.put("_lock_user",lockedUser);
+                    }
                     break;
-                case "closeNodes":
+                case "closeNodes": //closeNodes(nodeCode); //根据环节代码关闭节点
+                    String nodecode = fetchFuncStringParam(lexer);
+                    if(StringUtils.isNotBlank(nodecode)){
+                       //flowEngine
+                    }
                     break;
-                case "closeAllIsolatedNodes":
+                case "closeAllIsolatedNodes": //closeAllIsolatedNodes();// 关闭所有游离节点
+                    lexer.seekToRightBracket();
+
                     break;
-                case "closeAllOtherNodes":
+                case "closeAllOtherNodes": //closeAllOtherNodes(); // 关闭所有其他节点，非本节点全部关闭
+                    lexer.seekToRightBracket();
+
                     break;
-                case "setFlowTeam":
+                case "setFlowTeam"://setFlowTeam(roleCode, users);// 设置办件角色
+                {
+                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
+                    if (params == null) {
+                        break;
+                    }
+                }
                     break;
-                case "setFlowOrganize":
+                case "setFlowOrganize"://setFlowOrganize(roleCode, units);// 设置办件机构
+                {
+                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
+                    if (params == null) {
+                        break;
+                    }
+                }
                     break;
             }
             currWord = lexer.getAWord();
