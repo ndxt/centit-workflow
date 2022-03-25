@@ -29,6 +29,7 @@ import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowEventService;
 import com.centit.workflow.service.FlowManager;
+import com.centit.workflow.service.FlowScriptRunTime;
 import com.centit.workflow.support.AutoRunNodeEventSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +51,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(FlowEngineImpl.class);
     public static final String NODE_INST_ZERO = "0";
+
+    @Autowired
+    private FlowScriptRunTime flowScriptRunTime;
+
     @Autowired
     private FlowInstanceDao flowInstanceDao;
     @Autowired
@@ -805,7 +810,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     nextNodeId = nodeTran.getEndNodeId();
                 }
                 resNodes = submitToNextNode(
-                    flowNodeDao.getObjectById(nextNodeId), "R" + nodeToken, flowInst, flowInfo,
+                    flowNodeDao.getObjectById(nextNodeId), nodeToken + "." + NodeInstance.RUN_TOKEN_ISOLATED, flowInst, flowInfo,
                     preNodeInst, preTransPath.toString(), nodeTran, options,
                     flowVarTrans, application);
             }
@@ -1021,13 +1026,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             SubmitOptOptions autoSubmitOptions = SubmitOptOptions.create().copy(options).nodeInst(lastNodeInstId);
             if (NodeInfo.AUTO_NODE_OPT_CODE_SCRIPT.equals(nextOptNode.getAutoRunType())) {
                 //添加脚本的运行
-                Map<String, Object> objectMap = varTrans.calcScript(nextOptNode.getOptParam());
+                Map<String, Object> objectMap = flowScriptRunTime.runFlowScript(nextOptNode.getOptParam(),
+                    flowInst, nodeInst, varTrans);
+                /*Map<String, Object> objectMap = varTrans.calcScript(nextOptNode.getOptParam());
                 for (Map.Entry<String, Object> ent : objectMap.entrySet()) {
                     if (!ent.getKey().startsWith("_")) {
                         saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken,
                             ent.getKey(), ent.getValue());
                     }
-                }
+                }*/
                 String lockUser = StringBaseOpt.castObjectToString(
                     objectMap.get("_lock_user"));
                 if (StringUtils.isNotBlank(lockUser)) {
@@ -1858,7 +1865,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error("找不到节点实例：" + curNodeInstId);
             return null;
         }
-        if (nodeInst.getRunToken().startsWith("R")) {
+        if (nodeInst.getRunToken().contains(NodeInstance.RUN_TOKEN_ISOLATED)) {
             logger.error("游离节点不能创建前置节点：" + curNodeInstId + " token:" + nodeInst.getRunToken() + "。");
             return null;
         }

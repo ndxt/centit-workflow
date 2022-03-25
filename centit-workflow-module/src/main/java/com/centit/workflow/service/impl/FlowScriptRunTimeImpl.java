@@ -1,14 +1,16 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.compiler.Lexer;
 import com.centit.support.compiler.VariableFormula;
+import com.centit.workflow.dao.FlowInstanceDao;
+import com.centit.workflow.dao.NodeInstanceDao;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.service.FlowEngine;
-import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.FlowScriptRunTime;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -27,7 +29,10 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
     FlowEngine flowEngine;
 
     @Autowired
-    private FlowManager flowManager;
+    private FlowInstanceDao flowInstanceDao;
+
+    @Autowired
+    private NodeInstanceDao nodeInstanceDao;
 
     private LeftRightPair<String, Object> fetchFuncStringFormulaParams(Lexer lexer, FlowVariableTranslate varTrans){
         String currWord = lexer.getAWord();
@@ -76,8 +81,10 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
      * closeNodes(nodeCode); //根据环节代码关闭节点
      * closeAllIsolatedNodes();// 关闭所有游离节点
      * closeAllOtherNodes(); // 关闭所有其他节点，非本节点全部关闭
-     * setFlowTeam(roleCode, users);// 设置办件角色
-     * setFlowOrganize(roleCode, units);// 设置办件机构
+     * deleteFlowWorkTeam(roleCode);//清除角色
+     * assignFlowWorkTeam(roleCode, users);// 设置办件角色
+     * deleteFlowOrganize(roleCode);// 清除机构组
+     * assignFlowOrganize(roleCode, units);// 设置办件机构
      *
      * @param script  执行的脚本
      * @param flowInst 流程实例
@@ -123,34 +130,60 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                         retValueMap.put("_lock_user",lockedUser);
                     }
                     break;
-                case "closeNodes": //closeNodes(nodeCode); //根据环节代码关闭节点
+                case "closeNodes": { //closeNodes(nodeCode); //根据环节代码关闭节点
                     String nodecode = fetchFuncStringParam(lexer);
-                    if(StringUtils.isNotBlank(nodecode)){
-                       //flowEngine
-                    }
-                    break;
-                case "closeAllIsolatedNodes": //closeAllIsolatedNodes();// 关闭所有游离节点
-                    lexer.seekToRightBracket();
-
-                    break;
-                case "closeAllOtherNodes": //closeAllOtherNodes(); // 关闭所有其他节点，非本节点全部关闭
-                    lexer.seekToRightBracket();
-
-                    break;
-                case "setFlowTeam"://setFlowTeam(roleCode, users);// 设置办件角色
-                {
-                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
-                    if (params == null) {
-                        break;
+                    if (StringUtils.isNotBlank(nodecode)) {
+                        closeNodes(nodecode, flowInst);
                     }
                 }
                     break;
-                case "setFlowOrganize"://setFlowOrganize(roleCode, units);// 设置办件机构
+                case "closeAllIsolatedNodes": //closeAllIsolatedNodes();// 关闭所有游离节点
+                    lexer.seekToRightBracket();
+                    closeAllIsolatedNodes(flowInst);
+                    break;
+
+                case "closeAllOtherNodes": //closeAllOtherNodes(); // 关闭所有其他节点，非本节点全部关闭
+                    lexer.seekToRightBracket();
+                    closeAllOtherNodes(flowInst, nodeInst);
+                    break;
+
+                case "deleteFlowWorkTeam":{
+                    String roleCode = fetchFuncStringParam(lexer);
+                    if(StringUtils.isNotBlank(roleCode)){
+                        flowEngine.deleteFlowWorkTeam(flowInst.getFlowInstId(), roleCode);
+                    }
+                    break;
+                }
+
+                case "assignFlowWorkTeam"://setFlowTeam(roleCode, users);// 设置办件角色
                 {
                     LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
-                    if (params == null) {
+                    if (params == null || StringUtils.isBlank(params.getLeft())) {
                         break;
                     }
+                    flowEngine.assignFlowWorkTeam(flowInst.getFlowInstId(), params.getLeft(),
+                        nodeInst.getRunToken(),
+                        StringBaseOpt.objectToStringList(params.getRight()));
+                }
+                    break;
+
+                case "deleteFlowOrganize":{
+                    String roleCode = fetchFuncStringParam(lexer);
+                    if(StringUtils.isNotBlank(roleCode)){
+                        flowEngine.deleteFlowOrganize(flowInst.getFlowInstId(), roleCode);
+                    }
+                    break;
+                }
+
+
+                case "assignFlowOrganize"://setFlowOrganize(roleCode, units);// 设置办件机构
+                {
+                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
+                    if (params == null || StringUtils.isBlank(params.getLeft())) {
+                        break;
+                    }
+                    flowEngine.assignFlowOrganize(flowInst.getFlowInstId(), params.getLeft(),
+                        StringBaseOpt.objectToStringList(params.getRight()), "来自脚本引擎的授权");
                 }
                     break;
             }
@@ -160,5 +193,60 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
             }
         }
         return retValueMap;
+    }
+
+    private void closeNodeInstanceInside(NodeInstance ni) {
+
+        if ("W".equals(ni.getNodeState())) { //结束子流程
+            FlowInstance subFlowInst = flowInstanceDao.getObjectById(ni.getSubFlowInstId());
+            if (subFlowInst != null) {
+                FlowOptUtils.endInstance(subFlowInst, "F", "system", flowInstanceDao);
+            }
+        }
+        ni.setNodeState("F");// 节点设置为无效
+        ni.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+        ni.setLastUpdateUser("system");
+        nodeInstanceDao.updateObject(ni);
+    }
+
+    private void closeNodes(String nodeCode, FlowInstance flowInst) {
+        if(flowInst.getFlowNodeInstances().size() == 0){
+            flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
+        }
+        Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
+        for(NodeInstance ni : activeNodes){
+            String nc = ni.getNodeCode();
+            if(nc!=null) {
+                nodeInstanceDao.fetchObjectReference(ni, "node");
+                nc = ni.getNodeCode();
+            }
+            if(StringUtils.equals(nodeCode, nc)){
+                closeNodeInstanceInside(ni);
+            }
+        }
+    }
+
+    private void closeAllIsolatedNodes( FlowInstance flowInst) {
+        if(flowInst.getFlowNodeInstances().size() == 0){
+            flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
+        }
+        Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
+        for(NodeInstance ni : activeNodes){
+            if (ni.getRunToken().contains(NodeInstance.RUN_TOKEN_ISOLATED)) {
+                closeNodeInstanceInside(ni);
+            }
+        }
+    }
+
+    private void closeAllOtherNodes( FlowInstance flowInst, NodeInstance nodeInst) {
+        if(flowInst.getFlowNodeInstances().size() == 0){
+            flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
+        }
+        Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
+        for(NodeInstance ni : activeNodes){
+            if (! StringUtils.equals(ni.getRunToken(), nodeInst.getRunToken())) {
+                closeNodeInstanceInside(ni);
+            }
+        }
     }
 }

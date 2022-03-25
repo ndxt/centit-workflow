@@ -36,6 +36,7 @@ import java.util.*;
 public class FlowDefineImpl implements FlowDefine, Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Autowired
     private FlowInfoDao flowDefineDao;
 

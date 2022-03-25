@@ -5,11 +5,9 @@ import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
-import com.centit.support.compiler.VariableFormula;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
 import com.centit.workflow.po.NodeInstance;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -292,12 +290,12 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
     public UserUnitVariableTranslate getFlowVarTrans() {
         return flowVarTrans;
     }
-
+/*
     public Map<String, Object> calcScript(String script){
         int nPos = script.indexOf(':');
         if(nPos<1) return null;
         String [] varNames = script.substring(0, nPos).split(",");
-        if(/*varNames==null || */varNames.length<1){
+        if(*//*varNames==null || *//*varNames.length<1){
             return null;
         }
 
@@ -321,5 +319,5 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
             i++;
         }
         return retMap;
-    }
+    }*/
 }
