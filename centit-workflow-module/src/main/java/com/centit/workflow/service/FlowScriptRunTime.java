@@ -15,8 +15,10 @@ public interface FlowScriptRunTime {
      * closeNodes(nodeCode); //根据环节代码关闭节点
      * closeAllIsolatedNodes();// 关闭所有游离节点
      * closeAllOtherNodes(); // 关闭所有其他节点，非本节点全部关闭
-     * setFlowTeam(roleCode, users);// 设置办件角色
-     * setFlowOrganize(roleCode, units);// 设置办件机构
+     * deleteFlowWorkTeam(roleCode);//清除角色
+     * assignFlowWorkTeam(roleCode, users);// 设置办件角色
+     * deleteFlowOrganize(roleCode);// 清除机构组
+     * assignFlowOrganize(roleCode, units);// 设置办件机构
      *
      * @param script  执行的脚本
      * @param flowInst 流程实例
