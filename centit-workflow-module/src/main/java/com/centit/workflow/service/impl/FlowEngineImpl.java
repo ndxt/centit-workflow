@@ -758,7 +758,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         for (String uc : nextNodeUnits) {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
-                                "cd_" + nextRouterNode.getNodeCode(), uc);
+                                "cd_" + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), nextRouterNode.getNodeId()) , uc);
                             String runToken = preNodeInst == null ? "T" : preNodeInst.getRunToken();
                             flowVarTrans.setInnerVariable("cursor", runToken, uc);
                             resNodes.addAll(submitToNextNode(
@@ -782,7 +782,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         for (String uc : optUsers) {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
-                                "cu_" + nextRouterNode.getNodeCode(), uc);
+                                "cu_"  + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), nextRouterNode.getNodeId()) , uc);
                             // 创建首节点时preNodeInst为null， 默认token为T
                             String runToken = preNodeInst == null ? "T" : preNodeInst.getRunToken();
                             flowVarTrans.setInnerVariable("cursor", runToken, uc);
@@ -2157,25 +2157,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             flowOrganizeDao.listFlowOrganize(flowInstId, roleCode, authDesc));
     }
 
-    @Override
-    public void saveFlowVariable(String flowInstId, String sVar, Object sValue) {
-        String objStr = StringBaseOpt.objectToString(sValue);
-        if (StringUtils.isBlank(objStr)) {
-            flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId, NodeInstance.RUN_TOKEN_GLOBAL, sVar));
-        } else {
-            String varType = sValue.getClass().isArray() || sValue instanceof Collection ? "E" : "S";
-            FlowVariableId cid = new FlowVariableId(flowInstId, NodeInstance.RUN_TOKEN_GLOBAL, sVar);
-            FlowVariable varO = flowVariableDao.getObjectById(cid);
-            if (varO == null) {
-                varO = new FlowVariable(flowInstId, NodeInstance.RUN_TOKEN_GLOBAL, sVar, objStr, varType);
-                flowVariableDao.saveNewObject(varO);
-            } else {
-                varO.setVarType(varType);
-                varO.setVarValue(objStr);
-                flowVariableDao.updateObject(varO);
-            }
-        }
-    }
+
 
     /**
      * 设置流程节点上下文变量
@@ -2195,7 +2177,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         FlowVariableId cid = new FlowVariableId(flowInstId,
             runToken, sVar);
-        String varType = sValue.getClass().isArray() || sValue instanceof Collection ? "E" : "S";
+        String varType = sValue.getClass().isArray() || sValue instanceof Collection
+             || objStr.indexOf(',') > 1 ? "E" : "S";
+
         FlowVariable varO = flowVariableDao.getObjectById(cid);
         if (varO == null) {
             varO = new FlowVariable(flowInstId,
@@ -2208,6 +2192,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
     }
 
+    @Override
+    public void saveFlowVariable(String flowInstId, String sVar, Object sValue) {
+        saveFlowNodeVariable(flowInstId, NodeInstance.RUN_TOKEN_GLOBAL, sVar, sValue);
+    }
 
     @Override
     public void saveFlowNodeVariable(String nodeInstId, String sVar, Object sValue) {
