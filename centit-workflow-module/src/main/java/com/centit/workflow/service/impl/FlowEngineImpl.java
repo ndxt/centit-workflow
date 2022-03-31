@@ -758,7 +758,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         for (String uc : nextNodeUnits) {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
-                                "cd_" + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), nextRouterNode.getNodeId()) , uc);
+                                "cd_" + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), "unit") , uc);
                             String runToken = preNodeInst == null ? "T" : preNodeInst.getRunToken();
                             flowVarTrans.setInnerVariable("cursor", runToken, uc);
                             resNodes.addAll(submitToNextNode(
@@ -782,7 +782,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         for (String uc : optUsers) {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
-                                "cu_"  + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), nextRouterNode.getNodeId()) , uc);
+                                "cu_"  + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), "user") , uc);
                             // 创建首节点时preNodeInst为null， 默认token为T
                             String runToken = preNodeInst == null ? "T" : preNodeInst.getRunToken();
                             flowVarTrans.setInnerVariable("cursor", runToken, uc);
