@@ -73,6 +73,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
         String formula = lexer.getBuffer(formulaBeginPos, formulaEndPos);
         return VariableFormula.calculate(formula, varTrans);
     }
+
     /**
      * 运行流程脚本，流程脚本包括以下几个函数
      * setValue(字符串常量 name, 表达式 formula); // 计算变量
@@ -190,7 +191,6 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                     break;
                 }
 
-
                 case "assignFlowOrganize"://setFlowOrganize(roleCode, units);// 设置办件机构
                 {
                     LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
@@ -201,6 +201,12 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                         StringBaseOpt.objectToStringList(params.getRight()), "来自脚本引擎的授权");
                 }
                     break;
+
+               /* case "if":{
+                    //
+                }
+                break;
+                */
             }
             currWord = lexer.getAWord();
             while(";".equals(currWord)){
