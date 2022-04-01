@@ -77,6 +77,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
      * 运行流程脚本，流程脚本包括以下几个函数
      * setValue(字符串常量 name, 表达式 formula); // 计算变量
      * saveValue(字符串常量 name, 表达式 formula); // 计算变量，并保存到流程的变量表中
+     * saveGlobalValue(字符串常量 name, 表达式 formula); // 计算变量，并保存到流程的全局变量表中
      * setNextOptUser(表达式 user); // 设置下一个交互节点的操作人员
      * closeNodes(字符串常量 nodeCode); //根据环节代码关闭节点
      * closeAllIsolatedNodes();// 关闭所有游离节点
@@ -123,6 +124,20 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                     retValueMap.put(params.getLeft(),params.getRight());
                 }
                     break;
+
+                case "saveGlobalValue":
+                {
+                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
+                    if(params ==null){
+                        break;
+                    }
+                    flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), nodeInst.getRunToken(),
+                        params.getLeft(),params.getRight());
+                    varTrans.setInnerVariable(params.getLeft(), "T", params.getRight());
+                    retValueMap.put(params.getLeft(),params.getRight());
+                }
+                break;
+
                 case "setNextOptUser":
                     String lockedUser =
                         StringBaseOpt.castObjectToString(fetchFuncFormulaParam(lexer, varTrans) );
