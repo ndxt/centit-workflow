@@ -21,6 +21,7 @@ import java.util.*;
 @Table(name = "WF_NODE_INSTANCE")
 public class NodeInstance implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
+    public static final String TOP_RUNTIME_TOKEN = "T";
 
     @Id
     @Column(name = "NODE_INST_ID")
@@ -222,8 +223,8 @@ public class NodeInstance implements java.io.Serializable {
     /**
      * 计算一个令牌token的上层token
      *
-     * @param token
-     * @return
+     * @param token 当前令牌
+     * @return 上层令牌
      */
     public static String calcSuperToken(String token) {
         if (token == null) {

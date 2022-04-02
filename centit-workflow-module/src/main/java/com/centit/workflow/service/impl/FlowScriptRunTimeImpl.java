@@ -18,8 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 
 @Service
 @Transactional
@@ -34,50 +36,30 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
     @Autowired
     private NodeInstanceDao nodeInstanceDao;
 
-    private LeftRightPair<String, Object> fetchFuncStringFormulaParams(Lexer lexer, FlowVariableTranslate varTrans){
-        String currWord = lexer.getAWord();
-        if (!"(".equals(currWord)) {
-            return null;
-        }
-        String valueName = lexer.getAWord();
-        currWord = lexer.getAWord();
-        if (!",".equals(currWord)) {
-            return null;
-        }
-        int formulaBeginPos = lexer.getCurrPos();
-        lexer.seekToRightBracket();
-        int formulaEndPos = lexer.getCurrPos();
-        String formula = lexer.getBuffer(formulaBeginPos, formulaEndPos);
-        Object value = VariableFormula.calculate(formula, varTrans);
-        return new LeftRightPair<>(StringRegularOpt.trimString(valueName), value);
+    private boolean beginFunction(VariableFormula formula){
+        String currWord = formula.skipAWord();
+        return "(".equals(currWord);
     }
 
-    private String fetchFuncStringParam(Lexer lexer){
-        String currWord = lexer.getAWord();
-        if (!"(".equals(currWord)) {
-            return null;
-        }
-        String valueName = lexer.getAWord();
-        lexer.seekToRightBracket();
-        return StringRegularOpt.trimString(valueName);
+    private boolean endFunction(VariableFormula formula){
+        return formula.seekToRightBracket();
     }
 
-    private Object fetchFuncFormulaParam(Lexer lexer, FlowVariableTranslate varTrans){
-        String currWord = lexer.getAWord();
-        if (!"(".equals(currWord)) {
-            return null;
+    private Object getAFunctionParam(VariableFormula formula){
+        Object object =  formula.calcFormula();
+
+        String separatorString = formula.skipAWord();
+        if(!",".equals(separatorString)) {
+            formula.writeBackAWord(separatorString);
         }
-        int formulaBeginPos = lexer.getCurrPos();
-        lexer.seekToRightBracket();
-        int formulaEndPos = lexer.getCurrPos();
-        String formula = lexer.getBuffer(formulaBeginPos, formulaEndPos);
-        return VariableFormula.calculate(formula, varTrans);
+        return object;
     }
 
     /**
      * 运行流程脚本，流程脚本包括以下几个函数
      * setValue(字符串常量 name, 表达式 formula); // 计算变量
      * saveValue(字符串常量 name, 表达式 formula); // 计算变量，并保存到流程的变量表中
+     * saveSuperValue(字符串常量 name, 表达式 formula); // 计算变量，并保存到流程的上级分支的变量表中
      * saveGlobalValue(字符串常量 name, 表达式 formula); // 计算变量，并保存到流程的全局变量表中
      * setNextOptUser(表达式 user); // 设置下一个交互节点的操作人员
      * closeNodes(字符串常量 nodeCode); //根据环节代码关闭节点
@@ -97,123 +79,240 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
     @Override
     public Map<String, Object> runFlowScript(String script, FlowInstance flowInst, NodeInstance nodeInst,
                                              FlowVariableTranslate varTrans) {
-        Lexer lexer = new Lexer(script);
+        VariableFormula formula = new VariableFormula();
         Map<String, Object> retValueMap = new HashMap<>(16);
-        String currWord = lexer.getAWord();
-        while(StringUtils.isNotBlank(currWord)){
-            //String funcName = currWord.toLowerCase();
-            switch (currWord){
-                case "setValue":
-                {
-                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
-                    if(params ==null){
-                        break;
-                    }
-                    varTrans.setInnerVariable(params.getLeft(), nodeInst.getRunToken(), params.getRight());
-                    retValueMap.put(params.getLeft(),params.getRight());
-                }
-                    break;
-                case "saveValue":
-                {
-                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
-                    if(params ==null){
-                        break;
-                    }
-                    flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), nodeInst.getRunToken(),
-                        params.getLeft(),params.getRight());
-                    varTrans.setInnerVariable(params.getLeft(), nodeInst.getRunToken(), params.getRight());
-                    retValueMap.put(params.getLeft(),params.getRight());
-                }
-                    break;
+        formula.setFormula(script);
+        formula.setTrans(varTrans);
 
-                case "saveGlobalValue":
-                {
-                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
-                    if(params ==null){
-                        break;
-                    }
-                    flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), nodeInst.getRunToken(),
-                        params.getLeft(),params.getRight());
-                    varTrans.setInnerVariable(params.getLeft(), "T", params.getRight());
-                    retValueMap.put(params.getLeft(),params.getRight());
+        //Function<Object[], Object> func =  (arObjs) -> this::closeAllIsolatedNodes(flowInst) ;
+
+        while (true) {
+            LeftRightPair<String, Object> value = runWorkflowFunction(flowInst, nodeInst,
+                formula, varTrans);
+            if (value != null) {
+                retValueMap.put(value.getLeft(), value.getRight());
+            }
+
+            String separatorString = formula.skipAWord();
+            while (StringUtils.equalsAny(separatorString, ",", ";","(", ")")) {
+                separatorString = formula.skipAWord();
+            }
+            if (StringUtils.isBlank(separatorString)) {
+                break;
+            }
+            formula.writeBackAWord(separatorString);
+        }
+        return retValueMap;
+
+    }
+
+    public LeftRightPair<String, Object> runWorkflowFunction(FlowInstance flowInst, NodeInstance nodeInst,
+                                                             VariableFormula formula, FlowVariableTranslate varTrans){
+        String currWord = formula.skipAWord();
+        if(StringUtils.isBlank(currWord)) {
+            return null;
+        }
+        //currWord = currWord.toLowerCase(Locale.ROOT);
+            //String funcName = currWord.toLowerCase();
+        switch (currWord){
+            case "setValue":
+            {
+                if(!beginFunction(formula)){
+                    return null;
                 }
+                Object name = getAFunctionParam(formula);
+                Object value = getAFunctionParam(formula);
+                endFunction(formula);
+                if(name !=null && value !=null) {
+                    varTrans.setInnerVariable(StringBaseOpt.castObjectToString(name), nodeInst.getRunToken(), value);
+                    return new LeftRightPair<>(StringBaseOpt.castObjectToString(name),  value);
+                }
+            }
+                break;
+            case "saveValue":
+            {
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                Object name = getAFunctionParam(formula);
+                Object value = getAFunctionParam(formula);
+                endFunction(formula);
+                if(name !=null && value !=null) {
+                    LeftRightPair<String, Object> retPair = new LeftRightPair<>(StringBaseOpt.castObjectToString(name),  value);
+                    varTrans.setInnerVariable(retPair.getLeft(), nodeInst.getRunToken(), value);
+                    flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), nodeInst.getRunToken(),
+                        retPair.getLeft(),  value);
+                    return retPair;
+                }
+
+            }
                 break;
 
-                case "setNextOptUser":
-                    String lockedUser =
-                        StringBaseOpt.castObjectToString(fetchFuncFormulaParam(lexer, varTrans) );
-                    if(StringUtils.isNotBlank(lockedUser)){
-                        retValueMap.put("_lock_user",lockedUser);
+            case "saveGlobalValue":
+            {
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                Object name = getAFunctionParam(formula);
+                Object value = getAFunctionParam(formula);
+                endFunction(formula);
+                if(name !=null && value !=null) {
+                    LeftRightPair<String, Object> retPair = new LeftRightPair<>(StringBaseOpt.castObjectToString(name),  value);
+                    varTrans.setInnerVariable(retPair.getLeft(), NodeInstance.TOP_RUNTIME_TOKEN, value);
+                    flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), NodeInstance.TOP_RUNTIME_TOKEN,
+                        retPair.getLeft(),  value);
+                    return retPair;
+                }
+            }
+            break;
+
+            case "saveSuperValue":
+            {
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                Object name = getAFunctionParam(formula);
+                Object value = getAFunctionParam(formula);
+                endFunction(formula);
+                if(name !=null && value !=null) {
+                    String token = NodeInstance.calcSuperToken(nodeInst.getRunToken());
+                    if(StringUtils.isBlank(token)){
+                        token = NodeInstance.TOP_RUNTIME_TOKEN;
                     }
-                    break;
-                case "closeNodes": { //closeNodes(nodeCode); //根据环节代码关闭节点
-                    String nodecode = fetchFuncStringParam(lexer);
-                    if (StringUtils.isNotBlank(nodecode)) {
+                    LeftRightPair<String, Object> retPair = new LeftRightPair<>(StringBaseOpt.castObjectToString(name),  value);
+                    varTrans.setInnerVariable(retPair.getLeft(), token, value);
+                    flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), token,
+                        retPair.getLeft(),  value);
+                    return retPair;
+                }
+            }
+            break;
+
+            case "setNextOptUser": {
+                if (!beginFunction(formula)) {
+                    return null;
+                }
+                Object param = getAFunctionParam(formula);
+                endFunction(formula);
+                if (param != null) {
+                    String lockedUser =
+                        StringBaseOpt.castObjectToString(param);
+                    if (StringUtils.isNotBlank(lockedUser)) {
+                        return new LeftRightPair<>("_lock_user", lockedUser);
+                    }
+                }
+            }
+                break;
+            case "closeNodes": { //closeNodes(nodeCode); //根据环节代码关闭节点
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                Object param = getAFunctionParam(formula);
+                endFunction(formula);
+                if (param!=null) {
+                    String nodecode = StringBaseOpt.castObjectToString(param);
+                    if(StringUtils.isNotBlank(nodecode)) {
                         closeNodes(nodecode, flowInst);
                     }
                 }
-                    break;
-                case "closeAllIsolatedNodes": //closeAllIsolatedNodes();// 关闭所有游离节点
-                    lexer.seekToRightBracket();
-                    closeAllIsolatedNodes(flowInst);
-                    break;
+            }
+                break;
+            case "closeAllIsolatedNodes": //closeAllIsolatedNodes();// 关闭所有游离节点
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                endFunction(formula);
+                closeAllIsolatedNodes(flowInst);
+                break;
 
-                case "closeAllOtherNodes": //closeAllOtherNodes(); // 关闭所有其他节点，非本节点全部关闭
-                    lexer.seekToRightBracket();
-                    closeAllOtherNodes(flowInst, nodeInst);
-                    break;
+            case "closeAllOtherNodes": //closeAllOtherNodes(); // 关闭所有其他节点，非本节点全部关闭
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                endFunction(formula);
+                closeAllOtherNodes(flowInst, nodeInst);
+                break;
 
-                case "deleteFlowWorkTeam":{
-                    String roleCode = fetchFuncStringParam(lexer);
+            case "deleteFlowWorkTeam":{
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                Object param = getAFunctionParam(formula);
+                endFunction(formula);
+                if (param!=null) {
+                    String roleCode = StringBaseOpt.castObjectToString(param);
                     if(StringUtils.isNotBlank(roleCode)){
                         flowEngine.deleteFlowWorkTeam(flowInst.getFlowInstId(), roleCode);
                     }
+                }
+                break;
+            }
+
+            case "assignFlowWorkTeam"://setFlowTeam(roleCode, users);// 设置办件角色
+            {
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                Object name = getAFunctionParam(formula);
+                Object value = getAFunctionParam(formula);
+                endFunction(formula);
+                if (name == null || value==null) {
                     break;
                 }
-
-                case "assignFlowWorkTeam"://setFlowTeam(roleCode, users);// 设置办件角色
-                {
-                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
-                    if (params == null || StringUtils.isBlank(params.getLeft())) {
-                        break;
-                    }
-                    flowEngine.assignFlowWorkTeam(flowInst.getFlowInstId(), params.getLeft(),
+                String roleCode = StringBaseOpt.castObjectToString(name);
+                if(StringUtils.isNotBlank(roleCode)) {
+                    flowEngine.assignFlowWorkTeam(flowInst.getFlowInstId(), roleCode,
                         nodeInst.getRunToken(),
-                        StringBaseOpt.objectToStringList(params.getRight()));
+                        StringBaseOpt.objectToStringList(value));
                 }
-                    break;
+            }
+                break;
 
-                case "deleteFlowOrganize":{
-                    String roleCode = fetchFuncStringParam(lexer);
+            case "deleteFlowOrganize":{
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                Object param = getAFunctionParam(formula);
+                endFunction(formula);
+                if (param!=null) {
+                    String roleCode = StringBaseOpt.castObjectToString(param);
                     if(StringUtils.isNotBlank(roleCode)){
                         flowEngine.deleteFlowOrganize(flowInst.getFlowInstId(), roleCode);
                     }
-                    break;
-                }
-
-                case "assignFlowOrganize"://setFlowOrganize(roleCode, units);// 设置办件机构
-                {
-                    LeftRightPair<String, Object> params = fetchFuncStringFormulaParams(lexer, varTrans);
-                    if (params == null || StringUtils.isBlank(params.getLeft())) {
-                        break;
-                    }
-                    flowEngine.assignFlowOrganize(flowInst.getFlowInstId(), params.getLeft(),
-                        StringBaseOpt.objectToStringList(params.getRight()), "来自脚本引擎的授权");
-                }
-                    break;
-
-               /* case "if":{
-                    //
                 }
                 break;
-                */
             }
-            currWord = lexer.getAWord();
-            while(";".equals(currWord)){
-                currWord = lexer.getAWord();
+
+            case "assignFlowOrganize"://setFlowOrganize(roleCode, units);// 设置办件机构
+            {
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                Object name = getAFunctionParam(formula);
+                Object value = getAFunctionParam(formula);
+                endFunction(formula);
+                if (name == null || value==null) {
+                    break;
+                }
+                String roleCode = StringBaseOpt.castObjectToString(name);
+                if(StringUtils.isNotBlank(roleCode)) {
+                    flowEngine.assignFlowOrganize(flowInst.getFlowInstId(), roleCode,
+                        StringBaseOpt.objectToStringList(value), "来自脚本引擎的授权");
+                }
             }
+                break;
+
+            case "if":
+            case "iF":
+            case "If":
+            case "IF":{
+                //
+            }
+            break;
+
         }
-        return retValueMap;
+
+        return null;
     }
 
     private void closeNodeInstanceInside(NodeInstance ni) {
@@ -247,7 +346,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
         }
     }
 
-    private void closeAllIsolatedNodes( FlowInstance flowInst) {
+    public Integer  closeAllIsolatedNodes(FlowInstance flowInst) {
         if(flowInst.getFlowNodeInstances().size() == 0){
             flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
         }
@@ -257,6 +356,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                 closeNodeInstanceInside(ni);
             }
         }
+        return 1;
     }
 
     private void closeAllOtherNodes( FlowInstance flowInst, NodeInstance nodeInst) {
