@@ -49,9 +49,9 @@ public class FlowManagerController extends BaseController {
     @Autowired
     private FlowManager flowManager;
     @Autowired
-    private FlowEngine flowEng;
+    private FlowEngine flowEngine;
     @Autowired
-    private FlowDefine flowDef;
+    private FlowDefine flowDefine;
 
     /**
      * 流程实例检索查询
@@ -96,7 +96,7 @@ public class FlowManagerController extends BaseController {
         String flowCode = flowInst.getFlowCode();
         Long version = flowInst.getVersion();
         if (StringUtils.isNotBlank(flowCode)) {
-            FlowInfo obj = flowDef.getFlowInfo(flowCode, version);
+            FlowInfo obj = flowDefine.getFlowInfo(flowCode, version);
             String wfDefXML = obj.getFlowXmlDesc();
 
             Map<String, Object> result = new HashMap<>();
@@ -110,7 +110,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "查看流程图", notes = "查看流程图")
     @RequestMapping(value = "/viewxml/{flowCode}/{version}", method = RequestMethod.GET)
     public void viewRuntimeXml(@PathVariable String flowCode, @PathVariable Long version, HttpServletRequest request, HttpServletResponse response) {
-        FlowInfo obj = flowDef.getFlowInfo(flowCode, version);
+        FlowInfo obj = flowDefine.getFlowInfo(flowCode, version);
         String xml = obj.getFlowXmlDesc();
         HashMap<String, String> result = new HashMap<>();
         result.put("xml", xml);
@@ -137,7 +137,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/getorglist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<Map<String, String>> getOrganizeList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
-        Map<String, List<String>> organizeMap = flowEng.viewFlowOrganize(flowInstId);
+        Map<String, List<String>> organizeMap = flowEngine.viewFlowOrganize(flowInstId);
         List<Map<String, String>> organizeList = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : organizeMap.entrySet()) {
             for (String unitCode : entry.getValue()) {
@@ -160,7 +160,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "删除指定的流程组织机构", notes = "删除指定的流程组织机构")
     @RequestMapping(value = "/deleteorg/{flowInstId}/{roleCode}/{unitCode}", method = RequestMethod.GET)
     public void deleteOrg(@PathVariable String flowInstId, @PathVariable String roleCode, @PathVariable String unitCode, HttpServletResponse response) {
-        flowEng.deleteFlowOrganize(flowInstId, roleCode, unitCode);
+        flowEngine.deleteFlowOrganize(flowInstId, roleCode, unitCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -173,7 +173,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "删除指定roleCode下的所有流程工作机构", notes = "删除指定roleCode下的所有流程工作机构")
     @RequestMapping(value = "/deleteorg/{flowInstId}/{roleCode}", method = RequestMethod.GET)
     public void deleteOrgAll(@PathVariable String flowInstId, @PathVariable String roleCode, HttpServletResponse response) {
-        flowEng.deleteFlowOrganize(flowInstId, roleCode);
+        flowEngine.deleteFlowOrganize(flowInstId, roleCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -189,7 +189,7 @@ public class FlowManagerController extends BaseController {
         @PathVariable String flowInstId, @PathVariable String roleCode,
         @PathVariable String unitCode, @PathVariable String authDesc,
         HttpServletRequest request, HttpServletResponse response) {
-        flowEng.assignFlowOrganize(flowInstId, roleCode, unitCode, authDesc);
+        flowEngine.assignFlowOrganize(flowInstId, roleCode, unitCode, authDesc);
         JsonResultUtils.writeSingleDataJson("", response);
 
     }
@@ -245,7 +245,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/getteamlist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<Map<String, String>> getTeamList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
-        Map<String, List<String>> teamMap = flowEng.viewFlowWorkTeam(flowInstId);
+        Map<String, List<String>> teamMap = flowEngine.viewFlowWorkTeam(flowInstId);
         List<Map<String, String>> teamList = new ArrayList<Map<String, String>>();
         for (Map.Entry<String, List<String>> entry : teamMap.entrySet()) {
             Set<HashMap<String, String>> userMap = new HashSet<HashMap<String, String>>();
@@ -270,7 +270,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "删除指定roleCode下的所有流程工作小组", notes = "删除指定roleCode下的所有流程工作小组")
     @RequestMapping(value = "/deleteteam/{flowInstId}/{roleCode}", method = RequestMethod.GET)
     public void deleteWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
-        flowEng.deleteFlowWorkTeam(flowInstId, roleCode);
+        flowEngine.deleteFlowWorkTeam(flowInstId, roleCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -282,7 +282,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "删除指定的流程工作小组", notes = "删除指定的流程工作小组")
     @RequestMapping(value = "/deleteteam/{flowInstId}/{roleCode}/{userCode}", method = RequestMethod.GET)
     public void deleteWorkTeamUser(@PathVariable String flowInstId, @PathVariable String roleCode, @PathVariable String userCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
-        flowEng.deleteFlowWorkTeam(flowInstId, roleCode, userCode);
+        flowEngine.deleteFlowWorkTeam(flowInstId, roleCode, userCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -299,7 +299,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/getvariablelist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<FlowVariable> getVariableList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
-        List<FlowVariable> variableList = flowEng.listFlowVariables(flowInstId);
+        List<FlowVariable> variableList = flowEngine.listFlowVariables(flowInstId);
         pageDesc.setTotalRows(variableList.size());
         return PageQueryResult.createResult(variableList, pageDesc);
     }
@@ -314,7 +314,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/savevariable/{flowInstId}/{varName}/{varValue}", method = RequestMethod.GET)
     public void saveVariable(@PathVariable String flowInstId, @PathVariable String varName, @PathVariable String varValue, HttpServletRequest request, HttpServletResponse response) {
         String runToken = request.getParameter("runToken");
-        flowEng.saveFlowNodeVariable(flowInstId, runToken, varName, StringUtils.isBlank(varValue) ? null : varValue);
+        flowEngine.saveFlowNodeVariable(flowInstId, runToken, varName, StringUtils.isBlank(varValue) ? null : varValue);
         JsonResultUtils.writeSingleDataJson("", response);
     }
 
@@ -328,7 +328,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/tokens/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public Map<String, String> listTokens(@PathVariable String flowInstId) {
-        List<FlowVariable> flowVariableList = flowEng.listFlowVariables(flowInstId);
+        List<FlowVariable> flowVariableList = flowEngine.listFlowVariables(flowInstId);
         Set<String> existTokenSet = new HashSet<>();
         for (FlowVariable flowVariable : flowVariableList) {
             existTokenSet.add(flowVariable.getRunToken());
@@ -463,7 +463,7 @@ public class FlowManagerController extends BaseController {
                                             HttpServletRequest request, @PathVariable String bo) {
         switch (bo.charAt(0)) {
             case '1':
-                flowEng.rollBackNode(nodeInstId, "admin");
+                flowEngine.rollBackNode(nodeInstId, "admin");
                 break;//这儿必须有break，不然会继续往后执行的。
             case '2':
                 flowManager.forceCommit(nodeInstId, "admin");
@@ -477,7 +477,7 @@ public class FlowManagerController extends BaseController {
 
                 if (timeLimit != null) {
                     flowManager.activizeInstance(
-                        flowEng.getNodeInstById(nodeInstId).getFlowInstId(), timeLimit,
+                        flowEngine.getNodeInstById(nodeInstId).getFlowInstId(), timeLimit,
                         mangerUserCode);
                 } else {
                     flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
@@ -491,7 +491,7 @@ public class FlowManagerController extends BaseController {
                 break;
 
         }
-        return flowEng.getNodeInstById(nodeInstId);
+        return flowEngine.getNodeInstById(nodeInstId);
     }
 
     /**
@@ -515,7 +515,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "任务列表查询，查询条件可自助添加", notes = "任务列表查询，查询条件可自助添加")
     @RequestMapping(value = "/listNodeOpers/{nodeInstId}", method = RequestMethod.GET)
     public void listNodeOpers(@PathVariable String nodeInstId, HttpServletResponse response) {
-        NodeInstance nodeInstance = flowEng.getNodeInstById(nodeInstId);
+        NodeInstance nodeInstance = flowEngine.getNodeInstById(nodeInstId);
         List<UserTask> objList = new ArrayList<>();
         List<UserTask> innerTask = flowManager.listNodeTasks(nodeInstId);
         if (innerTask != null) {
@@ -527,7 +527,7 @@ public class FlowManagerController extends BaseController {
             searchColumn.put("unitCode", nodeInstance.getUnitCode());
             searchColumn.put("userStation", nodeInstance.getRoleCode());
             PageDesc pageDesc = new PageDesc(1, 100);
-            List<UserTask> dynamicTask = flowEng.listDynamicTaskByUnitStation(searchColumn, pageDesc);
+            List<UserTask> dynamicTask = flowEngine.listDynamicTaskByUnitStation(searchColumn, pageDesc);
             objList.addAll(dynamicTask);
         }
         JsonResultUtils.writeSingleDataJson(objList, response);
@@ -536,8 +536,8 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "返回节点的操作记录，或者日志", notes = "返回节点的操作记录，或者日志")
     @RequestMapping(value = "/viewnode/{nodeInstId}", method = RequestMethod.GET)
     public void viewNodeInstanceInfo(@PathVariable String nodeInstId, HttpServletResponse response) {
-        NodeInstance nodeInst = flowEng.getNodeInstById(nodeInstId);
-        NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeInst.getNodeId());
+        NodeInstance nodeInst = flowEngine.getNodeInstById(nodeInstId);
+        NodeInfo nodeInfo = flowDefine.getNodeInfoById(nodeInst.getNodeId());
         List<UserTask> tasks = flowManager.listNodeTasks(nodeInstId);
         List<? extends OperationLog> logs = flowManager.listNodeActionLogs(nodeInstId);
         ResponseMapData resData = new ResponseMapData();
@@ -558,7 +558,7 @@ public class FlowManagerController extends BaseController {
         if (dbobject == null) {
             throw new ObjectException("找不到对应的流程实例信息：flowInstId=" + flowInstId);
         }
-        NodeInfo nodeInfo = flowDef.getNodeInfoById(nodeId);
+        NodeInfo nodeInfo = flowDefine.getNodeInfoById(nodeId);
         JSONObject nodeOptInfo = new JSONObject();
         nodeOptInfo.put("nodename", nodeInfo.getNodeName());
         int nodeInstInd = 0;
@@ -590,7 +590,7 @@ public class FlowManagerController extends BaseController {
                         searchColumn.put("nodeInstId", nodeInst.getNodeInstId());
                         searchColumn.put("unitCode", nodeInst.getUnitCode());
                         searchColumn.put("userStation", nodeInfo.getRoleCode());
-                        List<UserTask> dynamicTask = flowEng.listDynamicTaskByUnitStation(searchColumn, pageDesc);
+                        List<UserTask> dynamicTask = flowEngine.listDynamicTaskByUnitStation(searchColumn, pageDesc);
                         tasks.addAll(dynamicTask);
                     }
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
@@ -653,7 +653,7 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     public void assignFlowWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode,
                                    @PathVariable String userCode, @PathVariable String authdesc) {
-        flowEng.assignFlowWorkTeam(flowInstId, roleCode,
+        flowEngine.assignFlowWorkTeam(flowInstId, roleCode,
             CollectionsOpt.createList(userCode));
     }
 
@@ -666,7 +666,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/getAttByFlowInstId/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public List<InstAttention> getAttByFlowInstId(@PathVariable String flowInstId) {
-        return flowEng.viewFlowAttention(flowInstId);
+        return flowEngine.viewFlowAttention(flowInstId);
     }
 
     /**
@@ -678,7 +678,7 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/addAttention", method = RequestMethod.POST)
     public void addAttention(@RequestBody InstAttention instAttention) {
-        flowEng.saveFlowAttention(instAttention);
+        flowEngine.saveFlowAttention(instAttention);
     }
 
     /**
