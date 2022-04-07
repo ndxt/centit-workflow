@@ -224,7 +224,7 @@ public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
         return this;
     }
 
-    public SubmitOptOptions clone(){
+    public SubmitOptOptions duplicate(){
         SubmitOptOptions newObj = new SubmitOptOptions();
         newObj.setVariables(CollectionsOpt.cloneHashMap(this.variables));
         newObj.setGlobalVariables(CollectionsOpt.cloneHashMap(this.globalVariables));

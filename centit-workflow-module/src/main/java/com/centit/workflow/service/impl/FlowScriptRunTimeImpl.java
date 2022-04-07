@@ -459,6 +459,8 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                     } // else ")".equals(aWord);
                 }
             }
+            break;
+
             default:
                 break;
         }
