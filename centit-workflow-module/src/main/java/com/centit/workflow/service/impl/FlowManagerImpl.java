@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.*;
 
+
 /**
  * 流程管理业务实现类
  *
@@ -1149,7 +1150,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     public int suspendFlowInstTimer(String flowInstId, String mangerUserCode) {
-        flowInstanceDao.updateFlowTimerState(flowInstId, "P", mangerUserCode);
+        flowInstanceDao.updateFlowTimerState(flowInstId, FlowInstance.FLOW_TIMER_STATE_SUSPEND, mangerUserCode);
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "暂停流程计时: " + flowInstId);
@@ -1162,7 +1163,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     public int activizeFlowInstTimer(String flowInstId, String mangerUserCode) {
-        flowInstanceDao.updateFlowTimerState(flowInstId, "T", mangerUserCode);
+        flowInstanceDao.updateFlowTimerState(flowInstId, FlowInstance.FLOW_TIMER_STATE_RUN, mangerUserCode);
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "恢复流程计时: " + flowInstId);

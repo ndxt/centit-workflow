@@ -1,27 +1,31 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.components.OperationLogCenter;
+import com.centit.framework.model.adapter.NotificationCenter;
+import com.centit.framework.model.basedata.NoticeMessage;
+import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.algorithm.GeneralAlgorithm;
 import com.centit.support.algorithm.StringBaseOpt;
-import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.common.LeftRightPair;
-import com.centit.support.compiler.Lexer;
+import com.centit.support.compiler.Pretreatment;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.dao.NodeInstanceDao;
+import com.centit.workflow.po.FlowEventInfo;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.service.FlowEngine;
+import com.centit.workflow.service.FlowEventService;
+import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.FlowScriptRunTime;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -32,10 +36,19 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
     FlowEngine flowEngine;
 
     @Autowired
+    private FlowManager flowManager;
+
+    @Autowired
     private FlowInstanceDao flowInstanceDao;
 
     @Autowired
     private NodeInstanceDao nodeInstanceDao;
+
+    @Autowired
+    private NotificationCenter notificationCenter;
+
+    @Autowired
+    private FlowEventService flowEventService;
 
     private boolean beginFunction(VariableFormula formula){
         String currWord = formula.skipAWord();
@@ -54,6 +67,20 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
             formula.writeBackAWord(separatorString);
         }
         return object;
+    }
+
+    private List<Object> getAllFunctionParams(VariableFormula formula){
+        Object object =  formula.calcFormula();
+        String separatorString = formula.skipAWord();
+        List<Object> params = new ArrayList<>(8);
+        params.add(object);
+        while(",".equals(separatorString)) {
+            object =  formula.calcFormula();
+            params.add(object);
+            separatorString = formula.skipAWord();
+        }
+        formula.writeBackAWord(separatorString);
+        return params;
     }
 
     /**
@@ -303,6 +330,113 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
             }
                 break;
 
+            case "event":{ //发送流程消息
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                List<Object> params =  getAllFunctionParams(formula);
+                endFunction(formula);
+                if(params.size()<1){
+                    return null;
+                }
+                FlowEventInfo eventInfo = new FlowEventInfo();
+                eventInfo.setFlowInstId(flowInst.getFlowInstId());
+                eventInfo.setSenderUser(GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
+                eventInfo.setEventName(StringBaseOpt.castObjectToString(params.get(0)));
+                if(params.size()>1) {
+                    eventInfo.setEventParam(StringBaseOpt.castObjectToString(params.get(1)));
+                }
+                flowEventService.saveNewEvent(eventInfo);
+
+                break;
+            }
+
+            case "parentEvent":{ //发送流程消息
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                List<Object> params =  getAllFunctionParams(formula);
+                endFunction(formula);
+                if(params.size()<1){
+                    return null;
+                }
+                FlowEventInfo eventInfo = new FlowEventInfo();
+                eventInfo.setFlowInstId(flowInst.getPreInstId());
+                eventInfo.setSenderUser(GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
+                eventInfo.setEventName(StringBaseOpt.castObjectToString(params.get(0)));
+                if(params.size()>1) {
+                    eventInfo.setEventParam(StringBaseOpt.castObjectToString(params.get(1)));
+                }
+                flowEventService.saveNewEvent(eventInfo);
+
+                break;
+            }
+
+            case "sendMessage":{ //发送通知消息
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                List<Object> params =  getAllFunctionParams(formula);
+                endFunction(formula);
+                if(params.size()<3){
+                    return null;
+                }
+                notificationCenter.sendMessage("system", StringBaseOpt.objectToStringList(params.get(0)),
+                    NoticeMessage.create().operation("workflow").method("submit").subject(
+                        StringBaseOpt.castObjectToString(params.get(1)))
+                        .content(
+                            Pretreatment.mapTemplateString(StringBaseOpt.castObjectToString(params.get(2)), varTrans)));
+
+                break;
+            }
+
+            case "suspendTimer": //暂停计时
+                if (!beginFunction(formula)) {
+                    return null;
+                }
+                endFunction(formula);
+                flowManager.suspendFlowInstTimer(flowInst.getFlowInstId(),
+                    GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
+                /*flowInstanceDao.updateFlowTimerState(flowInst.getFlowInstId(),
+                    FlowInstance.FLOW_TIMER_STATE_SUSPEND, GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
+
+                OperationLog managerAct = FlowOptUtils.createActionLog(
+                    GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"), flowInst.getFlowInstId(),
+                    "来自节点" + nodeInst.getNodeInstId() + "脚本的暂停流程计时: " + flowInst.getFlowInstId());
+                OperationLogCenter.log(managerAct);*/
+                break;
+
+            case "activizeTimer": //恢复计时
+                if (!beginFunction(formula)) {
+                    return null;
+                }
+                endFunction(formula);
+                flowManager.activizeFlowInstTimer(flowInst.getFlowInstId(),
+                    GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
+                /*flowInstanceDao.updateFlowTimerState(flowInst.getFlowInstId(),
+                    FlowInstance.FLOW_TIMER_STATE_RUN, GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
+
+                OperationLog managerAct = FlowOptUtils.createActionLog(
+                    GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"), flowInst.getFlowInstId(),
+                    "来自节点" + nodeInst.getNodeInstId() + "脚本的恢复流程计时: " + flowInst.getFlowInstId());
+                OperationLogCenter.log(managerAct);*/
+                break;
+
+            case "resetTimeLimit":
+                if (!beginFunction(formula)) {
+                    return null;
+                }
+                Object param = getAFunctionParam(formula);
+                endFunction(formula);
+                String timeLimt = StringBaseOpt.castObjectToString(param);
+                if(StringUtils.isNotBlank(timeLimt)){
+                    flowManager.resetFlowTimelimt(flowInst.getFlowInstId(),
+                        StringBaseOpt.castObjectToString(param),
+                        GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"),
+                        "来自自动运行节点的重置"+nodeInst.getNodeInstId());
+                }
+
+            break;
             case "if":
             case "iF":
             case "If":

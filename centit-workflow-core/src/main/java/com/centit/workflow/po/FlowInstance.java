@@ -94,6 +94,7 @@ public class FlowInstance implements java.io.Serializable {
     private Date createTime;
     @Column(name = "PROMISE_TIME")
     private Long promiseTime;
+
     @Column(name = "TIME_LIMIT")
     private Long timeLimit;
     /**
@@ -129,8 +130,13 @@ public class FlowInstance implements java.io.Serializable {
     private Date lastUpdateTime;
     @Column(name = "LAST_UPDATE_USER")
     private String lastUpdateUser;
+
+    //不计时 F、计时T(有期限)、暂停P 忽略(无期限) F
+    public static final String FLOW_TIMER_STATE_NOLIMIT = "F";
+    public static final String FLOW_TIMER_STATE_RUN = "T";
+    public static final String FLOW_TIMER_STATE_SUSPEND = "P";
     @Column(name = "IS_TIMER")
-    private String isTimer; //不计时N、计时T(有期限)、暂停P  忽略(无期限) F
+    private String isTimer;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = NodeInstance.class)
     @JoinColumn(name = "flowInstId")
