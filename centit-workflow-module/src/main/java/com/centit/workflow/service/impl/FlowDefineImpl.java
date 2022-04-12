@@ -103,8 +103,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
         List<FlowInfo> flows = flowDefineDao.listLastVersionFlowByOptId(optId);
         List<? extends IOptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
+        List<FlowInfo> tyFlows = new ArrayList<FlowInfo>();
         OptInfo optInfo = null;
         String tyOptId = "";
+        boolean flag = true;
         for(IOptInfo obj : allOptInfos){
             if(obj.getOptId().equals(optId)){
                 optInfo = (OptInfo) obj;
@@ -114,11 +116,16 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             for(IOptInfo obj : allOptInfos){
                 if(obj.getTopOptId().equals(optInfo.getTopOptId()) && obj.getOptName().equals(optInfo.OPT_INFO_FORM_CODE_COMMON_NAME)){
                     tyOptId = obj.getOptId();
+                    if(tyOptId.equals(optId)){
+                        flag = false;
+                    }
                 }
             }
         }
         //获取通用模块的流程
-        List<FlowInfo> tyFlows = flowDefineDao.listLastVersionFlowByOptId(tyOptId);
+        if(flag){
+            tyFlows = flowDefineDao.listLastVersionFlowByOptId(tyOptId);
+        }
         flows.addAll(tyFlows);
         if (CollectionUtils.sizeIsEmpty(flows)){
             return Collections.emptyList();
