@@ -3,10 +3,15 @@ package com.centit.workflow.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
+import com.centit.framework.filter.RequestThreadLocal;
+import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
+import com.centit.framework.model.basedata.IOptInfo;
+import com.centit.framework.system.po.OptInfo;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
@@ -27,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -64,6 +70,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Autowired
     private FlowInstanceDao flowInstanceDao;
 
+    @Autowired
+    private PlatformEnvironment platformEnvironment;
+
     private static Logger logger = LoggerFactory.getLogger(FlowDefineImpl.class);
     public static final String BEGINNODETAG = "begin";
     public static final String ENDNODETAG = "end";
@@ -89,7 +98,28 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     @Transactional
     public List listFlowsByOptId(String optId) {
+        HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+
         List<FlowInfo> flows = flowDefineDao.listLastVersionFlowByOptId(optId);
+        List<? extends IOptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
+        OptInfo optInfo = null;
+        String tyOptId = "";
+        for(IOptInfo obj : allOptInfos){
+            if(obj.getOptId().equals(optId)){
+                optInfo = (OptInfo) obj;
+            }
+        }
+        if(optInfo != null){
+            for(IOptInfo obj : allOptInfos){
+                if(obj.getTopOptId().equals(optInfo.getTopOptId()) && obj.getOptName().equals(optInfo.OPT_INFO_FORM_CODE_COMMON_NAME)){
+                    tyOptId = obj.getOptId();
+                }
+            }
+        }
+        //获取通用模块的流程
+        List<FlowInfo> tyFlows = flowDefineDao.listLastVersionFlowByOptId(tyOptId);
+        flows.addAll(tyFlows);
         if (CollectionUtils.sizeIsEmpty(flows)){
             return Collections.emptyList();
         }
