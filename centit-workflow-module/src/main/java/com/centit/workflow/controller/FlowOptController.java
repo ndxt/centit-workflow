@@ -6,9 +6,14 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.filter.RequestThreadLocal;
+import com.centit.framework.model.adapter.PlatformEnvironment;
+import com.centit.framework.model.basedata.IOptInfo;
 import com.centit.framework.model.basedata.IOsInfo;
+import com.centit.framework.system.po.OptInfo;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowOptPage;
 import com.centit.workflow.po.OptTeamRole;
 import com.centit.workflow.po.OptVariableDefine;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +42,9 @@ public class FlowOptController extends BaseController {
 
     @Autowired
     private FlowOptService wfOptService;
+
+    @Autowired
+    private PlatformEnvironment platformEnvironment;
 
     @ApiOperation(value = "获取业务系统列表", notes = "获取业务系统列表")
     @WrapUpResponseBody
@@ -125,6 +134,44 @@ public class FlowOptController extends BaseController {
         return PageQueryResult.createResult(optTeamRoles, pageDesc);
     }
 
+    @GetMapping("/allRoles/{optId}")
+    @WrapUpResponseBody
+    @ApiOperation("根据optId获取角色定义列表")
+    public PageQueryResult<OptTeamRole> listAllOptTeamRolesByOptId(@PathVariable String optId, PageDesc pageDesc) {
+        HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        List<? extends IOptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
+        List<OptTeamRole> tyRoles = new ArrayList<OptTeamRole>();
+        OptInfo optInfo = null;
+        String tyOptId = "";
+        boolean flag = true;
+        for(IOptInfo obj : allOptInfos){
+            if(obj.getOptId().equals(optId)){
+                optInfo = (OptInfo) obj;
+            }
+        }
+        if(optInfo != null){
+            for(IOptInfo obj : allOptInfos){
+                if(obj.getTopOptId().equals(optInfo.getTopOptId()) && obj.getOptName().equals(optInfo.OPT_INFO_FORM_CODE_COMMON_NAME)){
+                    tyOptId = obj.getOptId();
+                    if(tyOptId.equals(optId)){
+                        flag = false;
+                    }
+                }
+            }
+        }
+        if(flag){
+            Map<String, Object> filter = CollectionsOpt.createHashMap("optId", tyOptId);
+            tyRoles = wfOptService.listOptTeamRolesByFilter(filter, pageDesc);
+        }
+        Map<String, Object> filter = CollectionsOpt.createHashMap("optId", optId);
+        List<OptTeamRole> optTeamRoles = wfOptService.listOptTeamRolesByFilter(filter, pageDesc);
+        optTeamRoles.addAll(tyRoles);
+        return PageQueryResult.createResult(optTeamRoles, pageDesc);
+    }
+
+
+
     @GetMapping("/role/{roleId}")
     @WrapUpResponseBody
     @ApiOperation("根据主键id获取角色定义")
@@ -159,6 +206,43 @@ public class FlowOptController extends BaseController {
     public PageQueryResult<OptVariableDefine> listOptVariableDefinesByOptId(@PathVariable String optId, PageDesc pageDesc) {
         Map<String, Object> filter = CollectionsOpt.createHashMap("optId", optId);
         List<OptVariableDefine> optVariableDefines = wfOptService.listOptVariableDefinesByFilter(filter, pageDesc);
+        return PageQueryResult.createResult(optVariableDefines, pageDesc);
+    }
+
+    @GetMapping("/allVariables/{optId}")
+    @WrapUpResponseBody
+    @ApiOperation("根据optId获取变量定义列表")
+    public PageQueryResult<OptVariableDefine> listAllOptVariableDefinesByOptId(@PathVariable String optId, PageDesc pageDesc) {
+        HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        List<? extends IOptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
+        List<OptVariableDefine> tyVariables = new ArrayList<OptVariableDefine>();
+        OptInfo optInfo = null;
+        String tyOptId = "";
+        boolean flag = true;
+        for(IOptInfo obj : allOptInfos){
+            if(obj.getOptId().equals(optId)){
+                optInfo = (OptInfo) obj;
+            }
+        }
+        if(optInfo != null){
+            for(IOptInfo obj : allOptInfos){
+                if(obj.getTopOptId().equals(optInfo.getTopOptId()) && obj.getOptName().equals(optInfo.OPT_INFO_FORM_CODE_COMMON_NAME)){
+                    tyOptId = obj.getOptId();
+                    if(tyOptId.equals(optId)){
+                        flag = false;
+                    }
+                }
+            }
+        }
+        if(flag){
+            Map<String, Object> filter = CollectionsOpt.createHashMap("optId", tyOptId);
+            tyVariables = wfOptService.listOptVariableDefinesByFilter(filter, pageDesc);
+        }
+
+        Map<String, Object> filter = CollectionsOpt.createHashMap("optId", optId);
+        List<OptVariableDefine> optVariableDefines = wfOptService.listOptVariableDefinesByFilter(filter, pageDesc);
+        optVariableDefines.addAll(tyVariables);
         return PageQueryResult.createResult(optVariableDefines, pageDesc);
     }
 

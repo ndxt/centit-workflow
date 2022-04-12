@@ -98,6 +98,21 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     @Transactional
     public List listFlowsByOptId(String optId) {
+        List<FlowInfo> flows = flowDefineDao.listLastVersionFlowByOptId(optId);
+        if (CollectionUtils.sizeIsEmpty(flows)){
+            return Collections.emptyList();
+        }
+        //添加流程实例个数 属性
+        Object[] flowCodes = flows.stream().map(FlowInfo::getFlowCode).toArray();
+        JSONArray jsonArray = flowInstanceDao.countFlowInstances(CollectionsOpt.createHashMap("flowCode",flowCodes));
+        JSONArray flowDefineJsonArray = new JSONArray();
+        flows.forEach(flowInfo -> flowDefineJsonArray.add(combineFlowInstanceCount(jsonArray, flowInfo)));
+        return flowDefineJsonArray;
+    }
+
+    @Override
+    @Transactional
+    public List listAllFlowsByOptId(String optId) {
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
 
@@ -137,6 +152,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flows.forEach(flowInfo -> flowDefineJsonArray.add(combineFlowInstanceCount(jsonArray, flowInfo)));
         return flowDefineJsonArray;
     }
+
 
     private FlowInfo createFlowDefByJSON(String jsonDef, String flowCode, Long version, FlowDataDetail flowData) {
         FlowInfo flowDef = JSON.parseObject(jsonDef, FlowInfo.class);// new FlowInfo();

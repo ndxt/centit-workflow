@@ -72,6 +72,16 @@ public class FlowDefineController extends BaseController {
         return flowDefine.listFlowsByOptId(optId);
     }
 
+    /*
+     * 列举系统中的所有流程，只显示最新版本的(包含通用模块中的流程)
+     */
+    @ApiOperation(value = "列举流程业务相关流程(包含通用模块中的流程)", notes = "列举流程业务相关流程(包含通用模块中的流程)")
+    @WrapUpResponseBody
+    @GetMapping(value = "/optAllFlow/{optId}")
+    public List listAllFlowByOpt(@PathVariable String optId) {
+        return flowDefine.listAllFlowsByOptId(optId);
+    }
+
     /**
      * 某个流程的所有版本
      * // field    过滤域
