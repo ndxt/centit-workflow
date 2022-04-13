@@ -164,7 +164,8 @@ public class ActionTaskDao extends BaseDaoImpl<ActionTask, String> {
     public List<UserTask> listUserTaskFinByFilter(Map<String, Object> filter, PageDesc pageDesc) {
         String sql = userCompleteTaskBaseSql;
         if ("oracle.jdbc.driver.OracleDriver".equals(CodeRepositoryUtil.getSysConfigValue("jdbc.driver")) ||
-            "com.oscar.Driver".equals(CodeRepositoryUtil.getSysConfigValue("jdbc.driver"))) {
+            "com.oscar.Driver".equals(CodeRepositoryUtil.getSysConfigValue("jdbc.driver")) ||
+            "dm.jdbc.driver.DmDriver".equals(CodeRepositoryUtil.getSysConfigValue("jdbc.driver"))) {
             sql = userCompleteTaskBaseSql.replace("group_concat", "wm_concat");
         }
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql, filter);
