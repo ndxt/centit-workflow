@@ -216,6 +216,17 @@ public class FlowEngineController extends BaseController {
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
+
+    @ApiOperation(value = "根据条件查询待办", notes = "根据条件查询待办")
+    @WrapUpResponseBody
+    @GetMapping(value = "/listAllTasks")
+    public PageQueryResult<UserTask> listAllTasks(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks = flowEngine.listTasks(searchColumn, pageDesc);
+
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
+    }
+
     @ApiOperation(value = "查询节点待办用户", notes = "查询节点待办用户")
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/nodeTaskUsers")
