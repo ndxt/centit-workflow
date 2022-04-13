@@ -2442,7 +2442,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public List<UserTask> listTasks(Map<String, Object> searchColumn, PageDesc pageDesc) {
         List<UserTask> taskList = new ArrayList<>();
         //静态任务
-        List<UserTask> staticTaskList = actionTaskDao.queryStaticTask((String) searchColumn.get("userCode"));
+        //List<UserTask> staticTaskList = actionTaskDao.queryStaticTask((String) searchColumn.get("userCode"));
+        List<UserTask> staticTaskList = actionTaskDao.listUserTaskByFilter(searchColumn, pageDesc);
         if (staticTaskList != null) {
             taskList.addAll(staticTaskList);
         }
