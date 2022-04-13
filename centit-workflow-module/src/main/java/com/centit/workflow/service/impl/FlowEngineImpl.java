@@ -1370,7 +1370,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             runAsUser = options.getUserCode();
         } else {
             if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(currNode.getRoleType())) {
-                //TODO 判断人员岗位吻合
+                //TODO 判断人员岗位吻合 记录当前人员
+                nodeInst.setUserCode(options.getUserCode());
                 runAsUser = options.getUserCode();
             } else if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType())) {
                 runAsUser = actionTaskDao.checkTaskGrantor(options.getNodeInstId(), options.getUserCode(), options.getGrantorCode());
