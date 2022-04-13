@@ -2377,6 +2377,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      */
     @Override
     public List<UserTask> listNodeOperator(String nodeInstId) {
+        // TODO 考虑动态用户情况
         Map<String, Object> searchColumn = new HashMap<>(1);
         searchColumn.put("nodeInstId", nodeInstId);
         return this.listUserTasksByFilter(searchColumn, new PageDesc(-1, -1));
@@ -2394,6 +2395,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (iUserUnits == null || iUserUnits.size() == 0) {
             return taskList;
         }
+        // TODO 这个地方需要 拼接sql，不然这个地方无法分页
         for (IUserUnit i : iUserUnits) {
             searchColumn.put("unitCode", i.getUnitCode());
             searchColumn.put("userStation", i.getUserStation());
