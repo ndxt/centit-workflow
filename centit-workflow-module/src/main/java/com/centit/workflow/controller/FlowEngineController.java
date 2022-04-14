@@ -182,7 +182,7 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "根据条件查询用户所有待办", notes = "根据条件查询用户所有待办")
     @WrapUpResponseBody
-    @GetMapping(value = {"/listUserTasks","/listTasks","/listAllTasks","/userTasks"})
+    @GetMapping(value = "/userTasks")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "userCode", value = "用户编码"),
         @ApiImplicitParam(name = "flowInstId", value = "流程实例ID"),
