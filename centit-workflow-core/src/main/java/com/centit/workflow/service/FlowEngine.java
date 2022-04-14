@@ -99,7 +99,12 @@ public interface FlowEngine {
     List<UserTask> listNodeOperators(String nodeInstId);
 
 
-
+    /**
+     * 获取流程所有活动节点的任务列表
+     * @param flowInstId 流程实例id
+     * @return 操作人员
+     */
+    List<UserTask> listFlowActiveNodeOperators(String flowInstId);
     /**
      * 获取动态待办
      * @param searchColumn 查询参数，必须包括用户编号userCode

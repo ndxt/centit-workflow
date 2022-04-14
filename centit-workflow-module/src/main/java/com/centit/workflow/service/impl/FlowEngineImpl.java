@@ -2361,6 +2361,27 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return nodeInst==null ? null : listNodeOperators(nodeInst);
     }
 
+    /**
+     * 获取流程所有活动节点的任务列表
+     * @param flowInstId 流程实例id
+     * @return 操作人员
+     */
+    @Override
+    public List<UserTask> listFlowActiveNodeOperators(String flowInstId){
+        List<NodeInstance> nodeInsts = nodeInstanceDao.listNodeInstByState(flowInstId, NodeInstance.NODE_STATE_NORMAL);
+        if(nodeInsts==null || nodeInsts.size()==0){
+            return null;
+        }
+        List<UserTask> userTasks = new ArrayList<>(nodeInsts.size()*4);
+        for(NodeInstance ni : nodeInsts){
+            List<UserTask> uts = this.listNodeOperators(ni);
+            if(uts != null) {
+                userTasks.addAll(uts);
+            }
+        }
+        return userTasks;
+    }
+
     @Override
     public List<UserTask> listUserDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         String userCode  = StringBaseOpt.castObjectToString(searchColumn.get("userCode"));

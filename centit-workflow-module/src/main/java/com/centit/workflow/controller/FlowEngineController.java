@@ -551,9 +551,9 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "获取节点实例的待办详情", notes = "获取节点实例的待办详情")
     @ApiImplicitParam(name = "jsonObject", paramType = "body", value = "{\"nodeInstIds\":[]}")
-    @WrapUpResponseBody
+    @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @PostMapping(value = "/listNodeTasks")
-    public ResponseData listNodeTasks(@RequestBody JSONObject jsonObject) {
+    public  List<UserTask> listNodeTasks(@RequestBody JSONObject jsonObject) {
         List<String> nodeInstIds = jsonObject.getJSONArray("nodeInstIds").toJavaList(String.class);
         if(nodeInstIds==null || nodeInstIds.size()==0){
             return null;
@@ -565,6 +565,20 @@ public class FlowEngineController extends BaseController {
                 userTasks.addAll(uts);
             }
         }
-        return ResponseData.makeResponseData(userTasks);
+        return userTasks;
+    }
+
+    ///flowActiveNodeTask/"+flowInstId
+    @ApiOperation(value = "获取流程所有活动节点的任务列表", notes = "获取流程所有活动节点的任务列表")
+    @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
+    @ApiImplicitParam(
+        name = "flowInstId", value = "流程实例id",
+        required = true, paramType = "path", dataType = "String"
+    )
+    @RequestMapping(value = "/flowActiveNodeTask/{flowInstId}", method = RequestMethod.GET)
+    public List<UserTask> listFlowActiveNodeOperators(@PathVariable String flowInstId,
+                                          HttpServletRequest request) {
+
+        return flowEngine.listFlowActiveNodeOperators(flowInstId);
     }
 }

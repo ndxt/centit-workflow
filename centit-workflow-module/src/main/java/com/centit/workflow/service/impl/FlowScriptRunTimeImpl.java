@@ -95,7 +95,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
      * assignFlowWorkTeam(字符串常量 roleCode, 表达式 users);// 设置办件角色
      * deleteFlowOrganize(字符串常量 roleCode);// 清除机构组
      * assignFlowOrganize(字符串常量 roleCode, 表达式 units);// 设置办件机构
-     * if(condition, functionA , functionB) // 条件控制语句
+     * runIf(condition, functionA , functionB) // 条件控制语句
      * @param script  执行的脚本
      * @param flowInst 流程实例
      * @param nodeInst 节点实例
@@ -435,10 +435,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                 }
 
             break;
-            case "if":
-            case "iF":
-            case "If":
-            case "IF":{
+            case "runIf":{
                 if(!beginFunction(formula)){
                     return null;
                 }

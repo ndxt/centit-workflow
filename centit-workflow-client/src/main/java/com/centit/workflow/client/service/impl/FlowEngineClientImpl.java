@@ -467,6 +467,14 @@ public class FlowEngineClientImpl implements FlowEngine {
         return receiveJSON.getDataAsArray(UserTask.class);
     }
 
+    @Override
+    public List<UserTask> listFlowActiveNodeOperators(String flowInstId) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/engine/flowActiveNodeTask/"+flowInstId);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        return receiveJSON.getDataAsArray(UserTask.class);
+    }
+
     /**
      * 获取动态待办(查询用户岗位待办)
      *
