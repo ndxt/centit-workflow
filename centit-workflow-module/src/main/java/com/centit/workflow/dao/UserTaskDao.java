@@ -56,9 +56,9 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
     private final static String allAboutNodeTask = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
         "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE,b.USER_CODE, b.ROLE_TYPE," +
         "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
-        "c.NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
+        "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +
-        "b.LAST_UPDATE_TIME,b.INST_STATE,c.OPT_ID as OPT_URL,c.OS_ID, c.NODE_PARAM, a.USER_CODE as CREATOR_CODE, " +
+        "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE,c.OPT_ID as OPT_URL,c.OS_ID, c.OPT_PARAM as NODE_PARAM, a.USER_CODE as CREATOR_CODE, " +
         "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
         "from wf_node_instance b join  wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
         " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
@@ -67,9 +67,9 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
     private final static String userStaticTaskBaseSql = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
         "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE,b.USER_CODE, b.ROLE_TYPE," +
         "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
-        "c.NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
+        "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +
-        "b.LAST_UPDATE_TIME,b.INST_STATE,c.OPT_ID as OPT_URL,c.OS_ID, c.NODE_PARAM, a.USER_CODE as CREATOR_CODE, " +
+        "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE,c.OPT_ID as OPT_URL,c.OS_ID, c.OPT_PARAM as NODE_PARAM, a.USER_CODE as CREATOR_CODE, " +
         "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
         "from wf_node_instance b join  wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
             " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
@@ -100,9 +100,9 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
     private final static String userGrantorTaskBaseSql = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
         "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE,g.GRANTEE as USER_CODE, b.ROLE_TYPE," +
         "b.ROLE_CODE, '权限委托' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
-        "c.NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
+        "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE, g.GRANTOR, b.LAST_UPDATE_USER," +
-        "b.LAST_UPDATE_TIME,b.INST_STATE,c.OPT_ID as OPT_URL,c.OS_ID, c.NODE_PARAM, a.USER_CODE as CREATOR_CODE, " +
+        "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE,c.OPT_ID as OPT_URL,c.OS_ID, c.OPT_PARAM as NODE_PARAM, a.USER_CODE as CREATOR_CODE, " +
         "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
         "from wf_node_instance b join  wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
         " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
@@ -138,9 +138,9 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
         "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
             "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE,b.USER_CODE, b.ROLE_TYPE," +
             "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
-            "c.NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
+            "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
             "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +
-            "b.LAST_UPDATE_TIME,b.INST_STATE,c.OPT_ID as OPT_URL,c.OS_ID, c.NODE_PARAM, a.USER_CODE as CREATOR_CODE, " +
+            "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE,c.OPT_ID as OPT_URL,c.OS_ID, c.OPT_PARAM as NODE_PARAM, a.USER_CODE as CREATOR_CODE, " +
             "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
             "from wf_node_instance b join  wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
             " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
@@ -300,7 +300,7 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
         queryParamMap.putAll(staticQuery.getParams());
 
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
-            "select * from (" + staticSql +" union all " + grantorSql +" union all " + dynamicSql + ") order by CREATE_TIME desc",(String[])null,
+            "select * from (" + staticSql +" union all " + grantorSql +" union all " + dynamicSql + ") b order by CREATE_TIME desc",(String[])null,
             "select sum(t.rowcounts) as rowcounts from (" + staticCountSql +" union all " + grantorCountSql +" union all " + dynamicCountSql +") t",
             queryParamMap, pageDesc);
 

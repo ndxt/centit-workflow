@@ -2399,6 +2399,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //动态任务
         //1.找到用户所有机构下的岗位和职务
         List<? extends IUserUnit> iUserUnits = context.listUserUnits(userCode);
+        Integer count = iUserUnits.size();
+        for(int i=0; i<count; i++){
+            IUserUnit iUserUnit = iUserUnits.get(i);
+            filterMap.put("userUnitCode"+i, iUserUnit.getUnitCode());
+            filterMap.put("userStation"+i, iUserUnit.getUserStation());
+        }
         return  userTaskDao.listUserAllTask(iUserUnits, filterMap, pageDesc);
     }
 
