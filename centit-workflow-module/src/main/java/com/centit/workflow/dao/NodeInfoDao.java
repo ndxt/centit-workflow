@@ -55,4 +55,11 @@ public class NodeInfoDao extends BaseDaoImpl<NodeInfo, String>
         return this.listObjectsByFilter("where FLOW_CODE=? " +
                 "and version=? and node_Code=?",new Object[]{flowCode,  version,  nodeCode});
     }
+
+    @Transactional
+    public NodeInfo getNodeByNodeInstId(String nodeInstId) {
+        List<NodeInfo> nodes = this.listObjectsBySql("select a.* from WF_NODE_INSTANCE b join WF_NODE a on b.NODE_ID = a.NODE_ID " +
+            "where b.NODE_INST_ID = ?", new Object[]{nodeInstId});
+        return nodes==null ? null : nodes.get(0);
+    }
 }

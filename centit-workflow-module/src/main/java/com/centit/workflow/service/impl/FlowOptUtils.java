@@ -127,9 +127,9 @@ public class FlowOptUtils {
         nodeInst.setUnitCode(unitcode);
         nodeInst.setUserCode(usercode);
         //nodeInst.setNodeParam(nodeParam);
-        nodeInst.setNodeState("N");
+        nodeInst.setNodeState(NodeInstance.NODE_STATE_NORMAL);
         //nodeInst.setIsTimer(isTimer);
-        nodeInst.setTaskAssigned("S");
+        nodeInst.setTaskAssigned(NodeInstance.TASK_ASSIGN_TYPE_STATIC);
         //给一个默认的令牌 T
         nodeInst.setRunToken(NodeInstance.RUN_TOKEN_GLOBAL);
         nodeInst.setLastUpdateUser(usercode);
@@ -170,18 +170,6 @@ public class FlowOptUtils {
         nodeInst.setPromiseTime(nodeInst.getTimeLimit());
         //nodeInst.setLastUpdateTime(updateTime);
         return nodeInst;
-    }
-
-    /**
-     * 创建任务实例
-     */
-    public static ActionTask createActionTask(String nodeInstId, String usercode) {
-        ActionTask task = new ActionTask();
-        task.setNodeInstId(nodeInstId);
-        task.setAssignTime(new Date(System.currentTimeMillis()));
-        task.setUserCode(usercode);
-        task.setTaskState("A");
-        return task;
     }
 
      /**

@@ -99,8 +99,12 @@ public class FlowInstance implements java.io.Serializable {
     private Long timeLimit;
     /**
      * 流程状态
-     * N 正常  C 完成  P 暂停 挂起  F 强行结束  M
+     * N 正常  C 完成  P 暂停 挂起  F 强行结束、应主流程回退而结束
      */
+    public static final String FLOW_STATE_NORMAL = "N";
+    public static final String FLOW_STATE_COMPLETE = "C";
+    public static final String FLOW_STATE_FORCE = "F";
+    public static final String FLOW_STATE_PAUSE = "P";
     @Column(name = "INST_STATE")
     private String instState;
 

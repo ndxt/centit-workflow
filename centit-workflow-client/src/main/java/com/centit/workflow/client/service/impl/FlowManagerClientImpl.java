@@ -202,40 +202,7 @@ public class FlowManagerClientImpl implements FlowManager {
         return 0;
     }
 
-    /**
-     * 添加节点任务, 添加操作人员
-     * Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
-     *
-     * @param nodeInstId
-     * @param userCode
-     * @param mangerUserCode
-     * @param authDesc
-     */
-    @Override
-    public int addNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("userCode", userCode);
-        paramMap.put("authDesc", authDesc);
-        RestfulHttpRequest.jsonPost(appSession,
-            "/flow/manager/addNodeTask/" + nodeInstId + "/" + mangerUserCode, paramMap);
-        return 0;
-    }
 
-    /**
-     * 删除节点任务
-     *
-     * @param nodeInstId     节点实例ID
-     * @param userCode       操作用户
-     * @param mangerUserCode 管理用户
-     */
-    @Override
-    public int deleteNodeTask(String nodeInstId, String userCode, String mangerUserCode) {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("userCode", userCode);
-        RestfulHttpRequest.jsonPost(appSession,
-            "/flow/manager/deleteNodeTask/" + nodeInstId + "/" + mangerUserCode, paramMap);
-        return 0;
-    }
 
     /**
      * 获取节点实例的操作日志列表
@@ -463,29 +430,7 @@ public class FlowManagerClientImpl implements FlowManager {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
-    /**
-     * 根据节点ID查询能够操作该节点的所有人员，如果为空，则需要分配工作任务单
-     * 这个是返回所有能够操作本节点的人员
-     *
-     * @param nodeInstId
-     */
-    @Override
-    public List<UserTask> listNodeTasks(String nodeInstId) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 获取节点实例的任务列表，这个返回在actionTask中手动分配的工作人员
-     *
-     * @param nodeInstId
-     * @return List<ActionTask>
-     */
-    @Override
-    public List<ActionTask> listNodeActionTasks(String nodeInstId) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
+     /**
      * 获取节点所在阶段信息
      *
      * @param flowInstId
@@ -540,41 +485,7 @@ public class FlowManagerClientImpl implements FlowManager {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
-    /**
-     * @param nodeInstId
-     * @Author:chen_rj
-     * @Description:获取节点任务
-     * @Date:8:51 2017/7/14
-     */
-    @Override
-    public List<ActionTask> listNodeInstTasks(String nodeInstId) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 删除节点任务
-     *
-     * @param taskId
-     * @param mangerUserCode
-     */
-    @Override
-    public int deleteNodeTaskById(String taskId, String mangerUserCode) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 删除节点任务
-     *
-     * @param nodeInstId
-     * @param flowInstId
-     * @param mangerUserCode
-     */
-    @Override
-    public void deleteNodeActionTasks(String nodeInstId, String flowInstId, String mangerUserCode) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
+     /**
      * @param relegateno
      * @return
      */

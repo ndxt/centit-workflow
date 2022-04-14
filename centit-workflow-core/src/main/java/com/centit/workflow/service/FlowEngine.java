@@ -67,9 +67,7 @@ public interface FlowEngine {
      * @param options 当前节点实例编号
      * @return 节点实例信息
      */
-    default Map<String, Object> submitFlowOpt(SubmitOptOptions options) {
-        return null;
-    }
+    Map<String, Object> submitFlowOpt(SubmitOptOptions options);
 
     //--------------------查看流转信息-----------------------------------
 
@@ -92,100 +90,60 @@ public interface FlowEngine {
 
 
     //-------------------------用户待办接口---------------------------------------
-
     //任务类表查看
+    /**
+     * 获取节点的所有操作人员
+     * @param nodeInstId 节点实例id
+     * @return 操作人员
+     */
+    List<UserTask> listNodeOperators(String nodeInstId);
+
+
+
+    /**
+     * 获取动态待办
+     * @param searchColumn 查询参数，必须包括用户编号userCode
+     * @param pageDesc     分页信息
+     * @return 获取待办列表 这里指动态代办
+     */
+    List<UserTask> listUserDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+
+    /**
+     * 根据条件查询用户静态待办，包括flowInstId，flowOptTag
+     *
+     * @param searchColumn 查询参数，必须包括用户编号userCode
+     * @param pageDesc     分页信息
+     * @return 获取待办列表 这里指静态代办
+     */
+    List<UserTask> listUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    /**
+     * 根据条件查询用户被授权的代码
+     *
+     * @param searchColumn 查询参数，必须包括用户编号userCode
+     * @param pageDesc     分页信息
+     * @return 获取待办列表 这里指静态代办
+     */
+    List<UserTask> listUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    /**
+     * 根据条件查询静态待办和被授权的待办
+     *
+     * @param searchColumn 查询参数，必须包括用户编号userCode
+     * @param pageDesc     分页信息
+     * @return 获取待办列表 这里指静态代办
+     */
+    List<UserTask> listUserStaticAndGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 
     /**
      * 查看某一个用户所有的待办，并且分页
      *
-     * @param userCode 操作用户编号
+     * @param searchColumn 查询参数，必须包括用户编号userCode
      * @param pageDesc 分页信息
      * @return 用户任务列表
      */
-    List<UserTask> listUserTasks(String userCode, PageDesc pageDesc);
-
-    /**
-     * 这个查看某个用户对用特定流程的待办
-     *
-     * @param filterMap 过滤条件，按道理 必须包括一个 userCode 条件
-     * @param pageDesc  分页信息
-     * @return 用户任务列表
-     */
-    List<UserTask> listUserTasksByFilter(Map<String, Object> filterMap, PageDesc pageDesc);
-
-    /**
-     * 这个查看某个用户对用特定流程的待办
-     *
-     * @param userCode 用户代码
-     * @param flowCode 流程代码
-     * @param pageDesc 分页信息
-     * @return 用户任务列表
-     */
-    List<UserTask> listUserTasksByFlowCode(String userCode, String flowCode, PageDesc pageDesc);
-    /*
-     * 查看某个用户对用某一类流程的待办
-     * @param userCode 用户代码
-     * @param flowCode 流程代码
-     * @param pageDesc 分页信息
-     * @return 用户任务列表
-     */
-    //List<UserTask> listUserTasksByFlowClass(String userCode,String flowClass,PageDesc pageDesc);
-
-    /**
-     * 查看某一个用户对应某一个阶段的待办
-     *
-     * @param userCode  用户代码
-     * @param flowStage 流程阶段
-     * @param pageDesc  分页信息
-     * @return 用户任务列表
-     */
-    List<UserTask> listUserTasksByFlowStage(String userCode, String flowStage, PageDesc pageDesc);
-
-    /**
-     * 查询某个用户的对应某一个节点的待办，这个节点可以是多个流程中的节点，只要这些节点的nodecode一致
-     *
-     * @param userCode 用户代码
-     * @param nodeCode 节点代码
-     * @param pageDesc 分页信息
-     * @return 用户任务列表
-     */
-    List<UserTask> listUserTasksByNodeCode(String userCode, String nodeCode, PageDesc pageDesc);
-
-    /**
-     * 获取节点的所有操作人员
-     *
-     * @param nodeInstId 节点实例id
-     * @return 操作人员
-     */
-    List<UserTask> listNodeOperator(String nodeInstId);
-
-    /**
-     * 根据条件查询待办，包括flowInstId，flowOptTag
-     *
-     * @param searchColumn 查询参数
-     * @param pageDesc     分页信息
-     * @return 获取待办列表 这里指静态代办
-     */
-    List<UserTask> listTasks(Map<String, Object> searchColumn, PageDesc pageDesc);
-
-    /**
-     * 获取动态待办
-     *
-     * @param searchColumn
-     * @param pageDesc     分页信息
-     * @return 获取待办列表 这里指动态代办
-     */
-    List<UserTask> listDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc);
-
-    /**
-     * 获取动态待办
-     *
-     * @param searchColumn 包含nodeInstId，unitCode，userStation
-     * @param pageDesc     分页信息
-     * @return 获取待办列表 这里指动态代办
-     */
-    List<UserTask> listDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc);
-
+    List<UserTask> listUserAllTask(Map<String, Object> searchColumn, PageDesc pageDesc);
     /**
      * 查看某一个用户所有的已办，并且分页
      *
@@ -195,6 +153,7 @@ public interface FlowEngine {
      */
     List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap, PageDesc pageDesc);
 
+    //-------------------------权限验证---------------------------------------
     /**
      * 判断一个用户是否可以处理指定的节点,可以喝submitOpt结合使用，
      * 判断当前操作人员是否可以访问提交后的下一个节点。
@@ -215,8 +174,7 @@ public interface FlowEngine {
      */
     String getTaskGrantor(String nodeInstId, String userCode);
 
-    //预报警列表查看
-
+    //-------------------------预报警列表查看---------------------------------------
     /**
      * 自定义预警查询
      *
@@ -773,10 +731,6 @@ public interface FlowEngine {
      * @return
      */
     JSONArray viewFlowNodes(String flowInstId);
-
-    JSONArray listNodeTasks(List<String> nextNodeInstList);
-
-    JSONArray  getNodeTasks(String nodeInstId);
 
     /**
      * 更新办件角色

@@ -54,6 +54,10 @@ public class FlowDefineClientImpl implements FlowDefine {
         return receiveJSON.getDataAsArray(FlowInfo.class);
     }
 
+    @Override
+    public List listAllFlowsByOptId(String optId) {
+        return null;
+    }
 
 
     /**

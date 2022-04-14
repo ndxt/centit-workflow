@@ -17,8 +17,10 @@ public class UserTask implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
     private String nodeInstId;
     @DictionaryMap(value="unitCode", fieldName="unitName")
+
     private String unitCode;
     @DictionaryMap(value="userCode", fieldName="userName")
+
     private String userCode;
 
     private String flowInstId;
@@ -63,12 +65,16 @@ public class UserTask implements java.io.Serializable {
 
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeCreateTime;
+
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeExpireTime;
+
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeLastUpdateTime;
+
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date flowExpireTime;
+
     private Long flowTimeLimit;
     private Long flowPromiseTime;
 
@@ -143,6 +149,54 @@ public class UserTask implements java.io.Serializable {
               .append(this.grantor);
         }
         return urlBuilder.toString();
+    }
+
+    public void copy(UserTask other) {
+        this.nodeInstId = other.getNodeInstId();
+        this.unitCode = other.getUnitCode();
+        this.userCode = other.getUserCode();
+
+        this.flowInstId = other.getFlowInstId();
+        this.authDesc = other.getAuthDesc();
+        this.flowOptName = other.getFlowOptName();
+        this.flowOptTag = other.getFlowOptTag();
+        this.flowCode = other.getFlowCode();
+        this.version  = other.getVersion();
+        this.nodeCode = other.getNodeCode();
+        this.nodeName = other.getNodeName();
+        this.nodeType = other.getNodeType();
+        this.nodeOptType = other.getNodeOptType();
+        this.nodeParam = other.getNodeParam();
+        this.optParam = other.getOptParam();
+        this.optCode = other.getOptCode();
+
+        this.createTime = other.getCreateTime();
+        this.expireOpt = other.getExpireOpt();
+
+        this.lastUpdateTime = other.getLastUpdateTime();
+
+        this.lastUpdateUser = other.getLastUpdateUser();
+        this.promiseTime = other.getPromiseTime();
+        this.timeLimit = other.getTimeLimit();
+
+        this.grantor = other.getGrantor();
+        this.roleType = other.getRoleType();
+        this.roleCode = other.getRoleCode();
+        this.instState = other.getInstState();
+        this.osId = other.getOsId();
+        this.optId = other.getOptId();
+        this.optUrl = other.getOptUrl();
+        this.stageCode = other.getStageCode();
+
+        this.creatorCode = other.getCreatorCode();
+
+        this.nodeCreateTime = other.getNodeCreateTime();
+        this.nodeExpireTime = other.getNodeExpireTime();
+        this.nodeLastUpdateTime = other.getNodeLastUpdateTime();
+        this.flowExpireTime = other.getFlowExpireTime();
+
+        this.flowTimeLimit = other.getFlowTimeLimit();
+        this.flowPromiseTime = other.getFlowPromiseTime();
     }
 
 }

@@ -200,38 +200,13 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "给一个节点指定任务、用这个代替系统自动分配任务", notes = "给一个节点指定任务、用这个代替系统自动分配任务")
     @RequestMapping(value = "/assign/{nodeInstId}/{userCode}", method = RequestMethod.POST)
     @WrapUpResponseBody
-    public void assign(@PathVariable String nodeInstId, @PathVariable String userCode, @RequestBody ActionTask actionTask) {
+    public void assignNodeUser(@PathVariable String nodeInstId, @PathVariable String userCode,
+           @RequestBody UserTask actionTask ) {
         flowManager.assignNodeTask(nodeInstId,
             actionTask.getUserCode(), StringUtils.isBlank(userCode) ? "admin" : userCode, actionTask.getAuthDesc());
     }
 
-    @ApiOperation(value = "添加节点任务", notes = "添加节点任务")
-    @WrapUpResponseBody
-    @RequestMapping(value = "/addNodeTask/{nodeInstId}/{mangerUserCode}", method = RequestMethod.POST)
-    public void addNodeTask(@PathVariable String nodeInstId, @PathVariable String mangerUserCode, @RequestBody ActionTask actionTask) {
-        flowManager.addNodeTask(nodeInstId,
-            actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode) ? "admin" : mangerUserCode, actionTask.getAuthDesc());
-    }
 
-    @ApiOperation(value = "删除节点任务", notes = "删除节点任务")
-    @WrapUpResponseBody
-    @RequestMapping(value = "/deleteNodeTask/{nodeInstId}/{mangerUserCode}", method = RequestMethod.POST)
-    public void deleteNodeTask(@PathVariable String nodeInstId, @PathVariable String mangerUserCode, @RequestBody ActionTask actionTask) {
-        flowManager.deleteNodeTask(nodeInstId,
-            actionTask.getUserCode(), StringUtils.isBlank(mangerUserCode) ? "admin" : mangerUserCode);
-    }
-
-    /**
-     * 删除任务
-     *
-     * @return
-     */
-    @ApiOperation(value = "删除任务", notes = "删除任务")
-    @RequestMapping(value = "/deleteTask/{taskId}", method = RequestMethod.POST)
-    public void deleteTask(@PathVariable String taskId, HttpServletRequest request, HttpServletResponse response) {
-        flowManager.deleteNodeTaskById(taskId, "admin");
-        JsonResultUtils.writeSingleDataJson("", response);
-    }
 
     /*tab：办件角色管理*/
 
@@ -514,22 +489,8 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "任务列表查询，查询条件可自助添加", notes = "任务列表查询，查询条件可自助添加")
     @RequestMapping(value = "/listNodeOpers/{nodeInstId}", method = RequestMethod.GET)
-    public void listNodeOpers(@PathVariable String nodeInstId, HttpServletResponse response) {
-        NodeInstance nodeInstance = flowEngine.getNodeInstById(nodeInstId);
-        List<UserTask> objList = new ArrayList<>();
-        List<UserTask> innerTask = flowManager.listNodeTasks(nodeInstId);
-        if (innerTask != null) {
-            objList.addAll(innerTask);
-        }
-        if ("D".equals(nodeInstance.getTaskAssigned())) {
-            Map<String, Object> searchColumn = new HashMap<>();
-            searchColumn.put("nodeInstId", nodeInstId);
-            searchColumn.put("unitCode", nodeInstance.getUnitCode());
-            searchColumn.put("userStation", nodeInstance.getRoleCode());
-            PageDesc pageDesc = new PageDesc(1, 100);
-            List<UserTask> dynamicTask = flowEngine.listDynamicTaskByUnitStation(searchColumn, pageDesc);
-            objList.addAll(dynamicTask);
-        }
+    public void listNodeOperators(@PathVariable String nodeInstId, HttpServletResponse response) {
+        List<UserTask> objList =  flowEngine.listNodeOperators(nodeInstId);
         JsonResultUtils.writeSingleDataJson(objList, response);
     }
 
@@ -538,7 +499,7 @@ public class FlowManagerController extends BaseController {
     public void viewNodeInstanceInfo(@PathVariable String nodeInstId, HttpServletResponse response) {
         NodeInstance nodeInst = flowEngine.getNodeInstById(nodeInstId);
         NodeInfo nodeInfo = flowDefine.getNodeInfoById(nodeInst.getNodeId());
-        List<UserTask> tasks = flowManager.listNodeTasks(nodeInstId);
+        List<UserTask> tasks = flowEngine.listNodeOperators(nodeInstId);
         List<? extends OperationLog> logs = flowManager.listNodeActionLogs(nodeInstId);
         ResponseMapData resData = new ResponseMapData();
         resData.addResponseData("inst", nodeInst);
@@ -575,24 +536,7 @@ public class FlowManagerController extends BaseController {
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname",
                     CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
                 if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState())) {
-                    List<UserTask> tasks = new ArrayList<>();
-                    List<UserTask> innerTasks = flowManager.listNodeTasks(nodeInst.getNodeInstId());
-                    innerTasks.removeIf(userTask -> StringUtils.isNotBlank(userTask.getGrantor()));
-                    if (innerTasks != null) {
-                        tasks.addAll(innerTasks);
-                    }
-                    //暂时添加一个多余判断，解决相关地方手动修改视图，把岗位待办设置成静态待办的问题
-                    if (tasks.isEmpty() && "D".equals(nodeInst.getTaskAssigned())) {
-                        int page = 1;
-                        int limit = 100;
-                        PageDesc pageDesc = new PageDesc(page, limit);
-                        Map<String, Object> searchColumn = new HashMap<>();
-                        searchColumn.put("nodeInstId", nodeInst.getNodeInstId());
-                        searchColumn.put("unitCode", nodeInst.getUnitCode());
-                        searchColumn.put("userStation", nodeInfo.getRoleCode());
-                        List<UserTask> dynamicTask = flowEngine.listDynamicTaskByUnitStation(searchColumn, pageDesc);
-                        tasks.addAll(dynamicTask);
-                    }
+                    List<UserTask> tasks = flowEngine.listNodeOperators(nodeInst.getNodeInstId());
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
                     int taskInd = 0;
                     for (UserTask task : tasks) {
@@ -635,17 +579,6 @@ public class FlowManagerController extends BaseController {
         JsonResultUtils.writeSingleDataJson(nodeList, response);
     }
 
-    /**
-     * 查询某节点实例下的任务信息
-     *
-     * @return String
-     */
-    @ApiOperation(value = "查询某节点实例下的任务信息", notes = "查询某节点实例下的任务信息")
-    @RequestMapping(value = "/listusertasks/{nodeInstId}", method = RequestMethod.GET)
-    @WrapUpResponseBody
-    public List<ActionTask> listNodeInstTasks(@PathVariable String nodeInstId) {
-        return flowManager.listNodeInstTasks(nodeInstId);
-    }
 
     //新增工作组
     @ApiOperation(value = "新增工作组", notes = "新增工作组")

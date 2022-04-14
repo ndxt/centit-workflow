@@ -39,10 +39,10 @@ public class FlowTaskImpl {
     private static final Logger logger = LoggerFactory.getLogger(FlowTaskImpl.class);
 
     @Autowired
-    ActionTaskDao actionTaskDao;
+    NodeInstanceDao nodeInstanceDao;
 
     @Autowired
-    NodeInstanceDao nodeInstanceDao;
+    UserTaskDao userTaskDao;
 
     @Autowired
     private NodeInfoDao nodeInfoDao;
@@ -87,25 +87,24 @@ public class FlowTaskImpl {
 
     /**
      * 发送通知消息给待办用户
-     * @param nodeInstId
-     * @return
+     * @param nodeInstId 节点编号
+     * @return 0/1 是否发送
      */
     private int sendNotifyMessage(String nodeInstId) {
-        List<UserTask> taskList = actionTaskDao.listUserTaskByFilter(
-            CollectionsOpt.createHashMap("nodeInstId", nodeInstId), new PageDesc(-1, -1));
-        if (taskList == null) {
+        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+        if (nodeInst == null || NodeInstance.TASK_ASSIGN_TYPE_DYNAMIC.equals(nodeInst.getTaskAssigned())) {
             return 0;
         }
-        int nn = 0;
-        for (UserTask task : taskList) {
-            NoticeMessage noticeMessage = NoticeMessage.create().subject("节点预报警提示")
-                .content("业务" + task.getFlowOptName() + "(" + task.getFlowInstId() + ")的" +
-                    task.getNodeName() + "(" + task.getNodeInstId() + ")节点超时预警，请尽快处理。办理链接为 " + task.getNodeOptUrl())
-                .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInstId));
-            notificationCenter.sendMessage("system", task.getUserCode(), noticeMessage);
-            nn++;
+        UserTask task = userTaskDao.getNodeTaskInfo(nodeInstId);
+        if(task==null || StringUtils.isBlank(task.getUserCode())){
+            return 0;
         }
-        return nn;
+        NoticeMessage noticeMessage = NoticeMessage.create().subject("节点预报警提示")
+            .content("业务" + task.getFlowOptName() + "(" + task.getFlowInstId() + ")的" +
+                task.getNodeName() + "(" + task.getNodeInstId() + ")节点超时预警，请尽快处理。")
+            .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInstId));
+        notificationCenter.sendMessage("system", task.getUserCode(), noticeMessage);
+        return 1;
     }
 
 

@@ -2,6 +2,9 @@ package com.centit.workflow.dao;
 
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.workflow.po.RoleRelegate;
 import org.apache.commons.lang3.StringUtils;
@@ -44,8 +47,25 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
         super.mergeObject(roleRelegate);
     }
 
-    public List<RoleRelegate> getRelegateListByGrantor(String grantor) {
-        return this.listObjectsByFilter(" where grantor = ? ORDER BY GRANTEE, RELEGATE_TIME, EXPIRE_TIME, RECORD_DATE DESC ",
+    public List<RoleRelegate> listRelegateListByGrantor(String grantor) {
+        return this.listObjectsByFilter(" where GRANTOR = ? ORDER BY GRANTEE, RELEGATE_TIME, EXPIRE_TIME, RECORD_DATE DESC ",
             new Object[]{grantor});
     }
+
+    public List<RoleRelegate> listGranteeListByRank(String grantor, String unitCode, String userRank) {
+        return this.listObjectsByFilter(" where GRANTOR = ?  and (UNIT_CODE is null or UNIT_CODE = ?)" +
+                "and (ROLE_CODE is null or ROLE_CODE = ?)  " +
+                "and RELEGATE_TIME < ? and( EXPIRE_TIME is null or EXPIRE_TIME> ?)",
+            new Object[]{grantor, unitCode, userRank, DatetimeOpt.currentSqlDate(), DatetimeOpt.currentSqlDate() });
+    }
+
+    public int checkGrantee(String grantor, String grantee, String unitCode, String userRank) {
+        return NumberBaseOpt.castObjectToInteger( DatabaseOptUtils.getScalarObjectQuery (
+            this,"select count(*) as granted from WF_ROLE_RELEGATE where " +
+                "GRANTOR = ? and GRANTEE = ? and (UNIT_CODE is null or UNIT_CODE = ?)" +
+                "and (ROLE_CODE is null or ROLE_CODE = ?)  " +
+                "and RELEGATE_TIME < ? and( EXPIRE_TIME is null or EXPIRE_TIME> ?)",
+            new Object[]{grantor, grantee, unitCode, userRank, DatetimeOpt.currentSqlDate(), DatetimeOpt.currentSqlDate()}), 0);
+    }
+
 }

@@ -7,6 +7,7 @@ import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.algorithm.BooleanBaseOpt;
+import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.UrlOptUtils;
@@ -14,6 +15,7 @@ import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -140,6 +142,11 @@ public class FlowEngineClientImpl implements FlowEngine {
         } else {
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public Map<String, Object> submitFlowOpt(SubmitOptOptions options) {
+        return null;
     }
 
     /**
@@ -435,19 +442,6 @@ public class FlowEngineClientImpl implements FlowEngine {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
-    @Override
-    public JSONArray listNodeTasks(List<String> nodeInstList) {
-        String returnJson = RestfulHttpRequest.jsonPost(appSession,
-            "/flow/engine/listNodeTasks", nodeInstList);
-        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(returnJson);
-        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
-        return receiveJSON.getJSONArray();
-    }
-
-    @Override
-    public JSONArray  getNodeTasks(String nodeInstId) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
 
     /**
      * 更新办件角色
@@ -458,23 +452,6 @@ public class FlowEngineClientImpl implements FlowEngine {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
-    /**
-     * 根据条件查询待办，包括flowInstId，flowOptTag
-     *
-     * @param paramMap 查询参数
-     * @param pageDesc 分页信息
-     * @return 获取待办列表 这里指静态代办
-     */
-    @Override
-    public List<UserTask> listTasks(Map<String, Object> paramMap, PageDesc pageDesc) {
-        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            UrlOptUtils.appendParamsToUrl(
-                UrlOptUtils.appendParamsToUrl("/flow/engine/listTasks",
-                    paramMap), (JSONObject) JSON.toJSON(pageDesc)));
-        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
-        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
-        return receiveJSON.getDataAsArray("objList", UserTask.class);
-    }
 
     /**
      * 查看某一个节点所有的可以办理的用户
@@ -483,7 +460,7 @@ public class FlowEngineClientImpl implements FlowEngine {
      * @return 用户办件信息
      */
     @Override
-    public List<UserTask> listNodeOperator(String nodeInstId) {
+    public List<UserTask> listNodeOperators(String nodeInstId) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
                 "/flow/engine/nodeTaskUsers?nodeInstId="+nodeInstId);
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
@@ -498,11 +475,77 @@ public class FlowEngineClientImpl implements FlowEngine {
      * @return
      */
     @Override
-    public List<UserTask> listDynamicTask(Map<String, Object> paramMap, PageDesc pageDesc) {
+    public List<UserTask> listUserDynamicTask(Map<String, Object> paramMap, PageDesc pageDesc) {
+        String userCode  = StringBaseOpt.castObjectToString(paramMap.get("userCode"));
+        if(StringUtils.isBlank(userCode)){
+            return null;
+        }
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             UrlOptUtils.appendParamsToUrl(
-                UrlOptUtils.appendParamsToUrl("/flow/engine/listDynamicTasks",
+                UrlOptUtils.appendParamsToUrl("/flow/engine/dynamicTasks",
                     paramMap), (JSONObject) JSON.toJSON(pageDesc)));
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getDataAsArray("objList", UserTask.class);
+    }
+
+    @Override
+    public List<UserTask> listUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/engine/staticTasks",
+                    searchColumn), (JSONObject) JSON.toJSON(pageDesc)));
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getDataAsArray("objList", UserTask.class);
+    }
+
+    @Override
+    public List<UserTask> listUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/engine/grantorTasks",
+                    searchColumn), (JSONObject) JSON.toJSON(pageDesc)));
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getDataAsArray("objList", UserTask.class);
+    }
+
+    /**
+     * 根据条件查询待办，包括flowInstId，flowOptTag
+     *
+     * @param paramMap 查询参数
+     * @param pageDesc 分页信息
+     * @return 获取待办列表 这里指静态代办
+     */
+    @Override
+    public List<UserTask> listUserStaticAndGrantorTask(Map<String, Object> paramMap, PageDesc pageDesc) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/engine/staticAndGrantorTasks",
+                    paramMap), (JSONObject) JSON.toJSON(pageDesc)));
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
+        return receiveJSON.getDataAsArray("objList", UserTask.class);
+    }
+
+    /**
+     * 这个查看某个用户对用特定流程的待办
+     *
+     * @param filterMap 过滤条件，按道理 必须包括一个 userCode 条件
+     * @param pageDesc  分页信息
+     * @return 用户任务列表
+     */
+    @Override
+    public List<UserTask> listUserAllTask(Map<String, Object> filterMap, PageDesc pageDesc) {
+        String userCode  = StringBaseOpt.castObjectToString(filterMap.get("userCode"));
+        if(StringUtils.isBlank(userCode)){
+            return null;
+        }
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            UrlOptUtils.appendParamsToUrl(
+                UrlOptUtils.appendParamsToUrl("/flow/engine/userTasks",
+                    filterMap), (JSONObject) JSON.toJSON(pageDesc)));
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
         return receiveJSON.getDataAsArray("objList", UserTask.class);
@@ -569,80 +612,6 @@ public class FlowEngineClientImpl implements FlowEngine {
         return new HashSet<>(receiveJSON.getDataAsArray(String.class));
     }
 
-    /**
-     * 查看某一个用户所有的待办，并且分页
-     *
-     * @param userCode 操作用户编号
-     * @param pageDesc 分页信息
-     * @return 用户任务列表
-     */
-    @Override
-    public List<UserTask> listUserTasks(String userCode, PageDesc pageDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 这个查看某个用户对用特定流程的待办
-     *
-     * @param filterMap 过滤条件，按道理 必须包括一个 userCode 条件
-     * @param pageDesc  分页信息
-     * @return 用户任务列表
-     */
-    @Override
-    public List<UserTask> listUserTasksByFilter(Map<String, Object> filterMap, PageDesc pageDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 这个查看某个用户对用特定流程的待办
-     *
-     * @param userCode 用户代码
-     * @param flowCode 流程代码
-     * @param pageDesc 分页信息
-     * @return 用户任务列表
-     */
-    @Override
-    public List<UserTask> listUserTasksByFlowCode(String userCode, String flowCode, PageDesc pageDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 查看某一个用户对应某一个阶段的待办
-     *
-     * @param userCode  用户代码
-     * @param flowStage 流程阶段
-     * @param pageDesc  分页信息
-     * @return 用户任务列表
-     */
-    @Override
-    public List<UserTask> listUserTasksByFlowStage(String userCode, String flowStage, PageDesc pageDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 查询某个用户的对应某一个节点的待办，这个节点可以是多个流程中的节点，只要这些节点的nodecode一致
-     *
-     * @param userCode 用户代码
-     * @param nodeCode 节点代码
-     * @param pageDesc 分页信息
-     * @return 用户任务列表
-     */
-    @Override
-    public List<UserTask> listUserTasksByNodeCode(String userCode, String nodeCode, PageDesc pageDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 获取动态待办
-     *
-     * @param searchColumn 包含nodeInstId，unitCode，userStation
-     * @param pageDesc     分页信息
-     * @return 获取待办列表 这里指动态代办
-     */
-    @Override
-    public List<UserTask> listDynamicTaskByUnitStation(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
 
     /**
      * 查看某一个用户所有的已办，并且分页

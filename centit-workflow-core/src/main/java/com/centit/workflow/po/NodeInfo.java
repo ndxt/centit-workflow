@@ -61,14 +61,15 @@ public class NodeInfo implements java.io.Serializable {
      */
     @Column(name = "NODE_TYPE")
     private String nodeType;
+
     @Column(name = "NODE_NAME")
     private String nodeName;
 
     /**NODE_TYPE == NODE_TYPE_OPT
-     * A: 唯一执行人 B: 抢先机制 C: 多人操作
+     * A: 指定到人 唯一执行人 B: 动态分配 C: 多人操作（已废弃）
      * */
     public static final String OPT_RUN_TYPE_NORMAL   = "A";
-    public static final String OPT_RUN_TYPE_LEAD     = "B";
+    public static final String OPT_RUN_TYPE_DYNAMIC  = "B";
     public static final String OPT_RUN_TYPE_TEAMWORK = "C";
 
     /**

@@ -55,6 +55,15 @@ public class NodeInstance implements java.io.Serializable {
     private Long promiseTime;
     @Column(name = "TIME_LIMIT")
     private Long timeLimit;
+
+    public static final String NODE_STATE_NORMAL = "N";
+    public static final String NODE_STATE_ROLLBACK = "B";
+    public static final String NODE_STATE_COMPLETE = "C";
+    public static final String NODE_STATE_FORCE = "F";
+    public static final String NODE_STATE_WAITE_SUBPROCESS = "W";
+    public static final String NODE_STATE_PAUSE = "P";
+    public static final String NODE_STATE_SUSPEND = "S";
+    public static final String NODE_STATE_SYNC = "T";
     /**
      * N 正常  B 已回退  C 完成  F 被强制结束
      * P 暂停  W 等待子流程返回  S 等等前置节点（可能是多个）完成
@@ -69,7 +78,11 @@ public class NodeInstance implements java.io.Serializable {
 
     @Column(name = "TRANS_PATH")
     private String transPath;
-    //T: 通过 tasklist 分配， D：通过 岗位角色 自动匹配 S：静态代办（usercode)
+
+    //T: 通过 tasklist 分配(已废弃)， D：通过 岗位角色 自动匹配 S：静态代办（usercode)
+    public static final String TASK_ASSIGN_TYPE_STATIC = "S";
+    public static final String TASK_ASSIGN_TYPE_DYNAMIC = "D";
+    public static final String TASK_ASSIGN_TYPE_MULTI = "T";
     @Column(name = "TASK_ASSIGNED")
     private String taskAssigned;
 
@@ -101,9 +114,9 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name = "NODE_PARAM")
     private String nodeParam;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ActionTask.class)
+    /*@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ActionTask.class)
     @JoinColumn(name = "nodeInstId")
-    private Set<ActionTask> wfActionTasks = null;
+    private Set<ActionTask> wfActionTasks = null;*/
 
     //非持久化属性
     @Transient
@@ -117,9 +130,9 @@ public class NodeInstance implements java.io.Serializable {
      */
     @Column(name = "ROLE_TYPE")
     private String roleType;
+
     @Column(name = "ROLE_CODE")
     private String roleCode;
-
 
     @Transient
     //yes:可以回收；no：不可以回收
@@ -350,82 +363,6 @@ public class NodeInstance implements java.io.Serializable {
         return NodeInstance.truncTokenGeneration(this.getRunToken(), generation);
     }
 
-    public Set<ActionTask> getWfActionTasks() {
-        if (this.wfActionTasks == null) {
-            this.wfActionTasks = new HashSet<>();
-        }
-        return this.wfActionTasks;
-    }
-
-    public void setWfActionTasks(Set<ActionTask> wfActionTasks) {
-        this.wfActionTasks = wfActionTasks;
-    }
-
-    public void addWfActionTask(ActionTask wfActionTask) {
-        if (this.wfActionTasks == null) {
-            this.wfActionTasks = new HashSet<>();
-        }
-        this.wfActionTasks.add(wfActionTask);
-    }
-
-    private void removeWfActionTask(ActionTask wfActionTask) {
-        if (this.wfActionTasks == null) {
-            return;
-        }
-        this.wfActionTasks.remove(wfActionTask);
-    }
-
-    private ActionTask newWfActionTask() {
-        ActionTask res = new ActionTask();
-        res.setNodeInstId(this.getNodeInstId());
-        return res;
-    }
-
-    public void replaceWfActionTasks(List<ActionTask> wfActionTasks) {
-        List<ActionTask> newObjs = new ArrayList<ActionTask>();
-        for (ActionTask p : wfActionTasks) {
-            if (p == null) {
-                continue;
-            }
-            ActionTask actionTask = newWfActionTask();
-            actionTask.copyNotNullProperty(p);
-            newObjs.add(actionTask);
-        }
-        //delete
-        boolean found;
-        Set<ActionTask> oldObjs = new HashSet<>(getWfActionTasks());
-        for (Iterator<ActionTask> it = oldObjs.iterator(); it.hasNext(); ) {
-            ActionTask odt = it.next();
-            found = false;
-            for (ActionTask actionTask : newObjs) {
-                if (odt.getTaskId().equals(actionTask.getTaskId())) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                removeWfActionTask(odt);
-            }
-        }
-        oldObjs.clear();
-        //insert
-        for (ActionTask actionTask : newObjs) {
-            found = false;
-            for (Iterator<ActionTask> it = getWfActionTasks().iterator();
-                 it.hasNext(); ) {
-                ActionTask odt = it.next();
-                if (odt.getTaskId().equals(actionTask.getTaskId())) {
-                    odt.copy(actionTask);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                addWfActionTask(actionTask);
-            }
-        }
-    }
-
     public void copy(NodeInstance other) {
         this.setNodeInstId(other.getNodeInstId());
         this.flowInstId = other.getFlowInstId();
@@ -443,7 +380,6 @@ public class NodeInstance implements java.io.Serializable {
         this.lastUpdateUser = other.getLastUpdateUser();
         this.isTimer = other.getIsTimer();
         this.stageCode = other.getStageCode();
-
     }
 
     public void copyNotNullProperty(NodeInstance other) {

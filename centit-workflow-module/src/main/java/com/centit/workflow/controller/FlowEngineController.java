@@ -180,19 +180,9 @@ public class FlowEngineController extends BaseController {
         return flowManager.listFlowActiveNodes(flowInstId);
     }
 
-    @ApiOperation(value = "查询用户待办", notes = "查询用户待办")
+    @ApiOperation(value = "根据条件查询用户所有待办", notes = "根据条件查询用户所有待办")
     @WrapUpResponseBody
-    @GetMapping(value = "/listUserTasks")
-    public PageQueryResult<UserTask> listUserTasks(@RequestParam(value = "userCode") String userCode, PageDesc pageDesc) {
-        Map<String, Object> searchColumn = new HashMap<>();
-        searchColumn.put("userCode", userCode);
-        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, pageDesc);
-        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
-    }
-
-    @ApiOperation(value = "根据条件查询待办", notes = "根据条件查询待办")
-    @WrapUpResponseBody
-    @GetMapping(value = "/listTasks")
+    @GetMapping(value = {"/listUserTasks","/listTasks","/listAllTasks","/userTasks"})
     @ApiImplicitParams({
         @ApiImplicitParam(name = "userCode", value = "用户编码"),
         @ApiImplicitParam(name = "flowInstId", value = "流程实例ID"),
@@ -209,21 +199,50 @@ public class FlowEngineController extends BaseController {
         @ApiImplicitParam(name = "notNodeCode", value = "NODE_CODE not in  (:notNodeCode)"),
         @ApiImplicitParam(name = "notNodeCodes", value = "环节代码,多个节点以逗号分割")
     })
-    public PageQueryResult<UserTask> listTasks(HttpServletRequest request, PageDesc pageDesc) {
+    public PageQueryResult<UserTask> listUserAllTask(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
-        List<UserTask> userTasks = flowEngine.listUserTasksByFilter(searchColumn, pageDesc);
+        List<UserTask> userTasks = flowEngine.listUserAllTask(searchColumn, pageDesc);
 
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
 
-    @ApiOperation(value = "根据条件查询待办", notes = "根据条件查询待办")
+    @ApiOperation(value = "根据条件查询用户静态待办", notes = "根据条件查询用户静态待办")
     @WrapUpResponseBody
-    @GetMapping(value = "/listAllTasks")
-    public PageQueryResult<UserTask> listAllTasks(HttpServletRequest request, PageDesc pageDesc) {
+    @GetMapping(value = "/staticTasks")
+    public PageQueryResult<UserTask> listUserStaticTask(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
-        List<UserTask> userTasks = flowEngine.listTasks(searchColumn, pageDesc);
+        List<UserTask> userTasks = flowEngine.listUserStaticTask(searchColumn, pageDesc);
 
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
+    }
+
+    @ApiOperation(value = "根据条件查询用户被授权的待办", notes = "根据条件查询用户被授权的待办")
+    @WrapUpResponseBody
+    @GetMapping(value = "/grantorTasks")
+    public PageQueryResult<UserTask> listUserGrantorTask(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks = flowEngine.listUserGrantorTask(searchColumn, pageDesc);
+
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
+    }
+
+    @ApiOperation(value = "查询用户岗位待办（动态待办）", notes = "查询用户岗位待办（动态待办）")
+    @WrapUpResponseBody
+    @GetMapping(value = "/dynamicTasks")
+    public PageQueryResult<UserTask> listUserDynamicTasks(HttpServletRequest request, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = collectRequestParameters(request);
+        List<UserTask> userTasks = flowEngine.listUserDynamicTask(searchColumn, pageDesc);
+        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
+    }
+
+    @ApiOperation(value = "查询用户静态待办和被授权的静态待办", notes = "查询用户静态待办和被授权的静态待办")
+    @WrapUpResponseBody
+    @GetMapping(value = "/staticAndGrantorTasks")
+    public PageQueryResult<UserTask> listUserTasks(@RequestParam(value = "userCode") String userCode, PageDesc pageDesc) {
+        Map<String, Object> searchColumn = new HashMap<>();
+        searchColumn.put("userCode", userCode);
+        List<UserTask> userTasks = flowEngine.listUserStaticAndGrantorTask(searchColumn, pageDesc);
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
@@ -231,17 +250,10 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/nodeTaskUsers")
     public List<UserTask> listNodeTaskUsers(String nodeInstId) {
-        return flowEngine.listNodeOperator(nodeInstId);
+        return flowEngine.listNodeOperators(nodeInstId);
     }
 
-    @ApiOperation(value = "查询用户岗位待办", notes = "查询用户岗位待办")
-    @WrapUpResponseBody
-    @GetMapping(value = "/listDynamicTasks")
-    public PageQueryResult<UserTask> listUserDynamicTasks(HttpServletRequest request, PageDesc pageDesc) {
-        Map<String, Object> searchColumn = collectRequestParameters(request);
-        List<UserTask> userTasks = flowEngine.listDynamicTask(searchColumn, pageDesc);
-        return PageQueryResult.createResultMapDict(userTasks, pageDesc);
-    }
+
 
     @ApiOperation(value = "业务id关联流程", notes = "根据业务id查询关联流程")
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
@@ -543,7 +555,16 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/listNodeTasks")
     public ResponseData listNodeTasks(@RequestBody JSONObject jsonObject) {
         List<String> nodeInstIds = jsonObject.getJSONArray("nodeInstIds").toJavaList(String.class);
-        JSONArray nodeTasks = flowEngine.listNodeTasks(nodeInstIds);
-        return ResponseData.makeResponseData(nodeTasks);
+        if(nodeInstIds==null || nodeInstIds.size()==0){
+            return null;
+        }
+        List<UserTask> userTasks = new ArrayList<>(nodeInstIds.size()*4);
+        for(String nodeInstId : nodeInstIds){
+            List<UserTask> uts = flowEngine.listNodeOperators(nodeInstId);
+            if(uts != null) {
+                userTasks.addAll(uts);
+            }
+        }
+        return ResponseData.makeResponseData(userTasks);
     }
 }

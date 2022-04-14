@@ -246,24 +246,6 @@ public interface FlowManager {
     long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode);
 
 
-    //----------节点任务管理--------------------------------
-
-    /**
-     * 根据节点ID查询能够操作该节点的所有人员，如果为空，则需要分配工作任务单
-     * 这个是返回所有能够操作本节点的人员
-     */
-    List<UserTask> listNodeTasks(String nodeInstId);
-
-
-    /**
-     * 获取节点实例的任务列表，这个返回在actionTask中手动分配的工作人员
-     *
-     * @param nodeInstId
-     * @return List<ActionTask>
-     */
-    List<ActionTask> listNodeActionTasks(String nodeInstId);
-
-
     //------------流程阶段管理-------------------------
 
     /**
@@ -341,15 +323,6 @@ public interface FlowManager {
     List<NodeInstance> listNodesWithoutOpt();
 
 
-      /**
-     * @param nodeInstId
-     * @Author:chen_rj
-     * @Description:获取节点任务
-     * @Date:8:51 2017/7/14
-     */
-    List<ActionTask> listNodeInstTasks(String nodeInstId);
-
-
     /**
      * 分配节点任务
      *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
@@ -357,28 +330,6 @@ public interface FlowManager {
     int assignNodeTask(String nodeInstId, String userCode,
                        String mangerUserCode, String authDesc);
 
-    /**
-     * 添加节点任务, 添加操作人元
-     *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
-     */
-    int addNodeTask(String nodeInstId, String userCode,
-                    String mangerUserCode, String authDesc);
-    /**
-     * 删除节点任务
-     */
-    int deleteNodeTask(String nodeInstId, String userCode, String mangerUserCode);
-
-    /**
-     * 删除节点任务
-     */
-    int deleteNodeTaskById(String taskId, String mangerUserCode);
-    /**
-     * 删除节点任务
-     * @param nodeInstId
-     * @param flowInstId
-     * @param mangerUserCode
-     */
-    void deleteNodeActionTasks(String nodeInstId, String flowInstId, String mangerUserCode);
     // ---------节点任务委托--------------------
 
 
