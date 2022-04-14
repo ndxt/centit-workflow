@@ -591,30 +591,6 @@ public class FlowManagerController extends BaseController {
     }
 
     /**
-     * 获取流程实例的关注列表
-     *
-     * @param flowInstId
-     */
-    @ApiOperation(value = "获取流程实例的关注列表", notes = "获取流程实例的关注列表")
-    @RequestMapping(value = "/getAttByFlowInstId/{flowInstId}", method = RequestMethod.GET)
-    @WrapUpResponseBody
-    public List<InstAttention> getAttByFlowInstId(@PathVariable String flowInstId) {
-        return flowEngine.viewFlowAttention(flowInstId);
-    }
-
-    /**
-     * 新增流程关注
-     *
-     * @param instAttention
-     */
-    @ApiOperation(value = "新增流程关注", notes = "新增流程关注")
-    @WrapUpResponseBody
-    @RequestMapping(value = "/addAttention", method = RequestMethod.POST)
-    public void addAttention(@RequestBody InstAttention instAttention) {
-        flowEngine.saveFlowAttention(instAttention);
-    }
-
-    /**
      * 将 fromUserCode 所有任务 迁移 给 toUserCode
      */
     @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode", notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")

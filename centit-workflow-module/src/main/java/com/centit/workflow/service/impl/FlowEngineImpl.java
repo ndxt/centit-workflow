@@ -80,8 +80,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private FlowVariableDao flowVariableDao;
     @Autowired
-    private InstAttentionDao attentionDao;
-    @Autowired
     private FlowWarningDao runtimeWarningDao;
     @Autowired
     private FlowInstanceGroupDao flowInstanceGroupDao;
@@ -2218,107 +2216,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             lv = new ArrayList<>();
         }
         return lv;
-    }
-
-    @Override
-    public void saveFlowAttention(InstAttention attObj) {
-        attObj = new InstAttention(attObj.getUserCode(), attObj.getFlowInstId(), DatetimeOpt.currentUtilDate(), attObj.getAttSetUser(), attObj.getAttSetMemo());
-        attentionDao.mergeObject(attObj);
-    }
-
-    @Override
-    public void deleteFlowAttention(String flowInstId, String attUser) {
-        attentionDao.deleteObjectById(new InstAttentionId(attUser, flowInstId));
-    }
-
-
-    /**
-     * 删除流程关注人员
-     *
-     * @param flowInstId 流程实例ID
-     * @param optUser    关注设置人员
-     */
-    @Override
-    public void deleteFlowAttentionByOptUser(String flowInstId, String optUser) {
-        attentionDao.deleteFlowAttentionByOptUser(flowInstId, optUser);
-    }
-
-    @Override
-    public void deleteFlowAttention(String flowInstId) {
-        attentionDao.deleteFlowAttention(flowInstId);
-    }
-
-
-    /**
-     * 获取流程关注人员
-     *
-     * @param flowInstId 流程实例ID
-     * @return 关注人员
-     */
-    @Override
-    public List<InstAttention> viewFlowAttention(String flowInstId) {
-        return attentionDao.listAttentionByFlowInstId(flowInstId);
-    }
-
-    /**
-     * @param flowInstId 流程实例ID
-     * @param userCode   关注人员
-     * @return 关注人员
-     */
-    @Override
-    public InstAttention getFlowAttention(String flowInstId, String userCode) {
-        return attentionDao.getObjectById(
-            new InstAttentionId(userCode, flowInstId));
-    }
-
-
-    /**
-     * 返回所有关在的项目
-     *
-     * @param userCode  关注人
-     * @param instState N 正常  C 完成   P 暂停 挂起     F 强行结束  A 所有
-     * @return 关注项目（流程）
-     */
-    @Override
-    public List<FlowInstance> viewAttentionFLowInstance(String userCode, String instState) {
-        //查询出指定用户的关注
-        List<FlowInstance> flowInstances = new ArrayList<>();
-        Map<String, Object> filterMap = new HashMap<>();
-        filterMap.put("userCode", userCode);
-        List<InstAttention> instAttentions = attentionDao.listObjects(filterMap);
-        if (instAttentions != null && instAttentions.size() > 0) {
-            //对每个关注下的实例验证状态
-            for (InstAttention instAttention : instAttentions) {
-                FlowInstance flowInstance = flowInstanceDao.getObjectById(instAttention.getFlowInstId());
-                if ("A".equals(instState)) {
-                    flowInstances.add(flowInstance);
-                    continue;
-                }
-                if (flowInstance != null && instState != null && instState.equals(flowInstance.getInstState())) {
-                    flowInstances.add(flowInstance);
-                }
-            }
-        }
-        return flowInstances;
-    }
-
-    @Override
-    public List<FlowInstance> viewAttentionFLowInstanceByOptName(String optName, String userCode, String instState) {
-        List<FlowInstance> flowInstanceList = viewAttentionFLowInstance(userCode, instState);
-        if (StringUtils.isBlank(optName)) {
-            return flowInstanceList;
-        }
-        if (flowInstanceList != null && flowInstanceList.size() > 0) {
-            Iterator<FlowInstance> iterator = flowInstanceList.iterator();
-            while (iterator.hasNext()) {
-                FlowInstance flowInstance = iterator.next();
-                String flowOptName = flowInstance.getFlowOptName();
-                if (StringUtils.isBlank(flowOptName) || !(flowOptName.contains(optName))) {
-                    iterator.remove();
-                }
-            }
-        }
-        return flowInstanceList;
     }
 
     @Override
