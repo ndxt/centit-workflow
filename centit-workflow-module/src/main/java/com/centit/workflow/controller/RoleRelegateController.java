@@ -11,7 +11,6 @@ import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.basedata.IUserUnit;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleRelegate;
-import com.centit.workflow.service.FlowOptService;
 import com.centit.workflow.service.RoleRelegateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -35,9 +34,6 @@ public class RoleRelegateController extends BaseController {
 
     @Autowired
     private RoleRelegateService roleRelegateService;
-
-    @Autowired
-    private FlowOptService wfOptService;
 
     @Autowired
     private UserUnitFilterCalcContextFactory userUnitFilterFactory;
