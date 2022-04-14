@@ -9,7 +9,8 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * create by scaffold

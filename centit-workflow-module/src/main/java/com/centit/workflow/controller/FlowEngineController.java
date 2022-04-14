@@ -19,7 +19,10 @@ import com.centit.workflow.aop.NoRepeatCommit;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.*;
-import com.centit.workflow.service.*;
+import com.centit.workflow.service.FlowDefine;
+import com.centit.workflow.service.FlowEngine;
+import com.centit.workflow.service.FlowManager;
+import com.centit.workflow.service.RoleFormulaService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +44,6 @@ public class FlowEngineController extends BaseController {
 
     @Autowired
     private FlowDefine flowDefine;
-
-    @Autowired
-    private FlowOptService flowOptService;
 
     @Autowired
     private RoleFormulaService roleFormulaService;

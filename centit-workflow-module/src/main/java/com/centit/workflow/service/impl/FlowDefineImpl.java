@@ -50,9 +50,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     private NodeInfoDao flowNodeDao;
 
     @Autowired
-    private FlowOptPageDao flowOptPageDao;
-
-    @Autowired
     private RoleFormulaDao flowRoleDao;
 
     @Autowired

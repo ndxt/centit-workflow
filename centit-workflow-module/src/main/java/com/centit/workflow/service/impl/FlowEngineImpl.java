@@ -4,13 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.dde.adapter.DdeDubboTaskRun;
-import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.dao.DictionaryMapUtils;
-import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
@@ -40,7 +38,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
 
@@ -71,8 +68,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private UserTaskDao userTaskDao;
     @Autowired
     private FlowInfoDao flowDefDao;
-    @Autowired
-    private FlowOptPageDao flowOptPageDao;
+
     @Autowired
     private FlowManager flowManager;
     @Autowired
@@ -1067,10 +1063,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }*/
             } else if (NodeInfo.AUTO_NODE_OPT_CODE_CALL.equals(nextOptNode.getAutoRunType())) {
                 //执行节点创建后 事件
-                FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
+                //FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
                 NodeEventSupport nodeEventExecutor =
-                    new AutoRunNodeEventSupport(optPage, nextOptNode,
-                        varTrans, this, optVariableDefineDao, ddeDubboTaskRun);
+                    new AutoRunNodeEventSupport(varTrans, ddeDubboTaskRun);
                 needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst == null ? nodeInst : preNodeInst,
                     nextOptNode, options.getUserCode());
             } else if (NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nextOptNode.getAutoRunType())) {
