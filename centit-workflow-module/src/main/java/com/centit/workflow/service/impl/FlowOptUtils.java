@@ -125,7 +125,7 @@ public class FlowOptUtils {
         Date updateTime = DatetimeOpt.currentUtilDate();
         nodeInst.setNodeId(node.getNodeId());
         nodeInst.setUnitCode(unitcode);
-        nodeInst.setUserCode(usercode);
+        //nodeInst.setUserCode(usercode);
         //nodeInst.setNodeParam(nodeParam);
         nodeInst.setNodeState(NodeInstance.NODE_STATE_NORMAL);
         //nodeInst.setIsTimer(isTimer);

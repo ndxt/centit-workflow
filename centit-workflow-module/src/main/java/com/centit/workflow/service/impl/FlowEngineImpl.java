@@ -436,13 +436,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                  String transPath, FlowTransition trans,
                                  String preNodeInstId, String userCode, String unitCode,
                                  FlowVariableTranslate varTrans) {
-        FlowOptUtils.endInstance(flowInst, "C", userCode, flowInstanceDao);
+        FlowOptUtils.endInstance(flowInst, FlowInstance.FLOW_STATE_COMPLETE, userCode, flowInstanceDao);
         NodeInstance endNodeInst =
             FlowOptUtils.createNodeInst(unitCode, userCode, flowInst,
                 null, flowInfo, endNode, trans, varTrans);
         endNodeInst.setNodeInstId(UuidOpt.getUuidAsString32());
-        endNodeInst.setNodeState("C");
+        endNodeInst.setNodeState(NodeInstance.NODE_STATE_COMPLETE);
         Date updateTime = DatetimeOpt.currentUtilDate();
+        endNodeInst.setUserCode(userCode);
         endNodeInst.setLastUpdateTime(updateTime);
         endNodeInst.setLastUpdateUser(userCode);
         endNodeInst.setPrevNodeInstId(preNodeInstId);
@@ -898,7 +899,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // S：子流程
         if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
             //如果是子流程 启动流程
-            nodeInst.setNodeState("W");
+            nodeInst.setNodeState(NodeInstance.NODE_STATE_WAITE_SUBPROCESS);
             String tempFlowTimeLimit = "";
             if (BooleanBaseOpt.ONE_CHAR_TRUE.equals(flowInst.getIsTimer())
                 && flowInst.getTimeLimit() != null
@@ -930,6 +931,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //交互节点，计算人员的分配策略
             // NodeInfo.OPT_RUN_TYPE_DYNAMIC.equals(nextOptNode.getOptRunType())
             //      和 SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(nextOptNode.getRoleType()) 等价
+            // 动态运行
             if (NodeInfo.OPT_RUN_TYPE_DYNAMIC.equals(nextOptNode.getOptRunType())) {
                 nodeInst.setTaskAssigned(NodeInstance.TASK_ASSIGN_TYPE_DYNAMIC);
             } else { //NodeInfo.OPT_RUN_TYPE_NORMAL.equals(nextOptNode.getOptRunType())
@@ -1880,10 +1882,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
         nextNodeInst.setRunToken(nodeInst.getRunToken() + "." + NodeInstance.RUN_TOKEN_INSERT);
         nextNodeInst.setUserCode(userCode);
-        nextNodeInst.setTaskAssigned("S");
+        nextNodeInst.setTaskAssigned(NodeInstance.TASK_ASSIGN_TYPE_STATIC);
         nextNodeInst.setTransPath("");
         //等待前置节点提交
-        nodeInst.setNodeState("S");
+        nodeInst.setNodeState(NodeInstance.NODE_STATE_SUSPEND);
         nodeInstanceDao.saveNewObject(nextNodeInst);
         nodeInstanceDao.updateObject(nodeInst);
         return nextNodeInst;
@@ -1946,7 +1948,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
         nextNodeInst.setRunToken(nodeInst.getRunToken() + "." + NodeInstance.RUN_TOKEN_ISOLATED);
         nextNodeInst.setUserCode(userCode);
-        nextNodeInst.setTaskAssigned("S");
+        nextNodeInst.setTaskAssigned(NodeInstance.TASK_ASSIGN_TYPE_STATIC);
         nextNodeInst.setTransPath("");
         nodeInstanceDao.saveNewObject(nextNodeInst);
         return nextNodeInst;
