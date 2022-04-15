@@ -244,7 +244,7 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
     public static String buildDynamicTaskSql(List<? extends IUserUnit> userUnits){
         StringBuilder sqlBuilder = new StringBuilder(3072);
         int uuCount = userUnits.size();
-        if(uuCount > 1) {
+        if(uuCount > 0) {
             sqlBuilder.append(userDynamicTaskSqlPart1).append(" and (");
         }
         for(int i=0; i<uuCount; i++){
@@ -254,7 +254,7 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
             sqlBuilder.append("( (b.unit_code is null or b.unit_code =:").append("userUnitCode").append(i)
                 .append(") and b.role_code = :").append("userStation").append(i).append(")");
         }
-        if(uuCount > 1) {
+        if(uuCount > 0) {
             sqlBuilder.append(" ) ");
         }
         sqlBuilder.append(userDynamicTaskSqlPart2);
