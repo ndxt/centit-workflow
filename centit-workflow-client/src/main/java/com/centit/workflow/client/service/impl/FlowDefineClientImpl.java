@@ -1,6 +1,7 @@
 package com.centit.workflow.client.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
@@ -48,14 +49,14 @@ public class FlowDefineClientImpl implements FlowDefine {
     }
 
     @Override
-    public List<FlowInfo> listFlowsByOptId(String optId){
+    public JSONArray listFlowsByOptId(String optId){
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
            "/flow/define/optFlow/"+optId);
-        return receiveJSON.getDataAsArray(FlowInfo.class);
+        return receiveJSON.getJSONArray();
     }
 
     @Override
-    public List listAllFlowsByOptId(String optId) {
+    public JSONArray listAllFlowsByOptId(String optId) {
         return null;
     }
 

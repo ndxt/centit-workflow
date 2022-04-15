@@ -68,8 +68,13 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "列举流程业务相关流程", notes = "列举流程业务相关流程")
     @WrapUpResponseBody
     @GetMapping(value = "/optFlow/{optId}")
-    public List listFlowByOpt(@PathVariable String optId) {
-        return flowDefine.listFlowsByOptId(optId);
+    public ResponseData listFlowByOpt(@PathVariable String optId) {
+        JSONArray jsonArray = flowDefine.listFlowsByOptId(optId);
+        if (jsonArray == null) {
+            ResponseData.makeErrorMessage("未查询到相关流程。");
+            return null;
+        }
+        return ResponseData.makeResponseData(jsonArray);
     }
 
     /*
@@ -78,8 +83,13 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "列举流程业务相关流程(包含通用模块中的流程)", notes = "列举流程业务相关流程(包含通用模块中的流程)")
     @WrapUpResponseBody
     @GetMapping(value = "/optAllFlow/{optId}")
-    public List listAllFlowByOpt(@PathVariable String optId) {
-        return flowDefine.listAllFlowsByOptId(optId);
+    public ResponseData listAllFlowByOpt(@PathVariable String optId) {
+        JSONArray jsonArray = flowDefine.listAllFlowsByOptId(optId);
+        if (jsonArray == null) {
+            ResponseData.makeErrorMessage("未查询到相关流程。");
+            return null;
+        }
+        return ResponseData.makeResponseData(jsonArray);
     }
 
     /**

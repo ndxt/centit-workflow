@@ -1,5 +1,6 @@
 package com.centit.workflow.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowStage;
@@ -103,14 +104,14 @@ public interface FlowDefine {
      * @param optId 业务id
      * @return 流程列表
      */
-    List listFlowsByOptId(String optId);
+    JSONArray listFlowsByOptId(String optId);
 
     /**
      * 根据已知的流程业务，查询对应的定义流程(包含通用模块的流程)
      * @param optId
      * @return
      */
-    List listAllFlowsByOptId(String optId);
+    JSONArray listAllFlowsByOptId(String optId);
 
     /**
      * 获取某一流程某一版本号中存在的所有机构表达式
