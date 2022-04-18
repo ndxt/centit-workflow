@@ -246,7 +246,7 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
         int uuCount = userUnits.size();
         sqlBuilder.append(userDynamicTaskSqlPart1).append(" and ");
         if(uuCount == 1) {
-            sqlBuilder.append("(b.unit_code is null or b.unit_code =:userUnitCode0) and b.role_code = :userStation0)");
+            sqlBuilder.append("(b.unit_code is null or b.unit_code =:userUnitCode0) and b.role_code = :userStation0");
         }else  if(uuCount > 1) {
             sqlBuilder.append(" (");
             for (int i = 0; i < uuCount; i++) {
@@ -255,8 +255,8 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
                 }
                 sqlBuilder.append("( (b.unit_code is null or b.unit_code =:userUnitCode").append(i)
                     .append(") and b.role_code = :userStation").append(i).append(")");
-                sqlBuilder.append(" ) ");
             }
+            sqlBuilder.append(" ) ");
         }
 
         sqlBuilder.append(userDynamicTaskSqlPart2);
@@ -266,8 +266,8 @@ public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
     public static void appendDynamicQueryParams( Map<String, Object> queryMap, List<? extends IUserUnit> userUnits){
         int i=0;
         for(IUserUnit uu : userUnits){
-            queryMap.put("userUnitCode"+String.valueOf(i), uu.getUnitCode());
-            queryMap.put("userStation"+String.valueOf(i), uu.getUserStation());
+            queryMap.put("userUnitCode"+i, uu.getUnitCode());
+            queryMap.put("userStation"+i, uu.getUserStation());
             i++;
         }
     }
