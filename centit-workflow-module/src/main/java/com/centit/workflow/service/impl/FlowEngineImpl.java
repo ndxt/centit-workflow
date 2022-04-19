@@ -13,7 +13,10 @@ import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
-import com.centit.framework.model.basedata.*;
+import com.centit.framework.model.basedata.IUserInfo;
+import com.centit.framework.model.basedata.IUserUnit;
+import com.centit.framework.model.basedata.NoticeMessage;
+import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.common.ObjectException;
@@ -1139,122 +1142,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             || NodeInfo.ROUTER_TYPE_PARALLEL.equals(routerType)) {
             VariableFormula formula = new VariableFormula();
             formula.setTrans(varTrans);
-            formula.addExtendFunc(
-                "userRank",
-                (a) -> {
-                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
-                        preNodeInst, nodeToken, currNode, options, varTrans);
-                    if (a == null || a.length < 1) {
-                        return null;
-                    }
-                    return context.getUserRank(StringBaseOpt.castObjectToString(a[0]));
-                }
-            );
-            formula.addExtendFunc(
-                "userType",
-                (a) -> {
-                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
-                        preNodeInst, nodeToken, currNode, options, varTrans);
-                    if (a == null || a.length < 1) {
-                        return null;
-                    }
-                    IUserInfo ui = context.getUserInfoByCode(StringBaseOpt.castObjectToString(a[0]));
-                    if (ui == null) {
-                        return "";
-                    }
-                    return ui.getUserType();
-                }
-            );
-            formula.addExtendFunc(
-                "unitType",
-                (a) -> {
-                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
-                        preNodeInst, nodeToken, currNode, options, varTrans);
-                    if (a == null || a.length < 1) {
-                        return null;
-                    }
-                    IUnitInfo ui = context.getUnitInfoByCode(StringBaseOpt.castObjectToString(a[0]));
-                    if (ui == null) {
-                        return "";
-                    }
-                    return ui.getUnitType();
-                }
-            );
-
-            formula.addExtendFunc(
-                "userUnits",
-                (a) -> {
-                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
-                        preNodeInst, nodeToken, currNode, options, varTrans);
-                    if (a == null || a.length < 1) {
-                        return null;
-                    }
-                    List<? extends IUserUnit> userUnits =
-                        context.listUserUnits(StringBaseOpt.castObjectToString(a[0]));
-                    return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUnitCode);
-                }
-            );
-            formula.addExtendFunc(
-                "unitUsers",
-                (a) -> {
-                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
-                        preNodeInst, nodeToken, currNode, options, varTrans);
-                    if (a == null || a.length < 1) {
-                        return null;
-                    }
-                    List<? extends IUserUnit> userUnits =
-                        context.listUnitUsers(StringBaseOpt.castObjectToString(a[0]));
-                    return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUserCode);
-                }
-            );
-
-            formula.addExtendFunc(
-                "userRoles",
-                (a) -> {
-                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
-                        preNodeInst, nodeToken, currNode, options, varTrans);
-                    if (a == null || a.length < 1) {
-                        return null;
-                    }
-                    String userCode = StringBaseOpt.castObjectToString(a[0]);
-                    String userType = SysUserFilterEngine.ROLE_TYPE_XZ;
-                    if (a.length > 1) {
-                        userType = StringBaseOpt.castObjectToString(a[1]);
-                    }
-                    if (SysUserFilterEngine.ROLE_TYPE_SYSTEM.equals(userType)) {
-                        List<? extends IUserRole> roles = context.listUserRoles(userCode);
-                        return CollectionsOpt.mapCollectionToSet(roles, IUserRole::getRoleCode);
-                    } else if (SysUserFilterEngine.ROLE_TYPE_GW.equals(userType)) {
-                        List<? extends IUserUnit> userUnits = context.listUserUnits(userCode);
-                        return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUserStation);
-                    } else {
-                        List<? extends IUserUnit> userUnits = context.listUserUnits(userCode);
-                        return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUserRank);
-                    }
-                }
-            );
-            formula.addExtendFunc(
-                "calcUnits",
-                (a) -> {
-                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
-                        preNodeInst, nodeToken, currNode, options, varTrans);
-                    if (a == null || a.length < 1) {
-                        return null;
-                    }
-                    return UserUnitCalcEngine.calcUnitsByExp(context, StringBaseOpt.castObjectToString(a[0]));
-                }
-            );
-            formula.addExtendFunc(
-                "calcUsers",
-                (a) -> {
-                    UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
-                        preNodeInst, nodeToken, currNode, options, varTrans);
-                    if (a == null || a.length < 1) {
-                        return null;
-                    }
-                    return UserUnitCalcEngine.calcOperators(context, StringBaseOpt.castObjectToString(a[0]));
-                }
-            );
+            formula.setExtendFuncMap(
+                FlowOptUtils.createExtendFuncMap( () ->createCalcUserUnitContext(flowInst,
+                    preNodeInst, nodeToken, currNode, options, varTrans)) );
 
             for (FlowTransition trans : transList) {
                 if (StringUtils.isBlank(trans.getTransCondition())) {

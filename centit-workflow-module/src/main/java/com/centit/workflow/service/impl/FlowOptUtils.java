@@ -1,7 +1,10 @@
 package com.centit.workflow.service.impl;
 
-import com.centit.framework.model.basedata.OperationLog;
+import com.centit.framework.components.SysUserFilterEngine;
+import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
+import com.centit.framework.model.basedata.*;
 import com.centit.support.algorithm.BooleanBaseOpt;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.WorkTimeSpan;
@@ -12,10 +15,13 @@ import com.centit.workflow.po.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class FlowOptUtils {
+public abstract class FlowOptUtils {
     //private static final Logger logger = LoggerFactory.getLogger(FlowOptUtils.class);
 
     /**
@@ -292,4 +298,120 @@ public class FlowOptUtils {
         return flowVarTrans;
     }
 
+    public static Map<String, Function<Object[], Object>> createExtendFuncMap(Supplier<UserUnitFilterCalcContext> supplierContent) {
+        Map<String, Function<Object[], Object>> extendFuncs = new HashMap<>(12);
+        extendFuncs.put(
+            "userRank",
+            (a) -> {
+                UserUnitFilterCalcContext context = supplierContent.get();
+                if (a == null || a.length < 1) {
+                    return null;
+                }
+                return context.getUserRank(StringBaseOpt.castObjectToString(a[0]));
+            }
+        );
+        extendFuncs.put(
+            "userType",
+            (a) -> {
+                UserUnitFilterCalcContext context = supplierContent.get();
+                if (a == null || a.length < 1) {
+                    return null;
+                }
+                IUserInfo ui = context.getUserInfoByCode(StringBaseOpt.castObjectToString(a[0]));
+                if (ui == null) {
+                    return "";
+                }
+                return ui.getUserType();
+            }
+        );
+        extendFuncs.put(
+            "unitType",
+            (a) -> {
+                UserUnitFilterCalcContext context = supplierContent.get();
+                if (a == null || a.length < 1) {
+                    return null;
+                }
+                IUnitInfo ui = context.getUnitInfoByCode(StringBaseOpt.castObjectToString(a[0]));
+                if (ui == null) {
+                    return "";
+                }
+                return ui.getUnitType();
+            }
+        );
+
+        extendFuncs.put(
+            "userUnits",
+            (a) -> {
+                UserUnitFilterCalcContext context = supplierContent.get();
+                if (a == null || a.length < 1) {
+                    return null;
+                }
+                List<? extends IUserUnit> userUnits =
+                    context.listUserUnits(StringBaseOpt.castObjectToString(a[0]));
+                return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUnitCode);
+            }
+        );
+        extendFuncs.put(
+            "unitUsers",
+            (a) -> {
+                UserUnitFilterCalcContext context = supplierContent.get();
+                if (a == null || a.length < 1) {
+                    return null;
+                }
+                List<? extends IUserUnit> userUnits =
+                    context.listUnitUsers(StringBaseOpt.castObjectToString(a[0]));
+                return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUserCode);
+            }
+        );
+
+        extendFuncs.put(
+            "userRoles",
+            (a) -> {
+                UserUnitFilterCalcContext context = supplierContent.get();
+                if (a == null || a.length < 1) {
+                    return null;
+                }
+                String userCode = StringBaseOpt.castObjectToString(a[0]);
+                String userType = SysUserFilterEngine.ROLE_TYPE_XZ;
+                if (a.length > 1) {
+                    userType = StringBaseOpt.castObjectToString(a[1]);
+                }
+                if (SysUserFilterEngine.ROLE_TYPE_SYSTEM.equals(userType)) {
+                    List<? extends IUserRole> roles = context.listUserRoles(userCode);
+                    return CollectionsOpt.mapCollectionToSet(roles, IUserRole::getRoleCode);
+                } else if (SysUserFilterEngine.ROLE_TYPE_GW.equals(userType)) {
+                    List<? extends IUserUnit> userUnits = context.listUserUnits(userCode);
+                    return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUserStation);
+                } else {
+                    List<? extends IUserUnit> userUnits = context.listUserUnits(userCode);
+                    return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUserRank);
+                }
+            }
+        );
+        extendFuncs.put(
+            "calcUnits",
+            (a) -> {
+                UserUnitFilterCalcContext context = supplierContent.get();
+                if (a == null || a.length < 1) {
+                    return null;
+                }
+                return UserUnitCalcEngine.calcUnitsByExp(context, StringBaseOpt.castObjectToString(a[0]));
+            }
+        );
+        extendFuncs.put(
+            "calcUsers",
+            (a) -> {
+                UserUnitFilterCalcContext context = supplierContent.get();
+                if (a == null || a.length < 1) {
+                    return null;
+                }
+                return UserUnitCalcEngine.calcOperators(context, StringBaseOpt.castObjectToString(a[0]));
+            }
+        );
+        return extendFuncs;
+    }
+
+    public static Map<String, Function<Object[], Object>> createExtendFuncMap(UserUnitFilterCalcContext calcContext) {
+        return createExtendFuncMap( () -> calcContext);
+    }
 }
