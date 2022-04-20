@@ -9,7 +9,9 @@ import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.UuidOpt;
+import com.centit.support.common.ParamName;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
@@ -454,6 +456,27 @@ public class FlowDefineController extends BaseController {
             flowDefine.enableFlow(flowcode);
             JsonResultUtils.writeSingleDataJson("已经启用！", response);
         }
+    }
+
+    /**
+     * 批量删除
+     * @param flowCodes
+     * @param flowState
+     * @return
+     */
+    @ApiOperation(value = "批量删除流程", notes = "批量删除流程,多个id之间用逗号隔开")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/batchChangeState/{flowState}", method = RequestMethod.POST)
+    public ResponseData batchChangeState(@RequestParam(value = "flowCodes") String flowCodes,
+                                         @PathVariable String flowState){
+        if (StringUtils.isBlank(flowCodes)){
+            return ResponseData.makeErrorMessage("flowCodes不能为空!");
+        }
+        if (StringUtils.isBlank(flowState)){
+            return ResponseData.makeErrorMessage("flowState不能为空!");
+        }
+        flowDefine.batchChangeStateByCodes(CollectionsOpt.arrayToList(flowCodes.split(",")), flowState);
+        return ResponseData.makeSuccessResponse();
     }
 
     /**

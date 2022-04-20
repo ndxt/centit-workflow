@@ -83,7 +83,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
 
     @Transactional
     public List<FlowInfo> listLastVersionFlowByOptId(String optId){
-        String sql =  "SELECT * FROM F_V_LASTVERSIONFLOW WHERE opt_id = ?" ;
+        String sql =  "SELECT * FROM F_V_LASTVERSIONFLOW WHERE opt_id = ? AND flow_state != 'D'" ;
         return this.listObjectsBySql(sql, new Object[] {optId});
     }
 

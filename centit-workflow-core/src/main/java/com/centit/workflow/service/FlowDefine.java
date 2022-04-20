@@ -257,4 +257,12 @@ public interface FlowDefine {
      * @return
      */
     String copyWorkFlow(Map<String, Object> parameters);
+
+    /**
+     * 批量删除流程
+     * @param flowCodes
+     * @param flowState
+     */
+    void batchChangeStateByCodes(List<String> flowCodes, String flowState);
+
 }
