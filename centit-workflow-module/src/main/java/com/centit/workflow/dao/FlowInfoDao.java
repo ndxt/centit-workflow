@@ -99,6 +99,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
             " [:flowState| and FLOW_STATE = :flowState ] " +
             " [:(like)flowName| and FLOW_NAME like :flowName ] " +
             " [:flowCode| and FLOW_CODE = :flowCode ]" +
+            " [:osId| and OS_ID = :osId ]" +
             " [:optId| and OPT_ID = :optId ] order by OPT_ID" ;
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql,filterMap);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
