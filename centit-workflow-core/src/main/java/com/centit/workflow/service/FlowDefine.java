@@ -265,4 +265,9 @@ public interface FlowDefine {
      */
     void batchChangeStateByCodes(List<String> flowCodes, String flowState);
 
+    /**
+     * 清空回收站
+     */
+    void clearRecycle();
+
 }

@@ -892,6 +892,16 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
     }
 
+    @Override
+    public void clearRecycle() {
+        List<FlowInfo> list = flowDefineDao.getFlowsByState(FlowInfo.FLOW_STATE_FORBIDDEN);
+        if(list != null && list.size() > 0){
+            for(FlowInfo flowInfo : list){
+                this.deleteFlowDef(flowInfo.getFlowCode());
+            }
+        }
+    }
+
     /**
      * 添加flowInfo中的实例个数
      * @param jsonArray 实例统计详情

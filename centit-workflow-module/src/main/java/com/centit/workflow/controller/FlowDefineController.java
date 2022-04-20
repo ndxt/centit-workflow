@@ -467,15 +467,30 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "批量删除流程", notes = "批量删除流程,多个id之间用逗号隔开")
     @WrapUpResponseBody
     @RequestMapping(value = "/batchChangeState/{flowState}", method = RequestMethod.POST)
-    public ResponseData batchChangeState(@RequestParam(value = "flowCodes") String flowCodes,
+    public ResponseData batchChangeState(@RequestParam(value = "flowCodes") String[] flowCodes,
                                          @PathVariable String flowState){
-        if (StringUtils.isBlank(flowCodes)){
+        if (!StringUtils.isNoneEmpty(flowCodes)){
             return ResponseData.makeErrorMessage("flowCodes不能为空!");
         }
         if (StringUtils.isBlank(flowState)){
             return ResponseData.makeErrorMessage("flowState不能为空!");
         }
-        flowDefine.batchChangeStateByCodes(CollectionsOpt.arrayToList(flowCodes.split(",")), flowState);
+        flowDefine.batchChangeStateByCodes(CollectionsOpt.arrayToList(flowCodes), flowState);
+        return ResponseData.makeSuccessResponse();
+    }
+
+    /**
+     * 清空回收站
+     */
+    @ApiOperation(value = "清空回收站", notes = "清空回收站")
+    @PostMapping("/clear")
+    @WrapUpResponseBody
+    public ResponseData clearRecycle(){
+        try {
+            flowDefine.clearRecycle();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return ResponseData.makeSuccessResponse();
     }
 
