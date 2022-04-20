@@ -37,14 +37,14 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
 
     @Transactional
     public long getLastVersion(String flowCode){
-        String sql = "select max(t.VERSION) from WF_FLOW_DEFINE t where t.FLOW_CODE = ?";
+        String sql = "select max(t.VERSION) from WF_FLOW_DEFINE t where t.FLOW_CODE = ? and t.FLOW_STATE = 'D' ";
         return this.getJdbcTemplate().queryForObject(sql,
                 new Object[]{flowCode} ,Long.class);
     }
 
     @Transactional
     public List<FlowInfo> getAllVersionFlowsByCode(String wfCode, PageDesc pageDesc){
-        return this.listObjectsByFilterAsJson("where FLOW_CODE = ? order by version desc",
+        return this.listObjectsByFilterAsJson("where FLOW_CODE = ? and FLOW_STATE != 'D' order by version desc",
                 new Object[]{wfCode},pageDesc).toJavaList(FlowInfo.class);
     }
     @Transactional

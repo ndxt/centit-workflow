@@ -448,11 +448,11 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "更新流程状态", notes = "更新流程状态")
     @RequestMapping(value = "/changestate/{flowcode}/{newstate}", method = RequestMethod.GET)
     public void changeState(@PathVariable String flowcode, @PathVariable String newstate, HttpServletResponse response) {
-        if ("D".equals(newstate)) {
+        if (FlowInfo.FLOW_STATE_FORBIDDEN.equals(newstate)) {
             flowDefine.disableFlow(flowcode);
             JsonResultUtils.writeSingleDataJson("已经禁用！", response);
         }
-        if ("B".equals(newstate)) {
+        if (FlowInfo.FLOW_STATE_NORMAL.equals(newstate)) {
             flowDefine.enableFlow(flowcode);
             JsonResultUtils.writeSingleDataJson("已经启用！", response);
         }
