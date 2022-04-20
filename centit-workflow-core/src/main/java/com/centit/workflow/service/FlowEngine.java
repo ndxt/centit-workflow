@@ -305,6 +305,19 @@ public interface FlowEngine {
                                         String nodeCode, String createUser,
                                         String userCode, String unitCode);
 
+    /**
+     * 复制一个多实例节点，用于代替以前给一个节点分配多个操作人员
+     * <p>
+     *
+     * @param flowInstId    流程实例号
+     * @param multiNodeCode      需要复制的节点必须要指定nodeCode 并且需要在 多实例循环中
+     * @param createUser    当前创建用户
+     * @param userCode      指定操作用户
+     * @param unitCode      指定机构
+     * @return 节点实例
+     */
+    NodeInstance duplicateMultiNodeInst(String flowInstId, String multiNodeCode, String createUser,
+                                        String userCode, String unitCode);
 
     /**
      * 更改流程的父节点，这个函数只是用来手动的将一个流程作为子流程挂到父流程的节点上，一般不会使用。

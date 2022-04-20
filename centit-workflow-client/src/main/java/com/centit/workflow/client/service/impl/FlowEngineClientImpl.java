@@ -363,6 +363,21 @@ public class FlowEngineClientImpl implements FlowEngine {
         return receiveJSON.getDataAsObject(NodeInstance.class);
     }
 
+    @Override
+    public NodeInstance duplicateMultiNodeInst(String flowInstId, String multiNodeCode, String createUser, String userCode, String unitCode) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("flowInstId", flowInstId);
+        paramMap.put("createUser", createUser);
+        paramMap.put("nodeCode", multiNodeCode);
+        paramMap.put("userCode", userCode);
+        paramMap.put("unitCode", unitCode);
+        String json =  RestfulHttpRequest.jsonPost(appSession,
+            "/flow/engine/duplicateMultiNode", paramMap);
+        HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
+        RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
+        return receiveJSON.getDataAsObject(NodeInstance.class);
+    }
+
     /**
      * 加签,并指定到人
      * <p>

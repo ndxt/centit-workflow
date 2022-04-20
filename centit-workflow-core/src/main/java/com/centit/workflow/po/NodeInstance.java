@@ -381,7 +381,12 @@ public class NodeInstance implements java.io.Serializable {
         this.lastUpdateUser = other.getLastUpdateUser();
         this.isTimer = other.getIsTimer();
         this.stageCode = other.getStageCode();
-    }
+        this.roleType = other.getRoleType();
+        this.roleCode = other.getRoleCode();
+        this.userCode = other.getUserCode();
+        this.nodeId = other.getNodeId();
+        this.promiseTime = other.getPromiseTime();
+     }
 
     public void copyNotNullProperty(NodeInstance other) {
         if (other.getNodeInstId() != null) {

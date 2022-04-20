@@ -1816,9 +1816,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 + "）中对应环节代码为" + nodeCode + "的节点有多个，系统随机的创建一个，如有问题请和管理人员联系。");
         }
 
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
+        NodeInstance nodeInst = null;
         if (NODE_INST_ZERO.equals(curNodeInstId)) {
             nodeInst = new NodeInstance();
+        } else {
+            nodeInst = nodeInstanceDao.getObjectById(curNodeInstId);
         }
         //必需存在且状态为正常 或者 暂停
         if (nodeInst == null) {
@@ -1844,6 +1846,70 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return nextNodeInst;
     }
 
+    /**
+     * 复制一个多实例节点，用于代替以前给一个节点分配多个操作人员
+     * <p>
+     *
+     * @param flowInstId    流程实例号
+     * @param multiNodeCode      需要复制的节点必须要指定nodeCode 并且需要在 多实例循环中
+     * @param createUser    当前创建用户
+     * @param userCode      指定操作用户
+     * @param unitCode      指定机构
+     * @return 节点实例
+     */
+    @Override
+    public NodeInstance duplicateMultiNodeInst(String flowInstId, String multiNodeCode, String createUser,
+                                        String userCode, String unitCode){
+        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+        if (flowInst == null) {
+            return null;
+        }
+        List<NodeInfo> nodeList = flowNodeDao.listNodeByNodecode(flowInst.getFlowCode(),
+            flowInst.getVersion(), multiNodeCode);
+
+        if (nodeList == null || nodeList.size() < 1) {
+            return null;
+        }
+
+        flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
+        Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
+        if(activeNodes==null || activeNodes.size()==0){
+            return null;
+        }
+        for(NodeInstance inst : activeNodes){
+            //通过令牌 check node in loop
+            int dotPos = inst.getRunToken().lastIndexOf('.');
+            int loopInd = -1;
+            if(dotPos > 0){
+                String ind = inst.getRunToken().substring(dotPos+1);
+                if(StringRegularOpt.isDigit(ind)){
+                    loopInd = NumberBaseOpt.parseInteger(ind, -1);
+                }
+            }
+            if(loopInd >=0){
+                for(NodeInfo node : nodeList){
+                    if(StringUtils.equals(node.getNodeId(), inst.getNodeId())){
+                        // 找到了对应的 节点，复制这个节点
+                        String lastNodeInstId = UuidOpt.getUuidAsString32();
+                        NodeInstance nextNodeInst = new NodeInstance();
+                        nextNodeInst.copy(inst);
+                        nextNodeInst.setNodeInstId(lastNodeInstId);
+                        nextNodeInst.setTaskAssigned(NodeInstance.TASK_ASSIGN_TYPE_STATIC);
+                        nextNodeInst.setUserCode(userCode);
+                        nextNodeInst.setUnitCode(unitCode);
+                        nextNodeInst.setLastUpdateUser(createUser);
+                        nextNodeInst.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+                        nextNodeInst.setTimeLimit(nextNodeInst.getPromiseTime());
+                        int tokenInd = flowInst.fetchTheMaxMultiNodeTokenInd(node.getNodeId()) + 1;
+                        nextNodeInst.setRunToken(inst.getRunToken().substring(0,dotPos)+"."+tokenInd);
+                        nodeInstanceDao.saveNewObject(nextNodeInst);
+                        return nextNodeInst;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     @Override
     public void assignFlowWorkTeam(String flowInstId, String roleCode, String runToken,
