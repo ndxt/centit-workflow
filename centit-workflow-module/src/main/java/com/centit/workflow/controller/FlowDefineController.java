@@ -467,7 +467,7 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "批量删除流程", notes = "批量删除流程,多个id之间用逗号隔开")
     @WrapUpResponseBody
     @RequestMapping(value = "/batchChangeState/{flowState}", method = RequestMethod.POST)
-    public ResponseData batchChangeState(@RequestParam(value = "flowCodes") String[] flowCodes,
+    public ResponseData batchChangeState(@RequestBody String[] flowCodes,
                                          @PathVariable String flowState){
         if (!StringUtils.isNoneEmpty(flowCodes)){
             return ResponseData.makeErrorMessage("flowCodes不能为空!");
