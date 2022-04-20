@@ -68,7 +68,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private RoleRelegateDao roleRelegateDao;
     @Autowired
-    private UserTaskDao userTaskDao;
+    private UserTaskListDao userTaskListDao;
     @Autowired
     private FlowInfoDao flowDefDao;
 
@@ -356,7 +356,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public String getNodeOptUrl(String nodeInstId, String userCode) {
-        UserTask task = userTaskDao.getNodeTaskInfo(nodeInstId);
+        UserTask task = userTaskListDao.getNodeTaskInfo(nodeInstId);
         if (task == null) {
             return null;
         } else {
@@ -2184,7 +2184,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     private List<UserTask> listNodeOperators(NodeInstance nodeInst) {
-        UserTask userTask = userTaskDao.getNodeTaskInfo(nodeInst.getNodeInstId());
+        UserTask userTask = userTaskListDao.getNodeTaskInfo(nodeInst.getNodeInstId());
         if(NodeInstance.TASK_ASSIGN_TYPE_STATIC.equals(nodeInst.getTaskAssigned())){
             return CollectionsOpt.createList(userTask);
         }
@@ -2247,22 +2247,22 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //动态任务
         //1.找到用户所有机构下的岗位和职务
         List<? extends IUserUnit> iUserUnits = context.listUserUnits(userCode);
-        return  userTaskDao.listUserDynamicTask(iUserUnits, searchColumn, pageDesc);
+        return  userTaskListDao.listUserDynamicTask(iUserUnits, searchColumn, pageDesc);
     }
 
     @Override
     public List<UserTask> listUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return  userTaskDao.listUserStaticTask(searchColumn, pageDesc);
+        return  userTaskListDao.listUserStaticTask(searchColumn, pageDesc);
     }
 
     @Override
     public List<UserTask> listUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return userTaskDao.listUserGrantorTask(searchColumn, pageDesc);
+        return userTaskListDao.listUserGrantorTask(searchColumn, pageDesc);
     }
 
     @Override
     public List<UserTask> listUserStaticAndGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return  userTaskDao.listUserStaticAndGrantorTask(searchColumn, pageDesc);
+        return  userTaskListDao.listUserStaticAndGrantorTask(searchColumn, pageDesc);
     }
 
     @Override
@@ -2281,7 +2281,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             filterMap.put("userUnitCode"+i, iUserUnit.getUnitCode());
             filterMap.put("userStation"+i, iUserUnit.getUserStation());
         }
-        return  userTaskDao.listUserAllTask(iUserUnits, filterMap, pageDesc);
+        return  userTaskListDao.listUserAllTask(iUserUnits, filterMap, pageDesc);
     }
 
     @Override
@@ -2303,7 +2303,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (nodeCodes != null) {
             filterMap.put("nodeCodes", nodeCodes.toString().split(","));
         }
-        return userTaskDao.listUserCompletedTask(filterMap, pageDesc);
+        return userTaskListDao.listUserCompletedTask(filterMap, pageDesc);
     }
 
 

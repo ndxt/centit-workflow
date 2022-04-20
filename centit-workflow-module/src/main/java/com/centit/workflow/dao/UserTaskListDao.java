@@ -27,7 +27,7 @@ import java.util.Map;
  * $Id$
  */
 @Repository
-public class UserTaskDao extends BaseDaoImpl<NodeInstance, String> {
+public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
 
     private final static String flowInstStateSql = "select aa.FLOW_INST_ID, group_concat(DISTINCT bb.Node_Name) as node_name " +
         "from wf_node_instance cc join wf_flow_instance aa on (aa.FLOW_INST_ID = cc.FLOW_INST_ID) " +

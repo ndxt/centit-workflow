@@ -40,7 +40,7 @@ public class FlowTaskImpl {
     NodeInstanceDao nodeInstanceDao;
 
     @Autowired
-    UserTaskDao userTaskDao;
+    UserTaskListDao userTaskListDao;
 
     @Autowired
     private NodeInfoDao nodeInfoDao;
@@ -93,7 +93,7 @@ public class FlowTaskImpl {
         if (nodeInst == null || NodeInstance.TASK_ASSIGN_TYPE_DYNAMIC.equals(nodeInst.getTaskAssigned())) {
             return 0;
         }
-        UserTask task = userTaskDao.getNodeTaskInfo(nodeInstId);
+        UserTask task = userTaskListDao.getNodeTaskInfo(nodeInstId);
         if(task==null || StringUtils.isBlank(task.getUserCode())){
             return 0;
         }
