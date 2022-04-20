@@ -368,6 +368,30 @@ public class FlowEngineController extends BaseController {
             userCode, unitCode);
     }
 
+
+    /**
+     * 复制一个多实例节点，用于代替以前给一个节点分配多个操作人员
+     * <p>
+     *
+     * @param jsonObject 节点信息
+     * @return 节点实例
+     */
+    @ApiOperation(value = "复制多实例节点，代替以前添加多人操作的操作人员", notes = "复制多实例节点，代替以前添加多人操作的操作人员")
+    @ApiImplicitParam(name = "jsonObject", paramType = "body",
+        value = "{'flowInstId':xxx,'createUser':'xxx','userCode':'u1','unitCode':'d1','nodeCode':'xxx'}"
+    )
+    @WrapUpResponseBody
+    @PostMapping(value = "/duplicateMultiNode")
+    public NodeInstance duplicateMultiNodeInst(@RequestBody JSONObject jsonObject) {
+        String flowInstId = jsonObject.getString("flowInstId");
+        String createUser = jsonObject.getString("createUser");
+        String userCode = jsonObject.getString("userCode");
+        String multiNodeCode = jsonObject.getString("nodeCode");
+        String unitCode = jsonObject.getString("unitCode");
+        return /*NodeInstance =*/ flowEngine.duplicateMultiNodeInst(flowInstId, multiNodeCode, createUser,
+            userCode, unitCode);
+    }
+
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
     @WrapUpResponseBody
     @PostMapping(value = "/prepNode")

@@ -2,6 +2,8 @@ package com.centit.workflow.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
+import com.centit.support.algorithm.NumberBaseOpt;
+import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
@@ -220,8 +222,30 @@ public class FlowInstance implements java.io.Serializable {
         return nodeInstSet;
     }
 
+    public int fetchTheMaxMultiNodeTokenInd(String nodeId) {
+        if(this.flowNodeInstances==null){
+            return 0;
+        }
+        int maxToken = -1;
+        for(NodeInstance inst : this.flowNodeInstances){
+            if(StringUtils.equals(nodeId, inst.getNodeId())){
+                int dotPos = inst.getRunToken().lastIndexOf('.');
+                if(dotPos > 0){
+                    String ind = inst.getRunToken().substring(dotPos+1);
+                    if(StringRegularOpt.isDigit(ind)){
+                        int loopInd = NumberBaseOpt.parseInteger(ind, -1);
+                        if(loopInd > maxToken){
+                            maxToken = loopInd;
+                        }
+                    }
+                }
+            }
+        }
+        return maxToken;
+    }
+
     public List<NodeInstance> getFlowNodeInstances() {
-        if (flowNodeInstances == null) {
+        if (this.flowNodeInstances == null) {
             this.flowNodeInstances = new ArrayList<>();
             return this.flowNodeInstances;
         }
