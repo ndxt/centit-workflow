@@ -459,23 +459,18 @@ public class FlowDefineController extends BaseController {
     }
 
     /**
-     * 批量删除
+     * 批量删除(物理删除)
      * @param flowCodes
-     * @param flowState
      * @return
      */
     @ApiOperation(value = "批量删除流程", notes = "批量删除流程,多个id之间用逗号隔开")
     @WrapUpResponseBody
-    @RequestMapping(value = "/batchChangeState/{flowState}", method = RequestMethod.POST)
-    public ResponseData batchChangeState(@RequestBody String[] flowCodes,
-                                         @PathVariable String flowState){
+    @RequestMapping(value = "/batchChangeState", method = RequestMethod.POST)
+    public ResponseData batchChangeState(@RequestBody String[] flowCodes){
         if (!StringUtils.isNoneEmpty(flowCodes)){
             return ResponseData.makeErrorMessage("flowCodes不能为空!");
         }
-        if (StringUtils.isBlank(flowState)){
-            return ResponseData.makeErrorMessage("flowState不能为空!");
-        }
-        flowDefine.batchChangeStateByCodes(CollectionsOpt.arrayToList(flowCodes), flowState);
+        flowDefine.deleteByCodes(CollectionsOpt.arrayToList(flowCodes));
         return ResponseData.makeSuccessResponse();
     }
 

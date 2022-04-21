@@ -881,14 +881,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     }
 
     @Override
-    public void batchChangeStateByCodes(List<String> flowCodes, String flowState) {
+    public void deleteByCodes(List<String> flowCodes) {
         for (String flowCode : flowCodes) {
-            if ("D".equals(flowState)) {
-                this.disableFlow(flowCode);
-            }
-            if ("B".equals(flowState)) {
-                this.enableFlow(flowCode);
-            }
+            this.deleteFlowDef(flowCode);
         }
     }
 

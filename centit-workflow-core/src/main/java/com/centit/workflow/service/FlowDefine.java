@@ -261,9 +261,8 @@ public interface FlowDefine {
     /**
      * 批量删除流程
      * @param flowCodes
-     * @param flowState
      */
-    void batchChangeStateByCodes(List<String> flowCodes, String flowState);
+    void deleteByCodes(List<String> flowCodes);
 
     /**
      * 清空回收站
