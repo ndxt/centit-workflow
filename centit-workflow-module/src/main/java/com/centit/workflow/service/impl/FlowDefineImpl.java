@@ -847,7 +847,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @Override
     @Transactional
     public int[] batchUpdateOptId(String optId, List<String> flowCodes) {
-        String sql = "UPDATE wf_flow_define SET OPT_ID=? WHERE flow_code = ? ";
+        String sql = "UPDATE wf_flow_define SET OPT_ID=? , FLOW_STATE = 'B' WHERE flow_code = ? ";
         return flowDefineDao.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {

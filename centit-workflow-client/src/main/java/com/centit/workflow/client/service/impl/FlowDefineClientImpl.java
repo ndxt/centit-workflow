@@ -458,4 +458,14 @@ public class FlowDefineClientImpl implements FlowDefine {
     public String copyWorkFlow(Map<String, Object> parameters) {
         throw new ObjectException("This function is not been implemented in client.");
     }
+
+    @Override
+    public void deleteByCodes(List<String> flowCodes) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    @Override
+    public void clearRecycle() {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
 }
