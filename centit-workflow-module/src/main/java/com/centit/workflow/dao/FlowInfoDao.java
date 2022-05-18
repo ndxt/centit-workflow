@@ -127,7 +127,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
 
     @Transactional
     public void deleteObjectByFlowCode(String flowCode){
-        String sql="delete from wf_flow_define where flow_code=? and ";
+        String sql="delete from wf_flow_define where flow_code=?";
         this.getJdbcTemplate().update(sql,flowCode);
     }
 
