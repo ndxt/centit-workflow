@@ -480,7 +480,8 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "清空回收站", notes = "清空回收站")
     @PostMapping("/clear")
     @WrapUpResponseBody
-    public ResponseData clearRecycle(@RequestParam(value = "osId") String osId){
+    public ResponseData clearRecycle(HttpServletRequest request){
+        String osId = request.getParameter("osId");
         if (!StringUtils.isNoneEmpty(osId)){
             return ResponseData.makeErrorMessage("osId不能为空!");
         }
