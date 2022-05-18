@@ -68,6 +68,14 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
     }
 
     @Transactional
+    public List<FlowInfo> getFlowsByOsId(String osId, String wfstate)
+    {
+        String sql="SELECT * FROM F_V_LASTVERSIONFLOW WHERE OS_ID = ? AND FLOW_STATE = ? ORDER BY VERSION";
+        return  this.getJdbcTemplate().query(sql,
+            new Object[]{osId, wfstate} ,new BeanPropertyRowMapper<FlowInfo>(FlowInfo.class));
+    }
+
+    @Transactional
     public Map<String, String> listFlowCodeNameMap(){
         String sql = "SELECT FLOW_CODE, FLOW_NAME FROM F_V_LASTVERSIONFLOW" ;
         List<Object[]> codeNameData = DatabaseOptUtils.listObjectsBySql(this, sql);
@@ -119,7 +127,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
 
     @Transactional
     public void deleteObjectByFlowCode(String flowCode){
-        String sql="delete from wf_flow_define where flow_code=?";
+        String sql="delete from wf_flow_define where flow_code=? and ";
         this.getJdbcTemplate().update(sql,flowCode);
     }
 

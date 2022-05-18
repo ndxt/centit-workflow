@@ -888,8 +888,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     }
 
     @Override
-    public void clearRecycle() {
-        List<FlowInfo> list = flowDefineDao.getFlowsByState(FlowInfo.FLOW_STATE_FORBIDDEN);
+    public void clearRecycle(String osId) {
+        List<FlowInfo> list = flowDefineDao.getFlowsByOsId(osId, FlowInfo.FLOW_STATE_FORBIDDEN);
         if(list != null && list.size() > 0){
             for(FlowInfo flowInfo : list){
                 this.deleteFlowDef(flowInfo.getFlowCode());

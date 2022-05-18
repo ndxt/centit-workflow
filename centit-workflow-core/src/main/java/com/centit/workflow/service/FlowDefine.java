@@ -267,6 +267,6 @@ public interface FlowDefine {
     /**
      * 清空回收站
      */
-    void clearRecycle();
+    void clearRecycle(String osId);
 
 }
