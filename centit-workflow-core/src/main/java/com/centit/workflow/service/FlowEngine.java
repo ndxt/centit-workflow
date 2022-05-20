@@ -1,6 +1,7 @@
 package com.centit.workflow.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
@@ -91,8 +92,10 @@ public interface FlowEngine {
 
     //-------------------------用户待办接口---------------------------------------
     //任务类表查看
+
     /**
      * 获取节点的所有操作人员
+     *
      * @param nodeInstId 节点实例id
      * @return 操作人员
      */
@@ -101,17 +104,22 @@ public interface FlowEngine {
 
     /**
      * 获取流程所有活动节点的任务列表
+     *
      * @param flowInstId 流程实例id
      * @return 操作人员
      */
     List<UserTask> listFlowActiveNodeOperators(String flowInstId);
+
     /**
      * 获取动态待办
+     *
      * @param searchColumn 查询参数，必须包括用户编号userCode
      * @param pageDesc     分页信息
      * @return 获取待办列表 这里指动态代办
      */
     List<UserTask> listUserDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    ResponseData dubboUserDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 
 
     /**
@@ -123,6 +131,8 @@ public interface FlowEngine {
      */
     List<UserTask> listUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 
+    ResponseData dubboUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
     /**
      * 根据条件查询用户被授权的代码
      *
@@ -131,6 +141,7 @@ public interface FlowEngine {
      * @return 获取待办列表 这里指静态代办
      */
     List<UserTask> listUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+    ResponseData dubboUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 
     /**
      * 根据条件查询静态待办和被授权的待办
@@ -141,14 +152,19 @@ public interface FlowEngine {
      */
     List<UserTask> listUserStaticAndGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 
+    ResponseData dubboUserStaticAndGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
     /**
      * 查看某一个用户所有的待办，并且分页
      *
      * @param searchColumn 查询参数，必须包括用户编号userCode
-     * @param pageDesc 分页信息
+     * @param pageDesc     分页信息
      * @return 用户任务列表
      */
     List<UserTask> listUserAllTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
+    ResponseData dubboUserAllTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
     /**
      * 查看某一个用户所有的已办，并且分页
      *
@@ -159,6 +175,7 @@ public interface FlowEngine {
     List<UserTask> listUserCompleteTasks(Map<String, Object> filterMap, PageDesc pageDesc);
 
     //-------------------------权限验证---------------------------------------
+
     /**
      * 判断一个用户是否可以处理指定的节点,可以喝submitOpt结合使用，
      * 判断当前操作人员是否可以访问提交后的下一个节点。
@@ -180,6 +197,7 @@ public interface FlowEngine {
     String getTaskGrantor(String nodeInstId, String userCode);
 
     //-------------------------预报警列表查看---------------------------------------
+
     /**
      * 自定义预警查询
      *
@@ -310,7 +328,7 @@ public interface FlowEngine {
      * <p>
      *
      * @param flowInstId    流程实例号
-     * @param multiNodeCode      需要复制的节点必须要指定nodeCode 并且需要在 多实例循环中
+     * @param multiNodeCode 需要复制的节点必须要指定nodeCode 并且需要在 多实例循环中
      * @param createUser    当前创建用户
      * @param userCode      指定操作用户
      * @param unitCode      指定机构
@@ -685,6 +703,7 @@ public interface FlowEngine {
 
     /**
      * 更新办件角色
+     *
      * @param u
      */
     void updateFlowWorkTeam(FlowWorkTeam u);

@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.dde.adapter.DdeDubboTaskRun;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.dao.DictionaryMapUtils;
+import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
@@ -361,15 +363,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return null;
         } else {
             return JSON.toJSONString(
-                CollectionsOpt.createHashMap("osId",task.getOsId(),
+                CollectionsOpt.createHashMap("osId", task.getOsId(),
                     "optId", task.getOptUrl(),
                     "optCode", task.getOptCode(),
                     "optParam", task.getOptParam(),
-                    "flowInstId",task.getFlowInstId(),
-                    "nodeInstId",nodeInstId,
-                    "flowOptTag",task.getFlowOptTag(),
-                    "flowCode",task.getFlowCode()
-                    )
+                    "flowInstId", task.getFlowInstId(),
+                    "nodeInstId", nodeInstId,
+                    "flowOptTag", task.getFlowOptTag(),
+                    "flowCode", task.getFlowCode()
+                )
             );
         }
     }
@@ -764,7 +766,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         for (String uc : nextNodeUnits) {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
-                                "cd_" + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), "unit") , uc);
+                                "cd_" + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), "unit"), uc);
                             String runToken = preNodeInst == null ? "T" : preNodeInst.getRunToken();
                             flowVarTrans.setInnerVariable("cursor", runToken, uc);
                             resNodes.addAll(submitToNextNode(
@@ -788,7 +790,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         for (String uc : optUsers) {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
-                                "cu_"  + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), "user") , uc);
+                                "cu_" + GeneralAlgorithm.nvl(nextRouterNode.getNodeCode(), "user"), uc);
                             // 创建首节点时preNodeInst为null， 默认token为T
                             String runToken = preNodeInst == null ? "T" : preNodeInst.getRunToken();
                             flowVarTrans.setInnerVariable("cursor", runToken, uc);
@@ -942,9 +944,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     String errorMsg = "流程" + flowInst.getFlowInstId() + "的下一个节点:" + nextOptNode.getNodeName()
                         + ",找不到权限为" + nextOptNode.getRoleCode() + "的操作人员";
                     logger.error(errorMsg);
-                    throw new WorkflowException(WorkflowException.NodeUserNotFound,errorMsg);
+                    throw new WorkflowException(WorkflowException.NodeUserNotFound, errorMsg);
                 }
-                if (optUsers.size() == 1 ) { //|| NodeInfo.OPT_RUN_TYPE_NORMAL.equals(nextOptNode.getOptRunType())
+                if (optUsers.size() == 1) { //|| NodeInfo.OPT_RUN_TYPE_NORMAL.equals(nextOptNode.getOptRunType())
                     //第894行已经设置过 机构
                     nodeInst.setTaskAssigned(NodeInstance.TASK_ASSIGN_TYPE_STATIC);
                     nodeInst.setUserCode(optUsers.iterator().next());
@@ -1143,8 +1145,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             VariableFormula formula = new VariableFormula();
             formula.setTrans(varTrans);
             formula.setExtendFuncMap(
-                FlowOptUtils.createExtendFuncMap( () ->createCalcUserUnitContext(flowInst,
-                    preNodeInst, nodeToken, currNode, options, varTrans)) );
+                FlowOptUtils.createExtendFuncMap(() -> createCalcUserUnitContext(flowInst,
+                    preNodeInst, nodeToken, currNode, options, varTrans)));
 
             for (FlowTransition trans : transList) {
                 if (StringUtils.isBlank(trans.getTransCondition())) {
@@ -1694,15 +1696,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
 
     private String checkTaskGrantor(NodeInstance nodeInst, String userCode) {
-        if(StringUtils.equals(userCode,nodeInst.getUserCode())){
+        if (StringUtils.equals(userCode, nodeInst.getUserCode())) {
             return userCode;
         }
         //检验对应的授权信息
         int granted = roleRelegateDao.checkGrantee(nodeInst.getUserCode(),
-             userCode, nodeInst.getUnitCode(), nodeInst.getRoleCode());
-        if(granted > 0){
+            userCode, nodeInst.getUnitCode(), nodeInst.getRoleCode());
+        if (granted > 0) {
             return nodeInst.getUserCode();
-        }else{
+        } else {
             return null;
         }
     }
@@ -1710,7 +1712,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public String getTaskGrantor(String nodeInstId, String userCode) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        if(nodeInst==null){
+        if (nodeInst == null) {
             return null;
         }
         return checkTaskGrantor(nodeInst, userCode);
@@ -1851,7 +1853,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * <p>
      *
      * @param flowInstId    流程实例号
-     * @param multiNodeCode      需要复制的节点必须要指定nodeCode 并且需要在 多实例循环中
+     * @param multiNodeCode 需要复制的节点必须要指定nodeCode 并且需要在 多实例循环中
      * @param createUser    当前创建用户
      * @param userCode      指定操作用户
      * @param unitCode      指定机构
@@ -1859,7 +1861,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      */
     @Override
     public NodeInstance duplicateMultiNodeInst(String flowInstId, String multiNodeCode, String createUser,
-                                        String userCode, String unitCode){
+                                               String userCode, String unitCode) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
         if (flowInst == null) {
             return null;
@@ -1873,22 +1875,22 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
         Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
-        if(activeNodes==null || activeNodes.size()==0){
+        if (activeNodes == null || activeNodes.size() == 0) {
             return null;
         }
-        for(NodeInstance inst : activeNodes){
+        for (NodeInstance inst : activeNodes) {
             //通过令牌 check node in loop
             int dotPos = inst.getRunToken().lastIndexOf('.');
             int loopInd = -1;
-            if(dotPos > 0){
-                String ind = inst.getRunToken().substring(dotPos+1);
-                if(StringRegularOpt.isDigit(ind)){
+            if (dotPos > 0) {
+                String ind = inst.getRunToken().substring(dotPos + 1);
+                if (StringRegularOpt.isDigit(ind)) {
                     loopInd = NumberBaseOpt.parseInteger(ind, -1);
                 }
             }
-            if(loopInd >=0){
-                for(NodeInfo node : nodeList){
-                    if(StringUtils.equals(node.getNodeId(), inst.getNodeId())){
+            if (loopInd >= 0) {
+                for (NodeInfo node : nodeList) {
+                    if (StringUtils.equals(node.getNodeId(), inst.getNodeId())) {
                         // 找到了对应的 节点，复制这个节点
                         String lastNodeInstId = UuidOpt.getUuidAsString32();
                         NodeInstance nextNodeInst = new NodeInstance();
@@ -1901,7 +1903,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         nextNodeInst.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                         nextNodeInst.setTimeLimit(nextNodeInst.getPromiseTime());
                         int tokenInd = flowInst.fetchTheMaxMultiNodeTokenInd(node.getNodeId()) + 1;
-                        nextNodeInst.setRunToken(inst.getRunToken().substring(0,dotPos)+"."+tokenInd);
+                        nextNodeInst.setRunToken(inst.getRunToken().substring(0, dotPos) + "." + tokenInd);
                         nodeInstanceDao.saveNewObject(nextNodeInst);
                         return nextNodeInst;
                     }
@@ -2117,7 +2119,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
 
-
     /**
      * 设置流程节点上下文变量
      *
@@ -2137,7 +2138,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowVariableId cid = new FlowVariableId(flowInstId,
             runToken, sVar);
         String varType = sValue.getClass().isArray() || sValue instanceof Collection
-             || objStr.indexOf(',') > 1 ? "E" : "S";
+            || objStr.indexOf(',') > 1 ? "E" : "S";
 
         FlowVariable varO = flowVariableDao.getObjectById(cid);
         if (varO == null) {
@@ -2185,17 +2186,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     private List<UserTask> listNodeOperators(NodeInstance nodeInst) {
         UserTask userTask = userTaskListDao.getNodeTaskInfo(nodeInst.getNodeInstId());
-        if(NodeInstance.TASK_ASSIGN_TYPE_STATIC.equals(nodeInst.getTaskAssigned())){
+        if (NodeInstance.TASK_ASSIGN_TYPE_STATIC.equals(nodeInst.getTaskAssigned())) {
             return CollectionsOpt.createList(userTask);
         }
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
         Set<String> optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(context,
             SysUserFilterEngine.ROLE_TYPE_GW, userTask.getRoleCode(), userTask.getUnitCode());
-        if(optUsers==null || optUsers.size()==0){
+        if (optUsers == null || optUsers.size() == 0) {
             return null;
         }
         List<UserTask> userTaskList = new ArrayList<>(optUsers.size());
-        for (String userCode : optUsers){
+        for (String userCode : optUsers) {
             UserTask ut = new UserTask();
             ut.copy(userTask);
             ut.setUserCode(userCode);
@@ -2204,6 +2205,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return userTaskList;
 
     }
+
     /**
      * 获取节点的所有操作人员
      *
@@ -2213,24 +2215,25 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public List<UserTask> listNodeOperators(String nodeInstId) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        return nodeInst==null ? null : listNodeOperators(nodeInst);
+        return nodeInst == null ? null : listNodeOperators(nodeInst);
     }
 
     /**
      * 获取流程所有活动节点的任务列表
+     *
      * @param flowInstId 流程实例id
      * @return 操作人员
      */
     @Override
-    public List<UserTask> listFlowActiveNodeOperators(String flowInstId){
+    public List<UserTask> listFlowActiveNodeOperators(String flowInstId) {
         List<NodeInstance> nodeInsts = nodeInstanceDao.listNodeInstByState(flowInstId, NodeInstance.NODE_STATE_NORMAL);
-        if(nodeInsts==null || nodeInsts.size()==0){
+        if (nodeInsts == null || nodeInsts.size() == 0) {
             return null;
         }
-        List<UserTask> userTasks = new ArrayList<>(nodeInsts.size()*4);
-        for(NodeInstance ni : nodeInsts){
+        List<UserTask> userTasks = new ArrayList<>(nodeInsts.size() * 4);
+        for (NodeInstance ni : nodeInsts) {
             List<UserTask> uts = this.listNodeOperators(ni);
-            if(uts != null) {
+            if (uts != null) {
                 userTasks.addAll(uts);
             }
         }
@@ -2239,20 +2242,34 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public List<UserTask> listUserDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        String userCode  = StringBaseOpt.castObjectToString(searchColumn.get("userCode"));
-        if(StringUtils.isBlank(userCode)){
+        String userCode = StringBaseOpt.castObjectToString(searchColumn.get("userCode"));
+        if (StringUtils.isBlank(userCode)) {
             return null;
         }
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
         //动态任务
         //1.找到用户所有机构下的岗位和职务
         List<? extends IUserUnit> iUserUnits = context.listUserUnits(userCode);
-        return  userTaskListDao.listUserDynamicTask(iUserUnits, searchColumn, pageDesc);
+        return userTaskListDao.listUserDynamicTask(iUserUnits, searchColumn, pageDesc);
+    }
+
+    @Override
+    public ResponseData dubboUserDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<UserTask> userTaskList = listUserDynamicTask(searchColumn, pageDesc);
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDesc);
+        return pageQueryResult.toResponseData();
     }
 
     @Override
     public List<UserTask> listUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return  userTaskListDao.listUserStaticTask(searchColumn, pageDesc);
+        return userTaskListDao.listUserStaticTask(searchColumn, pageDesc);
+    }
+
+    @Override
+    public ResponseData dubboUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<UserTask> userTaskList = listUserStaticTask(searchColumn, pageDesc);
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDesc);
+        return pageQueryResult.toResponseData();
     }
 
     @Override
@@ -2261,14 +2278,28 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
+    public ResponseData dubboUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<UserTask> userTaskList = listUserGrantorTask(searchColumn, pageDesc);
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDesc);
+        return pageQueryResult.toResponseData();
+    }
+
+    @Override
     public List<UserTask> listUserStaticAndGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return  userTaskListDao.listUserStaticAndGrantorTask(searchColumn, pageDesc);
+        return userTaskListDao.listUserStaticAndGrantorTask(searchColumn, pageDesc);
+    }
+
+    @Override
+    public ResponseData dubboUserStaticAndGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<UserTask> userTaskList = listUserStaticAndGrantorTask(searchColumn, pageDesc);
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDesc);
+        return pageQueryResult.toResponseData();
     }
 
     @Override
     public List<UserTask> listUserAllTask(Map<String, Object> filterMap, PageDesc pageDesc) {
-        String userCode  = StringBaseOpt.castObjectToString(filterMap.get("userCode"));
-        if(StringUtils.isBlank(userCode)){
+        String userCode = StringBaseOpt.castObjectToString(filterMap.get("userCode"));
+        if (StringUtils.isBlank(userCode)) {
             return null;
         }
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
@@ -2276,12 +2307,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //1.找到用户所有机构下的岗位和职务
         List<? extends IUserUnit> iUserUnits = context.listUserUnits(userCode);
         Integer count = iUserUnits.size();
-        for(int i=0; i<count; i++){
+        for (int i = 0; i < count; i++) {
             IUserUnit iUserUnit = iUserUnits.get(i);
-            filterMap.put("userUnitCode"+i, iUserUnit.getUnitCode());
-            filterMap.put("userStation"+i, iUserUnit.getUserStation());
+            filterMap.put("userUnitCode" + i, iUserUnit.getUnitCode());
+            filterMap.put("userStation" + i, iUserUnit.getUserStation());
         }
-        return  userTaskListDao.listUserAllTask(iUserUnits, filterMap, pageDesc);
+        return userTaskListDao.listUserAllTask(iUserUnits, filterMap, pageDesc);
+    }
+
+    @Override
+    public ResponseData dubboUserAllTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        List<UserTask> userTaskList = listUserAllTask(searchColumn, pageDesc);
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDesc);
+        return pageQueryResult.toResponseData();
     }
 
     @Override
@@ -2290,7 +2328,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return false;
         }
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        if(nodeInst==null){
+        if (nodeInst == null) {
             return false;
         }
         return StringUtils.isNotBlank(
@@ -2379,7 +2417,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         for (Object flowNode : flowNodes) {
             JSONObject jsonObject = (JSONObject) flowNode;
             jsonObject.putIfAbsent("nodeState", "0");
-            if (NodeInstance.NODE_STATE_NORMAL.equals( jsonObject.getString("nodeState"))) {
+            if (NodeInstance.NODE_STATE_NORMAL.equals(jsonObject.getString("nodeState"))) {
                 // 办理中节点添加待办用户
                 List<UserTask> userTasks = this.listNodeOperators(jsonObject.getString("nodeInstId"));
                 jsonObject.put("userTasks", DictionaryMapUtils.objectsToJSONArray(userTasks));
