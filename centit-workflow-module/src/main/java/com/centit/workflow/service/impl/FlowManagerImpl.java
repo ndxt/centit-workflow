@@ -3,8 +3,10 @@ package com.centit.workflow.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.core.dao.DictionaryMapUtils;
+import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.CollectionsOpt;
@@ -1399,6 +1401,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
         return nodeInstanceDao.listObjects(searchColumn, pageDesc);
+    }
+    @Override
+    public ResponseData dubboNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc){
+        PageDesc pageDescCopy=new PageDesc();
+        pageDescCopy.copy(pageDesc);
+        List<NodeInstance> nodeInstances = listNodeInstance(searchColumn, pageDescCopy);
+        PageQueryResult<NodeInstance> pageQueryResult = PageQueryResult.createResultMapDict(nodeInstances, pageDescCopy);
+        return pageQueryResult.toResponseData();
     }
 
     /**

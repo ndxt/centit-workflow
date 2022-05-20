@@ -1,6 +1,7 @@
 package com.centit.workflow.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.*;
@@ -55,7 +56,7 @@ public interface FlowManager {
     /**
      * 查看工作流程节点示例图
      *
-     * @param flowInstId  流程 实例id
+     * @param flowInstId 流程 实例id
      * @return 工作流程节点示例图
      */
     String viewFlowNodeInstance(String flowInstId);
@@ -72,17 +73,19 @@ public interface FlowManager {
 
     /**
      * 暂停一个流程    P 暂停 挂起
-     * @param flowInstId 流程实例id
+     *
+     * @param flowInstId     流程实例id
      * @param mangerUserCode 管理人员代码
-     * @param admindesc 管理原因
+     * @param admindesc      管理原因
      */
     int suspendInstance(String flowInstId, String mangerUserCode, String admindesc);
 
     /**
      * 激活一个 挂起的或者无效的流程  N 正常
-     * @param flowInstId 流程实例id
+     *
+     * @param flowInstId     流程实例id
      * @param mangerUserCode 管理人员代码
-     * @param admindesc 管理原因
+     * @param admindesc      管理原因
      */
     int activizeInstance(String flowInstId, String mangerUserCode, String admindesc);
 
@@ -165,6 +168,7 @@ public interface FlowManager {
 
     /**
      * 强制修改流程的节点状态
+     *
      * @param nodeInstId
      * @param newState
      */
@@ -207,10 +211,11 @@ public interface FlowManager {
 
     /**
      * 从这个节点重新运行该流程，包括已经结束的流程
-     * @param nodeInstId 节点实例id
+     *
+     * @param nodeInstId     节点实例id
      * @param mangerUserCode 管理人员代码
      * @return 新的节点实例
-     * */
+     */
     NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode);
 
     /**
@@ -277,6 +282,7 @@ public interface FlowManager {
 
     /**
      * 获取节点实例的操作日志列表
+     *
      * @param flowInstId 流程实例号
      * @param nodeInstId 节点实例好
      * @return List<WfActionLog>
@@ -284,10 +290,11 @@ public interface FlowManager {
     List<? extends OperationLog> listNodeActionLogs(String flowInstId, String nodeInstId);
 
     List<? extends OperationLog> listNodeActionLogs(String nodeInstId);
+
     /**
      * 获取节点实例的操作日志列表
      *
-     * @param flowInstId 流程实例id
+     * @param flowInstId     流程实例id
      * @param withNodeAction 是否包括节点的日志
      * @return List<WfActionLog>
      */
@@ -325,7 +332,7 @@ public interface FlowManager {
 
     /**
      * 分配节点任务
-     *  Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
+     * Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      */
     int assignNodeTask(String nodeInstId, String userCode,
                        String mangerUserCode, String authDesc);
@@ -366,19 +373,21 @@ public interface FlowManager {
      * 将 fromUserCode 所有任务 迁移 给 toUserCode
      *
      * @param fromUserCode 任务属主
-     * @param toUserCode 新的属主
-     * @param moveDesc 迁移描述
+     * @param toUserCode   新的属主
+     * @param moveDesc     迁移描述
      * @param optUserCode  操作人员
      * @return 返回迁移的任务数
      */
     int moveUserTaskTo(String fromUserCode, String toUserCode,
                        String optUserCode, String moveDesc);
+
     /**
      * 将 fromUserCode 所有任务 迁移 给 toUserCode
-     * @param nodeInstIds 任务节点结合
+     *
+     * @param nodeInstIds  任务节点结合
      * @param fromUserCode 任务属主
-     * @param toUserCode 新的属主
-     * @param moveDesc 迁移描述
+     * @param toUserCode   新的属主
+     * @param moveDesc     迁移描述
      * @param optUserCode  操作人员
      * @return 返回迁移的任务数
      */
@@ -389,9 +398,10 @@ public interface FlowManager {
 
     /**
      * 流程拉回到首节点
+     *
      * @param flowInstId
      * @param managerUserCode
-     * @param force 是否强制，否的话 需要判断流程最后提交人是否是自己
+     * @param force           是否强制，否的话 需要判断流程最后提交人是否是自己
      */
     NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force);
 
@@ -399,6 +409,7 @@ public interface FlowManager {
 
     /**
      * 获取所有流程分组
+     *
      * @param filterMap
      * @param pageDesc
      * @return
@@ -419,6 +430,7 @@ public interface FlowManager {
 
     /**
      * 删除流程实例数据
+     *
      * @param flowInstId
      * @param userCode
      * @return
@@ -427,14 +439,18 @@ public interface FlowManager {
 
     /**
      * 获取节点实例列表
+     *
      * @param searchColumn
      * @param pageDesc
      * @return
      */
     List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc);
 
+    ResponseData dubboNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc);
+
     /**
      * 强制修改流程状态以及相关节点实例状态
+     *
      * @param flowInstId
      * @param userCode
      * @param instState
@@ -444,6 +460,7 @@ public interface FlowManager {
 
     /**
      * 获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)
+     *
      * @param searchColumn
      * @param pageDesc
      * @return
@@ -452,6 +469,7 @@ public interface FlowManager {
 
     /**
      * 批量删除工作流实例
+     *
      * @param flowInstIds
      */
     void deleteFlowInstByIds(List<String> flowInstIds);
