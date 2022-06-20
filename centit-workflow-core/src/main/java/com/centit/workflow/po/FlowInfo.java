@@ -91,6 +91,7 @@ public class FlowInfo implements java.io.Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date atPublishDate;
 
+    @Column(name = "SOURCE_ID")
     @ApiModelProperty(value = "模板来源")
     @JSONField(serialize = false)
     private String sourceId;

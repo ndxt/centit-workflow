@@ -289,6 +289,7 @@ public class NodeInfo implements java.io.Serializable {
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
 
+    @Column(name = "SOURCE_ID")
     @ApiModelProperty(value = "模板来源")
     @JSONField(serialize = false)
     private String sourceId;
