@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
@@ -513,6 +514,11 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     @Override
+    public ResponseData dubboUserDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return null;
+    }
+
+    @Override
     public List<UserTask> listUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             UrlOptUtils.appendParamsToUrl(
@@ -524,6 +530,11 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     @Override
+    public ResponseData dubboUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return null;
+    }
+
+    @Override
     public List<UserTask> listUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             UrlOptUtils.appendParamsToUrl(
@@ -532,6 +543,11 @@ public class FlowEngineClientImpl implements FlowEngine {
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
         return receiveJSON.getDataAsArray("objList", UserTask.class);
+    }
+
+    @Override
+    public ResponseData dubboUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return null;
     }
 
     /**
@@ -550,6 +566,11 @@ public class FlowEngineClientImpl implements FlowEngine {
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
         return receiveJSON.getDataAsArray("objList", UserTask.class);
+    }
+
+    @Override
+    public ResponseData dubboUserStaticAndGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return null;
     }
 
     /**
@@ -572,6 +593,11 @@ public class FlowEngineClientImpl implements FlowEngine {
         RestfulHttpRequest.checkHttpReceiveJSON(receiveJSON);
         pageDesc.copy(receiveJSON.getDataAsObject("pageDesc", PageDesc.class));
         return receiveJSON.getDataAsArray("objList", UserTask.class);
+    }
+
+    @Override
+    public ResponseData dubboUserAllTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return null;
     }
 
     /**

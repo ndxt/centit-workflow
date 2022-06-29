@@ -465,7 +465,10 @@ public class FlowDefineClientImpl implements FlowDefine {
     }
 
     @Override
-    public void clearRecycle() {
+    public void clearRecycle(String osId) {
         throw new ObjectException("This function is not been implemented in client.");
     }
+
+
+
 }

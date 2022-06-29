@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
+import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.common.ObjectException;
@@ -622,6 +623,11 @@ public class FlowManagerClientImpl implements FlowManager {
     @Override
     public List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
         throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    @Override
+    public ResponseData dubboNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return null;
     }
 
     /**
