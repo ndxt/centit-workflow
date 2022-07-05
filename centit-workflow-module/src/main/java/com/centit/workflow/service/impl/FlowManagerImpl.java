@@ -152,12 +152,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     }
                 }
                 //流程被退回后 被看作是 已经被强制结束
-                if ("B".equals(nodeInst.getNodeState())){
+                if ("B".equals(nodeInst.getNodeState())) {
                     nodeState.put(nodeInst.getNodeId(), "suspend");
                 }
                 //节点状态等于C，被看作 节点已经完成
-                if ("C".equals(nodeInst.getNodeState())){
-                    nodeState.put(nodeInst.getNodeId(),"complete");
+                if ("C".equals(nodeInst.getNodeState())) {
+                    nodeState.put(nodeInst.getNodeId(), "complete");
                     nodeState.put(nodeInst.getNodeId(), "complete");
                 }
             }
@@ -994,13 +994,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
             if (node == null)
                 continue;
-
+            nodeInst.setNodeName(node.getNodeName());
             nodeInst.setOptUrl(JSON.toJSONString(
-                CollectionsOpt.createHashMap("osId",node.getOsId(),
+                CollectionsOpt.createHashMap("osId", node.getOsId(),
                     "optId", node.getOptId(),
                     "optCode", node.getOptCode(),
                     "optParam", node.getOptParam(),
-                    "flowCode",node.getFlowCode()
+                    "flowCode", node.getFlowCode()
                 )
             ));
             nodeInstList.add(nodeInst);
@@ -1402,9 +1402,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
         return nodeInstanceDao.listObjects(searchColumn, pageDesc);
     }
+
     @Override
-    public ResponseData dubboNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc){
-        PageDesc pageDescCopy=new PageDesc();
+    public ResponseData dubboNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        PageDesc pageDescCopy = new PageDesc();
         pageDescCopy.copy(pageDesc);
         List<NodeInstance> nodeInstances = listNodeInstance(searchColumn, pageDescCopy);
         PageQueryResult<NodeInstance> pageQueryResult = PageQueryResult.createResultMapDict(nodeInstances, pageDescCopy);
@@ -1506,11 +1507,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Transactional
     public void deleteFlowInstByIds(List<String> flowInstIds) {
         for (String flowInstId : flowInstIds) {
-            if (StringUtils.isBlank(flowInstId)){
+            if (StringUtils.isBlank(flowInstId)) {
                 continue;
             }
             flowInstanceDao.deleteObjectById(flowInstId);
-            nodeInstanceDao.deleteObjectsByProperties(CollectionsOpt.createHashMap("flowInstId",flowInstId));
+            nodeInstanceDao.deleteObjectsByProperties(CollectionsOpt.createHashMap("flowInstId", flowInstId));
         }
     }
 }
