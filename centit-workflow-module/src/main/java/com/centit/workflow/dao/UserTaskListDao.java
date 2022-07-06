@@ -77,7 +77,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         " [ :(splitforin)flowInstIds| and b.FLOW_INST_ID in ( :flowInstIds )]" +
         "[ :flowOptTag| and b.FLOW_OPT_TAG = :flowOptTag]" +
         "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
-        "[ :(like)flowOptName| and b.FLOW_OPT_NAME like :flowOptName]" +
+        "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
         "[ :userCode| and b.USER_CODE = :userCode]" +
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
         "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
@@ -112,7 +112,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         " [ :(splitforin)flowInstIds| and b.FLOW_INST_ID in ( :flowInstIds )]" +
         "[ :flowOptTag| and b.FLOW_OPT_TAG = :flowOptTag]" +
         "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
-        "[ :(like)flowOptName| and b.FLOW_OPT_NAME like :flowOptName]" +
+        "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
         "[ :userCode| and g.GRANTEE = :userCode]" +
         "[ :grantor| and g.GRANTOR = :grantor]" +
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
@@ -152,7 +152,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :(splitforin)flowInstIds| and b.FLOW_INST_ID in ( :flowInstIds )]" +
             "[ :flowOptTag| and b.FLOW_OPT_TAG = :flowOptTag]" +
             "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
-            "[ :(like)flowOptName| and b.FLOW_OPT_NAME like :flowOptName]" +
+            "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
             "[ :unitCode| and ( b.unit_code = :unitCode or b.unit_code is null )] " +
             "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
             "[ :endTime| and b.CREATE_TIME <= :endTime]" +
