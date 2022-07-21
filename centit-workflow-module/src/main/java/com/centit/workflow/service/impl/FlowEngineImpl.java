@@ -563,8 +563,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //根据权限表达式创建任务列表
             optUsers = UserUnitCalcEngine.calcOperators(context, roleFormula);
             if (optUsers == null || optUsers.size() == 0) {
-                logger.error("权限引擎没有识别出符合表达式的操作人员：" + roleFormula + "，flow_inst_id:" + flowInst.getFlowInstId()
-                    + ",node_inst_id:" + nextOptNode.getNodeId() + "。");
+                logger.debug("权限引擎没有识别出符合表达式的操作人员：" + roleFormula + "，flow_inst_id:" + flowInst.getFlowInstId()
+                    + ",node_inst_id:" + nextOptNode.getNodeId() + "；自动运行节点忽略这个信息。");
             }
         } else if (SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(nextOptNode.getRoleType())) {
             optUsers = new HashSet<>();
