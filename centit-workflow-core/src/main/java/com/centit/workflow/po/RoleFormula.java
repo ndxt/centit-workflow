@@ -47,4 +47,6 @@ public class RoleFormula implements Serializable {
     @Column(name = "TOP_UNIT")
     private String topUnit;
 
+    @Column(name = "FORMULA_DESC")
+    private String formulaDesc;
 }
