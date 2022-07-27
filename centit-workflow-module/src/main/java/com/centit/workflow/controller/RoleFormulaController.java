@@ -123,6 +123,9 @@ public class RoleFormulaController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/calcUsers", method = RequestMethod.GET)
     public JSONArray viewFormulaUsers(String formula, HttpServletRequest request) {
+        if(StringBaseOpt.isNvl(formula)){
+            return null;
+        }
         return roleFormulaService.viewFormulaUsers(
             StringEscapeUtils.unescapeHtml4(formula),
             WebOptUtils.getCurrentUserCode(request),
