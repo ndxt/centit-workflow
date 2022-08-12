@@ -60,6 +60,13 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam, FlowWorkTeamId> {
         return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? order by user_Order", new Object[]{flowInstId, roleCode});
     }
 
+    @Transactional
+    public List<FlowWorkTeam> listFlowWorkTeamByRole(String flowInstId, String roleCode, String runtoken) {
+        return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? and RUN_TOKEN = ? " +
+            "order by user_Order", new Object[]{flowInstId, roleCode, runtoken});
+    }
+
+
     /**
      * 链接 F_Userinfo 是为了排序
      *

@@ -1205,7 +1205,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             NodeInfo nodeInfo = getNodeInfo(nodeInstId);
             if (nodeInfo != null) {
                 nodeNames.add(nodeInfo.getNodeName());
-
             }
         }
         HashMap<String, Object> resultMap = new HashMap<>();
@@ -1920,10 +1919,27 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return;
         }
         Date assignDate = new Date(System.currentTimeMillis());
+        List<FlowWorkTeam> flowWorkTeams = flowTeamDao.listFlowWorkTeamByRole(flowInstId, roleCode, runToken);
+        if(flowWorkTeams != null){
+            for(FlowWorkTeam team : flowWorkTeams){
+                if(!userCodeSet.contains(team.getUserCode())){
+                    flowTeamDao.deleteObject(team);
+                }
+            }
+        }
         for (String usercode : userCodeSet) {
             if (StringUtils.isNotBlank(usercode)) {
-                flowTeamDao.mergeObject(
-                    new FlowWorkTeam(flowInstId, usercode, roleCode, runToken, assignDate));
+                boolean indb =false;
+                for(FlowWorkTeam team : flowWorkTeams){
+                    if(usercode.equals(team.getUserCode())){
+                        indb =  true;
+                        break;
+                    }
+                }
+                if(!indb) {
+                    flowTeamDao.saveNewObject(
+                        new FlowWorkTeam(flowInstId, usercode, roleCode, runToken, assignDate));
+                }
             }
         }
     }
