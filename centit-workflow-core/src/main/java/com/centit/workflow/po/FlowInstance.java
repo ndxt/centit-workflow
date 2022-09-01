@@ -470,9 +470,8 @@ public class FlowInstance implements java.io.Serializable {
         }
         for (NodeInstance ni : flowNodeInstances)
             if (ni.getNodeId().equals(nodeId) && !ni.getNodeInstId().equals(thisNodeInstId)
-                && (runToken == null || ni.getRunToken() == null || runToken.equals(ni.getRunToken())
-                || runToken.startsWith(ni.getRunToken() + ".") || ni.getRunToken().startsWith(runToken + "."))) {
-
+                && (runToken == null || runToken.equals(ni.getRunToken()) /*
+                || runToken.startsWith(ni.getRunToken() + ".") || ni.getRunToken().startsWith(runToken + ".")*/)) {
                 if (sameInst == null || sameInst.getCreateTime().before(ni.getCreateTime()))//大小于
                     sameInst = ni;
             }

@@ -491,14 +491,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return context;
     }
 
-    private LeftRightPair<Set<String>, Set<String>> calcNodeUnitAndOperator(FlowInstance flowInst, NodeInstance preNodeInst, String nodeToken, NodeInfo nextOptNode, FlowOptParamOptions options, FlowVariableTranslate varTrans) {
+    private LeftRightPair<Set<String>, Set<String>> calcNodeUnitAndOperator(FlowInstance flowInst, NodeInstance preNodeInst,
+                          String nodeToken, NodeInfo nextOptNode, FlowOptParamOptions options, FlowVariableTranslate varTrans) {
         UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
             preNodeInst, nodeToken, nextOptNode, options, varTrans);
         return calcNodeUnitAndOperator(context, flowInst,
             nodeToken, nextOptNode, options);
     }
 
-    private LeftRightPair<Set<String>, Set<String>> calcNodeUnitAndOperator(UserUnitFilterCalcContext context, FlowInstance flowInst, String nodeToken, NodeInfo nextOptNode, FlowOptParamOptions options) {
+    private LeftRightPair<Set<String>, Set<String>> calcNodeUnitAndOperator(UserUnitFilterCalcContext context,
+                         FlowInstance flowInst, String nodeToken, NodeInfo nextOptNode, FlowOptParamOptions options) {
         // 参数指定
         Set<String> nodeUnits = null;
         if (options.getNodeUnits() != null) {
