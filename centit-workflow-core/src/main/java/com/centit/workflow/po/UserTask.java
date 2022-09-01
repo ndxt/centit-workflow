@@ -35,9 +35,8 @@ public class UserTask implements java.io.Serializable {
     private String nodeName;
     private String nodeType;
     private String nodeOptType;
-    private String nodeParam;
-    private String optParam;
-    private String optCode;
+    // private String nodeParam;
+
 
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
@@ -58,7 +57,8 @@ public class UserTask implements java.io.Serializable {
     private String instState;
     private String osId;
     private String optId;
-    private String optUrl;
+    private String optCode;
+    private String optParam;
     private String stageCode;
     @DictionaryMap(value="userCode", fieldName="creatorName")
     private String creatorCode;
@@ -116,28 +116,17 @@ public class UserTask implements java.io.Serializable {
     }
 
     public String getNodeOptUrl(){
-        if(this.optUrl==null) {
-            //this.optUrl=this.optCode;
-            return null;
-        }
-        StringBuilder urlBuilder = new StringBuilder(this.optUrl);
-        if(!this.optUrl.endsWith("?") && !this.optUrl.endsWith("&")){
-            if(this.optUrl.indexOf('?') == -1 )
-              urlBuilder.append('?');
-            else
-              urlBuilder.append('&');
-        }
-        urlBuilder.append("flowInstId=")
+        StringBuilder urlBuilder = new StringBuilder("osId=");
+        urlBuilder.append(this.osId)
+            .append("&optId=").append(this.optId)
+            .append("&optCode=").append(this.optCode)
+            .append("&flowInstId=")
             .append(this.flowInstId)
             .append("&nodeInstId=")
             .append(this.nodeInstId);
         if(StringUtils.isNotBlank(this.flowOptTag)){
             urlBuilder.append("&flowOptTag=")
                 .append(this.flowOptTag);
-        }
-        if(StringUtils.isNotBlank(this.nodeParam)){
-            urlBuilder.append("&nodeParam=")
-                .append(this.nodeParam);
         }
         if(StringUtils.isNotBlank(this.optParam)){
             urlBuilder.append("&")
@@ -166,7 +155,6 @@ public class UserTask implements java.io.Serializable {
         this.nodeName = other.getNodeName();
         this.nodeType = other.getNodeType();
         this.nodeOptType = other.getNodeOptType();
-        this.nodeParam = other.getNodeParam();
         this.optParam = other.getOptParam();
         this.optCode = other.getOptCode();
 
@@ -185,7 +173,6 @@ public class UserTask implements java.io.Serializable {
         this.instState = other.getInstState();
         this.osId = other.getOsId();
         this.optId = other.getOptId();
-        this.optUrl = other.getOptUrl();
         this.stageCode = other.getStageCode();
 
         this.creatorCode = other.getCreatorCode();

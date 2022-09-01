@@ -22,6 +22,9 @@ import java.util.Set;
 @Data
 public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
     private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty(value = "流程名称")
+    private String flowOptName;
     /**
      * 流程代码
      */
