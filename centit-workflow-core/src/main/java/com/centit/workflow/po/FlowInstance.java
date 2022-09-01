@@ -459,6 +459,27 @@ public class FlowInstance implements java.io.Serializable {
     /**
      * 查找在同一条运行路径上的相同节点
      */
+    public NodeInstance findLastCompletedNodeInst(String nodeId, NodeInstance nodeInst) {
+        if (this.flowNodeInstances == null)
+            return null;
+
+        NodeInstance sameInst = null;
+        String runToken = null;
+        if (nodeInst != null) {
+            runToken = nodeInst.getRunToken();
+        }
+        for (NodeInstance ni : flowNodeInstances)
+            if (ni.getNodeId().equals(nodeId) && NodeInstance.NODE_STATE_COMPLETE.equals(ni.getNodeState())
+                && (runToken == null || runToken.equals(ni.getRunToken()))) {
+                if (sameInst == null || sameInst.getCreateTime().before(ni.getCreateTime()))//大小于
+                    sameInst = ni;
+            }
+        return sameInst;
+    }
+
+    /**
+     * 查找在同一条运行路径上的相同节点
+     */
     public NodeInstance findLastSameNodeInst(String nodeId, NodeInstance nodeInst, String thisNodeInstId) {
         if (this.flowNodeInstances == null)
             return null;
@@ -470,8 +491,8 @@ public class FlowInstance implements java.io.Serializable {
         }
         for (NodeInstance ni : flowNodeInstances)
             if (ni.getNodeId().equals(nodeId) && !ni.getNodeInstId().equals(thisNodeInstId)
-                && (runToken == null || runToken.equals(ni.getRunToken()) /*
-                || runToken.startsWith(ni.getRunToken() + ".") || ni.getRunToken().startsWith(runToken + ".")*/)) {
+                && (runToken == null || ni.getRunToken() == null || runToken.equals(ni.getRunToken())
+                || runToken.startsWith(ni.getRunToken() + ".") || ni.getRunToken().startsWith(runToken + "."))) {
                 if (sameInst == null || sameInst.getCreateTime().before(ni.getCreateTime()))//大小于
                     sameInst = ni;
             }

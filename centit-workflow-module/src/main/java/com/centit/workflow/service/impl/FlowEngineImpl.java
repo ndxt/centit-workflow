@@ -463,7 +463,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
         context.setVarTrans(varTrans);
         //构建内置变量
-        NodeInstance oldNodeInst = flowInst.findLastSameNodeInst(nextOptNode.getNodeId(), preNodeInst, "");
+        NodeInstance oldNodeInst = flowInst.findLastCompletedNodeInst(nextOptNode.getNodeId(), preNodeInst);
         // L 上一次运行到本节点的 用户和机构
         if (oldNodeInst != null) {
             context.addUnitParam("L", oldNodeInst.getUnitCode());
