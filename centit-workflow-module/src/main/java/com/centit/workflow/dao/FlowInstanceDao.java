@@ -120,11 +120,13 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
     public List<FlowInstance> listAllActiveFlowInst(PageDesc pageDesc){
         return this.listObjectsByFilterAsJson("where inst_State = 'N'",new Object[]{},pageDesc).toJavaList(FlowInstance.class);
     }
+
     @Transactional
     public List<FlowInstance> listAllActiveTimerFlowInst(){
         String whereSql = "where inst_State = 'N' and is_Timer='T'";
         return this.listObjectsByFilter(whereSql,(Object[]) null);
     }
+
     @Transactional
     public List<FlowInstance> listAllActiveTimerFlowInst(PageDesc pageDesc){
         return this.listObjectsByFilterAsJson("where inst_State = 'N' and is_Timer='T'",new Object[]{},pageDesc).toJavaList(FlowInstance.class);
@@ -185,6 +187,14 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
         String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=? where  FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,flowInstId});
     }
+
+    @Transactional
+    public void updateFlowInstOptName(String flowInstId, String flowOptName){
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=? where  FLOW_INST_ID=?";
+        this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowInstId});
+    }
+
+    @Transactional
     public void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName,String flowOptTag,String userCode,String unitCode){
         String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=?,user_code=?,unit_code=? where  FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,userCode,unitCode,flowInstId});

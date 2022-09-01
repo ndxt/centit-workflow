@@ -1,12 +1,16 @@
 package com.centit.workflow.po;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
+import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.common.WorkTimeSpan;
+import com.centit.support.network.UrlOptUtils;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * create by scaffold
@@ -16,11 +20,11 @@ import java.util.Date;
 public class UserTask implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
     private String nodeInstId;
+
     @DictionaryMap(value="unitCode", fieldName="unitName")
-
     private String unitCode;
-    @DictionaryMap(value="userCode", fieldName="userName")
 
+    @DictionaryMap(value="userCode", fieldName="userName")
     private String userCode;
 
     private String flowInstId;
@@ -30,13 +34,29 @@ public class UserTask implements java.io.Serializable {
 
     @DictionaryMap(value="flowCode", fieldName="flowName")
     private String flowCode;
+
     private String version;
     private String nodeCode;
     private String nodeName;
     private String nodeType;
-    private String nodeOptType;
-    // private String nodeParam;
 
+    /**NODE_TYPE == NODE_TYPE_OPT
+     * A: 指定到人 唯一执行人 B: 动态分配 C: 多人操作（已废弃）
+        * */
+    private String nodeOptType;
+
+    private String stageCode;
+
+    private String instState;
+    private String osId;
+    private String optId;
+    private String optCode;
+    private String optParam;
+
+    @DictionaryMap(value="userCode", fieldName="grantorName")
+    private String grantor;
+    private String roleType;
+    private String roleCode;
 
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
@@ -50,16 +70,7 @@ public class UserTask implements java.io.Serializable {
     private Long promiseTime;
     private Long timeLimit;
 
-    @DictionaryMap(value="userCode", fieldName="grantorName")
-    private String grantor;
-    private String roleType;
-    private String roleCode;
-    private String instState;
-    private String osId;
-    private String optId;
-    private String optCode;
-    private String optParam;
-    private String stageCode;
+
     @DictionaryMap(value="userCode", fieldName="creatorName")
     private String creatorCode;
 
@@ -116,28 +127,22 @@ public class UserTask implements java.io.Serializable {
     }
 
     public String getNodeOptUrl(){
-        StringBuilder urlBuilder = new StringBuilder("osId=");
-        urlBuilder.append(this.osId)
-            .append("&optId=").append(this.optId)
-            .append("&optCode=").append(this.optCode)
-            .append("&flowInstId=")
-            .append(this.flowInstId)
-            .append("&nodeInstId=")
-            .append(this.nodeInstId);
-        if(StringUtils.isNotBlank(this.flowOptTag)){
-            urlBuilder.append("&flowOptTag=")
-                .append(this.flowOptTag);
+        Map<String, Object> urlParams =
+            CollectionsOpt.createHashMap("osId", this.getOsId(),
+                "optId", this.getOptId(),
+                "optCode", this.getOptCode(),
+                "optParam", this.getOptParam(),
+                "flowInstId", this.getFlowInstId(),
+                "nodeInstId", this.getNodeInstId(),
+                "flowOptTag", this.getFlowOptTag(),
+                "flowCode", this.getFlowCode(),
+                "grantor", this.getGrantor()
+            );
+        if(StringUtils.isNotBlank(this.getOptParam() )){
+            urlParams.putAll(
+                UrlOptUtils.splitUrlParamter(this.getOptParam()));
         }
-        if(StringUtils.isNotBlank(this.optParam)){
-            urlBuilder.append("&")
-            .append(this.optParam);
-        }
-        if(StringUtils.isNotBlank(this.grantor) &&
-          ! StringUtils.equals(this.grantor, this.userCode)){
-            urlBuilder.append("&grantor=")
-              .append(this.grantor);
-        }
-        return urlBuilder.toString();
+        return JSON.toJSONString(urlParams);
     }
 
     public void copy(UserTask other) {

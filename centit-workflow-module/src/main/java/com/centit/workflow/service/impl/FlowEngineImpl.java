@@ -362,17 +362,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (task == null) {
             return null;
         } else {
-            return JSON.toJSONString(
-                CollectionsOpt.createHashMap("osId", task.getOsId(),
-                    "optId", task.getOptUrl(),
-                    "optCode", task.getOptCode(),
-                    "optParam", task.getOptParam(),
-                    "flowInstId", task.getFlowInstId(),
-                    "nodeInstId", nodeInstId,
-                    "flowOptTag", task.getFlowOptTag(),
-                    "flowCode", task.getFlowCode()
-                )
-            );
+            return task.getNodeOptUrl();
         }
     }
 
@@ -1288,6 +1278,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         if (saveOptions) {
+            // 更新流程业务名称，长度必须大于1个字符
+            if(StringUtils.length(options.getFlowOptName())>1) {
+                flowInst.setFlowOptName(options.getFlowOptName());
+                flowInstanceDao.updateFlowInstOptName(
+                    flowInst.getFlowInstId(),
+                    flowInst.getFlowOptName()
+                );
+            }
             saveValueAndRoleInOptions(nodeInst.getFlowInstId(), nodeInst.getRunToken(), options);
         }
 
