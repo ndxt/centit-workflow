@@ -510,8 +510,9 @@ public class FlowDefineController extends BaseController {
     @RequestMapping(value = "/getdatamap/{flowcode}", method = RequestMethod.GET)
     @WrapUpResponseBody
     @Transactional
-    public Map<String, Map<String, String>> getDataMap(@PathVariable String flowcode) {
-        Map<String, Map<String, String>> map = flowDefine.listAllRole();
+    public Map<String, Map<String, String>> getDataMap(@PathVariable String flowcode, HttpServletRequest request){
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        Map<String, Map<String, String>> map = flowDefine.listAllRole(topUnit);
         //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
         Map<String, String> bjMap = new LinkedHashMap<>();
         bjMap.put("", "请选择");
@@ -554,15 +555,17 @@ public class FlowDefineController extends BaseController {
     @ApiOperation(value = "列举所有角色")
     @RequestMapping(value = "/listAllRole", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public Map<String, Map<String, String>> listAllRole(){
-        return flowDefine.listAllRole();
+    public Map<String, Map<String, String>> listAllRole(HttpServletRequest request){
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        return flowDefine.listAllRole(topUnit);
     }
 
     @ApiOperation(value = "角色名称和类别对应列表")
     @RequestMapping(value = "/listRoleByType/{roleType}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public Map<String, String> listRoleByType(@PathVariable String roleType){
-        return flowDefine.listRoleByType(roleType);
+    public Map<String, String> listRoleByType(@PathVariable String roleType, HttpServletRequest request){
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        return flowDefine.listRoleByType(roleType, topUnit);
     }
 
     @ApiOperation(value = "列举流程办件角色")

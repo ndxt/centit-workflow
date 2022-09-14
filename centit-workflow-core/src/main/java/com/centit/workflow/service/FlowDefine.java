@@ -145,13 +145,13 @@ public interface FlowDefine {
     /**
      * 列举所有角色
      */
-    Map<String, Map<String, String>> listAllRole();
+    Map<String, Map<String, String>> listAllRole(String topUnit);
 
     /**
      * @param stype 角色类别
      * @return 角色名称和类别对应列表
      */
-    Map<String, String> listRoleByType(String stype);
+    Map<String, String> listRoleByType(String stype, String topUnit);
 
     /**
      * @return 内置的流程结构表达式

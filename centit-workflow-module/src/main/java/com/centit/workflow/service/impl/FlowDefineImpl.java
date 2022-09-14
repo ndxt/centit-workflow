@@ -592,8 +592,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * 列举所有角色
      */
     @Override
-    public Map<String, Map<String, String>> listAllRole() {
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+    public Map<String, Map<String, String>> listAllRole(String topUnit) {
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         Map<String, Map<String, String>> roleList = new HashMap<>();
         roleList.put(SysUserFilterEngine.ROLE_TYPE_GW /*"gw"*/, context.listAllStation());
         roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ /*"xz"*/, context.listAllRank());
@@ -608,9 +608,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      * @return 角色名称和类别对应列表
      */
     @Override
-    public Map<String, String> listRoleByType(String stype) {
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+    public Map<String, String> listRoleByType(String stype, String topUnit) {
 
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         if (SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(stype)) {
             return context.listAllStation();
         } else if (SysUserFilterEngine.ROLE_TYPE_XZ.equalsIgnoreCase(stype)) {

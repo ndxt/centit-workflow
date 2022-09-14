@@ -1,6 +1,7 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
@@ -106,8 +107,9 @@ public class RoleRelegateController extends BaseController {
     )
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/role/{userCode}")
-    public List<? extends IUserUnit> listUserRoles(@PathVariable String userCode) {
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+    public List<? extends IUserUnit> listUserRoles(@PathVariable String userCode, HttpServletRequest request) {
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         return context.listUserUnits(userCode);
     }
 

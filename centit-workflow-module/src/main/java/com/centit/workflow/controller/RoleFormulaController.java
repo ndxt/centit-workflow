@@ -189,10 +189,12 @@ public class RoleFormulaController extends BaseController {
     @PostMapping(value = "/testformula")
     @ApiOperation(value = "测试表达式")
     @WrapUpResponseBody
-    public Object testFormula(@RequestBody JSONObject jsonObject) {
+    public Object testFormula(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         Object object = jsonObject.getOrDefault("jsonString", "");
         VariableFormula variableFormula = new VariableFormula();
-        variableFormula.setExtendFuncMap(FlowOptUtils.createExtendFuncMap(() -> userUnitFilterFactory.createCalcContext()));
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        variableFormula.setExtendFuncMap(FlowOptUtils.createExtendFuncMap(() ->
+            userUnitFilterFactory.createCalcContext(topUnit)));
         variableFormula.setTrans(new ObjectTranslate(object));
         variableFormula.setFormula(jsonObject.containsKey("formula") ? jsonObject.getString("formula") : "");
         return variableFormula.calcFormula();
