@@ -2,12 +2,15 @@ package com.centit.workflow.service.impl;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.centit.framework.common.GlobalConstValue;
+import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.basedata.IUnitInfo;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.workflow.commons.FlowOptParamOptions;
 import com.centit.workflow.dao.RoleFormulaDao;
 import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.service.RoleFormulaService;
@@ -27,10 +30,22 @@ import java.util.*;
 public class RoleFormulaServiceImpl implements RoleFormulaService {
 
     @Autowired
+    private PlatformEnvironment platformEnvironment;
+
+    @Autowired
     private UserUnitFilterCalcContextFactory userUnitFilterFactory;
 
     @Autowired
     private RoleFormulaDao flowRoleDao;
+
+
+    private String fetchTopUnit(String unitCode) {
+        IUnitInfo ui = platformEnvironment.loadUnitInfo(unitCode);
+        if(ui!=null){
+            return ui.getTopUnit();
+        }
+        return GlobalConstValue.NO_TENANT_TOP_UNIT;
+    }
 
     //审批角色列表
     @Override
@@ -59,7 +74,8 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
 
     @Override
     public JSONArray viewFormulaUsers(String formula, String userCode, String unitCode) {
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(fetchTopUnit(unitCode));
         context.addUserParam("C", userCode);
         context.addUnitParam("C", unitCode);
         context.addUnitParam("N", unitCode);
@@ -84,7 +100,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
 
     @Override
     public JSONArray viewFormulaUnits(String formula, String userCode, String unitCode) {
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(fetchTopUnit(unitCode));
         context.addUserParam("C", userCode);
         context.addUnitParam("C", unitCode);
         context.addUnitParam("N", unitCode);
@@ -108,14 +124,14 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     }
 
     @Override
-    public List<? extends IUserInfo> listAllUserInfo() {
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+    public List<? extends IUserInfo> listAllUserInfo(String topUnit) {
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         return context.listAllUserInfo();
     }
 
     @Override
-    public List<? extends IUserInfo> listUserInfo(String prefix) {
-        List<? extends IUserInfo> allUsers = listAllUserInfo();
+    public List<? extends IUserInfo> listUserInfo(String prefix, String topUnit) {
+        List<? extends IUserInfo> allUsers = listAllUserInfo(topUnit);
         List<IUserInfo> selUsers = new ArrayList<>();
         for (IUserInfo user : allUsers) {
             if (user.getUserName().startsWith(prefix)
@@ -129,8 +145,8 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     }
 
     @Override
-    public List<? extends IUnitInfo> listAllUnitInfo() {
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+    public List<? extends IUnitInfo> listAllUnitInfo(String topUnit) {
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         List<? extends IUnitInfo> unitInfos = context.listAllUnitInfo();
         CollectionsOpt.sortAsTree(unitInfos,
             (p, c) -> StringUtils.equals(p.getUnitCode(), c.getParentUnit()));
@@ -145,7 +161,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
      */
     @Override
     public List<? extends IUnitInfo> listSubUnit(String unitCode) {
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(fetchTopUnit(unitCode));
         return context.listSubUnit(unitCode);
         /*CollectionsOpt.sortAsTree(unitInfos,
             (p,c) -> StringUtils.equals(p.getUnitCode(),c.getParentUnit()));*/

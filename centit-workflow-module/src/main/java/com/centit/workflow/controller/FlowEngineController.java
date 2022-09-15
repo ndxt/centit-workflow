@@ -232,6 +232,9 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/dynamicTasks")
     public PageQueryResult<UserTask> listUserDynamicTasks(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
+        if(searchColumn.get("topUnit") == null) {
+            searchColumn.put("topUnit", WebOptUtils.getCurrentTopUnit(request));
+        }
         List<UserTask> userTasks = flowEngine.listUserDynamicTask(searchColumn, pageDesc);
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }

@@ -158,22 +158,25 @@ public class RoleFormulaController extends BaseController {
     @ApiOperation(value = "列举所有用户", notes = "列举所有用户")
     @WrapUpResponseBody
     @RequestMapping(value = "/allUsers", method = RequestMethod.GET)
-    public List<? extends IUserInfo> listAllUserInfo(Integer maxUsers) {
-        return truncateUsers(roleFormulaService.listAllUserInfo(), maxUsers);
+    public List<? extends IUserInfo> listAllUserInfo(Integer maxUsers, HttpServletRequest request) {
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        return truncateUsers(roleFormulaService.listAllUserInfo(topUnit), maxUsers);
     }
 
     @ApiOperation(value = "根据前缀或者后缀查询用户", notes = "根据前缀或者后缀查询用户")
     @WrapUpResponseBody
     @RequestMapping(value = "/users/{prefix}", method = RequestMethod.GET)
-    public List<? extends IUserInfo> listUserInfo(@PathVariable String prefix, Integer maxUsers) {
-        return truncateUsers(roleFormulaService.listUserInfo(prefix), maxUsers);
+    public List<? extends IUserInfo> listUserInfo(@PathVariable String prefix, Integer maxUsers, HttpServletRequest request) {
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        return truncateUsers(roleFormulaService.listUserInfo(prefix, topUnit), maxUsers);
     }
 
     @ApiOperation(value = "列举所有机构", notes = "列举所有机构")
     @WrapUpResponseBody
     @RequestMapping(value = "/allUnits", method = RequestMethod.GET)
-    public List<? extends IUnitInfo> listAllUnitInfo() {
-        return roleFormulaService.listAllUnitInfo();
+    public List<? extends IUnitInfo> listAllUnitInfo(HttpServletRequest request) {
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        return roleFormulaService.listAllUnitInfo(topUnit);
     }
 
     @ApiOperation(value = "列举所有子机构", notes = "列举所有子机构")

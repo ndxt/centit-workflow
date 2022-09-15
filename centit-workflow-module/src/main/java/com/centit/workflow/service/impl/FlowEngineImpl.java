@@ -11,14 +11,8 @@ import com.centit.framework.components.SysUserFilterEngine;
 import com.centit.framework.components.impl.ObjectUserUnitVariableTranslate;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
-import com.centit.framework.model.adapter.NotificationCenter;
-import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
-import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
-import com.centit.framework.model.adapter.UserUnitVariableTranslate;
-import com.centit.framework.model.basedata.IUserInfo;
-import com.centit.framework.model.basedata.IUserUnit;
-import com.centit.framework.model.basedata.NoticeMessage;
-import com.centit.framework.model.basedata.OperationLog;
+import com.centit.framework.model.adapter.*;
+import com.centit.framework.model.basedata.*;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.common.ObjectException;
@@ -98,6 +92,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private StageInstanceDao stageInstanceDao;
     @Autowired
     private DdeDubboTaskRun ddeDubboTaskRun;
+
+    @Autowired
+    private PlatformEnvironment platformEnvironment;
+
+
     private final static Object lockObject = new Object();
 
     public FlowEngineImpl() {
@@ -147,6 +146,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowInstance createInstance(CreateFlowOptions options,
                                        UserUnitVariableTranslate varTrans,
                                        ServletContext application) {
+        fetchTopUnit(options);
         //查询重复的流程
         HashMap<String, Object> conditions = new HashMap<>(8);
         conditions.put("flowCode", options.getFlowCode());
@@ -175,6 +175,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return instance;
     }
 
+    private void fetchTopUnit(FlowOptParamOptions options) {
+        if(StringUtils.isBlank(options.getTopUnit())){
+            IUnitInfo ui = platformEnvironment.loadUnitInfo(options.getUnitCode());
+            if(ui!=null){
+                options.setTopUnit(ui.getTopUnit());
+            }
+        }
+    }
     /**
      * 创建流程实例  返回流程实例
      *
@@ -183,6 +191,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      */
     @Override
     public FlowInstance createInstance(CreateFlowOptions options) {
+
         return createInstance(options,
             new ObjectUserUnitVariableTranslate(
                 CollectionsOpt.unionTwoMap(
@@ -460,7 +469,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                                                 NodeInfo nextOptNode,
                                                                 FlowOptParamOptions options,
                                                                 FlowVariableTranslate varTrans) {
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(options.getTopUnit());
         context.setVarTrans(varTrans);
         //构建内置变量
         NodeInstance oldNodeInst = flowInst.findLastCompletedNodeInst(nextOptNode.getNodeId(), preNodeInst);
@@ -778,7 +788,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                 " 路由：" + nextRouterNode.getNodeId());
                     } else {
                         int nRn = 1;
-                        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+                        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(options.getTopUnit());
                         for (String uc : optUsers) {
                             // 持久变量，供后续节点使用
                             this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
@@ -1229,6 +1239,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private List<String> submitOptInside(SubmitOptOptions options,
                                          UserUnitVariableTranslate varTrans,
                                          ServletContext application, boolean saveOptions, boolean saveLog, boolean isSkipNode) {
+        fetchTopUnit(options);
         //2012-04-16 重构提交事件，添加一个多实例节点类型，这个节点类型会根据不同的机构创建不同的节点
         //根据上级节点实例编号获取节点所在父流程实例信息
         NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(options.getNodeInstId());
@@ -2205,7 +2216,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (NodeInstance.TASK_ASSIGN_TYPE_STATIC.equals(nodeInst.getTaskAssigned())) {
             return CollectionsOpt.createList(userTask);
         }
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        //获取租户
+        IUnitInfo ui = platformEnvironment.loadUnitInfo(nodeInst.getUnitCode());
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(ui.getTopUnit());
         Set<String> optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(context,
             SysUserFilterEngine.ROLE_TYPE_GW, userTask.getRoleCode(), userTask.getUnitCode());
         if (optUsers == null || optUsers.size() == 0) {
@@ -2262,7 +2275,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (StringUtils.isBlank(userCode)) {
             return null;
         }
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        String topUnit = StringBaseOpt.castObjectToString(searchColumn.get("topUnit"));
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         //动态任务
         //1.找到用户所有机构下的岗位和职务
         List<? extends IUserUnit> iUserUnits = context.listUserUnits(userCode);
@@ -2271,7 +2285,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public ResponseData dubboUserDynamicTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        PageDesc pageDescCopy=new PageDesc();
+        PageDesc pageDescCopy = new PageDesc();
         pageDescCopy.copy(pageDesc);
         List<UserTask> userTaskList = listUserDynamicTask(searchColumn, pageDescCopy);
         PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDescCopy);
@@ -2326,7 +2340,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (StringUtils.isBlank(userCode)) {
             return null;
         }
-        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext();
+        String topUnit = StringBaseOpt.castObjectToString(filterMap.get("topUnit"));
+        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         //动态任务
         //1.找到用户所有机构下的岗位和职务
         List<? extends IUserUnit> iUserUnits = context.listUserUnits(userCode);

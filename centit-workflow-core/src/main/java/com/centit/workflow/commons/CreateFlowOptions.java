@@ -85,6 +85,14 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
     @ApiModelProperty(value ="提交（操作）用户当前单位（机构）", required = true)
     private String unitCode;
 
+
+    /**
+     * 租户代码，可以为空，如果是空系统会根据 unitCode 获取
+     */
+    @ApiModelProperty(value ="当前应用的租户代码，可以为空，如果是空系统会根据 unitCode 获取。")
+    private String topUnit;
+
+
     @ApiModelProperty("是否跳过第一步，默认为false，如果第一步为路由节点无效")
     private boolean skipFirstNode;
 

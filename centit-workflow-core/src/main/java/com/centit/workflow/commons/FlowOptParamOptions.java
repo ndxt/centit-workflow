@@ -17,6 +17,10 @@ public interface FlowOptParamOptions {
 
     String getUnitCode();
 
+    String getTopUnit();
+
+    void setTopUnit(String topUnit);
+
     boolean isLockOptUser();
 
     String getWorkUserCode();

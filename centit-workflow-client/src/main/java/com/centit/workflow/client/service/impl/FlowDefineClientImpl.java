@@ -325,7 +325,7 @@ public class FlowDefineClientImpl implements FlowDefine {
      * 列举所有角色
      */
     @Override
-    public Map<String, Map<String, String>> listAllRole() {
+    public Map<String, Map<String, String>> listAllRole(String topUnit) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -334,7 +334,7 @@ public class FlowDefineClientImpl implements FlowDefine {
      * @return 角色名称和类别对应列表
      */
     @Override
-    public Map<String, String> listRoleByType(String stype) {
+    public Map<String, String> listRoleByType(String stype, String topUnit) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

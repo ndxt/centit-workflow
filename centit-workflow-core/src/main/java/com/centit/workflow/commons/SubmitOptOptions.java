@@ -51,6 +51,12 @@ public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
     private String unitCode;
 
     /**
+     * 租户代码，可以为空，如果是空系统会根据 unitCode 获取
+     */
+    @ApiModelProperty(value ="当前应用的租户代码，可以为空，如果是空系统会根据 unitCode 获取。")
+    private String topUnit;
+
+    /**
      * 提交后的节点强行指定用户
      */
     @ApiModelProperty("提交后的节点强行指定用户")

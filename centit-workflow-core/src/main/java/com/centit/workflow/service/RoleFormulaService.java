@@ -26,11 +26,11 @@ public interface RoleFormulaService {
 
     JSONArray viewRoleFormulaUsers(String formulaCode, String userCode, String unitCode);
 
-    List<? extends IUserInfo> listAllUserInfo();
+    List<? extends IUserInfo> listAllUserInfo(String topUnit);
 
-    List<? extends IUserInfo> listUserInfo(String prefix);
+    List<? extends IUserInfo> listUserInfo(String prefix, String topUnit);
 
-    List<? extends IUnitInfo> listAllUnitInfo();
+    List<? extends IUnitInfo> listAllUnitInfo(String topUnit);
 
     List<? extends IUnitInfo> listSubUnit(String unitCode);
 }
