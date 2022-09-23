@@ -214,7 +214,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String flowInstId = StringUtils.isBlank(options.getFlowInstId()) ?
             UuidOpt.getUuidAsString32() : options.getFlowInstId();
 
-        FlowInstance flowInst = FlowOptUtils.createFlowInst(
+        FlowInstance flowInst = FlowOptUtils.createFlowInst(options.getTopUnit(),
             options.getUnitCode(), options.getUserCode(), wf, flowInstId, options.getTimeLimitStr());
         if (options.getModelId() != null) {
             flowInst.setOptId(options.getModelId());

@@ -46,7 +46,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "on n.node_id=w.node_id where w.NODE_STATE in ('C', 'F', 'P') [ :userCode| and w.last_update_user=:userCode] " +
         " [ :nodeCode| and n.node_code = :nodeCode] [ :nodeCodes | and n.node_code in (:nodeCodes)]  )" +
         " [ :(like)flowOptName| and t.flow_Opt_Name like :flowOptName] " +
-        " [ :(like)flowName| and f.flow_Name like :flowName]  " +
+        " [ :(like)flowName| and f.flow_Name like :flowName] " +
+        " [ :topUnit| and t.TOP_UNIT = :topUnit]" +
         " [ :osId| and f.os_id = :osId] " +
         " [ :optId| and t.OPT_ID = :optId] " +
         " [ :osIds| and f.os_id in (:osIds)] " +
@@ -80,6 +81,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
         "[ :userCode| and b.USER_CODE = :userCode]" +
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
+        "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
         "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
         "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
         "[ :endTime| and b.CREATE_TIME <= :endTime]" +
@@ -116,6 +118,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :userCode| and g.GRANTEE = :userCode]" +
         "[ :grantor| and g.GRANTOR = :grantor]" +
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
+        "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
         "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
         "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
         "[ :endTime| and b.CREATE_TIME <= :endTime]" +
@@ -156,6 +159,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :unitCode| and ( b.unit_code = :unitCode or b.unit_code is null )] " +
             "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
             "[ :endTime| and b.CREATE_TIME <= :endTime]" +
+            "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
             "[ :osId| and c.OS_ID = :osId]" +
             "[ :optId| and c.OPT_ID = :optId]" +
             "[ :optCode| and c.OPT_CODE = :optCode]" +

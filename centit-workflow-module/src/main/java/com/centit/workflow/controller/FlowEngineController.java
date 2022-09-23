@@ -52,6 +52,9 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @PostMapping(value = "/createInstance")
     public FlowInstance createFlowInstDefault(@RequestBody CreateFlowOptions newFlowInstanceOptions, HttpServletRequest request) {
+        if(StringUtils.isBlank(newFlowInstanceOptions.getTopUnit())){
+            newFlowInstanceOptions.setTopUnit(WebOptUtils.getCurrentTopUnit(request));
+        }
         FlowInstance flowInstance =
             flowEngine.createInstance(newFlowInstanceOptions,
                 new ObjectUserUnitVariableTranslate(
@@ -74,6 +77,9 @@ public class FlowEngineController extends BaseController {
     public Map<String, Object> submitOpt(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
         /*return flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
             BaseController.collectRequestParameters(request)),null);*/
+        if(StringUtils.isBlank(options.getTopUnit())){
+            options.setTopUnit(WebOptUtils.getCurrentTopUnit(request));
+        }
         List<String> nextNodeInstList = flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
             BaseController.collectRequestParameters(request)), null);
         // 返回提交后节点的名称
@@ -201,8 +207,10 @@ public class FlowEngineController extends BaseController {
     })
     public PageQueryResult<UserTask> listUserAllTask(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
+        if(searchColumn.get("topUnit") == null) {
+            searchColumn.put("topUnit", WebOptUtils.getCurrentTopUnit(request));
+        }
         List<UserTask> userTasks = flowEngine.listUserAllTask(searchColumn, pageDesc);
-
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
@@ -212,8 +220,10 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/staticTasks")
     public PageQueryResult<UserTask> listUserStaticTask(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
+        if(searchColumn.get("topUnit") == null) {
+            searchColumn.put("topUnit", WebOptUtils.getCurrentTopUnit(request));
+        }
         List<UserTask> userTasks = flowEngine.listUserStaticTask(searchColumn, pageDesc);
-
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
@@ -222,8 +232,10 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/grantorTasks")
     public PageQueryResult<UserTask> listUserGrantorTask(HttpServletRequest request, PageDesc pageDesc) {
         Map<String, Object> searchColumn = collectRequestParameters(request);
+        if(searchColumn.get("topUnit") == null) {
+            searchColumn.put("topUnit", WebOptUtils.getCurrentTopUnit(request));
+        }
         List<UserTask> userTasks = flowEngine.listUserGrantorTask(searchColumn, pageDesc);
-
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }
 
@@ -242,9 +254,12 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查询用户静态待办和被授权的静态待办", notes = "查询用户静态待办和被授权的静态待办")
     @WrapUpResponseBody
     @GetMapping(value = "/staticAndGrantorTasks")
-    public PageQueryResult<UserTask> listUserTasks(@RequestParam(value = "userCode") String userCode, PageDesc pageDesc) {
+    public PageQueryResult<UserTask> listUserTasks(HttpServletRequest request,
+                                                   @RequestParam(value = "userCode") String userCode, PageDesc pageDesc) {
         Map<String, Object> searchColumn = new HashMap<>();
         searchColumn.put("userCode", userCode);
+        searchColumn.put("topUnit", WebOptUtils.getCurrentTopUnit(request));
+
         List<UserTask> userTasks = flowEngine.listUserStaticAndGrantorTask(searchColumn, pageDesc);
         return PageQueryResult.createResultMapDict(userTasks, pageDesc);
     }

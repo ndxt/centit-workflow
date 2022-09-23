@@ -27,7 +27,8 @@ public abstract class FlowOptUtils {
     /**
      * 创建流程实例
      */
-    public static FlowInstance createFlowInst(String unitcode, String usercode, FlowInfo wf, String flowInstId, String timeLimitStr) {
+    public static FlowInstance createFlowInst(String topUnit, String unitcode, String usercode,
+                                              FlowInfo wf, String flowInstId, String timeLimitStr) {
         FlowInstance flowInst = new FlowInstance();
         flowInst.setFlowInstId(flowInstId);
         flowInst.setFlowCode(wf.getFlowCode());
@@ -37,6 +38,7 @@ public abstract class FlowOptUtils {
         flowInst.setUnitCode(unitcode);
         flowInst.setUserCode(usercode);
         flowInst.setPreNodeInstId("");
+        flowInst.setTopUnit(topUnit);
         flowInst.setPreInstId("");
         flowInst.setIsSubInst(false);
         flowInst.setInstState("N");

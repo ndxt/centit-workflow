@@ -58,7 +58,12 @@ public class FlowInstance implements java.io.Serializable {
     @Length(max = 32, message = "字段长度不能大于{max}")
     @DictionaryMap(value = "flowCode", fieldName = "flowName")
     private String flowCode;
-    /**
+
+    @Column(name = "TOP_UNIT")
+    @Length(max = 32, message = "字段长度不能大于{max}")
+    private String topUnit;
+
+    /**租户信息
      * 等同于 wf_opt_info中的 APPLICATION_ID
      */
     @Column(name = "OS_ID")
