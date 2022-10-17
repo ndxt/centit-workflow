@@ -63,7 +63,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
             }
             params.putAll(JSON.parseObject(nodeParams));
         }
-        logger.debug("自动运行api网关" + nodeInfo.getOptCode() + "，参数:" + params);
+        logger.info("自动运行api网关" + nodeInfo.getOptCode() + "，参数:" + params);
         ddeDubboTaskRun.runTask(nodeInfo.getOptCode(), params);
         return true;
     }
