@@ -7,7 +7,7 @@
 	 http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
 	 http://code.alibabatech.com/schema/dubbo
 	 http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
-    <dubbo:reference id="flowEngine" interface="com.centit.workflow.service.FlowEngine" init="false" timeout="60000"/>
+    <dubbo:reference id="flowEngine" interface="com.centit.workflow.service.FlowEngine" init="false" retries="0" timeout="60000"/>
     <dubbo:reference id="flowDefine" interface="com.centit.workflow.service.FlowDefine" check="false" init="false" timeout="60000"/>
     <dubbo:reference id="flowManager" interface="com.centit.workflow.service.FlowManager" check="false" init="false" timeout="60000"/>
     <dubbo:reference id="flowOptService" interface="com.centit.workflow.service.FlowOptService" check="false" init="false" timeout="60000"/>
