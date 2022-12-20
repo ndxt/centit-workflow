@@ -107,6 +107,13 @@ public interface FlowDefine {
     JSONArray listFlowsByOptId(String optId);
 
     /**
+     * 根据已知的应用id，查询对应的定义流程
+     * @param osId 应用id
+     * @return 流程列表
+     */
+    JSONArray listFlowByOsId(String osId);
+
+    /**
      * 根据已知的流程业务，查询对应的定义流程(包含通用模块的流程)
      * @param optId
      * @return

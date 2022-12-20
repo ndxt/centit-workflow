@@ -80,6 +80,21 @@ public class FlowDefineController extends BaseController {
     }
 
     /*
+     * 列举应用中的所有流程，只显示最新版本的
+     */
+    @ApiOperation(value = "列举流程业务相关流程", notes = "列举流程业务相关流程")
+    @WrapUpResponseBody
+    @GetMapping(value = "/osFlow/{osId}")
+    public ResponseData listFlowByOs(@PathVariable String osId) {
+        JSONArray jsonArray = flowDefine.listFlowByOsId(osId);
+        if (jsonArray == null) {
+            ResponseData.makeErrorMessage("未查询到相关流程。");
+            return null;
+        }
+        return ResponseData.makeResponseData(jsonArray);
+    }
+
+    /*
      * 列举系统中的所有流程，只显示最新版本的(包含通用模块中的流程)
      */
     @ApiOperation(value = "列举流程业务相关流程(包含通用模块中的流程)", notes = "列举流程业务相关流程(包含通用模块中的流程)")

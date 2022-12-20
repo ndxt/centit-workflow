@@ -110,6 +110,21 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
+    public JSONArray listFlowByOsId(String osId) {
+        List<FlowInfo> flows = flowDefineDao.getFlowsByOsId(osId, FlowInfo.FLOW_STATE_NORMAL);
+        JSONArray flowDefineJsonArray = new JSONArray();
+        if (CollectionUtils.sizeIsEmpty(flows)){
+            return flowDefineJsonArray;
+        }
+        //添加流程实例个数 属性
+        Object[] flowCodes = flows.stream().map(FlowInfo::getFlowCode).toArray();
+        JSONArray jsonArray = flowInstanceDao.countFlowInstances(CollectionsOpt.createHashMap("flowCode",flowCodes));
+        flows.forEach(flowInfo -> flowDefineJsonArray.add(combineFlowInstanceCount(jsonArray, flowInfo)));
+        return flowDefineJsonArray;
+    }
+
+    @Override
+    @Transactional
     public JSONArray listAllFlowsByOptId(String optId) {
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
