@@ -10,7 +10,6 @@ import com.centit.framework.model.basedata.IUnitInfo;
 import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.workflow.commons.FlowOptParamOptions;
 import com.centit.workflow.dao.RoleFormulaDao;
 import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.service.RoleFormulaService;
