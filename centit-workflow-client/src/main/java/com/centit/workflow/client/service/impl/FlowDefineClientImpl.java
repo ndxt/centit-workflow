@@ -56,6 +56,13 @@ public class FlowDefineClientImpl implements FlowDefine {
     }
 
     @Override
+    public JSONArray listFlowByOsId(String osId) {
+        HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
+            "/flow/define/osFlow/"+osId);
+        return receiveJSON.getJSONArray();
+    }
+
+    @Override
     public JSONArray listAllFlowsByOptId(String optId) {
         return null;
     }
