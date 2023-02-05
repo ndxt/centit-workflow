@@ -363,8 +363,12 @@ public class FlowManagerController extends BaseController {
     /*流程实例状态管理api*/
     @ApiOperation(value = "终止流程实例", notes = "终止流程实例")
     @RequestMapping(value = "/stopinst/{flowInstId}", method = RequestMethod.GET)
-    public void stopInstance(@PathVariable String flowInstId, HttpServletResponse response) {
-        flowManager.stopInstance(flowInstId, "admin", "");
+    public void stopInstance(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
+        String mangerUserCode = request.getParameter("admin");
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
+        }
+        flowManager.stopInstance(flowInstId, mangerUserCode, "");
         JsonResultUtils.writeSingleDataJson("", response);
     }
 

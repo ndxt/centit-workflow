@@ -555,7 +555,7 @@ public class FlowEngineClientImpl implements FlowEngine {
      *
      * @param paramMap 查询参数
      * @param pageDesc 分页信息
-     * @return 获取待办列表 这里指静态代办
+     * @return 获取待办列表 这里指静态待办
      */
     @Override
     public List<UserTask> listUserStaticAndGrantorTask(Map<String, Object> paramMap, PageDesc pageDesc) {

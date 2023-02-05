@@ -166,13 +166,19 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     }
 
 
-    private FlowInfo createFlowDefByJSON(String jsonDef, String flowCode, Long version, FlowDataDetail flowData) {
+    private FlowInfo createFlowDefByJSON(String jsonDef, String flowCode, Long version, FlowDataDetail flowData, FlowInfo flow) {
         FlowInfo flowDef = JSON.parseObject(jsonDef, FlowInfo.class);// new FlowInfo();
         flowDef.setCid(new FlowInfoId(version, flowCode));
         //getStartNode
         flowData.nodeTagToId.clear();
         flowData.transTagToId.clear();
         String startNodeId = null;
+        if (StringUtils.isBlank(flow.getOptId())) {
+            flow.setOptId(flow.getOptId());
+        }
+        if (StringUtils.isBlank(flow.getOsId())) {
+            flow.setOsId(flow.getOsId());
+        }
         for (NodeInfo node : flowDef.getNodeList()) {
             if (NodeInfo.NODE_TYPE_START.equals(node.getNodeType())) {
                 startNodeId = node.getNodeId();
@@ -182,7 +188,11 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             node.setNodeId(thisNodeId);
             // 节点的optId默认和流程的optId一致。
             if (StringUtils.isBlank(node.getOptId())) {
-                node.setOptId(flowDef.getOptId());
+                node.setOptId(flow.getOptId());
+            }
+            // 节点的osId默认和流程的osId一致。
+            if (StringUtils.isBlank(node.getOsId())) {
+                node.setOsId(flow.getOsId());
             }
         }
 
@@ -377,7 +387,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
         FlowDataDetail flowData = new FlowDataDetail();
         FlowInfo newFlowDef =
-            createFlowDefByJSON(flowDef.getFlowXmlDesc(), flowDef.getFlowCode(), newVersion, flowData);
+            createFlowDefByJSON(flowDef.getFlowXmlDesc(), flowDef.getFlowCode(), newVersion, flowData, flowDef);
         // 添加验证流程定义验证
         checkFlowDef(newFlowDef);
 

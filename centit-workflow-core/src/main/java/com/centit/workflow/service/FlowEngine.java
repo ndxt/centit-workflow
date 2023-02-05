@@ -127,7 +127,7 @@ public interface FlowEngine {
      *
      * @param searchColumn 查询参数，必须包括用户编号userCode
      * @param pageDesc     分页信息
-     * @return 获取待办列表 这里指静态代办
+     * @return 获取待办列表 这里指静态待办
      */
     List<UserTask> listUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 
@@ -148,7 +148,7 @@ public interface FlowEngine {
      *
      * @param searchColumn 查询参数，必须包括用户编号userCode
      * @param pageDesc     分页信息
-     * @return 获取待办列表 这里指静态代办
+     * @return 获取待办列表 这里指静态待办
      */
     List<UserTask> listUserStaticAndGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 

@@ -80,7 +80,7 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name = "TRANS_PATH")
     private String transPath;
 
-    //T: 通过 tasklist 分配(已废弃)， D：通过 岗位角色 自动匹配 S：静态代办（usercode)
+    //T: 通过 tasklist 分配(已废弃)， D：通过 岗位角色 自动匹配 S：静态待办（usercode)
     public static final String TASK_ASSIGN_TYPE_STATIC = "S";
     public static final String TASK_ASSIGN_TYPE_DYNAMIC = "D";
     public static final String TASK_ASSIGN_TYPE_MULTI = "T";
