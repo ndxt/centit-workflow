@@ -12,7 +12,6 @@ import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.security.model.StandardPasswordEncoderImpl;
-
 import com.centit.msgpusher.plugins.EMailMsgPusher;
 import com.centit.msgpusher.plugins.SystemUserEmailSupport;
 import com.centit.support.security.AESSecurityUtils;
