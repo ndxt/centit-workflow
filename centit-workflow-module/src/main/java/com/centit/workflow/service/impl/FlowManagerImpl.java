@@ -596,7 +596,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public JSONArray listFlowInstance(Map<String, Object> filterMap,
                                       PageDesc pageDesc) {
-        return flowInstanceDao.listObjectsAsJson(filterMap,
+        return flowInstanceDao.listObjectsByPropertiesAsJson(filterMap,
             pageDesc);
     }
 
@@ -1128,7 +1128,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         filterMap.put("taskAssigned", "S");
         filterMap.put("userCode", fromUserCode);
         filterMap.put("nodeState", "N");
-        List<NodeInstance> nodeInstances = nodeInstanceDao.listObjects(filterMap);
+        List<NodeInstance> nodeInstances = nodeInstanceDao.listObjectsByProperties(filterMap);
         moveUserTaskTo(nodeInstances, fromUserCode, toUserCode, optUserCode);
         return 0;
     }
@@ -1383,7 +1383,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public JSONArray listFlowInstGroup(Map<String, Object> filterMap, PageDesc pageDesc) {
-        return flowInstanceGroupDao.listObjectsAsJson(filterMap, pageDesc);
+        return flowInstanceGroupDao.listObjectsByPropertiesAsJson(filterMap, pageDesc);
     }
 
     @Override
@@ -1400,7 +1400,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     public List<NodeInstance> listNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
-        return nodeInstanceDao.listObjects(searchColumn, pageDesc);
+        return nodeInstanceDao.listObjectsByProperties(searchColumn, pageDesc);
     }
 
     @Override
@@ -1459,7 +1459,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             searchColumn.put("flowInstIds", flowInstIds.toString().split(","));
         }
         // 获取流程实例数据
-        List<FlowInstance> flowInstances = flowInstanceDao.listObjects(searchColumn, pageDesc);
+        List<FlowInstance> flowInstances = flowInstanceDao.listObjectsByProperties(searchColumn, pageDesc);
         JSONArray flowInstArray = DictionaryMapUtils.objectsToJSONArray(flowInstances);
         if (flowInstances.isEmpty()) {
             return flowInstArray;

@@ -387,7 +387,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (flowInst == null) {
             return null;
         }
-        List<NodeInfo> nodeList = flowNodeDao.listObjects(
+        List<NodeInfo> nodeList = flowNodeDao.listObjectsByProperties(
             CollectionsOpt.createHashMap("flowCode", flowInst.getFlowCode(),
                 "version", flowInst.getVersion()));
         Map<String, String> nodes = new HashMap<>();
@@ -2443,7 +2443,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     @Override
     public List<FlowInstanceGroup> listFlowInstGroup(Map<String, Object> filterMap, PageDesc pageDesc) {
-        return flowInstanceGroupDao.listObjects(filterMap, pageDesc);
+        return flowInstanceGroupDao.listObjectsByProperties(filterMap, pageDesc);
     }
 
     @Override

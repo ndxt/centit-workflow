@@ -5,7 +5,7 @@
     <parent>
         <artifactId>centit-workflow</artifactId>
         <groupId>com.centit.product</groupId>
-        <version>5.2-SNAPSHOT</version>
+        <version>5.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -23,6 +23,11 @@
 
         <dependency>
             <groupId>com.centit.framework</groupId>
+            <artifactId>framework-system-entity</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-jdbc</artifactId>
         </dependency>
 
@@ -34,11 +39,6 @@
         <dependency>
             <groupId>com.centit.support</groupId>
             <artifactId>centit-database-datasource</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.framework</groupId>
-            <artifactId>framework-adapter</artifactId>
         </dependency>
 
         <dependency>

@@ -32,7 +32,7 @@ public class FlowOptServiceImpl implements FlowOptService {
 
     @Override
     public List<OptTeamRole> listOptTeamRolesByFilter(Map<String, Object> filter, PageDesc pageDesc) {
-        return optTeamRoleDao.listObjects(filter, pageDesc);
+        return optTeamRoleDao.listObjectsByProperties(filter, pageDesc);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class FlowOptServiceImpl implements FlowOptService {
 
     @Override
     public List<OptVariableDefine> listOptVariableDefinesByFilter(Map<String, Object> filter, PageDesc pageDesc) {
-        return optVariableDefineDao.listObjects(filter, pageDesc);
+        return optVariableDefineDao.listObjectsByProperties(filter, pageDesc);
     }
 
     @Override

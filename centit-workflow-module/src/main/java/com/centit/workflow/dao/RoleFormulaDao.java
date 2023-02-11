@@ -41,7 +41,7 @@ public class RoleFormulaDao extends BaseDaoImpl<RoleFormula, String> {
         List<RoleFormula> flowRoles;
         if(WebOptUtils.isTenantTopUnit(RequestThreadLocal.getLocalThreadWrapperRequest())){
             String topUnit = WebOptUtils.getCurrentTopUnit(RequestThreadLocal.getLocalThreadWrapperRequest());
-            flowRoles= this.listObjects(CollectionsOpt.createHashMap("topUnit",topUnit));
+            flowRoles= this.listObjectsByProperties(CollectionsOpt.createHashMap("topUnit",topUnit));
         }else {
             flowRoles = this.listObjects();
         }
