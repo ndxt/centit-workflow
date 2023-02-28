@@ -1,7 +1,7 @@
 package com.centit.workflow.service.impl;
 
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
 import com.centit.framework.common.GlobalConstValue;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
@@ -94,7 +94,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
             }
 
         });
-        return (JSONArray) JSONArray.toJSON(userInfos);
+        return JSONArray.copyOf(userInfos);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
         for (String uc : sUnits) {
             userInfos.add(context.getUnitInfoByCode(uc));
         }
-        return (JSONArray) JSONArray.toJSON(userInfos);
+        return JSONArray.copyOf(userInfos);
     }
 
     @Override

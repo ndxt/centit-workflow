@@ -1,6 +1,7 @@
 package com.centit.workflow.service;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.database.utils.PageDesc;
@@ -405,7 +406,7 @@ public interface FlowManager {
      */
     NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force);
 
-    List<com.alibaba.fastjson.JSONObject> getListRoleRelegateByGrantor(String grantor);
+    List<JSONObject> getListRoleRelegateByGrantor(String grantor);
 
     /**
      * 获取所有流程分组

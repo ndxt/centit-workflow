@@ -1,6 +1,6 @@
 package com.centit.workflow.service;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
 import com.centit.support.database.utils.PageDesc;

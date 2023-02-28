@@ -1,6 +1,6 @@
 package com.centit.workflow.support;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.centit.dde.adapter.DdeDubboTaskRun;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.compiler.Lexer;

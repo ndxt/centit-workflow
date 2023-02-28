@@ -1,6 +1,6 @@
 package com.centit.workflow.service;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowStage;
