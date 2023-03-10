@@ -1017,7 +1017,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                 Pretreatment.mapTemplateString(nextOptNode.getNoticeMessage(), options)));
                 }
                 notSendMessage = false;
-            } else if (StringUtils.isNotBlank(nextOptNode.getNoticeUserExp())) {
+            } else/* if (StringUtils.isNotBlank(nextOptNode.getNoticeUserExp()))*/ {
                 context.addUnitParam("N", nodeUnits);
                 context.addUserParam("N", optUsers);
                 Set<String> sendMessageUser = UserUnitCalcEngine.calcOperators(context, nextOptNode.getNoticeUserExp());
