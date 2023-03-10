@@ -85,8 +85,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private NotificationCenter notificationCenter;
     @Autowired
-    private OptVariableDefineDao optVariableDefineDao;
-    @Autowired
     private FlowEventService flowEventService;
     @Autowired
     private StageInstanceDao stageInstanceDao;
