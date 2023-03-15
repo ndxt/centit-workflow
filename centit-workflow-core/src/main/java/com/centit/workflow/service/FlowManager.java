@@ -474,4 +474,14 @@ public interface FlowManager {
      * @param flowInstIds
      */
     void deleteFlowInstByIds(List<String> flowInstIds);
+
+    /** 流程定义时 必须用 nodeCode 进行节点标注
+     * 将正在执行中的流程从一个版本迁移到另一个版本（只能在同一个流程的不通版本间迁移）
+     * @param flowCode 流程代码
+     * @param newVersion 新的版本 如果 <=0 则替换为 最新版本
+     * @param oldVersion 旧的版本， 如果 <=0 则将所有的版本 都迁移过过来
+     * @return 返回迁移的流程实例数量
+     */
+    void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion);
+
 }

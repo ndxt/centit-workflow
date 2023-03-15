@@ -7,6 +7,7 @@ import com.centit.framework.common.ResponseData;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.support.algorithm.CollectionsOpt;
@@ -1415,10 +1416,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * 强制修改流程状态以及相关节点实例状态
      *
-     * @param flowInstId
-     * @param mangerUserCode
-     * @param instState
-     * @param desc
+     * @param flowInstId  流程实例
+     * @param mangerUserCode 管理员
+     * @param instState 流程状态
+     * @param desc 描述
      */
     @Override
     public void updateFlowState(String flowInstId, String mangerUserCode, String instState, String desc) {
@@ -1512,6 +1513,43 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
             flowInstanceDao.deleteObjectById(flowInstId);
             nodeInstanceDao.deleteObjectsByProperties(CollectionsOpt.createHashMap("flowInstId", flowInstId));
+        }
+    }
+
+    private void innerUpgradeFlowVersion(String flowCode, long newVersion, long oldVersion){
+        //数据不完备可能出错，比较稳妥的写法是 查询出来一条一条的处理
+        String sqlUpdateNodeInst = "update WF_NODE_INSTANCE a set a.NODE_ID = " +
+                "(select max(b.NODE_ID) from WF_NODE b where b.FLOW_CODE=? and b.VERSION =?" +
+            " and b.NODE_CODE = (select c.NODE_CODE from WF_NODE c where c.NODE_ID = a.NODE_ID)) " +
+            " where FLOW_INST_ID in (select f.FLOW_INST_ID from" +
+                "  WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE= ? and f.VERSION = ? ";
+        DatabaseOptUtils.doExecuteSql(nodeInstanceDao, sqlUpdateNodeInst,
+            new Object[]{flowCode, newVersion, flowCode, oldVersion});
+
+        String sqlUpdateFlowInst = "update WF_FLOW_INSTANCE f set f.VERSION = ? " +
+            "where f.INST_STATE in ('N','P') and f.FLOW_CODE= ? and f.VERSION = ?  ";
+        DatabaseOptUtils.doExecuteSql(nodeInstanceDao, sqlUpdateFlowInst,
+            new Object[]{newVersion, flowCode, oldVersion});
+    }
+    /** 流程定义时 必须用 nodeCode 进行节点标注
+     * 将正在执行中的流程从一个版本迁移到另一个版本（只能在同一个流程的不通版本间迁移）
+     * @param flowCode 流程代码
+     * @param newVersion 新的版本 如果 <=0 则替换为 最新版本
+     * @param oldVersion 旧的版本， 如果 <=0 则将所有的版本 都迁移过过来
+     * @return 返回迁移的流程实例数量
+     */
+    @Override
+    @Transactional
+    public void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion){
+        if(newVersion<=0){
+            newVersion = flowDefDao.getLastVersion(flowCode);
+        }
+        if(oldVersion>0){
+            innerUpgradeFlowVersion(flowCode, newVersion, oldVersion);
+            return;
+        }
+        for(long v = newVersion-1; v>0 ; v--){
+            innerUpgradeFlowVersion(flowCode, newVersion, v);
         }
     }
 }
