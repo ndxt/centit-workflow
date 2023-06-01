@@ -21,7 +21,8 @@ public class JdbcUserUnitFilterCalcContext extends AbstractUserUnitFilterCalcCon
 
     private ExtFrameworkContextCacheBean extFrameworkBean;
 
-    public JdbcUserUnitFilterCalcContext(ExtFrameworkContextCacheBean extFrameworkBean){
+    public JdbcUserUnitFilterCalcContext(String topUnit, ExtFrameworkContextCacheBean extFrameworkBean){
+        super(topUnit);
         this.extFrameworkBean = extFrameworkBean;
     }
 

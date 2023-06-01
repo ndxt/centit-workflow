@@ -7,10 +7,6 @@ import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 public class SystemUserUnitCalcContextFactoryImpl implements UserUnitFilterCalcContextFactory {
     @Override
     public UserUnitFilterCalcContext createCalcContext(String topUnit) {
-        // HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
-        // String topUnit = WebOptUtils.getCurrentTopUnit(request);
-        SystemUserUnitFilterCalcContext context = new SystemUserUnitFilterCalcContext();
-        context.setTopUnit(topUnit);
-        return context;
+        return new SystemUserUnitFilterCalcContext(topUnit);
     }
 }

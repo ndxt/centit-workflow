@@ -11,7 +11,7 @@ public class JdbcUserUnitCalcContextFactoryImpl implements UserUnitFilterCalcCon
 
     @Override
     public UserUnitFilterCalcContext createCalcContext(String topUnit) {
-        return new JdbcUserUnitFilterCalcContext(extFrameworkContextCacheBean);
+        return new JdbcUserUnitFilterCalcContext(topUnit, extFrameworkContextCacheBean);
     }
 
     public void setExtFrameworkContextCacheBean(ExtFrameworkContextCacheBean extFrameworkContextCacheBean) {
