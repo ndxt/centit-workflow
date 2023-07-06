@@ -279,7 +279,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     @Transactional
     public List<UserTask> listUserDynamicTask(List<? extends IUserUnit> userUnits, Map<String, Object> filter, PageDesc pageDesc) {
         String querySql = buildDynamicTaskSql(userUnits);
-        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(querySql + "order by CREATE_TIME desc ", filter);
+        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(querySql + " order by CREATE_TIME desc ", filter);
         Map<String, Object> queryParamMap = CollectionsOpt.unionTwoMap(queryAndNamedParams.getParams(), filter);
         appendDynamicQueryParams(queryParamMap, userUnits);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
