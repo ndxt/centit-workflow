@@ -1,7 +1,6 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.common.WorkTimeSpan;
@@ -34,7 +33,6 @@ public class UserTask implements java.io.Serializable {
 
     @DictionaryMap(value="flowCode", fieldName="flowName")
     private String flowCode;
-
     private String version;
     private String nodeCode;
     private String nodeName;
@@ -44,9 +42,7 @@ public class UserTask implements java.io.Serializable {
      * A: 指定到人 唯一执行人 B: 动态分配 C: 多人操作（已废弃）
         * */
     private String nodeOptType;
-
     private String stageCode;
-
     private String instState;
     private String osId;
     private String optId;
@@ -57,12 +53,8 @@ public class UserTask implements java.io.Serializable {
     private String grantor;
     private String roleType;
     private String roleCode;
-
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     private String expireOpt;
-
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date lastUpdateTime;
 
     @DictionaryMap(value="userCode", fieldName="lastUpdateUserName")
@@ -74,16 +66,12 @@ public class UserTask implements java.io.Serializable {
     @DictionaryMap(value="userCode", fieldName="creatorName")
     private String creatorCode;
 
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeCreateTime;
 
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeExpireTime;
 
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date nodeLastUpdateTime;
 
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date flowExpireTime;
 
     private Long flowTimeLimit;

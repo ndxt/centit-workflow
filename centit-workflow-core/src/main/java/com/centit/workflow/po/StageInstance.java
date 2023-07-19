@@ -1,6 +1,5 @@
 package com.centit.workflow.po;
 
-import com.alibaba.fastjson2.annotation.JSONField;
 import com.centit.support.common.WorkTimeSpan;
 
 import javax.persistence.*;
@@ -25,14 +24,14 @@ public class StageInstance implements java.io.Serializable {
 
     @Transient
     private String  stageName;
+
     // 1 是否 已计时
     @Column(name = "STAGE_BEGIN")
     private String stageBegin;
 
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @Column(name = "BEGIN_TIME")
     private Date beginTime;
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+
     @Column(name = "LAST_UPDATE_TIME")
     private Date  lastUpdateTime;
 

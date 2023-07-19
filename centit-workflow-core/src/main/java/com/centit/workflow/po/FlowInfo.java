@@ -336,18 +336,6 @@ public class FlowInfo implements java.io.Serializable {
         }
     }
 
-/*
-    @JSONField(serialize=false)
-    public Set<FlowStage> getFlowStagesSet(){
-        Set<FlowStage> flowStages = new HashSet<FlowStage>();
-        if(this.flowStages !=null){
-            for(FlowStage fs: this.flowStages)
-                flowStages.add(fs);
-        }
-        return flowStages;
-    }
-*/
-
     public List<FlowStage> getFlowStages() {
         if (this.flowStages == null)
             this.flowStages = new ArrayList<>();

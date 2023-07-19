@@ -1,6 +1,5 @@
 package com.centit.workflow.po;
 
-import com.alibaba.fastjson2.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
@@ -40,16 +39,14 @@ public class NodeInstance implements java.io.Serializable {
 
     @Column(name = "NODE_ID")
     private String nodeId;
-    //    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+
     @Column(name = "CREATE_TIME")
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @ValueGenerator(strategy = GeneratorType.FUNCTION, value = "today()")
     private Date createTime;
 
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "LAST_UPDATE_TIME")
-//    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date lastUpdateTime;
+
     @Column(name = "PREV_NODE_INST_ID")
     private String prevNodeInstId;
     @Column(name = "PROMISE_TIME")
