@@ -29,6 +29,9 @@
         <Logger name="com.centit.im" level="trace" additivity="false">
             <AppenderRef ref="running-log" />
         </Logger>
+        <Logger name="com.centit.framework.core.controller.BaseController" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Root level="info">
             <AppenderRef ref="running-log" />
             <AppenderRef ref="Console" />
