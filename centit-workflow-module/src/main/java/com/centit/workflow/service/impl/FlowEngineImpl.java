@@ -94,7 +94,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private PlatformEnvironment platformEnvironment;
 
-
     private final static Object lockObject = new Object();
 
     public FlowEngineImpl() {
@@ -181,6 +180,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         }
     }
+
     /**
      * 创建流程实例  返回流程实例
      *
@@ -748,9 +748,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
                 NodeInfo nextNode = flowNodeDao.getObjectById(nextNodeId);
 
-                LeftRightPair<Set<String>, Set<String>> unitAndUsers = calcNodeUnitAndOperator(flowInst, preNodeInst, nodeToken,
-                    nextRouterNode, options,
-                    flowVarTrans);
+                LeftRightPair<Set<String>, Set<String>> unitAndUsers = calcNodeUnitAndOperator(
+                    flowInst, preNodeInst, nodeToken, nextRouterNode, options, flowVarTrans);
 
                 //D 机构， U  人员（权限表达式） V 变量
                 if (NodeInfo.ROUTER_MULTI_TYPE_UNIT.equals(nextRouterNode.getMultiInstType())) {
