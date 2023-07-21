@@ -155,7 +155,7 @@ public class UserTask implements java.io.Serializable {
 
         this.createTime = other.getCreateTime();
         this.expireOpt = other.getExpireOpt();
-
+        this.modelId = other.getModelId();
         this.lastUpdateTime = other.getLastUpdateTime();
 
         this.lastUpdateUser = other.getLastUpdateUser();
