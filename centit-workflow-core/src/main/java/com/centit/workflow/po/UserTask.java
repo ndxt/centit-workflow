@@ -45,6 +45,9 @@ public class UserTask implements java.io.Serializable {
     private String stageCode;
     private String instState;
     private String osId;
+
+    private String modelId;
+
     private String optId;
     private String optCode;
     private String optParam;
@@ -61,7 +64,6 @@ public class UserTask implements java.io.Serializable {
     private String lastUpdateUser;
     private Long promiseTime;
     private Long timeLimit;
-
 
     @DictionaryMap(value="userCode", fieldName="creatorName")
     private String creatorCode;

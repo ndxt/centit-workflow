@@ -165,7 +165,6 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         return flowDefineJsonArray;
     }
 
-
     private FlowInfo createFlowDefByJSON(String jsonDef, String flowCode, Long version, FlowDataDetail flowData, FlowInfo flow) {
         FlowInfo flowDef = JSON.parseObject(jsonDef, FlowInfo.class);// new FlowInfo();
         flowDef.setCid(new FlowInfoId(version, flowCode));
