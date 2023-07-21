@@ -38,7 +38,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "t.FLOW_OPT_TAG, t.UNIT_CODE, t.USER_CODE, " +
         "t.CREATE_TIME, t.PROMISE_TIME, t.TIME_LIMIT, " +
         "n.NODE_NAME, t.LAST_UPDATE_TIME, t.INST_STATE, " +
-        "t.LAST_UPDATE_USER, t.USER_CODE as CREATOR_CODE " +
+        "t.LAST_UPDATE_USER, t.USER_CODE as CREATOR_CODE, t.OS_ID, t.OPT_ID " +
         " from wf_flow_instance t join wf_flow_define f on f.FLOW_CODE=t.FLOW_CODE and f.VERSION=t.VERSION" +
         " left join ("+flowInstStateSql+") n " +
         " on n.FLOW_INST_ID=t.FLOW_INST_ID " +
@@ -48,9 +48,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         " [ :(like)flowOptName| and t.flow_Opt_Name like :flowOptName] " +
         " [ :(like)flowName| and f.flow_Name like :flowName] " +
         " [ :topUnit| and t.TOP_UNIT = :topUnit]" +
-        " [ :osId| and f.os_id = :osId] " +
+        " [ :osId| and t.os_id = :osId] " +
         " [ :optId| and t.OPT_ID = :optId] " +
-        " [ :osIds| and f.os_id in (:osIds)] " +
+        " [ :osIds| and t.os_id in (:osIds)] " +
         " [ :(like)nodeName| and n.node_Name like :nodeName] " +
         " order by t.last_update_time desc ";
 
@@ -59,9 +59,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
         "c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
         "c.OPT_CODE, c.EXPIRE_OPT, c.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
-        "b.LAST_UPDATE_TIME, b.NODE_STATE as INST_STATE, c.OPT_ID, c.OS_ID, a.USER_CODE as CREATOR_CODE, " +
+        "b.LAST_UPDATE_TIME, b.NODE_STATE as INST_STATE, a.OPT_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
         "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
-        "from wf_node_instance b join  wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
+        "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
         " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
         "where b.NODE_INST_ID = ?";
 
@@ -70,9 +70,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
         "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +
-        "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE,c.OPT_ID,c.OS_ID, a.USER_CODE as CREATOR_CODE, " +
+        "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, a.OPT_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
         "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
-        "from wf_node_instance b join  wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
+        "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
             " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
         "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'S' [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
         " [ :(splitforin)flowInstIds| and b.FLOW_INST_ID in ( :flowInstIds )]" +
@@ -85,10 +85,10 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
         "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
         "[ :endTime| and b.CREATE_TIME <= :endTime]" +
-        "[ :osId| and c.OS_ID = :osId]" +
-        "[ :optId| and c.OPT_ID = :optId]" +
+        "[ :osId| and a.OS_ID = :osId]" +
+        "[ :optId| and a.OPT_ID = :optId]" +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
-        "[ :osIds| and c.OS_ID  in (:osIds)]" +
+        "[ :osIds| and a.OS_ID  in (:osIds)]" +
         "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
         "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
@@ -104,9 +104,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "b.ROLE_CODE, '权限委托' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
         "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE, g.GRANTOR, b.LAST_UPDATE_USER," +
-        "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE,c.OPT_ID,c.OS_ID, a.USER_CODE as CREATOR_CODE, " +
+        "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, a.OPT_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
         "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
-        "from wf_node_instance b join  wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
+        "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
         " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
         " join WF_ROLE_RELEGATE g on(g.GRANTOR = b.user_code and (g.unit_code is null or b.unit_code = g.unit_code) " +
           " and (g.ROLE_CODE is null or g.ROLE_CODE = b.ROLE_CODE))" +
@@ -122,10 +122,10 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
         "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
         "[ :endTime| and b.CREATE_TIME <= :endTime]" +
-        "[ :osId| and c.OS_ID = :osId]" +
-        "[ :optId| and c.OPT_ID = :optId]" +
+        "[ :osId| and a.OS_ID = :osId]" +
+        "[ :optId| and a.OPT_ID = :optId]" +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
-        "[ :osIds| and c.OS_ID  in (:osIds)]" +
+        "[ :osIds| and a.OS_ID  in (:osIds)]" +
         "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
         "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
@@ -143,7 +143,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
             "c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
             "c.OPT_CODE, c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +
-            "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE,c.OPT_ID, c.OS_ID, a.USER_CODE as CREATOR_CODE, " +
+            "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, a.OPT_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
             "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
             "from wf_node_instance b join  wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
             " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
@@ -160,10 +160,10 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
             "[ :endTime| and b.CREATE_TIME <= :endTime]" +
             "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
-            "[ :osId| and c.OS_ID = :osId]" +
-            "[ :optId| and c.OPT_ID = :optId]" +
+            "[ :osId| and a.OS_ID = :osId]" +
+            "[ :optId| and a.OPT_ID = :optId]" +
             "[ :optCode| and c.OPT_CODE = :optCode]" +
-            "[ :osIds| and c.OS_ID  in (:osIds)]" +
+            "[ :osIds| and a.OS_ID  in (:osIds)]" +
             "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
             "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
             "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
