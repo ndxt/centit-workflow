@@ -7,6 +7,7 @@ import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.workflow.commons.FlowOptParamOptions;
 import com.centit.workflow.dao.FlowInstanceDao;
@@ -29,6 +30,9 @@ public abstract class FlowOptUtils {
      */
     public static FlowInstance createFlowInst(String topUnit, String unitcode, String usercode,
                                               FlowInfo wf, String flowInstId, String timeLimitStr) {
+        if(StringUtils.isBlank(topUnit)){
+            throw new ObjectException(ObjectException.DATA_VALIDATE_ERROR, "topUnit属性为null无法创建流程实例，请和开发人员联系。");
+        }
         FlowInstance flowInst = new FlowInstance();
         flowInst.setFlowInstId(flowInstId);
         flowInst.setFlowCode(wf.getFlowCode());
