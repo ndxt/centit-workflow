@@ -207,7 +207,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         //获取流程信息
         FlowInfo wf = flowDefDao.getFlowDefineByID(options.getFlowCode(), options.getFlowVersion());
-
+        if(StringUtils.isBlank(options.getTopUnit())){
+            IOsInfo iOsInfo = platformEnvironment.getOsInfo(wf.getOsId());
+            if(iOsInfo!=null) {
+                options.setTopUnit(iOsInfo.getTopUnit());
+            }
+        }
         //获取流程实例编号
         String flowInstId = StringUtils.isBlank(options.getFlowInstId()) ?
             UuidOpt.getUuidAsString32() : options.getFlowInstId();
@@ -236,6 +241,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         flowInst.setFlowOptName(options.getFlowOptName());
         flowInst.setFlowOptTag(options.getFlowOptTag());
+
         flowInstanceDao.saveNewObject(flowInst);
         // ----------- 创建 流程 实例 结束
         for (StageInstance flowStageInstance : flowInst.getFlowStageInstances()) {
@@ -1245,12 +1251,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             throw new WorkflowException(WorkflowException.NodeInstNotFound, "找不到节点实例：" + options.getNodeInstId());
         }
         FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(nodeInst.getFlowInstId());
+
         if (flowInst == null) {
             logger.error("找不到流程实例：" + nodeInst.getFlowInstId());
             throw new WorkflowException(WorkflowException.FlowInstNotFound,
                 "找不到流程实例：" + nodeInst.getFlowInstId());
         }
-
+        if(StringUtils.isBlank(options.getTopUnit())){
+            options.setTopUnit(flowInst.getTopUnit());
+        }
         FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
 
         if ("P".equals(nodeInst.getIsTimer())) {
