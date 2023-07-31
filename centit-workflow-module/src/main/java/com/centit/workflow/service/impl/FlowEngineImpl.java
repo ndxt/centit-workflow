@@ -919,6 +919,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 workTimeSpan.fromNumberAsMinute(flowInst.getTimeLimit());
                 tempFlowTimeLimit = workTimeSpan.toStringAsMinute();
             }
+
+            if(StringUtils.isBlank(options.getTopUnit())){
+                options.setTopUnit(flowInst.getTopUnit());
+            }
             //子流程的机构 要和 节点的机构一致
             FlowInstance tempFlow = createInstanceInside(
                 CreateFlowOptions.create().copy(options)
