@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
+import com.centit.support.common.LeftRightPair;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
@@ -566,7 +567,7 @@ public class FlowInstance implements java.io.Serializable {
      * @return token, NodeInst
      */
     public Map<String, NodeInstance> findSubmitSubNodeInstByToken(String token, NodeInstance preNodeInst) {
-        Map<String, NodeInstance> sameNodes = new HashMap<String, NodeInstance>();
+        Map<String, NodeInstance> sameNodes = new HashMap<>();
         if (token == null || this.flowNodeInstances == null)
             return sameNodes;
 
@@ -609,12 +610,17 @@ public class FlowInstance implements java.io.Serializable {
      * @param preNodeInst 汇聚节点的父节点实例
      * @return Nodeid
      */
-    public Set<String> calcSubmitSubNodeIdByToken(String token, NodeInstance preNodeInst) {
+    public LeftRightPair<Set<String>,Set<String>> calcSubmitSubNodeTokensByToken(String token, NodeInstance preNodeInst) {
         Map<String, NodeInstance> subNodes = findSubmitSubNodeInstByToken(token, preNodeInst);
-        Set<String> subTokens = new HashSet<String>();
-        for (Map.Entry<String, NodeInstance> ent : subNodes.entrySet())
-            subTokens.add(ent.getValue().getNodeId());
-        return subTokens;
+        Set<String> subTokens = new HashSet<>();
+        Set<String> subNodeIds = new HashSet<>();
+        int subg = NodeInstance.calcTokenGeneration(token) + 1;
+        for (Map.Entry<String, NodeInstance> ent : subNodes.entrySet()) {
+            subNodeIds.add(ent.getValue().getNodeId());
+            String thisToken = ent.getValue().getSuperGenerationToken(subg);
+            subTokens.add(thisToken);
+        }
+        return new LeftRightPair<>(subNodeIds, subTokens);
     }
 
     /**
