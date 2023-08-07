@@ -679,7 +679,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else if (NodeInfo.ROUTER_TYPE_COLLECT.equals(routerType)) { // E:汇聚
             String preRunToken = NodeInstance.calcSuperToken(nodeToken);
             // 所有未提交的需要等待的 子节点令牌
-            Set<String> nNs = flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
+            Set<String> nNs = flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken, preNodeInst);
             //汇聚节点，所有节点都已提交,或者只要当前节点
             boolean canSubmit = nNs == null || nNs.size() == 0 ||
                 (nNs.size() == 1 && nNs.contains(nodeToken));

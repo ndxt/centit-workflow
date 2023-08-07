@@ -558,49 +558,6 @@ public class FlowInstance implements java.io.Serializable {
     }
 
 
-    /**
-     * 找到汇聚节点所有已经提交的子节点
-     * （preNodeInst不为null时，视正在提交中的节点为已办理节点）
-     *
-     * @param token
-     * @param preNodeInst 汇聚节点的父节点实例
-     * @return token, NodeInst
-     */
-    public Map<String, NodeInstance> findSubmitSubNodeInstByToken(String token, NodeInstance preNodeInst) {
-        Map<String, NodeInstance> sameNodes = new HashMap<>();
-        if (token == null || this.flowNodeInstances == null)
-            return sameNodes;
-
-        NodeInstance sameInst = null;
-
-        for (NodeInstance ni : flowNodeInstances) {
-            if (token.endsWith(ni.getRunToken())) {
-                if(sameInst == null || ni.getCreateTime().after(sameInst.getCreateTime())){
-                    sameInst = ni;
-                }
-//                if (sameInst == null)
-//                    sameInst = ni;
-//                else if (ni.getCreateTime().after(sameInst.getCreateTime()))//大小于
-//                    sameInst = ni;
-            }
-        }
-        if (sameInst == null)
-            return sameNodes;
-        int subg = NodeInstance.calcTokenGeneration(token) + 1;
-
-        for (NodeInstance nodeInst : flowNodeInstances) {
-            String thisToken = nodeInst.getTrunkToken();
-            if (thisToken != null && thisToken.startsWith(token + '.') &&
-                ("C".equals(nodeInst.getNodeState()) || (preNodeInst != null && preNodeInst.getNodeInstId().equals(nodeInst.getNodeInstId()))) &&
-                nodeInst.getTokenGeneration() == subg &&
-                !nodeInst.getCreateTime().before(sameInst.getCreateTime())) {
-                NodeInstance tempInst = sameNodes.get(thisToken);
-                if (tempInst == null || tempInst.getCreateTime().before(nodeInst.getCreateTime()))
-                    sameNodes.put(thisToken, nodeInst);
-            }
-        }
-        return sameNodes;
-    }
 
     /**
      * 找到汇聚节点所有已经提交的子节点
@@ -611,15 +568,33 @@ public class FlowInstance implements java.io.Serializable {
      * @return Nodeid
      */
     public LeftRightPair<Set<String>,Set<String>> calcSubmitSubNodeTokensByToken(String token, NodeInstance preNodeInst) {
-        Map<String, NodeInstance> subNodes = findSubmitSubNodeInstByToken(token, preNodeInst);
+        Map<String, NodeInstance> sameNodes = new HashMap<>();
         Set<String> subTokens = new HashSet<>();
         Set<String> subNodeIds = new HashSet<>();
+        if (token == null || this.flowNodeInstances == null)
+            return new LeftRightPair<>(subNodeIds, subTokens);;
+
         int subg = NodeInstance.calcTokenGeneration(token) + 1;
-        for (Map.Entry<String, NodeInstance> ent : subNodes.entrySet()) {
+
+        for (NodeInstance nodeInst : flowNodeInstances) {
+            String thisToken = nodeInst.getTrunkToken();
+            if (thisToken != null && thisToken.startsWith(token + '.') &&
+                ("C".equals(nodeInst.getNodeState()) || (preNodeInst != null && preNodeInst.getNodeInstId().equals(nodeInst.getNodeInstId()))) &&
+                nodeInst.getTokenGeneration() == subg &&
+                !nodeInst.getCreateTime().before(preNodeInst.getCreateTime())) {
+                NodeInstance tempInst = sameNodes.get(thisToken);
+                if (tempInst == null || tempInst.getCreateTime().before(nodeInst.getCreateTime()))
+                    sameNodes.put(thisToken, nodeInst);
+            }
+        }
+
+        for (Map.Entry<String, NodeInstance> ent : sameNodes.entrySet()) {
             subNodeIds.add(ent.getValue().getNodeId());
             String thisToken = ent.getValue().getSuperGenerationToken(subg);
             subTokens.add(thisToken);
         }
+        subNodeIds.add(preNodeInst.getNodeId());
+        subTokens.add(preNodeInst.getRunToken());
         return new LeftRightPair<>(subNodeIds, subTokens);
     }
 
@@ -629,14 +604,16 @@ public class FlowInstance implements java.io.Serializable {
      * @param token 节点令牌
      * @return subToken 子节点令牌
      */
-    public Set<String> calcNoSubmitSubNodeTokensInstByToken(String token) {
+    public Set<String> calcNoSubmitSubNodeTokensInstByToken(String token, NodeInstance preNodeInst) {
         Set<NodeInstance> sameNodes = findAllActiveSubNodeInstByToken(token);
         Set<String> subTokens = new HashSet<>();
 
         int subg = NodeInstance.calcTokenGeneration(token) + 1;
         for (NodeInstance nodeInst : sameNodes) {
-            String thisToken = nodeInst.getSuperGenerationToken(subg);
-            subTokens.add(thisToken);
+            if(!StringUtils.equals(nodeInst.getRunToken(), preNodeInst.getRunToken())) {
+                String thisToken = nodeInst.getSuperGenerationToken(subg);
+                subTokens.add(thisToken);
+            }
         }
         return subTokens;
     }
