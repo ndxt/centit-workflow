@@ -579,9 +579,8 @@ public class FlowInstance implements java.io.Serializable {
         for (NodeInstance nodeInst : flowNodeInstances) {
             String thisToken = nodeInst.getTrunkToken();
             if (thisToken != null && thisToken.startsWith(token + '.') &&
-                ("C".equals(nodeInst.getNodeState()) || (preNodeInst != null && preNodeInst.getNodeInstId().equals(nodeInst.getNodeInstId()))) &&
-                nodeInst.getTokenGeneration() == subg &&
-                !nodeInst.getCreateTime().before(preNodeInst.getCreateTime())) {
+                "C".equals(nodeInst.getNodeState())  &&
+                nodeInst.getTokenGeneration() == subg ) {
                 NodeInstance tempInst = sameNodes.get(thisToken);
                 if (tempInst == null || tempInst.getCreateTime().before(nodeInst.getCreateTime()))
                     sameNodes.put(thisToken, nodeInst);
