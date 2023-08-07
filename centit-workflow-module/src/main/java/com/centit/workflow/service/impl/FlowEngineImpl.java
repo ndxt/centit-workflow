@@ -678,8 +678,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         } else if (NodeInfo.ROUTER_TYPE_COLLECT.equals(routerType)) { // E:汇聚
             String preRunToken = NodeInstance.calcSuperToken(nodeToken);
-            Set<String> nNs = // 所有未提交的需要等待的 子节点令牌
-                flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
+            // 所有未提交的需要等待的 子节点令牌
+            Set<String> nNs = flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken);
             //汇聚节点，所有节点都已提交,或者只要当前节点
             boolean canSubmit = nNs == null || nNs.size() == 0 ||
                 (nNs.size() == 1 && nNs.contains(nodeToken));
@@ -689,7 +689,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 // 除了要找到汇聚节点所有已经提交的子节点外 还要添加当前正在提交的节点（视正在提交中的节点为已办理节点）
                 LeftRightPair<Set<String>,Set<String>> submitSubNodeTokens = flowInst.calcSubmitSubNodeTokensByToken(preRunToken, preNodeInst);
                 Set<String> submitNodeIds = submitSubNodeTokens.getLeft();
-                Set<String> submitNodeTokes = submitSubNodeTokens.getRight();
+                Set<String> submitNodeTokens = submitSubNodeTokens.getRight();
                 // 获取指向汇聚节点的流程线
                 List<FlowTransition> transList =
                     flowTransitionDao.getNodeInputTrans(nextRouterNode.getNodeId());
@@ -705,12 +705,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     if (StringRegularOpt.isNumber(nextRouterNode.getConvergeParam())) {
                         if (NodeInfo.ROUTER_COLLECT_TYPE_LEAST_COMPLETED.equals(convergeType)) {
                             //计算已经提交的汇聚节点个数
-                            canSubmit = submitNodeTokes.size() >=
+                            canSubmit = submitNodeTokens.size() >=
                                 Integer.parseInt(nextRouterNode.getConvergeParam());
                         } else if (NodeInfo.ROUTER_COLLECT_TYPE_MOST_UNCOMPLETED.equals(convergeType)) {
                             canSubmit = nNs.size() <= Integer.parseInt(nextRouterNode.getConvergeParam());
                         } else if (NodeInfo.ROUTER_COLLECT_TYPE_RATE.equals(convergeType)) {
-                            canSubmit = (double) submitNodeTokes.size() / (double) (submitNodeTokes.size() + nNs.size())
+                            canSubmit = (double) submitNodeTokens.size() / (double) (submitNodeTokens.size() + nNs.size())
                                 >= Double.parseDouble(nextRouterNode.getConvergeParam());
                         } else {
                             canSubmit = false;
