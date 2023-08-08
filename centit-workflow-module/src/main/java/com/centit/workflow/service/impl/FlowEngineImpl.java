@@ -30,6 +30,7 @@ import com.centit.workflow.service.FlowScriptRunTime;
 import com.centit.workflow.support.AutoRunNodeEventSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -679,25 +680,24 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else if (NodeInfo.ROUTER_TYPE_COLLECT.equals(routerType)) { // E:汇聚
             String preRunToken = NodeInstance.calcSuperToken(nodeToken);
             // 所有未提交的需要等待的 子节点令牌
-            Set<String> nNs = flowInst.calcNoSubmitSubNodeTokensInstByToken(preRunToken, preNodeInst);
+            Triple<Integer, Integer, Set<String>> allSubmitState = flowInst.calcSubmitSubNodeTokensByToken(preRunToken, preNodeInst);
             //汇聚节点，所有节点都已提交,或者只要当前节点
-            boolean canSubmit = nNs == null || nNs.size() == 0 ||
-                (nNs.size() == 1 && nNs.contains(nodeToken));
+            boolean canSubmit = allSubmitState.getLeft() == 0;
             //A 所有都完成，R 至少有X完成，L 至多有X未完成， V 完成比率达到X
             String convergeType = nextRouterNode.getConvergeType();
             if (!canSubmit && !NodeInfo.ROUTER_COLLECT_TYPE_ALL_COMPLETED.equals(convergeType)) {
                 // 除了要找到汇聚节点所有已经提交的子节点外 还要添加当前正在提交的节点（视正在提交中的节点为已办理节点）
-                LeftRightPair<Set<String>,Set<String>> submitSubNodeTokens = flowInst.calcSubmitSubNodeTokensByToken(preRunToken, preNodeInst);
-                Set<String> submitNodeIds = submitSubNodeTokens.getLeft();
-                Set<String> submitNodeTokens = submitSubNodeTokens.getRight();
+                Set<String> submitNodeIds = allSubmitState.getRight();
                 // 获取指向汇聚节点的流程线
-                List<FlowTransition> transList =
-                    flowTransitionDao.getNodeInputTrans(nextRouterNode.getNodeId());
                 canSubmit = true;
-                for (FlowTransition tran : transList) {
-                    if (!tran.getCanIgnore() && !submitNodeIds.contains(tran.getStartNodeId())) {
-                        canSubmit = false;
-                        break;
+                for(String nId : submitNodeIds) { // 检查所有未提交的节点 有没有 不能忽略的节点
+                    List<FlowTransition> transList =
+                        flowTransitionDao.getNodeInputTrans(nId);
+                    for (FlowTransition tran : transList) {
+                        if (tran.getCanIgnore() != null && !tran.getCanIgnore()) {
+                            canSubmit = false;
+                            break;
+                        }
                     }
                 }
 
@@ -705,12 +705,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     if (StringRegularOpt.isNumber(nextRouterNode.getConvergeParam())) {
                         if (NodeInfo.ROUTER_COLLECT_TYPE_LEAST_COMPLETED.equals(convergeType)) {
                             //计算已经提交的汇聚节点个数
-                            canSubmit = submitNodeTokens.size() >=
+                            canSubmit = allSubmitState.getMiddle() >=
                                 Integer.parseInt(nextRouterNode.getConvergeParam());
                         } else if (NodeInfo.ROUTER_COLLECT_TYPE_MOST_UNCOMPLETED.equals(convergeType)) {
-                            canSubmit = nNs.size() <= Integer.parseInt(nextRouterNode.getConvergeParam());
+                            canSubmit = allSubmitState.getLeft() <= Integer.parseInt(nextRouterNode.getConvergeParam());
                         } else if (NodeInfo.ROUTER_COLLECT_TYPE_RATE.equals(convergeType)) {
-                            canSubmit = (double) submitNodeTokens.size() / (double) (submitNodeTokens.size() + nNs.size())
+                            canSubmit = (double) allSubmitState.getMiddle() / (double) (allSubmitState.getMiddle() + allSubmitState.getLeft())
                                 >= Double.parseDouble(nextRouterNode.getConvergeParam());
                         } else {
                             canSubmit = false;

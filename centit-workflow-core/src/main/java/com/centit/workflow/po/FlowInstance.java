@@ -4,12 +4,13 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
-import com.centit.support.common.LeftRightPair;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
@@ -361,7 +362,7 @@ public class FlowInstance implements java.io.Serializable {
         NodeInstance nodeInst = this.getNodeInstanceById(nodeInstId);
         if (nodeInst == null)
             return null;
-        List<NodeInstance> nodes = new ArrayList<NodeInstance>();
+        List<NodeInstance> nodes = new ArrayList<>();
         String thisToken = nodeInst.getRunToken();
         while (true) {
             if (thisToken == null || thisToken.equals(nodeInst.getRunToken()))
@@ -506,7 +507,7 @@ public class FlowInstance implements java.io.Serializable {
     }
 
     public Set<NodeInstance> findSubNodeInstByToken(String token) {
-        Set<NodeInstance> sameNodes = new HashSet<NodeInstance>();
+        Set<NodeInstance> sameNodes = new HashSet<>();
         if (this.flowNodeInstances == null)
             return sameNodes;
         for (NodeInstance nodeInst : flowNodeInstances) {
@@ -567,54 +568,49 @@ public class FlowInstance implements java.io.Serializable {
      * @param preNodeInst 汇聚节点的父节点实例
      * @return Nodeid
      */
-    public LeftRightPair<Set<String>,Set<String>> calcSubmitSubNodeTokensByToken(String token, NodeInstance preNodeInst) {
-        Map<String, NodeInstance> sameNodes = new HashMap<>();
-        Set<String> subTokens = new HashSet<>();
-        Set<String> subNodeIds = new HashSet<>();
+    public Triple<Integer, Integer, Set<String>> calcSubmitSubNodeTokensByToken(String token, NodeInstance preNodeInst) {
+        Set<String> notSubmitNodeIds = new HashSet<>();
+
         if (token == null || this.flowNodeInstances == null)
-            return new LeftRightPair<>(subNodeIds, subTokens);;
+            return new ImmutableTriple<>(0, 0, notSubmitNodeIds);
 
-        int subg = NodeInstance.calcTokenGeneration(token) + 1;
+        Map<String, Boolean> tokenSubmitState = new HashMap<>();
+        Date nodeBeginTime = this.getCreateTime(); //节点创建时间
+        for (NodeInstance nodeInst : flowNodeInstances) { // 找到并行 或者 多实例 节点的 启动时间
+            String thisToken = nodeInst.getTrunkToken();
+            if (thisToken != null && (thisToken.equals(token) || token.startsWith(thisToken + '.'))
+                 && nodeInst.getCreateTime().after(nodeBeginTime)){
+                nodeBeginTime = nodeInst.getCreateTime();
+            }
+        }
 
+        int subG = NodeInstance.calcTokenGeneration(token) + 1;
         for (NodeInstance nodeInst : flowNodeInstances) {
             String thisToken = nodeInst.getTrunkToken();
             if (thisToken != null && thisToken.startsWith(token + '.') &&
-                "C".equals(nodeInst.getNodeState())  &&
-                nodeInst.getTokenGeneration() == subg ) {
-                NodeInstance tempInst = sameNodes.get(thisToken);
-                if (tempInst == null || tempInst.getCreateTime().before(nodeInst.getCreateTime()))
-                    sameNodes.put(thisToken, nodeInst);
+                nodeInst.getCreateTime().compareTo(nodeBeginTime) >= 0) {
+                String subNodeToken = NodeInstance.truncTokenGeneration(thisToken, subG);
+                if(nodeInst.checkIsNotCompleted() &&
+                     ! nodeInst.getNodeInstId().equals(preNodeInst.getNodeInstId())){
+                    notSubmitNodeIds.add(nodeInst.getNodeId());
+                    tokenSubmitState.put(subNodeToken, false);// 标记为 未提交
+                } else {
+                    if(! tokenSubmitState.containsKey(subNodeToken)){
+                        tokenSubmitState.put(subNodeToken, true);// 标记为 已提交
+                    }
+                }
             }
         }
 
-        for (Map.Entry<String, NodeInstance> ent : sameNodes.entrySet()) {
-            subNodeIds.add(ent.getValue().getNodeId());
-            String thisToken = ent.getValue().getSuperGenerationToken(subg);
-            subTokens.add(thisToken);
+        int notSubmitSum = 0, submitSum = 0;
+        for (Boolean submit: tokenSubmitState.values()) {
+            if(submit)
+                submitSum ++;
+            else
+                notSubmitSum ++;
         }
-        subNodeIds.add(preNodeInst.getNodeId());
-        subTokens.add(preNodeInst.getRunToken());
-        return new LeftRightPair<>(subNodeIds, subTokens);
-    }
 
-    /**
-     * 找到汇聚节点所有未提交的子节点
-     *
-     * @param token 节点令牌
-     * @return subToken 子节点令牌
-     */
-    public Set<String> calcNoSubmitSubNodeTokensInstByToken(String token, NodeInstance preNodeInst) {
-        Set<NodeInstance> sameNodes = findAllActiveSubNodeInstByToken(token);
-        Set<String> subTokens = new HashSet<>();
-
-        int subg = NodeInstance.calcTokenGeneration(token) + 1;
-        for (NodeInstance nodeInst : sameNodes) {
-            if(!StringUtils.equals(nodeInst.getRunToken(), preNodeInst.getRunToken())) {
-                String thisToken = nodeInst.getSuperGenerationToken(subg);
-                subTokens.add(thisToken);
-            }
-        }
-        return subTokens;
+        return new ImmutableTriple<>(notSubmitSum, submitSum, notSubmitNodeIds);
     }
 
     public NodeInstance getPareNodeInst(String thisNodeInstId) {
@@ -634,24 +630,10 @@ public class FlowInstance implements java.io.Serializable {
             }
         }
         return pareNode;
-        /*while(true){
-            WfNodeInstance prevNodeInst = getNodeInstanceById( nodeInst.getPrevNodeInstId());
-            if(prevNodeInst==null)
-                return null;
-
-            String prevToken = prevNodeInst.getRunToken();
-            if( (thisToken==null || prevToken==null)
-                    || thisToken.equals(prevToken)
-                    || thisToken.startsWith(prevToken+'.'))
-
-                return prevNodeInst;
-
-            nodeInst = prevNodeInst;
-        }*/
     }
 
     public void replaceFlowStageInstances(List<StageInstance> wfStageInstances) {
-        List<StageInstance> newObjs = new ArrayList<StageInstance>();
+        List<StageInstance> newObjs = new ArrayList<>();
         for (StageInstance p : wfStageInstances) {
             if (p == null)
                 continue;
