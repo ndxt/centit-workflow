@@ -169,6 +169,11 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
         return this;
     }
 
+    public CreateFlowOptions tenant(String topUnit){
+        this.topUnit = topUnit;
+        return this;
+    }
+
     public CreateFlowOptions addVariable(String name, String value){
         if(this.variables == null){
             this.variables = new HashMap<>();

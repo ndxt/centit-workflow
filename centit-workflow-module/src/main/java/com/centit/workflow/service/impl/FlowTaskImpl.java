@@ -210,29 +210,29 @@ public class FlowTaskImpl {
 
                 if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer()))
                     && nodeInst.getTimeLimit() <= 0 ) {
-                    //* N：通知（预警）， O:不处理 ， X：挂起， E：终止（流程）， C：完成（强制提交,提交失败就挂起）
-                    if ("E".equals(nodeInfo.getExpireOpt())) {
-                        stopFlow = true;
-                        break;
-                    } else if ("C".equals(nodeInfo.getExpireOpt())) {
-                        //自动提交
-                        flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
-                            .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()));
-                    //} else if ("X".equals(nodeInfo.getExpireOpt())) {
-                    } else if ("N".equals(nodeInfo.getExpireOpt())) {
-                        List<FlowWarning> flowWarnings = wfRuntimeWarningDao.listFlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(),
-                             warningType,"N", null);
-                        if (flowWarnings == null || flowWarnings.isEmpty()) {
-                            // 存入流程告警表 wf_runtime_warning
-                            FlowWarning flowWarning = new FlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(), warningType, "N");
-                            wfRuntimeWarningDao.saveNewObject(flowWarning);
-                        }
-                    }
-
                     // 同步节点的方式为时间，时间到达后自动提交节点
                     if ("T".equals(nodeInst.getNodeState()) && NodeInfo.SYNC_NODE_TYPE_TIME.equals(nodeInfo.getOptType())) {
                         flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
-                            .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()));
+                            .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()).tenant(flowInst.getTopUnit()));
+                    } else {
+                        //* N：通知（预警）， O:不处理 ， X：挂起， E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+                        if ("E".equals(nodeInfo.getExpireOpt())) {
+                            stopFlow = true;
+                            break;
+                        } else if ("C".equals(nodeInfo.getExpireOpt())) {
+                            //自动提交
+                            flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
+                                .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()).tenant(flowInst.getTopUnit()));
+                            //} else if ("X".equals(nodeInfo.getExpireOpt())) {
+                        } else if ("N".equals(nodeInfo.getExpireOpt())) {
+                            List<FlowWarning> flowWarnings = wfRuntimeWarningDao.listFlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(),
+                                warningType, "N", null);
+                            if (flowWarnings == null || flowWarnings.isEmpty()) {
+                                // 存入流程告警表 wf_runtime_warning
+                                FlowWarning flowWarning = new FlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(), warningType, "N");
+                                wfRuntimeWarningDao.saveNewObject(flowWarning);
+                            }
+                        }
                     }
                 }
 

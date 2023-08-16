@@ -131,6 +131,11 @@ public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
         return this;
     }
 
+    public SubmitOptOptions tenant(String topUnit){
+        this.topUnit = topUnit;
+        return this;
+    }
+
     public SubmitOptOptions addVariable(String name, String value){
         if(this.variables == null){
             this.variables = new HashMap<>();
