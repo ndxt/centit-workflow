@@ -181,20 +181,20 @@ public class FlowTaskImpl {
             Set<String> stageCodes = new HashSet<>();
             for (NodeInstance nodeInst : nodeList) {
                 NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeId());
-                //* N：通知（预警）， O:不处理 ， X：挂起， E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+
                 //如果节点实例超时或者节点满足预警规则 都进行处理
-                // 预警规则： R：运行时间  L:剩余时间  P：比率
                 String warningRule = nodeInfo.getWarningRule();
                 String warningParam = nodeInfo.getWarningParam();
                 // 是否根据预警规则进行预警
-                boolean warning = true;
+                boolean warning = false;
                 // 预警类别 warningType  W，预警  A  报警  N 提醒  O 其他
                 String warningType = "";
+                // 预警规则： R：运行时间  L:剩余时间  P：比率
                 if ("R".equals(warningRule)) {
-
+                    warning = parse(warningParam) >= nodeInst.getPromiseTime().doubleValue() - nodeInst.getTimeLimit().doubleValue();
                 } else if ("L".equals(warningRule)) {
-
-                } else if ("P".equals(warningRule)) {
+                    warning = parse(warningParam) >= nodeInst.getTimeLimit().doubleValue();
+                } else  if ("P".equals(warningRule)) {
                     if (StringUtils.isNotBlank(warningParam) && nodeInst.getPromiseTime() > 0) {
                         warning = parse(warningParam) >= nodeInst.getTimeLimit().doubleValue() / nodeInst.getPromiseTime().doubleValue();
                     }
@@ -209,12 +209,16 @@ public class FlowTaskImpl {
                 }
 
                 if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer()))
-                    && (warning || nodeInst.getTimeLimit() <= 0)) {
+                    && nodeInst.getTimeLimit() <= 0 ) {
+                    //* N：通知（预警）， O:不处理 ， X：挂起， E：终止（流程）， C：完成（强制提交,提交失败就挂起）
                     if ("E".equals(nodeInfo.getExpireOpt())) {
                         stopFlow = true;
                         break;
                     } else if ("C".equals(nodeInfo.getExpireOpt())) {
-                    } else if ("X".equals(nodeInfo.getExpireOpt())) {
+                        //自动提交
+                        flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
+                            .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()));
+                    //} else if ("X".equals(nodeInfo.getExpireOpt())) {
                     } else if ("N".equals(nodeInfo.getExpireOpt())) {
                         List<FlowWarning> flowWarnings = wfRuntimeWarningDao.listFlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(),
                              warningType,"N", null);
@@ -227,12 +231,8 @@ public class FlowTaskImpl {
 
                     // 同步节点的方式为时间，时间到达后自动提交节点
                     if ("T".equals(nodeInst.getNodeState()) && NodeInfo.SYNC_NODE_TYPE_TIME.equals(nodeInfo.getOptType())) {
-                        flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId()));
-                        // 更新节点状态为 C
-                        nodeInst.setNodeState("C");
-                        nodeInst.setLastUpdateUser(nodeInst.getUserCode());
-                        nodeInst.setLastUpdateTime(DatetimeOpt.currentUtilDate());
-                        nodeInstanceDao.updateObject(nodeInst);
+                        flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
+                            .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()));
                     }
                 }
 
