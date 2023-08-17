@@ -84,8 +84,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
         "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
         "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
-        "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
-        "[ :endTime| and b.CREATE_TIME <= :endTime]" +
+        "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
+        "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
         "[ :osId| and a.OS_ID = :osId]" +
         "[ :optId| and c.OPT_ID = :optId]" +
         "[ :modelId| and a.OPT_ID = :modelId] " +
@@ -122,8 +122,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
         "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
         "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
-        "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
-        "[ :endTime| and b.CREATE_TIME <= :endTime]" +
+        "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
+        "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
         "[ :osId| and a.OS_ID = :osId]" +
         "[ :optId| and c.OPT_ID = :optId]" +
         "[ :modelId| and a.OPT_ID = :modelId] " +
@@ -160,8 +160,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
             "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
             "[ :unitCode| and ( b.unit_code = :unitCode or b.unit_code is null )] " +
-            "[ :beginTime| and b.CREATE_TIME >= :beginTime]" +
-            "[ :endTime| and b.CREATE_TIME <= :endTime]" +
+            "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
+            "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
             "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
             "[ :osId| and a.OS_ID = :osId]" +
             "[ :optId| and c.OPT_ID = :optId]" +
