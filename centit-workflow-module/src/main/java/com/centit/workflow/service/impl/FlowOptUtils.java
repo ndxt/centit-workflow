@@ -97,13 +97,13 @@ public abstract class FlowOptUtils {
                 timeLimitInMinute = new WorkTimeSpan(tlt).toNumberAsMinute();
             }
         }
-        if ("1".equals(node.getInheritType())) {
+        if (NodeInfo.TIME_LIMIT_INHERIT_LEAD.equals(node.getInheritType())) {
             if (preNodeInst != null && preNodeInst.getTimeLimit() != null) {
                 nodeInst.setTimeLimit(timeLimitInMinute + preNodeInst.getTimeLimit());
             } else {
                 nodeInst.setTimeLimit(timeLimitInMinute);
             }
-        } else if ("2".equals(node.getInheritType())) {
+        } else if (NodeInfo.TIME_LIMIT_INHERIT_ASSIGNED.equals(node.getInheritType())) {
             //flowInst.
             List<NodeInfo> nodes = flowInfo.listNodesByNodeCode(node.getInheritNodeCode());
             NodeInstance inhertInst = null;
@@ -166,7 +166,7 @@ public abstract class FlowOptUtils {
             timeLimitType = trans.getLimitType();
         }
 
-        if ("C".equals(timeLimitType)) {
+        if (NodeInfo.TIME_LIMIT_TYPE_CYCLE.equals(timeLimitType)) {
             NodeInstance sameInst = flowInst.findLastSameNodeInst(nodeInst.getNodeId(), nodeInst, nodeInst.getNodeInstId());
             if (sameInst != null)
                 nodeInst.setTimeLimit(sameInst.getTimeLimit());
@@ -174,7 +174,7 @@ public abstract class FlowOptUtils {
                 setNewNodeInstTimelimit(nodeInst, timeLimit,
                     flowInst, preNodeInst, flowInfo, node, varTrans);
             }
-        } else if ("F".equals(timeLimitType)) {
+        } else if (NodeInfo.TIME_LIMIT_TYPE_FIX.equals(timeLimitType)) {
             //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
             setNewNodeInstTimelimit(nodeInst, timeLimit,
                 flowInst, preNodeInst, flowInfo, node, varTrans);
