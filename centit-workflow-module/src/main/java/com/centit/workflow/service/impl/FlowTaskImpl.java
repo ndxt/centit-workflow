@@ -68,10 +68,10 @@ public class FlowTaskImpl {
     @Value("${workflow.flowTimeStart:true}")
     private Boolean flowTimeStart;
 
-    @Value("${workflow.amStart:900}")
+    @Value("${workflow.amStart:830}")
     private int amStart;
 
-    @Value("${workflow.amEnd:1200}")
+    @Value("${workflow.amEnd:1130}")
     private int amEnd;
 
     @Value("${workflow.pmStart:1300}")
@@ -101,7 +101,6 @@ public class FlowTaskImpl {
         notificationCenter.sendMessage("system", task.getUserCode(), noticeMessage);
         return 1;
     }
-
 
     /**
      * 根据数据库计算出来的预报警发出对应的通知即可
