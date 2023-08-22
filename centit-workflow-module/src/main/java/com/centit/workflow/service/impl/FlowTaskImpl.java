@@ -20,10 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 工作流引擎定时检测任务期限，并发出相应的消息
@@ -74,10 +71,10 @@ public class FlowTaskImpl {
     @Value("${workflow.amStart:900}")
     private int amStart;
 
-    @Value("${workflow.amEnd:1130}")
+    @Value("${workflow.amEnd:1200}")
     private int amEnd;
 
-    @Value("${workflow.pmStart:1400}")
+    @Value("${workflow.pmStart:1300}")
     private int pmStart;
 
     @Value("${workflow.pmEnd:1800}")
@@ -146,19 +143,30 @@ public class FlowTaskImpl {
     @Scheduled(cron = "0 1/2 5-23 * * ?")
     @Transactional
     public void runEntity() {
-
         /**这部分内容 也可以放到后台 通过数据库来执行，在程序中执行 如果服务器停止则计时会不正确，
          *  并且如果部署到多个应用服务器 会出现重复扣除时间的问题
          *  在数据库中执行 复杂在要重新实现 当前时间是否是工作时间的问题
          */
-        Date runTime = new Date();
-        if (flowTimeStart && isWorkTime(runTime)) {
-            long consumeTime = 2;
-            consumeLifeTime(consumeTime);
-            logger.info(runTime.toString() + "工作时间，各个在办件减少一个即时周期" + consumeTime + "分钟。");
-        }
-
+        long consumeTime = 2;
+        consumeLifeTime(consumeTime);
         runEventTask(500);
+    }
+
+    public boolean isWorkTime(Map<String, Boolean> cached, String topUnit) {
+        if(cached.containsKey(topUnit)){
+            return cached.get(topUnit);
+        }
+        Date workTime = DatetimeOpt.currentUtilDate();
+        boolean workdDay =  workDayManager.isWorkDay(topUnit, workTime);
+        if (!workdDay) {
+            cached.put(topUnit, false);
+            return false;
+        }
+        int m = DatetimeOpt.getMinute(workTime) + 100 * DatetimeOpt.getHour(workTime);
+        //默认朝九晚五
+        boolean isWT=  (m > amStart && m < amEnd) || (m > pmStart && m < pmEnd);
+        cached.put(topUnit, isWT);
+        return isWT;
     }
 
     private void consumeLifeTime(long consumeTime) {
@@ -167,7 +175,11 @@ public class FlowTaskImpl {
         if (activeFlows == null || activeFlows.size() < 1) {
             return;
         }
+
+        Map<String, Boolean> cached = new HashMap<>(100);
         for (FlowInstance flowInst : activeFlows) {
+            if(! isWorkTime( cached, flowInst.getTopUnit())) // 不是工作日跳过
+                continue;
             // 获取计时流程中 办理中节点并且需要计时的节点实例
             List<NodeInstance> nodeList = nodeInstanceDao.listActiveTimerNodeByFlow(flowInst.getFlowInstId());
             if (nodeList == null || nodeList.size() < 1) {
@@ -264,7 +276,6 @@ public class FlowTaskImpl {
                 }
             }
 
-
             //如果关闭流程，流程状态置为C
             if (stopFlow) {
                 flowInst.setInstState("C");
@@ -296,10 +307,8 @@ public class FlowTaskImpl {
                         stageInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                     }
                     stageInstanceDao.updateObject(stageInstance);
-
                 }
             }
-
         }
     }
 
@@ -310,16 +319,6 @@ public class FlowTaskImpl {
         } else {
             return Double.parseDouble(ratio);
         }
-    }
-
-    public boolean isWorkTime(Date workTime) {
-        boolean workdDay =  workDayManager.isWorkDay(DatetimeOpt.convertDatetimeToString(workTime));
-        if (!workdDay) {
-            return false;
-        }
-        int m = DatetimeOpt.getMinute(workTime) + 100 * DatetimeOpt.getHour(workTime);
-        //默认朝九晚五
-        return (m > amStart && m < amEnd) || (m > pmStart && m < pmEnd);
     }
 
     private void runEventTask(int maxRows) {
