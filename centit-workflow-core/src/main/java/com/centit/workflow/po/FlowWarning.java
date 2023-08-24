@@ -33,7 +33,7 @@ public class FlowWarning implements java.io.Serializable {
     @Column(name = "FLOW_STAGE")
     private String flowStage;
 
-//    F ： 工作流 N ：节点  P：阶段
+//    F ： 工作流  N ：节点  P：阶段
     @Column(name = "OBJ_TYPE")
     private String objType;
 

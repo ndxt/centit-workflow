@@ -219,23 +219,23 @@ public class FlowTaskImpl {
                     warningType = "N";
                 }
 
-                if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer()))
+                if ((NodeInfo.TIME_LIMIT_NORMAL.equals(nodeInst.getIsTimer()) || NodeInfo.TIME_LIMIT_ONLY_NODE.equals(nodeInst.getIsTimer()))
                     && nodeInst.getTimeLimit() <= 0 ) {
                     // 同步节点的方式为时间，时间到达后自动提交节点
-                    if ("T".equals(nodeInst.getNodeState()) && NodeInfo.SYNC_NODE_TYPE_TIME.equals(nodeInfo.getOptType())) {
+                    if (NodeInstance.NODE_STATE_SYNC.equals(nodeInst.getNodeState()) && NodeInfo.SYNC_NODE_TYPE_TIME.equals(nodeInfo.getOptType())) {
                         flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
                             .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()).tenant(flowInst.getTopUnit()));
                     } else {
                         //* N：通知（预警）， O:不处理 ， X：挂起， E：终止（流程）， C：完成（强制提交,提交失败就挂起）
-                        if ("E".equals(nodeInfo.getExpireOpt())) {
+                        if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(nodeInfo.getExpireOpt())) {
                             stopFlow = true;
                             break;
-                        } else if ("C".equals(nodeInfo.getExpireOpt())) {
+                        } else if (NodeInfo.TIME_EXPIRE_OPT_SUBMIT.equals(nodeInfo.getExpireOpt())) {
                             //自动提交
                             flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
                                 .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()).tenant(flowInst.getTopUnit()));
                             //} else if ("X".equals(nodeInfo.getExpireOpt())) {
-                        } else if ("N".equals(nodeInfo.getExpireOpt())) {
+                        } else if (NodeInfo.TIME_EXPIRE_OPT_NOTIFY.equals(nodeInfo.getExpireOpt())) {
                             List<FlowWarning> flowWarnings = wfRuntimeWarningDao.listFlowWarning(flowInst.getFlowInstId(), nodeInst.getNodeInstId(),
                                 warningType, "N", null);
                             if (flowWarnings == null || flowWarnings.isEmpty()) {
