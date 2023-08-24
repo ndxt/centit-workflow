@@ -248,7 +248,7 @@ public class FlowTaskImpl {
                 }
 
                 // 更新节点实例剩余办理时间
-                if (("T".equals(nodeInst.getIsTimer()) || "H".equals(nodeInst.getIsTimer())) &&
+                if ((NodeInfo.TIME_LIMIT_NORMAL.equals(nodeInst.getIsTimer()) || NodeInfo.TIME_LIMIT_ONLY_NODE.equals(nodeInst.getIsTimer())) &&
                     (nodeInst.getTimeLimit() != null)) {
                     nodeInst.setTimeLimit(nodeInst.getTimeLimit() - consumeTime);
                     nodeInstanceDao.updateObject(nodeInst);
@@ -277,7 +277,7 @@ public class FlowTaskImpl {
 
             //如果关闭流程，流程状态置为C
             if (stopFlow) {
-                flowInst.setInstState("C");
+                flowInst.setInstState(FlowInstance.FLOW_STATE_COMPLETE);
                 flowInstanceDao.updateObject(flowInst);
                 continue;
             }
@@ -298,7 +298,7 @@ public class FlowTaskImpl {
                         wfRuntimeWarningDao.saveNewObject(flowWarning);
                     }
                     stageInstance.setTimeLimit(stageInstance.getTimeLimit() - consumeTime);
-                    if ("1".equals(stageInstance.getStageBegin())) {
+                    if (StageInstance.STAGE_TIMER_STATE_STARTED.equals(stageInstance.getStageBegin())) {
                         stageInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                     } else {
                         stageInstance.setStageBegin(StageInstance.STAGE_TIMER_STATE_STARTED);
