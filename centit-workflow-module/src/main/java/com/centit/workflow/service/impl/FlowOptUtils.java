@@ -58,7 +58,7 @@ public abstract class FlowOptUtils {
             stageInst.setFlowInstId(flowInstId);
             stageInst.setStageCode(wfStage.getStageCode());
             stageInst.setStageId(wfStage.getStageId());
-            stageInst.setStageBegin("0");
+            stageInst.setStageBegin(StageInstance.STAGE_TIMER_STATE_NOT_START);
             if(BooleanBaseOpt.castObjectToBoolean(wfStage.getIsAccountTime(), false)) {
                 stageInst.setPromiseTime(new WorkTimeSpan(wfStage.getTimeLimit()).toNumberAsMinute());
                 stageInst.setTimeLimit(stageInst.getPromiseTime());
@@ -137,8 +137,6 @@ public abstract class FlowOptUtils {
         Date updateTime = DatetimeOpt.currentUtilDate();
         nodeInst.setNodeId(node.getNodeId());
         nodeInst.setUnitCode(unitcode);
-        //nodeInst.setUserCode(usercode);
-        //nodeInst.setNodeParam(nodeParam);
         nodeInst.setNodeState(NodeInstance.NODE_STATE_NORMAL);
         //nodeInst.setIsTimer(isTimer);
         nodeInst.setTaskAssigned(NodeInstance.TASK_ASSIGN_TYPE_STATIC);
@@ -155,10 +153,16 @@ public abstract class FlowOptUtils {
         if(preNodeInst!=null) {
             nodeInst.setPrevNodeInstId(preNodeInst.getNodeInstId());
         }
+
+        if(StringUtils.equalsAny(node.getIsAccountTime(), NodeInfo.TIME_LIMIT_NORMAL,
+            NodeInfo.TIME_LIMIT_NONE, NodeInfo.TIME_LIMIT_ONLY_NODE)){
+            flowInst.setIsTimer(node.getIsAccountTime());
+        }
+
         //计算节点的期限
         //I ： 未设置（ignore 默认 ）、N 无 (无期限 none ) 、 F 每实例固定期限 fix 、C 节点固定期限  cycle。
         String timeLimit, timeLimitType;
-        if (trans==null || trans.getLimitType() == null || "I".equals(trans.getLimitType())) {
+        if (trans==null || trans.getLimitType() == null || NodeInfo.TIME_LIMIT_TYPE_IGNORE.equals(trans.getLimitType())) {
             timeLimit = node.getTimeLimit();
             timeLimitType = node.getLimitType();
         } else {

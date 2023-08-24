@@ -25,6 +25,8 @@ public class StageInstance implements java.io.Serializable {
     @Transient
     private String  stageName;
 
+    public static String STAGE_TIMER_STATE_NOT_START = "0";
+    public static String STAGE_TIMER_STATE_STARTED = "1";
     // 1 是否 已计时
     @Column(name = "STAGE_BEGIN")
     private String stageBegin;
@@ -39,12 +41,12 @@ public class StageInstance implements java.io.Serializable {
     // Constructors
     /** default constructor */
     public StageInstance() {
-        this.stageBegin= "0";
+        this.stageBegin=  STAGE_TIMER_STATE_NOT_START;
     }
     /** minimal constructor */
     public StageInstance(StageInstanceId id) {
         this.cid = id;
-        this.stageBegin= "0";
+        this.stageBegin= STAGE_TIMER_STATE_NOT_START;
     }
 
 /** full constructor */
@@ -196,7 +198,7 @@ public class StageInstance implements java.io.Serializable {
         this.stageCode = null;
         this.promiseTime= null;
         this.timeLimit= null;
-        this.stageBegin= "0";
+        this.stageBegin= STAGE_TIMER_STATE_NOT_START;
         this.beginTime=  null;
         this.lastUpdateTime= null;
     }

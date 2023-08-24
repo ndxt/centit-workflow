@@ -878,14 +878,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     transPath + "," + trans.getTransId());
         }
         nodeInst.setRunToken(nodeToken);
+
         //设置阶段进入时间 或者变更时间
         if (StringUtils.isNotBlank(nextOptNode.getStageCode())) {
             StageInstance stage = flowInst.getStageInstanceByCode(nextOptNode.getStageCode());
             if (stage != null) {
-                if ("1".equals(stage.getStageBegin())) {
+                if (StageInstance.STAGE_TIMER_STATE_STARTED.equals(stage.getStageBegin())) {
                     stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                 } else {
-                    stage.setStageBegin("1");
+                    stage.setStageBegin(StageInstance.STAGE_TIMER_STATE_STARTED);
                     stage.setBeginTime(DatetimeOpt.currentUtilDate());
                     stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                 }
@@ -1326,20 +1327,22 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
             OperationLogCenter.log(wfactlog);
         }
+
         nodeInstanceDao.updateObject(nodeInst);
         //设置阶段进 变更时间（提交时间）
         StageInstance stage = flowInst.getStageInstanceByCode(currNode.getStageCode());
         if (stage != null) {
-            if ("1".equals(stage.getStageBegin())) {
+            if (StageInstance.STAGE_TIMER_STATE_STARTED.equals(stage.getStageBegin())) {
                 stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
             } else {//这一句应该是运行不到的
-                stage.setStageBegin("1");
+                stage.setStageBegin(StageInstance.STAGE_TIMER_STATE_STARTED);
                 stage.setBeginTime(DatetimeOpt.currentUtilDate());
                 stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
             }
             stageInstanceDao.updateObject(stage);
 
         }
+        //这个后面是不是还有保存，
         flowInst.setLastUpdateTime(updateTime);
         flowInst.setLastUpdateUser(options.getUserCode());
         flowInstanceDao.updateObject(flowInst);

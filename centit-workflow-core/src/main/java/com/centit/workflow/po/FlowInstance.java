@@ -144,10 +144,12 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name = "LAST_UPDATE_USER")
     private String lastUpdateUser;
 
-    //不计时 F、计时T(有期限)、暂停P 忽略(无期限) F
+    //不计时 F、 计时 T(有期限)、暂停P 忽略(无期限)
     public static final String FLOW_TIMER_STATE_NOLIMIT = "F";
     public static final String FLOW_TIMER_STATE_RUN = "T";
     public static final String FLOW_TIMER_STATE_SUSPEND = "P";
+
+    public static final String FLOW_TIMER_STATE_ONLY_NODE = "H";
     @Column(name = "IS_TIMER")
     private String isTimer;
 

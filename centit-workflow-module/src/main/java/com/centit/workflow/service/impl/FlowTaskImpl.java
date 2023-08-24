@@ -258,14 +258,14 @@ public class FlowTaskImpl {
                     stageCodes.add(nodeInst.getStageCode());
                 }
 
-                if ("T".equals(nodeInst.getIsTimer())
+                if (NodeInfo.TIME_LIMIT_NORMAL.equals(nodeInst.getIsTimer())
                     /*&& "T".equals( node.getIsTrunkLine())*/) {
                     flowconsume = true;
                 }
             }
 
             // 流程实例预警（不支持流程实例预警规则）
-            if ("T".equals(flowInst.getIsTimer()) && flowInst.getTimeLimit() != null && flowInst.getTimeLimit() <= 0) {
+            if (FlowInstance.FLOW_TIMER_STATE_RUN.equals(flowInst.getIsTimer()) && flowInst.getTimeLimit() != null && flowInst.getTimeLimit() <= 0) {
                 List<FlowWarning> flowWarnings = wfRuntimeWarningDao.listFlowWarning(flowInst.getFlowInstId(),
                     "W", "F", null);
                 if (flowWarnings == null || flowWarnings.isEmpty()) {
@@ -283,7 +283,7 @@ public class FlowTaskImpl {
             }
 
             // 更新流程实例剩余办理时间
-            if (flowconsume && flowInst.getTimeLimit() != null) {
+            if (flowconsume && FlowInstance.FLOW_TIMER_STATE_RUN.equals(flowInst.getIsTimer()) && flowInst.getTimeLimit() != null) {
                 flowInst.setTimeLimit(flowInst.getTimeLimit() - consumeTime);
                 flowInstanceDao.updateObject(flowInst);
             }
@@ -301,7 +301,7 @@ public class FlowTaskImpl {
                     if ("1".equals(stageInstance.getStageBegin())) {
                         stageInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                     } else {
-                        stageInstance.setStageBegin("1");
+                        stageInstance.setStageBegin(StageInstance.STAGE_TIMER_STATE_STARTED);
                         stageInstance.setBeginTime(DatetimeOpt.currentUtilDate());
                         stageInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                     }
