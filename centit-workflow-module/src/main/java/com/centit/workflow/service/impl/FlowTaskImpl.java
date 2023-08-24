@@ -281,7 +281,7 @@ public class FlowTaskImpl {
                 flowInstanceDao.updateObject(flowInst);
                 continue;
             }
-
+            // FlowInstance.FLOW_TIMER_STATE_RUN.equals(flowInst.getIsTimer()) 流程计时状态是否要考虑其实是一个问题
             // 更新流程实例剩余办理时间
             if (flowconsume && FlowInstance.FLOW_TIMER_STATE_RUN.equals(flowInst.getIsTimer()) && flowInst.getTimeLimit() != null) {
                 flowInst.setTimeLimit(flowInst.getTimeLimit() - consumeTime);
