@@ -149,6 +149,7 @@ public abstract class FlowOptUtils {
         nodeInst.setStageCode(node.getStageCode());
         //计算节点的期限
         nodeInst.setIsTimer(node.getIsAccountTime());
+        //TODO 计时时间从常量升级为变量
         nodeInst.setTimeLimit(new WorkTimeSpan(node.getTimeLimit()).toNumberAsMinute());
         if(preNodeInst!=null) {
             nodeInst.setPrevNodeInstId(preNodeInst.getNodeInstId());

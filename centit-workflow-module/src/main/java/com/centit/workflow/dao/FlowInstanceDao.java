@@ -5,7 +5,6 @@ import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.database.utils.PageDesc;
-import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.FlowInstance;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,33 +64,6 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
         FlowInstance flowInst = this.getObjectById(instid);
         flowInst.setInstState(state);
         this.updateObject(flowInst);
-    }
-
-    /**
-     *  获取用户参与 流程实例 按照时间倒序排列
-     * @param userCode 用户代码
-     * @param pageDesc 分页描述
-     * @return
-     */
-    @Transactional
-    public List<FlowInstance> listUserAttachFlowInstance(String userCode, String flowPhase, Map<String, Object> filterMap, PageDesc pageDesc) {
-        //TODO 这个方法有严重问题，直接删除 或者重新设计  VUserAttachFlow 视图不存在
-        String whereSql = " where flow_Inst_Id in (select distinct u.flow_Inst_Id from VUserAttachFlow u ";
-        if (filterMap.get("oper") != null && filterMap.get("oper").equals("all")) {
-            whereSql += " )";
-        } else {
-            whereSql += " where u.user_Code="
-                + QueryUtils.buildStringForQuery(userCode)
-                + " and u.flow_Phase in (";
-
-            if (flowPhase != null && flowPhase.equals("fw")) {
-                whereSql += "'fw','yh','qf','zwh','pb','ysp','gz'";
-            } else {
-                whereSql += "'sw','pf','ys' ";
-            }
-            whereSql += " ) )";
-        }
-        return this.listObjectsByFilterAsJson(whereSql,filterMap,pageDesc).toJavaList(FlowInstance.class);
     }
 
     // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F

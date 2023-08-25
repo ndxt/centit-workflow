@@ -523,76 +523,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
     }
 
-    /**
-     * 通过flowOptTag获取流程实例
-     * @param flowOptTag
-     * @return
-     */
- /*   @Override
-    public FlowInstance getFlowInstance(String flowOptTag) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("flowOptTag",flowOptTag);
-        FlowInstance flowInstance = flowInstanceDao.getObjectByProperties(properties);
-        */
-
-    /**
-     * 初始化节点信息
-     *//*
-        initNodeInstances(flowInstance);
-        return flowInstance;
-    }*/
-    @Override
-    public List<FlowInstance> listUserAttachFlowInstance(String userCode,
-                                                         String flowPhase, Map<String, Object> filterMap, PageDesc pageDesc) {
-        List<FlowInstance> instList = flowInstanceDao
-            .listUserAttachFlowInstance(userCode, flowPhase, filterMap,
-                pageDesc);
-
-        for (FlowInstance flowInst : instList) {
-            StringBuffer curStep = new StringBuffer(1);
-            List<NodeInstance> activeNodeList = new ArrayList<NodeInstance>();
-            for (NodeInstance nodeInst : flowInst.getFlowNodeInstances()) {
-
-                if ("N".equals(nodeInst.getNodeState())
-                    || "W".equals(nodeInst.getNodeState())) {
-                    NodeInfo node = flowNodeDao.getObjectById(nodeInst
-                        .getNodeId());
-                    nodeInst.setNodeName(node.getNodeName());
-                    activeNodeList.add(nodeInst);
-                    curStep.append(node.getNodeName());
-                    curStep.append(',');
-                }
-            }
-            if (curStep.length() > 1) {
-                flowInst.setCurStep(curStep.deleteCharAt(curStep.length() - 1)
-                    .toString());
-            }
-            flowInst.setActiveNodeList(activeNodeList);
-        }
-
-        return new ArrayList<FlowInstance>(this.convertor(instList));
-    }
-
-    /**
-     * 转换流程名称等
-     *
-     * @param instList
-     * @return
-     */
-    private List<FlowInstance> convertor(List<FlowInstance> instList) {
-        //TO： 刘建洋这个为什么不用一个视图，后面可以更新这个效率太低。
-        if (instList == null) {
-            return null;
-        }
-        for (FlowInstance flowInst : instList) {
-            FlowInfo flowDef = flowDefDao.getFlowDefineByID(
-                flowInst.getFlowCode(), flowInst.getVersion());
-            if (flowDef != null) {
-                flowInst.setFlowName(flowDef.getFlowName());
-            }
-        }
-        return instList;
-    }
 
     @Override
     public JSONArray listFlowInstance(Map<String, Object> filterMap,
@@ -600,7 +530,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         return flowInstanceDao.listObjectsByPropertiesAsJson(filterMap,
             pageDesc);
     }
-
 
     /**
      * 更新流程实例状态，同时需更新所有节点实例状态
@@ -1119,7 +1048,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public int moveUserTaskTo(String fromUserCode, String toUserCode,
                               String optUserCode, String moveDesc) {
-        /** TODO 这个地方 逻辑较乱估计肯定有问题
+        /**
          *  1, 查出 所有的 fromUserCode 的待办， 可能在 wf_node_instance 也可能在 actiontask 表中
          *      但是不包括 委托的
          *  2, 每个任务 都需要在 actionlog 记录一条 任务转移的记录

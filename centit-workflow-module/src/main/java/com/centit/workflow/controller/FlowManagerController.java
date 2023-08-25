@@ -128,15 +128,15 @@ public class FlowManagerController extends BaseController {
 
     /**
      * 获取组织机构列表
-     * TODO:flowEng.viewFlowOrganize(flowInstId)要是直接返回unitInfo更方便
-     *
-     * @param flowInstId
-     * @param response
+     * flowEng.viewFlowOrganize(flowInstId)要是直接返回unitInfo更方便
+     * @param flowInstId 流程节点实例
+     * @param pageDesc 分页参数
+     * @return PageQueryResult 分页查询结果
      */
     @ApiOperation(value = "获取组织机构列表", notes = "获取组织机构列表")
     @RequestMapping(value = "/getorglist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public PageQueryResult<Map<String, String>> getOrganizeList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
+    public PageQueryResult<Map<String, String>> getOrganizeList(@PathVariable String flowInstId, PageDesc pageDesc) {
         Map<String, List<String>> organizeMap = flowEngine.viewFlowOrganize(flowInstId);
         List<Map<String, String>> organizeList = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : organizeMap.entrySet()) {

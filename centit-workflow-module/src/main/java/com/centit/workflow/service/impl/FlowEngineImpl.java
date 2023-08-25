@@ -1004,11 +1004,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         } else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())) {
             //  新建同步节点
-            nodeInst.setNodeState("T");
+            nodeInst.setNodeState(NodeInstance.NODE_STATE_SYNC);
             //  判断同步节点的同步方式是否为时间触发
             if (NodeInfo.SYNC_NODE_TYPE_TIME.equals(nextOptNode.getOptType())) {
                 // 设置时间
                 nodeInst.setIsTimer(NodeInfo.TIME_LIMIT_NORMAL);
+                //TODO 通过变量获取同步节点的同步时间
                 nodeInst.setTimeLimit(new WorkTimeSpan(nextOptNode.getTimeLimit()).toNumberAsMinute());
                 nodeInst.setPromiseTime(nodeInst.getTimeLimit());
             }

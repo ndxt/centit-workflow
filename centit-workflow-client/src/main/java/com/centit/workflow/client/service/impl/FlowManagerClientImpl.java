@@ -463,20 +463,6 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     /**
-     * 获取用户参与 流程实例 按照时间倒序排列
-     *
-     * @param userCode  用户代码
-     * @param flowPhase
-     * @param filterMap
-     * @param pageDesc  分页描述
-     * @return
-     */
-    @Override
-    public List<FlowInstance> listUserAttachFlowInstance(String userCode, String flowPhase, Map<String, Object> filterMap, PageDesc pageDesc) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
      * 查找所有没有操作用户的节点
      *
      * @return List<NodeInstance>

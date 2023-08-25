@@ -49,8 +49,15 @@ public class NodeInstance implements java.io.Serializable {
 
     @Column(name = "PREV_NODE_INST_ID")
     private String prevNodeInstId;
+
+    /**
+     * 承诺时间，以分钟计时的
+     */
     @Column(name = "PROMISE_TIME")
     private Long promiseTime;
+    /**
+     * 剩余时间，初始值等于 promiseTime， 有定时器自动扣取
+     */
     @Column(name = "TIME_LIMIT")
     private Long timeLimit;
 

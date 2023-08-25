@@ -311,16 +311,6 @@ public interface FlowManager {
      */
     List<? extends OperationLog> listUserActionLogs(String userCode, Date lastTime, PageDesc pageDesc);
 
-    /**
-     * 获取用户参与 流程实例 按照时间倒序排列
-     *
-     * @param userCode 用户代码
-     * @param pageDesc 分页描述
-     * @return
-     */
-    List<FlowInstance> listUserAttachFlowInstance(String userCode, String flowPhase, Map<String, Object> filterMap, PageDesc pageDesc);
-
-
     // ---------节点异常管理--------------------
 
     /**
