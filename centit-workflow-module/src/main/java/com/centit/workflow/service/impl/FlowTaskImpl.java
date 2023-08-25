@@ -257,8 +257,8 @@ public class FlowTaskImpl {
                 if(StringUtils.isNotBlank(nodeInst.getStageCode())) {
                     stageCodes.add(nodeInst.getStageCode());
                 }
-
-                if (NodeInfo.TIME_LIMIT_NORMAL.equals(nodeInst.getIsTimer())
+                // 非同步节点计时，则流程也计时
+                if (NodeInfo.TIME_LIMIT_NORMAL.equals(nodeInst.getIsTimer()) && !NodeInstance.NODE_STATE_SYNC.equals(nodeInst.getNodeState())
                     /*&& "T".equals( node.getIsTrunkLine())*/) {
                     flowconsume = true;
                 }
@@ -326,7 +326,7 @@ public class FlowTaskImpl {
         // 获取所有 时间事件的同步节点
         if (events != null && events.size() > 0) {
             for (FlowEventInfo eventInfo : events) {
-                List<NodeInstance> nodes = nodeInstanceDao.listNodeInstByState(eventInfo.getFlowInstId(), "T");
+                List<NodeInstance> nodes = nodeInstanceDao.listNodeInstByState(eventInfo.getFlowInstId(), NodeInstance.NODE_STATE_SYNC);
                 boolean hasOptEvent = false;
                 String successOpt = "S";
                 try {
