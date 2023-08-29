@@ -587,10 +587,12 @@ public class FlowInstance implements java.io.Serializable {
         }
 
         int subG = NodeInstance.calcTokenGeneration(token) + 1;
+        int subTokenBeginPos = token.length();
         for (NodeInstance nodeInst : flowNodeInstances) {
             String thisToken = nodeInst.getTrunkToken();
             if (thisToken != null && thisToken.startsWith(token + '.') &&
-                nodeInst.getCreateTime().compareTo(nodeBeginTime) >= 0) {
+                nodeInst.getCreateTime().compareTo(nodeBeginTime) >= 0 &&
+                thisToken.indexOf("R", subTokenBeginPos) < 0) { // 排除游离节点
                 String subNodeToken = NodeInstance.truncTokenGeneration(thisToken, subG);
                 if(nodeInst.checkIsNotCompleted() &&
                      ! nodeInst.getNodeInstId().equals(preNodeInst.getNodeInstId())){

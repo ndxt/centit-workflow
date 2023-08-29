@@ -528,10 +528,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         }
         //调用机构引擎来计算 unitCode 如果指定机构就不计算
-        if (CollectionUtils.isEmpty(nodeUnits)) {
+        if (CollectionUtils.isEmpty(nodeUnits) && StringUtils.isNotBlank(nextOptNode.getUnitExp())
+            && !"null".equals(nextOptNode.getUnitExp())) {
             nodeUnits = UserUnitCalcEngine.calcUnitsByExp(context,
                 nextOptNode.getUnitExp());
         }
+
         if (CollectionUtils.isNotEmpty(nodeUnits)) {
             // 将 机构表达式
             context.addUnitParam("N", nodeUnits);
@@ -655,7 +657,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
             }
             // D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
-            if (NodeInfo.ROUTER_TYPE_BRANCH.equals(routerType)) {
+            if (NodeInfo.ROUTER_TYPE_BRANCH.equals(routerType)) { // D:分支
                 // 分支节点只执行第一个符合条件的，如果有多个符合条件的 按道理应该报异常
                 // 这里为了最大可运行不报异常
                 FlowTransition nodeTran = selTrans.iterator().next();
@@ -907,6 +909,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //设置节点机构
         if (nodeUnits != null && !nodeUnits.isEmpty()) {
             nodeInst.setUnitCode(nodeUnits.iterator().next());
+        } else {
+            nodeInst.setUnitCode(null);
         }
 
         // S：子流程
