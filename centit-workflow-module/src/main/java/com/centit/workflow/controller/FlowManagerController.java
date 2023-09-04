@@ -13,8 +13,8 @@ import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.filter.RequestThreadLocal;
-import com.centit.framework.model.basedata.IUserInfo;
 import com.centit.framework.model.basedata.OperationLog;
+import com.centit.framework.model.basedata.UserInfo;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
@@ -547,7 +547,7 @@ public class FlowManagerController extends BaseController {
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
                             CodeRepositoryUtil.getValue("userCode", task.getUserCode()));
-                        IUserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
+                        UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
                         if (user != null) {
                             JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
                         }
@@ -763,7 +763,7 @@ public class FlowManagerController extends BaseController {
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         FlowInstance flowInstance = flowManager.getFlowInstance(flowInstId);
-        IUserInfo createFlowUser = CodeRepositoryUtil.getUserInfoByCode(topUnit, flowInstance.getUserCode());
+        UserInfo createFlowUser = CodeRepositoryUtil.getUserInfoByCode(topUnit, flowInstance.getUserCode());
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("createFlowUser", createFlowUser);
         resultMap.put("flowOptName", flowInstance.getFlowOptName());

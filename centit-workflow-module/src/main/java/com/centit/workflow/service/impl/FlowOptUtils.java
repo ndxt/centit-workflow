@@ -328,7 +328,7 @@ public abstract class FlowOptUtils {
                 if (a == null || a.length < 1) {
                     return null;
                 }
-                IUserInfo ui = context.getUserInfoByCode(StringBaseOpt.castObjectToString(a[0]));
+                UserInfo ui = context.getUserInfoByCode(StringBaseOpt.castObjectToString(a[0]));
                 if (ui == null) {
                     return "";
                 }
@@ -342,7 +342,7 @@ public abstract class FlowOptUtils {
                 if (a == null || a.length < 1) {
                     return null;
                 }
-                IUnitInfo ui = context.getUnitInfoByCode(StringBaseOpt.castObjectToString(a[0]));
+                UnitInfo ui = context.getUnitInfoByCode(StringBaseOpt.castObjectToString(a[0]));
                 if (ui == null) {
                     return "";
                 }
@@ -357,9 +357,9 @@ public abstract class FlowOptUtils {
                 if (a == null || a.length < 1) {
                     return null;
                 }
-                List<? extends IUserUnit> userUnits =
+                List<UserUnit> userUnits =
                     context.listUserUnits(StringBaseOpt.castObjectToString(a[0]));
-                return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUnitCode);
+                return CollectionsOpt.mapCollectionToSet(userUnits, UserUnit::getUnitCode);
             }
         );
         extendFuncs.put(
@@ -369,9 +369,9 @@ public abstract class FlowOptUtils {
                 if (a == null || a.length < 1) {
                     return null;
                 }
-                List<? extends IUserUnit> userUnits =
+                List<UserUnit> userUnits =
                     context.listUnitUsers(StringBaseOpt.castObjectToString(a[0]));
-                return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUserCode);
+                return CollectionsOpt.mapCollectionToSet(userUnits, UserUnit::getUserCode);
             }
         );
 
@@ -388,14 +388,14 @@ public abstract class FlowOptUtils {
                     userType = StringBaseOpt.castObjectToString(a[1]);
                 }
                 if (SysUserFilterEngine.ROLE_TYPE_SYSTEM.equals(userType)) {
-                    List<? extends IUserRole> roles = context.listUserRoles(userCode);
-                    return CollectionsOpt.mapCollectionToSet(roles, IUserRole::getRoleCode);
+                    List<UserRole> roles = context.listUserRoles(userCode);
+                    return CollectionsOpt.mapCollectionToSet(roles, UserRole::getRoleCode);
                 } else if (SysUserFilterEngine.ROLE_TYPE_GW.equals(userType)) {
-                    List<? extends IUserUnit> userUnits = context.listUserUnits(userCode);
-                    return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUserStation);
+                    List<UserUnit> userUnits = context.listUserUnits(userCode);
+                    return CollectionsOpt.mapCollectionToSet(userUnits, UserUnit::getUserStation);
                 } else {
-                    List<? extends IUserUnit> userUnits = context.listUserUnits(userCode);
-                    return CollectionsOpt.mapCollectionToSet(userUnits, IUserUnit::getUserRank);
+                    List<UserUnit> userUnits = context.listUserUnits(userCode);
+                    return CollectionsOpt.mapCollectionToSet(userUnits, UserUnit::getUserRank);
                 }
             }
         );

@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
-import com.centit.framework.model.basedata.IUserUnit;
+import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.DBType;
 import com.centit.support.database.utils.PageDesc;
@@ -249,7 +249,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         return dataList == null ? null : dataList.toJavaList(UserTask.class);
     }
 
-    public static String buildDynamicTaskSql(List<? extends IUserUnit> userUnits){
+    public static String buildDynamicTaskSql(List<UserUnit> userUnits){
         StringBuilder sqlBuilder = new StringBuilder(3072);
         int uuCount = userUnits.size();
         sqlBuilder.append(userDynamicTaskSqlPart1).append(" and ");
@@ -271,9 +271,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         return sqlBuilder.toString();
     }
 
-    public static void appendDynamicQueryParams( Map<String, Object> queryMap, List<? extends IUserUnit> userUnits){
+    public static void appendDynamicQueryParams( Map<String, Object> queryMap, List<UserUnit> userUnits){
         int i=0;
-        for(IUserUnit uu : userUnits){
+        for(UserUnit uu : userUnits){
             queryMap.put("userUnitCode"+i, uu.getUnitCode());
             queryMap.put("userStation"+i, uu.getUserStation());
             i++;
@@ -281,7 +281,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     }
 
     @Transactional
-    public List<UserTask> listUserDynamicTask(List<? extends IUserUnit> userUnits, Map<String, Object> filter, PageDesc pageDesc) {
+    public List<UserTask> listUserDynamicTask(List<UserUnit> userUnits, Map<String, Object> filter, PageDesc pageDesc) {
         String querySql = buildDynamicTaskSql(userUnits);
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(querySql + " order by CREATE_TIME desc ", filter);
         Map<String, Object> queryParamMap = CollectionsOpt.unionTwoMap(queryAndNamedParams.getParams(), filter);
@@ -293,7 +293,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     }
 
     @Transactional
-    public List<UserTask> listUserAllTask(List<? extends IUserUnit> userUnits, Map<String, Object> filter, PageDesc pageDesc) {
+    public List<UserTask> listUserAllTask(List<UserUnit> userUnits, Map<String, Object> filter, PageDesc pageDesc) {
 
         QueryAndNamedParams staticQuery = QueryUtils.translateQuery(userStaticTaskBaseSql , filter);
         String staticSql = staticQuery.getQuery();

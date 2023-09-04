@@ -9,7 +9,7 @@ import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
-import com.centit.framework.model.basedata.IUserUnit;
+import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleRelegate;
 import com.centit.workflow.service.RoleRelegateService;
@@ -107,7 +107,7 @@ public class RoleRelegateController extends BaseController {
     )
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/role/{userCode}")
-    public List<? extends IUserUnit> listUserRoles(@PathVariable String userCode, HttpServletRequest request) {
+    public List<UserUnit> listUserRoles(@PathVariable String userCode, HttpServletRequest request) {
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         return context.listUserUnits(userCode);

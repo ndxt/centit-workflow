@@ -9,8 +9,8 @@ import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
-import com.centit.framework.model.basedata.IUnitInfo;
-import com.centit.framework.model.basedata.IUserInfo;
+import com.centit.framework.model.basedata.UnitInfo;
+import com.centit.framework.model.basedata.UserInfo;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.ObjectException;
 import com.centit.support.compiler.ObjectTranslate;
@@ -144,7 +144,7 @@ public class RoleFormulaController extends BaseController {
             WebOptUtils.getCurrentUnitCode(request));
     }
 
-    private static List<? extends IUserInfo> truncateUsers(List<? extends IUserInfo> allusers, Integer maxSize) {
+    private static List<UserInfo> truncateUsers(List<UserInfo> allusers, Integer maxSize) {
         if (maxSize == null || maxSize < 1 || allusers == null || allusers.size() <= maxSize) {
             return allusers;
         }
@@ -154,7 +154,7 @@ public class RoleFormulaController extends BaseController {
     @ApiOperation(value = "列举所有用户", notes = "列举所有用户")
     @WrapUpResponseBody
     @RequestMapping(value = "/allUsers", method = RequestMethod.GET)
-    public List<? extends IUserInfo> listAllUserInfo(Integer maxUsers, HttpServletRequest request) {
+    public List<UserInfo> listAllUserInfo(Integer maxUsers, HttpServletRequest request) {
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         return truncateUsers(roleFormulaService.listAllUserInfo(topUnit), maxUsers);
     }
@@ -162,7 +162,7 @@ public class RoleFormulaController extends BaseController {
     @ApiOperation(value = "根据前缀或者后缀查询用户", notes = "根据前缀或者后缀查询用户")
     @WrapUpResponseBody
     @RequestMapping(value = "/users/{prefix}", method = RequestMethod.GET)
-    public List<? extends IUserInfo> listUserInfo(@PathVariable String prefix, Integer maxUsers, HttpServletRequest request) {
+    public List<UserInfo> listUserInfo(@PathVariable String prefix, Integer maxUsers, HttpServletRequest request) {
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         return truncateUsers(roleFormulaService.listUserInfo(prefix, topUnit), maxUsers);
     }
@@ -170,7 +170,7 @@ public class RoleFormulaController extends BaseController {
     @ApiOperation(value = "列举所有机构", notes = "列举所有机构")
     @WrapUpResponseBody
     @RequestMapping(value = "/allUnits", method = RequestMethod.GET)
-    public List<? extends IUnitInfo> listAllUnitInfo(HttpServletRequest request) {
+    public List<UnitInfo> listAllUnitInfo(HttpServletRequest request) {
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         return roleFormulaService.listAllUnitInfo(topUnit);
     }
@@ -178,7 +178,7 @@ public class RoleFormulaController extends BaseController {
     @ApiOperation(value = "列举所有子机构", notes = "列举所有子机构")
     @WrapUpResponseBody
     @RequestMapping(value = "/subUnits/{unitCode}", method = RequestMethod.GET)
-    public List<? extends IUnitInfo> listSubUnit(@PathVariable String unitCode) {
+    public List<UnitInfo> listSubUnit(@PathVariable String unitCode) {
         if ("null".equalsIgnoreCase(unitCode)) {
             unitCode = "";
         }

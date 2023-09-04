@@ -2,8 +2,8 @@ package com.centit.workflow.service;
 
 
 import com.alibaba.fastjson2.JSONArray;
-import com.centit.framework.model.basedata.IUnitInfo;
-import com.centit.framework.model.basedata.IUserInfo;
+import com.centit.framework.model.basedata.UnitInfo;
+import com.centit.framework.model.basedata.UserInfo;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleFormula;
 
@@ -26,11 +26,11 @@ public interface RoleFormulaService {
 
     JSONArray viewRoleFormulaUsers(String formulaCode, String userCode, String unitCode);
 
-    List<? extends IUserInfo> listAllUserInfo(String topUnit);
+    List<UserInfo> listAllUserInfo(String topUnit);
 
-    List<? extends IUserInfo> listUserInfo(String prefix, String topUnit);
+    List<UserInfo> listUserInfo(String prefix, String topUnit);
 
-    List<? extends IUnitInfo> listAllUnitInfo(String topUnit);
+    List<UnitInfo> listAllUnitInfo(String topUnit);
 
-    List<? extends IUnitInfo> listSubUnit(String unitCode);
+    List<UnitInfo> listSubUnit(String unitCode);
 }

@@ -11,12 +11,10 @@ import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
-import com.centit.framework.security.model.StandardPasswordEncoderImpl;
+import com.centit.framework.security.StandardPasswordEncoderImpl;
 import com.centit.msgpusher.plugins.EMailMsgPusher;
 import com.centit.msgpusher.plugins.SystemUserEmailSupport;
 import com.centit.support.security.SecurityOptUtils;
-import com.centit.workflow.context.ExtFrameworkContextCacheBean;
-import com.centit.workflow.context.JdbcUserUnitCalcContextFactoryImpl;
 import com.centit.workflow.service.impl.SystemUserUnitCalcContextFactoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,15 +80,14 @@ public class ServiceConfig {
 
     @Bean
     public UserUnitFilterCalcContextFactory userUnitFilterFactory() {
-        if ("external".equalsIgnoreCase(engineType)) { //jdbc
+        /*if ("external".equalsIgnoreCase(engineType)) { //jdbc
             ExtFrameworkContextCacheBean contextCacheBean = new ExtFrameworkContextCacheBean();
             contextCacheBean.setDatabaseSource(externalJdbcUrl, externalJdbcUser, externalJdbcPassword);
             JdbcUserUnitCalcContextFactoryImpl factoryBean = new JdbcUserUnitCalcContextFactoryImpl();
             factoryBean.setExtFrameworkContextCacheBean(contextCacheBean);
             return factoryBean;
-        } else {
+        } else {*/
             return new SystemUserUnitCalcContextFactoryImpl();
-        }
     }
 
     /*@Bean 注入 opt-log-module 将操作日志持久化

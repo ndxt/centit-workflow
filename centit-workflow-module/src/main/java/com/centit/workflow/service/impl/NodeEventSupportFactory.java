@@ -4,7 +4,7 @@ import com.centit.framework.appclient.AppSession;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.filter.RequestThreadLocal;
-import com.centit.framework.model.basedata.IOsInfo;
+import com.centit.framework.model.basedata.OsInfo;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.service.FlowEngine;
@@ -42,7 +42,7 @@ public class NodeEventSupportFactory {
         WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
-        IOsInfo osInfo = StringUtils.isBlank(nodeInfo.getOsId()) ?
+        OsInfo osInfo = StringUtils.isBlank(nodeInfo.getOsId()) ?
             null : CodeRepositoryUtil.getOsInfo(topUnit, nodeInfo.getOsId());
 
         if (osInfo != null && StringUtils.isNotBlank(osInfo.getOsUrl())) {

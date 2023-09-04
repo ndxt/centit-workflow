@@ -12,7 +12,7 @@ import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
-import com.centit.framework.model.basedata.IUserUnit;
+import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.aop.NoRepeatCommit;
@@ -316,7 +316,7 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/viewFlowWorkTeamUser")
     public JSONArray viewFlowWorkTeamUser(HttpServletRequest request, FlowWorkTeam flowWorkTeam) {
         List<String> teamUserCodes = flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
-        List<IUserUnit> teamUsers = new ArrayList<>();
+        List<UserUnit> teamUsers = new ArrayList<>();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         teamUserCodes.forEach(u -> {
             teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u));

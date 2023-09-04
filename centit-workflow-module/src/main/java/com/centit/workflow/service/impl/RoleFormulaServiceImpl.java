@@ -6,8 +6,8 @@ import com.centit.framework.common.GlobalConstValue;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
-import com.centit.framework.model.basedata.IUnitInfo;
-import com.centit.framework.model.basedata.IUserInfo;
+import com.centit.framework.model.basedata.UnitInfo;
+import com.centit.framework.model.basedata.UserInfo;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.RoleFormulaDao;
@@ -39,7 +39,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
 
 
     private String fetchTopUnit(String unitCode) {
-        IUnitInfo ui = platformEnvironment.loadUnitInfo(unitCode);
+        UnitInfo ui = platformEnvironment.loadUnitInfo(unitCode);
         if(ui!=null){
             return ui.getTopUnit();
         }
@@ -81,14 +81,14 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
         Set<String> sUsers = UserUnitCalcEngine.calcOperators(
             context, formula);
 
-        List<IUserInfo> userInfos = new ArrayList<>();
+        List<UserInfo> userInfos = new ArrayList<>();
         for (String uc : sUsers) {
             userInfos.add(context.getUserInfoByCode(uc));
         }
         // 根据userOrder增加排序
-        Collections.sort(userInfos, new Comparator<IUserInfo>() {
+        Collections.sort(userInfos, new Comparator<UserInfo>() {
             @Override
-            public int compare(IUserInfo o1, IUserInfo o2) {
+            public int compare(UserInfo o1, UserInfo o2) {
                 Long i = o1.getUserOrder() - o2.getUserOrder();
                 return new Long(i).intValue();
             }
@@ -106,7 +106,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
         Set<String> sUnits = UserUnitCalcEngine.calcUnitsByExp(
             context, formula);
 
-        List<IUnitInfo> userInfos = new ArrayList<>();
+        List<UnitInfo> userInfos = new ArrayList<>();
         for (String uc : sUnits) {
             userInfos.add(context.getUnitInfoByCode(uc));
         }
@@ -123,16 +123,16 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     }
 
     @Override
-    public List<? extends IUserInfo> listAllUserInfo(String topUnit) {
+    public List<UserInfo> listAllUserInfo(String topUnit) {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         return context.listAllUserInfo();
     }
 
     @Override
-    public List<? extends IUserInfo> listUserInfo(String prefix, String topUnit) {
-        List<? extends IUserInfo> allUsers = listAllUserInfo(topUnit);
-        List<IUserInfo> selUsers = new ArrayList<>();
-        for (IUserInfo user : allUsers) {
+    public List<UserInfo> listUserInfo(String prefix, String topUnit) {
+        List<UserInfo> allUsers = listAllUserInfo(topUnit);
+        List<UserInfo> selUsers = new ArrayList<>();
+        for (UserInfo user : allUsers) {
             if (user.getUserName().startsWith(prefix)
                 || user.getUserName().endsWith(prefix)
                 || user.getLoginName().startsWith(prefix)
@@ -144,9 +144,9 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
     }
 
     @Override
-    public List<? extends IUnitInfo> listAllUnitInfo(String topUnit) {
+    public List<UnitInfo> listAllUnitInfo(String topUnit) {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
-        List<? extends IUnitInfo> unitInfos = context.listAllUnitInfo();
+        List<UnitInfo> unitInfos = context.listAllUnitInfo();
         CollectionsOpt.sortAsTree(unitInfos,
             (p, c) -> StringUtils.equals(p.getUnitCode(), c.getParentUnit()));
         return unitInfos;
@@ -159,7 +159,7 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
      * @return 子机构集合
      */
     @Override
-    public List<? extends IUnitInfo> listSubUnit(String unitCode) {
+    public List<UnitInfo> listSubUnit(String unitCode) {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(fetchTopUnit(unitCode));
         return context.listSubUnit(unitCode);
         /*CollectionsOpt.sortAsTree(unitInfos,

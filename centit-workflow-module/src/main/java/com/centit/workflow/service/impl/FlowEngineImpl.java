@@ -175,7 +175,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     private void fetchTopUnit(FlowOptParamOptions options) {
         if(StringUtils.isBlank(options.getTopUnit())){
-            IUnitInfo ui = platformEnvironment.loadUnitInfo(options.getUnitCode());
+            UnitInfo ui = platformEnvironment.loadUnitInfo(options.getUnitCode());
             if(ui!=null){
                 options.setTopUnit(ui.getTopUnit());
             }
@@ -209,7 +209,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //获取流程信息
         FlowInfo wf = flowDefDao.getFlowDefineByID(options.getFlowCode(), options.getFlowVersion());
         if(StringUtils.isBlank(options.getTopUnit())){
-            IOsInfo iOsInfo = platformEnvironment.getOsInfo(wf.getOsId());
+            OsInfo iOsInfo = platformEnvironment.getOsInfo(wf.getOsId());
             if(iOsInfo!=null) {
                 options.setTopUnit(iOsInfo.getTopUnit());
             }
@@ -493,7 +493,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         // C 参数指定的，就是提交的人和机构
         String currUnitCode = options.getUnitCode();
         if (options.getUnitCode() == null && options.getUserCode() != null) {
-            IUserInfo ui = context.getUserInfoByCode(options.getUserCode());
+            UserInfo ui = context.getUserInfoByCode(options.getUserCode());
             if (ui != null) {
                 currUnitCode = ui.getPrimaryUnit();
             }
@@ -2234,7 +2234,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return CollectionsOpt.createList(userTask);
         }
         //获取租户
-        IUnitInfo ui = platformEnvironment.loadUnitInfo(nodeInst.getUnitCode());
+        UnitInfo ui = platformEnvironment.loadUnitInfo(nodeInst.getUnitCode());
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(ui.getTopUnit());
         Set<String> optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(context,
             SysUserFilterEngine.ROLE_TYPE_GW, userTask.getRoleCode(), userTask.getUnitCode());
@@ -2296,7 +2296,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         //动态任务
         //1.找到用户所有机构下的岗位和职务
-        List<? extends IUserUnit> iUserUnits = context.listUserUnits(userCode);
+        List<UserUnit> iUserUnits = context.listUserUnits(userCode);
         return userTaskListDao.listUserDynamicTask(iUserUnits, searchColumn, pageDesc);
     }
 
@@ -2361,10 +2361,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(topUnit);
         //动态任务
         //1.找到用户所有机构下的岗位和职务
-        List<? extends IUserUnit> iUserUnits = context.listUserUnits(userCode);
+        List<UserUnit> iUserUnits = context.listUserUnits(userCode);
         Integer count = iUserUnits.size();
         for (int i = 0; i < count; i++) {
-            IUserUnit iUserUnit = iUserUnits.get(i);
+            UserUnit iUserUnit = iUserUnits.get(i);
             filterMap.put("userUnitCode" + i, iUserUnit.getUnitCode());
             filterMap.put("userStation" + i, iUserUnit.getUserStation());
         }

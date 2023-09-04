@@ -10,8 +10,7 @@ import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
-import com.centit.framework.model.basedata.IOptInfo;
-import com.centit.framework.system.po.OptInfo;
+import com.centit.framework.model.basedata.OptInfo;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
@@ -129,18 +128,18 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         JSONArray flowDefineJsonArray = new JSONArray();
         List<FlowInfo> flows = flowDefineDao.listLastVersionFlowByOptId(optId);
-        List<? extends IOptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
+        List<OptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
         List<FlowInfo> tyFlows = new ArrayList<FlowInfo>();
         OptInfo optInfo = null;
         String tyOptId = "";
         boolean flag = true;
-        for(IOptInfo obj : allOptInfos){
+        for(OptInfo obj : allOptInfos){
             if(obj.getOptId().equals(optId)){
-                optInfo = (OptInfo) obj;
+                optInfo = obj;
             }
         }
         if(optInfo != null){
-            for(IOptInfo obj : allOptInfos){
+            for(OptInfo obj : allOptInfos){
                 if(obj.getTopOptId().equals(optInfo.getTopOptId()) && obj.getOptName().equals(optInfo.OPT_INFO_FORM_CODE_COMMON_NAME)){
                     tyOptId = obj.getOptId();
                     if(tyOptId.equals(optId)){

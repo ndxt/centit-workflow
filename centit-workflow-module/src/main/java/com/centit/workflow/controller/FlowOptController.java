@@ -7,9 +7,8 @@ import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.PlatformEnvironment;
-import com.centit.framework.model.basedata.IOptInfo;
-import com.centit.framework.model.basedata.IOsInfo;
-import com.centit.framework.system.po.OptInfo;
+import com.centit.framework.model.basedata.OptInfo;
+import com.centit.framework.model.basedata.OsInfo;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.OptTeamRole;
@@ -44,7 +43,7 @@ public class FlowOptController extends BaseController {
     @ApiOperation(value = "获取业务系统列表", notes = "获取业务系统列表")
     @WrapUpResponseBody
     @RequestMapping(value="/oslist" ,method = RequestMethod.GET)
-    public List<? extends IOsInfo> listAllOs(HttpServletRequest request){
+    public List<OsInfo> listAllOs(HttpServletRequest request){
         return CodeRepositoryUtil.listOsInfo(
             WebOptUtils.getCurrentTopUnit(request));
     }
@@ -64,18 +63,18 @@ public class FlowOptController extends BaseController {
     public PageQueryResult<OptTeamRole> listAllOptTeamRolesByOptId(@PathVariable String optId, PageDesc pageDesc) {
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
-        List<? extends IOptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
+        List<OptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
         List<OptTeamRole> tyRoles = new ArrayList<OptTeamRole>();
         OptInfo optInfo = null;
         String tyOptId = "";
         boolean flag = true;
-        for(IOptInfo obj : allOptInfos){
+        for(OptInfo obj : allOptInfos){
             if(obj.getOptId().equals(optId)){
                 optInfo = (OptInfo) obj;
             }
         }
         if(optInfo != null){
-            for(IOptInfo obj : allOptInfos){
+            for(OptInfo obj : allOptInfos){
                 if(obj.getTopOptId().equals(optInfo.getTopOptId()) && obj.getOptName().equals(optInfo.OPT_INFO_FORM_CODE_COMMON_NAME)){
                     tyOptId = obj.getOptId();
                     if(tyOptId.equals(optId)){
@@ -139,18 +138,18 @@ public class FlowOptController extends BaseController {
     public PageQueryResult<OptVariableDefine> listAllOptVariableDefinesByOptId(@PathVariable String optId, PageDesc pageDesc) {
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
-        List<? extends IOptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
+        List<OptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
         List<OptVariableDefine> tyVariables = new ArrayList<OptVariableDefine>();
         OptInfo optInfo = null;
         String tyOptId = "";
         boolean flag = true;
-        for(IOptInfo obj : allOptInfos){
+        for(OptInfo obj : allOptInfos){
             if(obj.getOptId().equals(optId)){
                 optInfo = (OptInfo) obj;
             }
         }
         if(optInfo != null){
-            for(IOptInfo obj : allOptInfos){
+            for(OptInfo obj : allOptInfos){
                 if(obj.getTopOptId().equals(optInfo.getTopOptId()) && obj.getOptName().equals(optInfo.OPT_INFO_FORM_CODE_COMMON_NAME)){
                     tyOptId = obj.getOptId();
                     if(tyOptId.equals(optId)){
