@@ -56,7 +56,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         " order by t.last_update_time desc ";
 
     private final static String allAboutNodeTask = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
-        "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE,b.USER_CODE, b.ROLE_TYPE," +
+        "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE, b.USER_CODE, b.ROLE_TYPE," +
         "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
         "c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
         "c.OPT_CODE, c.EXPIRE_OPT, c.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
@@ -67,7 +67,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "where b.NODE_INST_ID = ?";
 
     private final static String userStaticTaskBaseSql = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
-        "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE,b.USER_CODE, b.ROLE_TYPE," +
+        "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE, b.USER_CODE, b.ROLE_TYPE," +
         "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
         "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +

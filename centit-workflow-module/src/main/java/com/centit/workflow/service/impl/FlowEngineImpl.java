@@ -174,7 +174,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     private void fetchTopUnit(FlowOptParamOptions options) {
-        if(StringUtils.isBlank(options.getTopUnit())){
+        if(StringUtils.isBlank(options.getTopUnit()) && StringUtils.isNotBlank(options.getUnitCode())){
             UnitInfo ui = platformEnvironment.loadUnitInfo(options.getUnitCode());
             if(ui!=null){
                 options.setTopUnit(ui.getTopUnit());
@@ -2233,9 +2233,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (NodeInstance.TASK_ASSIGN_TYPE_STATIC.equals(nodeInst.getTaskAssigned())) {
             return CollectionsOpt.createList(userTask);
         }
-        //获取租户
-        UnitInfo ui = platformEnvironment.loadUnitInfo(nodeInst.getUnitCode());
+        UnitInfo ui;
+        if(StringUtils.isBlank(nodeInst.getUnitCode())){
+            FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
+            ui = platformEnvironment.loadUnitInfo(flowInst.getUnitCode());
+        } else {
+            //获取租户
+            ui = platformEnvironment.loadUnitInfo(nodeInst.getUnitCode());
+        }
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(ui.getTopUnit());
+
         Set<String> optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(context,
             SysUserFilterEngine.ROLE_TYPE_GW, userTask.getRoleCode(), userTask.getUnitCode());
         if (optUsers == null || optUsers.size() == 0) {

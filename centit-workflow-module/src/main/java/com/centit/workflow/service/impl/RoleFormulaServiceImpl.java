@@ -39,9 +39,11 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
 
 
     private String fetchTopUnit(String unitCode) {
-        UnitInfo ui = platformEnvironment.loadUnitInfo(unitCode);
-        if(ui!=null){
-            return ui.getTopUnit();
+        if(StringUtils.isNotBlank(unitCode)) {
+            UnitInfo ui = platformEnvironment.loadUnitInfo(unitCode);
+            if (ui != null) {
+                return ui.getTopUnit();
+            }
         }
         return GlobalConstValue.NO_TENANT_TOP_UNIT;
     }
