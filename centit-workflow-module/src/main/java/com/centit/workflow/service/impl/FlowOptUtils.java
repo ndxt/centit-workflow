@@ -69,7 +69,7 @@ public abstract class FlowOptUtils {
             flowInst.addFlowStageInstance(stageInst);
         }
 
-        if (!StringBaseOpt.isNvl(timeLimit)) {
+        if (StringUtils.isNotBlank(timeLimit)) {
             // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
             flowInst.setIsTimer("T");
             flowInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
