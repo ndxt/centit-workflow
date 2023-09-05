@@ -1309,10 +1309,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             // 更新流程业务名称，长度必须大于1个字符
             if(StringUtils.length(options.getFlowOptName())>1) {
                 flowInst.setFlowOptName(options.getFlowOptName());
-                flowInstanceDao.updateFlowInstOptName(
-                    flowInst.getFlowInstId(),
-                    flowInst.getFlowOptName()
-                );
             }
             saveValueAndRoleInOptions(nodeInst.getFlowInstId(), nodeInst.getRunToken(), options);
         }
@@ -1350,7 +1346,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //这个后面是不是还有保存，
         flowInst.setLastUpdateTime(updateTime);
         flowInst.setLastUpdateUser(options.getUserCode());
-        flowInstanceDao.updateObject(flowInst);
 
         List<String> nextNodeInsts = new ArrayList<>();
         //删除了多人操作判断的逻辑，
@@ -1371,6 +1366,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nodeInstanceDao.updateObject(preNodeInst);
             }
             nodeInstanceDao.updateObject(nodeInst);
+            flowInstanceDao.updateObject(flowInst);
             return nextNodeInsts;
         }
 
@@ -1381,6 +1377,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //将节点的状态设置为已完成
                 nodeInst.setNodeState("C");
                 nodeInstanceDao.updateObject(nodeInst);
+                flowInstanceDao.updateObject(flowInst);
                 return nextNodeInsts;
             } else {
                 logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
@@ -1407,6 +1404,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             flowNodeDao.getObjectById(nextNodeId), nodeInst.getRunToken(), flowInst, flowInfo,
             nodeInst, null, nodeTran, options,
             flowVarTrans, application);
+
+        flowInstanceDao.updateObject(flowInst);
         return nextNodeInsts;
     }
 

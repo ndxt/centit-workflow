@@ -90,18 +90,20 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
      */
     @Transactional
     public List<FlowInstance> listAllActiveFlowInst(PageDesc pageDesc){
-        return this.listObjectsByFilterAsJson("where inst_State = 'N'",new Object[]{},pageDesc).toJavaList(FlowInstance.class);
+        return this.listObjectsByFilterAsJson("where inst_State = 'N'",
+            new Object[]{},pageDesc).toJavaList(FlowInstance.class);
     }
 
     @Transactional
     public List<FlowInstance> listAllActiveTimerFlowInst(){
-        String whereSql = "where inst_State = 'N' and is_Timer='T'";
+        String whereSql = "where inst_State = 'N' and (is_Timer='T' or is_Timer='H')";
         return this.listObjectsByFilter(whereSql,(Object[]) null);
     }
 
     @Transactional
     public List<FlowInstance> listAllActiveTimerFlowInst(PageDesc pageDesc){
-        return this.listObjectsByFilterAsJson("where inst_State = 'N' and is_Timer='T'",new Object[]{},pageDesc).toJavaList(FlowInstance.class);
+        return this.listObjectsByFilterAsJson("where inst_State = 'N' and (is_Timer='T' or is_Timer='H')",
+            new Object[]{},pageDesc).toJavaList(FlowInstance.class);
     }
 
     /**

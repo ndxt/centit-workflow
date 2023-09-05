@@ -51,7 +51,7 @@ public abstract class FlowOptUtils {
         if (StringUtils.isNotBlank(timeLimitStr)) {
             timeLimit = timeLimitStr;
         }
-        flowInst.setIsTimer("F");
+        flowInst.setIsTimer(FlowInstance.FLOW_TIMER_STATE_NOLIMIT);
         // 创建 环节实例
         for (FlowStage wfStage : wf.getFlowStages()) {
             StageInstance stageInst = flowInst.newFlowStageInstance();
@@ -71,7 +71,7 @@ public abstract class FlowOptUtils {
 
         if (StringUtils.isNotBlank(timeLimit)) {
             // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
-            flowInst.setIsTimer("T");
+            flowInst.setIsTimer(FlowInstance.FLOW_TIMER_STATE_RUN);
             flowInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
         } else
             flowInst.setTimeLimit(null);

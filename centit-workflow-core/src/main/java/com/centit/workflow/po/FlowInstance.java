@@ -148,7 +148,6 @@ public class FlowInstance implements java.io.Serializable {
     public static final String FLOW_TIMER_STATE_NOLIMIT = "F";
     public static final String FLOW_TIMER_STATE_RUN = "T";
     public static final String FLOW_TIMER_STATE_SUSPEND = "P";
-
     public static final String FLOW_TIMER_STATE_ONLY_NODE = "H";
     @Column(name = "IS_TIMER")
     private String isTimer;
