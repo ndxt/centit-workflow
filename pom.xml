@@ -97,6 +97,7 @@
         <!--<module>centit-workflow-server</module>-->
         <module>centit-workflow-dubbo-server-config</module>
         <module>centit-workflow-dubbo-client-config</module>
+        <module>centit-workflow-timedtask</module>
     </modules>
 
     <!-- mvn deploy -DpomFile=pom.xml -->
