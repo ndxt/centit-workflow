@@ -6,7 +6,8 @@ import com.centit.framework.common.JsonResultUtils;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.SysUserFilterEngine;
-import com.centit.framework.core.controller.BaseController;
+import com.centit.product.oa.team.utils.ResourceBaseController;
+import com.centit.product.oa.team.utils.ResourceLock;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.support.algorithm.CollectionsOpt;
@@ -42,7 +43,7 @@ import java.util.Map;
 @Api(value = "流程定义",
     tags = "流程定义接口类")
 @RequestMapping("/flow/define")
-public class FlowDefineController extends BaseController {
+public class FlowDefineController extends ResourceBaseController {
     //public static final Logger logger = LoggerFactory.getLogger(SampleFlowDefineController.class);
 
     @Autowired
@@ -300,11 +301,16 @@ public class FlowDefineController extends BaseController {
      *
      * @param flowdefine 流程定义信息
      * @param flowcode 流程代码
+     * @param request HttpServletRequest
      * @param response HttpServletResponse
      */
     @ApiOperation(value = "修改流程的基本信息",notes = "修改流程的基本信息")
     @RequestMapping(value = "/{flowcode}", method = RequestMethod.POST)
-    public void editFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
+    public void editFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String flowcode,
+                              HttpServletRequest request, HttpServletResponse response) {
+        //检查资源
+        ResourceLock.lockResource(flowcode, WebOptUtils.getCurrentUserCode(request));
+
         flowdefine.setFlowCode(flowcode);
         flowdefine.setVersion(0l);
         boolean saveSucced = flowDefine.saveDraftFlowDef(flowdefine);
@@ -312,8 +318,6 @@ public class FlowDefineController extends BaseController {
             JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
         else
             JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
-        //新建流程之后，发送流程定义信息到业务系统
-        //FlowOptUtils.sendFlowInfo(flowdefine);
     }
 
     /**
