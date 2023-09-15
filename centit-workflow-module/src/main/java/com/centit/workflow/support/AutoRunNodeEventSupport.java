@@ -26,8 +26,7 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     private FlowVariableTranslate varTrans;
     private DdeDubboTaskRun ddeDubboTaskRun;
 
-    public AutoRunNodeEventSupport(FlowVariableTranslate varTrans,DdeDubboTaskRun ddeDubboTaskRun) {
-
+    public AutoRunNodeEventSupport(FlowVariableTranslate varTrans, DdeDubboTaskRun ddeDubboTaskRun) {
         this.varTrans = varTrans;
         this.ddeDubboTaskRun = ddeDubboTaskRun;
     }
