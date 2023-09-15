@@ -3,6 +3,7 @@ package com.centit.workflow.support;
 import com.alibaba.fastjson2.JSON;
 import com.centit.dde.adapter.DdeDubboTaskRun;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.compiler.Lexer;
 import com.centit.support.compiler.Pretreatment;
 import com.centit.workflow.commons.NodeEventSupport;
@@ -20,13 +21,13 @@ import java.util.Map;
  * @author codefan
  * 2013-7-10
  */
-public class AutoRunNodeEventSupport implements NodeEventSupport {
+public class CallApiNodeEventSupport implements NodeEventSupport {
 
-    private static Logger logger = LoggerFactory.getLogger(AutoRunNodeEventSupport.class);
+    private static Logger logger = LoggerFactory.getLogger(CallApiNodeEventSupport.class);
     private FlowVariableTranslate varTrans;
     private DdeDubboTaskRun ddeDubboTaskRun;
 
-    public AutoRunNodeEventSupport(FlowVariableTranslate varTrans, DdeDubboTaskRun ddeDubboTaskRun) {
+    public CallApiNodeEventSupport(FlowVariableTranslate varTrans, DdeDubboTaskRun ddeDubboTaskRun) {
         this.varTrans = varTrans;
         this.ddeDubboTaskRun = ddeDubboTaskRun;
     }
@@ -34,11 +35,13 @@ public class AutoRunNodeEventSupport implements NodeEventSupport {
     @Override
     public void runAfterCreate(FlowInstance flowInst, NodeInstance nodeInst,
                                NodeInfo nodeInfo, String optUserCode) {
+        throw new ObjectException(ObjectException.FUNCTION_NOT_SUPPORT, "Call API不支持afterCreate事件！");
     }
 
     @Override
     public void runBeforeSubmit(FlowInstance flowInst, NodeInstance nodeInst,
                                 NodeInfo nodeInfo, String optUserCode) {
+        throw new ObjectException(ObjectException.FUNCTION_NOT_SUPPORT, "Call API不支持beforeSubmit事件！");
     }
 
     @Override

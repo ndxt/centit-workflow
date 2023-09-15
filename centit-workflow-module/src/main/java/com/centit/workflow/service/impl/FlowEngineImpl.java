@@ -27,7 +27,7 @@ import com.centit.workflow.service.FlowEngine;
 import com.centit.workflow.service.FlowEventService;
 import com.centit.workflow.service.FlowManager;
 import com.centit.workflow.service.FlowScriptRunTime;
-import com.centit.workflow.support.AutoRunNodeEventSupport;
+import com.centit.workflow.support.CallApiNodeEventSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
@@ -1084,7 +1084,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //执行节点创建后 事件
                 //FlowOptPage optPage = flowOptPageDao.getObjectById(nextOptNode.getOptCode());
                 NodeEventSupport nodeEventExecutor =
-                    new AutoRunNodeEventSupport(varTrans, ddeDubboTaskRun);
+                    new CallApiNodeEventSupport(varTrans, ddeDubboTaskRun);
                 needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst == null ? nodeInst : preNodeInst,
                     nextOptNode, options.getUserCode());
             } else if (NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nextOptNode.getAutoRunType())) {
