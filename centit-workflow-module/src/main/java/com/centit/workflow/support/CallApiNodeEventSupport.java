@@ -60,7 +60,10 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
                 params.put("optTag", flowInst.getFlowOptTag());
             }
         }
-        String nodeParams = Pretreatment.mapTemplateString(nodeInfo.getOptParam(), varTrans);
+        /* Pretreatment.mapTemplateString(nodeInfo.getOptParam(), varTrans);
+           这个转换有问题，不能输入{}号。
+        */
+        String nodeParams = nodeInfo.getOptParam();
         if (StringUtils.isNotBlank(nodeParams)) {
             if (!"{".equals(Lexer.getFirstWord(nodeParams))) {
                 nodeParams = "{" + nodeParams + "}";
