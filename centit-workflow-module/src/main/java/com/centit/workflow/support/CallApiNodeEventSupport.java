@@ -1,11 +1,13 @@
 package com.centit.workflow.support;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.centit.dde.adapter.DdeDubboTaskRun;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.common.ObjectException;
 import com.centit.support.compiler.Lexer;
 import com.centit.support.compiler.Pretreatment;
+import com.centit.support.compiler.VariableFormula;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
@@ -63,7 +65,22 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
             if (!"{".equals(Lexer.getFirstWord(nodeParams))) {
                 nodeParams = "{" + nodeParams + "}";
             }
-            params.putAll(JSON.parseObject(nodeParams));
+            // 添加对变量的支持
+            JSONObject paramJson = JSONObject.parseObject(nodeParams);
+            if(paramJson!=null) {
+                for(Map.Entry<String, Object> ent : paramJson.entrySet()) {
+                    if(ent.getValue() instanceof String){
+                        Object objValue = VariableFormula.calculate((String)ent.getValue(), varTrans);
+                        if(objValue!=null){
+                            params.put(ent.getKey(), objValue);
+                        } else {
+                            params.put(ent.getKey(), ent.getValue());
+                        }
+                    } else {
+                        params.put(ent.getKey(), ent.getValue());
+                    }
+                }
+            }
         }
         logger.info("自动运行api网关" + nodeInfo.getOptCode() + "，参数:" + params);
         ddeDubboTaskRun.runTask(nodeInfo.getOptCode(), params);
