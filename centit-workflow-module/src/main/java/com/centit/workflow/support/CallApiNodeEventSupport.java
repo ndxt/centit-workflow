@@ -49,6 +49,10 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
     @Override
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                                    NodeInfo nodeInfo, String optUserCode) {
+        if(StringUtils.isBlank(nodeInfo.getOptCode())){
+            throw new ObjectException(ObjectException.DATA_NOT_FOUND_EXCEPTION,
+                "配置信息有误，接口调用自动运行节点没有正确配置接口id:" + nodeInfo.getNodeId());
+        }
         Map<String, Object> params = CollectionsOpt.createHashMap(
             "flowInstId", flowInst.getFlowInstId(),
             "nodeInstId", nodeInst.getNodeInstId(),
