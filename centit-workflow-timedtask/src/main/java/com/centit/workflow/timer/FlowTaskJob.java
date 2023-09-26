@@ -113,7 +113,7 @@ public class FlowTaskJob {
         if (warningList == null) {
             return;
         }
-        int nw = 0, nn = 0;
+        int nn = 0;
         for (FlowWarning warn : warningList) {
             if ("N".equals(warn.getObjType())) {
                 nn += sendNotifyMessage(warn.getNodeInstId());
@@ -134,9 +134,8 @@ public class FlowTaskJob {
             warn.setNoticeState("1");
             wfRuntimeWarningDao.updateObject(warn);
         }
-        nw++;
 
-        logger.info("通知中心发现 " + nw + "预警信息，并通知了" + nn + "个用户。");
+        logger.info("通知中心发现 " + warningList.size() + "预警信息，并通知了" + nn + "个用户。");
     }
 
     @Scheduled(cron = "0 1/2 5-23 * * ?")
