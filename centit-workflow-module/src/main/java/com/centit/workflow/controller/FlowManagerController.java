@@ -519,6 +519,7 @@ public class FlowManagerController extends BaseController {
     public JSONObject viewFlowNodeInfo(@PathVariable String flowInstId,
                                        @PathVariable String nodeId, HttpServletRequest request) {
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        String localLang = WebOptUtils.getCurrentLang(request);
         FlowInstance dbobject = flowManager.getFlowInstance(flowInstId);
         if (dbobject == null) {
             throw new ObjectException("找不到对应的流程实例信息：flowInstId=" + flowInstId);
@@ -538,27 +539,44 @@ public class FlowManagerController extends BaseController {
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitcode",
                     nodeInst.getUnitCode());
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname",
-                    CodeRepositoryUtil.getValue("unitcode", nodeInst.getUnitCode()));
-                if ("N".equals(nodeInst.getNodeState()) || "R".equals(nodeInst.getNodeState())) {
+                    CodeRepositoryUtil.getValue(CodeRepositoryUtil.UNIT_CODE, nodeInst.getUnitCode(), topUnit, localLang));
+                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].taskAssign", nodeInst.getTaskAssigned());
+
+                if (NodeInstance.NODE_STATE_NORMAL.equals(nodeInst.getNodeState()) || NodeInstance.NODE_STATE_PAUSE.equals(nodeInst.getNodeState())) {
                     List<UserTask> tasks = flowEngine.listNodeOperators(nodeInst.getNodeInstId());
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
-                    int taskInd = 0;
-                    for (UserTask task : tasks) {
-                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
-                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
-                            CodeRepositoryUtil.getValue("userCode", task.getUserCode()));
-                        UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
-                        if (user != null) {
-                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
+                    if(NodeInfo.OPT_RUN_TYPE_DYNAMIC.equals(nodeInfo.getOptRunType())){
+
+                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].rolecode", nodeInst.getRoleCode());
+                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].rolename",
+                            CodeRepositoryUtil.getValue(CodeRepositoryUtil.ROLE_CODE, nodeInst.getRoleCode(), topUnit, localLang));
+                        StringBuilder sbUsers = new StringBuilder();
+                        for (UserTask task : tasks) {
+                            UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
+                            if(user!= null){
+                                sbUsers.append(user.getUserName()).append("(").append(user.getLoginName()).append(") ");
+                            }
                         }
-                        taskInd++;
+                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].users", sbUsers);
+                    } else{
+                        int taskInd = 0;
+                        for (UserTask task : tasks) {
+                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
+                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
+                                CodeRepositoryUtil.getValue("userCode", task.getUserCode(), topUnit, localLang));
+                            UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
+                            if (user != null) {
+                                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
+                            }
+                            taskInd++;
+                        }
                     }
                 } else {
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state",
-                        CodeRepositoryUtil.getValue("WFInstType", nodeInst.getNodeState()));
+                        CodeRepositoryUtil.getValue("WFInstType", nodeInst.getNodeState(), topUnit, localLang));
                     //暂时添加当前节点的最后更新人
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updateuser",
-                        CodeRepositoryUtil.getValue("userCode", nodeInst.getLastUpdateUser()));
+                        CodeRepositoryUtil.getValue("userCode", nodeInst.getLastUpdateUser(), topUnit, localLang));
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
                         DatetimeOpt.convertDatetimeToString(
                             nodeInst.getLastUpdateTime() == null ? nodeInst.getCreateTime() : nodeInst.getLastUpdateTime()));
