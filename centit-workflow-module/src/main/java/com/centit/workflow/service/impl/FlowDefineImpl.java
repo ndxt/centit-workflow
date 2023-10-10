@@ -215,16 +215,15 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         // 将 流程定义格式保存到 版本为 0 的记录中
         FlowInfo flowDef = flowDefineDao.getObjectById(new FlowInfoId(0L, wfDef.getFlowCode()));
         if (flowDef == null) {
-            flowDef = new FlowInfo();
-            flowDef.setFlowCode(wfDef.getFlowCode());
+            wfDef.setVersion(0L);
+            wfDef.setFlowClass("R");
+            wfDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);
+            flowDefineDao.saveNewObject(wfDef);
+        }else {
+            flowDef.copyNotNullProperty(wfDef);
+            flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
+            flowDefineDao.updateObject(flowDef);
         }
-        flowDef.copyNotNullProperty(wfDef);
-        flowDef.setVersion(0L);//wfDef.getVersion()==null ? 0L : wfDef.getVersion());
-
-        flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
-        flowDef.setFlowClass("R");
-
-        flowDefineDao.mergeObject(flowDef);
         return true;
     }
 
