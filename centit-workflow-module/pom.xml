@@ -17,6 +17,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.centit.product</groupId>
+            <artifactId>centit-dde-dubbo-adapter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-core</artifactId>
         </dependency>
@@ -79,12 +85,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-dde-dubbo-adapter</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
     </dependencies>

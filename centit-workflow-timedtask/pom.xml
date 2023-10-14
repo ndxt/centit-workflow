@@ -83,12 +83,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-module</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>compile</scope>
