@@ -343,18 +343,18 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         wfFlowInst.setLastUpdateUser(userCode);
 
         String actionDesc = "U";
-        if ("P".equals(state) && "N".equals(wfFlowInst.getInstState())) {
+        if (FlowInstance.FLOW_STATE_PAUSE.equals(state) && FlowInstance.FLOW_STATE_NORMAL.equals(wfFlowInst.getInstState())) {
             wfFlowInst.setInstState(state);
             actionDesc = "挂起流程；";
         }
         // 只能结束未完成的流程
-        else if ("F".equals(state) && !"C".equals(wfFlowInst.getInstState())
-            && !"F".equals(wfFlowInst.getInstState()))
+        else if (FlowInstance.FLOW_STATE_FORCE.equals(state) && !FlowInstance.FLOW_STATE_COMPLETE.equals(wfFlowInst.getInstState())
+            && !FlowInstance.FLOW_STATE_FORCE.equals(wfFlowInst.getInstState()))
             actionDesc = "强制结束流程；";
             // 只能挂起正常的流程
-        else if ("N".equals(state)
-            && "P".equals(wfFlowInst.getInstState())) {
-            actionDesc = "换新流程；";
+        else if (FlowInstance.FLOW_STATE_NORMAL.equals(state)
+            && FlowInstance.FLOW_STATE_PAUSE.equals(wfFlowInst.getInstState())) {
+            actionDesc = "唤醒流程；";
         }
         // 不正确的操作
         if ("U".equals(actionDesc))
@@ -362,18 +362,20 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         // 更新流程实例状态
         wfFlowInst.setInstState(state);
-        if ("N".equals(state)) {
+        if (NodeInstance.NODE_STATE_NORMAL.equals(state)) {
             for (NodeInstance nodeInst : wfFlowInst.getFlowNodeInstances()) {
-                if ("P".equals(nodeInst.getNodeState()) || "F".equals(nodeInst.getNodeState())) {
+                if (NodeInstance.NODE_STATE_PAUSE.equals(nodeInst.getNodeState()) ){
+                    //|| "F".equals(nodeInst.getNodeState())) {
                     nodeInst.setNodeState(state);
                     nodeInst.setLastUpdateTime(updateTime);
                     nodeInst.setLastUpdateUser(userCode);
                     nodeInstanceDao.updateObject(nodeInst);
                 }
             }
-        } else if ("P".equals(state)) { // 更新挂起的节点
+        } else if (NodeInstance.NODE_STATE_PAUSE.equals(state)) { // 更新挂起的节点
             for (NodeInstance nodeInst : wfFlowInst.getFlowNodeInstances()) {
-                if ("N".equals(nodeInst.getNodeState()) || "S".equals(nodeInst.getNodeState())) {
+                if (NodeInstance.NODE_STATE_NORMAL.equals(nodeInst.getNodeState())) {
+                    //|| "S".equals(nodeInst.getNodeState())) {
                     nodeInst.setNodeState(state);
                     nodeInst.setLastUpdateTime(updateTime);
                     nodeInst.setLastUpdateUser(userCode);
@@ -426,7 +428,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst,
-            "换线流程节点；" + actionDesc, null);
+            "唤醒流程节点；" + actionDesc, null);
         OperationLogCenter.log(managerAct);
         return 1;
     }
@@ -440,7 +442,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public long activizeNodeInstance(String nodeInstId, String mangerUserCode) {
-        return updateNodeInstState(nodeInstId, "N", mangerUserCode);
+        return updateNodeInstState(nodeInstId, NodeInstance.NODE_STATE_NORMAL, mangerUserCode);
     }
 
     /**
@@ -549,7 +551,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
 
         // 只能结束未完成的流程
-        if ("C".equals(wfFlowInst.getInstState()) || "F".equals(wfFlowInst.getInstState())) {
+        if (FlowInstance.FLOW_STATE_COMPLETE.equals(wfFlowInst.getInstState()) ||
+            FlowInstance.FLOW_STATE_FORCE.equals(wfFlowInst.getInstState())) {
             return -1;
         }
 
@@ -559,11 +562,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         wfFlowInst.setFlowInstId(flowInstId);
 
         // 更新流程实例状态
-        wfFlowInst.setInstState("F");
+        wfFlowInst.setInstState(FlowInstance.FLOW_STATE_FORCE);
         flowInstanceDao.updtFlowInstInfo(wfFlowInst);
         for (NodeInstance nodeInst : wfFlowInst.getFlowNodeInstances()) {
-            if ("N".equals(nodeInst.getNodeState()) || "P".equals(nodeInst.getNodeState()) || "S".equals(nodeInst.getNodeState())) {
-                nodeInst.setNodeState("F");
+            if (NodeInstance.NODE_STATE_NORMAL.equals(nodeInst.getNodeState()) ||
+                NodeInstance.NODE_STATE_PAUSE.equals(nodeInst.getNodeState()) ||
+                NodeInstance.NODE_STATE_SUSPEND.equals(nodeInst.getNodeState())) {
+                nodeInst.setNodeState(NodeInstance.NODE_STATE_FORCE);
                 nodeInst.setLastUpdateTime(updateTime);
                 nodeInst.setLastUpdateUser(mangerUserCode);
                 nodeInstanceDao.updateObject(nodeInst);
@@ -851,7 +856,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             wfactlog.time(updateTime);
             OperationLogCenter.log(wfactlog);
 
-            nodeInst.setNodeState("F");
+            nodeInst.setNodeState(NodeInstance.NODE_STATE_FORCE);
             nodeInstanceDao.updateObject(nodeInst);
             return nodeInst.getRunToken().startsWith("R") ? "" : null;
         }

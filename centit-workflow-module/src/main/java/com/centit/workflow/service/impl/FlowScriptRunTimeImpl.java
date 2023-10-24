@@ -473,7 +473,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                 FlowOptUtils.endInstance(subFlowInst, "F", "system", flowInstanceDao);
             }
         }
-        ni.setNodeState("F");// 节点设置为无效
+        ni.setNodeState(NodeInstance.NODE_STATE_FORCE);// 节点设置为无效
         ni.setLastUpdateTime(DatetimeOpt.currentUtilDate());
         ni.setLastUpdateUser("system");
         nodeInstanceDao.updateObject(ni);
