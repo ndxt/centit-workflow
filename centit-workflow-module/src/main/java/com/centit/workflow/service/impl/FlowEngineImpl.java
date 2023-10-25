@@ -95,8 +95,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private PlatformEnvironment platformEnvironment;
 
-    private final static Object lockObject = new Object();
-
     public FlowEngineImpl() {
         //lockObject = new Object();
     }
@@ -1200,6 +1198,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * 记录提交日志，节点创建情况
      */
     @Override
+    @Transactional
     public List<String> submitOpt(SubmitOptOptions options,
                                   UserUnitVariableTranslate varTrans,
                                   ServletContext application) {
@@ -1208,6 +1207,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> submitFlowOpt(SubmitOptOptions options) {
         List<String> nextNodeInstList = submitOpt(options,
             new ObjectUserUnitVariableTranslate(
@@ -1235,6 +1235,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @return 节点实例编号列表
      */
     @Override
+    @Transactional
     public List<String> submitOpt(SubmitOptOptions options) {
         return submitOpt(options,
             new ObjectUserUnitVariableTranslate(
@@ -1317,6 +1318,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Date updateTime = DatetimeOpt.currentUtilDate();
         nodeInst.setLastUpdateTime(updateTime);
         nodeInst.setLastUpdateUser(options.getUserCode());
+        nodeInst.setNodeState(NodeInstance.NODE_STATE_COMPLETE);
         //创建节点提交日志 S:提交节点
         if (saveLog) {
             OperationLog wfactlog = FlowOptUtils.createActionLog(
@@ -1356,7 +1358,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //判断是否为临时插入节点
         if (nodeInst.getRunToken().endsWith(NodeInstance.RUN_TOKEN_INSERT)) {
             //提交临时插入节点
-            nodeInst.setNodeState(NodeInstance.NODE_STATE_COMPLETE);
             if (flowInst.checkNotCommitPreNodes(nodeInst.getPrevNodeInstId()) > 0) {
                 NodeInstance preNodeInst =
                     flowInst.getNodeInstanceById(nodeInst.getPrevNodeInstId());
@@ -1374,7 +1375,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             // 临时节点 和 游离节点都可以不管
             if (nodeInst.getRunToken().contains(NodeInstance.RUN_TOKEN_ISOLATED)) {
                 //将节点的状态设置为已完成
-                nodeInst.setNodeState(NodeInstance.NODE_STATE_COMPLETE);
                 nodeInstanceDao.updateObject(nodeInst);
                 flowInstanceDao.updateObject(flowInst);
                 return nextNodeInsts;
@@ -1384,7 +1384,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     "流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
             }
         }
-        synchronized (lockObject) {
+        //synchronized (this) {
             //再次验证一下节点的状态
             NodeInstance dbNodeInst = nodeInstanceDao.getObjectById(nodeInst.getNodeInstId());
             if (!dbNodeInst.checkIsInRunning()) {
@@ -1393,9 +1393,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     "流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
 
             }
-            nodeInst.setNodeState(NodeInstance.NODE_STATE_COMPLETE);
             nodeInstanceDao.updateObject(nodeInst);
-        }
+        //}
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
             nodeInst, flowInst, flowVariableDao, this, options);
         flowVarTrans.setFlowVarTrans(varTrans);
