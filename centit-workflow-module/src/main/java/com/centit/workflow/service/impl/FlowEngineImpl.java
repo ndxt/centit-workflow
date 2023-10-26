@@ -1384,17 +1384,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     "流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
             }
         }
-        //synchronized (this) {
+        synchronized (this) {
             //再次验证一下节点的状态
             NodeInstance dbNodeInst = nodeInstanceDao.getObjectById(nodeInst.getNodeInstId());
             if (!dbNodeInst.checkIsInRunning()) {
                 logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
                 throw new WorkflowException(WorkflowException.IncorrectNodeState,
                     "流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 已经被其他线程提交，请避免重复提交。");
-
             }
             nodeInstanceDao.updateObject(nodeInst);
-        //}
+        }
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
             nodeInst, flowInst, flowVariableDao, this, options);
         flowVarTrans.setFlowVarTrans(varTrans);

@@ -1,5 +1,6 @@
 package com.centit.workflow.service.impl;
 
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.basedata.NoticeMessage;
 import com.centit.product.oa.service.WorkDayManager;
@@ -249,7 +250,10 @@ public class FlowTaskImpl {
                 if ((NodeInfo.TIME_LIMIT_NORMAL.equals(nodeInst.getIsTimer()) || NodeInfo.TIME_LIMIT_ONLY_NODE.equals(nodeInst.getIsTimer())) &&
                     (nodeInst.getTimeLimit() != null)) {
                     nodeInst.setTimeLimit(nodeInst.getTimeLimit() - consumeTime);
-                    nodeInstanceDao.updateObject(nodeInst);
+                    DatabaseOptUtils.doExecuteSql(nodeInstanceDao,
+                            "update WF_NODE_INSTANCE set TIME_LIMIT = ? where NODE_INST_ID=?",
+                            new Object[] {nodeInst.getTimeLimit(), nodeInst.getNodeInstId()});
+                    //nodeInstanceDao.updateObject(nodeInst);
                 }
 
                 if(StringUtils.isNotBlank(nodeInst.getStageCode())) {
