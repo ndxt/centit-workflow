@@ -323,6 +323,9 @@ public class FlowTaskImpl {
                     NumberBaseOpt.castObjectToDouble(rat[1], 100.0);
             }
             return NumberBaseOpt.castObjectToDouble(rat[0], 0.0);
+        } else if (ratio.contains("%")) {
+            String percent = ratio.substring(0, ratio.indexOf('%'));
+            return NumberBaseOpt.castObjectToDouble(percent, 0.0) / 100.0;
         } else {
             return NumberBaseOpt.castObjectToDouble(ratio, 0.0);
         }
