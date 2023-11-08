@@ -5,8 +5,10 @@ import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.basedata.NoticeMessage;
 import com.centit.product.oa.service.WorkDayManager;
 import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.ObjectException;
+import com.centit.support.common.WorkTimeSpan;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
@@ -201,9 +203,9 @@ public class FlowTaskImpl {
                 String warningType = "";
                 // 预警规则： R：运行时间  L:剩余时间  P：比率
                 if ("R".equals(warningRule)) {
-                    warning = parse(warningParam) >= nodeInst.getPromiseTime().doubleValue() - nodeInst.getTimeLimit().doubleValue();
+                    warning = new WorkTimeSpan(warningParam).toNumberAsMinute() >= nodeInst.getPromiseTime()- nodeInst.getTimeLimit();
                 } else if ("L".equals(warningRule)) {
-                    warning = parse(warningParam) >= nodeInst.getTimeLimit().doubleValue();
+                    warning = new WorkTimeSpan(warningParam).toNumberAsMinute()  >= nodeInst.getTimeLimit();
                 } else  if ("P".equals(warningRule)) {
                     if (StringUtils.isNotBlank(warningParam) && nodeInst.getPromiseTime() > 0) {
                         warning = parse(warningParam) >= nodeInst.getTimeLimit().doubleValue() / nodeInst.getPromiseTime().doubleValue();
@@ -316,9 +318,13 @@ public class FlowTaskImpl {
     private double parse(String ratio) {
         if (ratio.contains("/")) {
             String[] rat = ratio.split("/");
-            return Double.parseDouble(rat[0]) / Double.parseDouble(rat[1]);
+            if(rat.length>2) {
+                return NumberBaseOpt.castObjectToDouble(rat[0], 0.0) /
+                    NumberBaseOpt.castObjectToDouble(rat[1], 100.0);
+            }
+            return NumberBaseOpt.castObjectToDouble(rat[0], 0.0);
         } else {
-            return Double.parseDouble(ratio);
+            return NumberBaseOpt.castObjectToDouble(ratio, 0.0);
         }
     }
 
