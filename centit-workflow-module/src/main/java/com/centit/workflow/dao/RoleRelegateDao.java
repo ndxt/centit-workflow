@@ -42,7 +42,7 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
     @Transactional
     public void saveObject(RoleRelegate roleRelegate) {
         if (StringUtils.isBlank(roleRelegate.getRelegateNo())) {
-            roleRelegate.setRelegateNo(UuidOpt.getUuidAsString32());
+            roleRelegate.setRelegateNo(UuidOpt.getUuidAsString22());
         }
         super.mergeObject(roleRelegate);
     }

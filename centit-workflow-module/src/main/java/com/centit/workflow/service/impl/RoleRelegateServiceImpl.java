@@ -6,6 +6,7 @@ import com.centit.workflow.dao.RoleRelegateDao;
 import com.centit.workflow.po.RoleRelegate;
 import com.centit.workflow.service.RoleRelegateService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,28 +26,42 @@ public class RoleRelegateServiceImpl implements RoleRelegateService {
     @Autowired
     private RoleRelegateDao roleRelegateDao;
 
-    @Override
-    @Transactional
-    public void saveRelegate(RoleRelegate roleRelegate) {
+    private void pretreatment(RoleRelegate roleRelegate) {
         if (roleRelegate.getRelegateTime() == null) {
             roleRelegate.setRelegateTime(new Date());
         }
-        if (roleRelegate.getRoleType() == null) {
-            roleRelegate.setRoleType("XZ");
+        if (StringUtils.isBlank(roleRelegate.getRoleType() )) {
+            if(StringUtils.isBlank(roleRelegate.getOptId())) {
+                roleRelegate.setRoleType("XZ");
+            } else {
+                roleRelegate.setRoleType("OP");
+                roleRelegate.setRoleCode(null);
+                roleRelegate.setUnitCode(null);
+            }
+        } else {
+            roleRelegate.setOptId(null);
         }
         if (roleRelegate.getIsValid() == null) {
             roleRelegate.setIsValid("T");
         }
+    }
+    @Override
+    @Transactional
+    public void saveRelegate(RoleRelegate roleRelegate) {
+        pretreatment(roleRelegate);
         roleRelegate.setRecordDate(new Date());
-
-        roleRelegateDao.mergeObject(roleRelegate);
-
+        roleRelegateDao.saveNewObject(roleRelegate);
     }
 
     @Override
     @Transactional
     public void updateRelegate(RoleRelegate roleRelegate) {
-        saveRelegate(roleRelegate);
+        pretreatment(roleRelegate);
+        roleRelegateDao.updateObject(new String[]{
+            "grantor", "grantee", "isValid", "roleType", "roleCode",
+            "unitCode", "optId", "expireTime", "relegateTime", "recordDate",
+            "grantDesc"
+        }, roleRelegate);
     }
 
     @Override
@@ -73,7 +88,7 @@ public class RoleRelegateServiceImpl implements RoleRelegateService {
         String isValid = relegate.getIsValid();
         if (!isValid.equalsIgnoreCase(valid)) {
             relegate.setIsValid(valid);
-            roleRelegateDao.updateObject(relegate);
+            roleRelegateDao.updateObject(new String[]{"isValid"},relegate);
         }
     }
 }
