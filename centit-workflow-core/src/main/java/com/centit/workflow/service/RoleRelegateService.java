@@ -22,4 +22,6 @@ public interface RoleRelegateService {
     void deleteRoleRelegate(String relegateNo);
 
     void changeRelegateValid(RoleRelegate roleRelegate);
+
+    void batchRelegateByOp(RoleRelegate roleRelegate, String relateType, List<String> optIds);
 }

@@ -56,7 +56,7 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
         return this.listObjectsByFilter(" where GRANTOR = ?  and (UNIT_CODE is null or UNIT_CODE = ?)" +
                 "and (ROLE_CODE is null or ROLE_CODE = ?)  " +
                 "and RELEGATE_TIME < ? and( EXPIRE_TIME is null or EXPIRE_TIME> ?)",
-            new Object[]{grantor, unitCode, userRank, DatetimeOpt.currentSqlDate(), DatetimeOpt.currentSqlDate() });
+            new Object[]{grantor, unitCode, userRank, DatetimeOpt.currentUtilDate(), DatetimeOpt.currentUtilDate() });
     }
 
     public int checkGrantee(String grantor, String grantee, String unitCode, String userRank) {
@@ -65,7 +65,13 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
                 "GRANTOR = ? and GRANTEE = ? and (UNIT_CODE is null or UNIT_CODE = ?)" +
                 "and (ROLE_CODE is null or ROLE_CODE = ?)  " +
                 "and RELEGATE_TIME < ? and( EXPIRE_TIME is null or EXPIRE_TIME> ?)",
-            new Object[]{grantor, grantee, unitCode, userRank, DatetimeOpt.currentSqlDate(), DatetimeOpt.currentSqlDate()}), 0);
+            new Object[]{grantor, grantee, unitCode, userRank, DatetimeOpt.currentUtilDate(), DatetimeOpt.currentUtilDate()}), 0);
     }
 
+    public void deleteOptRelegate(String grantor, String grantee) {
+        DatabaseOptUtils.doExecuteSql(this,
+            "delete from WF_ROLE_RELEGATE where GRANTOR = ? and GRANTEE = ? " +
+                " and( EXPIRE_TIME is null or EXPIRE_TIME> ?)",
+            new Object[]{grantor, grantee, DatetimeOpt.currentUtilDate()});
+    }
 }

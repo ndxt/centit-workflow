@@ -1,6 +1,7 @@
 package com.centit.workflow.controller;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpContentType;
@@ -10,6 +11,8 @@ import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.basedata.UserUnit;
+import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleRelegate;
 import com.centit.workflow.service.RoleRelegateService;
@@ -46,13 +49,25 @@ public class RoleRelegateController extends BaseController {
         roleRelegateService.saveRelegate(roleRelegate);
     }
 
+    @ApiOperation(value = "根据业务id数组进行委托", notes = "relateType:'batch（按照业务列表委托）/all(表示全部）', optIds :['设置为数组']")
+    @WrapUpResponseBody
+    @PostMapping("/batchRelegateByOp")
+    public void batchRelegate(@RequestBody String relegateString) {
+        JSONObject json = JSONObject.parseObject(relegateString);
+        RoleRelegate roleRelegate = json.toJavaObject(RoleRelegate.class);
+        roleRelegate.setRoleType("OP");
+        String relateType = json.getString("relateType");
+        //JSONArray optIds = json.getJSONArray("optIds");
+        List<String> optIds=  StringBaseOpt.objectToStringList(json.get("optIds"));
+        roleRelegateService.batchRelegateByOp(roleRelegate, relateType, optIds);
+    }
+
     @ApiOperation(value = "修改委托", notes = "修改委托")
     @WrapUpResponseBody
     @RequestMapping(value = "/updateRelegate", method = RequestMethod.POST)
     public void updateRelegate(@RequestBody RoleRelegate roleRelegate) {
         roleRelegateService.updateRelegate(roleRelegate);
     }
-
 
     @ApiOperation(value = "修改委托状态", notes = "修改委托状态")
     @WrapUpResponseBody

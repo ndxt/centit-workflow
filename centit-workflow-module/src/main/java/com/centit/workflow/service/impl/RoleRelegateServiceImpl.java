@@ -1,6 +1,7 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.core.dao.CodeBook;
+import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.RoleRelegateDao;
 import com.centit.workflow.po.RoleRelegate;
@@ -89,6 +90,22 @@ public class RoleRelegateServiceImpl implements RoleRelegateService {
         if (!isValid.equalsIgnoreCase(valid)) {
             relegate.setIsValid(valid);
             roleRelegateDao.updateObject(new String[]{"isValid"},relegate);
+        }
+    }
+
+    @Override
+    public void batchRelegateByOp(RoleRelegate roleRelegate, String relateType, List<String> optIds) {
+        roleRelegateDao.deleteOptRelegate(roleRelegate.getGrantor(), roleRelegate.getGrantee());
+        if("all".equalsIgnoreCase(relateType)){
+            roleRelegate.setOptId(null);
+            roleRelegate.setRelegateNo(UuidOpt.getUuidAsString22());
+            roleRelegateDao.saveNewObject(roleRelegate);
+        } else {
+            for(String optId : optIds){
+                roleRelegate.setOptId(optId);
+                roleRelegate.setRelegateNo(UuidOpt.getUuidAsString22());
+                roleRelegateDao.saveNewObject(roleRelegate);
+            }
         }
     }
 }
