@@ -15,6 +15,7 @@ import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
@@ -440,6 +441,18 @@ public class FlowEngineController extends BaseController {
     @GetMapping(value = "/nodeCanBeReclaim/{nodeInstId}")
     public Boolean checkNodeCanBeReclaim(@PathVariable String nodeInstId) {
         return flowEngine.nodeCanBeReclaim(nodeInstId);
+    }
+
+    @ApiOperation(value = "撤回节点", notes = "撤回节点移交的节点")
+    @WrapUpResponseBody(contentType = WrapUpContentType.RAW)
+    @GetMapping(value = "/reclaimNode/{nodeInstId}")
+    public NodeInstance reclaimNode(@PathVariable String nodeInstId, HttpServletRequest request) {
+        /*boolean canbe = flowEngine.nodeCanBeReclaim(nodeInstId);
+        if(!canbe){
+            throw new ObjectException(ObjectException.DATA_VALIDATE_ERROR, "当前节点不能被撤回。");
+        }*/
+        String currUser = WebOptUtils.getCurrentUserCode(request);
+        return flowEngine.reclaimNode(nodeInstId, currUser);
     }
 
     @ApiOperation(value = "创建流程实例分组", notes = "创建流程实例分组")

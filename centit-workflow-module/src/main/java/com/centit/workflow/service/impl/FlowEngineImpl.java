@@ -1626,6 +1626,61 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return nns > 0;
     }
 
+    @Override
+    public NodeInstance reclaimNode(String nodeInstId, String userCode) {
+        NodeInstance thisnode = nodeInstanceDao.getObjectById(nodeInstId);
+        if (thisnode == null) {
+            throw new ObjectException(ObjectException.DATA_VALIDATE_ERROR, "找不到对应的节点。");
+        }
+        FlowInstance flow = flowInstanceDao.getObjectWithReferences(thisnode
+            .getFlowInstId());
+        if (flow == null) {
+            throw new ObjectException(ObjectException.DATA_VALIDATE_ERROR, "找不到对应的流程。");
+        }
+        if(StringUtils.isBlank(userCode)){
+            userCode = thisnode.getUserCode();
+        }
+        // 流程状态被更改也算被操作了
+        if (!"N".equals(flow.getInstState())) {
+            throw new ObjectException(ObjectException.DATA_VALIDATE_ERROR, "流程状态不正确，不能被撤回，只有运行中的流程才可以被撤回。");
+        }
+        boolean canBeReclain = true;
+        List<NodeInstance> nextNodes = new ArrayList<>();
+        for (NodeInstance nextNode : flow.getFlowNodeInstances()) {
+            if (thisnode.getNodeInstId().equals(nextNode.getPrevNodeInstId())) {
+                if (!"N".equals(nextNode.getNodeState())) {
+                    canBeReclain = false;
+                    break;
+                }
+                nextNodes.add(nextNode);
+            }
+        }
+        if(!canBeReclain){
+            throw new ObjectException(ObjectException.DATA_VALIDATE_ERROR, "后续节点已经被操作，不能被撤回。");
+        }
+        if(nextNodes.isEmpty()){
+            throw new ObjectException(ObjectException.DATA_VALIDATE_ERROR, "找不到后续节点，不能被撤回。");
+        }
+        Date updateTime = DatetimeOpt.currentUtilDate();
+        for (NodeInstance nextNode : nextNodes) {
+            nextNode.setNodeState(NodeInstance.NODE_STATE_ROLLBACK);
+            nextNode.setLastUpdateUser(userCode);
+            nextNode.setLastUpdateTime(updateTime);
+            nodeInstanceDao.updateObject(nextNode);
+        }
+        NodeInstance nextNodeInst = flow.newNodeInstance();
+        nextNodeInst.copyNotNullProperty(thisnode);
+        nextNodeInst.setNodeInstId(UuidOpt.getUuidAsString32());
+        nextNodeInst.setNodeState(NodeInstance.NODE_STATE_NORMAL);
+        nextNodeInst.setTaskAssigned(thisnode.getTaskAssigned());
+        nextNodeInst.setLastUpdateUser(userCode);
+        nextNodeInst.setLastUpdateTime(updateTime);
+
+        flow.addNodeInstance(nextNodeInst);
+        nodeInstanceDao.saveNewObject(nextNodeInst);
+        return nextNodeInst;
+    }
+
 
     private Set<NodeInfo> viewRouterNextNodeInside(
         FlowInstance flowInst,

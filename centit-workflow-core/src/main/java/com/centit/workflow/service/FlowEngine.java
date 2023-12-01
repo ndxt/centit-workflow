@@ -281,11 +281,19 @@ public interface FlowEngine {
      * 检查后续的节点是否被操作过，包括更新和提交
      * 只有后续节点没有处理的才可以收回。true表示可以撤回，false表示不可以撤回，
      *
-     * @param nodeInstId 流程实例id
+     * @param nodeInstId 流程节点实例id
      * @return 是否可以回收
      */
     boolean nodeCanBeReclaim(String nodeInstId);
 
+
+    /**
+     * 撤回（回收）当前节点，将后续的节点终止，重新生成当前节点
+     * @param nodeInstId 流程节点实例id
+     * @param userCode   操作用户
+     * @return 重新生成的新节点
+     */
+    NodeInstance reclaimNode(String nodeInstId, String userCode);
 
     /**
      * 加签,并指定到人

@@ -54,7 +54,8 @@ public class RoleRelegate implements java.io.Serializable {
     @Column(name = "UNIT_CODE")
     private String unitCode;
     /**
-     * 目前只能是 行政职务 “XZ”
+     * 目前只能是 行政职务 “XZ” 应用 "OP"
+     * 分别表示不同的委托类别
      */
     @Column(name = "ROLE_TYPE")
     private String roleType;
