@@ -1,6 +1,11 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.dao.CodeBook;
+import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.RoleRelegateDao;
@@ -66,9 +71,29 @@ public class RoleRelegateServiceImpl implements RoleRelegateService {
     }
 
     @Override
-    public List<RoleRelegate> getRelegateListByGrantor(Map<String, Object> filterMap, PageDesc pageDesc) {
-        filterMap.put(CodeBook.SELF_ORDER_BY, "GRANTEE, OPT_ID, RELEGATE_TIME, EXPIRE_TIME, RECORD_DATE DESC");
-        return roleRelegateDao.listObjectsByProperties(filterMap, pageDesc);
+    public JSONArray listRelegateListByUser(Map<String, Object> filterMap, PageDesc pageDesc) {
+        String topUnit = StringBaseOpt.castObjectToString(filterMap.get("topUnit"));
+        JSONArray relegateList = roleRelegateDao.listRelegateListByUser(filterMap, pageDesc);
+        if(relegateList!=null && !relegateList.isEmpty()){
+            for(Object obj : relegateList){
+                if(obj instanceof JSONObject){
+                    JSONObject jsonObject = (JSONObject) obj;
+                    String unitCode = jsonObject.getString("unitCode");
+                    if(StringUtils.isNotBlank(unitCode)){
+                        jsonObject.put("unitName",
+                            CodeRepositoryUtil.getValue(CodeRepositoryUtil.UNIT_CODE, unitCode));
+                    }
+
+                    String roleCode = jsonObject.getString("roleCode");
+                    if(StringUtils.isNotBlank(roleCode) && StringUtils.isNotBlank(topUnit)){
+                        jsonObject.put("roleName",
+                            CodeRepositoryUtil.getValue(
+                                topUnit+"-RT", roleCode));
+                    }
+                }
+            }
+        }
+        return relegateList;
     }
 
     //审批角色列表

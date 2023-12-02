@@ -1,5 +1,6 @@
 package com.centit.workflow.service;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleRelegate;
 
@@ -15,7 +16,7 @@ public interface RoleRelegateService {
 
     void updateRelegate(RoleRelegate roleRelegate);
 
-    List<RoleRelegate> getRelegateListByGrantor(Map<String, Object> filterMap, PageDesc pageDesc);
+    JSONArray listRelegateListByUser(Map<String, Object> filterMap, PageDesc pageDesc);
 
     List<RoleRelegate> listRoleRelegates(Map<String, Object> filterMap, PageDesc pageDesc);
 

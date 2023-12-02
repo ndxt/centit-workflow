@@ -29,6 +29,9 @@ public class RoleRelegate implements java.io.Serializable {
     @ValueGenerator(strategy = GeneratorType.UUID22)
     private String relegateNo;
 
+    @Column(name = "TOP_UNIT")
+    private String topUnit;
+
     //委托人
     @Column(name = "GRANTOR")
     @DictionaryMap(value = "userCode", fieldName = "grantorName")
