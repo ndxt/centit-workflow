@@ -10,6 +10,7 @@ import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.basedata.UserUnit;
+import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.RoleRelegate;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +64,10 @@ public class RoleRelegateController extends BaseController {
         }
         roleRelegate.setRoleType("OP");
         String relateType = json.getString("relateType");
+        Date today = DatetimeOpt.truncateToDay(DatetimeOpt.currentUtilDate());
+        if(roleRelegate.getRelegateTime() == null || today.after(roleRelegate.getRelegateTime())){
+            roleRelegate.setRelegateTime(today);
+        }
         //JSONArray optIds = json.getJSONArray("optIds");
         List<String> optIds=  StringBaseOpt.objectToStringList(json.get("optIds"));
         roleRelegateService.batchRelegateByOp(roleRelegate, relateType, optIds);

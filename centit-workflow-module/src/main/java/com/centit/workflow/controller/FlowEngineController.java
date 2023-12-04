@@ -15,7 +15,6 @@ import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
-import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
