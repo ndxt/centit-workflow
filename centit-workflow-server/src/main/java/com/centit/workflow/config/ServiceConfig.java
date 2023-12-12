@@ -17,11 +17,13 @@ import com.centit.msgpusher.plugins.EMailMsgPusher;
 import com.centit.msgpusher.plugins.SystemUserEmailSupport;
 import com.centit.search.service.ESServerConfig;
 import com.centit.search.service.IndexerSearcherFactory;
+import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.security.SecurityOptUtils;
 import com.centit.workflow.service.impl.SystemUserUnitCalcContextFactoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
 
 
 /**
@@ -53,10 +55,8 @@ public class ServiceConfig {
     @Value("${app.home:/}")
     protected String appHome;
 
-   /* @Bean("passwordEncoder")
-    public CentitPasswordEncoder passwordEncoder() {
-        return new StandardPasswordEncoderImpl();
-    }*/
+    @Autowired
+    Environment env;
 
     @Bean("passwordEncoder")
     public StandardPasswordEncoderImpl passwordEncoder() {
@@ -95,9 +95,15 @@ public class ServiceConfig {
 
     @Bean
     public ESServerConfig esServerConfig() {
-        return IndexerSearcherFactory.loadESServerConfigFormProperties(
-            SysParametersUtils.loadProperties()
-        );
+        ESServerConfig config = new ESServerConfig();
+        config.setServerHostIp(env.getProperty("elasticsearch.server.ip"));
+        config.setServerHostPort(env.getProperty("elasticsearch.server.port"));
+        config.setClusterName(env.getProperty("elasticsearch.server.cluster"));
+        config.setOsId(env.getProperty("elasticsearch.osId"));
+        config.setUsername(env.getProperty("elasticsearch.server.username"));
+        config.setPassword(env.getProperty("elasticsearch.server.password"));
+        config.setMinScore(NumberBaseOpt.parseFloat(env.getProperty("elasticsearch.filter.minScore"), 0.5F));
+        return config;
     }
 
     @Bean
