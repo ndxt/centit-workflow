@@ -4,6 +4,7 @@ import com.alibaba.nacos.api.annotation.NacosProperties;
 import com.alibaba.nacos.spring.context.annotation.config.EnableNacosConfig;
 import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySources;
+import com.centit.framework.common.SysParametersUtils;
 import com.centit.framework.components.impl.NotificationCenterImpl;
 import com.centit.framework.config.SpringSecurityCasConfig;
 import com.centit.framework.config.SpringSecurityDaoConfig;
@@ -14,6 +15,8 @@ import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.security.StandardPasswordEncoderImpl;
 import com.centit.msgpusher.plugins.EMailMsgPusher;
 import com.centit.msgpusher.plugins.SystemUserEmailSupport;
+import com.centit.search.service.ESServerConfig;
+import com.centit.search.service.IndexerSearcherFactory;
 import com.centit.support.security.SecurityOptUtils;
 import com.centit.workflow.service.impl.SystemUserUnitCalcContextFactoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,15 +93,12 @@ public class ServiceConfig {
             return new SystemUserUnitCalcContextFactoryImpl();
     }
 
-    /*@Bean 注入 opt-log-module 将操作日志持久化
-    @Lazy(value = false)
-    public OperationLogWriter operationLogWriter() {
-        TextOperationLogWriterImpl operationLog = new TextOperationLogWriterImpl();
-        operationLog.setOptLogHomePath(
-            FileSystemOpt.appendPath(appHome , "logs"));
-        operationLog.init();
-        return operationLog;
-    }*/
+    @Bean
+    public ESServerConfig esServerConfig() {
+        return IndexerSearcherFactory.loadESServerConfigFormProperties(
+            SysParametersUtils.loadProperties()
+        );
+    }
 
     @Bean
     public InstantiationServiceBeanPostProcessor instantiationServiceBeanPostProcessor() {
