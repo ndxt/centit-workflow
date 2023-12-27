@@ -723,9 +723,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
             if (canSubmit) {
                 Set<NodeInstance> sameNodes = flowInst.findAllActiveSubNodeInstByToken(preRunToken);
-                // 移除待提交节点
+                // 移除待提交节点 和 并行节点中的游离节点
                 sameNodes.removeIf(
-                    nodeInst -> preNodeInst.getNodeInstId().equals(nodeInst.getNodeInstId())
+                    nodeInst -> preNodeInst.getNodeInstId().equals(nodeInst.getNodeInstId()) ||
+                        nodeInst.getRunToken().indexOf(NodeInstance.RUN_TOKEN_ISOLATED, preRunToken.length()) > 0
                 );
                 if (!sameNodes.isEmpty()) {
                     //结束这些节点
