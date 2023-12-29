@@ -339,7 +339,7 @@ public class FlowTaskImpl {
             for (FlowEventInfo eventInfo : events) {
                 List<NodeInstance> nodes = nodeInstanceDao.listNodeInstByState(eventInfo.getFlowInstId(), NodeInstance.NODE_STATE_SYNC);
                 boolean hasOptEvent = false;
-                String successOpt = "S";
+                String successOpt = FlowEventInfo.OPT_STATE_SUCCESS;//"S";
                 try {
                     if (nodes != null) {
                         for (NodeInstance nodeInst : nodes) {
@@ -354,7 +354,7 @@ public class FlowTaskImpl {
                         }
                     }
                 } catch (ObjectException e) {
-                    successOpt = "F";
+                    successOpt = FlowEventInfo.OPT_STATE_FAILED;// "F";
                     eventInfo.setOptResult(e.getMessage());
                 }
                 if (hasOptEvent) {

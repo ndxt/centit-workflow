@@ -1016,6 +1016,17 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 //TODO 通过变量获取同步节点的同步时间
                 nodeInst.setTimeLimit(new WorkTimeSpan(nextOptNode.getTimeLimit()).toNumberAsMinute());
                 nodeInst.setPromiseTime(nodeInst.getTimeLimit());
+            } else if (NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nextOptNode.getOptType())) {
+                // 检查是否有同步消息
+                FlowEventInfo eventInfo = flowEventService.getEventByFlowEvent(flowInst.getFlowCode(), nextOptNode.getMessageCode());
+                if(eventInfo!=null){
+                    Object ret = submitOptInside(
+                        SubmitOptOptions.create().copy(options).nodeInst(nodeInst.getNodeInstId()), varTrans, application, false, true, false);
+                    eventInfo.setOptResult(StringBaseOpt.castObjectToString(ret));
+                    eventInfo.setOptState(FlowEventInfo.OPT_STATE_SUCCESS);
+                    eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
+                    flowEventService.updateEvent(eventInfo);
+                }
             }
         }
 

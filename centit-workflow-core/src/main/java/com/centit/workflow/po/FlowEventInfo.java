@@ -18,6 +18,8 @@ import java.util.Date;
 @Table(name = "WF_EVENT_INFO")
 public class FlowEventInfo implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "FLOW_EVENT_ID")
     @ApiModelProperty(value = "流程实例编号", required = true)
@@ -43,6 +45,9 @@ public class FlowEventInfo implements Serializable {
     @Column(name = "OPT_TIME")
     private Date   optTime;
 
+    public  static final String OPT_STATE_NORMAL = "N";
+    public  static final String OPT_STATE_SUCCESS = "S";
+    public  static final String OPT_STATE_FAILED = "F";
     /**
      * N:未处理 S：处理成功 F：处理失败 P：需要再次执行 E： 消息失效
      */
@@ -53,7 +58,7 @@ public class FlowEventInfo implements Serializable {
     private String optResult;
 
     public FlowEventInfo(){
-        this.optState = "N";
+        this.optState = OPT_STATE_NORMAL;
         this.receiveTime = DatetimeOpt.currentUtilDate();
     }
 }
