@@ -314,7 +314,7 @@ public class FlowDefineController extends ResourceBaseController {
     public void editFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String flowcode,
                               HttpServletRequest request, HttpServletResponse response) {
         //检查资源
-        ResourceLock.lockResource(flowcode, WebOptUtils.getCurrentUserCode(request));
+        ResourceLock.lockResource(flowcode, WebOptUtils.getCurrentUserCode(request), request);
 
         flowdefine.setFlowCode(flowcode);
         flowdefine.setVersion(0l);
