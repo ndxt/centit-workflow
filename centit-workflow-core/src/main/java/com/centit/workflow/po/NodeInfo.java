@@ -3,6 +3,8 @@ package com.centit.workflow.po;
 import com.alibaba.fastjson2.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
@@ -107,6 +109,7 @@ public class NodeInfo implements java.io.Serializable {
     /**
      * optType 为一个多种意义的字段
      */
+    @JSONField(serialize = false, deserialize = false)
     @Column(name = "OPT_TYPE")
     private String optType;
 
