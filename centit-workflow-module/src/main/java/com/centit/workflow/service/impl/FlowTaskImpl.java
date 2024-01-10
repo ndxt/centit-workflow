@@ -363,7 +363,7 @@ public class FlowTaskImpl {
                     flowEventService.updateEvent(eventInfo);
                 } else {
                     FlowInstance flowInst = flowInstanceDao.getObjectById(eventInfo.getFlowInstId());
-                    if (flowInst == null || !"N".equals(flowInst.getInstState())) {
+                    if (flowInst == null || !FlowInstance.FLOW_STATE_NORMAL.equals(flowInst.getInstState())) {
                         eventInfo.setOptState("E");
                         eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
                         eventInfo.setOptResult("流程不在正常运行状态！");
