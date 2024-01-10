@@ -46,6 +46,7 @@ public class FlowEventInfo implements Serializable {
     public  static final String OPT_STATE_NORMAL = "N";
     public  static final String OPT_STATE_SUCCESS = "S";
     public  static final String OPT_STATE_FAILED = "F";
+    public  static final String OPT_STATE_EXPIRED = "E";
     /**
      * N:未处理 S：处理成功 F：处理失败 P：需要再次执行 E： 消息失效
      */
