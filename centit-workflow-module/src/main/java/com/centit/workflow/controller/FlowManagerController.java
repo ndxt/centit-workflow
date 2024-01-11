@@ -545,30 +545,35 @@ public class FlowManagerController extends BaseController {
                 if (NodeInstance.NODE_STATE_NORMAL.equals(nodeInst.getNodeState()) || NodeInstance.NODE_STATE_PAUSE.equals(nodeInst.getNodeState())) {
                     List<UserTask> tasks = flowEngine.listNodeOperators(nodeInst.getNodeInstId());
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
-                    if(NodeInfo.OPT_RUN_TYPE_DYNAMIC.equals(nodeInfo.getOptRunType())){
+                    if(NodeInfo.OPT_RUN_TYPE_DYNAMIC.equals(nodeInfo.getOptRunType())) {
 
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].rolecode", nodeInst.getRoleCode());
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].rolename",
                             CodeRepositoryUtil.getValue(CodeRepositoryUtil.ROLE_CODE, nodeInst.getRoleCode(), topUnit, localLang));
-                        StringBuilder sbUsers = new StringBuilder();
-                        for (UserTask task : tasks) {
-                            UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
-                            if(user!= null){
-                                sbUsers.append(user.getUserName()).append("(").append(user.getLoginName()).append(") ");
+
+                        if (tasks != null) {
+                            StringBuilder sbUsers = new StringBuilder();
+                            for (UserTask task : tasks) {
+                                UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
+                                if (user != null) {
+                                    sbUsers.append(user.getUserName()).append("(").append(user.getLoginName()).append(") ");
+                                }
                             }
+                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].users", sbUsers);
                         }
-                        JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].users", sbUsers);
                     } else{
                         int taskInd = 0;
-                        for (UserTask task : tasks) {
-                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
-                            JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
-                                CodeRepositoryUtil.getValue("userCode", task.getUserCode(), topUnit, localLang));
-                            UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
-                            if (user != null) {
-                                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
+                        if (tasks != null) {
+                            for (UserTask task : tasks) {
+                                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
+                                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
+                                    CodeRepositoryUtil.getValue("userCode", task.getUserCode(), topUnit, localLang));
+                                UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
+                                if (user != null) {
+                                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
+                                }
+                                taskInd++;
                             }
-                            taskInd++;
                         }
                     }
                 } else {
