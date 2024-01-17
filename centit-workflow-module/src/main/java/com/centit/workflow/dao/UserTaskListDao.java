@@ -75,6 +75,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
             " join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
+        // (b.task_assigned = 'S' or b.task_assigned = 'P' or b.task_assigned = 'T')
         "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'S' [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
         " [ :(splitforin)flowInstIds| and b.FLOW_INST_ID in ( :flowInstIds )]" +
         "[ :flowOptTag| and b.FLOW_OPT_TAG = :flowOptTag]" +

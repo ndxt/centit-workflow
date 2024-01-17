@@ -84,10 +84,14 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name = "TRANS_PATH")
     private String transPath;
 
-    //T: 通过 tasklist 分配(已废弃)， D：通过 岗位角色 自动匹配 S：静态待办（usercode)
+    // D：通过 岗位角色 自动匹配 S：静态待办（usercode) 只有一人， 根据设定
+    //静态分配可以根据 人员数量 不同自动转换为 P 抢先机制 T 多人操作 或者 流转到 人工分配节点 A artificial
     public static final String TASK_ASSIGN_TYPE_STATIC = "S";
-    public static final String TASK_ASSIGN_TYPE_DYNAMIC = "D";
     public static final String TASK_ASSIGN_TYPE_MULTI = "T";
+    public static final String TASK_ASSIGN_TYPE_PRIOR = "P";
+    public static final String TASK_ASSIGN_TYPE_ARTIFICIAL = "A";
+    public static final String TASK_ASSIGN_TYPE_DYNAMIC = "D";
+
     @Column(name = "TASK_ASSIGNED")
     private String taskAssigned;
 
