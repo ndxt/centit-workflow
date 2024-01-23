@@ -565,12 +565,17 @@ public class FlowManagerController extends BaseController {
                         int taskInd = 0;
                         if (tasks != null) {
                             for (UserTask task : tasks) {
-                                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
-                                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
-                                    CodeRepositoryUtil.getValue("userCode", task.getUserCode(), topUnit, localLang));
                                 UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, task.getUserCode());
+                                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].usercode", task.getUserCode());
+
                                 if (user != null) {
                                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].order", user.getUserOrder());
+                                    StringBuilder sbUsers = new StringBuilder();
+                                    sbUsers.append(user.getUserName()).append("(").append(user.getLoginName()).append(") ");
+                                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username", sbUsers);
+                                } else {
+                                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].task[" + taskInd + "].username",
+                                        CodeRepositoryUtil.getValue("userCode", task.getUserCode(), topUnit, localLang));
                                 }
                                 taskInd++;
                             }
