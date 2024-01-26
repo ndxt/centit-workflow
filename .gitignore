@@ -1,6 +1,14 @@
 docs/.vuepress/dist/
-node_modules
 .idea
 */target
 *.iml
 target
+D:
+.attach*
+**/node_modules
+.mvn
+mvn*
+.settings
+**/~$*
+out.*
+.flattened-pom.xml
