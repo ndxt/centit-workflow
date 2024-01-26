@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.centit.product</groupId>
         <artifactId>centit-workflow</artifactId>
-        <version>5.4-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -22,13 +22,13 @@
 
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-dubbo-client-config</artifactId>
-            <version>${project.version}</version>
+            <artifactId>framework-system-dubbo-client-config</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.product</groupId>
-            <artifactId>centit-dde-dubbo-client-config</artifactId>
+            <artifactId>centit-workflow-dubbo-server-config</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -41,21 +41,24 @@
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>msgpusher-plugin-email</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>elk-opt-log</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-core-web</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-config</artifactId>
-            <version>${centit.framework.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
@@ -66,16 +69,19 @@
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-extend</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-jdbc</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-jdbc-config</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
@@ -121,32 +127,13 @@
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-session-redis</artifactId>
+            <version>${revision}</version>
         </dependency>
 
-        <!--&lt;!&ndash; https://mvnrepository.com/artifact/com.h2database/h2 &ndash;&gt;-->
-        <!--<dependency>-->
-            <!--<groupId>com.h2database</groupId>-->
-            <!--<artifactId>h2</artifactId>-->
-            <!--<version>1.4.197</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>com.shentong</groupId>
             <artifactId>shentongjdbc</artifactId>
             <version>4.0</version>
-        </dependency>
-
-
-<!--        <dependency>-->
-<!--            <groupId>com.centit.product</groupId>-->
-<!--            <artifactId>centit-workflow-dubbo-client-config</artifactId>-->
-<!--            <version>5.4-SNAPSHOT</version>-->
-<!--        </dependency>-->
-
-        <dependency>
-            <groupId>com.centit.product</groupId>
-            <artifactId>centit-workflow-dubbo-server-config</artifactId>
-            <version>5.4-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
