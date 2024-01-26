@@ -11,13 +11,13 @@
     </parent>
 
     <groupId>com.centit.product</groupId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.5-SNAPSHOT</version>
     <artifactId>centit-workflow-timedtask</artifactId>
 
     <properties>
         <centit.framwork.version>5.5-SNAPSHOT</centit.framwork.version>
-        <centit.dde.version>5.4-SNAPSHOT</centit.dde.version>
-        <common.module.version>5.4-SNAPSHOT</common.module.version>
+        <centit.dde.version>5.5-SNAPSHOT</centit.dde.version>
+        <common.module.version>5.5-SNAPSHOT</common.module.version>
         <elasticsearch.version>7.17.9</elasticsearch.version>
         <mysql.version>8.2.0</mysql.version>
         <maven.compiler.source>8</maven.compiler.source>
