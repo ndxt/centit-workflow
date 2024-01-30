@@ -11,12 +11,11 @@
     </parent>
 
     <groupId>com.centit.product</groupId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.4.240119</version>
     <artifactId>centit-workflow-timedtask</artifactId>
 
     <properties>
-        <centit.dde.version>5.4-SNAPSHOT</centit.dde.version>
-        <common.module.version>5.4-SNAPSHOT</common.module.version>
+        <centit.framwork.version>5.4.240119</centit.framwork.version>
         <elasticsearch.version>7.17.9</elasticsearch.version>
         <mysql.version>8.2.0</mysql.version>
         <maven.compiler.source>8</maven.compiler.source>
@@ -28,25 +27,25 @@
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-core</artifactId>
-            <version>${project.version}</version>
+            <version>${centit.framwork.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-jdbc</artifactId>
-            <version>${project.version}</version>
+            <version>${centit.framwork.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>centit-persistence-extend</artifactId>
-            <version>${project.version}</version>
+            <version>${centit.framwork.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.support</groupId>
             <artifactId>centit-database-datasource</artifactId>
-            <version>${project.version}</version>
+            <version>${centit.framwork.version}</version>
         </dependency>
 
         <dependency>
@@ -57,14 +56,14 @@
 
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>centit-ip-dubbo-client-config</artifactId>
-            <version>${project.version}</version>
+            <artifactId>framework-system-dubbo-client-config</artifactId>
+            <version>${centit.framwork.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.centit.product</groupId>
             <artifactId>centit-dde-dubbo-client-config</artifactId>
-            <version>${project.version}</version>
+            <version>${centit.framwork.version}</version>
         </dependency>
 
         <dependency>
