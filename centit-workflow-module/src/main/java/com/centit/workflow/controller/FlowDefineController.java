@@ -419,18 +419,17 @@ public class FlowDefineController extends ResourceBaseController {
     }
 
     /**
-     * 删除流程
+     * 禁用流程
      * @param version 版本号
      * @param flowcode 流程代码
      * @param response HttpServletResponse
      */
-    @ApiOperation(value = "删除流程", notes = "删除流程")
-    @RequestMapping(value = "/{flowcode}/{version}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "禁用流程", notes = "禁用流程")
+    @RequestMapping(value = "/{flowcode}/{version}", method = RequestMethod.PUT)
     public void deleteFlowDefine(@PathVariable String flowcode, @PathVariable Long version, HttpServletResponse response) {
         FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
         if (null == obj) {
             JsonResultUtils.writeErrorMessageJson("此流程不存在", response);
-            return;
         } else {
             flowDefine.disableFlow(flowcode);
         }
@@ -442,7 +441,7 @@ public class FlowDefineController extends ResourceBaseController {
      * @param response HttpServletResponse
      */
     @ApiOperation(value = "物理删除流程定义", notes = "物理删除流程定义")
-    @RequestMapping(value = "/deleteFlow/{flowcode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/deleteFlow/{flowcode}", method = RequestMethod.DELETE)
     public void deleteFlowDefine(@PathVariable String flowcode, HttpServletResponse response) {
         flowDefine.deleteFlowDef(flowcode);
         JsonResultUtils.writeSuccessJson(response);
