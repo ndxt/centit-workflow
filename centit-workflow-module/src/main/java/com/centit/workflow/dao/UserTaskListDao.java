@@ -43,7 +43,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         " left join ("+flowInstStateSql+") n " +
         " on n.FLOW_INST_ID=t.FLOW_INST_ID " +
         " where t.flow_inst_id in  (select w.flow_inst_id from wf_node_instance w join wf_node n " +
-        "on n.node_id=w.node_id where w.NODE_STATE in ('C', 'F', 'P') [ :userCode| and w.last_update_user=:userCode] " +
+        " on n.node_id=w.node_id where w.NODE_STATE in ('C', 'F', 'P') [ :userCode| and w.last_update_user=:userCode] " +
         " [ :nodeCode| and n.node_code = :nodeCode] [ :nodeCodes | and n.node_code in (:nodeCodes)]  )" +
         " [ :(like)flowOptName| and t.flow_Opt_Name like :flowOptName] " +
         " [ :(like)flowName| and f.flow_Name like :flowName] " +
@@ -73,8 +73,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +
         "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
         "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
-        "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
-            " join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
+        "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
+            "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         // (b.task_assigned = 'S' or b.task_assigned = 'P' or b.task_assigned = 'T')
         "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'S' [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
         " [ :(splitforin)flowInstIds| and b.FLOW_INST_ID in ( :flowInstIds )]" +
@@ -109,13 +109,13 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE, g.GRANTOR, b.LAST_UPDATE_USER," +
         "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
         "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
-        "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
-        " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
-        " join WF_ROLE_RELEGATE g on ( g.GRANTOR = b.user_code and " +
+        "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
+        "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
+        "join WF_ROLE_RELEGATE g on ( g.GRANTOR = b.user_code and " +
             " ( (g.opt_id is not null and g.opt_id = a.opt_id) or " +
             " ((g.unit_code is null or b.unit_code = g.unit_code) and (g.ROLE_CODE is null or g.ROLE_CODE = b.ROLE_CODE)) ) ) " +
         "where b.node_state = 'N' and a.inst_state = 'N' [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
-        " [ :(splitforin)flowInstIds| and b.FLOW_INST_ID in ( :flowInstIds )]" +
+        "[ :(splitforin)flowInstIds| and b.FLOW_INST_ID in (:flowInstIds)]" +
         "[ :flowOptTag| and b.FLOW_OPT_TAG = :flowOptTag]" +
         "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
         "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
@@ -150,8 +150,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID," +
             " a.USER_CODE as CREATOR_CODE, " +
             "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
-            "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID)" +
-            " join WF_NODE c on (b.NODE_ID = c.NODE_ID)" +
+            "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
+            "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
             "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'D'" ;
             // " and c.role_type='GW' 目前只有这个
 
