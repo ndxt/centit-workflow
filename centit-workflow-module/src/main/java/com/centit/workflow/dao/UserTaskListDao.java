@@ -183,9 +183,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     /**
      * 根据用户编码获取用户已办任务列表
      *
-     * @param filter
-     * @param pageDesc
-     * @return
+     * @param filter 过滤条件
+     * @param pageDesc 分页信息
+     * @return 用户待办
      */
     @Transactional
     public List<UserTask> listUserCompletedTask(Map<String, Object> filter, PageDesc pageDesc) {
