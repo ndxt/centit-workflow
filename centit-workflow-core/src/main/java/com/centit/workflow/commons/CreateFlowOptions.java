@@ -18,6 +18,7 @@ import java.util.Set;
 @Data
 public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
     private static final long serialVersionUID = 1L;
+
     /**
      * 流程代码
      */
@@ -72,6 +73,11 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
      */
     @ApiModelProperty("设置流程时限，格式为3D4H30M这样的")
     private String timeLimitStr;
+
+    /**
+     * 用户的身份证号 或者 焦点科技的hr用户id
+     */
+    private String employeeId;
 
     /**
      * 提交（操作）用户

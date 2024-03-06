@@ -37,6 +37,10 @@ public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
     @ApiModelProperty(value ="授权用户，在作为被授权人时需要")
     private String grantorCode;
 
+    /**
+     * 用户的身份证号 或者 焦点科技的hr用户id
+     */
+    private String employeeId;
 
     /**
      * 提交（操作）用户
