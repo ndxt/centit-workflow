@@ -75,11 +75,6 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
     private String timeLimitStr;
 
     /**
-     * 用户的身份证号 或者 焦点科技的hr用户id
-     */
-    private String employeeId;
-
-    /**
      * 提交（操作）用户
      */
     @ApiModelProperty(value ="提交（操作）用户", required = true)

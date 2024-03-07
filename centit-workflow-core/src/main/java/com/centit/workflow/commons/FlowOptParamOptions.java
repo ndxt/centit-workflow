@@ -13,10 +13,6 @@ import java.util.Set;
  *                                       Map<Long, Set<String>> nodeUnits, Map<Long, Set<String>> nodeOptUsers
  */
 public interface FlowOptParamOptions {
-    /**
-     * @return 用户的身份证号 或者 焦点科技的hr用户id
-     */
-    String getEmployeeId();
 
     String getUserCode();
 
