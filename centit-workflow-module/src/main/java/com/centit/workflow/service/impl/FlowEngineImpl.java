@@ -873,6 +873,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String lastNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nodeInst = FlowOptUtils.createNodeInst(options.getUnitCode(), options.getUserCode(),
             flowInst, preNodeInst, flowInfo, nextOptNode, trans, varTrans);
+
         nodeInst.setNodeInstId(lastNodeInstId);
         if (trans != null) {
             nodeInst.setTransPath(
