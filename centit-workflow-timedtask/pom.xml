@@ -169,10 +169,16 @@
     </build>
 
     <distributionManagement>
+        <repository>
+            <id>aplan-releases</id>
+            <name>aplan releases</name>
+            <url>http://maven.mic.com/nexus/content/repositories/focustech-aplan-releases/</url>
+        </repository>
         <snapshotRepository>
-            <id>centit-snapshots</id>
-            <name>centit-snapshots</name>
-            <url>http://nexus.centit.com:8081/nexus/content/repositories/centit-snapshots/</url>
+            <id>snapshots</id>
+            <name>aplan snapshots</name>
+            <url>http://maven.mic.com/nexus/content/repositories/base-snapshot/</url>
+            <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
 </project>
