@@ -180,6 +180,7 @@ public class FlowTaskImpl {
         for (FlowInstance flowInst : activeFlows) {
             if(! isWorkTime( cached, flowInst.getTopUnit())) // 不是工作日跳过
                 continue;
+
             // 获取计时流程中 办理中节点并且需要计时的节点实例
             List<NodeInstance> nodeList = nodeInstanceDao.listActiveTimerNodeByFlow(flowInst.getFlowInstId());
             if (nodeList == null || nodeList.size() < 1) {

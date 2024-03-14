@@ -27,6 +27,7 @@ public class WebInitializer implements WebApplicationInitializer {
         WebConfig.registerSingleSignOutHttpSessionListener(servletContext);
         WebConfig.registerCharacterEncodingFilter(servletContext, servletUrlPatterns);
         WebConfig.registerHttpPutFormContentFilter(servletContext, servletUrlPatterns);
+        WebConfig.registerAssertUserLoginFilter(servletContext, new String[]{"/workflow/*"});
         WebConfig.registerHiddenHttpMethodFilter(servletContext, servletUrlPatterns);
         WebConfig.registerRequestThreadLocalFilter(servletContext);
         WebConfig.registerSpringSecurityFilter(servletContext, servletUrlPatterns);
