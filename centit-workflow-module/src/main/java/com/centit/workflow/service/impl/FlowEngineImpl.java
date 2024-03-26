@@ -2130,11 +2130,26 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             return;
         }
         Date assignDate = new Date(System.currentTimeMillis());
+        List<FlowOrganize> flowOrganizes = flowOrganizeDao.listFlowOrganizeByRole(flowInstId, roleCode);
+        if(flowOrganizes != null){
+            for(FlowOrganize organize : flowOrganizes){
+                if(!unitCodeSet.contains(organize.getUnitCode())){
+                    flowOrganizeDao.deleteObject(organize);
+                }
+            }
+        }
         for (String unitCode : unitCodeSet) {
-            if (unitCode != null && !"".equals(unitCode)) {
-                FlowOrganize dbObj = flowOrganizeDao.getObjectById(new FlowOrganizeId(flowInstId, unitCode, roleCode));
-                if (dbObj == null || StringBaseOpt.isNvl(dbObj.getUnitCode())) {
-                    flowOrganizeDao.mergeObject(new FlowOrganize(flowInstId, unitCode, roleCode, assignDate));
+            if (StringUtils.isNotBlank(unitCode)) {
+                boolean indb =false;
+                for(FlowOrganize organize : flowOrganizes){
+                    if(unitCode.equals(organize.getUnitCode())){
+                        indb =  true;
+                        break;
+                    }
+                }
+                if(!indb) {
+                    flowOrganizeDao.saveNewObject(
+                        new FlowOrganize(flowInstId, unitCode, roleCode, assignDate));
                 }
             }
         }
