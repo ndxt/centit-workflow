@@ -269,12 +269,32 @@ public class FlowEngineClientImpl implements FlowEngine {
             "/flow/engine/lockTask", paramMap);
     }
 
-    public List<String> viewFlowWorkTeam(String flowInstId, String roleCode) {
+    /**
+     * 查看工作小组
+     *
+     * @param flowInstId 流程实例号 不能为空
+     * @return Map roleCode,Set userCode
+     */
+    @Override
+    public List<FlowWorkTeam> viewFlowWorkTeam(String flowInstId) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    /**
+     * 查看工作小组中某个角色的成员
+     *
+     * @param flowInstId 工作流实例号
+     * @param roleCode   角色代码
+     * @return 流程工作组
+     */
+
+    @Override
+    public List<FlowWorkTeam> viewFlowWorkTeam(String flowInstId, String roleCode) {
         HashMap<java.lang.String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("roleCode", roleCode);
         return RestfulHttpRequest.getResponseObjectList(appSession,
-            "/flow/engine/viewFlowWorkTeam", paramMap, String.class);
+            "/flow/engine/viewFlowWorkTeam", paramMap, FlowWorkTeam.class);
     }
 
     public List<String> viewFlowOrganize(String flowInstId, String roleCode) {
@@ -812,42 +832,6 @@ public class FlowEngineClientImpl implements FlowEngine {
      */
     @Override
     public void deleteFlowWorkTeam(String flowInstId, String roleCode, String userCode) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 查看工作小组
-     *
-     * @param flowInstId 流程实例号 不能为空
-     * @return Map roleCode,Set userCode
-     */
-    @Override
-    public Map<String, List<String>> viewFlowWorkTeam(String flowInstId) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 查看工作小组中某个角色的成员
-     *
-     * @param flowInstId 工作流实例号
-     * @param roleCode   角色代码
-     * @return 流程工作组
-     */
-    @Override
-    public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
-    /**
-     * 查看工作小组中某个角色的成员,并且通过制定的授权说明过滤
-     *
-     * @param flowInstId 工作流实例号
-     * @param roleCode   角色代码
-     * @param authdesc   角色描述
-     * @return 流程工作组
-     */
-    @Override
-    public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode, String authdesc) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

@@ -61,9 +61,9 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam, FlowWorkTeamId> {
     }
 
     @Transactional
-    public List<FlowWorkTeam> listFlowWorkTeamByRole(String flowInstId, String roleCode, String runtoken) {
+    public List<FlowWorkTeam> listFlowWorkTeamByRole(String flowInstId, String roleCode, String runToken) {
         return this.listObjectsByFilter("where flow_Inst_Id = ? and role_Code = ? and RUN_TOKEN = ? " +
-            "order by user_Order", new Object[]{flowInstId, roleCode, runtoken});
+            "order by user_Order", new Object[]{flowInstId, roleCode, runToken});
     }
 
 

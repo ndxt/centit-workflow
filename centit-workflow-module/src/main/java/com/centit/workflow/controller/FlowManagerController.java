@@ -220,17 +220,15 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/getteamlist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public PageQueryResult<Map<String, String>> getTeamList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
-        Map<String, List<String>> teamMap = flowEngine.viewFlowWorkTeam(flowInstId);
-        List<Map<String, String>> teamList = new ArrayList<Map<String, String>>();
-        for (Map.Entry<String, List<String>> entry : teamMap.entrySet()) {
-            Set<HashMap<String, String>> userMap = new HashSet<HashMap<String, String>>();
-            for (String userCode : entry.getValue()) {
-                Map<String, String> teamTempMap = new HashMap<String, String>();
-                teamTempMap.put("roleCode", entry.getKey());
-                teamTempMap.put("userCode", userCode);
-                teamTempMap.put("userName", CodeRepositoryUtil.getValue("userCode", userCode));
-                teamList.add(teamTempMap);
-            }
+        List<FlowWorkTeam> teamMap = flowEngine.viewFlowWorkTeam(flowInstId);
+        List<Map<String, String>> teamList = new ArrayList<>();
+        for (FlowWorkTeam entry : teamMap) {
+            Map<String, String> teamTempMap = new HashMap<>();
+            teamTempMap.put("roleCode", entry.getRoleCode());
+            teamTempMap.put("userCode", entry.getUserCode());
+            teamTempMap.put("runToken", entry.getRunToken());
+            teamTempMap.put("userName", CodeRepositoryUtil.getValue("userCode", entry.getUserCode()));
+            teamList.add(teamTempMap);
         }
         pageDesc.setTotalRows(teamList.size());
         return PageQueryResult.createResult(teamList, pageDesc);

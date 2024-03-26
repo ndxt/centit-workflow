@@ -7,7 +7,9 @@ import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.FlowVariable;
+import com.centit.workflow.po.FlowWorkTeam;
 import com.centit.workflow.po.NodeInstance;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -18,7 +20,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
     private UserUnitVariableTranslate flowVarTrans;
     private List<FlowVariable> flowVariables;
     private Map<String,List<String>> flowOrganizes;
-    private Map<String,List<String>> flowWorkTeam;
+    private List<FlowWorkTeam> flowWorkTeam;
     private Map<String,Set<String>> nodeUnits;
     private Map<String,Set<String>> nodeUsers;
     //可能为 Null
@@ -114,12 +116,12 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         this.flowOrganizes = flowOrganizes;
     }
 
-    public void setFlowWorkTeam(Map<String,List<String>> flowWorkTeam) {
+    public void setFlowWorkTeam(List<FlowWorkTeam> flowWorkTeam) {
         this.flowWorkTeam = flowWorkTeam;
     }
 
     private FlowVariable findFlowVariable(String varName){
-        if(flowVariables==null || flowVariables.size()==0)
+        if(flowVariables==null || flowVariables.isEmpty())
             return null;
         String thisToken = nodeInst ==null? null : nodeInst.getRunToken();
         FlowVariable sValue = null;
@@ -155,6 +157,37 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         return sValue;
     }
 
+    public List<String> findFlowTeam(String varName) {
+        if(flowWorkTeam==null || flowWorkTeam.isEmpty())
+            return null;
+        String thisToken = nodeInst ==null? null : nodeInst.getRunToken();
+        String currentToken = thisToken;
+        int nTL=0;
+
+        // 找到最匹配的token
+        for(FlowWorkTeam team : flowWorkTeam){
+            if(StringUtils.equals(varName, team.getRoleCode())){
+                String currToken = team.getRunToken();
+                int cTL = currToken.length();
+                if( (NodeInstance.RUN_TOKEN_GLOBAL.equals(thisToken) || thisToken==null
+                    || currToken.equals(thisToken) || thisToken.startsWith(currToken+'.' )) &&  nTL< cTL) {
+                    nTL = cTL;
+                    currentToken = currToken;
+                }
+            }
+        }
+
+        //找到所有的对应额的用户
+        List<String> sValue = new ArrayList<>();
+        for(FlowWorkTeam team : flowWorkTeam){
+            if(StringUtils.equals(varName, team.getRoleCode())
+                    && StringUtils.equals(currentToken, team.getRunToken())){
+                sValue.add(team.getRoleCode());
+            }
+        }
+        return sValue;
+    }
+
     @Override
     public Object getVarValue(String varName) {
         // 内部变量最高优先级
@@ -185,8 +218,8 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
             }
         }
         if(flowWorkTeam !=null ) {
-            List<String> users = flowWorkTeam.get(varName);
-            if (users != null)
+            List<String> users = findFlowTeam(varName);
+            if (users != null && !users.isEmpty())
                 return users;
         }
 
@@ -239,9 +272,9 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
             return CollectionsOpt.cloneSet(v.getVarList());
 
         if(flowWorkTeam !=null ){
-            List<String> listUsers = flowWorkTeam.get(varName);
-            if(listUsers != null && !listUsers.isEmpty())
-                return new HashSet<>(listUsers);
+            List<String> users = findFlowTeam(varName);
+            if (users != null && !users.isEmpty())
+                return new HashSet<>(users);
         }
 
         if("flowuser".equalsIgnoreCase(varName))

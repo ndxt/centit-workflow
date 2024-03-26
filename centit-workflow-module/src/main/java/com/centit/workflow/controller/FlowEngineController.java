@@ -307,7 +307,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查看办件角色", notes = "查看办件角色")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowWorkTeam")
-    public List<String> viewFlowWorkTeam(FlowWorkTeam flowWorkTeam) {
+    public List<FlowWorkTeam> viewFlowWorkTeam(FlowWorkTeam flowWorkTeam) {
         return flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
     }
 
@@ -315,11 +315,11 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowWorkTeamUser")
     public JSONArray viewFlowWorkTeamUser(HttpServletRequest request, FlowWorkTeam flowWorkTeam) {
-        List<String> teamUserCodes = flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
+        List<FlowWorkTeam> teamUserCodes = flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
         List<UserUnit> teamUsers = new ArrayList<>();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         teamUserCodes.forEach(u -> {
-            teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u));
+            teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u.getUserCode()));
 //            teamUsers.add(CodeRepositoryUtil.getUserInfoByCode(topUnit, u));
         });
 

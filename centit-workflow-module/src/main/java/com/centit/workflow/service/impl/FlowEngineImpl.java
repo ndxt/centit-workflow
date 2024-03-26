@@ -2067,40 +2067,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public Map<String, List<String>> viewFlowWorkTeam(String flowInstId) {
-        List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeam(flowInstId);
-        Map<String, List<String>> team = new HashMap<>();
-        if (null != users) {
-            for (FlowWorkTeam user : users) {
-                List<String> us = team.get(user.getRoleCode());
-                if (us == null) {
-                    us = new ArrayList<>();
-                }
-                us.add(user.getUserCode());
-                team.put(user.getRoleCode(), us);
-            }
-        }
-        return team;
+    public List<FlowWorkTeam> viewFlowWorkTeam(String flowInstId) {
+        return flowTeamDao.listFlowWorkTeam(flowInstId);
     }
 
     @Override
-    public List<String> viewFlowWorkTeam(String flowInstId, String roleCode) {
-        List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(flowInstId, roleCode);
-        List<String> us = new ArrayList<>();
-        for (FlowWorkTeam user : users) {
-            us.add(user.getUserCode());
-        }
-        return us;
-    }
-
-    @Override
-    public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode) {
+    public List<FlowWorkTeam> viewFlowWorkTeam(String flowInstId, String roleCode) {
         return flowTeamDao.listFlowWorkTeamByRole(flowInstId, roleCode);
-    }
-
-    @Override
-    public List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode, String authdesc) {
-        return flowTeamDao.listFlowWorkTeam(flowInstId, roleCode, authdesc);
     }
 
     @Override

@@ -15,10 +15,7 @@ import com.centit.workflow.dao.FlowVariableDao;
 import com.centit.workflow.po.*;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -299,11 +296,16 @@ public abstract class FlowOptUtils {
         }
         flowVarTrans.setFlowOrganizes(flowOrgs);
 
-        Map<String, List<String>> flowTeams = flowEngine.viewFlowWorkTeam(flowInstance.getFlowInstId());
+        List<FlowWorkTeam> flowTeams = flowEngine.viewFlowWorkTeam(flowInstance.getFlowInstId());
+        if(flowTeams==null){
+            flowTeams = new ArrayList<>();
+        }
         if(hasFlowGroup) {
-            Map<String, List<String>> tempTeams = flowEngine.viewFlowWorkTeam(flowInstance.getFlowGroupId());
-            tempTeams.putAll(flowTeams);
-            flowTeams = tempTeams;
+            List<FlowWorkTeam> tempTeams = flowEngine.viewFlowWorkTeam(flowInstance.getFlowGroupId());
+            for(FlowWorkTeam team : tempTeams){
+                team.setRunToken("T");
+                flowTeams.add(team);
+            }
         }
         flowVarTrans.setFlowWorkTeam(flowTeams);
 
