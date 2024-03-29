@@ -28,16 +28,16 @@ public class NodeInfo implements java.io.Serializable {
     private String nodeId;
 
     @Column(name = "FLOW_CODE")
-    @NotNull(message = "字段不能为空")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @NotNull
+    @Length(max = 32)
     private String flowCode;
 
     /**
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
      */
     @Column(name = "VERSION")
-    @NotNull(message = "字段不能为空")
-    @Range( max = 9999, message = "版本号不能大于{max}")
+    @NotNull
+    @Range( max = 9999)
     private Long version;
 
     public static final String NODE_TYPE_START    = "A";
@@ -127,7 +127,7 @@ public class NodeInfo implements java.io.Serializable {
      * optType = D && optCode = S 时
      * optParam 存放的是代码脚本
      */
-    @Length(max = 2048, message = "长度不能超过{max}")
+    @Length(max = 2048)
     @Column(name = "OPT_PARAM")
     private String optParam;
 

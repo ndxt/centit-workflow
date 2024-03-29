@@ -62,13 +62,13 @@ public class FlowTransition implements java.io.Serializable {
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
      */
     @Column(name = "VERSION")
-    @NotNull(message = "字段不能为空")
-    @Range( max = 9999, message = "版本号不能大于{max}")
+    @NotNull
+    @Range( max = 9999)
     private Long version;
 
     @Column(name = "FLOW_CODE")
-    @NotBlank(message = "字段不能为空")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @NotBlank
+    @Length(max = 32)
     private String flowCode;
 
     @JSONField(serialize=false)
