@@ -66,7 +66,7 @@ public class NodeInfo implements java.io.Serializable {
     private String nodeName;
 
     /**NODE_TYPE == NODE_TYPE_OPT
-     * A: 指定到人 唯一执行人 B: 动态分配 C: 多人操作（已废弃）
+     * optRuntType A: 指定到人 唯一执行人 B: 动态分配 C: 多人操作（已废弃）
      * */
     public static final String OPT_RUN_TYPE_NORMAL   = "A";
     public static final String OPT_RUN_TYPE_DYNAMIC  = "B";
@@ -74,6 +74,7 @@ public class NodeInfo implements java.io.Serializable {
 
     /**
      * NODE_TYPE == NODE_TYPE_AUTO
+     * autoRunType ：
      * N：无操作、哑元
      * B：调用Bean包括远程Bean
      * S：脚本
@@ -87,6 +88,7 @@ public class NodeInfo implements java.io.Serializable {
     public static final String AUTO_NODE_OPT_CODE_CALL    = "C";
     /**
      * NODE_TYPE == NODE_TYPE_ROUTE
+     * routerType
      * D:分支 E:汇聚  G：多实例节点  H：并行  R：游离
      */
     public static final String ROUTER_TYPE_BRANCH    = "D";
@@ -98,6 +100,7 @@ public class NodeInfo implements java.io.Serializable {
 
     /**
      * NODE_TYPE == NODE_TYPE_SYNC
+     * nodeSyncType
      * T：时间触发
      * M：消息触发
      * */
