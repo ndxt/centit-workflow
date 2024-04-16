@@ -22,7 +22,7 @@ import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.security.SecurityOptUtils;
 import com.centit.workflow.service.impl.SystemUserUnitCalcContextFactoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
@@ -50,22 +50,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableNacosConfig(globalProperties = @NacosProperties(serverAddr = "${nacos.server-addr}"))
 @NacosPropertySource(dataId = "${nacos.system-dataid}",groupId = "CENTIT", autoRefreshed = true)
-
 public class ServiceConfig implements EnvironmentAware {
-
-    @Value("${wf.external.system.jdbc.url:}")
-    protected String externalJdbcUrl;
-    @Value("${wf.external.system.jdbc.user:}")
-    protected String externalJdbcUser;
-    @Value("${wf.external.system.jdbc.password:}")
-    protected String externalJdbcPassword;
-    @Value("${wf.userunit.engine.type:system}")
-    protected String engineType;
-
-
-    @Value("${app.home:/}")
-    protected String appHome;
-
     protected Environment env;
 
     @Override
@@ -73,6 +58,11 @@ public class ServiceConfig implements EnvironmentAware {
         if (environment != null) {
             this.env = environment;
         }
+    }
+
+    @Bean
+    public AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor(){
+        return new AutowiredAnnotationBeanPostProcessor();
     }
 
     @Bean("passwordEncoder")
