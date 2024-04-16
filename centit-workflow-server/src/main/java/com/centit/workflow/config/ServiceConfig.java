@@ -7,6 +7,8 @@ import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySources;
 import com.centit.framework.components.impl.NotificationCenterImpl;
 import com.centit.framework.config.SpringSecurityCasConfig;
 import com.centit.framework.config.SpringSecurityDaoConfig;
+import com.centit.framework.dubbo.config.DubboConfig;
+import com.centit.framework.dubbo.config.IpServerDubboClientConfig;
 import com.centit.framework.jdbc.config.JdbcConfig;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.adapter.PlatformEnvironment;
@@ -21,7 +23,9 @@ import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.security.SecurityOptUtils;
 import com.centit.workflow.service.impl.SystemUserUnitCalcContextFactoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -35,7 +39,11 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
  * Created by codefan on 17-7-18.
  */
 @Configuration
-@Import({//IPOrStaticAppSystemBeanConfig.class,
+
+@PropertySource("classpath:system.properties")
+@Import({
+    DubboConfig.class,
+    IpServerDubboClientConfig.class,
     JdbcConfig.class,
     SpringSecurityDaoConfig.class,
     SpringSecurityCasConfig.class})
@@ -43,9 +51,9 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
     excludeFilters = @ComponentScan.Filter(value = org.springframework.stereotype.Controller.class))
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableNacosConfig(globalProperties = @NacosProperties(serverAddr = "${nacos.server-addr}"))
-@NacosPropertySources({@NacosPropertySource(dataId = "${nacos.system-dataid}",groupId = "CENTIT", autoRefreshed = true)}
-)
-public class ServiceConfig {
+@NacosPropertySource(dataId = "${nacos.system-dataid}",groupId = "CENTIT", autoRefreshed = true)
+
+public class ServiceConfig implements EnvironmentAware {
 
     @Value("${wf.external.system.jdbc.url:}")
     protected String externalJdbcUrl;
@@ -60,14 +68,19 @@ public class ServiceConfig {
     @Value("${app.home:/}")
     protected String appHome;
 
-    @Autowired
-    Environment env;
+    protected Environment env;
+
+    @Override
+    public void setEnvironment(@Autowired Environment environment) {
+        if (environment != null) {
+            this.env = environment;
+        }
+    }
 
     @Bean("passwordEncoder")
     public StandardPasswordEncoderImpl passwordEncoder() {
         return new StandardPasswordEncoderImpl();
     }
-
 
     @Bean
     public CentitUserDetailsService centitUserDetailsService(@Autowired PlatformEnvironment platformEnvironment) {
@@ -87,6 +100,11 @@ public class ServiceConfig {
         ms.setBasename("classpath:i18n/messages");
         ms.setDefaultEncoding("UTF-8");
         return ms;
+    }
+
+    @Bean
+    public AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor() {
+        return new AutowiredAnnotationBeanPostProcessor();
     }
 
     @Bean
