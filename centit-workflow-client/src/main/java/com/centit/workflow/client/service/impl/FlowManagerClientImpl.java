@@ -645,7 +645,7 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     @Override
-    public void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion) {
+    public void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion, String mangerUserCode)  {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
