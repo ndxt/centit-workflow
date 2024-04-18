@@ -30,6 +30,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -860,19 +861,38 @@ public class FlowManagerController extends BaseController {
 
     @ApiOperation(value = "暂停流程计时", notes = "暂停流程计时")
     @RequestMapping(value = "/suspendFlowInstTimer/{flowInstId}", method = RequestMethod.GET)
-    public void suspendFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> parameters = collectRequestParameters(request);
-        String userCode = MapUtils.getString(parameters,"userCode","admin");
+    @WrapUpResponseBody
+    public void suspendFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request) {
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
+        String userCode = userInfo.getUserCode();// MapUtils.getString(parameters,"userCode","admin");
         flowManager.suspendFlowInstTimer(flowInstId, userCode);
-        JsonResultUtils.writeSingleDataJson("暂停节点计时成功", response);
+        //JsonResultUtils.writeSingleDataJson("暂停节点计时成功", response);
     }
 
     @ApiOperation(value = "唤醒流程计时", notes = "唤醒流程计时")
     @RequestMapping(value = "/activizeFlowInstTimer/{flowInstId}", method = RequestMethod.GET)
-    public void activizeFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> parameters = collectRequestParameters(request);
-        String userCode = MapUtils.getString(parameters,"userCode","admin");
+    @WrapUpResponseBody
+    public void activizeFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request) {
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
+        String userCode = userInfo.getUserCode();
         flowManager.activizeFlowInstTimer(flowInstId, userCode);
-        JsonResultUtils.writeSingleDataJson("唤醒流程计时成功", response);
+        //JsonResultUtils.writeSingleDataJson("唤醒流程计时成功", response);
     }
+
+    @ApiOperation(value = "迁移流程版本", notes = "获取流程实例列表")
+    @RequestMapping(value = "/upgrade/{flowCode}", method = RequestMethod.PUT)
+    @WrapUpResponseBody
+    public void upgradeFlowVersion(@PathVariable String flowCode,
+                                   @RequestBody JSONObject versionDesc,
+                                   HttpServletRequest request) {
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
+        long newVersion = -1;
+        long oldVersion = -1;
+        if(versionDesc!=null){
+            newVersion = NumberBaseOpt.castObjectToLong(versionDesc.get("newVersion"), -1l);
+            oldVersion = NumberBaseOpt.castObjectToLong(versionDesc.get("oldVersion"), -1l);
+        }
+        flowManager.upgradeFlowVersion(flowCode, newVersion, oldVersion, userInfo.getUserCode());
+    }
+
 }

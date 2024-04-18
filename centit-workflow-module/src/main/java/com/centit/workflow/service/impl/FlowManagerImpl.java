@@ -1469,6 +1469,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         DatabaseOptUtils.doExecuteSql(nodeInstanceDao, sqlUpdateFlowInst,
             new Object[]{newVersion, flowCode, oldVersion});
     }
+
     /** 流程定义时 必须用 nodeCode 进行节点标注
      * 将正在执行中的流程从一个版本迁移到另一个版本（只能在同一个流程的不通版本间迁移）
      * @param flowCode 流程代码
@@ -1478,7 +1479,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     @Transactional
-    public void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion){
+    public void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion, String mangerUserCode){
         if(newVersion<=0){
             newVersion = flowDefDao.getLastVersion(flowCode);
         }
@@ -1489,5 +1490,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         for(long v = newVersion-1; v>0 ; v--){
             innerUpgradeFlowVersion(flowCode, newVersion, v);
         }
+        OperationLog managerAct = FlowOptUtils.createActionLog(
+            mangerUserCode, flowCode, "流程" +flowCode+ "版本迁移，从版本" +oldVersion +"迁移到"+ newVersion);
+        OperationLogCenter.log(managerAct);
     }
 }
