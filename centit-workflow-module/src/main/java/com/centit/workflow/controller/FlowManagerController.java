@@ -613,7 +613,8 @@ public class FlowManagerController extends BaseController {
 
     //新增工作组
     @ApiOperation(value = "新增工作组", notes = "新增工作组")
-    @RequestMapping(value = "/assignFlowWorkTeam/{flowInstId}/{roleCode}/{userCode}/{authdesc}", method = RequestMethod.POST)
+    @RequestMapping(value = "/assignFlowWorkTeam/{flowInstId}/{roleCode}/{userCode}/{authdesc}",
+        method = RequestMethod.POST)
     @WrapUpResponseBody
     public void assignFlowWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode,
                                    @PathVariable String userCode, @PathVariable String authdesc) {
@@ -627,16 +628,24 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode", notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")
     @WrapUpResponseBody
     @RequestMapping(value = "/moveUserTaskTo", method = RequestMethod.POST)
-    public void moveUserTaskTo(@RequestBody TaskMove taskMove) {
-        flowManager.moveUserTaskTo(taskMove.getFormUser(), taskMove.getToUser(), taskMove.getOperatorUser(),
+    public void moveUserTaskTo(@RequestBody TaskMove taskMove, HttpServletRequest request) {
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
+        flowManager.moveUserTaskTo( WebOptUtils.getCurrentTopUnit(request),
+            taskMove.getFormUser(),
+            taskMove.getToUser(),
+            userInfo.getUserCode(), //taskMove.getOperatorUser(),
             taskMove.getMoveDesc());
     }
 
     @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode", notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")
     @WrapUpResponseBody
     @RequestMapping(value = "/moveSelectedUserTaskTo", method = RequestMethod.POST)
-    public void moveSelectedUserTaskTo(@RequestBody TaskMove taskMove) {
-        flowManager.moveUserTaskTo(taskMove.getNodeInstIds(), taskMove.getFormUser(), taskMove.getToUser(), taskMove.getOperatorUser(),
+    public void moveSelectedUserTaskTo(@RequestBody TaskMove taskMove, HttpServletRequest request) {
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
+        flowManager.moveUserTaskTo(taskMove.getNodeInstIds(),
+            taskMove.getFormUser(),
+            taskMove.getToUser(),
+            userInfo.getUserCode(), //taskMove.getOperatorUser(),
             taskMove.getMoveDesc());
     }
 

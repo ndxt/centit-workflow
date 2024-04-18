@@ -21,7 +21,7 @@ import java.util.Map;
 public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
 
     public Map<String, String> getFilterField() {
-        Map<String, String> filterField = new HashMap<String, String>();
+        Map<String, String> filterField = new HashMap<>();
         filterField.put("nodeInstId", CodeBook.EQUAL_HQL_ID);
         filterField.put("flowInstId", CodeBook.EQUAL_HQL_ID);
         filterField.put("nodeId", CodeBook.EQUAL_HQL_ID);
@@ -37,6 +37,8 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         filterField.put("runToken", CodeBook.EQUAL_HQL_ID);
         filterField.put("taskAssigned", CodeBook.EQUAL_HQL_ID);
         filterField.put("userCode", CodeBook.EQUAL_HQL_ID);
+        filterField.put("topUnit", "FLOW_CODE in (select a.FLOW_CODE from WF_FLOW_DEFINE a " +
+            " join F_OS_INFO b on(a.OS_ID = b.OS_ID) where b.TOP_UNIT = :topUnit)" );
 
         filterField.put(CodeBook.ORDER_BY_HQL_ID, "nodeInstId desc");
         return filterField;

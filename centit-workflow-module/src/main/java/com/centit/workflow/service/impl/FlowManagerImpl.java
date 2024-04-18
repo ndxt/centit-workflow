@@ -1055,7 +1055,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     @Override
-    public int moveUserTaskTo(String fromUserCode, String toUserCode,
+    public int moveUserTaskTo(String topUnit, String fromUserCode, String toUserCode,
                               String optUserCode, String moveDesc) {
         /**
          *  1, 查出 所有的 fromUserCode 的待办， 可能在 wf_node_instance 也可能在 actiontask 表中
@@ -1067,6 +1067,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         filterMap.put("taskAssigned", "S");
         filterMap.put("userCode", fromUserCode);
         filterMap.put("nodeState", "N");
+        filterMap.put("topUnit", topUnit);
         List<NodeInstance> nodeInstances = nodeInstanceDao.listObjectsByProperties(filterMap);
         moveUserTaskTo(nodeInstances, fromUserCode, toUserCode, optUserCode);
         return 0;
