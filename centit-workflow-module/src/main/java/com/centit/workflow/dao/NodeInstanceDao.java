@@ -37,6 +37,8 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         filterField.put("runToken", CodeBook.EQUAL_HQL_ID);
         filterField.put("taskAssigned", CodeBook.EQUAL_HQL_ID);
         filterField.put("userCode", CodeBook.EQUAL_HQL_ID);
+        filterField.put("osId", "FLOW_CODE in (select a.FLOW_CODE from WF_FLOW_DEFINE a " +
+            " where a.OS_ID  = :osId)" );
         filterField.put("topUnit", "FLOW_CODE in (select a.FLOW_CODE from WF_FLOW_DEFINE a " +
             " join F_OS_INFO b on(a.OS_ID = b.OS_ID) where b.TOP_UNIT = :topUnit)" );
 
