@@ -19,6 +19,7 @@ import com.centit.support.algorithm.*;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JSONOpt;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.FlowEngine;
@@ -678,13 +679,14 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "终止一个流程，更新所有节点状态为F", notes = "终止一个流程，更新所有节点状态为F")
     @PutMapping(value = "/stopInstance/{flowInstId}/{userCode}")
-    public void stopInstance(@PathVariable String flowInstId, @PathVariable String userCode, HttpServletResponse response) {
+    @WrapUpResponseBody
+    public void stopInstance(@PathVariable String flowInstId, @PathVariable String userCode, HttpServletRequest request) {
         try {
             flowManager.stopInstance(flowInstId, userCode, "");
-            JsonResultUtils.writeSuccessJson(response);
         } catch (Exception e) {
-            JsonResultUtils.writeErrorMessageJson(1, "流程无法强行结束", response);
-
+            throw new ObjectException(WorkflowException.IncorrectNodeState,
+                getI18nMessage("flow.654.flow_cant_stop", request));
+               // 1, "流程无法强行结束", response);
         }
     }
 
@@ -718,13 +720,14 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "流程拉回到首节点", notes = "流程拉回到首节点")
     @PutMapping(value = "/reStartFlow/{flowInstId}/{userCode}")
+    @WrapUpResponseBody
     public void reStartFlow(@PathVariable String flowInstId, @PathVariable String userCode,
-                            @RequestParam(required = false, defaultValue = "false") Boolean force, HttpServletResponse response) {
+                            @RequestParam(required = false, defaultValue = "false") Boolean force,
+                            HttpServletRequest request) {
         NodeInstance startNodeInst = flowManager.reStartFlow(flowInstId, userCode, force);
-        if (startNodeInst != null) {
-            JsonResultUtils.writeSuccessJson(response);
-        } else {
-            JsonResultUtils.writeErrorMessageJson(1, "流程已经被审批，无法撤回", response);
+        if (startNodeInst == null) {
+           throw new ObjectException(WorkflowException.WithoutPermission,
+                getI18nMessage("flow.656.flow_cant_restart", request));
         }
     }
 
@@ -829,7 +832,8 @@ public class FlowManagerController extends BaseController {
     public ResponseData batchDeleteFlowInst(HttpServletRequest request) {
         String flowInstIds = MapUtils.getString(collectRequestParameters(request), "flowInstIds");
         if (StringUtils.isBlank(flowInstIds)){
-            return ResponseData.makeErrorMessage("flowInstIds不能为空!");
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_FIELD_INPUT_NOT_VALID,
+                getI18nMessage("error.701.field_is_blank", request, "flowCode,flowName"));
         }
         flowManager.deleteFlowInstByIds(CollectionsOpt.arrayToList(flowInstIds.split(",")));
         return ResponseData.makeSuccessResponse();
