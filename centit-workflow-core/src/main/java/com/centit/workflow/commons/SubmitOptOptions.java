@@ -6,10 +6,7 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by codefan on 17-9-11.
@@ -101,6 +98,8 @@ public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
      */
     @ApiModelProperty("指定后续节点操作人员")
     private Map<String, Set<String>> nodeOptUsers;
+
+    private Locale clientLocale;
 
     private SubmitOptOptions() {
         this.lockOptUser = false;
@@ -223,31 +222,22 @@ public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
     }
 
     public SubmitOptOptions copy(FlowOptParamOptions options){
-
         this.setVariables(CollectionsOpt.cloneHashMap(options.getVariables()));
         this.setFlowRoleUsers(CollectionsOpt.cloneHashMap(options.getFlowRoleUsers()));
         this.setGlobalVariables(CollectionsOpt.cloneHashMap(options.getGlobalVariables()));
         this.setNodeUnits(CollectionsOpt.cloneHashMap(options.getNodeUnits()));
         this.setNodeOptUsers(CollectionsOpt.cloneHashMap(options.getNodeOptUsers()));
         this.setFlowOrganizes(CollectionsOpt.cloneHashMap(options.getFlowOrganizes()));
-
+        this.setClientLocale(options.getClientLocale());
         this.user(options.getUserCode())
             .unit(options.getUnitCode());
-
         return this;
     }
 
     public SubmitOptOptions duplicate(){
         SubmitOptOptions newObj = new SubmitOptOptions();
-        newObj.setVariables(CollectionsOpt.cloneHashMap(this.variables));
-        newObj.setGlobalVariables(CollectionsOpt.cloneHashMap(this.globalVariables));
-        newObj.setNodeUnits(CollectionsOpt.cloneHashMap(this.nodeUnits));
-        newObj.setFlowRoleUsers(CollectionsOpt.cloneHashMap(this.flowRoleUsers));
-        newObj.setNodeOptUsers(CollectionsOpt.cloneHashMap(this.nodeOptUsers));
-        newObj.setFlowOrganizes(CollectionsOpt.cloneHashMap(this.flowOrganizes));
-
-        return newObj.user(this.userCode)
-            .unit(this.unitCode).workUser(this.workUserCode)
+        newObj.copy(this);
+        return newObj.workUser(this.workUserCode)
             .lockOptUser(this.lockOptUser)
             .nodeInst(this.nodeInstId).grantor(this.grantorCode);
     }

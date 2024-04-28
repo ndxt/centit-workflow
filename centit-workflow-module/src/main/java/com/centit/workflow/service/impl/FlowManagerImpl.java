@@ -30,6 +30,7 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +49,9 @@ import java.util.*;
 public class FlowManagerImpl implements FlowManager, Serializable {
     private static final long serialVersionUID = 1L;
     private static Logger logger = LoggerFactory.getLogger(FlowManagerImpl.class);
+
+    @Autowired
+    protected MessageSource messageSource;
 
     @Autowired
     FlowInstanceDao flowInstanceDao;

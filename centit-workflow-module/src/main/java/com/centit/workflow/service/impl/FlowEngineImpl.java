@@ -34,6 +34,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +49,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(FlowEngineImpl.class);
     public static final String NODE_INST_ZERO = "0";
+
+    @Autowired
+    protected MessageSource messageSource;
 
     @Autowired
     private FlowScriptRunTime flowScriptRunTime;

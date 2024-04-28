@@ -1,6 +1,7 @@
 package com.centit.workflow.commons;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +39,8 @@ public interface FlowOptParamOptions {
 
     Map<String, Set<String>> getNodeOptUsers();
 
+    Locale getClientLocale();
+
     //-----------------------------------------------
     void setVariables(Map<String, Object> variables);
 
@@ -50,4 +53,5 @@ public interface FlowOptParamOptions {
     void setNodeUnits(Map<String, String> nodeUnits);
 
     void setNodeOptUsers(Map<String, Set<String>> nodeOptUsers);
+
 }
