@@ -134,7 +134,8 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowVariablesByVarname")
     public List<FlowVariable> viewFlowVariablesByVarname(FlowVariable flowVariableParam) {
-        List<FlowVariable> flowVariables = flowEngine.viewFlowVariablesByVarName(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName());
+        List<FlowVariable> flowVariables = flowEngine.viewFlowVariablesByVarName(flowVariableParam.getFlowInstId(),
+            flowVariableParam.getVarName());
         return flowVariables;
     }
 
@@ -635,8 +636,7 @@ public class FlowEngineController extends BaseController {
         required = true, paramType = "path", dataType = "String"
     )
     @RequestMapping(value = "/flowActiveNodeTask/{flowInstId}", method = RequestMethod.GET)
-    public List<UserTask> listFlowActiveNodeOperators(@PathVariable String flowInstId,
-                                          HttpServletRequest request) {
+    public List<UserTask> listFlowActiveNodeOperators(@PathVariable String flowInstId) {
 
         return flowEngine.listFlowActiveNodeOperators(flowInstId);
     }

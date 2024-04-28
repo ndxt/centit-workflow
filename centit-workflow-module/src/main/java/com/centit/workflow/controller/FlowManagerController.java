@@ -30,7 +30,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -160,7 +159,8 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "删除指定的流程组织机构", notes = "删除指定的流程组织机构")
     @RequestMapping(value = "/deleteorg/{flowInstId}/{roleCode}/{unitCode}", method = RequestMethod.GET)
-    public void deleteOrg(@PathVariable String flowInstId, @PathVariable String roleCode, @PathVariable String unitCode, HttpServletResponse response) {
+    public void deleteOrg(@PathVariable String flowInstId, @PathVariable String roleCode, @PathVariable String unitCode,
+                          HttpServletResponse response) {
         flowEngine.deleteFlowOrganize(flowInstId, roleCode, unitCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -214,13 +214,13 @@ public class FlowManagerController extends BaseController {
     /**
      * 查询办件角色列表
      *
-     * @param flowInstId
-     * @param response
+     * @param flowInstId 查询办件角色列表
+     * @param pageDesc PageDesc
      */
     @ApiOperation(value = "查询办件角色列表", notes = "查询办件角色列表")
     @RequestMapping(value = "/getteamlist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public PageQueryResult<Map<String, String>> getTeamList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
+    public PageQueryResult<Map<String, String>> getTeamList(@PathVariable String flowInstId, PageDesc pageDesc) {
         List<FlowWorkTeam> teamMap = flowEngine.viewFlowWorkTeam(flowInstId);
         List<Map<String, String>> teamList = new ArrayList<>();
         for (FlowWorkTeam entry : teamMap) {
@@ -243,7 +243,7 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "删除指定roleCode下的所有流程工作小组", notes = "删除指定roleCode下的所有流程工作小组")
     @RequestMapping(value = "/deleteteam/{flowInstId}/{roleCode}", method = RequestMethod.GET)
-    public void deleteWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
+    public void deleteWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode, HttpServletResponse response) {
         flowEngine.deleteFlowWorkTeam(flowInstId, roleCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -255,7 +255,8 @@ public class FlowManagerController extends BaseController {
      */
     @ApiOperation(value = "删除指定的流程工作小组", notes = "删除指定的流程工作小组")
     @RequestMapping(value = "/deleteteam/{flowInstId}/{roleCode}/{userCode}", method = RequestMethod.GET)
-    public void deleteWorkTeamUser(@PathVariable String flowInstId, @PathVariable String roleCode, @PathVariable String userCode, PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
+    public void deleteWorkTeamUser(@PathVariable String flowInstId, @PathVariable String roleCode,
+                                   @PathVariable String userCode, HttpServletResponse response) {
         flowEngine.deleteFlowWorkTeam(flowInstId, roleCode, userCode);
         JsonResultUtils.writeSingleDataJson("", response);
     }
@@ -266,13 +267,13 @@ public class FlowManagerController extends BaseController {
     /**
      * 查询变量列表
      *
-     * @param flowInstId
-     * @param response
+     * @param flowInstId 查询变量列表
+     * @param pageDesc PageDesc
      */
     @ApiOperation(value = "查询变量列表", notes = "查询变量列表")
     @RequestMapping(value = "/getvariablelist/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public PageQueryResult<FlowVariable> getVariableList(@PathVariable String flowInstId, PageDesc pageDesc, HttpServletResponse response) {
+    public PageQueryResult<FlowVariable> getVariableList(@PathVariable String flowInstId, PageDesc pageDesc) {
         List<FlowVariable> variableList = flowEngine.listFlowVariables(flowInstId);
         pageDesc.setTotalRows(variableList.size());
         return PageQueryResult.createResult(variableList, pageDesc);
@@ -281,12 +282,11 @@ public class FlowManagerController extends BaseController {
 
     /**
      * 保存流程变量
-     *
-     * @return
      */
     @ApiOperation(value = "保存流程变量", notes = "保存流程变量")
     @RequestMapping(value = "/savevariable/{flowInstId}/{varName}/{varValue}", method = RequestMethod.GET)
-    public void saveVariable(@PathVariable String flowInstId, @PathVariable String varName, @PathVariable String varValue, HttpServletRequest request, HttpServletResponse response) {
+    public void saveVariable(@PathVariable String flowInstId, @PathVariable String varName, @PathVariable String varValue,
+                             HttpServletRequest request, HttpServletResponse response) {
         String runToken = request.getParameter("runToken");
         flowEngine.saveFlowNodeVariable(flowInstId, runToken, varName, StringUtils.isBlank(varValue) ? null : varValue);
         JsonResultUtils.writeSingleDataJson("", response);
@@ -521,7 +521,9 @@ public class FlowManagerController extends BaseController {
         String localLang = WebOptUtils.getCurrentLang(request);
         FlowInstance dbobject = flowManager.getFlowInstance(flowInstId);
         if (dbobject == null) {
-            throw new ObjectException("找不到对应的流程实例信息：flowInstId=" + flowInstId);
+            throw new ObjectException(ObjectException.DATA_NOT_FOUND_EXCEPTION,
+                    getI18nMessage("error.604.object_not_found", request, "FlowInstance", flowInstId));
+                // "找不到对应的流程实例信息：flowInstId=" + flowInstId);
         }
         NodeInfo nodeInfo = flowDefine.getNodeInfoById(nodeId);
         JSONObject nodeOptInfo = new JSONObject();

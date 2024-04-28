@@ -75,7 +75,7 @@ public class FlowOptController extends BaseController {
         }
         if(optInfo != null){
             for(OptInfo obj : allOptInfos){
-                if(obj.getTopOptId().equals(optInfo.getTopOptId()) && obj.getOptName().equals(optInfo.OPT_INFO_FORM_CODE_COMMON_NAME)){
+                if(obj.getTopOptId().equals(optInfo.getTopOptId()) && obj.getOptName().equals(OptInfo.OPT_INFO_FORM_CODE_COMMON_NAME)){
                     tyOptId = obj.getOptId();
                     if(tyOptId.equals(optId)){
                         flag = false;
