@@ -308,7 +308,7 @@ public class FlowDefineController extends ResourceBaseController {
         boolean saveSucced = flowDefine.saveDraftFlowDef(flowdefine);
         if (saveSucced) {
             return ResponseData.makeSuccessResponse(
-                getI18nMessage("info.200.save_draft_success", request));
+                getI18nMessage("flow.200.save_draft_success", request));
         } else { // saveSucced always true
             return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
                 getI18nMessage("error.704.process_failed", request, "no way"));
@@ -335,7 +335,7 @@ public class FlowDefineController extends ResourceBaseController {
         boolean saveSucced = flowDefine.saveDraftFlowDef(flowdefine);
         if (saveSucced) {
             return ResponseData.makeSuccessResponse(
-                getI18nMessage("info.200.save_draft_success", request));
+                getI18nMessage("flow.200.save_draft_success", request));
         } else { // saveSucced always true
             return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
                 getI18nMessage("error.704.process_failed", request, "no way"));
@@ -390,7 +390,7 @@ public class FlowDefineController extends ResourceBaseController {
         boolean saveSucced = flowDefine.saveDraftFlowRole(flowdefine);
         if (saveSucced) {
             return ResponseData.makeSuccessResponse(
-                getI18nMessage("info.200.save_draft_success", request));
+                getI18nMessage("flow.200.save_draft_success", request));
         } else {
             return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
                 getI18nMessage("error.704.process_failed", request, "flow not found"));
