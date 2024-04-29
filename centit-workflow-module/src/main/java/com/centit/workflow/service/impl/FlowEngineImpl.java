@@ -5,7 +5,6 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.centit.dde.adapter.DdeDubboTaskRun;
 import com.centit.framework.common.ResponseData;
-import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
@@ -40,7 +39,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
 
@@ -656,13 +654,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (nodeToken.startsWith(NodeInstance.RUN_TOKEN_ISOLATED)) {
                     return resNodes;
                 } else {
-                    String errorMsg = "找不到后续节点：" + flowInst.getFlowInstId() +
-                        (preNodeInst != null ? "; 节点：" + preNodeInst.getNodeInstId() : ";") +
-                        " 路由：" + nextRouterNode.getNodeId();
-                    logger.error(errorMsg);
-                    throw new WorkflowException(WorkflowException.NotFoundNextNode,
-                       getI18nMessage("" ,options.getClientLocale(),
-                        flowInst.getFlowInstId(), preNodeInst.getNodeInstId(), nextRouterNode.getNodeId()));
+                    String preNodeId = preNodeInst != null ?  preNodeInst.getNodeInstId() : "--";
+                    throw new WorkflowException(WorkflowException.NextNodeNotFound,
+                       getI18nMessage("flow.658.next_node_not_found" ,options.getClientLocale(),
+                        flowInst.getFlowInstId(), preNodeId, nextRouterNode.getNodeId()));
                 }
             }
             // D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
@@ -1404,7 +1399,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 return nextNodeInsts;
             } else {
                 logger.error("流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
-                throw new WorkflowException(WorkflowException.NotFoundNextNode,
+                throw new WorkflowException(WorkflowException.NextNodeNotFound,
                     "流程：" + nodeInst.getFlowInstId() + "节点：" + options.getNodeInstId() + " " + currNode.getNodeName() + " 没有找到符合流转条件的后续节点。");
             }
         }

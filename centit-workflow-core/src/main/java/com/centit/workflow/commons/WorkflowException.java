@@ -19,7 +19,7 @@ public class WorkflowException extends ObjectException {
     public static final int PauseTimerNode      = 655;  // 暂停计时节点不能提交
     public static final int WithoutPermission   = 656;  //没有权限
     public static final int NoValueForMultiInst = 657;  //多实例节点对应的变量为空
-    public static final int NotFoundNextNode    = 658;  //找不到符合流转条件的后续节点
+    public static final int NextNodeNotFound = 658;  //找不到符合流转条件的后续节点
     public static final int AutoRunNodeWithoutApplcationContent= 659; //自动运行节点出错，传递的参数application为空
     public static final int AutoRunNodeBeanNotFound= 660; //自动运行节点 出错，可能是设置bean找不到
  ///////////////用户提供的接口异常////////////////////////////////////////////////
