@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.centit.dde.adapter.DdeDubboTaskRun;
 import com.centit.framework.common.ResponseData;
+import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.OperationLogCenter;
 import com.centit.framework.components.SysUserFilterEngine;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
 
@@ -102,7 +104,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     public FlowEngineImpl() {
         //lockObject = new Object();
     }
-
+    private String getI18nMessage(String code, Locale currLocale, Object... args) {
+        return this.messageSource.getMessage(code, args, "Message:" + code, currLocale);
+    }
     private void saveValueAndRoleInOptions(String flowInstId, String runToken,
                                            FlowOptParamOptions options) {
         // 设置流程变量
@@ -255,7 +259,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //生成首节点实例编号
         NodeInfo node = wf.getFirstNode();
         if (node == null) {
-            throw new WorkflowException(WorkflowException.FlowDefineError, "找不到首节点");
+            throw new WorkflowException(WorkflowException.FlowDefineError,
+                getI18nMessage("flow.653.first_node_not_found", options.getClientLocale()));
         }
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
             null, flowInst, flowVariableDao, this, options);
@@ -655,7 +660,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         (preNodeInst != null ? "; 节点：" + preNodeInst.getNodeInstId() : ";") +
                         " 路由：" + nextRouterNode.getNodeId();
                     logger.error(errorMsg);
-                    throw new WorkflowException(WorkflowException.NotFoundNextNode, errorMsg);
+                    throw new WorkflowException(WorkflowException.NotFoundNextNode,
+                       getI18nMessage("" ,options.getClientLocale(),
+                        flowInst.getFlowInstId(), preNodeInst.getNodeInstId(), nextRouterNode.getNodeId()));
                 }
             }
             // D:分支 E:汇聚  G 多实例节点  H并行  R 游离 S：同步
