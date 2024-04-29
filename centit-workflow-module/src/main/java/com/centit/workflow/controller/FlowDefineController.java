@@ -566,6 +566,7 @@ public class FlowDefineController extends ResourceBaseController {
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         Map<String, Map<String, String>> map = flowDefine.listAllRole(topUnit);
         //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
+        FlowInfo flowInfo = flowDefine.getFlowInfo(flowcode, 0l);
         Map<String, String> bjMap = new LinkedHashMap<>();
         bjMap.put("", "请选择");
         bjMap.putAll(flowDefine.listFlowItemRoles(flowcode, 0L));
@@ -580,7 +581,7 @@ public class FlowDefineController extends ResourceBaseController {
         map.put("OptType", map2);
 
         // 子流程
-        Map<String, String> map4 = flowDefine.listAllSubFlow();
+        Map<String, String> map4 = flowDefine.listAllSubFlow(flowInfo.getOsId());
         map.put("SubWfcode", map4);
         Map<String, String> stageMap = flowDefine.listFlowStages(flowcode, 0L);
         map.put("FlowPhase", stageMap);

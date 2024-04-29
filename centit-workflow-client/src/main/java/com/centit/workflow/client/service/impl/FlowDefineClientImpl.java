@@ -357,7 +357,7 @@ public class FlowDefineClientImpl implements FlowDefine {
      * 列举所有的子流程
      */
     @Override
-    public Map<String, String> listAllSubFlow() {
+    public Map<String, String> listAllSubFlow(String osId) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

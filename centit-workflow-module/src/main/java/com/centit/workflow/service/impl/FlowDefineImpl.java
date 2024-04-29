@@ -666,10 +666,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      */
     @Override
     @Transactional
-    public Map<String, String> listAllSubFlow() {
+    public Map<String, String> listAllSubFlow(String osId) {
         Map<String, String> subwf = new HashMap<>();
 
-        List<FlowInfo> listflow = flowDefineDao.getFlowsByState("B");
+        List<FlowInfo> listflow = flowDefineDao.getFlowsByOsId(osId, "B");
         for (FlowInfo wfFlowDefine : listflow) {
             subwf.put(wfFlowDefine.getFlowCode(), wfFlowDefine.getFlowName());
         }

@@ -14,7 +14,6 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.support.network.UrlOptUtils;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
-import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import org.apache.commons.lang3.StringUtils;
@@ -332,7 +331,7 @@ public class FlowEngineClientImpl implements FlowEngine {
 
     @Override
     public NodeInstance reclaimNode(String nodeInstId, String userCode) {
-        throw new WorkflowException(ObjectException.FUNCTION_NOT_SUPPORT,"当前版本不支持的操作！");
+        throw new ObjectException(ObjectException.FUNCTION_NOT_SUPPORT,"当前版本不支持的操作！");
     }
 
     //rollBackNode

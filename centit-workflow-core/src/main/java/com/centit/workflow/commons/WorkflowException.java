@@ -7,7 +7,7 @@ import com.centit.support.common.ObjectException;
  * @author codefan
  */
 @SuppressWarnings("unused")
-public class WorkflowException extends ObjectException {
+public abstract class WorkflowException extends ObjectException {
     private static final long serialVersionUID = 1L;
 
     //public enum FlowExceptionType {
@@ -26,22 +26,9 @@ public class WorkflowException extends ObjectException {
     public static final int BizDataCheckError   = 661; //业务数据验证异常
     public static final int BizLogicError       = 662; //业务逻辑异常
     public static final int BizDefinedError     = 663; //业务自定义异常
-    //}
 
-    public WorkflowException(String message){
+    private WorkflowException(String message) {
         super(message);
-    }
-
-    public WorkflowException(int exceptionType,String message){
-        super(exceptionType, message);
-    }
-
-    public int getExceptionType() {
-        return this.getExceptionCode();
-    }
-
-    public void setExceptionType(int exceptionType) {
-        this.setExceptionCode(exceptionType);
     }
 
 }
