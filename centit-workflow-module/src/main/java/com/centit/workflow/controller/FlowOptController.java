@@ -70,7 +70,7 @@ public class FlowOptController extends BaseController {
         boolean flag = true;
         for(OptInfo obj : allOptInfos){
             if(obj.getOptId().equals(optId)){
-                optInfo = (OptInfo) obj;
+                optInfo = obj;
             }
         }
         if(optInfo != null){
@@ -139,7 +139,7 @@ public class FlowOptController extends BaseController {
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         List<OptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
-        List<OptVariableDefine> tyVariables = new ArrayList<OptVariableDefine>();
+        List<OptVariableDefine> tyVariables = new ArrayList<>();
         OptInfo optInfo = null;
         String tyOptId = "";
         boolean flag = true;

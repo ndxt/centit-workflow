@@ -620,7 +620,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ /*"xz"*/, context.listAllRank());
         //roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM /*"bj"*/, context.listAllProjectRole());
         roleList.put(SysUserFilterEngine.ROLE_TYPE_SYSTEM /*"ro"*/, context.listAllSystemRole());
-        roleList.put(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA /*"sf"*/, flowRoleDao.listAllRoleMsg());
+        roleList.put(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA /*"sf"*/, flowRoleDao.listAllRoleMsg(topUnit));
         return roleList;
     }
 
@@ -641,7 +641,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }*/ else if (SysUserFilterEngine.ROLE_TYPE_SYSTEM.equalsIgnoreCase(stype)) {
             return context.listAllSystemRole();
         } else if (SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA.equalsIgnoreCase(stype)) {
-            return flowRoleDao.listAllRoleMsg();
+            return flowRoleDao.listAllRoleMsg(topUnit);
         } else {
             return null;
         }

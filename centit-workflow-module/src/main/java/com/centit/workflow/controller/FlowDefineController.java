@@ -562,6 +562,7 @@ public class FlowDefineController extends ResourceBaseController {
     @WrapUpResponseBody
     @Transactional
     public Map<String, Map<String, String>> getDataMap(@PathVariable String flowcode, HttpServletRequest request){
+        WebOptUtils.assertUserLogin(request);
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         Map<String, Map<String, String>> map = flowDefine.listAllRole(topUnit);
         //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
@@ -607,6 +608,7 @@ public class FlowDefineController extends ResourceBaseController {
     @RequestMapping(value = "/listAllRole", method = RequestMethod.GET)
     @WrapUpResponseBody
     public Map<String, Map<String, String>> listAllRole(HttpServletRequest request){
+        WebOptUtils.assertUserLogin(request);
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         return flowDefine.listAllRole(topUnit);
     }
