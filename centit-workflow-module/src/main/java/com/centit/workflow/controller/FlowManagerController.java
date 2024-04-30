@@ -308,15 +308,20 @@ public class FlowManagerController extends BaseController {
         for (FlowVariable flowVariable : flowVariableList) {
             existTokenSet.add(flowVariable.getRunToken());
         }
-        List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
-        Set<String> tokenSet = new HashSet<>();
         Map<String, String> tokenLvbList = new HashMap<>();
-        tokenLvbList.put(" ", "------请选择------");
-        for (NodeInstance nodeInst : nodeInstList) {
-            if (!existTokenSet.contains(nodeInst.getRunToken()) && !tokenSet.contains(nodeInst.getRunToken())) {
-                tokenSet.add(nodeInst.getRunToken());
-                tokenLvbList.put(nodeInst.getRunToken(), nodeInst.getRunToken()); // 获取没有使用过的令牌
+
+        List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
+        if(nodeInstList!=null) {
+            Set<String> tokenSet = new HashSet<>();
+            tokenLvbList.put(" ", "------请选择------");
+            for (NodeInstance nodeInst : nodeInstList) {
+                if (!existTokenSet.contains(nodeInst.getRunToken()) && !tokenSet.contains(nodeInst.getRunToken())) {
+                    tokenSet.add(nodeInst.getRunToken());
+                    tokenLvbList.put(nodeInst.getRunToken(), nodeInst.getRunToken()); // 获取没有使用过的令牌
+                }
             }
+        } else {
+            tokenLvbList.put(" ", "---没有对应的流程---");
         }
         return tokenLvbList;
     }

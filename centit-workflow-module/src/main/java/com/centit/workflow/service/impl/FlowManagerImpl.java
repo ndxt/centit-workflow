@@ -14,7 +14,6 @@ import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.UuidOpt;
-import com.centit.support.common.ObjectException;
 import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.NodeEventSupport;
@@ -929,7 +928,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public List<NodeInstance> listFlowInstNodes(String wfinstid) {
         FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(wfinstid);
         if(flowInst==null){
-            throw new ObjectException(ObjectException.DATA_NOT_FOUND_EXCEPTION, "流程实例不存在,flow_inst_id:"+wfinstid);
+            return null;
+            //"流程实例不存在,flow_inst_id:" + wfinstid);
         }
         List<NodeInstance> nodeInstsSet = flowInst.getFlowNodeInstances();
         List<NodeInstance> nodeInstList = new ArrayList<>();
