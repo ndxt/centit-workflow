@@ -5,7 +5,6 @@ import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.support.common.ObjectException;
 import com.centit.workflow.commons.NodeEventSupport;
-import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
@@ -42,7 +41,7 @@ public class EventBeanController extends BaseController {
             String optUserCode = paramMap.getString("optUserCode");
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean());
             autoRun.runAfterCreate(flowInstance, nodeInstance, nodeInfo, optUserCode);
-        } catch (BeansException | WorkflowException e) {
+        } catch (BeansException e) {
             logger.error("bean调用失败");
             //JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
             throw new ObjectException("bean调用失败", e);
@@ -62,7 +61,7 @@ public class EventBeanController extends BaseController {
             String optUserCode = paramMap.getString("optUserCode");
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean());
             autoRun.runBeforeSubmit(flowInstance, nodeInstance, nodeInfo, optUserCode);
-        } catch (BeansException | WorkflowException e) {
+        } catch (BeansException e) {
             //e.printStackTrace();
             logger.error("bean调用失败");
             //JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
@@ -83,7 +82,7 @@ public class EventBeanController extends BaseController {
             String optUserCode = paramMap.getString("optUserCode");
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean());
             return autoRun.runAutoOperator(flowInstance, nodeInstance, nodeInfo, optUserCode);
-        } catch (BeansException | WorkflowException e) {
+        } catch (BeansException | ObjectException e) {
             //e.printStackTrace();
             //JsonResultUtils.writeMessageJson("bean调用失败", httpServletResponse);
             logger.error("bean调用失败");
@@ -104,7 +103,7 @@ public class EventBeanController extends BaseController {
             String optUserCode = paramMap.getString("optUserCode");
             NodeEventSupport autoRun = (NodeEventSupport) wac.getBean(nodeInfo.getOptBean());
             return autoRun.canStepToNext(flowInstance, nodeInstance, nodeInfo, optUserCode);
-        } catch (BeansException | WorkflowException e) {
+        } catch (BeansException | ObjectException e) {
             //e.printStackTrace();
             logger.error("bean调用失败");
             return false;

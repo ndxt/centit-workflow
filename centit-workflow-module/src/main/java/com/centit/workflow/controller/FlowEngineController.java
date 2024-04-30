@@ -15,9 +15,11 @@ import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.FlowEngine;
@@ -433,10 +435,29 @@ public class FlowEngineController extends BaseController {
     @ApiImplicitParam(name = "jsonObject", paramType = "body", value = "{\"nodeInstId\":\"\",\"managerUserCode\":\"userCode\"}")
     @WrapUpResponseBody
     @PostMapping(value = "/rollBackNode")
-    public String rollBackNode(@RequestBody JSONObject jsonObject) {
+    public String rollBackNode(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String nodeInstId = jsonObject.getString("nodeInstId");
         String managerUserCode = jsonObject.getString("managerUserCode");
-        return flowEngine.rollBackNode(nodeInstId, managerUserCode);
+        try {
+            return flowEngine.rollBackNode(nodeInstId, managerUserCode);
+        } catch (ObjectException e){
+            String msg;
+            switch (e.getExceptionCode()){
+                case WorkflowException.FlowInstNotFound:
+                case WorkflowException.NodeInstNotFound:
+                    msg = getI18nMessage("flow.651.node_inst_not_found", request, nodeInstId);
+                    break;
+
+                case WorkflowException.IncorrectNodeState:
+                    msg = getI18nMessage("flow.654.node_incorrect_state", request,
+                        "--", "--", nodeInstId, "--");
+                    break;
+                default:
+                    msg = getI18nMessage("error.704.process_failed", request, e.getMessage());
+                    break;
+            }
+            throw new ObjectException(e.getExceptionCode(), msg);
+        }
     }
 
     @ApiOperation(value = "检查后续的节点是否被操作过，包括更新和提交", notes = "检查后续的节点是否被操作过，包括更新和提交")

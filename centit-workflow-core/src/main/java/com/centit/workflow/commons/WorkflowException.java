@@ -7,8 +7,7 @@ import com.centit.support.common.ObjectException;
  * @author codefan
  */
 @SuppressWarnings("unused")
-public abstract class WorkflowException extends ObjectException {
-    private static final long serialVersionUID = 1L;
+public abstract class WorkflowException {
 
     //public enum FlowExceptionType {
     public static final int NodeUserNotFound    = 650; //找不到节点操作人员
@@ -26,9 +25,5 @@ public abstract class WorkflowException extends ObjectException {
     public static final int BizDataCheckError   = 661; //业务数据验证异常
     public static final int BizLogicError       = 662; //业务逻辑异常
     public static final int BizDefinedError     = 663; //业务自定义异常
-
-    private WorkflowException(String message) {
-        super(message);
-    }
 
 }
