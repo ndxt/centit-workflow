@@ -471,6 +471,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
             FlowInstance subFlowInst = flowInstanceDao.getObjectById(ni.getSubFlowInstId());
             if (subFlowInst != null) {
                 FlowOptUtils.endInstance(subFlowInst, "F", "system", flowInstanceDao);
+                flowInstanceDao.updateObject(subFlowInst);
             }
         }
         ni.setNodeState(NodeInstance.NODE_STATE_FORCE);// 节点设置为无效

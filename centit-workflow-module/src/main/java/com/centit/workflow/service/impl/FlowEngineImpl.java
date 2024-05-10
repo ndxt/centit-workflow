@@ -273,7 +273,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     .copy(options).nodeInst(nodeInsts.iterator().next()),
                 varTrans, application, false, false, options.isSkipFirstNode());
         }
-
+        // 流程开始就结束
+        if(!FlowInstance.FLOW_STATE_NORMAL.equals(flowInst.getInstState())) {
+            flowInstanceDao.updateObject(flowInst);
+        }
         OperationLogCenter.log(FlowOptUtils.createActionLog(
             options.getUserCode(), flowInstId, "创建流程，创建首节点:" +
                 StringBaseOpt.castObjectToString(nodeInsts)));
@@ -619,6 +622,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 FlowInstance subFlowInst = flowInstanceDao.getObjectById(ni.getSubFlowInstId());
                 if (subFlowInst != null) {
                     FlowOptUtils.endInstance(subFlowInst, "F", userCode, flowInstanceDao);
+                    flowInstanceDao.updateObject(subFlowInst);
                 }
             }
             ni.setNodeState(NodeInstance.NODE_STATE_FORCE);// 节点设置为无效
@@ -1133,8 +1137,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //varTrans改为一个空的
             if (needSubmit) {
                 List<String> nextNodes = this.submitOptInside(
-                    autoSubmitOptions,
-                    varTrans, application, false);
+                    autoSubmitOptions, nodeInst, flowInst,
+                    varTrans, application, false, true, false);
                 createNodes.addAll(nextNodes);
             }
         } else if (StringUtils.isNotBlank(nextOptNode.getOptBean())) {
@@ -1283,7 +1287,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     private List<String> submitOptInside(SubmitOptOptions options,
                                          UserUnitVariableTranslate varTrans,
                                          ServletContext application, boolean saveOptions, boolean saveLog, boolean isSkipNode) {
-        fetchTopUnit(options);
+
         //2012-04-16 重构提交事件，添加一个多实例节点类型，这个节点类型会根据不同的机构创建不同的节点
         //根据上级节点实例编号获取节点所在父流程实例信息
         NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(options.getNodeInstId());
@@ -1294,14 +1298,23 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             logger.error(errorMsg);
             throw new ObjectException(WorkflowException.NodeInstNotFound, errorMsg);
         }
-        FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(nodeInst.getFlowInstId());
 
+        FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(nodeInst.getFlowInstId());
         if (flowInst == null) {
             String errorMsg = getI18nMessage("flow.652.flow_inst_not_found", options.getClientLocale(),
                 nodeInst.getFlowInstId());
             logger.error(errorMsg);
-            throw new ObjectException(WorkflowException.FlowInstNotFound,errorMsg);
+            throw new ObjectException(WorkflowException.FlowInstNotFound, errorMsg);
         }
+        return submitOptInside(options, nodeInst, flowInst, varTrans, application,
+             saveOptions,  saveLog,  isSkipNode);
+    }
+
+    private List<String> submitOptInside(SubmitOptOptions options, NodeInstance nodeInst, FlowInstance flowInst,
+        UserUnitVariableTranslate varTrans,
+        ServletContext application, boolean saveOptions, boolean saveLog, boolean isSkipNode) {
+
+        fetchTopUnit(options);
         if(StringUtils.isBlank(options.getTopUnit())){
             options.setTopUnit(flowInst.getTopUnit());
         }

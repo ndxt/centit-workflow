@@ -233,7 +233,7 @@ public abstract class FlowOptUtils {
                 FlowInstance subFlowInst = flowInstanceDao.getObjectById(ni.getSubFlowInstId());
                 if (subFlowInst != null && !"F,C".contains(subFlowInst.getInstState())) {
                     endInstance(subFlowInst, "F", userCode, flowInstanceDao);
-                    //flowInstanceDao.updateObject(subFlowInst);
+                    flowInstanceDao.updateObject(subFlowInst);
                 }
             }
             //ni.setNodeState("F");//因为流程被强制结束而被强制结束
@@ -241,7 +241,6 @@ public abstract class FlowOptUtils {
             //ni.setLastUpdateUser(userCode);
             //}
         }
-        flowInstanceDao.updateObject(flowInst);
     }
 
     public static FlowVariableTranslate createVariableTranslate(

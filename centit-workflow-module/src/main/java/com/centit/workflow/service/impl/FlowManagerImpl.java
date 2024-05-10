@@ -750,9 +750,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     FlowInstance subFlowInst = flowInstanceDao
                         .getObjectById(nodeInst.getSubFlowInstId());
                     if (subFlowInst != null) {
+                        subFlowInst.setLastUpdateUser(mangerUserCode);
                         FlowOptUtils.endInstance(subFlowInst, FlowInstance.FLOW_STATE_FORCE,
                             mangerUserCode, flowInstanceDao);
-                        subFlowInst.setLastUpdateUser(mangerUserCode);
                         flowInstanceDao.updateObject(subFlowInst);
                         //更新子流程下的所有消息为已办
                         //FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(), mangerUserCode);
