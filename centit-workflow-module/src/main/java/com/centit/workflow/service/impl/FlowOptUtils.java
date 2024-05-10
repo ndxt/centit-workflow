@@ -42,7 +42,7 @@ public abstract class FlowOptUtils {
         flowInst.setTopUnit(topUnit);
         flowInst.setPreInstId("");
         flowInst.setIsSubInst(false);
-        flowInst.setInstState("N");
+        flowInst.setInstState(FlowInstance.FLOW_STATE_NORMAL);// "N"
         flowInst.setCreateTime(new Date(System.currentTimeMillis()));
         String timeLimit = wf.getTimeLimit();
         if (StringUtils.isNotBlank(timeLimitStr)) {

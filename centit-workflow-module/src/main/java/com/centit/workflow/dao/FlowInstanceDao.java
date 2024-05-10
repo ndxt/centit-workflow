@@ -49,22 +49,6 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
         filterField.put(CodeBook.ORDER_BY_HQL_ID , "createTime desc,flowInstId desc");
         return filterField;
     }
-    @Transactional
-    public long getNextFlowInstId(){
-        return  DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWINSTNO");
-    }
-
-    /**
-     * 更新流程实例状态
-     * @param instid 实例编号
-     * @param state
-     */
-    @Transactional
-    public void updtFlowInstState(long instid,String state){
-        FlowInstance flowInst = this.getObjectById(instid);
-        flowInst.setInstState(state);
-        this.updateObject(flowInst);
-    }
 
     // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
     // expireOptSign == 0未处理  1 已通知  ,2..6 已通知2..5次（暂时不启动重复通知）6:不处理    7：已挂起  8 已终止 9 已完成
@@ -158,30 +142,30 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
 
     @Transactional
     public void updateFlowInstOptInfo(String flowInstId, String flowOptName,String flowOptTag){
-        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=? where  FLOW_INST_ID=?";
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?, FLOW_OPT_TAG=? where FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,flowInstId});
     }
 
     @Transactional
     public void updateFlowInstOptName(String flowInstId, String flowOptName){
-        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=? where  FLOW_INST_ID=?";
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=? where FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowInstId});
     }
 
     @Transactional
     public void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName,String flowOptTag,String userCode,String unitCode){
-        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=?,user_code=?,unit_code=? where  FLOW_INST_ID=?";
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?, FLOW_OPT_TAG=?, user_code=?, unit_code=? where FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,userCode,unitCode,flowInstId});
     }
 
     public List<FlowInstance> listAllFlowInstByOptTag(String flowOptTag) {
-        return this.listObjectsByFilter("where FLOW_OPT_TAG=? "
-            ,new Object[]{flowOptTag});
+        return this.listObjectsByFilter("where FLOW_OPT_TAG=? ",
+            new Object[]{flowOptTag});
     }
 
     public void updtFlowInstInfo(FlowInstance wfFlowInst) {
-        String sql="update WF_FLOW_INSTANCE set FLOW_INST_ID=?,INST_STATE=?," +
-            "LAST_UPDATE_TIME=?,LAST_UPDATE_USER=? where  FLOW_INST_ID=?";
+        String sql="update WF_FLOW_INSTANCE set FLOW_INST_ID=?, INST_STATE=?, " +
+            "LAST_UPDATE_TIME=?, LAST_UPDATE_USER=? where FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{wfFlowInst.getFlowInstId(),wfFlowInst.getInstState(),
             wfFlowInst.getLastUpdateTime(),wfFlowInst.getLastUpdateUser(),wfFlowInst.getFlowInstId()});
     }
@@ -192,7 +176,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
      * @return
      */
     public JSONArray countFlowInstances(Map<String,Object> map){
-        String sql = "SELECT FLOW_CODE,count(1) FROM wf_flow_instance WHERE 1 = 1 [ :flowCode | AND FLOW_CODE in ( :flowCode ) ]  GROUP BY FLOW_CODE";
+        String sql = "SELECT FLOW_CODE,count(1) FROM wf_flow_instance " +
+            "WHERE 1 = 1 [ :flowCode | AND FLOW_CODE in ( :flowCode ) ]  GROUP BY FLOW_CODE";
         return DatabaseOptUtils.listObjectsByParamsDriverSqlAsJson(this, sql, map);
     }
 }
