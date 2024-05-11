@@ -1291,21 +1291,24 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //2012-04-16 重构提交事件，添加一个多实例节点类型，这个节点类型会根据不同的机构创建不同的节点
         //根据上级节点实例编号获取节点所在父流程实例信息
         NodeInstance nodeInst = nodeInstanceDao.getObjectWithReferences(options.getNodeInstId());
-        if (nodeInst == null) {
+        FlowInstance flowInst = null;
+        if (nodeInst != null) {
+            flowInst = flowInstanceDao.getObjectWithReferences(nodeInst.getFlowInstId());
+            if (flowInst == null) {
+                String errorMsg = getI18nMessage("flow.652.flow_inst_not_found", options.getClientLocale(),
+                    nodeInst.getFlowInstId());
+                logger.error(errorMsg);
+                throw new ObjectException(WorkflowException.FlowInstNotFound, errorMsg);
+            }
+            nodeInst = flowInst.getNodeInstanceById(nodeInst.getNodeInstId());
+        }
+        if (flowInst== null || nodeInst == null) {
             String errorMsg = getI18nMessage("flow.651.node_inst_not_found", options.getClientLocale(),
                 options.getNodeInstId());
-
             logger.error(errorMsg);
             throw new ObjectException(WorkflowException.NodeInstNotFound, errorMsg);
         }
 
-        FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(nodeInst.getFlowInstId());
-        if (flowInst == null) {
-            String errorMsg = getI18nMessage("flow.652.flow_inst_not_found", options.getClientLocale(),
-                nodeInst.getFlowInstId());
-            logger.error(errorMsg);
-            throw new ObjectException(WorkflowException.FlowInstNotFound, errorMsg);
-        }
         return submitOptInside(options, nodeInst, flowInst, varTrans, application,
              saveOptions,  saveLog,  isSkipNode);
     }

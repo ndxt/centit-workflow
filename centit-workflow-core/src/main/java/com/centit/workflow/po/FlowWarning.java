@@ -71,11 +71,13 @@ public class FlowWarning implements java.io.Serializable {
      * minimal constructor
      */
     public FlowWarning(String warningid, String flowInstId) {
+        this.noticeState = "0";
         this.warningId = warningid;
         this.flowInstId = flowInstId;
     }
 
     public FlowWarning(String flowInstId, String nodeInstId,String warningType, String objType) {
+        this.noticeState = "0";
         this.flowInstId = flowInstId;
         this.nodeInstId = nodeInstId;
         this.objType = objType;
@@ -96,6 +98,7 @@ public class FlowWarning implements java.io.Serializable {
         this.warningidMsg = other.getWarningidMsg();
         this.sendMsgTime = other.getSendMsgTime();
         this.sendUsers = other.getSendUsers();
+        this.noticeState = other.getNoticeState();
     }
 
     public void copyNotNullProperty(FlowWarning other) {
@@ -122,7 +125,8 @@ public class FlowWarning implements java.io.Serializable {
             this.sendMsgTime = other.getSendMsgTime();
         if (other.getSendUsers() != null)
             this.sendUsers = other.getSendUsers();
-
+        if (other.getNoticeState() != null)
+            this.noticeState = other.getNoticeState();
     }
 
     public void clearProperties() {
@@ -136,5 +140,6 @@ public class FlowWarning implements java.io.Serializable {
         this.warningidMsg = null;
         this.sendMsgTime = null;
         this.sendUsers = null;
+        this.noticeState = "0";
     }
 }
