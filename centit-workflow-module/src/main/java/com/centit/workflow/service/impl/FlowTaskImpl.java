@@ -1,5 +1,8 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.centit.dde.adapter.DdeDubboTaskRun;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.basedata.NoticeMessage;
@@ -9,6 +12,8 @@ import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.ObjectException;
 import com.centit.support.common.WorkTimeSpan;
+import com.centit.support.compiler.Lexer;
+import com.centit.support.compiler.Pretreatment;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
@@ -68,6 +73,9 @@ public class FlowTaskImpl {
     @Autowired
     private WorkDayManager workDayManager;
 
+    @Autowired
+    private DdeDubboTaskRun ddeDubboTaskRun;
+
     @Value("${workflow.flowTimeStart:true}")
     private Boolean flowTimeStart;
 
@@ -93,15 +101,44 @@ public class FlowTaskImpl {
         if (nodeInst == null || NodeInstance.TASK_ASSIGN_TYPE_DYNAMIC.equals(nodeInst.getTaskAssigned())) {
             return 0;
         }
-        UserTask task = userTaskListDao.getNodeTaskInfo(nodeInstId);
-        if(task==null || StringUtils.isBlank(task.getUserCode())){
+        NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeCode());
+        if(StringUtils.isBlank(nodeInfo.getNoticeType())){
             return 0;
         }
+
+        //TODO 根据 nodeInfo.getNoticeType() 判断发送方式 notificationCenter.sendMessageAppointedType()
+        if("api".equals(nodeInfo.getNoticeType())){
+            if(StringUtils.isBlank(nodeInfo.getNoticeUserExp())){
+                return 0;
+            }
+            JSONObject jsonObject = JSONObject.from(nodeInfo);
+            jsonObject.putAll(JSONObject.from(nodeInst));
+            FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
+            if (StringUtils.isNotBlank(flowInst.getFlowOptTag())) {
+                if ("{".equals(Lexer.getFirstWord(flowInst.getFlowOptTag()))) {
+                    jsonObject.putAll(JSON.parseObject(flowInst.getFlowOptTag()));
+                } else {
+                    jsonObject.put("optTag", flowInst.getFlowOptTag());
+                }
+            }
+            ddeDubboTaskRun.runTask(nodeInfo.getNoticeUserExp(), jsonObject);
+            return 1;
+        }
+        //TODO 根据 nodeInfo.getNoticeMessage() 判断发送内容
+        String msgContent;
+        if(StringUtils.isNotBlank(nodeInfo.getNoticeMessage())){
+            JSONObject jsonObject = JSONObject.from(nodeInfo);
+            jsonObject.putAll(JSONObject.from(nodeInst));
+            msgContent = Pretreatment.mapTemplateString(nodeInfo.getNoticeMessage(), jsonObject);
+        } else {
+            msgContent = "业务" + nodeInst.getFlowOptName() + "(" + nodeInst.getFlowInstId() + ")的" +
+                nodeInst.getNodeName() + "(" + nodeInst.getNodeInstId() + ")节点超时预警，请尽快处理。";
+        }
+        //TODO 根据 nodeInfo.getNoticeUserExp() 判断发送人员 -- nodeInst.getUserCode()
         NoticeMessage noticeMessage = NoticeMessage.create().subject("节点预报警提示")
-            .content("业务" + task.getFlowOptName() + "(" + task.getFlowInstId() + ")的" +
-                task.getNodeName() + "(" + task.getNodeInstId() + ")节点超时预警，请尽快处理。")
+            .content(msgContent)
             .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInstId));
-        notificationCenter.sendMessage("system", task.getUserCode(), noticeMessage);
+        notificationCenter.sendMessage("system", nodeInst.getUserCode(), noticeMessage);
         return 1;
     }
 
