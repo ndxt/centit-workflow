@@ -2,6 +2,7 @@ package com.centit.workflow.po;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
+import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.database.orm.GeneratorType;
@@ -302,8 +303,9 @@ public class FlowInstance implements java.io.Serializable {
 
     public List<StageInstance> getExpiredStageInstanceList() {
         List<StageInstance> stageList = new ArrayList<>();
+        Date currentTime = DatetimeOpt.currentUtilDate();
         for (StageInstance stage : getFlowStageInstances()) {
-            if (stage.getTimeLimit() < 0)
+            if (stage.getDeadlineTime() != null && stage.getDeadlineTime().before(currentTime) )
                 stageList.add(stage);
         }
         return stageList;

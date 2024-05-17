@@ -1,7 +1,6 @@
 package com.centit.workflow.po;
 
 import com.centit.framework.core.dao.DictionaryMap;
-import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
 import lombok.Data;
@@ -157,7 +156,7 @@ public class NodeInstance implements java.io.Serializable {
     private String optUrl;
 
     public NodeInstance() {
-        this.timeLimit = null;
+        this.isTimer = "F";
         this.taskAssigned = "D";
         this.node = new NodeInfo();
     }
@@ -165,14 +164,14 @@ public class NodeInstance implements java.io.Serializable {
     public NodeInstance(
         String nodeInstId
     ) {
-        this.timeLimit = null;
+        this.isTimer = "F";
         this.nodeInstId = nodeInstId;
         this.taskAssigned = "D";
         this.node = new NodeInfo();
     }
 
     public NodeInstance(String nodeInstId, String wfinstid, String nodeid, Date createtime, Date starttime, String prevnodeinstid,
-                        Long promiseTime, Long timeLimit, String nodestate, String subwfinstid, String unitcode,
+                        String nodestate, String subwfinstid, String unitcode,
                         String transPath, String taskassigned, String runToken, String lastUpdateUser,
                         String isTimer, String flowPhase) {
         this.nodeInstId = nodeInstId;
@@ -181,8 +180,6 @@ public class NodeInstance implements java.io.Serializable {
         this.createTime = createtime;
         this.lastUpdateTime = starttime;
         this.prevNodeInstId = prevnodeinstid;
-        this.promiseTime = promiseTime;
-        this.timeLimit = timeLimit;
         this.nodeState = nodestate;
         this.subFlowInstId = subwfinstid;
         this.unitCode = unitcode;
@@ -199,24 +196,6 @@ public class NodeInstance implements java.io.Serializable {
             return null;
         }
         return this.node.getNodeCode();
-    }
-
-    public String getPromiseTimeStr() {
-        if (promiseTime == null) {
-            return "";
-        }
-        WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumberAsMinute(promiseTime);
-        return wts.getTimeSpanDesc();
-    }
-
-    public String getTimeLimitStr() {
-        if (timeLimit == null) {
-            return "";
-        }
-        WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumberAsMinute(timeLimit);
-        return wts.getTimeSpanDesc();
     }
 
     public boolean checkIsInRunning() {

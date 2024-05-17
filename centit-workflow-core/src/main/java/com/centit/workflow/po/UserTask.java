@@ -3,12 +3,10 @@ package com.centit.workflow.po;
 import com.alibaba.fastjson2.JSON;
 import com.centit.framework.core.dao.DictionaryMap;
 import com.centit.support.algorithm.CollectionsOpt;
-import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.network.UrlOptUtils;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Column;
 import java.util.Date;
 import java.util.Map;
 
@@ -64,59 +62,18 @@ public class UserTask implements java.io.Serializable {
     @DictionaryMap(value="userCode", fieldName="lastUpdateUserName")
     private String lastUpdateUser;
 
-    private String isTimer;
-    private Date deadlineTime;
-    private Date pauseTime;
-
     @DictionaryMap(value="userCode", fieldName="creatorName")
     private String creatorCode;
 
+    private String nodeTimerState; // isTimer
     private Date nodeCreateTime;
-
     private Date nodeExpireTime;
-
     private Date nodeLastUpdateTime;
-
     private Date flowExpireTime;
-
-    private Long flowTimeLimit;
-    private Long flowPromiseTime;
 
     // Constructors
     /** default constructor */
     public UserTask() {
-    }
-
-    public String getPromiseTimeStr() {
-        if(promiseTime==null)
-            return "";
-        WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumberAsMinute(promiseTime);
-        return wts.getTimeSpanDesc();
-    }
-
-    public String getTimeLimitStr() {
-        if(timeLimit==null)
-            return "";
-        WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumberAsMinute(timeLimit);
-        return wts.getTimeSpanDesc();
-    }
-
-    public String getFlowTimeLimitStr() {
-        if(flowTimeLimit==null)
-            return "";
-        WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumberAsMinute(flowTimeLimit);
-        return wts.getTimeSpanDesc();
-    }
-
-    public String getFlowPromiseTimeStr() {
-        if(flowPromiseTime==null)
-            return "";
-        WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumberAsMinute(flowPromiseTime);
-        return wts.getTimeSpanDesc();
     }
 
     public String getNodeOptUrl(){
@@ -162,9 +119,6 @@ public class UserTask implements java.io.Serializable {
         this.lastUpdateTime = other.getLastUpdateTime();
 
         this.lastUpdateUser = other.getLastUpdateUser();
-        this.promiseTime = other.getPromiseTime();
-        this.timeLimit = other.getTimeLimit();
-
         this.grantor = other.getGrantor();
         this.roleType = other.getRoleType();
         this.roleCode = other.getRoleCode();
@@ -175,13 +129,11 @@ public class UserTask implements java.io.Serializable {
 
         this.creatorCode = other.getCreatorCode();
 
+        this.nodeTimerState = other.getNodeTimerState();
         this.nodeCreateTime = other.getNodeCreateTime();
         this.nodeExpireTime = other.getNodeExpireTime();
         this.nodeLastUpdateTime = other.getNodeLastUpdateTime();
         this.flowExpireTime = other.getFlowExpireTime();
-
-        this.flowTimeLimit = other.getFlowTimeLimit();
-        this.flowPromiseTime = other.getFlowPromiseTime();
     }
 
 }
