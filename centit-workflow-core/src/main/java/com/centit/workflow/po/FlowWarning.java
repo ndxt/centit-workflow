@@ -14,6 +14,7 @@ import java.util.Date;
  * create by scaffold
  *
  * @author codefan@hotmail.com
+ * 这个可以只为 超时报警（预警）的日志
  */
 
 @Entity
@@ -33,11 +34,13 @@ public class FlowWarning implements java.io.Serializable {
     @Column(name = "FLOW_STAGE")
     private String flowStage;
 
-//    F ： 工作流  N ：节点  P：阶段
+    // F ： 工作流  N ：节点  P：阶段
     @Column(name = "OBJ_TYPE")
     private String objType;
 
-//    warningType W，预警  A  报警  N 提醒  O 其他
+    //  warningType
+    //  N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+    //  A ：调用api
     @Column(name = "WARNING_TYPE")
     private String warningType;
     @Column(name = "WARNING_CODE")
@@ -45,13 +48,14 @@ public class FlowWarning implements java.io.Serializable {
     @Column(name = "WARNING_TIME")
     private Date warningTime;
 
-//    D 摘牌 C 纠正 F 督办 N 未处理
+    //D 摘牌 C 纠正 F 督办 N 未处理
     @Column(name = "WARNING_STATE")
     private String warningState;
 
-//    0 待发送 1 已发送 2 发送消息失败
+    //0 待发送 1 已发送（已执行） 2 发送消息失败（执行失败）
     @Column(name = "NOTICE_STATE")
     private String noticeState;
+    // 发送的消息，或者执行失败的信息
     @Column(name = "WARNINGID_MSG")
     private String warningidMsg;
     @Column(name = "SEND_MSG_TIME")

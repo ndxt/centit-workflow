@@ -79,10 +79,14 @@ public class FlowInfo implements java.io.Serializable {
     /**
      * 获取流程超期后处理方式
      * N：通知， O:不处理 ，X：挂起，E：终止（流程）
+     * A ：调用api
      */
     @Column(name = "EXPIRE_OPT")
     @Length(max = 1)
     private String expireOpt;
+
+    @Column(name = "EXPIRE_CALL_API")
+    private String expireCallApi;
 
     /**
      * 计划发布时间（生效时间），这个字段暂未使用

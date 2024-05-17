@@ -8,6 +8,7 @@ import com.centit.support.network.UrlOptUtils;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.persistence.Column;
 import java.util.Date;
 import java.util.Map;
 
@@ -62,8 +63,10 @@ public class UserTask implements java.io.Serializable {
 
     @DictionaryMap(value="userCode", fieldName="lastUpdateUserName")
     private String lastUpdateUser;
-    private Long promiseTime;
-    private Long timeLimit;
+
+    private String isTimer;
+    private Date deadlineTime;
+    private Date pauseTime;
 
     @DictionaryMap(value="userCode", fieldName="creatorName")
     private String creatorCode;

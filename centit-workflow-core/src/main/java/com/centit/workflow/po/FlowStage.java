@@ -36,14 +36,32 @@ public class FlowStage implements java.io.Serializable {
     @Column(name = "IS_ACCOUNT_TIME")
     private String  isAccountTime;
 
+    /**
+     * 期限类别 I ： 未设置（ignore 在流转线上默认 ）、
+     * N 无 (无期限 none 默认) 、
+     * F 每实例固定期限 fix 、
+     * C 节点固定期限  cycle、
+     * H 继承其他节点期限 hierarchical。
+     * D 当天完成 day
+     * W 当周完成 week
+     * M 当月完成 month
+     * Y 当年完成 year
+     */
     @Column(name = "LIMIT_TYPE")
     private String  limitType;
 
     @Column(name = "TIME_LIMIT")
     private String  timeLimit;
 
+    /**
+     * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+     * A ：调用api
+     */
     @Column(name = "EXPIRE_OPT")
     private String  expireOpt;
+
+    @Column(name = "EXPIRE_CALL_API")
+    private String expireCallApi;
 
     @Column(name = "STAGE_ORDER")
     private Long  stageOrder;

@@ -233,6 +233,7 @@ public class FlowTaskImpl {
                 // 预警类别 warningType  W，预警  A  报警  N 提醒  O 其他
                 String warningType = "";
                 // 预警规则： R：运行时间  L:剩余时间  P：比率
+                // 计时为档期完成的 D W M Y 预警规则为 warningRule = L  warningParam = 0
                 if ("R".equals(warningRule)) {
                     warning = new WorkTimeSpan(warningParam).toNumberAsMinute() >= nodeInst.getPromiseTime()- nodeInst.getTimeLimit();
                 } else if ("L".equals(warningRule)) {

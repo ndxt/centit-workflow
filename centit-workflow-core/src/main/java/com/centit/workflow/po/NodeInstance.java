@@ -50,16 +50,25 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name = "PREV_NODE_INST_ID")
     private String prevNodeInstId;
 
+
     /**
-     * 承诺时间，以分钟计时的
+     * 计时状态 F 不计是 、T 计时 、P 暂停
      */
-    @Column(name = "PROMISE_TIME")
-    private Long promiseTime;
+    @Column(name = "IS_TIMER")
+    private String isTimer;
     /**
-     * 剩余时间，初始值等于 promiseTime， 有定时器自动扣取
+     * 截止时间
      */
-    @Column(name = "TIME_LIMIT")
-    private Long timeLimit;
+    @Column(name = "deadline_time")
+    private Date deadlineTime;
+    /**
+     * 暂停时间 isTimer=='P' 有效
+     */
+    @Column(name = "pause_time")
+    private Date pauseTime;
+
+    @Column(name = "STAGE_CODE")
+    private String stageCode;
 
     public static final String NODE_STATE_NORMAL = "N";
     public static final String NODE_STATE_ROLLBACK = "B";
@@ -107,12 +116,7 @@ public class NodeInstance implements java.io.Serializable {
     private String lastUpdateUser;
     @Column(name = "GRANTOR")
     private String grantor;
-    @Column(name = "IS_TIMER")
-    //不计时N、计时T 、暂停 P
-    //T 计时、有期限   F 不计时   H仅环节计时  暂停P
-    private String isTimer;
-    @Column(name = "STAGE_CODE")
-    private String stageCode;
+
     @DictionaryMap(value = "userCode", fieldName = "userName")
     @Column(name = "USER_CODE")
     private String userCode;
@@ -384,16 +388,16 @@ public class NodeInstance implements java.io.Serializable {
         this.unitCode = other.getUnitCode();
         this.transPath = other.getTransPath();
         this.taskAssigned = other.getTaskAssigned();
-        this.timeLimit = other.getTimeLimit();
         this.runToken = other.getRunToken();
         this.lastUpdateUser = other.getLastUpdateUser();
         this.isTimer = other.getIsTimer();
+        this.deadlineTime = other.getDeadlineTime();
+        this.pauseTime = other.getPauseTime();
         this.stageCode = other.getStageCode();
         this.roleType = other.getRoleType();
         this.roleCode = other.getRoleCode();
         this.userCode = other.getUserCode();
         this.nodeId = other.getNodeId();
-        this.promiseTime = other.getPromiseTime();
      }
 
     public void copyNotNullProperty(NodeInstance other) {
@@ -430,18 +434,18 @@ public class NodeInstance implements java.io.Serializable {
         if (other.getTaskAssigned() != null) {
             this.taskAssigned = other.getTaskAssigned();
         }
-        if (other.getTimeLimit() != null) {
-            this.timeLimit = other.getTimeLimit();
-        }
         if (other.getRunToken() != null) {
             this.runToken = other.getRunToken();
         }
         if (other.getLastUpdateUser() != null) {
             this.lastUpdateUser = other.getLastUpdateUser();
         }
-        if (other.getIsTimer() != null) {
+        if (other.getIsTimer() != null)
             this.isTimer = other.getIsTimer();
-        }
+        if (other.getDeadlineTime() != null)
+            this.deadlineTime = other.getDeadlineTime();
+        if (other.getPauseTime() != null)
+            this.pauseTime = other.getPauseTime();
         if (other.getStageCode() != null) {
             this.stageCode = other.getStageCode();
         }
@@ -457,9 +461,6 @@ public class NodeInstance implements java.io.Serializable {
         if (other.getNodeId() != null) {
             this.nodeId = other.getNodeId();
         }
-        if (other.getPromiseTime() != null) {
-            this.promiseTime = other.getPromiseTime();
-        }
     }
 
     public void clearProperties() {
@@ -472,9 +473,10 @@ public class NodeInstance implements java.io.Serializable {
         this.unitCode = null;
         this.transPath = null;
         this.taskAssigned = "D";
-        this.timeLimit = null;
-        this.runToken = null;
         this.isTimer = null;
+        this.deadlineTime = null;
+        this.pauseTime = null;
+        this.runToken = null;
         this.stageCode = null;
     }
 }
