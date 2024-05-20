@@ -10,6 +10,7 @@ import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.model.basedata.OperationLog;
+import com.centit.product.oa.service.WorkDayManager;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
@@ -85,9 +86,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Autowired
     private FlowWorkTeamDao flowTeamDao;
 
+    @Autowired
+    private WorkDayManager workDayManager;
     /*@Autowired
     private NotificationCenter notificationCenter;*/
-
+    @Autowired
+    private  FlowStageDao flowStageDao;
     @Autowired(required = false)
     private OperationLogWriter optLogManager;
 
@@ -348,6 +352,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         String actionDesc = "U";
         if (FlowInstance.FLOW_STATE_PAUSE.equals(state) && FlowInstance.FLOW_STATE_NORMAL.equals(wfFlowInst.getInstState())) {
             wfFlowInst.setInstState(state);
+            //TODO 同时 挂起计时
             actionDesc = "挂起流程；";
         }
         // 只能结束未完成的流程
@@ -357,6 +362,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             // 只能挂起正常的流程
         else if (FlowInstance.FLOW_STATE_NORMAL.equals(state)
             && FlowInstance.FLOW_STATE_PAUSE.equals(wfFlowInst.getInstState())) {
+            //TODO 同时 恢复计时
             actionDesc = "唤醒流程；";
         }
         // 不正确的操作
@@ -473,7 +479,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /**
      * 设置流程期限
-     *
      * @param nodeInstId     流程节点实例编号
      * @param timeLimit      新的流程期限 5D3h
      * @param mangerUserCode 管理人员代码
@@ -481,20 +486,27 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     public long resetNodeTimelimt(String nodeInstId, String timeLimit,
-                                  String mangerUserCode) {
+                                  String mangerUserCode, String topUnit) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null) {
             return 0;
         }
+        NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
+        Date today = DatetimeOpt.currentUtilDate();
+        WorkTimeSpan deadLine= new WorkTimeSpan(timeLimit);
+        nodeInst.setDeadlineTime(workDayManager.calcWorkingDeadline(topUnit, today, deadLine));
+        deadLine.subtractWorkTimeSpan(new WorkTimeSpan(node.getWarningParam()));
+        nodeInst.setWarningTime(workDayManager.calcWorkingDeadline(topUnit, today, deadLine));
 
-        nodeInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
+
+        nodeInst.setLastUpdateTime(today);
+        nodeInst.setLastUpdateUser(mangerUserCode);
         // 设置最后更新时间和更新人
         nodeInstanceDao.updateObject(nodeInst);
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst,
             "重置节点期限：" + new WorkTimeSpan(timeLimit).getTimeSpanDesc(), null);
         OperationLogCenter.log(managerAct);
-
         return 1;
     }
 
@@ -591,6 +603,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public int suspendInstance(String flowInstId, String mangerUserCode,
                                String admindesc) {
+
         return updateInstanceState(flowInstId, "P", mangerUserCode, admindesc);
     }
 
@@ -669,13 +682,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (wfFlowInst == null) {
             return 0;
         }
+        FlowInfo flowInfo = flowDefDao.getFlowDefineByID(wfFlowInst.getFlowCode(), wfFlowInst.getVersion());
 
-        wfFlowInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
+        Date today = DatetimeOpt.currentUtilDate();
+        WorkTimeSpan deadLine= new WorkTimeSpan(timeLimit);
+        wfFlowInst.setDeadlineTime(workDayManager.calcWorkingDeadline(wfFlowInst.getTopUnit(), today, deadLine));
+        deadLine.subtractWorkTimeSpan(new WorkTimeSpan(flowInfo.getWarningParam()));
+        wfFlowInst.setWarningTime(workDayManager.calcWorkingDeadline(wfFlowInst.getTopUnit(), today, deadLine));
+        wfFlowInst.setLastUpdateTime(today);
         wfFlowInst.setLastUpdateUser(mangerUserCode);
-        wfFlowInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
 
         flowInstanceDao.updateObject(wfFlowInst);
-
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId,
             "更改流程期限：" +
@@ -959,7 +976,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
             return -1;
-        nodeInstanceDao.updateNodeTimerState(nodeInstId, "P", mangerUserCode);
+        Date today = DatetimeOpt.currentUtilDate();
+        nodeInst.setTimerStatus(FlowWarning.TIMER_STATUS_SUSPEND);
+        nodeInst.setPauseTime(today);
+        nodeInst.setLastUpdateTime(today);
+        nodeInst.setLastUpdateUser(mangerUserCode);
+        nodeInstanceDao.updateObject(nodeInst);
+
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst, "暂停节点计时:"
                 + nodeInstId, null);
@@ -976,9 +999,20 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null)
             return 0;
-        NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
-        nodeInstanceDao.updateNodeTimerState(nodeInstId,
-            node.getIsAccountTime() /* T */, mangerUserCode);
+        FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
+
+        Date today = DatetimeOpt.currentUtilDate();
+        nodeInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
+
+        WorkTimeSpan deadLine= WorkTimeSpan.calcWorkTimeSpan(nodeInst.getPauseTime(), today);
+        nodeInst.setDeadlineTime(workDayManager
+            .calcWorkingDeadline(flowInst.getTopUnit(), nodeInst.getDeadlineTime(), deadLine));
+        nodeInst.setWarningTime(workDayManager
+            .calcWorkingDeadline(flowInst.getTopUnit(), nodeInst.getWarningTime(), deadLine));
+
+        nodeInst.setLastUpdateTime(today);
+        nodeInst.setLastUpdateUser(mangerUserCode);
+        nodeInstanceDao.updateObject(nodeInst);
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, nodeInst, "恢复节点计时:" + nodeInstId, null);
@@ -991,7 +1025,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     public int suspendFlowInstTimer(String flowInstId, String mangerUserCode) {
-        flowInstanceDao.updateFlowTimerState(flowInstId, FlowInstance.FLOW_TIMER_STATE_SUSPEND, mangerUserCode);
+
+        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+        Date today = DatetimeOpt.currentUtilDate();
+        flowInst.setTimerStatus(FlowWarning.TIMER_STATUS_SUSPEND);
+        flowInst.setPauseTime(today);
+        flowInst.setLastUpdateUser(mangerUserCode);
+        flowInst.setLastUpdateTime(today);
+        flowInstanceDao.updateObject(flowInst);
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "暂停流程计时: " + flowInstId);
@@ -1004,7 +1045,20 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      */
     @Override
     public int activizeFlowInstTimer(String flowInstId, String mangerUserCode) {
-        flowInstanceDao.updateFlowTimerState(flowInstId, FlowInstance.FLOW_TIMER_STATE_RUN, mangerUserCode);
+        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+        if (flowInst == null)
+            return 0;
+        Date today = DatetimeOpt.currentUtilDate();
+        flowInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
+
+        WorkTimeSpan deadLine= WorkTimeSpan.calcWorkTimeSpan(flowInst.getPauseTime(), today);
+        flowInst.setDeadlineTime(workDayManager
+            .calcWorkingDeadline(flowInst.getTopUnit(), flowInst.getDeadlineTime(), deadLine));
+        flowInst.setWarningTime(workDayManager
+            .calcWorkingDeadline(flowInst.getTopUnit(), flowInst.getWarningTime(), deadLine));
+        flowInst.setLastUpdateTime(today);
+        flowInst.setLastUpdateUser(mangerUserCode);
+        flowInstanceDao.updateObject(flowInst);
 
         OperationLog managerAct = FlowOptUtils.createActionLog(
             mangerUserCode, flowInstId, "恢复流程计时: " + flowInstId);
@@ -1043,9 +1097,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return 0;
 
         StageInstance stageInst = stageInstanceDao.getObject(flowInstId, stageId);
+        FlowStage flowStage = flowStageDao.getObjectById(stageInst.getStageId());
 
-        stageInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
-        stageInst.setTimeLimit(new WorkTimeSpan(timeLimit).toNumberAsMinute());
+        Date today = DatetimeOpt.currentUtilDate();
+        WorkTimeSpan deadLine= new WorkTimeSpan(timeLimit);
+        stageInst.setDeadlineTime(workDayManager.calcWorkingDeadline(wfFlowInst.getTopUnit(), today, deadLine));
+        deadLine.subtractWorkTimeSpan(new WorkTimeSpan(flowStage.getWarningParam()));
+        stageInst.setWarningTime(workDayManager.calcWorkingDeadline(wfFlowInst.getTopUnit(), today, deadLine));
+        stageInst.setLastUpdateTime(today);
 
         flowInstanceDao.updateObject(wfFlowInst);
 

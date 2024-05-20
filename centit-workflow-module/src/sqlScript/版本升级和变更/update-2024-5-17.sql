@@ -7,7 +7,9 @@ ALTER TABLE wf_node MODIFY COLUMN Warning_Param varchar(200);
 alter table WF_FLOW_DEFINE add Warning_Param varchar(200);
 alter table WF_FLOW_STAGE add Warning_Param varchar(200);
 
-alter table WF_NODE_INSTANCE add TIMER_STATUS varchar(1);
+-- alter table WF_NODE_INSTANCE add TIMER_STATUS varchar(1);
+ALTER TABLE WF_NODE_INSTANCE CHANGE IS_TIMER TIMER_STATUS varchar(1);
+
 alter table WF_NODE_INSTANCE add warning_time DATETIME;
 alter table WF_NODE_INSTANCE add deadline_time DATETIME;
 alter table WF_NODE_INSTANCE add pause_time DATETIME;
@@ -27,7 +29,7 @@ alter table WF_STAGE_INSTANCE add pause_time DATETIME;
 alter table wf_flow_stage drop column is_Account_Time;
 alter table wf_flow_stage drop column Limit_Type;
 
-alter table WF_NODE_INSTANCE drop column IS_TIMER;
+-- alter table WF_NODE_INSTANCE drop column IS_TIMER;
 alter table WF_NODE_INSTANCE drop column PROMISE_TIME;
 alter table WF_NODE_INSTANCE drop column TIME_LIMIT;
 

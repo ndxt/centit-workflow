@@ -249,7 +249,7 @@ public interface FlowManager {
      * @param mangerUserCode 管理人员代码
      * @return
      */
-    long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode);
+    long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode, String topUnit);
 
 
     //------------流程阶段管理-------------------------

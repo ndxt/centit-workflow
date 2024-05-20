@@ -427,7 +427,7 @@ public class FlowManagerClientImpl implements FlowManager {
      * @return
      */
     @Override
-    public long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode) {
+    public long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode, String topUnit) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

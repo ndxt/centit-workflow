@@ -69,7 +69,6 @@ public class FlowTaskImpl {
     private WorkDayManager workDayManager;
 
 
-
     /**
      * 发送通知消息给待办用户
      * @param nodeInstId 节点编号

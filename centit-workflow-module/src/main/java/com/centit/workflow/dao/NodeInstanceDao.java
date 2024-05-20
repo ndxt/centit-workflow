@@ -126,20 +126,6 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
             new Object[]{userCode, isTimer}, pageDesc).toJavaList(NodeInstance.class);
     }
 
-    /**
-     * 更新节点实例时钟状态
-     *
-     * @param instid  实例编号
-     * @param isTimer 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
-     */
-    @Transactional
-    public void updateNodeTimerState(String instid, String isTimer, String mangerUserCode) {
-        NodeInstance nodeInst = this.getObjectById(instid);
-        nodeInst.setIsTimer(isTimer);
-        nodeInst.setLastUpdateUser(mangerUserCode);
-        nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
-        this.updateObject(nodeInst);
-    }
 
     @Transactional
     public List<NodeInstance> listActiveTimerNodeByFlow(String flowInstId) {
