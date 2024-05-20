@@ -19,11 +19,26 @@ public class StageInstance implements java.io.Serializable {
     @Column(name = "STAGE_CODE")
     private String  stageCode;
 
+    @Transient
+    private String  stageName;
+
     /**
-     * 计时状态 F 不计是 、T 计时 、P 暂停
+     * 计时状态 N 为开始 not begin  F 不计是 、T 计时 、P 暂停 、 W 已预警 、 E 已逾期处理
      */
-    @Column(name = "IS_TIMER")
-    private String isTimer;
+    @Column(name = "TIMER_STATUS")
+    private String timerStatus;
+
+    @Column(name = "BEGIN_TIME")
+    private Date beginTime;
+
+    @Column(name = "LAST_UPDATE_TIME")
+    private Date  lastUpdateTime;
+
+    /**
+     * 预警时间
+     */
+    @Column(name = "warning_time")
+    private Date warningTime;
     /**
      * 截止时间
      */
@@ -35,38 +50,22 @@ public class StageInstance implements java.io.Serializable {
     @Column(name = "pause_time")
     private Date pauseTime;
 
-    @Transient
-    private String  stageName;
-
-    public static String STAGE_TIMER_STATE_NOT_START = "0";
-    public static String STAGE_TIMER_STATE_STARTED = "1";
-    // 1 是否 已计时
-    @Column(name = "STAGE_BEGIN")
-    private String stageBegin;
-
-    @Column(name = "BEGIN_TIME")
-    private Date beginTime;
-
-    @Column(name = "LAST_UPDATE_TIME")
-    private Date  lastUpdateTime;
 
     // Constructors
     /** default constructor */
     public StageInstance() {
-        this.stageBegin=  STAGE_TIMER_STATE_NOT_START;
+        this.timerStatus = FlowWarning.TIMER_STATUS_NOT_BEGIN;
     }
     /** minimal constructor */
     public StageInstance(StageInstanceId id) {
         this.cid = id;
-        this.stageBegin= STAGE_TIMER_STATE_NOT_START;
+        this.timerStatus = FlowWarning.TIMER_STATUS_NOT_BEGIN;
     }
 
 /** full constructor */
-    public StageInstance(StageInstanceId id, String stageCode,
-                         String stageBegin, Date beginTime, Date lastUpdateTime) {
+    public StageInstance(StageInstanceId id, String stageCode, Date beginTime, Date lastUpdateTime) {
         this.cid = id;
         this.stageCode = stageCode;
-        this.stageBegin= stageBegin;
         this.beginTime= beginTime;
         this.lastUpdateTime= lastUpdateTime;
     }
@@ -107,10 +106,9 @@ public class StageInstance implements java.io.Serializable {
         this.setFlowInstId(other.getFlowInstId());
         this.setStageId(other.getStageId());
         this.stageCode = other.getStageCode();
-        this.isTimer = other.getIsTimer();
+        this.timerStatus = other.getTimerStatus();
         this.deadlineTime = other.getDeadlineTime();
         this.pauseTime = other.getPauseTime();
-        this.stageBegin= other.getStageBegin();
         this.beginTime=  other.getBeginTime();
         this.lastUpdateTime= other.getLastUpdateTime();
     }
@@ -122,14 +120,12 @@ public class StageInstance implements java.io.Serializable {
             this.setStageId(other.getStageId());
         if( other.getStageCode() != null)
             this.stageCode = other.getStageCode();
-        if (other.getIsTimer() != null)
-            this.isTimer = other.getIsTimer();
+        if (other.getTimerStatus() != null)
+            this.timerStatus = other.getTimerStatus();
         if (other.getDeadlineTime() != null)
             this.deadlineTime = other.getDeadlineTime();
         if (other.getPauseTime() != null)
             this.pauseTime = other.getPauseTime();
-        if( other.getStageBegin() != null)
-            this.stageBegin= other.getStageBegin();
         if( other.getBeginTime() != null)
             this.beginTime=  other.getBeginTime();
         if( other.getLastUpdateTime() != null)
@@ -138,10 +134,9 @@ public class StageInstance implements java.io.Serializable {
 
     public void clearProperties(){
         this.stageCode = null;
-        this.isTimer = null;
+        this.timerStatus = null;
         this.deadlineTime = null;
         this.pauseTime = null;
-        this.stageBegin= STAGE_TIMER_STATE_NOT_START;
         this.beginTime=  null;
         this.lastUpdateTime= null;
     }

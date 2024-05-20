@@ -68,27 +68,14 @@ public class FlowTaskImpl {
     @Autowired
     private WorkDayManager workDayManager;
 
-    @Value("${workflow.flowTimeStart:true}")
-    private Boolean flowTimeStart;
 
-    @Value("${workflow.amStart:830}")
-    private int amStart;
-
-    @Value("${workflow.amEnd:1130}")
-    private int amEnd;
-
-    @Value("${workflow.pmStart:1300}")
-    private int pmStart;
-
-    @Value("${workflow.pmEnd:1800}")
-    private int pmEnd;
 
     /**
      * 发送通知消息给待办用户
      * @param nodeInstId 节点编号
      * @return 0/1 是否发送
      */
-    private int sendNotifyMessage(String nodeInstId) {
+    private int sendWarningMessage(String nodeInstId) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
         if (nodeInst == null || NodeInstance.TASK_ASSIGN_TYPE_DYNAMIC.equals(nodeInst.getTaskAssigned())) {
             return 0;
@@ -97,36 +84,6 @@ public class FlowTaskImpl {
         if(StringUtils.isBlank(nodeInfo.getNoticeType())){
             return 0;
         }
-
-        //TODO 根据 nodeInfo.getNoticeType() 判断发送方式 notificationCenter.sendMessageAppointedType()
-        /*if("api".equals(nodeInfo.getNoticeType())){
-            if(StringUtils.isBlank(nodeInfo.getNoticeUserExp())){
-                return 0;
-            }
-            JSONObject jsonObject = JSONObject.from(nodeInfo);
-            jsonObject.putAll(JSONObject.from(nodeInst));
-            FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
-            if (StringUtils.isNotBlank(flowInst.getFlowOptTag())) {
-                if ("{".equals(Lexer.getFirstWord(flowInst.getFlowOptTag()))) {
-                    jsonObject.putAll(JSON.parseObject(flowInst.getFlowOptTag()));
-                } else {
-                    jsonObject.put("optTag", flowInst.getFlowOptTag());
-                }
-            }
-            ddeDubboTaskRun.runTask(nodeInfo.getNoticeUserExp(), jsonObject);
-            return 1;
-        }
-        //TODO 根据 nodeInfo.getNoticeMessage() 判断发送内容
-        String msgContent;
-        if(StringUtils.isNotBlank(nodeInfo.getNoticeMessage())){
-            JSONObject jsonObject = JSONObject.from(nodeInfo);
-            jsonObject.putAll(JSONObject.from(nodeInst));
-            msgContent = Pretreatment.mapTemplateString(nodeInfo.getNoticeMessage(), jsonObject);
-        } else {
-            msgContent = "业务" + nodeInst.getFlowOptName() + "(" + nodeInst.getFlowInstId() + ")的" +
-                nodeInst.getNodeName() + "(" + nodeInst.getNodeInstId() + ")节点超时预警，请尽快处理。";
-        }
-        //TODO 根据 nodeInfo.getNoticeUserExp() 判断发送人员 -- nodeInst.getUserCode()*/
         NoticeMessage noticeMessage = NoticeMessage.create().subject("节点预报警提示")
             .content("业务" + nodeInst.getFlowOptName() + "(" + nodeInst.getFlowInstId() + ")的" +
                 nodeInst.getNodeName() + "(" + nodeInst.getNodeInstId() + ")节点超时预警，请尽快处理。")
@@ -135,11 +92,6 @@ public class FlowTaskImpl {
         return 1;
     }
 
-    /**
-     * 根据数据库计算出来的预报警发出对应的通知即可
-     */
-    @Scheduled(cron = "0 1/5 8-18 * * ?")
-    @Transactional
     public void notifyTimeWaring() {
         //直接从  wfRuntimeWarningDao 读取 报警信息，发送通知，设置已通知标志位
         List<FlowWarning> warningList = wfRuntimeWarningDao.listNeedNotifyWarning();
@@ -149,17 +101,17 @@ public class FlowTaskImpl {
         int nn = 0;
         for (FlowWarning warn : warningList) {
             if ("N".equals(warn.getObjType())) {
-                nn += sendNotifyMessage(warn.getNodeInstId());
+                nn += sendWarningMessage(warn.getNodeInstId());
             } else if ("F".equals(warn.getObjType())) {
                 List<NodeInstance> nodelist = nodeInstanceDao.listActiveTimerNodeByFlow(warn.getFlowInstId());
                 for (NodeInstance node : nodelist) {
-                    nn += sendNotifyMessage(node.getNodeInstId());
+                    nn += sendWarningMessage(node.getNodeInstId());
                 }
             } else if ("P".equals(warn.getObjType())) {
                 List<NodeInstance> nodelist = nodeInstanceDao.listActiveTimerNodeByFlowStage(
                     warn.getFlowInstId(), warn.getFlowStage());
                 for (NodeInstance node : nodelist) {
-                    nn += sendNotifyMessage(node.getNodeInstId());
+                    nn += sendWarningMessage(node.getNodeInstId());
                 }
             }
 
@@ -170,34 +122,6 @@ public class FlowTaskImpl {
         logger.info("通知中心发现 " + warningList.size() + "预警信息，并通知了" + nn + "个用户。");
     }
 
-    @Scheduled(cron = "0 1/2 5-23 * * ?")
-    @Transactional
-    public void runEntity() {
-        /**这部分内容 也可以放到后台 通过数据库来执行，在程序中执行 如果服务器停止则计时会不正确，
-         *  并且如果部署到多个应用服务器 会出现重复扣除时间的问题
-         *  在数据库中执行 复杂在要重新实现 当前时间是否是工作时间的问题
-         */
-        long consumeTime = 2;
-        consumeLifeTime(consumeTime);
-        runEventTask(500);
-    }
-
-    public boolean isWorkTime(Map<String, Boolean> cached, String topUnit) {
-        if(cached.containsKey(topUnit)){
-            return cached.get(topUnit);
-        }
-        Date workTime = DatetimeOpt.currentUtilDate();
-        boolean workdDay =  workDayManager.isWorkDay(topUnit, workTime);
-        if (!workdDay) {
-            cached.put(topUnit, false);
-            return false;
-        }
-        int m = DatetimeOpt.getMinute(workTime) + 100 * DatetimeOpt.getHour(workTime);
-        //默认朝九晚五
-        boolean isWT=  (m > amStart && m < amEnd) || (m > pmStart && m < pmEnd);
-        cached.put(topUnit, isWT);
-        return isWT;
-    }
 
     private void consumeLifeTime(long consumeTime) {
         // 获取审批中流程并且需求计时的流程实例
@@ -347,21 +271,6 @@ public class FlowTaskImpl {
         }
     }
 
-    private double parse(String ratio) {
-        if (ratio.contains("/")) {
-            String[] rat = ratio.split("/");
-            if(rat.length>2) {
-                return NumberBaseOpt.castObjectToDouble(rat[0], 0.0) /
-                    NumberBaseOpt.castObjectToDouble(rat[1], 100.0);
-            }
-            return NumberBaseOpt.castObjectToDouble(rat[0], 0.0);
-        } else if (ratio.contains("%")) {
-            String percent = ratio.substring(0, ratio.indexOf('%'));
-            return NumberBaseOpt.castObjectToDouble(percent, 0.0) / 100.0;
-        } else {
-            return NumberBaseOpt.castObjectToDouble(ratio, 0.0);
-        }
-    }
 
     private void runEventTask(int maxRows) {
         // 获取所有事件 来处理

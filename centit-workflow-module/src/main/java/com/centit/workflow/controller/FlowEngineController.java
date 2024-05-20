@@ -13,6 +13,7 @@ import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.model.basedata.UserInfo;
 import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.common.ObjectException;
@@ -381,10 +382,12 @@ public class FlowEngineController extends BaseController {
     )
     @WrapUpResponseBody
     @PostMapping(value = "/isolatedNode")
-    public NodeInstance createIsolatedNodeInst(@RequestBody JSONObject jsonObject) {
+    public NodeInstance createIsolatedNodeInst(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+        UserInfo userInfo =  WebOptUtils.assertUserLogin(request);
+        //String topUnit =  WebOptUtils.getCurrentTopUnit(request);
         String flowInstId = jsonObject.getString("flowInstId");
         String curNodeInstId = jsonObject.getString("curNodeInstId");
-        String createUser = jsonObject.getString("createUser");
+        String createUser = userInfo.getUserCode();// jsonObject.getString("createUser");
         String userCode = jsonObject.getString("userCode");
         String nodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
@@ -406,9 +409,11 @@ public class FlowEngineController extends BaseController {
     )
     @WrapUpResponseBody
     @PostMapping(value = "/duplicateMultiNode")
-    public NodeInstance duplicateMultiNodeInst(@RequestBody JSONObject jsonObject) {
+    public NodeInstance duplicateMultiNodeInst(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+        UserInfo userInfo =  WebOptUtils.assertUserLogin(request);
+        //String topUnit =  WebOptUtils.getCurrentTopUnit(request);
         String flowInstId = jsonObject.getString("flowInstId");
-        String createUser = jsonObject.getString("createUser");
+        String createUser = userInfo.getUserCode();// jsonObject.getString("createUser");
         String userCode = jsonObject.getString("userCode");
         String multiNodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
@@ -419,11 +424,13 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
     @WrapUpResponseBody
     @PostMapping(value = "/prepNode")
-    public NodeInstance createPrepNodeInst(@RequestBody String json) {
+    public NodeInstance createPrepNodeInst(@RequestBody String json, HttpServletRequest request) {
         JSONObject jsonObject = JSON.parseObject(json);
+        UserInfo userInfo =  WebOptUtils.assertUserLogin(request);
+        //String topUnit =  WebOptUtils.getCurrentTopUnit(request);
         String flowInstId = jsonObject.getString("flowInstId");
         String curNodeInstId = jsonObject.getString("curNodeInstId");
-        String createUser = jsonObject.getString("createUser");
+        String createUser = userInfo.getUserCode();// jsonObject.getString("createUser");
         String userCode = jsonObject.getString("userCode");
         String nodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");

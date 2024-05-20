@@ -22,6 +22,19 @@ import java.util.Date;
 @Table(name = "WF_RUNTIME_WARNING")
 public class FlowWarning implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 计时状态 N 为未开始（只用于阶段） F 不计是 、T 计时 、P 暂停 、 W 已预警 、 E 已逾期处理、 S 同步节点
+     */
+    //不计时 F、 计时 T(有期限)、暂停P 忽略(无期限)
+    public static final String TIMER_STATUS_NOT_BEGIN = "N";
+    public static final String TIMER_STATUS_NO_LIMIT = "F";
+    public static final String TIMER_STATUS_RUN = "T";
+    public static final String TIMER_STATUS_SUSPEND = "P";
+    public static final String TIMER_STATUS_WARN = "W";
+    public static final String TIMER_STATUS_EXCEED = "E";
+    public static final String TIMER_STATUS_SYNC = "S";
+
     @Id
     @Column(name = "WARNING_ID")
     @ValueGenerator(strategy = GeneratorType.UUID22)
@@ -39,12 +52,14 @@ public class FlowWarning implements java.io.Serializable {
     private String objType;
 
     //  warningType
-    //  N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+    //  N：仅通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
     //  A ：调用api
     @Column(name = "WARNING_TYPE")
     private String warningType;
+
     @Column(name = "WARNING_CODE")
     private String warningCode;
+
     @Column(name = "WARNING_TIME")
     private Date warningTime;
 

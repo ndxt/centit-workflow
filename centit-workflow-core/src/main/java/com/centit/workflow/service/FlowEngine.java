@@ -304,7 +304,7 @@ public interface FlowEngine {
      * @param flowInstId    流程实例号
      * @param curNodeInstId 当前节点实例号
      * @param nodeCode      节点环节代码，这个节点在这个流程中必需唯一
-     * @param createUser    当前创建用户
+     * @param topUnit    当前创建用户
      * @param userCode      指定操作用户
      * @param unitCode      指定机构
      * @return 节点实例
@@ -324,7 +324,7 @@ public interface FlowEngine {
      * @param nodeCode      节点环节代码
      * @param createUser    当前创建用户
      * @param userCode      指定操作用户
-     * @param unitCode      指定机构
+     //* @param unitCode      指定机构
      * @return 节点实例
      */
     NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId,

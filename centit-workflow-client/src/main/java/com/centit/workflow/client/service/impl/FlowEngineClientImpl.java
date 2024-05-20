@@ -382,6 +382,7 @@ public class FlowEngineClientImpl implements FlowEngine {
         paramMap.put("nodeCode", nodeCode);
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
+        //paramMap.put("topUnit", topUnit);
         String json =  RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/isolatedNode", paramMap);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
@@ -390,13 +391,15 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     @Override
-    public NodeInstance duplicateMultiNodeInst(String flowInstId, String multiNodeCode, String createUser, String userCode, String unitCode) {
+    public NodeInstance duplicateMultiNodeInst(String flowInstId, String multiNodeCode,
+                                               String createUser, String userCode, String unitCode) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("createUser", createUser);
         paramMap.put("nodeCode", multiNodeCode);
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
+        //paramMap.put("topUnit", topUnit);
         String json =  RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/duplicateMultiNode", paramMap);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
@@ -413,8 +416,8 @@ public class FlowEngineClientImpl implements FlowEngine {
      * @param flowInstId    流程实例号
      * @param curNodeInstId 当前节点实例号
      * @param nodeCode      节点环节代码，这个节点在这个流程中必需唯一
-     * @param createUser    当前创建用户
-     * @param userCode      指定操作用户
+     * @param createUser    创建用户
+     * @param userCode      指定用户
      * @param unitCode      指定机构
      * @return 节点实例
      */
@@ -425,10 +428,11 @@ public class FlowEngineClientImpl implements FlowEngine {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
         paramMap.put("curNodeInstId", curNodeInstId);
-        paramMap.put("createUser", createUser);
         paramMap.put("nodeCode", nodeCode);
+        paramMap.put("createUser", createUser);
         paramMap.put("userCode", userCode);
         paramMap.put("unitCode", unitCode);
+        //paramMap.put("topUnit", topUnit);
         String json =  RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/prepNode", paramMap);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);

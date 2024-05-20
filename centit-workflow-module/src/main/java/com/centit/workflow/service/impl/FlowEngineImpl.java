@@ -13,6 +13,7 @@ import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.adapter.*;
 import com.centit.framework.model.basedata.*;
+import com.centit.product.oa.service.WorkDayManager;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.common.ObjectException;
@@ -94,11 +95,14 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Autowired
     private StageInstanceDao stageInstanceDao;
     @Autowired
+    private  FlowStageDao flowStageDao;
+    @Autowired
     private DdeDubboTaskRun ddeDubboTaskRun;
 
     @Autowired
     private PlatformEnvironment platformEnvironment;
-
+    @Autowired
+    private WorkDayManager workDayManager;
     public FlowEngineImpl() {
         //lockObject = new Object();
     }
@@ -223,7 +227,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             UuidOpt.getUuidAsString32() : options.getFlowInstId();
 
         FlowInstance flowInst = FlowOptUtils.createFlowInst(options.getTopUnit(),
-            options.getUnitCode(), options.getUserCode(), wf, flowInstId, options.getTimeLimitStr());
+            options.getUnitCode(), options.getUserCode(), wf, flowInstId, options.getTimeLimitStr(),
+            workDayManager);
         if (options.getModelId() != null) {
             flowInst.setOptId(options.getModelId());
         }
@@ -456,7 +461,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowOptUtils.endInstance(flowInst, FlowInstance.FLOW_STATE_COMPLETE, userCode, flowInstanceDao);
         NodeInstance endNodeInst =
             FlowOptUtils.createNodeInst(unitCode, userCode, flowInst,
-                null, flowInfo, endNode, trans, varTrans);
+                null, flowInfo, endNode, trans, varTrans, workDayManager);
         endNodeInst.setNodeInstId(UuidOpt.getUuidAsString32());
         endNodeInst.setNodeState(NodeInstance.NODE_STATE_COMPLETE);
         Date updateTime = DatetimeOpt.currentUtilDate();
@@ -848,7 +853,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     private List<String> submitToNextNode(NodeInfo nextNode, String nodeToken, FlowInstance flowInst, FlowInfo flowInfo,
-                                          NodeInstance preNodeInst, String transPath, FlowTransition nodeTran, FlowOptParamOptions options,
+                                          NodeInstance preNodeInst, String transPath, FlowTransition nodeTran,
+                                          FlowOptParamOptions options,
                                           FlowVariableTranslate varTrans, ServletContext application) {
         //每次重置当前节点实例
         varTrans.setNodeInst(preNodeInst);
@@ -885,7 +891,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         Date currentTime = new Date(System.currentTimeMillis());
         String lastNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nodeInst = FlowOptUtils.createNodeInst(options.getUnitCode(), options.getUserCode(),
-            flowInst, preNodeInst, flowInfo, nextOptNode, trans, varTrans);
+            flowInst, preNodeInst, flowInfo, nextOptNode, trans, varTrans, workDayManager);
 
         nodeInst.setNodeInstId(lastNodeInstId);
         if (trans != null) {
@@ -897,16 +903,32 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         //设置阶段进入时间 或者变更时间
         if (StringUtils.isNotBlank(nextOptNode.getStageCode())) {
-            StageInstance stage = flowInst.getStageInstanceByCode(nextOptNode.getStageCode());
-            if (stage != null) {
-                if (StageInstance.STAGE_TIMER_STATE_STARTED.equals(stage.getStageBegin())) {
-                    stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+            StageInstance stageInst = flowInst.getStageInstanceByCode(nextOptNode.getStageCode());
+            if (stageInst != null) {
+                Date today = DatetimeOpt.currentUtilDate();
+                if (FlowWarning.TIMER_STATUS_NOT_BEGIN.equals(stageInst.getTimerStatus())) {
+                    // 第一次进入阶段
+                    FlowStage stageInfo = flowStageDao.getObjectById(stageInst.getStageId());
+                    if("O".equals(stageInfo.getExpireOpt()) || StringUtils.isBlank(stageInfo.getTimeLimit())){
+                        stageInst.setBeginTime(today);
+                        stageInst.setTimerStatus(FlowWarning.TIMER_STATUS_NO_LIMIT);
+                    } else { //
+                        WorkTimeSpan deadLine= new WorkTimeSpan(stageInfo.getTimeLimit());
+                        stageInst.setDeadlineTime(workDayManager.calcWorkingDeadline(flowInst.getTopUnit(), today, deadLine));
+                        deadLine.subtractWorkTimeSpan(new WorkTimeSpan(stageInfo.getWarningParam()));
+                        stageInst.setWarningTime(workDayManager.calcWorkingDeadline(flowInst.getTopUnit(), today, deadLine));
+                        stageInst.setBeginTime(today);
+                        stageInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
+                    }
                 } else {
-                    stage.setStageBegin(StageInstance.STAGE_TIMER_STATE_STARTED);
-                    stage.setBeginTime(DatetimeOpt.currentUtilDate());
-                    stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+                    // 如果阶段已经包过异常再次打开阶段，对新进入的节点报警
+                    if(StringUtils.equalsAny(stageInst.getTimerStatus(),
+                        FlowWarning.TIMER_STATUS_WARN, FlowWarning.TIMER_STATUS_EXCEED)){
+                        stageInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
+                    }
                 }
-                stageInstanceDao.updateObject(stage);
+                stageInst.setLastUpdateTime(today);
+                stageInstanceDao.updateObject(stageInst);
             }
         }
         List<String> createNodes = new ArrayList<>();
@@ -931,15 +953,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
             //如果是子流程 启动流程
             nodeInst.setNodeState(NodeInstance.NODE_STATE_WAITE_SUBPROCESS);
-            String tempFlowTimeLimit = "";
-            if (BooleanBaseOpt.ONE_CHAR_TRUE.equals(flowInst.getIsTimer())
-                && flowInst.getTimeLimit() != null
-                && !NodeInfo.TIME_LIMIT_NONE.equals(nextOptNode.getIsAccountTime())) {
-                //子流程实例计时可以继承父流程剩余时间
-                WorkTimeSpan workTimeSpan = new WorkTimeSpan();
-                workTimeSpan.fromNumberAsMinute(flowInst.getTimeLimit());
-                tempFlowTimeLimit = workTimeSpan.toStringAsMinute();
-            }
 
             //子流程的机构 要和 节点的机构一致
             FlowInstance tempFlow = createInstanceInside(
@@ -948,9 +961,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
                     .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
                     .optTag(flowInst.getFlowOptTag())
-                    .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId)
-                    .timeLimit(tempFlowTimeLimit), varTrans, application);
-
+                    .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId), varTrans, application);
+            // TODO 子流程是否要自动添加 父节点 和 父流程的 时间期限， 如果需要在这儿添加逻辑
             nodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
             //对于子流程也设定一个用户作为流程的责任人
             if (optUsers != null && !optUsers.isEmpty()) {
@@ -1032,10 +1044,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //  判断同步节点的同步方式是否为时间触发
             if (NodeInfo.SYNC_NODE_TYPE_TIME.equals(nextOptNode.getOptType())) {
                 // 设置时间
-                nodeInst.setIsTimer(NodeInfo.TIME_LIMIT_NORMAL);
+                nodeInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
                 //TODO 通过变量获取同步节点的同步时间
-                nodeInst.setTimeLimit(new WorkTimeSpan(nextOptNode.getTimeLimit()).toNumberAsMinute());
-                nodeInst.setPromiseTime(nodeInst.getTimeLimit());
+                Date deadlineTime = workDayManager.calcWorkingDeadline(options.getTopUnit(), DatetimeOpt.currentUtilDate(),
+                    new WorkTimeSpan(nextOptNode.getTimeLimit()));
+                nodeInst.setDeadlineTime(deadlineTime);
+                nodeInst.setWarningTime(deadlineTime);
             } else if (NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nextOptNode.getOptType())) {
                 // 检查是否有同步消息
                 FlowEventInfo eventInfo = flowEventService.getEventByFlowEvent(flowInst.getFlowCode(), nextOptNode.getMessageCode());
@@ -1066,7 +1080,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 context.addUnitParam("N", nodeUnits);
                 context.addUserParam("N", optUsers);
                 Set<String> sendMessageUser = UserUnitCalcEngine.calcOperators(context, nextOptNode.getNoticeUserExp());
-                if (sendMessageUser != null && sendMessageUser.size() > 0) {
+                if (sendMessageUser != null && !sendMessageUser.isEmpty()) {
                     notificationCenter.sendMessage("system", sendMessageUser,
                         NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
                             .content(
@@ -1323,12 +1337,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
 
-        if ("P".equals(nodeInst.getIsTimer())) {
+        /*if (FlowWarning.TIMER_STATUS_SUSPEND.equals(nodeInst.getTimerStatus())) {
             String errorMsg = getI18nMessage("flow.655.node_is_paused", options.getClientLocale(),
                 nodeInst.getFlowInstId(), options.getNodeInstId());
             logger.error(errorMsg);
             throw new ObjectException(WorkflowException.PauseTimerNode, errorMsg);
-        }
+        }*/
+
         //校验节点状态 流程和节点状态都要为正常
         if (!flowInst.checkIsInRunning() || !nodeInst.checkIsInRunning()) {
             String errorMsg = getI18nMessage("flow.654.node_incorrect_state", options.getClientLocale(),
@@ -1383,18 +1398,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             OperationLogCenter.log(wfactlog);
         }
 
-        //设置阶段进 变更时间（提交时间）
-        StageInstance stage = flowInst.getStageInstanceByCode(currNode.getStageCode());
-        if (stage != null) {
-            if (StageInstance.STAGE_TIMER_STATE_STARTED.equals(stage.getStageBegin())) {
-                stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
-            } else {//这一句应该是运行不到的
-                stage.setStageBegin(StageInstance.STAGE_TIMER_STATE_STARTED);
-                stage.setBeginTime(DatetimeOpt.currentUtilDate());
-                stage.setLastUpdateTime(DatetimeOpt.currentUtilDate());
-            }
-            stageInstanceDao.updateObject(stage);
-        }
         //这个后面是不是还有保存，
         flowInst.setLastUpdateTime(updateTime);
         flowInst.setLastUpdateUser(options.getUserCode());
@@ -1863,7 +1866,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      * @param nodeCode      节点环节代码，这个节点在这个流程中必需唯一
      * @param userCode      指定用户
      * @param unitCode      指定机构
-     * @param createUser    创建用户
      * @return 节点实例
      */
     @Override
@@ -1879,7 +1881,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         List<NodeInfo> nodeList = flowNodeDao.listNodeByNodecode(flowInst.getFlowCode(),
             flowInst.getVersion(), nodeCode);
 
-        if (nodeList == null || nodeList.size() < 1) {
+        if (nodeList == null || nodeList.isEmpty()) {
             return null;
         }
         if (nodeList.size() > 1) {
@@ -1902,8 +1904,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         NodeInfo nextNode = flowNodeDao.getObjectById(nodeId);
         //获取上一个相同节点实例机构
         String lastNodeInstId = UuidOpt.getUuidAsString32();
-        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, userCode,
-            flowInst, nodeInst, flowInfo, nextNode, null, null);
+        NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser,
+            flowInst, nodeInst, flowInfo, nextNode, null, null, workDayManager);
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
         nextNodeInst.setRunToken(nodeInst.getRunToken() + "." + NodeInstance.RUN_TOKEN_INSERT);
@@ -1944,7 +1946,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         List<NodeInfo> nodeList = flowNodeDao.listNodeByNodecode(flowInst.getFlowCode(),
             flowInst.getVersion(), nodeCode);
 
-        if (nodeList == null || nodeList.size() < 1) {
+        if (nodeList == null || nodeList.isEmpty()) {
             return null;
         }
         if (nodeList.size() > 1) {
@@ -1971,7 +1973,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //获取上一个相同节点实例机构
         String lastNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nextNodeInst = FlowOptUtils.createNodeInst(unitCode, createUser, flowInst,
-            nodeInst, flowInfo, nextNode, null, null);
+            nodeInst, flowInfo, nextNode, null, null, workDayManager);
         nextNodeInst.setNodeInstId(lastNodeInstId);
         nextNodeInst.setPrevNodeInstId(curNodeInstId);
         nextNodeInst.setRunToken(nodeInst.getRunToken() + "." + NodeInstance.RUN_TOKEN_ISOLATED);
@@ -2003,13 +2005,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         List<NodeInfo> nodeList = flowNodeDao.listNodeByNodecode(flowInst.getFlowCode(),
             flowInst.getVersion(), multiNodeCode);
 
-        if (nodeList == null || nodeList.size() < 1) {
+        if (nodeList == null || nodeList.isEmpty()) {
             return null;
         }
 
         flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
         Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
-        if (activeNodes == null || activeNodes.size() == 0) {
+        if (activeNodes == null || activeNodes.isEmpty()) {
             return null;
         }
         for (NodeInstance inst : activeNodes) {
@@ -2035,7 +2037,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         nextNodeInst.setUnitCode(unitCode);
                         nextNodeInst.setLastUpdateUser(createUser);
                         nextNodeInst.setLastUpdateTime(DatetimeOpt.currentUtilDate());
-                        nextNodeInst.setTimeLimit(nextNodeInst.getPromiseTime());
+                        nextNodeInst.setDeadlineTime(nextNodeInst.getDeadlineTime());
+                        nextNodeInst.setWarningTime(nextNodeInst.getWarningTime());
                         int tokenInd = flowInst.fetchTheMaxMultiNodeTokenInd(node.getNodeId()) + 1;
                         nextNodeInst.setRunToken(inst.getRunToken().substring(0, dotPos) + "." + tokenInd);
                         nodeInstanceDao.saveNewObject(nextNodeInst);

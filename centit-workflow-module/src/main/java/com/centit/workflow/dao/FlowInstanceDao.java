@@ -106,12 +106,12 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
     /**
      * 更新流程实例时钟状态
      * @param instid 实例编号
-     * @param isTimer 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
+     * @param timerStatus 计时状态 F 不计是 、T 计时 、P 暂停 、 W 已预警 、 E 已逾期处理
      */
     @Transactional
-    public void updateFlowTimerState(String instid,String isTimer,String mangerUserCode){
+    public void updateFlowTimerState(String instid, String timerStatus,String mangerUserCode){
         FlowInstance flowInst = this.getObjectById(instid);
-        flowInst.setIsTimer(isTimer);
+        flowInst.setTimerStatus(timerStatus);
         flowInst.setLastUpdateUser(mangerUserCode);
         flowInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
         this.updateObject(flowInst);

@@ -221,7 +221,7 @@ public class NodeInfo implements java.io.Serializable {
     public static final String TIME_EXPIRE_OPT_END_FLOW  = "E";
     public static final String TIME_EXPIRE_OPT_SUBMIT = "C";
     /**
-     * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+     * N：仅通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
      * A ：调用api
      */
     @Column(name = "EXPIRE_OPT")
@@ -229,6 +229,9 @@ public class NodeInfo implements java.io.Serializable {
 
     @Column(name = "EXPIRE_CALL_API")
     private String expireCallApi;
+
+    @Column(name = "WARNING_PARAM")
+    private String warningParam;
 
     public static final String NODE_NOTICE_TYPE_NONE  = "N";
     public static final String NODE_NOTICE_TYPE_DEFAULT  = "D";
@@ -293,14 +296,6 @@ public class NodeInfo implements java.io.Serializable {
 
     @Column(name = "CONVERGE_PARAM")
     private String convergeParam;
-    /**
-     * R：运行时间  L:剩余时间 P：比率
-     */
-    @Column(name = "WARNING_RULE")
-    private String warningRule;
-
-    @Column(name = "WARNING_PARAM")
-    private String warningParam;
 
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
@@ -409,7 +404,6 @@ public class NodeInfo implements java.io.Serializable {
         this.multiInstParam=other.getMultiInstParam();
         this.convergeParam=other.getConvergeParam();
         this.convergeType=other.getConvergeType();
-        this.warningRule=other.getWarningRule();
         this.warningParam=other.getWarningParam();
     }
 
@@ -472,8 +466,6 @@ public class NodeInfo implements java.io.Serializable {
             this.convergeParam=other.getConvergeParam();
         if (other.getConvergeType()!=null)
             this.convergeType=other.getConvergeType();
-        if (other.getWarningRule()!=null)
-            this.warningRule=other.getWarningRule();
         if (other.getWarningParam()!=null)
             this.warningParam=other.getWarningParam();
     }
@@ -506,7 +498,6 @@ public class NodeInfo implements java.io.Serializable {
         this.multiInstParam=null;
         this.convergeParam=null;
         this.convergeType=null;
-        this.warningRule=null;
         this.warningParam=null;
     }
 

@@ -103,15 +103,15 @@ public class FlowInstance implements java.io.Serializable {
     private Date createTime;
 
     /**
-     * 计时状态 F 不计是 、T 计时 、P 暂停
+     * 计时状态 F 不计是 、T 计时 、P 暂停 、 W 已预警 、 E 已逾期处理
      */
-    //不计时 F、 计时 T(有期限)、暂停P 忽略(无期限)
-    public static final String FLOW_TIMER_STATE_NOLIMIT = "F";
-    public static final String FLOW_TIMER_STATE_RUN = "T";
-    public static final String FLOW_TIMER_STATE_SUSPEND = "P";
-
-    @Column(name = "IS_TIMER")
-    private String isTimer;
+    @Column(name = "TIMER_STATUS")
+    private String timerStatus;
+    /**
+     * 预警时间
+     */
+    @Column(name = "warning_time")
+    private Date warningTime;
     /**
      * 截止时间
      */
@@ -187,7 +187,7 @@ public class FlowInstance implements java.io.Serializable {
      * default constructor
      */
     public FlowInstance() {
-        this.isTimer = "F";
+        this.timerStatus = "F";
         this.flowNodeInstances = null;
         this.flowStageInstances = null;
         this.activeNodeList = null;
@@ -198,7 +198,7 @@ public class FlowInstance implements java.io.Serializable {
      * minimal constructor
      */
     public FlowInstance(String wfinstid, Date createtime) {
-        this.isTimer = "F";
+        this.timerStatus = "F";
         this.flowInstId = wfinstid;
         this.createTime = createtime;
         this.isSubInst = false;
@@ -733,14 +733,13 @@ public class FlowInstance implements java.io.Serializable {
         this.userCode = other.getUserCode();
         this.osId = other.getOsId();
         this.optId = other.getOptId();
-        this.isTimer = other.getIsTimer();
+        this.timerStatus = other.getTimerStatus();
         this.deadlineTime = other.getDeadlineTime();
         this.pauseTime = other.getPauseTime();
         this.flowNodeInstances = other.getFlowNodeInstances();
         this.flowStageInstances = other.getFlowStageInstances();
         this.lastUpdateTime = other.getLastUpdateTime();
         this.lastUpdateUser = other.getLastUpdateUser();
-        this.isTimer = other.getIsTimer();
     }
 
     public void copyNotNullProperty(FlowInstance other) {
@@ -772,8 +771,8 @@ public class FlowInstance implements java.io.Serializable {
             this.setUnitCode(other.getUnitCode());
         if (other.getUserCode() != null)
             this.userCode = other.getUserCode();
-        if (other.getIsTimer() != null)
-            this.isTimer = other.getIsTimer();
+        if (other.getTimerStatus() != null)
+            this.timerStatus = other.getTimerStatus();
         if (other.getDeadlineTime() != null)
             this.deadlineTime = other.getDeadlineTime();
         if (other.getPauseTime() != null)
@@ -799,7 +798,7 @@ public class FlowInstance implements java.io.Serializable {
         this.preNodeInstId = null;
         this.setUnitCode(null);
         this.userCode = null;
-        this.isTimer = null;
+        this.timerStatus = null;
         this.deadlineTime = null;
         this.pauseTime = null;
         this.flowNodeInstances = null;

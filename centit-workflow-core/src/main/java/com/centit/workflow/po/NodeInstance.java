@@ -49,12 +49,16 @@ public class NodeInstance implements java.io.Serializable {
     @Column(name = "PREV_NODE_INST_ID")
     private String prevNodeInstId;
 
-
     /**
-     * 计时状态 F 不计是 、T 计时 、P 暂停
+     * 计时状态 F 不计是 、T 计时 、P 暂停 、 W 已预警 、 E 已逾期处理
      */
-    @Column(name = "IS_TIMER")
-    private String isTimer;
+    @Column(name = "TIMER_STATUS")
+    private String timerStatus;
+    /**
+     * 预警时间
+     */
+    @Column(name = "warning_time")
+    private Date warningTime;
     /**
      * 截止时间
      */
@@ -156,7 +160,7 @@ public class NodeInstance implements java.io.Serializable {
     private String optUrl;
 
     public NodeInstance() {
-        this.isTimer = "F";
+        this.timerStatus = "F";
         this.taskAssigned = "D";
         this.node = new NodeInfo();
     }
@@ -164,7 +168,7 @@ public class NodeInstance implements java.io.Serializable {
     public NodeInstance(
         String nodeInstId
     ) {
-        this.isTimer = "F";
+        this.timerStatus = "F";
         this.nodeInstId = nodeInstId;
         this.taskAssigned = "D";
         this.node = new NodeInfo();
@@ -187,7 +191,7 @@ public class NodeInstance implements java.io.Serializable {
         this.taskAssigned = taskassigned;
         this.setRunToken(runToken);
         this.lastUpdateUser = lastUpdateUser;
-        this.isTimer = isTimer;
+        this.timerStatus = isTimer;
         this.stageCode = flowPhase;
     }
 
@@ -369,7 +373,7 @@ public class NodeInstance implements java.io.Serializable {
         this.taskAssigned = other.getTaskAssigned();
         this.runToken = other.getRunToken();
         this.lastUpdateUser = other.getLastUpdateUser();
-        this.isTimer = other.getIsTimer();
+        this.timerStatus = other.getTimerStatus();
         this.deadlineTime = other.getDeadlineTime();
         this.pauseTime = other.getPauseTime();
         this.stageCode = other.getStageCode();
@@ -419,8 +423,8 @@ public class NodeInstance implements java.io.Serializable {
         if (other.getLastUpdateUser() != null) {
             this.lastUpdateUser = other.getLastUpdateUser();
         }
-        if (other.getIsTimer() != null)
-            this.isTimer = other.getIsTimer();
+        if (other.getTimerStatus() != null)
+            this.timerStatus = other.getTimerStatus();
         if (other.getDeadlineTime() != null)
             this.deadlineTime = other.getDeadlineTime();
         if (other.getPauseTime() != null)
@@ -452,7 +456,7 @@ public class NodeInstance implements java.io.Serializable {
         this.unitCode = null;
         this.transPath = null;
         this.taskAssigned = "D";
-        this.isTimer = null;
+        this.timerStatus = null;
         this.deadlineTime = null;
         this.pauseTime = null;
         this.runToken = null;
