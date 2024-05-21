@@ -286,9 +286,13 @@ public class FlowTaskImpl {
         }
         for (StageInstance stageInst : activeStages) {
             FlowStage stageInfo = flowStageDao.getObjectById(stageInst.getStageId());
+            // 判断是否有执行的节点
+            int activeTimerNodes = nodeInstanceDao.countActiveTimerNodeByFlowStage(
+                stageInst.getFlowInstId(), stageInst.getStageCode());
 
-            if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(stageInfo.getExpireOpt()) ||
-                NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(stageInfo.getExpireOpt())) {
+            if ( activeTimerNodes>0 &&
+                (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(stageInfo.getExpireOpt()) ||
+                NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(stageInfo.getExpireOpt())) ) {
                 FlowInstance flowInst = flowInstanceDao.getObjectById(stageInst.getFlowInstId());
                 String message = "OK！";
                 if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(stageInfo.getExpireOpt())) {
@@ -314,6 +318,7 @@ public class FlowTaskImpl {
                 flowWarning.setSendUsers("system");
                 wfRuntimeWarningDao.saveNewObject(flowWarning);
             }
+
             stageInst.setTimerStatus("E");
             stageInstanceDao.updtStageTimerStatus(stageInst.getFlowInstId(), stageInst.getStageId(), stageInst.getTimerStatus());
         }

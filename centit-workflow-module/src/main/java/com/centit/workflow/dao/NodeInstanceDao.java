@@ -5,6 +5,7 @@ import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryAndNamedParams;
 import com.centit.support.database.utils.QueryUtils;
@@ -145,6 +146,13 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
             new Object[]{flowInstId, flowStageCode});
     }
 
+    @Transactional
+    public int countActiveTimerNodeByFlowStage(String flowInstId, String flowStageCode) {
+        Object obj = DatabaseOptUtils.getScalarObjectQuery(this,
+            "select count(*) as activeNodes from WF_NODE_INSTANCE where flow_Inst_Id = ? and STAGE_CODE = ? and node_state in ('N','W','S')",
+            new Object[]{flowInstId, flowStageCode});
+        return NumberBaseOpt.castObjectToInteger(obj,0);
+    }
     /**
      * 获取流程实例的节点信息（流程中所有的业务节点 和 节点实例）
      *
