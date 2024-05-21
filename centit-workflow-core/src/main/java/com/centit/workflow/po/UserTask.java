@@ -65,7 +65,7 @@ public class UserTask implements java.io.Serializable {
     @DictionaryMap(value="userCode", fieldName="creatorName")
     private String creatorCode;
 
-    private String nodeTimerState; // isTimer
+    private String nodeTimerStatus; // isTimer
     private Date nodeCreateTime;
     private Date nodeExpireTime;
     private Date nodeLastUpdateTime;
@@ -129,7 +129,7 @@ public class UserTask implements java.io.Serializable {
 
         this.creatorCode = other.getCreatorCode();
 
-        this.nodeTimerState = other.getNodeTimerState();
+        this.nodeTimerStatus = other.getNodeTimerStatus();
         this.nodeCreateTime = other.getNodeCreateTime();
         this.nodeExpireTime = other.getNodeExpireTime();
         this.nodeLastUpdateTime = other.getNodeLastUpdateTime();
