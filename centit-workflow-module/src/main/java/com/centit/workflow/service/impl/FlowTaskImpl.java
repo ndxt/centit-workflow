@@ -224,7 +224,7 @@ public class FlowTaskImpl {
                     JSONObject params = JSONObject.from(flowInst);
                     params.putAll(JSONObject.from(nodeInfo));
                     params.putAll(JSONObject.from(nodeInst));
-                    logger.info("自动运行api网关" + nodeInfo.getExpireCallApi() + "，参数:" + params);
+                    logger.info("节点超时，自动运行api网关" + nodeInfo.getExpireCallApi() + "，参数:" + params);
                     Object obj =  ddeDubboTaskRun.runTask(nodeInfo.getExpireCallApi(), params);
                     message = JSON.toJSONString(obj);
                 }
@@ -261,7 +261,7 @@ public class FlowTaskImpl {
                 } else if (NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(flowInfo.getExpireOpt())){
                     //自动执行API
                     JSONObject params = JSONObject.from(flowInst);
-                    logger.info("自动运行api网关" + flowInfo.getExpireCallApi() + "，参数:" + params);
+                    logger.info("流程超时，自动运行api网关" + flowInfo.getExpireCallApi() + "，参数:" + params);
                     Object obj = ddeDubboTaskRun.runTask(flowInfo.getExpireCallApi(), params);
                     message = JSON.toJSONString(obj);
                 }
@@ -304,7 +304,7 @@ public class FlowTaskImpl {
                     JSONObject params = JSONObject.from(flowInst);
                     params.putAll(JSONObject.from(stageInfo));
                     params.putAll(JSONObject.from(stageInst));
-                    logger.info("自动运行api网关" + stageInfo.getExpireCallApi() + "，参数:" + params);
+                    logger.info("阶段超时，自动运行api网关" + stageInfo.getExpireCallApi() + "，参数:" + params);
                     Object obj = ddeDubboTaskRun.runTask(stageInfo.getExpireCallApi(), params);
                     message = JSON.toJSONString(obj);
                 }
