@@ -292,6 +292,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             flowDef.setFlowDesc(flowAttr.getString("flowDesc"));
             flowDef.setTimeLimit(flowAttr.getString("timeLimit"));
             flowDef.setExpireOpt(flowAttr.getString("expireOpt"));
+            flowDef.setExpireCallApi(flowAttr.getString("expireCallApi"));
+            flowDef.setWarningParam(flowAttr.getString("warningParam"));
         }
         flowDef.setFlowXmlDesc(flowDefXML);
 
@@ -406,6 +408,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         newFlowDef.setOptId(flowDef.getOptId());
         newFlowDef.setTimeLimit(flowDef.getTimeLimit());
         newFlowDef.setExpireOpt(flowDef.getExpireOpt());
+        newFlowDef.setExpireCallApi(newFlowDef.getExpireCallApi());
+        newFlowDef.setWarningParam(newFlowDef.getWarningParam());
+
         newFlowDef.setFlowPublishDate(DatetimeOpt.currentUtilDate());
         //newFlowDef.setFirstNodeId(flowData.firstNodeId);
         newFlowDef.setFlowState(FlowInfo.FLOW_STATE_NORMAL);

@@ -213,6 +213,8 @@ public class FlowDefineController extends ResourceBaseController {
         wfDefine.setFlowName(request.getParameter("flowName"));
         wfDefine.setFlowDesc(request.getParameter("flowDesc"));
         wfDefine.setExpireOpt(request.getParameter("expireOpt"));
+        wfDefine.setExpireCallApi(request.getParameter("expireCallApi"));
+        wfDefine.setWarningParam(request.getParameter("warningParam"));
         wfDefine.setTimeLimit(request.getParameter("timeLimit"));
 
         flowDefine.saveDraftFlowDef(wfDefine);
