@@ -24,6 +24,9 @@ alter table WF_STAGE_INSTANCE add warning_time DATETIME;
 alter table WF_STAGE_INSTANCE add deadline_time DATETIME;
 alter table WF_STAGE_INSTANCE add pause_time DATETIME;
 
+alter table WF_RUNTIME_WARNING add WARNING_MSG varchar(500);
+ALTER TABLE wf_runtime_warning MODIFY COLUMN SEND_USERS varchar(1000);
+
 -- 添加现有数据转换
 
 alter table wf_flow_stage drop column is_Account_Time;
@@ -39,3 +42,9 @@ alter table WF_STAGE_INSTANCE drop column stage_Begin;
 
 alter table WF_FLOW_INSTANCE drop column PROMISE_TIME;
 alter table WF_FLOW_INSTANCE drop column TIME_LIMIT;
+
+alter table WF_RUNTIME_WARNING drop column NOTICE_STATE;
+alter table WF_RUNTIME_WARNING drop column WARNING_STATE;
+alter table WF_RUNTIME_WARNING drop column WARNINGID_MSG;
+alter table WF_RUNTIME_WARNING drop column WARNING_CODE;
+alter table WF_RUNTIME_WARNING drop column SEND_MSG_TIME;

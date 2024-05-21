@@ -1044,7 +1044,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             //  判断同步节点的同步方式是否为时间触发
             if (NodeInfo.SYNC_NODE_TYPE_TIME.equals(nextOptNode.getOptType())) {
                 // 设置时间
-                nodeInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
+                nodeInst.setTimerStatus(FlowWarning.TIMER_STATUS_SYNC);
                 //TODO 通过变量获取同步节点的同步时间
                 Date deadlineTime = workDayManager.calcWorkingDeadline(options.getTopUnit(), DatetimeOpt.currentUtilDate(),
                     new WorkTimeSpan(nextOptNode.getTimeLimit()));

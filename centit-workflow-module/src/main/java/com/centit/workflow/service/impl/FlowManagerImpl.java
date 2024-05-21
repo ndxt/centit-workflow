@@ -1068,15 +1068,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public List<NodeInstance> listPauseTimerNodeInst(String userCode, PageDesc pageDesc) {
-        List<NodeInstance> tempList = nodeInstanceDao.listNodeInstByTimer(
-            userCode, "P", pageDesc);
+        List<NodeInstance> tempList = nodeInstanceDao.listNodeInstByTimerStatus(
+            userCode, FlowWarning.TIMER_STATUS_SUSPEND, pageDesc);
         return new ArrayList<>(tempList);
     }
 
     @Override
     public List<FlowInstance> listPauseTimerFlowInst(String userCode, PageDesc pageDesc) {
-        List<FlowInstance> tempList = flowInstanceDao.listFlowInstByTimer(
-            userCode, "P", pageDesc);
+        List<FlowInstance> tempList = flowInstanceDao.listFlowInstByTimerStatus(
+            userCode, FlowWarning.TIMER_STATUS_SUSPEND, pageDesc);
         return new ArrayList<>(tempList);
     }
 

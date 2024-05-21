@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryAndNamedParams;
 import com.centit.support.database.utils.QueryUtils;
@@ -12,7 +13,6 @@ import com.centit.workflow.po.NodeInstance;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +47,15 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
     }
 
     @Transactional
-    public long getNextNodeInstId() {
-        return DatabaseOptUtils.getSequenceNextValue(this, "S_NODEINSTNO");
+    public void updtNodeTimerStatus(String nodeInstId, String state) {
+        String sql = "update WF_NODE_INSTANCE set TIMER_STATUS = ? where node_Inst_Id = ?";
+        DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{ state, nodeInstId});
+    }
+
+    @Transactional
+    public void updtNodeInstParam(String nodeInstId, String nodeParam) {
+        String sql = "update WF_NODE_INSTANCE set NODE_PARAM = ? where node_Inst_Id = ?";
+        DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{ nodeParam, nodeInstId});
     }
 
     /**
@@ -59,23 +66,9 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
      */
     @Transactional
     public void updtNodeInstState(String nodeInstId, String state) {
-        NodeInstance nodeInst = this.getObjectById(nodeInstId);
-        nodeInst.setNodeState(state);
-        this.updateObject(nodeInst);
+        String sql = "update WF_NODE_INSTANCE set node_State = ? where node_Inst_Id = ?";
+        DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{ state, nodeInstId});
     }
-
-    @Transactional
-    public void updtNodeInstParam(String nodeInstId, String nodeParam) {
-        NodeInstance nodeInst = this.getObjectById(nodeInstId);
-        nodeInst.setNodeParam(nodeParam);
-        this.updateObject(nodeInst);
-    }
-
-    /*@Transactional
-    public List<NodeInstance> listNodeInstByState(String nodeState) {
-        return this.listObjectsByFilter("where node_State= ? ",
-            new Object[]{nodeState});
-    }*/
 
     @Transactional
     public List<NodeInstance> listNodeInstByState(String flowInstId, String nodeState) {
@@ -93,11 +86,23 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
 
     //expireOptSign == 0未处理  1 已通知  ,2..6 已通知2..5次（暂时不启动重复通知） 6:不处理    7：已挂起  8 已终止 9 已完成
     @Transactional
-    public List<NodeInstance> listNearExpireNodeInstance(long leaveTime) {
-        return this.listObjectsByFilter(" where time_Limit <= ? and node_State='N' and " +
-            "(is_Timer='T' or is_Timer='R')", new Object[]{leaveTime});
+    public List<NodeInstance> listExpireNodeInstance() {
+        return this.listObjectsByFilter(" where deadline_time < ? and node_State='N'" +
+                " and (TIMER_STATUS='T' or TIMER_STATUS='W') ",
+            new Object[]{DatetimeOpt.currentUtilDate()});
     }
 
+    @Transactional
+    public List<NodeInstance> listNeedSubmitSyncNodeInstance() {
+        return this.listObjectsByFilter(" where deadline_time < ? and node_State='T' ",
+            new Object[]{DatetimeOpt.currentUtilDate()});
+    }
+
+    @Transactional
+    public List<NodeInstance> listWarningNodeInstance() {
+        return this.listObjectsByFilter(" where warning_time < ? and node_State='N' and TIMER_STATUS='T'",
+            new Object[]{DatetimeOpt.currentUtilDate()});
+    }
 
     /**
      * 查询最后更改的节点
@@ -120,23 +125,24 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
      * @return
      */
     @Transactional
-    public List<NodeInstance> listNodeInstByTimer(String userCode, String isTimer, PageDesc pageDesc) {
-        return this.listObjectsByFilterAsJson(" where last_Update_User = ? and is_Timer = ? " +
+    public List<NodeInstance> listNodeInstByTimerStatus(String userCode, String timerStatus, PageDesc pageDesc) {
+        return this.listObjectsByFilterAsJson(" where last_Update_User = ? and TIMER_STATUS = ? " +
                 "order by last_Update_Time ",
-            new Object[]{userCode, isTimer}, pageDesc).toJavaList(NodeInstance.class);
+            new Object[]{userCode, timerStatus}, pageDesc).toJavaList(NodeInstance.class);
     }
 
 
     @Transactional
     public List<NodeInstance> listActiveTimerNodeByFlow(String flowInstId) {
-        return this.listObjectsByFilter(" where node_state in ('N','W','S','T') and flow_Inst_Id = ? and is_Timer = 'T' ",
+        return this.listObjectsByFilter(" where node_state in ('N','W','S') and flow_Inst_Id = ? " +
+                "and TIMER_STATUS in ('T','W') ",
             new Object[]{flowInstId});
     }
 
     @Transactional
-    public List<NodeInstance> listActiveTimerNodeByFlowStage(String flowInstId, String flowStage) {
-        return this.listObjectsByFilter(" where flow_Inst_Id = ? and STAGE_CODE = ? and is_Timer = 'T'",
-            new Object[]{flowInstId, flowStage});
+    public List<NodeInstance> listActiveTimerNodeByFlowStage(String flowInstId, String flowStageCode) {
+        return this.listObjectsByFilter(" where flow_Inst_Id = ? and STAGE_CODE = ? and node_state in ('N','W','S')",
+            new Object[]{flowInstId, flowStageCode});
     }
 
     /**

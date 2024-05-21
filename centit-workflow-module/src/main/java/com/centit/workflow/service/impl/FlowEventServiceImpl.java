@@ -21,18 +21,9 @@ public class FlowEventServiceImpl implements FlowEventService {
 
     @Override
     public List<FlowEventInfo> listEventForOpt(int maxRows) {
-        return flowEventDao.listObjectsByProperties(
-            CollectionsOpt.createHashMap("optState",
-                "N"), 0, maxRows);
+        return flowEventDao.listEventForOpt(maxRows);
     }
 
-    /*@Override
-    public List<FlowEventInfo> listEventByFlow(String flowInstId) {
-        return flowEventDao.listObjectsByProperties(
-            CollectionsOpt.createHashMap("OPT_STATE",
-                "N", "flowInstId", flowInstId));
-    }
-    */
     @Override
     public FlowEventInfo getEventByFlowEvent(String flowInstId, String eventName) {
         return flowEventDao.getObjectByProperties(

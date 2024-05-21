@@ -14,8 +14,10 @@ import java.util.Date;
 @Table(name = "WF_STAGE_INSTANCE")
 public class StageInstance implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
+
     @EmbeddedId
     private StageInstanceId cid;
+
     @Column(name = "STAGE_CODE")
     private String  stageCode;
 
