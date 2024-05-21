@@ -245,7 +245,7 @@ public class FlowTaskImpl {
     }
 
     private void doFlowExpiredOpt() {
-        List<FlowInstance> activeFlows = flowInstanceDao.listWarningFLowInstance();
+        List<FlowInstance> activeFlows = flowInstanceDao.listExpireFlowInstance();
         if (activeFlows == null || activeFlows.isEmpty()) {
             return;
         }
@@ -280,7 +280,7 @@ public class FlowTaskImpl {
     }
 
     private void doStageExpiredOpt() {
-        List<StageInstance> activeStages =  stageInstanceDao.listWarningStageInstance();
+        List<StageInstance> activeStages =  stageInstanceDao.listExpireStageInstance();
         if (activeStages == null || activeStages.isEmpty()) {
             return;
         }

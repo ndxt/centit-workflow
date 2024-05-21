@@ -52,7 +52,7 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
 
     @Transactional
     public List<StageInstance> listWarningStageInstance() {
-        return this.listObjectsByFilter(" where warning_time < ? and and TIMER_STATUS='T'",
+        return this.listObjectsByFilter(" where warning_time < ? and TIMER_STATUS='T'",
             new Object[]{DatetimeOpt.currentUtilDate()});
     }
 
