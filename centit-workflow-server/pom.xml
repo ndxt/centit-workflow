@@ -57,6 +57,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.centit.support</groupId>
+            <artifactId>centit-quartz-extend</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-core-web</artifactId>
             <version>${revision}</version>

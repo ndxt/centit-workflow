@@ -1,5 +1,8 @@
 package com.centit.workflow.service.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.centit.dde.adapter.DdeDubboTaskRun;
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.basedata.NoticeMessage;
 import com.centit.support.algorithm.DatetimeOpt;
@@ -24,7 +27,7 @@ import java.util.List;
  * @author codefan
  * @create 2012-2-23
  */
-@Component
+@Component("flowTaskImpl")
 public class FlowTaskImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowTaskImpl.class);
@@ -63,6 +66,9 @@ public class FlowTaskImpl {
 
     @Autowired
     private FlowStageDao flowStageDao;
+
+    @Autowired
+    private DdeDubboTaskRun ddeDubboTaskRun;
 
     private void doNodeAlertWarning() {
         List<NodeInstance> activeNodes =  nodeInstanceDao.listWarningNodeInstance();
@@ -132,7 +138,7 @@ public class FlowTaskImpl {
                     flowWarning.setWarningType("W");
                     flowWarning.setObjType("P");//阶段
                     flowWarning.setFlowInstId(flowInst.getFlowInstId());
-                    flowWarning.setFlowStage(stageInfo.getStageId());
+                    flowWarning.setFlowStage(stageInfo.getStageCode());
                     flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
                     flowWarning.setWarningMsg(message);
                     flowWarning.setSendUsers(StringBaseOpt.castObjectToString(users));
@@ -155,7 +161,7 @@ public class FlowTaskImpl {
             return;
         }
         for (FlowInstance flowInst : activeFlows) {
-            FlowInfo flowInfo = flowInfoDao.getObjectById(flowInst.getFlowInstId());
+            FlowInfo flowInfo = flowInfoDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
             if (!NodeInfo.TIME_EXPIRE_OPT_NONE.equals(flowInfo.getExpireOpt())) {
                 List<String> users = new ArrayList<>();
                 List<NodeInstance> activeNodes = nodeInstanceDao.listActiveTimerNodeByFlow(flowInst.getFlowInstId());
@@ -199,9 +205,11 @@ public class FlowTaskImpl {
         for (NodeInstance nodeInst : activeNodes){
             NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeCode());
             FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
-            String message = "OK！";
+
             if(NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(nodeInfo.getExpireOpt()) ||
-                NodeInfo.TIME_EXPIRE_OPT_SUBMIT.equals(nodeInfo.getExpireOpt())){
+                NodeInfo.TIME_EXPIRE_OPT_SUBMIT.equals(nodeInfo.getExpireOpt()) ||
+                NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(nodeInfo.getExpireOpt())){
+                String message = "OK！";
                 //* N：通知（预警）， O:不处理 ， X：挂起， E：终止（流程）， C：完成（强制提交,提交失败就挂起）
                 if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(nodeInfo.getExpireOpt())) {
                     // 终止流程
@@ -211,6 +219,14 @@ public class FlowTaskImpl {
                     //自动提交
                     flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
                         .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()).tenant(flowInst.getTopUnit()));
+                } else if (NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(nodeInfo.getExpireOpt())) {
+                    //自动执行API
+                    JSONObject params = JSONObject.from(flowInst);
+                    params.putAll(JSONObject.from(nodeInfo));
+                    params.putAll(JSONObject.from(nodeInst));
+                    logger.info("自动运行api网关" + nodeInfo.getExpireCallApi() + "，参数:" + params);
+                    Object obj =  ddeDubboTaskRun.runTask(nodeInfo.getExpireCallApi(), params);
+                    message = JSON.toJSONString(obj);
                 }
 
                 FlowWarning flowWarning = new FlowWarning();
@@ -234,23 +250,72 @@ public class FlowTaskImpl {
             return;
         }
         for (FlowInstance flowInst : activeFlows) {
-            FlowInfo flowInfo = flowInfoDao.getObjectById(flowInst.getFlowInstId());
-            if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(flowInfo.getExpireOpt())) {
-                // 终止流程
-                flowInst.setInstState(FlowInstance.FLOW_STATE_FORCE);
-                flowInstanceDao.updateObject(flowInst);
+            FlowInfo flowInfo = flowInfoDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
+            if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(flowInfo.getExpireOpt()) ||
+                NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(flowInfo.getExpireOpt())) {
+                String message = "OK！";
+                if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(flowInfo.getExpireOpt())) {
+                    // 终止流程
+                    flowInst.setInstState(FlowInstance.FLOW_STATE_FORCE);
+                    flowInstanceDao.updateObject(flowInst);
+                } else if (NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(flowInfo.getExpireOpt())){
+                    //自动执行API
+                    JSONObject params = JSONObject.from(flowInst);
+                    logger.info("自动运行api网关" + flowInfo.getExpireCallApi() + "，参数:" + params);
+                    Object obj = ddeDubboTaskRun.runTask(flowInfo.getExpireCallApi(), params);
+                    message = JSON.toJSONString(obj);
+                }
                 FlowWarning flowWarning = new FlowWarning();
-                flowWarning.setWarningType("W");
+                flowWarning.setWarningType("E");
                 flowWarning.setObjType("F");//流程
                 flowWarning.setFlowInstId(flowInst.getFlowInstId());
                 flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
-                flowWarning.setWarningMsg("OK!");
+                flowWarning.setWarningMsg(message);
                 flowWarning.setSendUsers("system");
                 wfRuntimeWarningDao.saveNewObject(flowWarning);
             }
             flowInst.setTimerStatus("E");
             flowInstanceDao.updtFlowTimerStatus(flowInst.getFlowInstId(), flowInst.getTimerStatus());
+        }
+    }
 
+    private void doStageExpiredOpt() {
+        List<StageInstance> activeStages =  stageInstanceDao.listWarningStageInstance();
+        if (activeStages == null || activeStages.isEmpty()) {
+            return;
+        }
+        for (StageInstance stageInst : activeStages) {
+            FlowStage stageInfo = flowStageDao.getObjectById(stageInst.getStageId());
+
+            if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(stageInfo.getExpireOpt()) ||
+                NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(stageInfo.getExpireOpt())) {
+                FlowInstance flowInst = flowInstanceDao.getObjectById(stageInst.getFlowInstId());
+                String message = "OK！";
+                if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(stageInfo.getExpireOpt())) {
+                    // 终止流程
+                    flowInst.setInstState(FlowInstance.FLOW_STATE_FORCE);
+                    flowInstanceDao.updateObject(flowInst);
+                } else if (NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(stageInfo.getExpireOpt())) {
+                    //自动执行API
+                    JSONObject params = JSONObject.from(flowInst);
+                    params.putAll(JSONObject.from(stageInfo));
+                    params.putAll(JSONObject.from(stageInst));
+                    logger.info("自动运行api网关" + stageInfo.getExpireCallApi() + "，参数:" + params);
+                    Object obj = ddeDubboTaskRun.runTask(stageInfo.getExpireCallApi(), params);
+                    message = JSON.toJSONString(obj);
+                }
+                FlowWarning flowWarning = new FlowWarning();
+                flowWarning.setWarningType("E");
+                flowWarning.setObjType("P");//阶段
+                flowWarning.setFlowInstId(stageInst.getFlowInstId());
+                flowWarning.setFlowStage(stageInfo.getStageCode());
+                flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
+                flowWarning.setWarningMsg(message);
+                flowWarning.setSendUsers("system");
+                wfRuntimeWarningDao.saveNewObject(flowWarning);
+            }
+            stageInst.setTimerStatus("E");
+            stageInstanceDao.updtStageTimerStatus(stageInst.getFlowInstId(), stageInst.getStageId(), stageInst.getTimerStatus());
         }
     }
 
@@ -312,11 +377,13 @@ public class FlowTaskImpl {
     public void doFlowTimerJob() {
         runEventTask(100);
         doTimerSyncNodeEvent();
+
         doNodeAlertWarning();
         doStageAlertWarning();
         doFlowAlertWarning();
 
         doNodeExpiredOpt();
+        doStageExpiredOpt();
         doFlowExpiredOpt();
     }
 }
