@@ -69,7 +69,7 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
         String nodeParams = nodeInfo.getOptParam();
         if (StringUtils.isNotBlank(nodeParams)) {
             if (!"{".equals(Lexer.getFirstWord(nodeParams))) {
-                nodeParams = "{" + nodeParams +"}";
+                nodeParams = "{ " + nodeParams + " }";
             }
             JSONObject paramJson = JSONObject.parseObject(nodeParams);
             if(paramJson != null) {
