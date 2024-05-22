@@ -71,10 +71,9 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
             if (!"{".equals(Lexer.getFirstWord(nodeParams))) {
                 nodeParams = "{" + nodeParams +"}";
             }
-            Object obj = JSON.parse(nodeParams);
-            if(obj instanceof JSONObject) {
+            JSONObject paramJson = JSONObject.parseObject(nodeParams);
+            if(paramJson != null) {
                 // 添加对变量的支持
-                JSONObject paramJson = (JSONObject) obj;
                 for (Map.Entry<String, Object> ent : paramJson.entrySet()) {
                     if (ent.getValue() instanceof String) {
                         Object objValue = VariableFormula.calculate((String) ent.getValue(), varTrans);
