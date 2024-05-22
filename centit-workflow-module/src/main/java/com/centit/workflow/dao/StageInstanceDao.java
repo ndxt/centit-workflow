@@ -46,13 +46,15 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
 
     @Transactional
     public List<StageInstance> listExpireStageInstance() {
-        return this.listObjectsByFilter(" where deadline_time < ? and (TIMER_STATUS='T' or TIMER_STATUS='W') ",
+        return this.listObjectsByFilter(" a join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
+                " where b.inst_State='N' and a.deadline_time < ? and (a.TIMER_STATUS='T' or a.TIMER_STATUS='W') ",
             new Object[]{DatetimeOpt.currentUtilDate()});
     }
 
     @Transactional
     public List<StageInstance> listWarningStageInstance() {
-        return this.listObjectsByFilter(" where warning_time < ? and TIMER_STATUS='T'",
+        return this.listObjectsByFilter(" a join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
+                " where b.inst_State='N' and a.warning_time < ? and a.TIMER_STATUS='T'",
             new Object[]{DatetimeOpt.currentUtilDate()});
     }
 

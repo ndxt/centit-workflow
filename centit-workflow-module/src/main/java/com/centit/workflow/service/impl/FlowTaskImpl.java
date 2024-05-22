@@ -117,17 +117,17 @@ public class FlowTaskImpl {
             FlowStage stageInfo = flowStageDao.getObjectById(stageInst.getStageId());
 
             if (!NodeInfo.TIME_EXPIRE_OPT_NONE.equals(stageInfo.getExpireOpt())) {
-                FlowInstance flowInst = flowInstanceDao.getObjectById(stageInst.getFlowInstId());
-                List<String> users = new ArrayList<>();
                 List<NodeInstance> activeNodes = nodeInstanceDao.listActiveTimerNodeByFlowStage(
                     stageInst.getFlowInstId(), stageInst.getStageCode());
                 if (activeNodes != null && !activeNodes.isEmpty()) {
+                    FlowInstance flowInst = flowInstanceDao.getObjectById(stageInst.getFlowInstId());
+                    List<String> users = new ArrayList<>();
                     String message = "业务" + flowInst.getFlowOptName() + "(" + flowInst.getFlowInstId() + ") 的阶段" +
                         stageInfo.getStageName() + "(" + stageInfo.getStageCode() + ") 超时预警。";
                     for (NodeInstance nodeInst : activeNodes) {
 
                         NoticeMessage noticeMessage = NoticeMessage.create().subject("流程阶段预报警提示")
-                            .content(message + "请尽快处理和您相关业务（" + nodeInst.getNodeInstId()+ ")")
+                            .content(message + "请尽快处理和您相关业务（" + nodeInst.getNodeInstId() + ")")
                             .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInst.getNodeInstId()));
 
                         notificationCenter.sendMessage("system", nodeInst.getUserCode(), noticeMessage);
@@ -144,14 +144,14 @@ public class FlowTaskImpl {
                     flowWarning.setSendUsers(StringBaseOpt.castObjectToString(users));
                     wfRuntimeWarningDao.saveNewObject(flowWarning);
                 }
-                if (NodeInfo.TIME_EXPIRE_OPT_NONE.equals(stageInfo.getExpireOpt()) ||
-                    NodeInfo.TIME_EXPIRE_OPT_NOTIFY.equals(stageInfo.getExpireOpt())) {
-                    stageInst.setTimerStatus("E");
-                } else {
-                    stageInst.setTimerStatus("W");
-                }
-                stageInstanceDao.updtStageTimerStatus(stageInst.getFlowInstId(), stageInst.getStageId(), stageInst.getTimerStatus());
             }
+            if (NodeInfo.TIME_EXPIRE_OPT_NONE.equals(stageInfo.getExpireOpt()) ||
+                NodeInfo.TIME_EXPIRE_OPT_NOTIFY.equals(stageInfo.getExpireOpt())) {
+                stageInst.setTimerStatus("E");
+            } else {
+                stageInst.setTimerStatus("W");
+            }
+            stageInstanceDao.updtStageTimerStatus(stageInst.getFlowInstId(), stageInst.getStageId(), stageInst.getTimerStatus());
         }
     }
 
