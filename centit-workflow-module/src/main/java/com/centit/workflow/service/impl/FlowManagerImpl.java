@@ -333,7 +333,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /**
      * 更新流程实例状态，同时需更新所有节点实例状态
-     *
+     * TODO 需要更新 pause_time 恢复的时候自动延长计时，这个需要论证业务上是否可行
      * @param instid   实例编号
      * @param state    N 正常/  C 完成/ P 暂停  挂起  / F 因为流程强行结束二结束 /
      * @param userCode 操作用户
