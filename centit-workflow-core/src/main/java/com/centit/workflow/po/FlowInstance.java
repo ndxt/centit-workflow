@@ -211,7 +211,7 @@ public class FlowInstance implements java.io.Serializable {
         return StringUtils.equalsAny(this.getInstState(), "N", "M");
     }
 
-    public Set<NodeInstance> getActiveNodeInstances() {
+    public Set<NodeInstance> fetchActiveNodeInstances() {
         Set<NodeInstance> nodeInstSet = new HashSet<>();
         if (this.flowNodeInstances == null)
             return nodeInstSet;
@@ -295,13 +295,8 @@ public class FlowInstance implements java.io.Serializable {
         return this.flowStageInstances;
     }
 
-    public List<StageInstance> getStageInstanceList() {
-        List<StageInstance> stageList = new ArrayList<>();
-        stageList.addAll(getFlowStageInstances());
-        return stageList;
-    }
 
-    public List<StageInstance> getExpiredStageInstanceList() {
+    public List<StageInstance> fetchExpiredStageInstanceList() {
         List<StageInstance> stageList = new ArrayList<>();
         Date currentTime = DatetimeOpt.currentUtilDate();
         for (StageInstance stage : getFlowStageInstances()) {
@@ -324,7 +319,6 @@ public class FlowInstance implements java.io.Serializable {
     }
 
     public StageInstance newFlowStageInstance() {
-
         StageInstance res = new StageInstance();
         res.setFlowInstId(this.getFlowInstId());
         return res;
@@ -340,7 +334,7 @@ public class FlowInstance implements java.io.Serializable {
         return null;
     }
 
-    public NodeInstance getFirstNodeInstance() {
+    public NodeInstance fetchFirstNodeInstance() {
         if (this.flowNodeInstances == null)
             return null;
         NodeInstance firstNode = null;
@@ -640,7 +634,7 @@ public class FlowInstance implements java.io.Serializable {
         }
         //delete
         boolean found = false;
-        Set<StageInstance> oldObjs = new HashSet<StageInstance>();
+        Set<StageInstance> oldObjs = new HashSet<>();
         oldObjs.addAll(getFlowStageInstances());
 
         for (Iterator<StageInstance> it = oldObjs.iterator(); it.hasNext(); ) {

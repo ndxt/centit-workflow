@@ -66,7 +66,7 @@ public class FlowEngineController extends BaseController {
                     BaseController.collectRequestParameters(request)), null);
 
         FlowInstance instance = flowEngine.getFlowInstById(flowInstance.getFlowInstId());
-        instance.setActiveNodeList(new ArrayList<>(instance.getActiveNodeInstances()));
+        instance.setActiveNodeList(new ArrayList<>(instance.fetchActiveNodeInstances()));
         return instance;
     }
 

@@ -484,7 +484,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
         if(flowInst.getFlowNodeInstances().size() == 0){
             flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
         }
-        Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
+        Set<NodeInstance> activeNodes = flowInst.fetchActiveNodeInstances();
         for(NodeInstance ni : activeNodes){
             String nc = ni.getNodeCode();
             if(nc!=null) {
@@ -501,7 +501,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
         if(flowInst.getFlowNodeInstances().size() == 0){
             flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
         }
-        Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
+        Set<NodeInstance> activeNodes = flowInst.fetchActiveNodeInstances();
         for(NodeInstance ni : activeNodes){
             if (ni.getRunToken().contains(NodeInstance.RUN_TOKEN_ISOLATED)) {
                 closeNodeInstanceInside(ni);
@@ -514,7 +514,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
         if(flowInst.getFlowNodeInstances().size() == 0){
             flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
         }
-        Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
+        Set<NodeInstance> activeNodes = flowInst.fetchActiveNodeInstances();
         for(NodeInstance ni : activeNodes){
             if (! StringUtils.equals(ni.getRunToken(), nodeInst.getRunToken())) {
                 closeNodeInstanceInside(ni);

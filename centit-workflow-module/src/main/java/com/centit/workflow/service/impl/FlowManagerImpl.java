@@ -1306,7 +1306,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public NodeInstance getFirstNodeInst(String flowInstId) {
-        return this.getFlowInstance(flowInstId).getFirstNodeInstance();
+        return this.getFlowInstance(flowInstId).fetchFirstNodeInstance();
     }
 
     @Override
@@ -1336,7 +1336,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 return null;
             }
         }
-        NodeInstance startNodeInst = this.resetFlowToThisNode(flowInstance.getFirstNodeInstance().getNodeInstId(), managerUserCode);
+        NodeInstance startNodeInst = this.resetFlowToThisNode(flowInstance.fetchFirstNodeInstance().getNodeInstId(), managerUserCode);
         //退回首节点之后，删除流程变量
         flowEngine.deleteFlowVariable(flowInstId, "", "");
         return startNodeInst;

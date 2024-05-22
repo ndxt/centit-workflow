@@ -969,7 +969,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nodeInst.setUserCode(optUsers.iterator().next());
             }
             //子流程的时间限制和父流程节点的一致
-            NodeInstance tempFirstNode = tempFlow.getFirstNodeInstance();
+            NodeInstance tempFirstNode = tempFlow.fetchFirstNodeInstance();
             createNodes.add(tempFirstNode.getNodeInstId());
         } else if (NodeInfo.NODE_TYPE_OPT.equals(nextOptNode.getNodeType())) {
             //交互节点，计算人员的分配策略
@@ -2010,7 +2010,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
-        Set<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
+        Set<NodeInstance> activeNodes = flowInst.fetchActiveNodeInstances();
         if (activeNodes == null || activeNodes.isEmpty()) {
             return null;
         }
