@@ -374,8 +374,13 @@ public class FlowTaskImpl {
         for (NodeInstance nodeInst : activeNodes){
             FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
             //自动提交
-            flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
-                .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()).tenant(flowInst.getTopUnit()));
+            try {
+                flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
+                    .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()).tenant(flowInst.getTopUnit()));
+            } catch (Exception e){
+                nodeInstanceDao.updtNodeTimerStatus(nodeInst.getNodeInstId(), FlowWarning.TIMER_STATUS_EXCEED);
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 

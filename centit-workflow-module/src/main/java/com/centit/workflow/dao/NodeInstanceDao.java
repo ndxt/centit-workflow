@@ -95,7 +95,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
 
     @Transactional
     public List<NodeInstance> listNeedSubmitSyncNodeInstance() {
-        return this.listObjectsByFilter(" where deadline_time < ? and node_State='T'", // and TIMER_STATUS='S'
+        return this.listObjectsByFilter(" where deadline_time < ? and node_State='T' and TIMER_STATUS='S'",
             new Object[]{DatetimeOpt.currentUtilDate()});
     }
 
