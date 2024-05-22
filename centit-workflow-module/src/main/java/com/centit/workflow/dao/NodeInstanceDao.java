@@ -88,24 +88,24 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
     //expireOptSign == 0未处理  1 已通知  ,2..6 已通知2..5次（暂时不启动重复通知） 6:不处理    7：已挂起  8 已终止 9 已完成
     @Transactional
     public List<NodeInstance> listExpireNodeInstance() {
-        return this.listObjectsByFilter(" a join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
+        return this.listObjectsByFilter(" join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
                 " where b.inst_State='N' and a.deadline_time < ? and a.node_State='N'" +
                 " and (a.TIMER_STATUS='T' or a.TIMER_STATUS='W') ",
-            new Object[]{DatetimeOpt.currentUtilDate()});
+            new Object[]{DatetimeOpt.currentUtilDate()}, "a");
     }
 
     @Transactional
     public List<NodeInstance> listNeedSubmitSyncNodeInstance() {
-        return this.listObjectsByFilter(" a join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
+        return this.listObjectsByFilter(" join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
                 " where b.inst_State='N' and a.deadline_time < ? and a.node_State='T' and a.TIMER_STATUS='S'",
-            new Object[]{DatetimeOpt.currentUtilDate()});
+            new Object[]{DatetimeOpt.currentUtilDate()}, "a");
     }
 
     @Transactional
     public List<NodeInstance> listWarningNodeInstance() {
-        return this.listObjectsByFilter(" a join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
+        return this.listObjectsByFilter(" join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
                 " where b.inst_State='N' and a.warning_time < ? and a.node_State='N' and a.TIMER_STATUS='T'",
-            new Object[]{DatetimeOpt.currentUtilDate()});
+            new Object[]{DatetimeOpt.currentUtilDate()}, "a");
     }
 
     /**
