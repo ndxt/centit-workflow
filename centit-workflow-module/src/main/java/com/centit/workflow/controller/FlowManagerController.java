@@ -784,7 +784,7 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     public ResponseData listFlowInstLogs(@PathVariable String flowInstId, String withNodeLog) {
         List<? extends OperationLog> operationLogs = flowManager.listFlowActionLogs(flowInstId,
-            BooleanBaseOpt.castObjectToBoolean(withNodeLog, false));
+            BooleanBaseOpt.castObjectToBoolean(withNodeLog, true));
         if (CollectionUtils.sizeIsEmpty(operationLogs)){
             return ResponseData.makeResponseData(Collections.emptyList());
         }
@@ -805,7 +805,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "获取流程申请信息", notes = "获取流程申请信息（获取流程创建用户的信息）")
     @RequestMapping(value = "/inst/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public ResponseData listUserOptLogs(@PathVariable String flowInstId) {
+    public ResponseData fetchFlowOptName(@PathVariable String flowInstId) {
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         FlowInstance flowInstance = flowManager.getFlowInstance(flowInstId);

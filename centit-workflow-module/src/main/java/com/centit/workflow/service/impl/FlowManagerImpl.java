@@ -92,6 +92,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     private NotificationCenter notificationCenter;*/
     @Autowired
     private  FlowStageDao flowStageDao;
+
     @Autowired(required = false)
     private OperationLogWriter optLogManager;
 
