@@ -40,14 +40,6 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name = "FLOW_GROUP_ID")
     private String flowGroupId;
 
-    @ManyToOne
-    @JoinColumns({
-        @JoinColumn(name = "version"),
-        @JoinColumn(name = "flowCode")
-    })
-    @JSONField(serialize = false)
-    private FlowInfo flowDefine;
-
     /**
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
      */
@@ -82,16 +74,6 @@ public class FlowInstance implements java.io.Serializable {
      */
     @Column(name = "FLOW_OPT_NAME")
     private String flowOptName;
-
-    public FlowInfo getFlowDefine() {
-        if (null == flowDefine)
-            return this.flowDefine = new FlowInfo();
-        return flowDefine;
-    }
-
-    public void setFlowDefine(FlowInfo flowDefine) {
-        this.flowDefine = flowDefine;
-    }
 
     /**
      * varchar(200)
@@ -161,7 +143,6 @@ public class FlowInstance implements java.io.Serializable {
     private Date lastUpdateTime;
     @Column(name = "LAST_UPDATE_USER")
     private String lastUpdateUser;
-
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = NodeInstance.class)
     @JoinColumn(name = "flowInstId")
