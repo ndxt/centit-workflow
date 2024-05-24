@@ -16,7 +16,10 @@ alter table WF_NODE_INSTANCE add warning_time DATETIME;
 alter table WF_NODE_INSTANCE add deadline_time DATETIME;
 alter table WF_NODE_INSTANCE add pause_time DATETIME;
 
-alter table WF_FLOW_INSTANCE add TIMER_STATUS varchar(1);
+ALTER TABLE WF_FLOW_INSTANCE CHANGE IS_TIMER TIMER_STATUS varchar(1);
+-- alter table WF_FLOW_INSTANCE add TIMER_STATUS varchar(1);
+-- update WF_FLOW_INSTANCE set TIMER_STATUS = IS_TIMER;
+
 alter table WF_FLOW_INSTANCE add warning_time DATETIME;
 alter table WF_FLOW_INSTANCE add deadline_time DATETIME;
 alter table WF_FLOW_INSTANCE add pause_time DATETIME;
@@ -45,6 +48,7 @@ alter table WF_STAGE_INSTANCE drop column stage_Begin;
 
 alter table WF_FLOW_INSTANCE drop column PROMISE_TIME;
 alter table WF_FLOW_INSTANCE drop column TIME_LIMIT;
+-- alter table WF_FLOW_INSTANCE drop column IS_TIMER;
 
 alter table WF_RUNTIME_WARNING drop column NOTICE_STATE;
 alter table WF_RUNTIME_WARNING drop column WARNING_STATE;
@@ -56,6 +60,8 @@ alter table WF_NODE MODIFY COLUMN Time_Limit varchar(200);
 alter table WF_FLOW_DEFINE MODIFY COLUMN Time_Limit varchar(200);
 alter table WF_FLOW_STAGE MODIFY COLUMN Time_Limit varchar(200);
 
+alter table WF_NODE drop column is_Account_Time;
+alter table wf_transition drop column is_Account_Time;
 -- locodedata.v_inner_user_task_list source
 
 create or replace
