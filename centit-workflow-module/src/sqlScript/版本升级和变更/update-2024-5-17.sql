@@ -52,6 +52,10 @@ alter table WF_RUNTIME_WARNING drop column WARNING_STATE;
 alter table WF_RUNTIME_WARNING drop column WARNING_CODE;
 alter table WF_RUNTIME_WARNING drop column SEND_MSG_TIME;
 
+alter table WF_NODE MODIFY COLUMN Time_Limit varchar(200);
+alter table WF_FLOW_DEFINE MODIFY COLUMN Time_Limit varchar(200);
+alter table WF_FLOW_STAGE MODIFY COLUMN Time_Limit varchar(200);
+
 -- locodedata.v_inner_user_task_list source
 
 create or replace

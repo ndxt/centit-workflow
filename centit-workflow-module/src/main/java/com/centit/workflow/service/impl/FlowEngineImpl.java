@@ -17,7 +17,6 @@ import com.centit.product.oa.service.WorkDayManager;
 import com.centit.support.algorithm.*;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.common.ObjectException;
-import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.compiler.Pretreatment;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
@@ -913,12 +912,13 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         stageInst.setBeginTime(today);
                         stageInst.setTimerStatus(FlowWarning.TIMER_STATUS_NO_LIMIT);
                     } else { //
-                        WorkTimeSpan deadLine= new WorkTimeSpan(stageInfo.getTimeLimit());
-                        stageInst.setDeadlineTime(workDayManager.calcWorkingDeadline(flowInst.getTopUnit(), today, deadLine));
-                        deadLine.subtractWorkTimeSpan(new WorkTimeSpan(stageInfo.getWarningParam()));
-                        stageInst.setWarningTime(workDayManager.calcWorkingDeadline(flowInst.getTopUnit(), today, deadLine));
                         stageInst.setBeginTime(today);
                         stageInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
+
+                        stageInst.setDeadlineTime(FlowOptUtils.calcTimeLimit(
+                            flowInst.getTopUnit(), today, stageInfo.getTimeLimit(), workDayManager, false));
+                        stageInst.setWarningTime(FlowOptUtils.calcTimeLimit(flowInst.getTopUnit(),
+                            stageInst.getDeadlineTime(), stageInfo.getWarningParam(), workDayManager, true));
                     }
                 } else {
                     // 如果阶段已经包过异常再次打开阶段，对新进入的节点报警
@@ -1046,8 +1046,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 // 设置时间
                 nodeInst.setTimerStatus(FlowWarning.TIMER_STATUS_SYNC);
                 //TODO 通过变量获取同步节点的同步时间
-                Date deadlineTime = workDayManager.calcWorkingDeadline(options.getTopUnit(), DatetimeOpt.currentUtilDate(),
-                    new WorkTimeSpan(nextOptNode.getTimeLimit()));
+                Date deadlineTime = FlowOptUtils.calcTimeLimit(
+                    options.getTopUnit(), DatetimeOpt.currentUtilDate(), nextOptNode.getTimeLimit(), workDayManager, false);
                 nodeInst.setDeadlineTime(deadlineTime);
                 nodeInst.setWarningTime(deadlineTime);
             } else if (NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nextOptNode.getOptType())) {

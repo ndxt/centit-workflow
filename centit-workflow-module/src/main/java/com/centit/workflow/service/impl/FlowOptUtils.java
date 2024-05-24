@@ -7,8 +7,9 @@ import com.centit.product.oa.service.WorkDayManager;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
+import com.centit.support.common.DateTimeSpan;
 import com.centit.support.common.ObjectException;
-import com.centit.support.common.WorkTimeSpan;
+import com.centit.support.compiler.VariableFormula;
 import com.centit.workflow.commons.FlowOptParamOptions;
 import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.dao.FlowVariableDao;
@@ -64,15 +65,36 @@ public abstract class FlowOptUtils {
         if (StringUtils.isNotBlank(timeLimit) && !"O".equals(wf.getExpireOpt())) {
             // 不计时F 、计时T(有期限)、暂停P  忽略(无期限) F
             flowInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
-            WorkTimeSpan deadLine= new WorkTimeSpan(timeLimit);
             Date today = DatetimeOpt.currentUtilDate();
-            flowInst.setDeadlineTime(
-                workDayManager.calcWorkingDeadline(topUnit, today, deadLine));
-            deadLine.subtractWorkTimeSpan(new WorkTimeSpan(wf.getWarningParam()));
-            flowInst.setWarningTime(workDayManager.calcWorkingDeadline(topUnit, today, deadLine));
+            flowInst.setDeadlineTime(calcTimeLimit(topUnit, today, timeLimit, workDayManager, false));
+            flowInst.setWarningTime(calcTimeLimit(topUnit,
+                flowInst.getDeadlineTime(), wf.getWarningParam(), workDayManager, true));
         }
 
         return flowInst;
+    }
+
+    public static Date calcTimeLimit(String topUnit, Date  currentDate, String timeLimitStr,
+                                              WorkDayManager workDayManager, boolean isMinus ) {
+        if(StringUtils.isBlank(timeLimitStr)) {
+            return currentDate;
+        }
+        String tlt = timeLimitStr.trim();
+        if (tlt.startsWith("$") || tlt.startsWith("${")) {
+            if(tlt.startsWith("$")){
+                tlt = tlt.substring(1, tlt.length()-1);
+            } else {
+                tlt = tlt.substring(1, tlt.length()-1);
+            }
+            Object object = VariableFormula.calculate(tlt);
+            return DatetimeOpt.castObjectToDate(object);
+        }
+        DateTimeSpan deadLine = new DateTimeSpan(tlt);
+        if(isMinus){
+            deadLine.setTimeSpan(0 - deadLine.getTimeSpan());
+        }
+        return workDayManager.calcWorkingDeadline(topUnit, currentDate, deadLine);
+
     }
 
     public static void setNewNodeInstTimelimit(NodeInstance nodeInst, String timeLimit,
@@ -80,25 +102,23 @@ public abstract class FlowOptUtils {
                                                FlowInfo flowInfo, NodeInfo node,
                                                FlowVariableTranslate varTrans,
                                                WorkDayManager workDayManager) {
-        WorkTimeSpan deadLine= new WorkTimeSpan();
-        if(StringUtils.isNotBlank(timeLimit)) {
-            String tlt = timeLimit.trim();
+        String tlt = timeLimit;
+        if(StringUtils.isNotBlank(tlt)) {
             if (tlt.startsWith("ref:")) {
                 if(varTrans!=null){
                     tlt = StringBaseOpt.castObjectToString(varTrans.getVarValue(tlt.substring(4)));
-                    deadLine = new WorkTimeSpan(tlt);
                 }
-            } else {
-                deadLine = new WorkTimeSpan(tlt);
             }
         }
+        DateTimeSpan extend = new DateTimeSpan();
+
         if (NodeInfo.TIME_LIMIT_INHERIT_LEAD.equals(node.getInheritType())) {
             if (preNodeInst != null // && !FlowWarning.TIMER_STATUS_NOLIMIT.equals(preNodeInst.getTimerStatus())
                 && preNodeInst.getLastUpdateTime() != null && preNodeInst.getDeadlineTime() != null
                 && preNodeInst.getLastUpdateTime().before(preNodeInst.getDeadlineTime())) {
 
-                deadLine.addWorkTimeSpan(WorkTimeSpan.calcWorkTimeSpan(
-                        preNodeInst.getLastUpdateTime(), preNodeInst.getDeadlineTime()));
+                extend = DateTimeSpan.calcDateTimeSpan(
+                        preNodeInst.getLastUpdateTime(), preNodeInst.getDeadlineTime());
 
             }
         } else if (NodeInfo.TIME_LIMIT_INHERIT_ASSIGNED.equals(node.getInheritType())) {
@@ -116,16 +136,20 @@ public abstract class FlowOptUtils {
                 && inhertInst.getLastUpdateTime() != null && inhertInst.getDeadlineTime() != null
                 && inhertInst.getLastUpdateTime().before(inhertInst.getDeadlineTime())) {
 
-                deadLine.addWorkTimeSpan(WorkTimeSpan.calcWorkTimeSpan(
-                    inhertInst.getLastUpdateTime(), inhertInst.getDeadlineTime()));
+                extend = DateTimeSpan.calcDateTimeSpan(
+                    inhertInst.getLastUpdateTime(), inhertInst.getDeadlineTime());
 
             }
         }
 
         Date today = DatetimeOpt.currentUtilDate();
-        nodeInst.setDeadlineTime(workDayManager.calcWorkingDeadline(flowInst.getTopUnit(), today, deadLine));
-        deadLine.subtractWorkTimeSpan(new WorkTimeSpan(node.getWarningParam()));
-        nodeInst.setWarningTime(workDayManager.calcWorkingDeadline(flowInst.getTopUnit(), today, deadLine));
+        nodeInst.setDeadlineTime(calcTimeLimit(flowInst.getTopUnit(), today, tlt, workDayManager, false));
+        if(extend.isPositiveTimeSpan()){
+            nodeInst.setDeadlineTime(workDayManager.calcWorkingDeadline(
+                flowInst.getTopUnit(), nodeInst.getDeadlineTime(), extend));
+        }
+        nodeInst.setWarningTime(calcTimeLimit(flowInst.getTopUnit(),
+            nodeInst.getDeadlineTime(), node.getWarningParam(), workDayManager, true));
     }
 
     /**
@@ -187,7 +211,7 @@ public abstract class FlowOptUtils {
                         flowInst, preNodeInst, flowInfo, node, varTrans, workDayManager);
                 }
             } else if (NodeInfo.TIME_LIMIT_TYPE_FIX.equals(timeLimitType)) {
-                //nodeInst.setTimeLimit( new WorkTimeSpan(timeLimit).toNumber() );
+                //nodeInst.setTimeLimit( new DateTimeSpan(timeLimit).toNumber() );
                 setNewNodeInstTimelimit(nodeInst, timeLimit,
                     flowInst, preNodeInst, flowInfo, node, varTrans, workDayManager);
             }
