@@ -162,26 +162,10 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "NODE_DESC")
     private String nodeDesc;
 
-    /**
-     * 是否计时 I ： 未设置（ignore 在流转线上默认 ）
-     * T:计时（默认）
-     * F： 不计时 （这个节点的执行时间不计算在流程内）
-     * H 仅环节计时 （流程业务的剩余时间不减，比如用在受理节点之前的节点，
-     *              这些节点本身有期限，但是时间不计入流程业务的期限内） 。
-     */
-    public static final String TIME_LIMIT_IGNORE    = "I";
-    public static final String TIME_LIMIT_NORMAL    = "T";
-    public static final String TIME_LIMIT_NONE      = "F";
-    public static final String TIME_LIMIT_ONLY_NODE      = "H";
-
-    @Column(name = "IS_ACCOUNT_TIME")
-    private String isAccountTime;
-
     public static final String TIME_LIMIT_TYPE_IGNORE    = "I";
     public static final String TIME_LIMIT_TYPE_NONE      = "N";
     public static final String TIME_LIMIT_TYPE_FIX       = "F";
     public static final String TIME_LIMIT_TYPE_CYCLE     = "C";
-    public static final String TIME_LIMIT_TYPE_HIERARCHICAL = "H";
     /**
      * 期限类别 I ： 未设置（ignore 在流转线上默认 ）、
      * N 无 (无期限 none 默认) 、
@@ -311,7 +295,6 @@ public class NodeInfo implements java.io.Serializable {
     // Constructors
     /** default constructor */
     public NodeInfo() {
-        this.isAccountTime = "T";
         this.inheritType = "0";
     }
 
@@ -319,7 +302,6 @@ public class NodeInfo implements java.io.Serializable {
     public NodeInfo(String nodeid, String nodetype) {
         this.nodeId = nodeid;
         this.nodeType = nodetype;
-        this.isAccountTime = "T";
         this.inheritType = "0";
     }
 
@@ -400,7 +382,6 @@ public class NodeInfo implements java.io.Serializable {
         this.nodeDesc = other.getNodeDesc();
         this.timeLimit = other.getTimeLimit();
         this.expireOpt = other.getExpireOpt();
-        this.isAccountTime = other.getIsAccountTime();
         this.stageCode =other.getStageCode();
         //this.routerType=other.getRouterType();
         this.multiInstType=other.getMultiInstType();
@@ -446,8 +427,6 @@ public class NodeInfo implements java.io.Serializable {
             this.timeLimit = other.getTimeLimit();
         if (other.getExpireOpt() != null)
             this.expireOpt = other.getExpireOpt();
-        if (other.getIsAccountTime() != null)
-            this.isAccountTime = other.getIsAccountTime();
         if (other.getStageCode()!=null)
             this.stageCode =other.getStageCode();
         if (other.getNoticeMessage()!=null)
@@ -493,7 +472,6 @@ public class NodeInfo implements java.io.Serializable {
         this.timeLimit = null;
         this.stageCode =null;
         this.expireOpt =  null;
-        this.isAccountTime = "T";
         this.noticeType = null;
         this.noticeMessage = null;
         //this.routerType=null;

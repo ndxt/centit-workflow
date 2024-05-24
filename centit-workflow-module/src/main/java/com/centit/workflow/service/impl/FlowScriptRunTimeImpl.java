@@ -23,7 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -484,7 +487,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
         if(flowInst.getFlowNodeInstances().size() == 0){
             flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
         }
-        Set<NodeInstance> activeNodes = flowInst.fetchActiveNodeInstances();
+        List<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
         for(NodeInstance ni : activeNodes){
             String nc = ni.getNodeCode();
             if(nc!=null) {
@@ -501,7 +504,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
         if(flowInst.getFlowNodeInstances().size() == 0){
             flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
         }
-        Set<NodeInstance> activeNodes = flowInst.fetchActiveNodeInstances();
+        List<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
         for(NodeInstance ni : activeNodes){
             if (ni.getRunToken().contains(NodeInstance.RUN_TOKEN_ISOLATED)) {
                 closeNodeInstanceInside(ni);
@@ -514,7 +517,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
         if(flowInst.getFlowNodeInstances().size() == 0){
             flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
         }
-        Set<NodeInstance> activeNodes = flowInst.fetchActiveNodeInstances();
+        List<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
         for(NodeInstance ni : activeNodes){
             if (! StringUtils.equals(ni.getRunToken(), nodeInst.getRunToken())) {
                 closeNodeInstanceInside(ni);

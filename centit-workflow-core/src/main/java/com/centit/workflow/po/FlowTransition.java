@@ -48,11 +48,6 @@ public class FlowTransition implements java.io.Serializable {
     private String limitType;
     @Column(name = "TIME_LIMIT")
     private String timeLimit;
-    /**
-     * 改是否记入时间 T / F  I 忽略
-     */
-    @Column(name = "IS_ACCOUNT_TIME")
-    private String isAccountTime;
 
     // * T可以忽略 F 不可以忽略  是否可以忽略运行
     @Column(name = "CAN_IGNORE")
@@ -79,9 +74,8 @@ public class FlowTransition implements java.io.Serializable {
     /** default constructor */
     public FlowTransition() {
         this.canIgnore= true;
-        isAccountTime ="I";
+        this.limitType = NodeInfo.TIME_LIMIT_TYPE_IGNORE;
     }
-
 
     public void copy(FlowTransition other){
         //this.setTransId(other.getTransId());
@@ -94,19 +88,14 @@ public class FlowTransition implements java.io.Serializable {
         this.transCondition = other.getTransCondition();
         this.limitType = other.getLimitType();
         this.timeLimit = other.getTimeLimit();
-
-        this.isAccountTime= other.getIsAccountTime();
         this.canIgnore= other.getCanIgnore();
     }
 
     public void copyNotNullProperty(FlowTransition other){
-
         /*if( other.getTransId() != null)
             this.setTransId(other.getTransId());*/
-
         if( other.getFlowDefine() != null)
             this.setFlowDefine(other.getFlowDefine());
-
         if( other.getTransClass() != null)
             this.transClass = other.getTransClass();
         if( other.getTransName() != null)
@@ -123,8 +112,6 @@ public class FlowTransition implements java.io.Serializable {
             this.limitType= other.getLimitType();
         if( other.getTimeLimit() != null)
             this.limitType= other.getTimeLimit();
-        if( other.getIsAccountTime() != null)
-            this.isAccountTime= other.getIsAccountTime();
         if( other.getCanIgnore() != null)
             this.canIgnore= other.getCanIgnore();
     }
@@ -137,9 +124,8 @@ public class FlowTransition implements java.io.Serializable {
         this.startNodeId =null;
         this.endNodeId = null;
         this.transCondition = null;
-        this.limitType =null;
+        this.limitType = NodeInfo.TIME_LIMIT_TYPE_IGNORE;
         this.timeLimit = null;
-        this.isAccountTime= "I";
         this.canIgnore=true;
     }
 
