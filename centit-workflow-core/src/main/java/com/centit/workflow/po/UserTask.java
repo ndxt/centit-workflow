@@ -126,6 +126,7 @@ public class UserTask implements java.io.Serializable {
         this.stageCode = other.getStageCode();
 
         this.creatorCode = other.getCreatorCode();
+        this.promiseTime = other.getPromiseTime();
         this.nodeExpireTime = other.getNodeExpireTime();
         this.flowExpireTime = other.getFlowExpireTime();
     }
