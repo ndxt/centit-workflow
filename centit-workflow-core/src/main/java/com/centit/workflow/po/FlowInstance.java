@@ -45,6 +45,7 @@ public class FlowInstance implements java.io.Serializable {
         @JoinColumn(name = "version"),
         @JoinColumn(name = "flowCode")
     })
+    @JSONField(serialize = false)
     private FlowInfo flowDefine;
 
     /**
@@ -167,10 +168,6 @@ public class FlowInstance implements java.io.Serializable {
     @JSONField(serialize = false)
     private List<NodeInstance> flowNodeInstances;
 
-    @Transient
-    @JSONField(serialize = true)
-    private List<NodeInstance> activeNodeList;
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)
     @JoinColumn(name = "flowInstId")
     @JSONField(serialize = false)
@@ -190,7 +187,6 @@ public class FlowInstance implements java.io.Serializable {
         this.timerStatus = "F";
         this.flowNodeInstances = null;
         this.flowStageInstances = null;
-        this.activeNodeList = null;
         this.isSubInst = false;
     }
 
@@ -204,15 +200,15 @@ public class FlowInstance implements java.io.Serializable {
         this.isSubInst = false;
         this.flowNodeInstances = null;
         this.flowStageInstances = null;
-        this.activeNodeList = null;
     }
 
     public boolean checkIsInRunning() {
         return StringUtils.equalsAny(this.getInstState(), "N", "M");
     }
 
-    public Set<NodeInstance> fetchActiveNodeInstances() {
-        Set<NodeInstance> nodeInstSet = new HashSet<>();
+    @JSONField
+    public List<NodeInstance> getActiveNodeInstances() {
+        List<NodeInstance> nodeInstSet = new ArrayList<>();
         if (this.flowNodeInstances == null)
             return nodeInstSet;
         for (NodeInstance nodeInst : flowNodeInstances)

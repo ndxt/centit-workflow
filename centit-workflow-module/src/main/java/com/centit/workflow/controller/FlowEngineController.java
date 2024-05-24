@@ -65,9 +65,7 @@ public class FlowEngineController extends BaseController {
                 new ObjectUserUnitVariableTranslate(
                     BaseController.collectRequestParameters(request)), null);
 
-        FlowInstance instance = flowEngine.getFlowInstById(flowInstance.getFlowInstId());
-        instance.setActiveNodeList(new ArrayList<>(instance.fetchActiveNodeInstances()));
-        return instance;
+        return flowEngine.getFlowInstById(flowInstance.getFlowInstId());
     }
 
     @ApiOperation(value = "提交节点", notes = "提交节点")

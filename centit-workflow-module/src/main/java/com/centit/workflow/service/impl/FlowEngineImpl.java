@@ -2010,7 +2010,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         flowInstanceDao.fetchObjectReference(flowInst, "flowNodeInstances");
-        Set<NodeInstance> activeNodes = flowInst.fetchActiveNodeInstances();
+        List<NodeInstance> activeNodes = flowInst.getActiveNodeInstances();
         if (activeNodes == null || activeNodes.isEmpty()) {
             return null;
         }
