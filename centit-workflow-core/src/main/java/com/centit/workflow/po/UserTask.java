@@ -65,6 +65,7 @@ public class UserTask implements java.io.Serializable {
     @DictionaryMap(value="userCode", fieldName="creatorName")
     private String creatorCode;
 
+    private String promiseTime;
     private Date nodeExpireTime;
     private Date flowExpireTime;
 

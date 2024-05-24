@@ -61,7 +61,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.deadline_time as node_Expire_Time, " +
         "c.OPT_CODE, c.EXPIRE_OPT, c.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
         "b.LAST_UPDATE_TIME, b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
-        "a.deadline_time as flow_Expire_Time " +
+        "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time " +
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
         "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         "where b.NODE_INST_ID = ?";
@@ -72,7 +72,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.deadline_time as node_Expire_Time, " +
         "c.OPT_CODE, c.EXPIRE_OPT, c.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
         "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
-        "a.deadline_time as flow_Expire_Time " +
+        "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time " +
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
             "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         // (b.task_assigned = 'S' or b.task_assigned = 'P' or b.task_assigned = 'T')
@@ -108,7 +108,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.deadline_time as node_Expire_Time, " +
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE, g.GRANTOR, b.LAST_UPDATE_USER," +
         "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
-        "a.deadline_time as flow_Expire_Time " +
+        "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time " +
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
         "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         "join WF_ROLE_RELEGATE g on ( g.GRANTOR = b.user_code and " +
@@ -149,7 +149,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "c.OPT_CODE, c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +
             "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, " +
             "a.USER_CODE as CREATOR_CODE, " +
-            "a.deadline_time as flow_Expire_Time " +
+            "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time " +
             "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
             "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
             "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'D'" ;

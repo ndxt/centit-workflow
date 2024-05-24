@@ -22,7 +22,6 @@ public class StageInstanceDao extends BaseDaoImpl<StageInstance,StageInstanceId>
 
         filterField.put("flowInstId", "flowInstId = :flowInstId");
         filterField.put("stageId", "stageId = :stageId");
-        filterField.put("promiseTime", CodeBook.LIKE_HQL_ID);
         filterField.put("timeLimit", CodeBook.LIKE_HQL_ID);
         return filterField;
     }
