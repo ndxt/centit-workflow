@@ -1391,7 +1391,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //创建节点提交日志 S:提交节点
         if (saveLog) {
             OperationLog wfactlog = FlowOptUtils.createActionLog(options.getTopUnit(),
-                options.getUserCode(), nodeInst, "提交节点:" + currNode.getNodeName(), currNode)
+                options.getUserCode(), nodeInst,
+                    NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType())?
+                        "提交节点:" + currNode.getNodeName() :  "自动运行:" + currNode.getNodeName(),
+                    currNode)
                 .application(flowInst.getOsId()).method("submitNode");
             if(StringUtils.isBlank(wfactlog.getUnitCode())){
                 wfactlog.unit(options.getUnitCode());

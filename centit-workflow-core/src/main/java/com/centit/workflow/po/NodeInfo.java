@@ -55,7 +55,7 @@ public class NodeInfo implements java.io.Serializable {
      * C:业务节点
      * D:自动运行节点
      * R:路由节点
-     * E:消息相应节点（同步节点）
+     * E:同步节点（消息响应节点，或等待时间）
      * F:结束
      * S:子流程
      */
