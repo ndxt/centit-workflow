@@ -229,7 +229,7 @@ public abstract class FlowOptUtils {
                                              String flowInstId, String logDetail) {
          return OperationLog.create().topUnit(topUnit)
              .operation("workflow").tag(flowInstId)
-             .method("flowOpt").user(usercode).content(logDetail);
+             .user(usercode).content(logDetail);
      }
     /**
      * @param usercode 操作用户
@@ -240,9 +240,10 @@ public abstract class FlowOptUtils {
      */
     public static OperationLog createActionLog(String topUnit, String usercode,
                                                NodeInstance nodeInst, String logDetail, NodeInfo node) {
-        OperationLog actionLog = createActionLog(topUnit, usercode, nodeInst.getFlowInstId(), logDetail)
+        OperationLog actionLog = createActionLog(topUnit, usercode,
+             nodeInst.getFlowInstId(), logDetail)
             .unit(nodeInst.getUnitCode())
-            .method(nodeInst.getNodeInstId());
+            .oldObject(nodeInst.getNodeInstId());
         if (node != null) {
             actionLog.setNewValue(usercode + ":" + node.getRoleType() + ":" + node.getRoleCode());
         }

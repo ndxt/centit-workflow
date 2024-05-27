@@ -283,7 +283,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         OperationLogCenter.log(FlowOptUtils.createActionLog(options.getTopUnit(),
             options.getUserCode(), flowInstId, "创建流程，创建首节点:" +
-                StringBaseOpt.castObjectToString(nodeInsts)));
+                StringBaseOpt.castObjectToString(nodeInsts))
+            .unit(options.getUnitCode()).application(flowInst.getOsId())
+            .method("createFlow")
+        );
         return flowInst;
     }
 
@@ -1388,7 +1391,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //创建节点提交日志 S:提交节点
         if (saveLog) {
             OperationLog wfactlog = FlowOptUtils.createActionLog(options.getTopUnit(),
-                options.getUserCode(), nodeInst, "提交节点", currNode);
+                options.getUserCode(), nodeInst, "提交节点", currNode)
+                .application(flowInst.getOsId()).method("submitNode");
+            if(StringUtils.isBlank(wfactlog.getUnitCode())){
+                wfactlog.unit(options.getUnitCode());
+            }
+
             if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType()) &&
                 !StringUtils.equals(runAsUser, options.getUserCode())) {
                 nodeInst.setGrantor(runAsUser);
@@ -1649,7 +1657,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, managerUserCode);
         //调用发送消息接口
         OperationLogCenter.log(FlowOptUtils.createActionLog(flowInst.getTopUnit(),
-            managerUserCode, flowInst.getFlowInstId(), "回退到上一个节点;"));
+            managerUserCode, flowInst.getFlowInstId(), "回退到上一个节点;")
+            .unit(thisNodeInst.getUnitCode()).application(flowInst.getOsId())
+            .method("rollback")
+        );
         return lastNodeInstId;
     }
 
