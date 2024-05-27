@@ -281,7 +281,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if(!FlowInstance.FLOW_STATE_NORMAL.equals(flowInst.getInstState())) {
             flowInstanceDao.updateObject(flowInst);
         }
-        OperationLogCenter.log(FlowOptUtils.createActionLog(
+        OperationLogCenter.log(FlowOptUtils.createActionLog(options.getTopUnit(),
             options.getUserCode(), flowInstId, "创建流程，创建首节点:" +
                 StringBaseOpt.castObjectToString(nodeInsts)));
         return flowInst;
@@ -1387,7 +1387,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeInst.setNodeState(NodeInstance.NODE_STATE_COMPLETE);
         //创建节点提交日志 S:提交节点
         if (saveLog) {
-            OperationLog wfactlog = FlowOptUtils.createActionLog(
+            OperationLog wfactlog = FlowOptUtils.createActionLog(options.getTopUnit(),
                 options.getUserCode(), nodeInst, "提交节点", currNode);
             if (NodeInfo.NODE_TYPE_OPT.equals(currNode.getNodeType()) &&
                 !StringUtils.equals(runAsUser, options.getUserCode())) {
@@ -1648,7 +1648,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             .createNodeEventSupportBean(nodedef, this);
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, managerUserCode);
         //调用发送消息接口
-        OperationLogCenter.log(FlowOptUtils.createActionLog(
+        OperationLogCenter.log(FlowOptUtils.createActionLog(flowInst.getTopUnit(),
             managerUserCode, flowInst.getFlowInstId(), "回退到上一个节点;"));
         return lastNodeInstId;
     }

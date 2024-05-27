@@ -225,9 +225,9 @@ public abstract class FlowOptUtils {
      * @param logDetail 操作说明
      * @return ActionLog
      */
-     public static OperationLog createActionLog(String usercode,
+     public static OperationLog createActionLog(String topUnit, String usercode,
                                              String flowInstId, String logDetail) {
-         return OperationLog.create()
+         return OperationLog.create().topUnit(topUnit)
              .operation("workflow").tag(flowInstId)
              .method("flowOpt").user(usercode).content(logDetail);
      }
@@ -238,9 +238,9 @@ public abstract class FlowOptUtils {
      * @param logDetail 操作说明
      * @return ActionLog
      */
-    public static OperationLog createActionLog(String usercode,
+    public static OperationLog createActionLog(String topUnit, String usercode,
                                                NodeInstance nodeInst, String logDetail, NodeInfo node) {
-        OperationLog actionLog = createActionLog(usercode, nodeInst.getFlowInstId(), logDetail)
+        OperationLog actionLog = createActionLog(topUnit, usercode, nodeInst.getFlowInstId(), logDetail)
             .unit(nodeInst.getUnitCode())
             .method(nodeInst.getNodeInstId());
         if (node != null) {

@@ -472,6 +472,7 @@ public interface FlowManager {
      * @param oldVersion 旧的版本， 如果 <=0 则将所有的版本 都迁移过过来
      * @return 返回迁移的流程实例数量
      */
-    void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion, String mangerUserCode);
+    void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion,
+                            String topUnit, String mangerUserCode);
 
 }

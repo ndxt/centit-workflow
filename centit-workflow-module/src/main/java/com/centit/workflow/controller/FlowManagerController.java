@@ -912,7 +912,9 @@ public class FlowManagerController extends BaseController {
             newVersion = NumberBaseOpt.castObjectToLong(versionDesc.get("newVersion"), -1l);
             oldVersion = NumberBaseOpt.castObjectToLong(versionDesc.get("oldVersion"), -1l);
         }
-        flowManager.upgradeFlowVersion(flowCode, newVersion, oldVersion, userInfo.getUserCode());
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        flowManager.upgradeFlowVersion(flowCode, newVersion, oldVersion,
+            topUnit, userInfo.getUserCode());
     }
 
 }
