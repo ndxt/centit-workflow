@@ -204,9 +204,9 @@ public class NodeInfo implements java.io.Serializable {
     public static final String TIME_EXPIRE_OPT_NONE    = "O";
     public static final String TIME_EXPIRE_OPT_NOTIFY  = "N";
     public static final String TIME_EXPIRE_OPT_SUSPEND = "X";
-    public static final String TIME_EXPIRE_OPT_END_FLOW  = "E";
-    public static final String TIME_EXPIRE_OPT_SUBMIT = "C";
-    public static final String TIME_EXPIRE_OPT_CALL_API = "A";
+    public static final String TIME_EXPIRE_OPT_END_FLOW= "E";
+    public static final String TIME_EXPIRE_OPT_SUBMIT  = "C";
+    public static final String TIME_EXPIRE_OPT_CALL_API= "A";
     /**
      * N：仅通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
      * A ：调用api

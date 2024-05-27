@@ -911,7 +911,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 if (FlowWarning.TIMER_STATUS_NOT_BEGIN.equals(stageInst.getTimerStatus())) {
                     // 第一次进入阶段
                     FlowStage stageInfo = flowStageDao.getObjectById(stageInst.getStageId());
-                    if("O".equals(stageInfo.getExpireOpt()) || StringUtils.isBlank(stageInfo.getTimeLimit())){
+                    if(NodeInfo.TIME_EXPIRE_OPT_NONE.equals(stageInfo.getExpireOpt()) || StringUtils.isBlank(stageInfo.getTimeLimit())){
                         stageInst.setBeginTime(today);
                         stageInst.setTimerStatus(FlowWarning.TIMER_STATUS_NO_LIMIT);
                     } else { //

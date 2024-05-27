@@ -72,14 +72,11 @@ public class FlowInfo implements java.io.Serializable {
     @Length(max = 20)
     private String timeLimit;
 
-    public static final String FLOW_EXPIRE_OPT_NOTICE = "N";
-    public static final String FLOW_EXPIRE_OPT_NONE = "O";
-    public static final String FLOW_EXPIRE_OPT_SUSPENSE = "X";
-    public static final String FLOW_EXPIRE_OPT_TERMINATE = "E";
     /**
      * 获取流程超期后处理方式
      * N：仅通知， O:不处理 ，X：挂起，E：终止（流程）
      * A ：调用api
+     * @see NodeInfo
      */
     @Column(name = "EXPIRE_OPT")
     @Length(max = 1)

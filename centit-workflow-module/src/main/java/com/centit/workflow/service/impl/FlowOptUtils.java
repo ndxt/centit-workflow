@@ -62,7 +62,7 @@ public abstract class FlowOptUtils {
             flowInst.addFlowStageInstance(stageInst);
         }
 
-        if (StringUtils.isNotBlank(timeLimit) && !"O".equals(wf.getExpireOpt())) {
+        if (StringUtils.isNotBlank(timeLimit) && !NodeInfo.TIME_EXPIRE_OPT_NONE.equals(wf.getExpireOpt())) {
             // 不计时F 、计时T(有期限)、暂停P  忽略(无期限) F
             flowInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
             Date today = DatetimeOpt.currentUtilDate();
