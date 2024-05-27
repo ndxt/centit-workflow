@@ -192,6 +192,18 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             if (StringUtils.isBlank(node.getOsId())) {
                 node.setOsId(flow.getOsId());
             }
+            //这个前端应该检测
+            if (StringUtils.isBlank(node.getNodeName())) {
+               if(NodeInfo.NODE_TYPE_END.equals(node.getNodeType())){
+                   node.setNodeName("结束节点");
+               } else if(NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType())){
+                   node.setNodeName("路由");
+               } else if(NodeInfo.NODE_TYPE_START.equals(node.getNodeType())){
+                   node.setNodeName("开始节点");
+               } else {
+                   node.setNodeName(StringUtils.isBlank(node.getNodeCode())?node.getNodeId():node.getNodeCode());
+               }
+            }
         }
 
         for (FlowTransition tran : flowDef.getTransList()) {
@@ -374,9 +386,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if (flowDef == null) {
             return 0L;
         }
-        //WfFlowDefine newFlowDef = new WfFlowDefine();
-        String wfDefXML = flowDef.getFlowXmlDesc();
-        if (StringUtils.isBlank(wfDefXML)) {
+
+        if (StringUtils.isBlank(flowDef.getFlowXmlDesc())) {
             throw new ObjectException("流程没有内容");
         }
 
