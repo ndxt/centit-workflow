@@ -782,9 +782,11 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "流程操作日志", notes = "流程操作日志")
     @RequestMapping(value = "/flowlogs/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public ResponseData listFlowInstLogs(@PathVariable String flowInstId, String withNodeLog) {
-        List<? extends OperationLog> operationLogs = flowManager.listFlowActionLogs(flowInstId,
-            BooleanBaseOpt.castObjectToBoolean(withNodeLog, true));
+    public ResponseData listFlowInstLogs(@PathVariable String flowInstId, HttpServletRequest request) {
+
+        List<? extends OperationLog> operationLogs =
+            flowManager.listFlowActionLogs(flowInstId, WebOptUtils.getCurrentTopUnit(request));
+
         if (CollectionUtils.sizeIsEmpty(operationLogs)){
             return ResponseData.makeResponseData(Collections.emptyList());
         }

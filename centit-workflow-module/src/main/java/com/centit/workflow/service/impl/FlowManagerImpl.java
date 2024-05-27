@@ -1254,18 +1254,19 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * 获取节点实例的操作日志列表
      *
      * @param flowInstId     流程实例id
-     * @param withNodeAction 是否包括节点的日志
+     * @param topUnit  归宿租户
      * @return List<WfActionLog>
      */
     @Override
-    public List<? extends OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction) {
+    public List<? extends OperationLog> listFlowActionLogs(String flowInstId, String topUnit) {
         if (optLogManager == null) {
             return null;
         }
-        Map<String, Object> filterMap = CollectionsOpt.createHashMap("optTag", flowInstId);
-        if (!withNodeAction) {
+        Map<String, Object> filterMap =
+            CollectionsOpt.createHashMap("optTag", flowInstId, "topUnit", topUnit);
+        /*if (!withNodeAction) {
             filterMap.put("optMethod", "flowOpt");
-        }
+        }*/
         return optLogManager.listOptLog("workflow", filterMap, -1, -1);
     }
 
@@ -1280,9 +1281,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public List<? extends OperationLog> listNodeActionLogs(String flowInstId, String nodeInstId) {
         if (optLogManager == null)
             return null;
+
         return optLogManager.listOptLog("workflow",
             CollectionsOpt.createHashMap("optTag", flowInstId,
-                "optMethod", nodeInstId), -1, -1);
+                "oldValue", nodeInstId), -1, -1);
     }
 
     @Override

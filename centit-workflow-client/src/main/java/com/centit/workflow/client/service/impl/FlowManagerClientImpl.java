@@ -223,13 +223,13 @@ public class FlowManagerClientImpl implements FlowManager {
      * 获取流程实例的操作日志列表
      *
      * @param flowInstId     流程实例号
-     * @param withNodeAction 是否包括节点的日志
+     * @param topUnit 归属租户
      * @return List<WfActionLog>
      */
     @Override
-    public List<OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction) {
+    public List<OperationLog> listFlowActionLogs(String flowInstId, String topUnit) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
-            "/flow/manager/flowlogs/" + flowInstId + "?withNodeAction=" + withNodeAction);
+            "/flow/manager/flowlogs/" + flowInstId + "?topUnit=" + topUnit);
         return receiveJSON.getDataAsArray(OperationLog.class);
     }
 
@@ -645,7 +645,8 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     @Override
-    public void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion, String mangerUserCode)  {
+    public void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion,
+                                   String topUnit, String mangerUserCode)  {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

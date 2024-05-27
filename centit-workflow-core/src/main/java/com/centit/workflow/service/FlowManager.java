@@ -296,10 +296,10 @@ public interface FlowManager {
      * 获取节点实例的操作日志列表
      *
      * @param flowInstId     流程实例id
-     * @param withNodeAction 是否包括节点的日志
+     * @param topUnit 归宿租户
      * @return List<WfActionLog>
      */
-    List<? extends OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction);
+    List<? extends OperationLog> listFlowActionLogs(String flowInstId, String topUnit);
 
     /**
      * 获取用户所有的操作记录
