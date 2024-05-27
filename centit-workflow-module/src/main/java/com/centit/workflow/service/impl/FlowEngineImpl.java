@@ -1391,7 +1391,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //创建节点提交日志 S:提交节点
         if (saveLog) {
             OperationLog wfactlog = FlowOptUtils.createActionLog(options.getTopUnit(),
-                options.getUserCode(), nodeInst, "提交节点", currNode)
+                options.getUserCode(), nodeInst, "提交节点:" + currNode.getNodeName(), currNode)
                 .application(flowInst.getOsId()).method("submitNode");
             if(StringUtils.isBlank(wfactlog.getUnitCode())){
                 wfactlog.unit(options.getUnitCode());
@@ -1657,7 +1657,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, managerUserCode);
         //调用发送消息接口
         OperationLogCenter.log(FlowOptUtils.createActionLog(flowInst.getTopUnit(),
-            managerUserCode, flowInst.getFlowInstId(), "回退到上一个节点;")
+            managerUserCode, flowInst.getFlowInstId(), "回退到上一个节点:"+nodedef.getNodeName())
             .unit(thisNodeInst.getUnitCode()).application(flowInst.getOsId())
             .method("rollback")
         );
