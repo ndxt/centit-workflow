@@ -1267,15 +1267,21 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             null);
         // 返回提交后节点的名称
         Set<String> nodeNames = new HashSet<>();
+        List<NodeInstance> nodeInstances = new ArrayList<>(nextNodeInstList.size());
         for (String nodeInstId : nextNodeInstList) {
-            NodeInfo nodeInfo = getNodeInfo(nodeInstId);
-            if (nodeInfo != null) {
+            NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+            if (nodeInst != null && !NodeInstance.NODE_STATE_COMPLETE.equals(nodeInst.getNodeState())) {
+                nodeInstances.add(nodeInst);
+                NodeInfo nodeInfo = flowNodeDao.getObjectById(nodeInst.getNodeId());
                 nodeNames.add(nodeInfo.getNodeName());
             }
         }
         HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("nextNodeInsts", nextNodeInstList);
-        resultMap.put("nodeNames", StringUtils.join(nodeNames, ","));
+        resultMap.put("nextNodeSize", nodeInstances.size());
+        if(!nodeInstances.isEmpty()){
+            resultMap.put("nextNodeInsts", nodeInstances);
+            resultMap.put("nodeNames", StringUtils.join(nodeNames, ","));
+        }
         return resultMap;
     }
 
