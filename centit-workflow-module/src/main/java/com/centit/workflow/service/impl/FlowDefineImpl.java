@@ -199,7 +199,11 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
                } else if(NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType())){
                    node.setNodeName("路由");
                } else if(NodeInfo.NODE_TYPE_START.equals(node.getNodeType())){
-                   node.setNodeName("开始节点");
+                    node.setNodeName("开始节点");
+               } else if(NodeInfo.NODE_TYPE_AUTO.equals(node.getNodeType())){
+                   node.setNodeName("自动执行");
+               } else if(NodeInfo.NODE_TYPE_SYNC.equals(node.getNodeType())){
+                   node.setNodeName("同步节点");
                } else {
                    node.setNodeName(StringUtils.isBlank(node.getNodeCode())?node.getNodeId():node.getNodeCode());
                }

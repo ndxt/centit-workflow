@@ -490,18 +490,18 @@ public class FlowDefineController extends ResourceBaseController {
 
     /**
      * 更新流程状态
-     * @param flowcode 流程代码
-     * @param newstate 新的状态
+     * @param flowCode 流程代码
+     * @param newState 新的状态
      * @param request HttpServletResponse
      */
     @ApiOperation(value = "更新流程状态", notes = "更新流程状态")
-    @RequestMapping(value = "/changestate/{flowcode}/{newstate}", method = RequestMethod.GET)
-    public ResponseData changeState(@PathVariable String flowcode, @PathVariable String newstate, HttpServletRequest request) {
-        if (FlowInfo.FLOW_STATE_FORBIDDEN.equals(newstate)) {
-            flowDefine.disableFlow(flowcode);
+    @RequestMapping(value = "/changestate/{flowCode}/{newState}", method = RequestMethod.PUT)
+    public ResponseData changeState(@PathVariable String flowCode, @PathVariable String newState, HttpServletRequest request) {
+        if (FlowInfo.FLOW_STATE_FORBIDDEN.equals(newState)) {
+            flowDefine.disableFlow(flowCode);
         }
-        if (FlowInfo.FLOW_STATE_NORMAL.equals(newstate)) {
-            flowDefine.enableFlow(flowcode);
+        if (FlowInfo.FLOW_STATE_NORMAL.equals(newState)) {
+            flowDefine.enableFlow(flowCode);
         }
         return ResponseData.makeSuccessResponse(getI18nMessage("info.200.success", request));
     }
