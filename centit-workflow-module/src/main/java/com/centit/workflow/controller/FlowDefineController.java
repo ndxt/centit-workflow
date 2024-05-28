@@ -497,6 +497,7 @@ public class FlowDefineController extends ResourceBaseController {
     @ApiOperation(value = "更新流程状态", notes = "更新流程状态")
     @RequestMapping(value = "/changestate/{flowCode}/{newState}", method = RequestMethod.PUT)
     public ResponseData changeState(@PathVariable String flowCode, @PathVariable String newState, HttpServletRequest request) {
+        WebOptUtils.assertUserLogin(request);
         if (FlowInfo.FLOW_STATE_FORBIDDEN.equals(newState)) {
             flowDefine.disableFlow(flowCode);
         }
