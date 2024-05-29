@@ -68,7 +68,8 @@ public class UserTask implements java.io.Serializable {
     private String promiseTime;
     private Date nodeExpireTime;
     private Date flowExpireTime;
-
+    private Date nodeWarningTime;
+    private Date flowWarningTime;
     // Constructors
     /** default constructor */
     public UserTask() {
@@ -129,6 +130,8 @@ public class UserTask implements java.io.Serializable {
         this.promiseTime = other.getPromiseTime();
         this.nodeExpireTime = other.getNodeExpireTime();
         this.flowExpireTime = other.getFlowExpireTime();
+        this.nodeWarningTime = other.getNodeExpireTime();
+        this.flowWarningTime = other.getFlowExpireTime();
     }
 
 }

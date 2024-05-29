@@ -282,7 +282,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             flowInstanceDao.updateObject(flowInst);
         }
         OperationLogCenter.log(FlowOptUtils.createActionLog(options.getTopUnit(),
-            options.getUserCode(), flowInstId, "创建流程，创建首节点:" +
+            options.getUserCode(), flowInstId, "创建流程，首节点ID:" +
                 StringBaseOpt.castObjectToString(nodeInsts))
             .unit(options.getUnitCode()).application(flowInst.getOsId())
             .method("createFlow")
@@ -2526,7 +2526,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         return userTaskListDao.listUserCompletedTask(filterMap, pageDesc);
     }
-
 
     @Override
     public List<FlowWarning> listFlowWarning(Map<String, Object> filterMap,

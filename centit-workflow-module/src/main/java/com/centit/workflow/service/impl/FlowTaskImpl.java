@@ -212,21 +212,20 @@ public class FlowTaskImpl {
                 String message = "OK！";
                 //* N：通知（预警）， O:不处理 ， X：挂起， E：终止（流程）， C：完成（强制提交,提交失败就挂起）
                 if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(nodeInfo.getExpireOpt())) {
-                    // 终止流程
+                    message = "节点超时，自动终止流程";
                     flowInst.setInstState(FlowInstance.FLOW_STATE_FORCE);
                     flowInstanceDao.updateObject(flowInst);
                 } else if (NodeInfo.TIME_EXPIRE_OPT_SUBMIT.equals(nodeInfo.getExpireOpt())) {
-                    //自动提交
+                    message = "节点超时，自动提交节点";
                     flowEngine.submitOpt(SubmitOptOptions.create().nodeInst(nodeInst.getNodeInstId())
                         .user(nodeInst.getUserCode()).unit(nodeInst.getUnitCode()).tenant(flowInst.getTopUnit()));
                 } else if (NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(nodeInfo.getExpireOpt())) {
-                    //自动执行API
                     JSONObject params = JSONObject.from(flowInst);
                     params.putAll(JSONObject.from(nodeInfo));
                     params.putAll(JSONObject.from(nodeInst));
                     logger.info("节点超时，自动运行api网关" + nodeInfo.getExpireCallApi() + "，参数:" + params);
                     Object obj =  ddeDubboTaskRun.runTask(nodeInfo.getExpireCallApi(), params);
-                    message = JSON.toJSONString(obj);
+                    message = "节点超时，自动运行api网关:" +JSON.toJSONString(obj);
                 }
 
                 FlowWarning flowWarning = new FlowWarning();
@@ -255,15 +254,14 @@ public class FlowTaskImpl {
                 NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(flowInfo.getExpireOpt())) {
                 String message = "OK！";
                 if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(flowInfo.getExpireOpt())) {
-                    // 终止流程
+                    message = "流程超时，自动终止流程";
                     flowInst.setInstState(FlowInstance.FLOW_STATE_FORCE);
                     flowInstanceDao.updateObject(flowInst);
                 } else if (NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(flowInfo.getExpireOpt())){
-                    //自动执行API
                     JSONObject params = JSONObject.from(flowInst);
                     logger.info("流程超时，自动运行api网关" + flowInfo.getExpireCallApi() + "，参数:" + params);
                     Object obj = ddeDubboTaskRun.runTask(flowInfo.getExpireCallApi(), params);
-                    message = JSON.toJSONString(obj);
+                    message = "流程超时，自动运行api网关:" +JSON.toJSONString(obj);
                 }
                 FlowWarning flowWarning = new FlowWarning();
                 flowWarning.setWarningType("E");
@@ -296,17 +294,16 @@ public class FlowTaskImpl {
                 FlowInstance flowInst = flowInstanceDao.getObjectById(stageInst.getFlowInstId());
                 String message = "OK！";
                 if (NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(stageInfo.getExpireOpt())) {
-                    // 终止流程
+                    message = "阶段超时，自动终止流程";
                     flowInst.setInstState(FlowInstance.FLOW_STATE_FORCE);
                     flowInstanceDao.updateObject(flowInst);
                 } else if (NodeInfo.TIME_EXPIRE_OPT_CALL_API.equals(stageInfo.getExpireOpt())) {
-                    //自动执行API
                     JSONObject params = JSONObject.from(flowInst);
                     params.putAll(JSONObject.from(stageInfo));
                     params.putAll(JSONObject.from(stageInst));
                     logger.info("阶段超时，自动运行api网关" + stageInfo.getExpireCallApi() + "，参数:" + params);
                     Object obj = ddeDubboTaskRun.runTask(stageInfo.getExpireCallApi(), params);
-                    message = JSON.toJSONString(obj);
+                    message = "阶段超时，自动运行api网关:" +JSON.toJSONString(obj);
                 }
                 FlowWarning flowWarning = new FlowWarning();
                 flowWarning.setWarningType("E");

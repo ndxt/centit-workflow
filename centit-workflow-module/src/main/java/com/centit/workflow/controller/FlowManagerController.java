@@ -793,6 +793,16 @@ public class FlowManagerController extends BaseController {
        return ResponseData.makeResponseData(DictionaryMapUtils.objectsToJSONArray(operationLogs));
     }
 
+    /**
+     * 流程预警日志
+     */
+    @ApiOperation(value = "流程预警日志", notes = "流程预警日志")
+    @RequestMapping(value = "/warning/{flowInstId}", method = RequestMethod.GET)
+    @WrapUpResponseBody
+    public List<FlowWarning> listFlowWarningLogs(@PathVariable String flowInstId, HttpServletRequest request) {
+        return flowEngine.listFlowWarningByInst(flowInstId, PageDesc.createNotPaging());
+    }
+
     @ApiOperation(value = "用户操作日志", notes = "用户操作日志")
     @RequestMapping(value = "/userlogs/{userCode}", method = RequestMethod.GET)
     @WrapUpResponseBody
