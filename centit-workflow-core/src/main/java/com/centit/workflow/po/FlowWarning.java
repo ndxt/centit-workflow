@@ -4,10 +4,7 @@ import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -58,6 +55,7 @@ public class FlowWarning implements java.io.Serializable {
     private String warningType;
 
     @Column(name = "WARNING_TIME")
+    @OrderBy("DESC")
     private Date warningTime;
 
     // 发送的消息，或者执行失败的信息

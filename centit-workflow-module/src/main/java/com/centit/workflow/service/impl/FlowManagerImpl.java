@@ -1263,7 +1263,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return null;
         }
         Map<String, Object> filterMap =
-            CollectionsOpt.createHashMap("optTag", flowInstId, "topUnit", topUnit);
+            CollectionsOpt.createHashMap("optTag", flowInstId, "topUnit", topUnit,
+                "orderBy", "optTime desc");
         /*if (!withNodeAction) {
             filterMap.put("optMethod", "flowOpt");
         }*/
@@ -1284,7 +1285,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         return optLogManager.listOptLog("workflow",
             CollectionsOpt.createHashMap("optTag", flowInstId,
-                "oldValue", nodeInstId), -1, -1);
+                "oldValue", nodeInstId, "orderBy", "optTime desc"), -1, -1);
     }
 
     @Override
@@ -1311,7 +1312,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return null;
         Map<String, Object> filterMap =
             CollectionsOpt.createHashMap("userCode", userCode,
-                "optTime_gt", lastTime);
+                "optTime_gt", lastTime, "orderBy", "optTime desc");
 
         List<? extends OperationLog> optLogs =
             optLogManager.listOptLog("workflow", filterMap,
