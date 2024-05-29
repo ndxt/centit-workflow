@@ -496,6 +496,7 @@ public class FlowDefineController extends ResourceBaseController {
      */
     @ApiOperation(value = "更新流程状态", notes = "更新流程状态")
     @RequestMapping(value = "/changestate/{flowCode}/{newState}", method = RequestMethod.PUT)
+    @WrapUpResponseBody
     public ResponseData changeState(@PathVariable String flowCode, @PathVariable String newState, HttpServletRequest request) {
         WebOptUtils.assertUserLogin(request);
         if (FlowInfo.FLOW_STATE_FORBIDDEN.equals(newState)) {
@@ -513,8 +514,8 @@ public class FlowDefineController extends ResourceBaseController {
      * @return
      */
     @ApiOperation(value = "批量删除流程", notes = "批量删除流程,多个id之间用逗号隔开")
-    @WrapUpResponseBody
     @RequestMapping(value = "/batchChangeState", method = RequestMethod.POST)
+    @WrapUpResponseBody
     public ResponseData batchChangeState(@RequestBody String[] flowCodes, HttpServletRequest request){
         if (StringUtils.isAnyEmpty(flowCodes)){
             return ResponseData.makeErrorMessage(ResponseData.ERROR_FIELD_INPUT_NOT_VALID,
