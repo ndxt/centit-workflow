@@ -74,7 +74,8 @@ public class RoleFormulaController extends BaseController {
     public RoleFormula saveFlowRole(HttpServletRequest request, @RequestBody RoleFormula roleFormula) {
         String loginUser = WebOptUtils.getCurrentUserCode(RequestThreadLocal.getLocalThreadWrapperRequest());
         if (StringBaseOpt.isNvl(loginUser)) {
-            throw new ObjectException(ResponseData.ERROR_USER_NOT_LOGIN, "您未登录！");
+            throw new ObjectException(ResponseData.ERROR_USER_NOT_LOGIN,
+                getI18nMessage( "error.302.user_not_login", request));
         }
         if (WebOptUtils.isTenantTopUnit(request)) {
             String topUnit = WebOptUtils.getCurrentTopUnit(request);

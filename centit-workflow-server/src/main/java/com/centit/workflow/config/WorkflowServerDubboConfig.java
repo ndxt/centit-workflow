@@ -1,8 +1,9 @@
-package com.centit.workflow.dubbo.config;
+package com.centit.workflow.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 @Configuration
-@ImportResource({"classpath:dubbo-workflow-client.xml"})
-public class DubboConfigClient {
+@ImportResource({"classpath:dubbo-workflow-server.xml"})
+public class WorkflowServerDubboConfig {
+
 }

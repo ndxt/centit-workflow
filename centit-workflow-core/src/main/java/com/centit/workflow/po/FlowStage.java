@@ -3,6 +3,7 @@ package com.centit.workflow.po;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "WF_FLOW_STAGE")
+@Data
 public class FlowStage implements java.io.Serializable {
     private static final long serialVersionUID =  1L;
 
@@ -33,17 +35,21 @@ public class FlowStage implements java.io.Serializable {
     @Column(name = "STAGE_NAME")
     private String  stageName;
 
-    @Column(name = "IS_ACCOUNT_TIME")
-    private String  isAccountTime;
-
-    @Column(name = "LIMIT_TYPE")
-    private String  limitType;
-
     @Column(name = "TIME_LIMIT")
     private String  timeLimit;
 
+    /**
+     * N：仅通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+     * A ：调用api
+     */
     @Column(name = "EXPIRE_OPT")
     private String  expireOpt;
+
+    @Column(name = "EXPIRE_CALL_API")
+    private String expireCallApi;
+
+    @Column(name = "WARNING_PARAM")
+    private String warningParam;
 
     @Column(name = "STAGE_ORDER")
     private Long  stageOrder;
@@ -52,13 +58,13 @@ public class FlowStage implements java.io.Serializable {
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
      */
     @Column(name = "VERSION")
-    @NotNull(message = "字段不能为空")
-    @Range( max = 9999, message = "版本号不能大于{max}")
+    @NotNull
+    @Range( max = 9999)
     private Long version;
 
     @Column(name = "FLOW_CODE")
-    @NotBlank(message = "字段不能为空")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @NotBlank
+    @Length(max = 32)
     private String flowCode;
 
     @JSONField(serialize=false)
@@ -82,166 +88,43 @@ public class FlowStage implements java.io.Serializable {
         this.stageCode= stageCode;
     }
 
-/** full constructor */
-    public FlowStage(
-            String stageId
-    , FlowInfo flowDefine, String  stageCode, String  stageName, String  isAccountTime, String  limitType, String  timeLimit, String  expireOpt, Long stageOrder) {
-
-        this.stageId = stageId;
-        this.flowDefine = flowDefine;
-        this.stageCode= stageCode;
-        this.stageName= stageName;
-        this.isAccountTime= isAccountTime;
-        this.limitType= limitType;
-        this.timeLimit= timeLimit;
-        this.expireOpt= expireOpt;
-        this.stageOrder= stageOrder;
-    }
-
-
-
-    public String getStageId() {
-        return this.stageId;
-    }
-
-    public void setStageId(String stageId) {
-        this.stageId = stageId;
-    }
-    // Property accessors
-
-
-    /*public void setVersion(Long version) {
-        if (null != flowDefine) {
-            this.flowDefine.setVersion(version);
-        }
-    }*/
-
-
-    /*public void setFlowCode(String flowCode) {
-        if (null != flowDefine) {
-            this.flowDefine.setFlowCode(flowCode);
-        }
-    }*/
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public String getFlowCode() {
-        return flowCode;
-    }
-
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
-    }
-
-    public String getStageCode() {
-        return this.stageCode;
-    }
-
-    public void setStageCode(String stageCode) {
-        this.stageCode = stageCode;
-    }
-
-    public String getStageName() {
-        return this.stageName;
-    }
-
-    public void setStageName(String stageName) {
-        this.stageName = stageName;
-    }
-
-    public String getIsAccountTime() {
-        return this.isAccountTime;
-    }
-
-    public void setIsAccountTime(String isAccountTime) {
-        this.isAccountTime = isAccountTime;
-    }
-
-    public String getLimitType() {
-        return this.limitType;
-    }
-
-    public void setLimitType(String limitType) {
-        this.limitType = limitType;
-    }
-
-    public String getTimeLimit() {
-        return this.timeLimit;
-    }
-
-    public void setTimeLimit(String timeLimit) {
-        this.timeLimit = timeLimit;
-    }
-
-    public String getExpireOpt() {
-        return this.expireOpt;
-    }
-
-    public void setExpireOpt(String expireOpt) {
-        this.expireOpt = expireOpt;
-    }
-
-    public Long getStageOrder() {
-        return stageOrder;
-    }
-
-    public void setStageOrder(Long stageOrder) {
-        this.stageOrder = stageOrder;
-    }
-
     public void copy(FlowStage other){
         this.setStageId(other.getStageId());
         //this.setVersion(other.getVersion());
         //this.setFlowCode(other.getFlowCode());
         this.stageCode= other.getStageCode();
         this.stageName= other.getStageName();
-        this.isAccountTime= other.getIsAccountTime();
-        this.limitType= other.getLimitType();
         this.timeLimit= other.getTimeLimit();
         this.expireOpt= other.getExpireOpt();
         this.stageOrder= other.getStageOrder();
-
+        this.warningParam=other.getWarningParam();
     }
 
     public void copyNotNullProperty(FlowStage other){
-
         if( other.getStageId() != null)
             this.setStageId(other.getStageId());
-        /*if( other.getFlowDefine() != null)
-            this.flowDefine = other.getFlowDefine();*/
         if( other.getStageCode() != null)
             this.stageCode= other.getStageCode();
         if( other.getStageName() != null)
             this.stageName= other.getStageName();
-        if( other.getIsAccountTime() != null)
-            this.isAccountTime= other.getIsAccountTime();
-        if( other.getLimitType() != null)
-            this.limitType= other.getLimitType();
         if( other.getTimeLimit() != null)
             this.timeLimit= other.getTimeLimit();
         if( other.getExpireOpt() != null)
             this.expireOpt= other.getExpireOpt();
         if( other.getStageOrder() != null)
             this.stageOrder= other.getStageOrder();
+        if (other.getWarningParam()!=null)
+            this.warningParam=other.getWarningParam();
     }
 
     public void clearProperties(){
-
         this.flowDefine=null;
         this.stageCode= null;
         this.stageName= null;
-        this.isAccountTime= null;
-        this.limitType= null;
         this.timeLimit= null;
         this.expireOpt= null;
         this.stageOrder= null;
-
+        this.warningParam=null;
     }
 
 }

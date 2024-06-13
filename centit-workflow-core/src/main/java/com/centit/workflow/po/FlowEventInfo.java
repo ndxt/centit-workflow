@@ -37,9 +37,9 @@ public class FlowEventInfo implements Serializable {
     private String eventParam;
 
     @Column(name = "RECEIVE_TIME")
-    @OrderBy("DESC")
     private Date   receiveTime;
 
+    @OrderBy
     @Column(name = "OPT_TIME")
     private Date   optTime;
 
@@ -59,5 +59,6 @@ public class FlowEventInfo implements Serializable {
     public FlowEventInfo(){
         this.optState = OPT_STATE_NORMAL;
         this.receiveTime = DatetimeOpt.currentUtilDate();
+        this.optTime = this.receiveTime;
     }
 }

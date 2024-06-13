@@ -167,7 +167,7 @@ public interface FlowDefine {
     /**
      * 列举所有的子流程
      */
-    Map<String, String> listAllSubFlow();
+    Map<String, String> listAllSubFlow(String osId);
 
     /**
      * 获取流程最新的版本好

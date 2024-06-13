@@ -4,13 +4,13 @@ import com.alibaba.fastjson2.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInstance;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,88 +49,37 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
         filterField.put(CodeBook.ORDER_BY_HQL_ID , "createTime desc,flowInstId desc");
         return filterField;
     }
-    @Transactional
-    public long getNextFlowInstId(){
-        return  DatabaseOptUtils.getSequenceNextValue(this,"S_FLOWINSTNO");
-    }
 
-    /**
-     * 更新流程实例状态
-     * @param instid 实例编号
-     * @param state
-     */
     @Transactional
-    public void updtFlowInstState(long instid,String state){
-        FlowInstance flowInst = this.getObjectById(instid);
-        flowInst.setInstState(state);
-        this.updateObject(flowInst);
-    }
-
-    // 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
-    // expireOptSign == 0未处理  1 已通知  ,2..6 已通知2..5次（暂时不启动重复通知）6:不处理    7：已挂起  8 已终止 9 已完成
-    @Transactional
-    public List<FlowInstance> listNearExpireFlowInstance(long leaveLimit) {
-        String conditionSql = "where FLOW_INST_ID = ? " +
-            " and inst_State='N' and is_Timer='T'";
-        //and expireOptSign<6 暂时没有这个字段
-        return  this.listObjectsByFilter(conditionSql,new Object[]{leaveLimit});
+    public List<FlowInstance> listExpireFlowInstance() {
+        return this.listObjectsByFilter(" where deadline_time < ? and inst_State='N'" +
+                " and (TIMER_STATUS='T' or TIMER_STATUS='W') ",
+            new Object[]{DatetimeOpt.currentUtilDate()});
     }
 
     @Transactional
-    public void updateTimeConsume(long consumeTime)
-    {
-        String baseSql = "update WF_FLOW_INSTANCE set TIME_LIMIT =TIME_LIMIT- ? " +
-            "where inst_State='N' and is_Timer='T' and time_Limit is not null  ";
-        this.getJdbcTemplate().update(baseSql,new Object[]{consumeTime});
-    }
-
-    /**
-     * 查询所有活动的流程
-     * @return
-     */
-    @Transactional
-    public List<FlowInstance> listAllActiveFlowInst(PageDesc pageDesc){
-        return this.listObjectsByFilterAsJson("where inst_State = 'N'",
-            new Object[]{},pageDesc).toJavaList(FlowInstance.class);
+    public List<FlowInstance> listWarningFLowInstance() {
+        return this.listObjectsByFilter(" where warning_time < ? and inst_State='N' and TIMER_STATUS='T'",
+            new Object[]{DatetimeOpt.currentUtilDate()});
     }
 
     @Transactional
-    public List<FlowInstance> listAllActiveTimerFlowInst(){
-        String whereSql = "where inst_State = 'N' and (is_Timer='T' or is_Timer='H')";
-        return this.listObjectsByFilter(whereSql,(Object[]) null);
-    }
-
-    @Transactional
-    public List<FlowInstance> listAllActiveTimerFlowInst(PageDesc pageDesc){
-        return this.listObjectsByFilterAsJson("where inst_State = 'N' and (is_Timer='T' or is_Timer='H')",
-            new Object[]{},pageDesc).toJavaList(FlowInstance.class);
+    public void updtFlowTimerStatus(String flowInstId, String state) {
+        String sql = "update WF_FLOW_INSTANCE set TIMER_STATUS = ? where FLOW_INST_ID = ?";
+        DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{ state, flowInstId});
     }
 
     /**
      * 查询某人操作定时任务的流程
      * @param userCode
-     * @param isTimer
+     * @param timerStatus
      * @return
      */
     @Transactional
-    public List<FlowInstance> listFlowInstByTimer(String userCode, String isTimer, PageDesc pageDesc){
+    public List<FlowInstance> listFlowInstByTimerStatus(String userCode, String timerStatus, PageDesc pageDesc){
         return super.listObjectsByFilterAsJson(
-            " where last_Update_User = ? and is_Timer =? order by last_Update_Time ",
-            new Object[]{userCode,isTimer},pageDesc).toJavaList(FlowInstance.class);
-    }
-
-    /**
-     * 更新流程实例时钟状态
-     * @param instid 实例编号
-     * @param isTimer 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
-     */
-    @Transactional
-    public void updateFlowTimerState(String instid,String isTimer,String mangerUserCode){
-        FlowInstance flowInst = this.getObjectById(instid);
-        flowInst.setIsTimer(isTimer);
-        flowInst.setLastUpdateUser(mangerUserCode);
-        flowInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
-        this.updateObject(flowInst);
+            " where last_Update_User = ? and TIMER_STATUS =? order by last_Update_Time ",
+            new Object[]{userCode,timerStatus},pageDesc).toJavaList(FlowInstance.class);
     }
 
     /**
@@ -158,30 +107,30 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
 
     @Transactional
     public void updateFlowInstOptInfo(String flowInstId, String flowOptName,String flowOptTag){
-        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=? where  FLOW_INST_ID=?";
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?, FLOW_OPT_TAG=? where FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,flowInstId});
     }
 
     @Transactional
     public void updateFlowInstOptName(String flowInstId, String flowOptName){
-        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=? where  FLOW_INST_ID=?";
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=? where FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowInstId});
     }
 
     @Transactional
     public void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName,String flowOptTag,String userCode,String unitCode){
-        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?,FLOW_OPT_TAG=?,user_code=?,unit_code=? where  FLOW_INST_ID=?";
+        String sql="update WF_FLOW_INSTANCE set FLOW_OPT_NAME=?, FLOW_OPT_TAG=?, user_code=?, unit_code=? where FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{flowOptName,flowOptTag,userCode,unitCode,flowInstId});
     }
 
     public List<FlowInstance> listAllFlowInstByOptTag(String flowOptTag) {
-        return this.listObjectsByFilter("where FLOW_OPT_TAG=? "
-            ,new Object[]{flowOptTag});
+        return this.listObjectsByFilter("where FLOW_OPT_TAG=? ",
+            new Object[]{flowOptTag});
     }
 
     public void updtFlowInstInfo(FlowInstance wfFlowInst) {
-        String sql="update WF_FLOW_INSTANCE set FLOW_INST_ID=?,INST_STATE=?," +
-            "LAST_UPDATE_TIME=?,LAST_UPDATE_USER=? where  FLOW_INST_ID=?";
+        String sql="update WF_FLOW_INSTANCE set FLOW_INST_ID=?, INST_STATE=?, " +
+            "LAST_UPDATE_TIME=?, LAST_UPDATE_USER=? where FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql,new Object[]{wfFlowInst.getFlowInstId(),wfFlowInst.getInstState(),
             wfFlowInst.getLastUpdateTime(),wfFlowInst.getLastUpdateUser(),wfFlowInst.getFlowInstId()});
     }
@@ -192,7 +141,8 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
      * @return
      */
     public JSONArray countFlowInstances(Map<String,Object> map){
-        String sql = "SELECT FLOW_CODE,count(1) FROM wf_flow_instance WHERE 1 = 1 [ :flowCode | AND FLOW_CODE in ( :flowCode ) ]  GROUP BY FLOW_CODE";
+        String sql = "SELECT FLOW_CODE,count(1) FROM wf_flow_instance " +
+            "WHERE 1 = 1 [ :flowCode | AND FLOW_CODE in ( :flowCode ) ]  GROUP BY FLOW_CODE";
         return DatabaseOptUtils.listObjectsByParamsDriverSqlAsJson(this, sql, map);
     }
 }

@@ -3,7 +3,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 @Configuration
-@ImportResource({"classpath:dubbo-workflow-server.xml"})
-public class DubboConfigServer {
-
+@ImportResource({"classpath:dubbo-workflow-client.xml"})
+public class WorkflowClientDubboConfig {
 }

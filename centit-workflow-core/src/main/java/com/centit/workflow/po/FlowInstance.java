@@ -2,9 +2,9 @@ package com.centit.workflow.po;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.centit.framework.core.dao.DictionaryMap;
+import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.StringRegularOpt;
-import com.centit.support.common.WorkTimeSpan;
 import com.centit.support.database.orm.GeneratorType;
 import com.centit.support.database.orm.ValueGenerator;
 import lombok.Data;
@@ -40,40 +40,33 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name = "FLOW_GROUP_ID")
     private String flowGroupId;
 
-    @ManyToOne
-    @JoinColumns({
-        @JoinColumn(name = "version"),
-        @JoinColumn(name = "flowCode")
-    })
-    private FlowInfo flowDefine;
-
     /**
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
      */
     @Column(name = "VERSION")
-    @NotNull(message = "字段不能为空")
-    @Range(max = 9999, message = "版本号不能大于{max}")
+    @NotNull
+    @Range(max = 9999)
     private Long version;
 
     @Column(name = "FLOW_CODE")
-    @NotNull(message = "字段不能为空")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @NotNull
+    @Length(max = 32)
     @DictionaryMap(value = "flowCode", fieldName = "flowName")
     private String flowCode;
 
     @Column(name = "TOP_UNIT")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @Length(max = 32)
     private String topUnit;
 
     /**租户信息
      * 等同于 wf_opt_info中的 APPLICATION_ID
      */
     @Column(name = "OS_ID")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @Length(max = 32)
     private String osId;
 
     @Column(name = "OPT_ID")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @Length(max = 32)
     private String optId;
 
     /**
@@ -81,16 +74,6 @@ public class FlowInstance implements java.io.Serializable {
      */
     @Column(name = "FLOW_OPT_NAME")
     private String flowOptName;
-
-    public FlowInfo getFlowDefine() {
-        if (null == flowDefine)
-            return this.flowDefine = new FlowInfo();
-        return flowDefine;
-    }
-
-    public void setFlowDefine(FlowInfo flowDefine) {
-        this.flowDefine = flowDefine;
-    }
 
     /**
      * varchar(200)
@@ -101,11 +84,28 @@ public class FlowInstance implements java.io.Serializable {
     @OrderBy(value = "DESC")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-    @Column(name = "PROMISE_TIME")
-    private Long promiseTime;
 
-    @Column(name = "TIME_LIMIT")
-    private Long timeLimit;
+    /**
+     * 计时状态 F 不计是 、T 计时 、P 暂停 、 W 已预警 、 E 已逾期处理
+     */
+    @Column(name = "TIMER_STATUS")
+    private String timerStatus;
+    /**
+     * 预警时间
+     */
+    @Column(name = "warning_time")
+    private Date warningTime;
+    /**
+     * 截止时间
+     */
+    @Column(name = "deadline_time")
+    private Date deadlineTime;
+    /**
+     * 暂停时间 isTimer=='P' 有效
+     */
+    @Column(name = "pause_time")
+    private Date pauseTime;
+
     /**
      * 流程状态
      * N 正常  C 完成  P 暂停 挂起  F 强行结束、应主流程回退而结束
@@ -144,22 +144,10 @@ public class FlowInstance implements java.io.Serializable {
     @Column(name = "LAST_UPDATE_USER")
     private String lastUpdateUser;
 
-    //不计时 F、 计时 T(有期限)、暂停P 忽略(无期限)
-    public static final String FLOW_TIMER_STATE_NOLIMIT = "F";
-    public static final String FLOW_TIMER_STATE_RUN = "T";
-    public static final String FLOW_TIMER_STATE_SUSPEND = "P";
-    public static final String FLOW_TIMER_STATE_ONLY_NODE = "H";
-    @Column(name = "IS_TIMER")
-    private String isTimer;
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = NodeInstance.class)
     @JoinColumn(name = "flowInstId")
     @JSONField(serialize = false)
     private List<NodeInstance> flowNodeInstances;
-
-    @Transient
-    @JSONField(serialize = true)
-    private List<NodeInstance> activeNodeList;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = StageInstance.class)
     @JoinColumn(name = "flowInstId")
@@ -177,10 +165,9 @@ public class FlowInstance implements java.io.Serializable {
      * default constructor
      */
     public FlowInstance() {
-        this.timeLimit = null;
+        this.timerStatus = "F";
         this.flowNodeInstances = null;
         this.flowStageInstances = null;
-        this.activeNodeList = null;
         this.isSubInst = false;
     }
 
@@ -188,38 +175,21 @@ public class FlowInstance implements java.io.Serializable {
      * minimal constructor
      */
     public FlowInstance(String wfinstid, Date createtime) {
-        this.timeLimit = null;
+        this.timerStatus = "F";
         this.flowInstId = wfinstid;
         this.createTime = createtime;
         this.isSubInst = false;
         this.flowNodeInstances = null;
         this.flowStageInstances = null;
-        this.activeNodeList = null;
     }
 
     public boolean checkIsInRunning() {
         return StringUtils.equalsAny(this.getInstState(), "N", "M");
     }
 
-    public String getPromiseTimeStr() {
-        if (promiseTime == null)
-            return "";
-        WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumberAsMinute(promiseTime);
-        return wts.getTimeSpanDesc();
-    }
-
-    public String getTimeLimitStr() {
-        if (timeLimit == null)
-            return "";
-        WorkTimeSpan wts = new WorkTimeSpan();
-        wts.fromNumberAsMinute(timeLimit);
-        return wts.getTimeSpanDesc();
-    }
-
-
-    public Set<NodeInstance> getActiveNodeInstances() {
-        Set<NodeInstance> nodeInstSet = new HashSet<>();
+    @JSONField
+    public List<NodeInstance> getActiveNodeInstances() {
+        List<NodeInstance> nodeInstSet = new ArrayList<>();
         if (this.flowNodeInstances == null)
             return nodeInstSet;
         for (NodeInstance nodeInst : flowNodeInstances)
@@ -302,16 +272,12 @@ public class FlowInstance implements java.io.Serializable {
         return this.flowStageInstances;
     }
 
-    public List<StageInstance> getStageInstanceList() {
-        List<StageInstance> stageList = new ArrayList<>();
-        stageList.addAll(getFlowStageInstances());
-        return stageList;
-    }
 
-    public List<StageInstance> getExpiredStageInstanceList() {
+    public List<StageInstance> fetchExpiredStageInstanceList() {
         List<StageInstance> stageList = new ArrayList<>();
+        Date currentTime = DatetimeOpt.currentUtilDate();
         for (StageInstance stage : getFlowStageInstances()) {
-            if (stage.getTimeLimit() < 0)
+            if (stage.getDeadlineTime() != null && stage.getDeadlineTime().before(currentTime) )
                 stageList.add(stage);
         }
         return stageList;
@@ -330,7 +296,6 @@ public class FlowInstance implements java.io.Serializable {
     }
 
     public StageInstance newFlowStageInstance() {
-
         StageInstance res = new StageInstance();
         res.setFlowInstId(this.getFlowInstId());
         return res;
@@ -346,7 +311,7 @@ public class FlowInstance implements java.io.Serializable {
         return null;
     }
 
-    public NodeInstance getFirstNodeInstance() {
+    public NodeInstance fetchFirstNodeInstance() {
         if (this.flowNodeInstances == null)
             return null;
         NodeInstance firstNode = null;
@@ -646,7 +611,7 @@ public class FlowInstance implements java.io.Serializable {
         }
         //delete
         boolean found = false;
-        Set<StageInstance> oldObjs = new HashSet<StageInstance>();
+        Set<StageInstance> oldObjs = new HashSet<>();
         oldObjs.addAll(getFlowStageInstances());
 
         for (Iterator<StageInstance> it = oldObjs.iterator(); it.hasNext(); ) {
@@ -739,20 +704,18 @@ public class FlowInstance implements java.io.Serializable {
         this.userCode = other.getUserCode();
         this.osId = other.getOsId();
         this.optId = other.getOptId();
-        this.promiseTime = other.getPromiseTime();
-        this.timeLimit = other.getTimeLimit();
+        this.timerStatus = other.getTimerStatus();
+        this.deadlineTime = other.getDeadlineTime();
+        this.pauseTime = other.getPauseTime();
         this.flowNodeInstances = other.getFlowNodeInstances();
         this.flowStageInstances = other.getFlowStageInstances();
         this.lastUpdateTime = other.getLastUpdateTime();
         this.lastUpdateUser = other.getLastUpdateUser();
-        this.isTimer = other.getIsTimer();
     }
 
     public void copyNotNullProperty(FlowInstance other) {
-
         if (other.getFlowInstId() != null)
             this.setFlowInstId(other.getFlowInstId());
-
         if (other.getVersion() != null)
             this.setVersion(other.getVersion());
         if (other.getFlowCode() != null)
@@ -779,21 +742,18 @@ public class FlowInstance implements java.io.Serializable {
             this.setUnitCode(other.getUnitCode());
         if (other.getUserCode() != null)
             this.userCode = other.getUserCode();
-
-        if (other.getPromiseTime() != null)
-            this.promiseTime = other.getPromiseTime();
-        if (other.getTimeLimit() != null)
-            this.timeLimit = other.getTimeLimit();
+        if (other.getTimerStatus() != null)
+            this.timerStatus = other.getTimerStatus();
+        if (other.getDeadlineTime() != null)
+            this.deadlineTime = other.getDeadlineTime();
+        if (other.getPauseTime() != null)
+            this.pauseTime = other.getPauseTime();
         if (other.getLastUpdateTime() != null)
             this.lastUpdateTime = other.getLastUpdateTime();
         if (other.getLastUpdateUser() != null)
             this.lastUpdateUser = other.getLastUpdateUser();
-        if (other.getIsTimer() != null)
-            this.isTimer = other.getIsTimer();
-
         this.replaceFlowNodeInstances(other.getFlowNodeInstances());
         this.replaceFlowStageInstances(other.getFlowStageInstances());
-
     }
 
     public void clearProperties() {
@@ -809,12 +769,12 @@ public class FlowInstance implements java.io.Serializable {
         this.preNodeInstId = null;
         this.setUnitCode(null);
         this.userCode = null;
-        this.timeLimit = null;
-        this.promiseTime = null;
+        this.timerStatus = null;
+        this.deadlineTime = null;
+        this.pauseTime = null;
         this.flowNodeInstances = null;
         this.flowStageInstances = null;
         this.lastUpdateTime = null;
         this.lastUpdateUser = null;
-        this.isTimer = null;
     }
 }

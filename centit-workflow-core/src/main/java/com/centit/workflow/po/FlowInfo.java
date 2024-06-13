@@ -23,14 +23,14 @@ public class FlowInfo implements java.io.Serializable {
     private FlowInfoId cid;
 
     @Column(name = "FLOW_NAME") //FLOW_NAME
-    @Length(max = 120, message = "字段长度不能大于{max}")
+    @Length(max = 120)
     private String flowName; //flowName
 
     /**
      * N 普通流程，F 自由流程
      */
     @Column(name = "FLOW_CLASS")
-    @Length(max = 4, message = "字段长度不能大于{max}")
+    @Length(max = 4)
     private String flowClass;
     // A 草稿 B 正常 C 过期 D 禁用  E 已发布
     public static final String FLOW_STATE_DRAFT = "A";
@@ -39,11 +39,11 @@ public class FlowInfo implements java.io.Serializable {
     public static final String FLOW_STATE_FORBIDDEN = "D";
     public static final String FLOW_STATE_PUBLISHED = "E";
     @Column(name = "FLOW_STATE")
-    @Length(max = 1, message = "字段长度不能大于{max}")
+    @Length(max = 1)
     private String flowState;
 
     @Column(name = "FLOW_DESC")
-    @Length(max = 500, message = "字段长度不能大于{max}")
+    @Length(max = 500)
     private String flowDesc;
 
     @JSONField(serialize = false)
@@ -54,35 +54,39 @@ public class FlowInfo implements java.io.Serializable {
     private Date flowPublishDate;
 
     @Column(name = "FIRST_NODE_ID")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @Length(max = 32)
     private String firstNodeId;
 
     /**
      * 等同于 wf_opt_info中的 APPLICATION_ID
      */
     @Column(name = "OS_ID")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @Length(max = 32)
     private String osId;
 
     @Column(name = "OPT_ID")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @Length(max = 32)
     private String optId;
 
     @Column(name = "TIME_LIMIT")
-    @Length(max = 20, message = "字段长度不能大于{max}")
+    @Length(max = 20)
     private String timeLimit;
 
-    public static final String FLOW_EXPIRE_OPT_NOTICE = "N";
-    public static final String FLOW_EXPIRE_OPT_NONE = "O";
-    public static final String FLOW_EXPIRE_OPT_SUSPENSE = "X";
-    public static final String FLOW_EXPIRE_OPT_TERMINATE = "E";
     /**
      * 获取流程超期后处理方式
-     * N：通知， O:不处理 ，X：挂起，E：终止（流程）
+     * N：仅通知， O:不处理 ，X：挂起，E：终止（流程）
+     * A ：调用api
+     * @see NodeInfo
      */
     @Column(name = "EXPIRE_OPT")
-    @Length(max = 1, message = "字段长度不能大于{max}")
+    @Length(max = 1)
     private String expireOpt;
+
+    @Column(name = "EXPIRE_CALL_API")
+    private String expireCallApi;
+
+    @Column(name = "WARNING_PARAM")
+    private String warningParam;
 
     /**
      * 计划发布时间（生效时间），这个字段暂未使用
@@ -472,6 +476,8 @@ public class FlowInfo implements java.io.Serializable {
             this.expireOpt = other.getExpireOpt();
         if (other.getAtPublishDate() != null)
             this.atPublishDate = other.getAtPublishDate();
+        if (other.getWarningParam()!=null)
+            this.warningParam=other.getWarningParam();
         /*if(other.getFlowStages() !=null)
             this.replaceFlowStages(other.getFlowStages());*/
     }
@@ -505,6 +511,8 @@ public class FlowInfo implements java.io.Serializable {
             this.expireOpt = other.getExpireOpt();
         if (this.getAtPublishDate() == null)
             this.atPublishDate = other.getAtPublishDate();
+        if (this.getWarningParam()==null)
+            this.warningParam=other.getWarningParam();
         /*if(null==this.getFlowStages())
             this.replaceFlowStages(other.getFlowStages());*/
     }
@@ -524,6 +532,7 @@ public class FlowInfo implements java.io.Serializable {
         this.timeLimit = null;
         this.expireOpt = null;
         this.atPublishDate = null;
+        this.warningParam=null;
         this.getFlowStages().clear();
     }
 

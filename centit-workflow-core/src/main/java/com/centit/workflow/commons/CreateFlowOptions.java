@@ -6,10 +6,7 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by codefan on 17-9-11.
@@ -144,6 +141,9 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
      */
     @ApiModelProperty("指定后续节点操作人员")
     private Map<String, Set<String>> nodeOptUsers;
+
+
+    private Locale clientLocale;
 
     private CreateFlowOptions() {
         this.lockOptUser = false;
@@ -317,6 +317,7 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
         this.setNodeUnits(CollectionsOpt.cloneHashMap(options.getNodeUnits()));
         this.setNodeOptUsers(CollectionsOpt.cloneHashMap(options.getNodeOptUsers()));
         this.setFlowOrganizes(CollectionsOpt.cloneHashMap(options.getFlowOrganizes()));
+        this.setClientLocale(options.getClientLocale());
         this.user(options.getUserCode())
             .unit(options.getUnitCode());
         return this;

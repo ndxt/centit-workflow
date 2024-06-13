@@ -5,7 +5,7 @@
     <parent>
         <artifactId>centit-workflow</artifactId>
         <groupId>com.centit.product</groupId>
-        <version>${revision}</version>
+         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>centit-workflow-dubbo-client-config</artifactId>
@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.centit.framework</groupId>
-            <artifactId>framework-dubbo-client-config</artifactId>
+            <artifactId>framework-dubbo-config</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>

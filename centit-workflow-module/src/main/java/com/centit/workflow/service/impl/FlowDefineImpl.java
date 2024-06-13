@@ -192,6 +192,22 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             if (StringUtils.isBlank(node.getOsId())) {
                 node.setOsId(flow.getOsId());
             }
+            //这个前端应该检测
+            if (StringUtils.isBlank(node.getNodeName())) {
+               if(NodeInfo.NODE_TYPE_END.equals(node.getNodeType())){
+                   node.setNodeName("结束节点");
+               } else if(NodeInfo.NODE_TYPE_ROUTE.equals(node.getNodeType())){
+                   node.setNodeName("路由");
+               } else if(NodeInfo.NODE_TYPE_START.equals(node.getNodeType())){
+                    node.setNodeName("开始节点");
+               } else if(NodeInfo.NODE_TYPE_AUTO.equals(node.getNodeType())){
+                   node.setNodeName("自动执行");
+               } else if(NodeInfo.NODE_TYPE_SYNC.equals(node.getNodeType())){
+                   node.setNodeName("同步节点");
+               } else {
+                   node.setNodeName(StringUtils.isBlank(node.getNodeCode())?node.getNodeId():node.getNodeCode());
+               }
+            }
         }
 
         for (FlowTransition tran : flowDef.getTransList()) {
@@ -292,6 +308,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
             flowDef.setFlowDesc(flowAttr.getString("flowDesc"));
             flowDef.setTimeLimit(flowAttr.getString("timeLimit"));
             flowDef.setExpireOpt(flowAttr.getString("expireOpt"));
+            flowDef.setExpireCallApi(flowAttr.getString("expireCallApi"));
+            flowDef.setWarningParam(flowAttr.getString("warningParam"));
         }
         flowDef.setFlowXmlDesc(flowDefXML);
 
@@ -372,9 +390,8 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         if (flowDef == null) {
             return 0L;
         }
-        //WfFlowDefine newFlowDef = new WfFlowDefine();
-        String wfDefXML = flowDef.getFlowXmlDesc();
-        if (StringUtils.isBlank(wfDefXML)) {
+
+        if (StringUtils.isBlank(flowDef.getFlowXmlDesc())) {
             throw new ObjectException("流程没有内容");
         }
 
@@ -406,6 +423,9 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         newFlowDef.setOptId(flowDef.getOptId());
         newFlowDef.setTimeLimit(flowDef.getTimeLimit());
         newFlowDef.setExpireOpt(flowDef.getExpireOpt());
+        newFlowDef.setExpireCallApi(newFlowDef.getExpireCallApi());
+        newFlowDef.setWarningParam(newFlowDef.getWarningParam());
+
         newFlowDef.setFlowPublishDate(DatetimeOpt.currentUtilDate());
         //newFlowDef.setFirstNodeId(flowData.firstNodeId);
         newFlowDef.setFlowState(FlowInfo.FLOW_STATE_NORMAL);
@@ -620,7 +640,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         roleList.put(SysUserFilterEngine.ROLE_TYPE_XZ /*"xz"*/, context.listAllRank());
         //roleList.put(SysUserFilterEngine.ROLE_TYPE_ITEM /*"bj"*/, context.listAllProjectRole());
         roleList.put(SysUserFilterEngine.ROLE_TYPE_SYSTEM /*"ro"*/, context.listAllSystemRole());
-        roleList.put(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA /*"sf"*/, flowRoleDao.listAllRoleMsg());
+        roleList.put(SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA /*"sf"*/, flowRoleDao.listAllRoleMsg(topUnit));
         return roleList;
     }
 
@@ -641,7 +661,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }*/ else if (SysUserFilterEngine.ROLE_TYPE_SYSTEM.equalsIgnoreCase(stype)) {
             return context.listAllSystemRole();
         } else if (SysUserFilterEngine.ROLE_TYPE_ENGINE_FORMULA.equalsIgnoreCase(stype)) {
-            return flowRoleDao.listAllRoleMsg();
+            return flowRoleDao.listAllRoleMsg(topUnit);
         } else {
             return null;
         }
@@ -666,10 +686,10 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
      */
     @Override
     @Transactional
-    public Map<String, String> listAllSubFlow() {
+    public Map<String, String> listAllSubFlow(String osId) {
         Map<String, String> subwf = new HashMap<>();
 
-        List<FlowInfo> listflow = flowDefineDao.getFlowsByState("B");
+        List<FlowInfo> listflow = flowDefineDao.getFlowsByOsId(osId, "B");
         for (FlowInfo wfFlowDefine : listflow) {
             subwf.put(wfFlowDefine.getFlowCode(), wfFlowDefine.getFlowName());
         }

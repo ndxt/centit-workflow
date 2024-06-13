@@ -3,8 +3,6 @@ package com.centit.workflow.po;
 import com.alibaba.fastjson2.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
@@ -30,16 +28,16 @@ public class NodeInfo implements java.io.Serializable {
     private String nodeId;
 
     @Column(name = "FLOW_CODE")
-    @NotNull(message = "字段不能为空")
-    @Length(max = 32, message = "字段长度不能大于{max}")
+    @NotNull
+    @Length(max = 32)
     private String flowCode;
 
     /**
      * 框架解析 不到ManyToOne的属性 这儿单独 设置
      */
     @Column(name = "VERSION")
-    @NotNull(message = "字段不能为空")
-    @Range( max = 9999, message = "版本号不能大于{max}")
+    @NotNull
+    @Range( max = 9999)
     private Long version;
 
     public static final String NODE_TYPE_START    = "A";
@@ -57,7 +55,7 @@ public class NodeInfo implements java.io.Serializable {
      * C:业务节点
      * D:自动运行节点
      * R:路由节点
-     * E:消息相应节点（同步节点）
+     * E:同步节点（消息响应节点，或等待时间）
      * F:结束
      * S:子流程
      */
@@ -68,7 +66,7 @@ public class NodeInfo implements java.io.Serializable {
     private String nodeName;
 
     /**NODE_TYPE == NODE_TYPE_OPT
-     * A: 指定到人 唯一执行人 B: 动态分配 C: 多人操作（已废弃）
+     * optRuntType A: 指定到人 唯一执行人 B: 动态分配 C: 多人操作（已废弃）
      * */
     public static final String OPT_RUN_TYPE_NORMAL   = "A";
     public static final String OPT_RUN_TYPE_DYNAMIC  = "B";
@@ -76,6 +74,7 @@ public class NodeInfo implements java.io.Serializable {
 
     /**
      * NODE_TYPE == NODE_TYPE_AUTO
+     * autoRunType ：
      * N：无操作、哑元
      * B：调用Bean包括远程Bean
      * S：脚本
@@ -89,6 +88,7 @@ public class NodeInfo implements java.io.Serializable {
     public static final String AUTO_NODE_OPT_CODE_CALL    = "C";
     /**
      * NODE_TYPE == NODE_TYPE_ROUTE
+     * routerType
      * D:分支 E:汇聚  G：多实例节点  H：并行  R：游离
      */
     public static final String ROUTER_TYPE_BRANCH    = "D";
@@ -100,6 +100,7 @@ public class NodeInfo implements java.io.Serializable {
 
     /**
      * NODE_TYPE == NODE_TYPE_SYNC
+     * nodeSyncType
      * T：时间触发
      * M：消息触发
      * */
@@ -129,7 +130,7 @@ public class NodeInfo implements java.io.Serializable {
      * optType = D && optCode = S 时
      * optParam 存放的是代码脚本
      */
-    @Length(max = 2048, message = "长度不能超过{max}")
+    @Length(max = 2048)
     @Column(name = "OPT_PARAM")
     private String optParam;
 
@@ -161,26 +162,10 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "NODE_DESC")
     private String nodeDesc;
 
-    /**
-     * 是否计时 I ： 未设置（ignore 在流转线上默认 ）
-     * T:计时（默认）
-     * F： 不计时 （这个节点的执行时间不计算在流程内）
-     * H 仅环节计时 （流程业务的剩余时间不减，比如用在受理节点之前的节点，
-     *              这些节点本身有期限，但是时间不计入流程业务的期限内） 。
-     */
-    public static final String TIME_LIMIT_IGNORE    = "I";
-    public static final String TIME_LIMIT_NORMAL    = "T";
-    public static final String TIME_LIMIT_NONE      = "F";
-    public static final String TIME_LIMIT_ONLY_NODE      = "H";
-
-    @Column(name = "IS_ACCOUNT_TIME")
-    private String isAccountTime;
-
     public static final String TIME_LIMIT_TYPE_IGNORE    = "I";
     public static final String TIME_LIMIT_TYPE_NONE      = "N";
     public static final String TIME_LIMIT_TYPE_FIX       = "F";
     public static final String TIME_LIMIT_TYPE_CYCLE     = "C";
-    public static final String TIME_LIMIT_TYPE_HIERARCHICAL = "H";
     /**
      * 期限类别 I ： 未设置（ignore 在流转线上默认 ）、
      * N 无 (无期限 none 默认) 、
@@ -191,6 +176,12 @@ public class NodeInfo implements java.io.Serializable {
     @Column(name = "LIMIT_TYPE")
     private String limitType;
 
+    /** TODO 添加一些固定的时间 字符串
+     * D 当天完成 day
+     * W 当周完成 week
+     * M 当月完成 month
+     * Y 当年完成 year
+     */
     @Column(name = "TIME_LIMIT")
     private String timeLimit;
 
@@ -213,14 +204,21 @@ public class NodeInfo implements java.io.Serializable {
     public static final String TIME_EXPIRE_OPT_NONE    = "O";
     public static final String TIME_EXPIRE_OPT_NOTIFY  = "N";
     public static final String TIME_EXPIRE_OPT_SUSPEND = "X";
-    public static final String TIME_EXPIRE_OPT_END_FLOW  = "E";
-    public static final String TIME_EXPIRE_OPT_SUBMIT = "C";
+    public static final String TIME_EXPIRE_OPT_END_FLOW= "E";
+    public static final String TIME_EXPIRE_OPT_SUBMIT  = "C";
+    public static final String TIME_EXPIRE_OPT_CALL_API= "A";
     /**
-     * N：通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+     * N：仅通知， O:不处理 ，X：挂起，E：终止（流程）， C：完成（强制提交,提交失败就挂起）
+     * A ：调用api
      */
     @Column(name = "EXPIRE_OPT")
     private String expireOpt;
 
+    @Column(name = "EXPIRE_CALL_API")
+    private String expireCallApi;
+
+    @Column(name = "WARNING_PARAM")
+    private String warningParam;
 
     public static final String NODE_NOTICE_TYPE_NONE  = "N";
     public static final String NODE_NOTICE_TYPE_DEFAULT  = "D";
@@ -285,14 +283,6 @@ public class NodeInfo implements java.io.Serializable {
 
     @Column(name = "CONVERGE_PARAM")
     private String convergeParam;
-    /**
-     * R：运行时间  L:剩余时间 P：比率
-     */
-    @Column(name = "WARNING_RULE")
-    private String warningRule;
-
-    @Column(name = "WARNING_PARAM")
-    private String warningParam;
 
     @JSONField(serialize=false)
     private FlowInfo flowDefine;
@@ -305,7 +295,6 @@ public class NodeInfo implements java.io.Serializable {
     // Constructors
     /** default constructor */
     public NodeInfo() {
-        this.isAccountTime = "T";
         this.inheritType = "0";
     }
 
@@ -313,7 +302,6 @@ public class NodeInfo implements java.io.Serializable {
     public NodeInfo(String nodeid, String nodetype) {
         this.nodeId = nodeid;
         this.nodeType = nodetype;
-        this.isAccountTime = "T";
         this.inheritType = "0";
     }
 
@@ -394,14 +382,12 @@ public class NodeInfo implements java.io.Serializable {
         this.nodeDesc = other.getNodeDesc();
         this.timeLimit = other.getTimeLimit();
         this.expireOpt = other.getExpireOpt();
-        this.isAccountTime = other.getIsAccountTime();
         this.stageCode =other.getStageCode();
         //this.routerType=other.getRouterType();
         this.multiInstType=other.getMultiInstType();
         this.multiInstParam=other.getMultiInstParam();
         this.convergeParam=other.getConvergeParam();
         this.convergeType=other.getConvergeType();
-        this.warningRule=other.getWarningRule();
         this.warningParam=other.getWarningParam();
     }
 
@@ -441,8 +427,6 @@ public class NodeInfo implements java.io.Serializable {
             this.timeLimit = other.getTimeLimit();
         if (other.getExpireOpt() != null)
             this.expireOpt = other.getExpireOpt();
-        if (other.getIsAccountTime() != null)
-            this.isAccountTime = other.getIsAccountTime();
         if (other.getStageCode()!=null)
             this.stageCode =other.getStageCode();
         if (other.getNoticeMessage()!=null)
@@ -464,8 +448,6 @@ public class NodeInfo implements java.io.Serializable {
             this.convergeParam=other.getConvergeParam();
         if (other.getConvergeType()!=null)
             this.convergeType=other.getConvergeType();
-        if (other.getWarningRule()!=null)
-            this.warningRule=other.getWarningRule();
         if (other.getWarningParam()!=null)
             this.warningParam=other.getWarningParam();
     }
@@ -490,7 +472,6 @@ public class NodeInfo implements java.io.Serializable {
         this.timeLimit = null;
         this.stageCode =null;
         this.expireOpt =  null;
-        this.isAccountTime = "T";
         this.noticeType = null;
         this.noticeMessage = null;
         //this.routerType=null;
@@ -498,7 +479,6 @@ public class NodeInfo implements java.io.Serializable {
         this.multiInstParam=null;
         this.convergeParam=null;
         this.convergeType=null;
-        this.warningRule=null;
         this.warningParam=null;
     }
 

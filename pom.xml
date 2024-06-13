@@ -94,8 +94,6 @@
         <module>centit-workflow-module</module>
         <module>centit-workflow-client</module>
         <module>centit-workflow-core</module>
-        <!--<module>centit-workflow-server</module>-->
-        <module>centit-workflow-dubbo-server-config</module>
         <module>centit-workflow-dubbo-client-config</module>
     </modules>
 

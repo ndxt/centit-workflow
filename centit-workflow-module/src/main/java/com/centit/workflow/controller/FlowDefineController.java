@@ -12,6 +12,7 @@ import com.centit.product.oa.team.utils.ResourceBaseController;
 import com.centit.product.oa.team.utils.ResourceLock;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.UuidOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.FlowInfo;
@@ -70,11 +71,11 @@ public class FlowDefineController extends ResourceBaseController {
     @ApiOperation(value = "列举流程业务相关流程", notes = "列举流程业务相关流程")
     @WrapUpResponseBody
     @GetMapping(value = "/optFlow/{optId}")
-    public ResponseData listFlowByOpt(@PathVariable String optId) {
+    public ResponseData listFlowByOpt(@PathVariable String optId, HttpServletRequest request) {
         JSONArray jsonArray = flowDefine.listFlowsByOptId(optId);
         if (jsonArray == null) {
-            ResponseData.makeErrorMessage("未查询到相关流程。");
-            return null;
+            return ResponseData.makeErrorMessage(ObjectException.DATA_NOT_FOUND_EXCEPTION,
+                getI18nMessage("error.604.data_not_found", request));
         }
         return ResponseData.makeResponseData(jsonArray);
     }
@@ -85,11 +86,11 @@ public class FlowDefineController extends ResourceBaseController {
     @ApiOperation(value = "列举流程业务相关流程", notes = "列举流程业务相关流程")
     @WrapUpResponseBody
     @GetMapping(value = "/osFlow/{osId}")
-    public ResponseData listFlowByOs(@PathVariable String osId) {
+    public ResponseData listFlowByOs(@PathVariable String osId, HttpServletRequest request) {
         JSONArray jsonArray = flowDefine.listFlowByOsId(osId);
         if (jsonArray == null) {
-            ResponseData.makeErrorMessage("未查询到相关流程。");
-            return null;
+            return ResponseData.makeErrorMessage(ObjectException.DATA_NOT_FOUND_EXCEPTION,
+                getI18nMessage("error.604.data_not_found", request));
         }
         return ResponseData.makeResponseData(jsonArray);
     }
@@ -100,11 +101,11 @@ public class FlowDefineController extends ResourceBaseController {
     @ApiOperation(value = "列举流程业务相关流程(包含通用模块中的流程)", notes = "列举流程业务相关流程(包含通用模块中的流程)")
     @WrapUpResponseBody
     @GetMapping(value = "/optAllFlow/{optId}")
-    public ResponseData listAllFlowByOpt(@PathVariable String optId) {
+    public ResponseData listAllFlowByOpt(@PathVariable String optId, HttpServletRequest request) {
         JSONArray jsonArray = flowDefine.listAllFlowsByOptId(optId);
         if (jsonArray == null) {
-            ResponseData.makeErrorMessage("未查询到相关流程。");
-            return null;
+            return ResponseData.makeErrorMessage(ObjectException.DATA_NOT_FOUND_EXCEPTION,
+                getI18nMessage("error.604.data_not_found", request));
         }
         return ResponseData.makeResponseData(jsonArray);
     }
@@ -113,26 +114,26 @@ public class FlowDefineController extends ResourceBaseController {
      * 某个流程的所有版本
      * // field    过滤域
      * @param pageDesc 分页
-     * @param flowcode 流程号
+     * @param flowCode 流程号
      */
     @ApiOperation(value = "根据流程编码列出所有的流程定义列表", notes = "根据流程编码列出所有的流程定义列表")
     @WrapUpResponseBody
-    @RequestMapping(value = "/allversions/{flowcode}", method = RequestMethod.GET)
-    public PageQueryResult<FlowInfo> listFlowAllVisionByCode(PageDesc pageDesc, @PathVariable String flowcode) {
-        List<FlowInfo> listObjects = flowDefine.listFlowsByCode(flowcode, pageDesc);
+    @RequestMapping(value = "/allversions/{flowCode}", method = RequestMethod.GET)
+    public PageQueryResult<FlowInfo> listFlowAllVisionByCode(PageDesc pageDesc, @PathVariable String flowCode) {
+        List<FlowInfo> listObjects = flowDefine.listFlowsByCode(flowCode, pageDesc);
         return PageQueryResult.createResult(listObjects, pageDesc);
     }
 
     /**
      * 某个流程的最新版本
      *
-     * @param flowcode 流程号
+     * @param flowCode 流程号
      */
     @ApiOperation(value = "获取流程最新版本信息", notes = "获取流程最新版本信息")
-    @RequestMapping(value = "/lastversion/{flowcode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/lastversion/{flowCode}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public FlowInfo listLastVersion(@PathVariable String flowcode) {
-        return flowDefine.getFlowInfo(flowcode);
+    public FlowInfo listLastVersion(@PathVariable String flowCode) {
+        return flowDefine.getFlowInfo(flowCode);
     }
 
     @RequestMapping(value = "/editfromthis/{flowCode}/{version}", method = RequestMethod.POST)
@@ -149,14 +150,14 @@ public class FlowDefineController extends ResourceBaseController {
     /**
      * 查询单个流程草稿
      *
-     * @param flowcode
+     * @param flowCode
      * @param response
      */
     @ApiOperation(value = "查询单个流程草稿", notes = "查询单个流程草稿")
-    @RequestMapping(value = "/draft/{flowcode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/draft/{flowCode}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public FlowInfo getFlowDefineDraft(@PathVariable String flowcode, HttpServletResponse response) {
-        FlowInfo flowInfo = flowDefine.getFlowInfo(flowcode, 0);
+    public FlowInfo getFlowDefineDraft(@PathVariable String flowCode, HttpServletResponse response) {
+        FlowInfo flowInfo = flowDefine.getFlowInfo(flowCode, 0);
         if (flowInfo == null) {
             flowInfo = new FlowInfo();
         }
@@ -167,17 +168,17 @@ public class FlowDefineController extends ResourceBaseController {
      * 查询单个流程某个版本
      *
      * @param version
-     * @param flowcode
+     * @param flowCode
      * @param response
      */
     @ApiOperation(value = "获取流程指定版本信息", notes = "获取流程指定版本信息")
-    @RequestMapping(value = "/{version}/{flowcode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{version}/{flowCode}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public FlowInfo getFlowDefine(@PathVariable Long version, @PathVariable String flowcode, HttpServletResponse response) {
+    public FlowInfo getFlowDefine(@PathVariable Long version, @PathVariable String flowCode, HttpServletResponse response) {
         if(version >= 0) {
-            return flowDefine.getFlowInfo(flowcode, version);
+            return flowDefine.getFlowInfo(flowCode, version);
         } else {
-            return flowDefine.getFlowInfo(flowcode);
+            return flowDefine.getFlowInfo(flowCode);
         }
     }
 
@@ -185,45 +186,51 @@ public class FlowDefineController extends ResourceBaseController {
      * 复制单个流程某个版本
      *
      * @param version 版本号
-     * @param flowcode 流程代码
-     * @param response HttpServletResponse
+     * @param flowCode 流程代码
      */
-    @RequestMapping(value = "/copy/{flowcode}/{version}", method = RequestMethod.POST)
-    public void copyFlowDefine(@PathVariable String flowcode, @PathVariable Long version, HttpServletResponse response) {
-        FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
+    @RequestMapping(value = "/copy/{flowCode}/{version}", method = RequestMethod.POST)
+    @WrapUpResponseBody
+    public FlowInfo copyFlowDefine(@PathVariable String flowCode, @PathVariable Long version) {
+        FlowInfo obj = flowDefine.getFlowInfo(flowCode, version);
         FlowInfo copy = new FlowInfo();
         copy.copyNotNullProperty(obj);
         copy.setCid(new FlowInfoId(0L, UuidOpt.getUuidAsString22()));
-        JsonResultUtils.writeSingleDataJson(copy, response);
+        return copy;// .writeSingleDataJson(copy, response);
     }
 
     /**
      * 编辑流程图
-     * @param flowcode 流程代码
-     * @param response HttpServletResponse
+     * @param flowCode 流程代码
+     * @param request HttpServletResponse
      */
-    @RequestMapping(value = "/savexmldesc/{flowcode}", method = RequestMethod.POST)
-    public void saveXmlDesc(@PathVariable String flowcode, HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/savexmldesc/{flowCode}", method = RequestMethod.POST)
+    @WrapUpResponseBody
+    public void saveXmlDesc(@PathVariable String flowCode, HttpServletRequest request) {
         String flowxmldesc = request.getParameter("flowxmldesc");
         FlowInfo wfDefine = new FlowInfo();
-        wfDefine.setFlowCode(flowcode);
+        wfDefine.setFlowCode(flowCode);
         wfDefine.setFlowXmlDesc(flowxmldesc);
         wfDefine.setFlowName(request.getParameter("flowName"));
         wfDefine.setFlowDesc(request.getParameter("flowDesc"));
         wfDefine.setExpireOpt(request.getParameter("expireOpt"));
+        wfDefine.setExpireCallApi(request.getParameter("expireCallApi"));
+        wfDefine.setWarningParam(request.getParameter("warningParam"));
         wfDefine.setTimeLimit(request.getParameter("timeLimit"));
 
-        boolean saveSucced = flowDefine.saveDraftFlowDef(wfDefine);
-        if (saveSucced) {
-            JsonResultUtils.writeSingleDataJson("流程图草稿草稿保存成功！", response);
+        flowDefine.saveDraftFlowDef(wfDefine);
+       /* if (saveSucced) {
+            return ResponseData.successResponse;
+            //JsonResultUtils.writeSingleDataJson("流程图草稿草稿保存成功！", response);
         } else {
-            JsonResultUtils.writeSingleDataJson("保存出错！", response);
-        }
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
+                getI18nMessage("error.704.process_failed", request, ""));
+            //JsonResultUtils.writeSingleDataJson("保存出错！", response);
+        }*/
     }
 
     /**
      * 复制流程草稿为一个新的流程
-     * @param flowcode
+     * @param flowCode
      * @param request
      * @param response
      */
@@ -238,30 +245,35 @@ public class FlowDefineController extends ResourceBaseController {
         @ApiImplicitParam(name = "flowName",value = "新的流程名",paramType = "String",dataTypeClass = String.class,required = true)})
     @RequestMapping(value = "/copyWorkFlow", method = RequestMethod.POST)
     @WrapUpResponseBody
-    public ResponseData copyWorkFlow( HttpServletRequest request) {
+    public ResponseData copyWorkFlow(HttpServletRequest request) {
         Map<String, Object> parameters = collectRequestParameters(request);
         String flowCode = MapUtils.getString(parameters, "flowCode");
         String flowName = MapUtils.getString(parameters, "flowName");
         if (StringUtils.isAnyBlank(flowCode,flowName)){
-            return ResponseData.makeErrorMessage("flowCode,flowName不能为空！");
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_FIELD_INPUT_NOT_VALID,
+                getI18nMessage("error.701.field_is_blank", request, "flowCode,flowName"));
         }
-        String newFlowCode = flowDefine.copyWorkFlow(parameters);
-        if (StringUtils.isBlank(newFlowCode)){
-            return ResponseData.makeErrorMessage("flowCode有误");
+        String newflowCode = flowDefine.copyWorkFlow(parameters);
+        if (StringUtils.isBlank(newflowCode)){
+            return ResponseData.makeErrorMessage(ObjectException.DATA_NOT_FOUND_EXCEPTION,
+                getI18nMessage("error.604.object_not_found", request, "FlowInfo","flowCode"));
+
         }
         JSONObject json = new JSONObject();
-        json.put("flowCode",newFlowCode);
+        json.put("flowCode",newflowCode);
         return ResponseData.makeResponseData(json);
     }
 
     @ApiOperation(value = "根据流程xml获取流程节点",notes = "根据流程xml获取流程节点")
-    @RequestMapping(value = "/getFlowNode/{flowcode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/getFlowNode/{flowCode}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public ResponseData getFlowNode(@PathVariable String flowcode) {
-        FlowInfo flowInfo = flowDefine.getFlowInfo(flowcode, 0);
+    public ResponseData getFlowNode(@PathVariable String flowCode, HttpServletRequest request) {
+        FlowInfo flowInfo = flowDefine.getFlowInfo(flowCode, 0);
         if (flowInfo == null) {
-            ResponseData.makeErrorMessage("未获取到流程节点，可能是流程没有保存。");
-            return null;
+            return ResponseData.makeErrorMessage(ObjectException.DATA_NOT_FOUND_EXCEPTION,
+                getI18nMessage("error.604.data_not_found", request));
+            //ResponseData.makeErrorMessage("未获取到流程节点，可能是流程没有保存。");
+            //return null;
         }
         JSONArray nodeList = JSONObject.parseObject(new String(flowInfo.getFlowXmlDesc())).getJSONArray("nodeList");
         nodeList.removeIf(
@@ -275,13 +287,13 @@ public class FlowDefineController extends ResourceBaseController {
     /**
      * 查看流程图
      * @param version 版本号
-     * @param flowcode 流程代码
+     * @param flowCode 流程代码
      */
     @ApiOperation(value = "查看流程图",notes = "查看流程图")
-    @RequestMapping(value = "/viewxml/{flowcode}/{version}", method = RequestMethod.GET)
+    @RequestMapping(value = "/viewxml/{flowCode}/{version}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public String viewXml(@PathVariable Long version, @PathVariable String flowcode) {
-        FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
+    public String viewXml(@PathVariable Long version, @PathVariable String flowCode) {
+        FlowInfo obj = flowDefine.getFlowInfo(flowCode, version);
         String flowXmlDesc = obj == null ? "" : obj.getFlowXmlDesc();
         return flowXmlDesc;
     }
@@ -289,52 +301,60 @@ public class FlowDefineController extends ResourceBaseController {
     /**
      * 保存草稿
      * @param flowdefine 流程定义信息
-     * @param response HttpServletResponse
+     * @param request HttpServletResponse
      */
     @ApiOperation(value = "新建流程的基本信息",notes = "新建流程的基本信息")
     @RequestMapping(method = RequestMethod.POST)
-    public void addFlowDefine(@RequestBody FlowInfo flowdefine, HttpServletResponse response) {
+    @WrapUpResponseBody
+    public ResponseData addFlowDefine(@RequestBody FlowInfo flowdefine, HttpServletRequest request) {
         boolean saveSucced = flowDefine.saveDraftFlowDef(flowdefine);
-        if (saveSucced)
-            JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
-        else
-            JsonResultUtils.writeSingleDataJson("保存出错！", response);
+        if (saveSucced) {
+            return ResponseData.makeSuccessResponse(
+                getI18nMessage("flow.200.save_draft_success", request));
+        } else { // saveSucced always true
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
+                getI18nMessage("error.704.process_failed", request, "no way"));
+        }
     }
 
     /**
      * 更新流程，默认编辑草稿，版本号为0
      *
      * @param flowdefine 流程定义信息
-     * @param flowcode 流程代码
+     * @param flowCode 流程代码
      * @param request HttpServletRequest
-     * @param response HttpServletResponse
      */
     @ApiOperation(value = "修改流程的基本信息",notes = "修改流程的基本信息")
-    @RequestMapping(value = "/{flowcode}", method = RequestMethod.POST)
-    public void editFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String flowcode,
-                              HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/{flowCode}", method = RequestMethod.POST)
+    @WrapUpResponseBody
+    public ResponseData editFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String flowCode,
+                              HttpServletRequest request) {
         //检查资源
-        ResourceLock.lockResource(flowcode, WebOptUtils.getCurrentUserCode(request), request);
+        ResourceLock.lockResource(flowCode, WebOptUtils.getCurrentUserCode(request), request);
 
-        flowdefine.setFlowCode(flowcode);
+        flowdefine.setFlowCode(flowCode);
         flowdefine.setVersion(0l);
         boolean saveSucced = flowDefine.saveDraftFlowDef(flowdefine);
-        if (saveSucced)
-            JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
-        else
-            JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
+        if (saveSucced) {
+            return ResponseData.makeSuccessResponse(
+                getI18nMessage("flow.200.save_draft_success", request));
+        } else { // saveSucced always true
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
+                getI18nMessage("error.704.process_failed", request, "no way"));
+        }
     }
 
     /**
      * 新增流程阶段，默认编辑草稿，版本号为0
      * @param flowdefine 流程定义信息
-     * @param flowcode 流程代码
-     * @param response HttpServletResponse
+     * @param flowCode 流程代码
+     * @param request HttpServletResponse
      */
     @ApiOperation(value = "保存流程的阶段信息",notes = "保存流程的阶段信息，阶段信息作为流程信息的属性flowStages封装")
+    @PostMapping(value = "/stage/{flowCode}")
     @WrapUpResponseBody
-    @PostMapping(value = "/stage/{flowcode}")
-    public ResponseData editFlowStage(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
+    public ResponseData editFlowStage(@Valid FlowInfo flowdefine, @PathVariable String flowCode,
+                                      HttpServletRequest request) {
         if (null != flowdefine.getFlowStages()) {
             for (FlowStage stage : flowdefine.getFlowStages()) {
                 if (null == stage.getStageId()) {
@@ -344,140 +364,148 @@ public class FlowDefineController extends ResourceBaseController {
                 stage.setFlowDefine(flowdefine);
             }
         }
-        flowdefine.setFlowCode(flowcode);
+        flowdefine.setFlowCode(flowCode);
         flowdefine.setVersion(0l);
 
         boolean saveSucced = flowDefine.saveDraftFlowStage(flowdefine);
-
         if (saveSucced) {
             return ResponseData.makeResponseData(flowdefine);
         } else {
-            return ResponseData.makeErrorMessage("流程的阶段信息保存失败！");
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
+                getI18nMessage("error.704.process_failed", request, "flow not found"));
         }
     }
 
     /**
      * 编辑流程角色
      * @param flowdefine 流程定义信息
-     * @param flowcode 流程代码
-     * @param response HttpServletResponse
+     * @param flowCode 流程代码
+     * @param request HttpServletResponse
      */
     @ApiOperation(value = "编辑流程角色信息",notes = "编辑流程角色信息")
-    @PostMapping(value = "/role/{flowcode}")
-    public void editRole(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
-
-        flowdefine.setFlowCode(flowcode);
+    @PostMapping(value = "/role/{flowCode}")
+    @WrapUpResponseBody
+    public ResponseData editRole(@Valid FlowInfo flowdefine, @PathVariable String flowCode,
+                                 HttpServletRequest request) {
+        flowdefine.setFlowCode(flowCode);
         flowdefine.setVersion(0l);
-
         boolean saveSucced = flowDefine.saveDraftFlowRole(flowdefine);
-
-        if (saveSucced)
-            JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
-        else
-            JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
+        if (saveSucced) {
+            return ResponseData.makeSuccessResponse(
+                getI18nMessage("flow.200.save_draft_success", request));
+        } else {
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
+                getI18nMessage("error.704.process_failed", request, "flow not found"));
+        }
     }
 
     /**
      * 编辑流程变量
      * @param flowdefine 流程定义信息
-     * @param flowcode 流程代码
-     * @param response HttpServletResponse
+     * @param flowCode 流程代码
+     * @param request HttpServletResponse
      */
     @ApiOperation(value = "编辑流程变量", notes = "编辑流程变量")
-    @PostMapping(value = "/variableDefine/{flowcode}")
+    @PostMapping(value = "/variableDefine/{flowCode}")
     @WrapUpResponseBody
-    public void editVariable(@Valid FlowInfo flowdefine, @PathVariable String flowcode, HttpServletResponse response) {
-        flowdefine.setFlowCode(flowcode);
+    public ResponseData editVariable(@Valid FlowInfo flowdefine, @PathVariable String flowCode,
+                             HttpServletRequest request) {
+        flowdefine.setFlowCode(flowCode);
         flowdefine.setVersion(0l);
 
         boolean saveSucced = flowDefine.saveDraftFlowVariableDef(flowdefine);
-
-        if (saveSucced)
-            JsonResultUtils.writeSingleDataJson("工作流定义草稿保存成功！", response);
-        else
-            JsonResultUtils.writeErrorMessageJson("工作流定义草稿保存失败！", response);
+        if (saveSucced) {
+            return ResponseData.successResponse;
+        } else {
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
+                getI18nMessage("error.704.process_failed", request, "flow not found"));
+        }
     }
 
     /**
      * 更新流程，默认编辑草稿，版本号为0
      *
      * @param flowdefine 流程定义信息
-     * @param response HttpServletResponse
+     * @param oldflowCode HttpServletResponse
+     * @param doCopyXML HttpServletResponse
      */
     @ApiOperation(value = "更新流程信息", notes = "更新流程信息doCopyXML为是否保留旧的流程图信息")
-    @RequestMapping(value = "/{oldflowcode}/{doCopyXML}", method = RequestMethod.POST)
-    public void editCopyFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String oldflowcode, @PathVariable String doCopyXML, HttpServletResponse response) {
+    @RequestMapping(value = "/{oldflowCode}/{doCopyXML}", method = RequestMethod.POST)
+    @WrapUpResponseBody
+    public void editCopyFlowDefine(@Valid FlowInfo flowdefine, @PathVariable String oldflowCode, @PathVariable String doCopyXML) {
         if ("F".equals(doCopyXML)) {
             flowDefine.saveDraftFlowDef(flowdefine);
         } else if ("T".equals(doCopyXML)) {
-            FlowInfo oldFlowDef = flowDefine.getFlowInfo(oldflowcode, 0);
+            FlowInfo oldFlowDef = flowDefine.getFlowInfo(oldflowCode, 0);
             flowdefine.setFlowXmlDesc(oldFlowDef.getFlowXmlDesc());
             flowDefine.saveDraftFlowDef(flowdefine);
         }
-        //新建流程之后，发送流程定义信息到业务系统
-        //FlowOptUtils.sendFlowInfo(flowdefine);
     }
 
     /**
      * 禁用流程
      * @param version 版本号
-     * @param flowcode 流程代码
-     * @param response HttpServletResponse
+     * @param flowCode 流程代码
+     * @param request HttpServletResponse
      */
     @ApiOperation(value = "禁用流程", notes = "禁用流程")
-    @RequestMapping(value = "/{flowcode}/{version}", method = RequestMethod.PUT)
-    public void deleteFlowDefine(@PathVariable String flowcode, @PathVariable Long version, HttpServletResponse response) {
-        FlowInfo obj = flowDefine.getFlowInfo(flowcode, version);
+    @RequestMapping(value = "/{flowCode}/{version}", method = RequestMethod.PUT)
+    @WrapUpResponseBody
+    public void deleteFlowDefine(@PathVariable String flowCode, @PathVariable Long version, HttpServletRequest request) {
+        FlowInfo obj = flowDefine.getFlowInfo(flowCode, version);
         if (null == obj) {
-            JsonResultUtils.writeErrorMessageJson("此流程不存在", response);
+            throw new ObjectException(ResponseData.ERROR_PROCESS_FAILED,
+                getI18nMessage("error.704.process_failed", request, "flow not found"));
+            //JsonResultUtils.writeErrorMessageJson("此流程不存在", response);
         } else {
-            flowDefine.disableFlow(flowcode);
+            flowDefine.disableFlow(flowCode);
         }
     }
 
     /**
      * 物理删除流程定义
-     * @param flowcode 流程代码
-     * @param response HttpServletResponse
+     * @param flowCode 流程代码
      */
     @ApiOperation(value = "物理删除流程定义", notes = "物理删除流程定义")
-    @RequestMapping(value = "/deleteFlow/{flowcode}", method = RequestMethod.DELETE)
-    public void deleteFlowDefine(@PathVariable String flowcode, HttpServletResponse response) {
-        flowDefine.deleteFlowDef(flowcode);
-        JsonResultUtils.writeSuccessJson(response);
+    @RequestMapping(value = "/deleteFlow/{flowCode}", method = RequestMethod.DELETE)
+    @WrapUpResponseBody
+    public void deleteFlowDefine(@PathVariable String flowCode) {
+        flowDefine.deleteFlowDef(flowCode);
     }
 
     /**
      * 发布新版本流程
      *
-     * @param flowcode 流程代码
+     * @param flowCode 流程代码
      * @param response HttpServletResponse
      * @throws Exception 异常
      */
     @ApiOperation(value = "发布流程定义", notes = "发布流程定义")
-    @RequestMapping(value = "/publish/{flowcode}", method = RequestMethod.POST)
-    public void publishFlow(@PathVariable String flowcode, HttpServletResponse response){
-        flowDefine.publishFlowDef(flowcode);
-        JsonResultUtils.writeSingleDataJson("已发布！", response);
+    @RequestMapping(value = "/publish/{flowCode}", method = RequestMethod.POST)
+    @WrapUpResponseBody
+    public void publishFlow(@PathVariable String flowCode, HttpServletResponse response){
+        flowDefine.publishFlowDef(flowCode);
+        //JsonResultUtils.writeSingleDataJson("已发布！", response);
     }
 
     /**
      * 更新流程状态
-     * @param flowcode 流程代码
-     * @param newstate 新的状态
-     * @param response HttpServletResponse
+     * @param flowCode 流程代码
+     * @param newState 新的状态
+     * @param request HttpServletResponse
      */
     @ApiOperation(value = "更新流程状态", notes = "更新流程状态")
-    @RequestMapping(value = "/changestate/{flowcode}/{newstate}", method = RequestMethod.GET)
-    public void changeState(@PathVariable String flowcode, @PathVariable String newstate, HttpServletResponse response) {
-        if (FlowInfo.FLOW_STATE_FORBIDDEN.equals(newstate)) {
-            flowDefine.disableFlow(flowcode);
-            JsonResultUtils.writeSingleDataJson("已经禁用！", response);
+    @RequestMapping(value = "/changestate/{flowCode}/{newState}", method = RequestMethod.PUT)
+    @WrapUpResponseBody
+    public ResponseData changeState(@PathVariable String flowCode, @PathVariable String newState, HttpServletRequest request) {
+        WebOptUtils.assertUserLogin(request);
+        if (FlowInfo.FLOW_STATE_FORBIDDEN.equals(newState)) {
+            flowDefine.disableFlow(flowCode);
         }
-        if (FlowInfo.FLOW_STATE_NORMAL.equals(newstate)) {
-            flowDefine.enableFlow(flowcode);
-            JsonResultUtils.writeSingleDataJson("已经启用！", response);
+        if (FlowInfo.FLOW_STATE_NORMAL.equals(newState)) {
+            flowDefine.enableFlow(flowCode);
         }
+        return ResponseData.makeSuccessResponse(getI18nMessage("info.200.success", request));
     }
 
     /**
@@ -486,11 +514,12 @@ public class FlowDefineController extends ResourceBaseController {
      * @return
      */
     @ApiOperation(value = "批量删除流程", notes = "批量删除流程,多个id之间用逗号隔开")
-    @WrapUpResponseBody
     @RequestMapping(value = "/batchChangeState", method = RequestMethod.POST)
-    public ResponseData batchChangeState(@RequestBody String[] flowCodes){
-        if (!StringUtils.isNoneEmpty(flowCodes)){
-            return ResponseData.makeErrorMessage("flowCodes不能为空!");
+    @WrapUpResponseBody
+    public ResponseData batchChangeState(@RequestBody String[] flowCodes, HttpServletRequest request){
+        if (StringUtils.isAnyEmpty(flowCodes)){
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_FIELD_INPUT_NOT_VALID,
+                getI18nMessage("error.701.field_is_blank", request, "flowCodes"));
         }
         flowDefine.deleteByCodes(CollectionsOpt.arrayToList(flowCodes));
         return ResponseData.makeSuccessResponse();
@@ -502,17 +531,21 @@ public class FlowDefineController extends ResourceBaseController {
     @ApiOperation(value = "清空回收站", notes = "清空回收站")
     @PostMapping("/clear")
     @WrapUpResponseBody
-    public ResponseData clearRecycle(@RequestBody JSONObject params){
+    public ResponseData clearRecycle(@RequestBody JSONObject params, HttpServletRequest request){
         String osId = params.getString("osId");
-        if (!StringUtils.isNoneEmpty(osId)){
-            return ResponseData.makeErrorMessage("osId不能为空!");
+        if (StringUtils.isAnyEmpty(osId)){
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_FIELD_INPUT_NOT_VALID,
+                getI18nMessage("error.701.field_is_blank", request, "osId"));
         }
         try {
             flowDefine.clearRecycle(osId);
+            return ResponseData.makeSuccessResponse();
         }catch (Exception e){
-            e.printStackTrace();
+            //e.printStackTrace();
+            return ResponseData.makeErrorMessage(ResponseData.ERROR_PROCESS_FAILED,
+                getI18nMessage("error.704.process_failed", request, e.getMessage()));
         }
-        return ResponseData.makeSuccessResponse();
+
     }
 
     /**
@@ -526,36 +559,38 @@ public class FlowDefineController extends ResourceBaseController {
 
     /**
      * 编辑流程图页面需要的数据字典及相关数据
-     * @param flowcode 流程代码
+     * @param flowCode 流程代码
      */
     @ApiOperation(value = "查询流程图页面需要的数据字典及相关数据")
-    @RequestMapping(value = "/getdatamap/{flowcode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/getdatamap/{flowCode}", method = RequestMethod.GET)
     @WrapUpResponseBody
     @Transactional
-    public Map<String, Map<String, String>> getDataMap(@PathVariable String flowcode, HttpServletRequest request){
+    public Map<String, Map<String, String>> getDataMap(@PathVariable String flowCode, HttpServletRequest request){
+        WebOptUtils.assertUserLogin(request);
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         Map<String, Map<String, String>> map = flowDefine.listAllRole(topUnit);
         //办件角色重新赋值为当前流程中的办件角色，不再使用系统的
+        FlowInfo flowInfo = flowDefine.getFlowInfo(flowCode, 0l);
         Map<String, String> bjMap = new LinkedHashMap<>();
         bjMap.put("", "请选择");
-        bjMap.putAll(flowDefine.listFlowItemRoles(flowcode, 0L));
+        bjMap.putAll(flowDefine.listFlowItemRoles(flowCode, 0L));
         map.put(SysUserFilterEngine.ROLE_TYPE_ITEM /*"bj"*/, bjMap);
 
 //        Map<String, String> spMap = new LinkedHashMap<>();
 //        spMap.put("", "请选择");
-//        spMap.putAll(flowDefine.getRoleMapByFlowCode);
+//        spMap.putAll(flowDefine.getRoleMapByflowCode);
 //        map.put("SP",spMap);
         // 分配机制
         Map<String, String> map2 = flowDefine.listAllOptType();
         map.put("OptType", map2);
 
         // 子流程
-        Map<String, String> map4 = flowDefine.listAllSubFlow();
+        Map<String, String> map4 = flowDefine.listAllSubFlow(flowInfo.getOsId());
         map.put("SubWfcode", map4);
-        Map<String, String> stageMap = flowDefine.listFlowStages(flowcode, 0L);
+        Map<String, String> stageMap = flowDefine.listFlowStages(flowCode, 0L);
         map.put("FlowPhase", stageMap);
         // 流程变量
-        Map<String, String> flowVariableDefineMap = flowDefine.listFlowVariableDefines(flowcode, 0L);
+        Map<String, String> flowVariableDefineMap = flowDefine.listFlowVariableDefines(flowCode, 0L);
         map.put("FlowVariableDefine", flowVariableDefineMap);
         return map;
     }
@@ -578,6 +613,7 @@ public class FlowDefineController extends ResourceBaseController {
     @RequestMapping(value = "/listAllRole", method = RequestMethod.GET)
     @WrapUpResponseBody
     public Map<String, Map<String, String>> listAllRole(HttpServletRequest request){
+        WebOptUtils.assertUserLogin(request);
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         return flowDefine.listAllRole(topUnit);
     }

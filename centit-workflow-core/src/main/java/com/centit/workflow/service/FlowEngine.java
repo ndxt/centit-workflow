@@ -304,7 +304,7 @@ public interface FlowEngine {
      * @param flowInstId    流程实例号
      * @param curNodeInstId 当前节点实例号
      * @param nodeCode      节点环节代码，这个节点在这个流程中必需唯一
-     * @param createUser    当前创建用户
+     * @param topUnit    当前创建用户
      * @param userCode      指定操作用户
      * @param unitCode      指定机构
      * @return 节点实例
@@ -324,7 +324,7 @@ public interface FlowEngine {
      * @param nodeCode      节点环节代码
      * @param createUser    当前创建用户
      * @param userCode      指定操作用户
-     * @param unitCode      指定机构
+     //* @param unitCode      指定机构
      * @return 节点实例
      */
     NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId,
@@ -420,7 +420,7 @@ public interface FlowEngine {
      * @param flowInstId 流程实例号 不能为空
      * @return Map roleCode,Set userCode
      */
-    Map<String, List<String>> viewFlowWorkTeam(String flowInstId);
+    List<FlowWorkTeam> viewFlowWorkTeam(String flowInstId);
 
     /**
      * 查看工作小组中某个角色的成员
@@ -429,27 +429,7 @@ public interface FlowEngine {
      * @param roleCode   办件角色代码
      * @return Set userCode
      */
-    List<String> viewFlowWorkTeam(String flowInstId, String roleCode);
-
-    /**
-     * 查看工作小组中某个角色的成员
-     *
-     * @param flowInstId 工作流实例号
-     * @param roleCode   角色代码
-     * @return 流程工作组
-     */
-    List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode);
-
-    /**
-     * 查看工作小组中某个角色的成员,并且通过制定的授权说明过滤
-     *
-     * @param flowInstId 工作流实例号
-     * @param roleCode   角色代码
-     * @param authdesc   角色描述
-     * @return 流程工作组
-     */
-    List<FlowWorkTeam> viewFlowWorkTeamList(String flowInstId, String roleCode,
-                                            String authdesc);
+    List<FlowWorkTeam> viewFlowWorkTeam(String flowInstId, String roleCode);
 
     /**
      * 分配流程组织机构

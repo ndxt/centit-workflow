@@ -249,7 +249,7 @@ public interface FlowManager {
      * @param mangerUserCode 管理人员代码
      * @return
      */
-    long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode);
+    long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode, String topUnit);
 
 
     //------------流程阶段管理-------------------------
@@ -296,10 +296,10 @@ public interface FlowManager {
      * 获取节点实例的操作日志列表
      *
      * @param flowInstId     流程实例id
-     * @param withNodeAction 是否包括节点的日志
+     * @param topUnit 归宿租户
      * @return List<WfActionLog>
      */
-    List<? extends OperationLog> listFlowActionLogs(String flowInstId, boolean withNodeAction);
+    List<? extends OperationLog> listFlowActionLogs(String flowInstId, String topUnit);
 
     /**
      * 获取用户所有的操作记录
@@ -362,14 +362,14 @@ public interface FlowManager {
 
     /**
      * 将 fromUserCode 所有任务 迁移 给 toUserCode
-     *
+     * @param topUnit  所属租户
      * @param fromUserCode 任务属主
      * @param toUserCode   新的属主
      * @param moveDesc     迁移描述
      * @param optUserCode  操作人员
      * @return 返回迁移的任务数
      */
-    int moveUserTaskTo(String fromUserCode, String toUserCode,
+    int moveUserTaskTo(String topUnit, String fromUserCode, String toUserCode,
                        String optUserCode, String moveDesc);
 
     /**
@@ -472,6 +472,7 @@ public interface FlowManager {
      * @param oldVersion 旧的版本， 如果 <=0 则将所有的版本 都迁移过过来
      * @return 返回迁移的流程实例数量
      */
-    void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion);
+    void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion,
+                            String topUnit, String mangerUserCode);
 
 }

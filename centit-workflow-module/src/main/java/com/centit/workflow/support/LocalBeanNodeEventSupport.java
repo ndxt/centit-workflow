@@ -1,5 +1,6 @@
 package com.centit.workflow.support;
 
+import com.centit.support.common.ObjectException;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
@@ -36,17 +37,17 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
         if(StringUtils.isBlank(nodeInfo.getOptBean())){
             return false;
         }
-       /* throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
+       /* throw new ObjectException(WorkflowException.AutoRunNodeBeanNotFound,
                 "自动运行节点 " + nodeInst.getNodeInstId() +"出错，流程设置时没有设置节点的自动运行bean属性。");*/
         if(application==null)
-            throw new WorkflowException(WorkflowException.AutoRunNodeWithoutApplcationContent,
+            throw new ObjectException(WorkflowException.AutoRunNodeWithoutApplcationContent,
                 "自动运行节点 " + nodeInst.getNodeInstId() +"出错，传递的参数application为空");
         return true;
     }
 
     private  void logError(BeansException e, NodeInfo nodeInfo, NodeInstance nodeInst){
         logger.error("自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
-        throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
+        throw new ObjectException(WorkflowException.AutoRunNodeBeanNotFound,
             "自动运行节点 " + nodeInst.getNodeInstId() +"出错，可能是bean:"+nodeInfo.getOptBean()+ " 找不到 。" +e.getMessage());
 
     }
@@ -88,7 +89,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                                           NodeInfo nodeInfo, String optUserCode ) {
         if(!checkRunCondition(nodeInfo, nodeInst)){
-            throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
+            throw new ObjectException(WorkflowException.AutoRunNodeBeanNotFound,
                 "自动运行节点 " + nodeInst.getNodeInstId() +"出错，流程设置时没有设置节点的自动运行bean属性。");
         }
         try{
@@ -105,7 +106,7 @@ public class LocalBeanNodeEventSupport implements NodeEventSupport {
     public boolean canStepToNext(FlowInstance flowInst, NodeInstance nodeInst,
                                  NodeInfo nodeInfo, String optUserCode){
         if(!checkRunCondition(nodeInfo, nodeInst)){
-            throw new WorkflowException(WorkflowException.AutoRunNodeBeanNotFound,
+            throw new ObjectException(WorkflowException.AutoRunNodeBeanNotFound,
                 "条件判断节点 " + nodeInst.getNodeInstId() +"出错，流程设置时没有设置条件判断的bean属性。");
         }
         try{

@@ -36,7 +36,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
 
     private final static String userCompleteTaskBaseSql = "select t.FLOW_INST_ID, t.FLOW_CODE, t.VERSION, t.FLOW_OPT_NAME, " +
         "t.FLOW_OPT_TAG, t.UNIT_CODE, t.USER_CODE, " +
-        "t.CREATE_TIME, t.PROMISE_TIME, t.TIME_LIMIT, " +
+        "t.CREATE_TIME, t.deadline_time as node_Expire_Time, " +
         "n.NODE_NAME, t.LAST_UPDATE_TIME, t.INST_STATE, " +
         "t.LAST_UPDATE_USER, t.USER_CODE as CREATOR_CODE, t.OS_ID, t.OPT_ID as MODEL_ID, n.OPT_ID" +
         " from wf_flow_instance t join wf_flow_define f on f.FLOW_CODE=t.FLOW_CODE and f.VERSION=t.VERSION" +
@@ -58,10 +58,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     private final static String allAboutNodeTask = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
         "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE, b.USER_CODE, b.ROLE_TYPE," +
         "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
-        "c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
+        "c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.deadline_time as node_Expire_Time, " +
         "c.OPT_CODE, c.EXPIRE_OPT, c.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
         "b.LAST_UPDATE_TIME, b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
-        "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
+        "b.warning_time as node_warning_Time, a.warning_time as flow_warning_Time, " +
+        "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time " +
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
         "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         "where b.NODE_INST_ID = ?";
@@ -69,10 +70,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     private final static String userStaticTaskBaseSql = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
         "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE, b.USER_CODE, b.ROLE_TYPE," +
         "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
-        "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
-        "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +
+        "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.deadline_time as node_Expire_Time, " +
+        "c.OPT_CODE, c.EXPIRE_OPT, c.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
         "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
-        "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
+        "b.warning_time as node_warning_Time, a.warning_time as flow_warning_Time, " +
+        "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time " +
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
             "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         // (b.task_assigned = 'S' or b.task_assigned = 'P' or b.task_assigned = 'T')
@@ -105,10 +107,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     private final static String userGrantorTaskBaseSql = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
         "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE,g.GRANTEE as USER_CODE, b.ROLE_TYPE," +
         "b.ROLE_CODE, '权限委托' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
-        "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
+        "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.deadline_time as node_Expire_Time, " +
         "c.OPT_CODE,c.EXPIRE_OPT,c.STAGE_CODE, g.GRANTOR, b.LAST_UPDATE_USER," +
         "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
-        "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
+        "b.warning_time as node_warning_Time, a.warning_time as flow_warning_Time, " +
+        "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time " +
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
         "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         "join WF_ROLE_RELEGATE g on ( g.GRANTOR = b.user_code and " +
@@ -145,11 +148,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
             "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE,b.USER_CODE, b.ROLE_TYPE," +
             "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
-            "c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.PROMISE_TIME, b.TIME_LIMIT," +
+            "c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.deadline_time as node_Expire_Time," +
             "c.OPT_CODE, c.EXPIRE_OPT,c.STAGE_CODE,b.GRANTOR,b.LAST_UPDATE_USER," +
-            "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID," +
-            " a.USER_CODE as CREATOR_CODE, " +
-            "a.PROMISE_TIME as flow_promise_time, a.TIME_LIMIT as flow_time_limit " +
+            "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, " +
+            "a.USER_CODE as CREATOR_CODE, b.warning_time as node_warning_Time, a.warning_time as flow_warning_Time, " +
+            "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time " +
             "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
             "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
             "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'D'" ;

@@ -4,6 +4,8 @@ import com.alibaba.fastjson2.JSONArray;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
+import com.centit.support.algorithm.DatetimeOpt;
+import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryAndNamedParams;
 import com.centit.support.database.utils.QueryUtils;
@@ -12,7 +14,6 @@ import com.centit.workflow.po.NodeInstance;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
 
     public Map<String, String> getFilterField() {
-        Map<String, String> filterField = new HashMap<String, String>();
+        Map<String, String> filterField = new HashMap<>();
         filterField.put("nodeInstId", CodeBook.EQUAL_HQL_ID);
         filterField.put("flowInstId", CodeBook.EQUAL_HQL_ID);
         filterField.put("nodeId", CodeBook.EQUAL_HQL_ID);
@@ -37,14 +38,25 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         filterField.put("runToken", CodeBook.EQUAL_HQL_ID);
         filterField.put("taskAssigned", CodeBook.EQUAL_HQL_ID);
         filterField.put("userCode", CodeBook.EQUAL_HQL_ID);
+        filterField.put("osId", "FLOW_CODE in (select a.FLOW_CODE from WF_FLOW_DEFINE a " +
+            " where a.OS_ID  = :osId)" );
+        filterField.put("topUnit", "FLOW_CODE in (select a.FLOW_CODE from WF_FLOW_DEFINE a " +
+            " join F_OS_INFO b on(a.OS_ID = b.OS_ID) where b.TOP_UNIT = :topUnit)" );
 
         filterField.put(CodeBook.ORDER_BY_HQL_ID, "nodeInstId desc");
         return filterField;
     }
 
     @Transactional
-    public long getNextNodeInstId() {
-        return DatabaseOptUtils.getSequenceNextValue(this, "S_NODEINSTNO");
+    public void updtNodeTimerStatus(String nodeInstId, String state) {
+        String sql = "update WF_NODE_INSTANCE set TIMER_STATUS = ? where node_Inst_Id = ?";
+        DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{ state, nodeInstId});
+    }
+
+    @Transactional
+    public void updtNodeInstParam(String nodeInstId, String nodeParam) {
+        String sql = "update WF_NODE_INSTANCE set NODE_PARAM = ? where node_Inst_Id = ?";
+        DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{ nodeParam, nodeInstId});
     }
 
     /**
@@ -55,23 +67,9 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
      */
     @Transactional
     public void updtNodeInstState(String nodeInstId, String state) {
-        NodeInstance nodeInst = this.getObjectById(nodeInstId);
-        nodeInst.setNodeState(state);
-        this.updateObject(nodeInst);
+        String sql = "update WF_NODE_INSTANCE set node_State = ? where node_Inst_Id = ?";
+        DatabaseOptUtils.doExecuteSql(this, sql, new Object[]{ state, nodeInstId});
     }
-
-    @Transactional
-    public void updtNodeInstParam(String nodeInstId, String nodeParam) {
-        NodeInstance nodeInst = this.getObjectById(nodeInstId);
-        nodeInst.setNodeParam(nodeParam);
-        this.updateObject(nodeInst);
-    }
-
-    /*@Transactional
-    public List<NodeInstance> listNodeInstByState(String nodeState) {
-        return this.listObjectsByFilter("where node_State= ? ",
-            new Object[]{nodeState});
-    }*/
 
     @Transactional
     public List<NodeInstance> listNodeInstByState(String flowInstId, String nodeState) {
@@ -89,11 +87,26 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
 
     //expireOptSign == 0未处理  1 已通知  ,2..6 已通知2..5次（暂时不启动重复通知） 6:不处理    7：已挂起  8 已终止 9 已完成
     @Transactional
-    public List<NodeInstance> listNearExpireNodeInstance(long leaveTime) {
-        return this.listObjectsByFilter(" where time_Limit <= ? and node_State='N' and " +
-            "(is_Timer='T' or is_Timer='R')", new Object[]{leaveTime});
+    public List<NodeInstance> listExpireNodeInstance() {
+        return this.listObjectsByFilter(" join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
+                " where b.inst_State='N' and a.deadline_time < ? and a.node_State='N'" +
+                " and (a.TIMER_STATUS='T' or a.TIMER_STATUS='W') ",
+            new Object[]{DatetimeOpt.currentUtilDate()}, "a");
     }
 
+    @Transactional
+    public List<NodeInstance> listNeedSubmitSyncNodeInstance() {
+        return this.listObjectsByFilter(" join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
+                " where b.inst_State='N' and a.deadline_time < ? and a.node_State='T' and a.TIMER_STATUS='S'",
+            new Object[]{DatetimeOpt.currentUtilDate()}, "a");
+    }
+
+    @Transactional
+    public List<NodeInstance> listWarningNodeInstance() {
+        return this.listObjectsByFilter(" join WF_FLOW_INSTANCE b on (a.FLOW_INST_ID=b.FLOW_INST_ID)" +
+                " where b.inst_State='N' and a.warning_time < ? and a.node_State='N' and a.TIMER_STATUS='T'",
+            new Object[]{DatetimeOpt.currentUtilDate()}, "a");
+    }
 
     /**
      * 查询最后更改的节点
@@ -116,39 +129,33 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
      * @return
      */
     @Transactional
-    public List<NodeInstance> listNodeInstByTimer(String userCode, String isTimer, PageDesc pageDesc) {
-        return this.listObjectsByFilterAsJson(" where last_Update_User = ? and is_Timer = ? " +
+    public List<NodeInstance> listNodeInstByTimerStatus(String userCode, String timerStatus, PageDesc pageDesc) {
+        return this.listObjectsByFilterAsJson(" where last_Update_User = ? and TIMER_STATUS = ? " +
                 "order by last_Update_Time ",
-            new Object[]{userCode, isTimer}, pageDesc).toJavaList(NodeInstance.class);
+            new Object[]{userCode, timerStatus}, pageDesc).toJavaList(NodeInstance.class);
     }
 
-    /**
-     * 更新节点实例时钟状态
-     *
-     * @param instid  实例编号
-     * @param isTimer 不计时N、计时T(有期限)、暂停P  忽略(无期限) F
-     */
-    @Transactional
-    public void updateNodeTimerState(String instid, String isTimer, String mangerUserCode) {
-        NodeInstance nodeInst = this.getObjectById(instid);
-        nodeInst.setIsTimer(isTimer);
-        nodeInst.setLastUpdateUser(mangerUserCode);
-        nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
-        this.updateObject(nodeInst);
-    }
 
     @Transactional
     public List<NodeInstance> listActiveTimerNodeByFlow(String flowInstId) {
-        return this.listObjectsByFilter(" where node_state in ('N','W','S','T') and flow_Inst_Id = ? and is_Timer = 'T' ",
+        return this.listObjectsByFilter(" where node_state in ('N','W','S') and flow_Inst_Id = ? " +
+                "and TIMER_STATUS in ('T','W') ",
             new Object[]{flowInstId});
     }
 
     @Transactional
-    public List<NodeInstance> listActiveTimerNodeByFlowStage(String flowInstId, String flowStage) {
-        return this.listObjectsByFilter(" where flow_Inst_Id = ? and STAGE_CODE = ? and is_Timer = 'T'",
-            new Object[]{flowInstId, flowStage});
+    public List<NodeInstance> listActiveTimerNodeByFlowStage(String flowInstId, String flowStageCode) {
+        return this.listObjectsByFilter(" where flow_Inst_Id = ? and STAGE_CODE = ? and node_state in ('N','W','S')",
+            new Object[]{flowInstId, flowStageCode});
     }
 
+    @Transactional
+    public int countActiveTimerNodeByFlowStage(String flowInstId, String flowStageCode) {
+        Object obj = DatabaseOptUtils.getScalarObjectQuery(this,
+            "select count(*) as activeNodes from WF_NODE_INSTANCE where flow_Inst_Id = ? and STAGE_CODE = ? and node_state in ('N','W','S')",
+            new Object[]{flowInstId, flowStageCode});
+        return NumberBaseOpt.castObjectToInteger(obj,0);
+    }
     /**
      * 获取流程实例的节点信息（流程中所有的业务节点 和 节点实例）
      *

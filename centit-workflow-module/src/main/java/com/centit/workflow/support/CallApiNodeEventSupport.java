@@ -69,15 +69,15 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
         String nodeParams = nodeInfo.getOptParam();
         if (StringUtils.isNotBlank(nodeParams)) {
             if (!"{".equals(Lexer.getFirstWord(nodeParams))) {
-                nodeParams = "{" + nodeParams + "}";
+                nodeParams = "{ " + nodeParams + " }";
             }
-            // 添加对变量的支持
             JSONObject paramJson = JSONObject.parseObject(nodeParams);
-            if(paramJson!=null) {
-                for(Map.Entry<String, Object> ent : paramJson.entrySet()) {
-                    if(ent.getValue() instanceof String){
-                        Object objValue = VariableFormula.calculate((String)ent.getValue(), varTrans);
-                        if(objValue!=null){
+            if(paramJson != null) {
+                // 添加对变量的支持
+                for (Map.Entry<String, Object> ent : paramJson.entrySet()) {
+                    if (ent.getValue() instanceof String) {
+                        Object objValue = VariableFormula.calculate((String) ent.getValue(), varTrans);
+                        if (objValue != null) {
                             params.put(ent.getKey(), objValue);
                         } else {
                             params.put(ent.getKey(), ent.getValue());

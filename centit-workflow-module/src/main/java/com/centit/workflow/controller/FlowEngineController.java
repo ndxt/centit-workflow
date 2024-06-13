@@ -13,11 +13,14 @@ import com.centit.framework.core.controller.WrapUpContentType;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
+import com.centit.framework.model.basedata.UserInfo;
 import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowDefine;
 import com.centit.workflow.service.FlowEngine;
@@ -52,6 +55,8 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @PostMapping(value = "/createInstance")
     public FlowInstance createFlowInstDefault(@RequestBody CreateFlowOptions newFlowInstanceOptions, HttpServletRequest request) {
+        newFlowInstanceOptions.setClientLocale(WebOptUtils.getCurrentLocale(request));
+
         if(StringUtils.isBlank(newFlowInstanceOptions.getTopUnit())){
             newFlowInstanceOptions.setTopUnit(WebOptUtils.getCurrentTopUnit(request));
         }
@@ -60,9 +65,7 @@ public class FlowEngineController extends BaseController {
                 new ObjectUserUnitVariableTranslate(
                     BaseController.collectRequestParameters(request)), null);
 
-        FlowInstance instance = flowEngine.getFlowInstById(flowInstance.getFlowInstId());
-        instance.setActiveNodeList(new ArrayList<>(instance.getActiveNodeInstances()));
-        return instance;
+        return flowEngine.getFlowInstById(flowInstance.getFlowInstId());
     }
 
     @ApiOperation(value = "提交节点", notes = "提交节点")
@@ -77,6 +80,7 @@ public class FlowEngineController extends BaseController {
     public Map<String, Object> submitOpt(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
         /*return flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
             BaseController.collectRequestParameters(request)),null);*/
+        options.setClientLocale(WebOptUtils.getCurrentLocale(request));
         if(StringUtils.isBlank(options.getTopUnit())){
             options.setTopUnit(WebOptUtils.getCurrentTopUnit(request));
         }
@@ -131,7 +135,8 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowVariablesByVarname")
     public List<FlowVariable> viewFlowVariablesByVarname(FlowVariable flowVariableParam) {
-        List<FlowVariable> flowVariables = flowEngine.viewFlowVariablesByVarName(flowVariableParam.getFlowInstId(), flowVariableParam.getVarName());
+        List<FlowVariable> flowVariables = flowEngine.viewFlowVariablesByVarName(flowVariableParam.getFlowInstId(),
+            flowVariableParam.getVarName());
         return flowVariables;
     }
 
@@ -307,7 +312,7 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "查看办件角色", notes = "查看办件角色")
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowWorkTeam")
-    public List<String> viewFlowWorkTeam(FlowWorkTeam flowWorkTeam) {
+    public List<FlowWorkTeam> viewFlowWorkTeam(FlowWorkTeam flowWorkTeam) {
         return flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
     }
 
@@ -315,11 +320,11 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody
     @GetMapping(value = "/viewFlowWorkTeamUser")
     public JSONArray viewFlowWorkTeamUser(HttpServletRequest request, FlowWorkTeam flowWorkTeam) {
-        List<String> teamUserCodes = flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
+        List<FlowWorkTeam> teamUserCodes = flowEngine.viewFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode());
         List<UserUnit> teamUsers = new ArrayList<>();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         teamUserCodes.forEach(u -> {
-            teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u));
+            teamUsers.add(CodeRepositoryUtil.getUserPrimaryUnit(topUnit, u.getUserCode()));
 //            teamUsers.add(CodeRepositoryUtil.getUserInfoByCode(topUnit, u));
         });
 
@@ -375,10 +380,12 @@ public class FlowEngineController extends BaseController {
     )
     @WrapUpResponseBody
     @PostMapping(value = "/isolatedNode")
-    public NodeInstance createIsolatedNodeInst(@RequestBody JSONObject jsonObject) {
+    public NodeInstance createIsolatedNodeInst(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+        UserInfo userInfo =  WebOptUtils.assertUserLogin(request);
+        //String topUnit =  WebOptUtils.getCurrentTopUnit(request);
         String flowInstId = jsonObject.getString("flowInstId");
         String curNodeInstId = jsonObject.getString("curNodeInstId");
-        String createUser = jsonObject.getString("createUser");
+        String createUser = userInfo.getUserCode();// jsonObject.getString("createUser");
         String userCode = jsonObject.getString("userCode");
         String nodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
@@ -400,9 +407,11 @@ public class FlowEngineController extends BaseController {
     )
     @WrapUpResponseBody
     @PostMapping(value = "/duplicateMultiNode")
-    public NodeInstance duplicateMultiNodeInst(@RequestBody JSONObject jsonObject) {
+    public NodeInstance duplicateMultiNodeInst(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
+        UserInfo userInfo =  WebOptUtils.assertUserLogin(request);
+        //String topUnit =  WebOptUtils.getCurrentTopUnit(request);
         String flowInstId = jsonObject.getString("flowInstId");
-        String createUser = jsonObject.getString("createUser");
+        String createUser = userInfo.getUserCode();// jsonObject.getString("createUser");
         String userCode = jsonObject.getString("userCode");
         String multiNodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
@@ -413,11 +422,13 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
     @WrapUpResponseBody
     @PostMapping(value = "/prepNode")
-    public NodeInstance createPrepNodeInst(@RequestBody String json) {
+    public NodeInstance createPrepNodeInst(@RequestBody String json, HttpServletRequest request) {
         JSONObject jsonObject = JSON.parseObject(json);
+        UserInfo userInfo =  WebOptUtils.assertUserLogin(request);
+        //String topUnit =  WebOptUtils.getCurrentTopUnit(request);
         String flowInstId = jsonObject.getString("flowInstId");
         String curNodeInstId = jsonObject.getString("curNodeInstId");
-        String createUser = jsonObject.getString("createUser");
+        String createUser = userInfo.getUserCode();// jsonObject.getString("createUser");
         String userCode = jsonObject.getString("userCode");
         String nodeCode = jsonObject.getString("nodeCode");
         String unitCode = jsonObject.getString("unitCode");
@@ -429,10 +440,29 @@ public class FlowEngineController extends BaseController {
     @ApiImplicitParam(name = "jsonObject", paramType = "body", value = "{\"nodeInstId\":\"\",\"managerUserCode\":\"userCode\"}")
     @WrapUpResponseBody
     @PostMapping(value = "/rollBackNode")
-    public String rollBackNode(@RequestBody JSONObject jsonObject) {
+    public String rollBackNode(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String nodeInstId = jsonObject.getString("nodeInstId");
         String managerUserCode = jsonObject.getString("managerUserCode");
-        return flowEngine.rollBackNode(nodeInstId, managerUserCode);
+        try {
+            return flowEngine.rollBackNode(nodeInstId, managerUserCode);
+        } catch (ObjectException e){
+            String msg;
+            switch (e.getExceptionCode()){
+                case WorkflowException.FlowInstNotFound:
+                case WorkflowException.NodeInstNotFound:
+                    msg = getI18nMessage("flow.651.node_inst_not_found", request, nodeInstId);
+                    break;
+
+                case WorkflowException.IncorrectNodeState:
+                    msg = getI18nMessage("flow.654.node_incorrect_state", request,
+                        "--", "--", nodeInstId, "--");
+                    break;
+                default:
+                    msg = getI18nMessage("error.704.process_failed", request, e.getMessage());
+                    break;
+            }
+            throw new ObjectException(e.getExceptionCode(), msg);
+        }
     }
 
     @ApiOperation(value = "检查后续的节点是否被操作过，包括更新和提交", notes = "检查后续的节点是否被操作过，包括更新和提交")
@@ -582,17 +612,19 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "预判下一步节点的节点编号", notes = "预判下一步节点的节点编号")
     @WrapUpResponseBody
     @PostMapping(value = "/viewNextNode")
-    public Set<NodeInfo> viewNextNode(@RequestBody SubmitOptOptions options) {
+    public Set<NodeInfo> viewNextNode(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
+        options.setClientLocale(WebOptUtils.getCurrentLocale(request));
         return flowEngine.viewNextNode(options);
     }
 
     @ApiOperation(value = "查看下一节点可以操作的人员类表", notes = "查看下一节点可以操作的人员类表")
     @WrapUpResponseBody
     @PostMapping(value = "/viewNextNodeOperator")
-    public Set<String> viewNextNodeOperator(@RequestBody String json) {
+    public Set<String> viewNextNodeOperator(@RequestBody String json, HttpServletRequest request) {
         JSONObject jsonObject = JSON.parseObject(json);
         String nextNodeId = jsonObject.getString("nextNodeId");
         SubmitOptOptions options = JSON.parseObject(jsonObject.getString("options"), SubmitOptOptions.class);
+        options.setClientLocale(WebOptUtils.getCurrentLocale(request));
         return flowEngine.viewNextNodeOperator(nextNodeId, options);
     }
 
@@ -630,8 +662,7 @@ public class FlowEngineController extends BaseController {
         required = true, paramType = "path", dataType = "String"
     )
     @RequestMapping(value = "/flowActiveNodeTask/{flowInstId}", method = RequestMethod.GET)
-    public List<UserTask> listFlowActiveNodeOperators(@PathVariable String flowInstId,
-                                          HttpServletRequest request) {
+    public List<UserTask> listFlowActiveNodeOperators(@PathVariable String flowInstId) {
 
         return flowEngine.listFlowActiveNodeOperators(flowInstId);
     }
