@@ -1,3 +1,40 @@
+-- 2024年3月13日
+ALTER TABLE application_version MODIFY COLUMN DATE_CREATED DATE NOT NULL COMMENT '创建日期';
+alter table application_version add BACKUP_FILE_ID varchar(32) NULL;
+alter table history_version ADD history_sha  varchar(80) NULL;
+
+-- 2024年4月15日
+ALTER TABLE application_version MODIFY COLUMN DATE_CREATED DATETIME  NOT NULL COMMENT '创建日期';
+alter table application_version add MERGE_STATUS varchar(1) comment '合并状态-A: 没有合并 或者 合并完成 B：合并中';
+alter table application_version add MERGE_TIME DATETIME comment '合并时间';
+update application_version set MERGE_STATUS = 'A';
+
+create table APP_MERGE_TASK ( APP_VERSION_ID varchar(32) not null comment '版本id',
+                                relateion_ID varchar(32) not null comment '关联表ID',
+                                object_type varchar(32) comment '对象类型',
+                                history_ID varchar(32) comment '历史版本',
+                                merge_type varchar(32) comment '合并类型',
+                                merge_time DATETIME comment '创建时间',
+                                merge_desc varchar(1000) comment '合并说明',
+                                merge_status varchar(1) comment '合并状态',
+                                last_update_time DATETIME comment '最后更新时间',
+                                update_user varchar(32) comment '最后更新人',
+                                primary key (APP_VERSION_ID, relateion_ID));
+
+create table I18N_MESSAGES ( OS_ID varchar(32) not null comment '应用ID',
+                               MSG_KEY varchar(200) not null comment '标签ID',
+                               MSG_VALUE varchar(4000) comment '标签文本',
+                               last_update_time DATETIME comment '最后更新时间',
+                               update_user varchar(32) comment '更新人员',
+                               primary key (OS_ID, MSG_KEY));
+
+-- 2024年4月15日
+alter table f_md_column MODIFY column COLUMN_LENGTH decimal(16,0);
+
+-- 2024年5月15日
+create fulltext index full_ind_structure_function on
+       m_meta_form_model_draft (STRUCTURE_FUNCTION) WITH PARSER ngram;
+
 -- 2024-5-17
 alter table WF_NODE add EXPIRE_CALL_API varchar(32);
 alter table WF_FLOW_DEFINE add EXPIRE_CALL_API varchar(32);
@@ -260,3 +297,5 @@ where
             or (`b`.`ROLE_TYPE` = `a`.`ROLE_TYPE`))
         and ((`b`.`ROLE_CODE` is null)
             or (`b`.`ROLE_CODE` = `a`.`ROLE_CODE`)));
+
+
