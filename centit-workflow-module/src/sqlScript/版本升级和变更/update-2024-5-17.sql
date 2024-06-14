@@ -1,5 +1,4 @@
 -- 2024年3月13日
-ALTER TABLE application_version MODIFY COLUMN DATE_CREATED DATE NOT NULL COMMENT '创建日期';
 alter table application_version add BACKUP_FILE_ID varchar(32) NULL;
 alter table history_version ADD history_sha  varchar(80) NULL;
 
