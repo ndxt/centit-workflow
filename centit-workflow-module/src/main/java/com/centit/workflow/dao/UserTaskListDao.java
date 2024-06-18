@@ -22,6 +22,8 @@ import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.po.UserTask;
 import com.centit.support.compiler.Lexer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -221,6 +223,19 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         return data == null ? null : data.toJavaObject(UserTask.class);
     }
 
+    private Pair<String, SimpleTableField> findField(TableMapInfo tabA, TableMapInfo tabB, TableMapInfo tabC,
+                                                     String fieldName){
+        SimpleTableField field = tabB.findFieldByName(fieldName);
+        if(field!=null)
+            return new ImmutablePair<>("b.", field);
+        field = tabA.findFieldByName(fieldName);
+        if(field!=null)
+            return new ImmutablePair<>("a.", field);
+        field = tabC.findFieldByName(fieldName);
+        if(field!=null)
+            return new ImmutablePair<>("c.", field);
+        return null;
+    }
 
     private String buildSortSql(Map<String, Object> filterMap, boolean hasAlias){
         String selfOrderBy = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.SELF_ORDER_BY));
@@ -237,35 +252,21 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             Lexer lexer = new Lexer(selfOrderBy, Lexer.LANG_TYPE_SQL);
             String aword = lexer.getAWord();
             while(StringUtils.isNotBlank(aword)){
-                SimpleTableField field = tabB.findFieldByName(aword);
-                if(field!=null){
+                Pair<String, SimpleTableField> fieldPair = findField(tabA, tabB, tabC, aword);
+                if(fieldPair!=null){
                     if(hasAlias)
-                        orderSql.append("b.");
-                }else{
-                    field = tabA.findFieldByName(aword);
-                    if(field!=null){
-                        if(hasAlias)
-                            orderSql.append("b.");
-                    } else {
-                        field = tabC.findFieldByName(aword);
-                        if(field!=null){
-                            if(hasAlias)
-                                orderSql.append("c.");
-                        }
-                    }
-                }
-                if(field!=null){
-                    orderSql.append(field.getColumnName());
+                        orderSql.append(fieldPair.getLeft());
+                    orderSql.append(fieldPair.getRight().getColumnName());
                 }
                 aword = lexer.getAWord();
                 if(StringUtils.equalsAnyIgnoreCase(aword, "desc", "asc")){
-                    if(field!=null){
+                    if(fieldPair!=null){
                         orderSql.append(" ").append(aword);
                     }
                     aword = lexer.getAWord();
                 }
                 if(",".equals(aword)){
-                    if(field!=null) {
+                    if(fieldPair!=null) {
                         orderSql.append(", ");
                     }
                 } else {
@@ -279,22 +280,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         }
 
         String sortField = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.TABLE_SORT_FIELD));
-        String sf = null;
-        SimpleTableField field = tabB.findFieldByName(sortField);
-        if(field!=null){
-            sf= hasAlias? "b." +field.getColumnName() : field.getColumnName();
-        }else{
-            field = tabA.findFieldByName(sortField);
-            if(field!=null){
-                sf= hasAlias?  "a." +field.getColumnName() : field.getColumnName();
-            } else {
-                field = tabC.findFieldByName(sortField);
-                if(field!=null){
-                    sf= hasAlias? "c." +field.getColumnName() : field.getColumnName();
-                }
-            }
-        }
-        if(StringUtils.isNotBlank(sf)){
+        Pair<String, SimpleTableField> fieldPair = findField(tabA, tabB, tabC, sortField);
+        if(fieldPair!=null){
+            String sf= hasAlias? fieldPair.getLeft() + fieldPair.getRight().getColumnName()
+                : fieldPair.getRight().getColumnName();
+
             String orderField = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.TABLE_SORT_ORDER));
             if(StringUtils.equalsAnyIgnoreCase(orderField, "desc", "asc")){
                 return sf + " " +orderField;
