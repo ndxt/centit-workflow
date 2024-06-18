@@ -7,12 +7,21 @@ import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.algorithm.StringBaseOpt;
+import com.centit.support.database.jsonmaptable.GeneralJsonObjectDao;
+import com.centit.support.database.metadata.SimpleTableField;
+import com.centit.support.database.orm.JpaMetadata;
+import com.centit.support.database.orm.TableMapInfo;
 import com.centit.support.database.utils.DBType;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.database.utils.QueryAndNamedParams;
 import com.centit.support.database.utils.QueryUtils;
+import com.centit.workflow.po.FlowInstance;
+import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.po.UserTask;
+import com.centit.support.compiler.Lexer;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -195,7 +204,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         String sql = userCompleteTaskBaseSql;
         DBType dbType = DBType.mapDBType(CodeRepositoryUtil.getSysConfigValue("jdbc.driver"));
         if (dbType == DBType.Oracle || dbType == DBType.Oscar ||dbType == DBType.DM) {
-            sql = userCompleteTaskBaseSql.replace("group_concat", "wm_concat");
+            sql = sql.replace("group_concat", "wm_concat");
         }
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql, filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
@@ -212,11 +221,94 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         return data == null ? null : data.toJavaObject(UserTask.class);
     }
 
+
+    private String buildSortSql(Map<String, Object> filterMap, boolean hasAlias){
+        String selfOrderBy = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.SELF_ORDER_BY));
+        if(StringUtils.isBlank(selfOrderBy)){
+            StringBaseOpt.objectToString(filterMap.get("orderBy"));
+        }
+        // wf_node_instance b   wf_flow_instance a o join WF_NODE c
+        TableMapInfo tabA = JpaMetadata.fetchTableMapInfo(FlowInstance.class);
+        TableMapInfo tabB = JpaMetadata.fetchTableMapInfo(NodeInstance.class);
+        TableMapInfo tabC = JpaMetadata.fetchTableMapInfo(NodeInfo.class);
+
+        if(StringUtils.isNotBlank(selfOrderBy)){
+            StringBuilder orderSql = new StringBuilder();
+            Lexer lexer = new Lexer(selfOrderBy, Lexer.LANG_TYPE_SQL);
+            String aword = lexer.getAWord();
+            while(StringUtils.isNotBlank(aword)){
+                SimpleTableField field = tabB.findFieldByName(aword);
+                if(field!=null){
+                    if(hasAlias)
+                        orderSql.append("b.");
+                }else{
+                    field = tabA.findFieldByName(aword);
+                    if(field!=null){
+                        if(hasAlias)
+                            orderSql.append("b.");
+                    } else {
+                        field = tabC.findFieldByName(aword);
+                        if(field!=null){
+                            if(hasAlias)
+                                orderSql.append("c.");
+                        }
+                    }
+                }
+                if(field!=null){
+                    orderSql.append(field.getColumnName());
+                }
+                aword = lexer.getAWord();
+                if(StringUtils.equalsAnyIgnoreCase(aword, "desc", "asc")){
+                    if(field!=null){
+                        orderSql.append(" ").append(aword);
+                    }
+                    aword = lexer.getAWord();
+                }
+                if(",".equals(aword)){
+                    if(field!=null) {
+                        orderSql.append(", ");
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            if(orderSql.length()>0){
+                return orderSql.toString();
+            }
+        }
+
+        String sortField = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.TABLE_SORT_FIELD));
+        String sf = null;
+        SimpleTableField field = tabB.findFieldByName(sortField);
+        if(field!=null){
+            sf= hasAlias? "b." +field.getColumnName() : field.getColumnName();
+        }else{
+            field = tabA.findFieldByName(sortField);
+            if(field!=null){
+                sf= hasAlias?  "a." +field.getColumnName() : field.getColumnName();
+            } else {
+                field = tabC.findFieldByName(sortField);
+                if(field!=null){
+                    sf= hasAlias? "c." +field.getColumnName() : field.getColumnName();
+                }
+            }
+        }
+        if(StringUtils.isNotBlank(sf)){
+            String orderField = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.TABLE_SORT_ORDER));
+            if(StringUtils.equalsAnyIgnoreCase(orderField, "desc", "asc")){
+                return sf + " " +orderField;
+            }
+            return sf;
+        }
+        return hasAlias? "b.CREATE_TIME desc" : "CREATE_TIME desc";
+    }
+
     @Transactional
     public List<UserTask> listUserStaticTask(Map<String, Object> filter, PageDesc pageDesc) {
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(
-            userStaticTaskBaseSql + " order by b.CREATE_TIME desc ", filter);
+            userStaticTaskBaseSql + " order by " + buildSortSql(filter, true), filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
             queryAndNamedParams.getQuery(), queryAndNamedParams.getParams(), pageDesc);
 
@@ -227,7 +319,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     public List<UserTask> listUserGrantorTask(Map<String, Object> filter, PageDesc pageDesc) {
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(
-            userGrantorTaskBaseSql + " order by b.CREATE_TIME desc ", filter);
+            userGrantorTaskBaseSql + " order by " + buildSortSql(filter, true), filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
             queryAndNamedParams.getQuery(), queryAndNamedParams.getParams(), pageDesc);
 
@@ -247,7 +339,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         grantorQuery.getParams().putAll(staticQuery.getParams());
 
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
-            "select * from (" + staticSql +" union all " + grantorSql +") order by b.CREATE_TIME desc",(String[])null,
+            "select * from (" + staticSql +" union all " + grantorSql +") order by " +
+                buildSortSql(filter, false),  null,
             "select sum(t.rowcounts) as rowcounts from (" + staticCountSql +" union all " + grantorCountSql +") t",
             grantorQuery.getParams(), pageDesc);
 
@@ -288,7 +381,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     @Transactional
     public List<UserTask> listUserDynamicTask(List<UserUnit> userUnits, Map<String, Object> filter, PageDesc pageDesc) {
         String querySql = buildDynamicTaskSql(userUnits);
-        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(querySql + " order by CREATE_TIME desc ", filter);
+        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(
+            querySql + " order by " + buildSortSql(filter, true), filter);
         Map<String, Object> queryParamMap = CollectionsOpt.unionTwoMap(queryAndNamedParams.getParams(), filter);
         appendDynamicQueryParams(queryParamMap, userUnits);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
@@ -315,7 +409,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         queryParamMap.putAll(staticQuery.getParams());
 
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
-            "select * from (" + staticSql +" union all " + grantorSql +" union all " + dynamicSql + ") b order by CREATE_TIME desc",(String[])null,
+            "select * from (" + staticSql +" union all " + grantorSql +" union all " + dynamicSql + ") order by "
+             + buildSortSql(filter, false) , null,
             "select sum(t.rowcounts) as rowcounts from (" + staticCountSql +" union all " + grantorCountSql +" union all " + dynamicCountSql +") t",
             queryParamMap, pageDesc);
 
