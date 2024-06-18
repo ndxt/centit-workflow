@@ -328,7 +328,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         grantorQuery.getParams().putAll(staticQuery.getParams());
 
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
-            "select * from (" + staticSql +" union all " + grantorSql +") order by " +
+            "select * from (" + staticSql +" union all " + grantorSql +") t order by " +
                 buildSortSql(filter, false),  null,
             "select sum(t.rowcounts) as rowcounts from (" + staticCountSql +" union all " + grantorCountSql +") t",
             grantorQuery.getParams(), pageDesc);
@@ -398,7 +398,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         queryParamMap.putAll(staticQuery.getParams());
 
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
-            "select * from (" + staticSql +" union all " + grantorSql +" union all " + dynamicSql + ") order by "
+            "select * from (" + staticSql +" union all " + grantorSql +" union all " + dynamicSql + ") t order by "
              + buildSortSql(filter, false) , null,
             "select sum(t.rowcounts) as rowcounts from (" + staticCountSql +" union all " + grantorCountSql +" union all " + dynamicCountSql +") t",
             queryParamMap, pageDesc);
