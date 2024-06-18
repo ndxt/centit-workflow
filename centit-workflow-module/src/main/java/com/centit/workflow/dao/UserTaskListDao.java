@@ -254,6 +254,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             while(StringUtils.isNotBlank(aword)){
                 Pair<String, SimpleTableField> fieldPair = findField(tabA, tabB, tabC, aword);
                 if(fieldPair!=null){
+                    if(orderSql.length()>0){
+                        orderSql.append(", ");
+                    }
                     if(hasAlias)
                         orderSql.append(fieldPair.getLeft());
                     orderSql.append(fieldPair.getRight().getColumnName());
@@ -265,11 +268,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
                     }
                     aword = lexer.getAWord();
                 }
-                if(",".equals(aword)){
-                    if(fieldPair!=null) {
-                        orderSql.append(", ");
-                    }
-                } else {
+                if(!",".equals(aword)){
                     break;
                 }
             }
