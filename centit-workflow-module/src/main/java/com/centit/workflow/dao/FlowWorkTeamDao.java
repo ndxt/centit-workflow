@@ -20,7 +20,7 @@ public class FlowWorkTeamDao extends BaseDaoImpl<FlowWorkTeam, FlowWorkTeamId> {
         filterField.put("roleCode", "roleCode=:roleCode");
         filterField.put("authDesc", CodeBook.LIKE_HQL_ID);
         filterField.put("authTime", CodeBook.EQUAL_HQL_ID);
-        filterField.put(CodeBook.ORDER_BY_HQL_ID, "userOrder");
+        filterField.put(CodeBook.SELF_ORDER_BY, "userOrder");
         return filterField;
     }
 

@@ -38,7 +38,7 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
         filterField.put("optId", CodeBook.EQUAL_HQL_ID);
         filterField.put("topUnit", CodeBook.EQUAL_HQL_ID);
 
-        filterField.put(CodeBook.ORDER_BY_HQL_ID, "recordDate desc");
+        filterField.put(CodeBook.SELF_ORDER_BY, "recordDate desc");
         return filterField;
     }
 

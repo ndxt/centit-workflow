@@ -46,7 +46,7 @@ public class FlowInstanceDao extends BaseDaoImpl<FlowInstance, String> {
         filterField.put("nocom" , "instState <> :nocom");
         filterField.put("NP_warning" , "flowInstId in (select flowInstId from FlowWarning ) ");
 
-        filterField.put(CodeBook.ORDER_BY_HQL_ID , "createTime desc,flowInstId desc");
+        filterField.put(CodeBook.SELF_ORDER_BY , "createTime desc, flowInstId desc");
         return filterField;
     }
 

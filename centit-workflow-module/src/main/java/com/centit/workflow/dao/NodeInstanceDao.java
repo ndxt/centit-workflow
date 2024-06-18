@@ -43,7 +43,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         filterField.put("topUnit", "FLOW_CODE in (select a.FLOW_CODE from WF_FLOW_DEFINE a " +
             " join F_OS_INFO b on(a.OS_ID = b.OS_ID) where b.TOP_UNIT = :topUnit)" );
 
-        filterField.put(CodeBook.ORDER_BY_HQL_ID, "nodeInstId desc");
+        filterField.put(CodeBook.SELF_ORDER_BY, "nodeInstId desc");
         return filterField;
     }
 

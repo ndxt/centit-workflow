@@ -31,7 +31,7 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
         filterField.put("flowDesc" , CodeBook.LIKE_HQL_ID);
         filterField.put("osId" , CodeBook.EQUAL_HQL_ID);
         filterField.put("optId" , CodeBook.EQUAL_HQL_ID);
-        filterField.put(CodeBook.ORDER_BY_HQL_ID, "version DESC, flowPublishDate DESC, flowCode DESC");
+        filterField.put(CodeBook.SELF_ORDER_BY, "version DESC, flowPublishDate DESC, flowCode DESC");
         return filterField;
     }
 

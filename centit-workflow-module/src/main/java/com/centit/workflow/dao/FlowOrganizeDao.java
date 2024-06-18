@@ -23,7 +23,7 @@ public class FlowOrganizeDao extends BaseDaoImpl<FlowOrganize, FlowOrganizeId> {
         filterField.put("authDesc", CodeBook.LIKE_HQL_ID);
         filterField.put("authTime", CodeBook.EQUAL_HQL_ID);
 
-        filterField.put(CodeBook.ORDER_BY_HQL_ID, "unitOrder");
+        filterField.put(CodeBook.SELF_ORDER_BY, "unitOrder");
 
         return filterField;
     }
