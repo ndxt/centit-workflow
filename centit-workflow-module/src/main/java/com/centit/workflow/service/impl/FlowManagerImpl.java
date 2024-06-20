@@ -1180,6 +1180,18 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         moveUserTaskTo(nodeInstances, fromUserCode, toUserCode, optUserCode);
         return 0;
     }
+    @Override
+    public int moveUserTaskToByOs(String osId, String fromUserCode, String toUserCode,
+                              String optUserCode, String moveDesc) {
+        Map<String, Object> filterMap = new HashMap<>();
+        filterMap.put("taskAssigned", "S");
+        filterMap.put("userCode", fromUserCode);
+        filterMap.put("nodeState", "N");
+        filterMap.put("osId", osId);
+        List<NodeInstance> nodeInstances = nodeInstanceDao.listObjectsByProperties(filterMap);
+        moveUserTaskTo(nodeInstances, fromUserCode, toUserCode, optUserCode);
+        return 0;
+    }
 
     private void moveUserTaskTo(List<NodeInstance> nodeInstIds, String fromUserCode, String toUserCode,
                                 String optUserCode) {

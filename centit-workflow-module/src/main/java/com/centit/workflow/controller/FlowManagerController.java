@@ -644,6 +644,20 @@ public class FlowManagerController extends BaseController {
             userInfo.getUserCode(), //taskMove.getOperatorUser(),
             taskMove.getMoveDesc());
     }
+    /**
+     * 将 fromUserCode 所有任务 迁移 给 toUserCode
+     */
+    @ApiOperation(value = "将 fromUserCode 某个应用下所有任务 迁移 给 toUserCode")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/moveUserTaskToByOs", method = RequestMethod.POST)
+    public void moveUserTaskToByOs(@RequestBody TaskMove taskMove, HttpServletRequest request) {
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
+        flowManager.moveUserTaskTo( taskMove.getOsId(),
+            taskMove.getFormUser(),
+            taskMove.getToUser(),
+            userInfo.getUserCode(),
+            taskMove.getMoveDesc());
+    }
 
     @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode", notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")
     @WrapUpResponseBody

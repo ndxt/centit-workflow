@@ -371,6 +371,17 @@ public interface FlowManager {
      */
     int moveUserTaskTo(String topUnit, String fromUserCode, String toUserCode,
                        String optUserCode, String moveDesc);
+    /**
+     * 将 fromUserCode 所有任务 迁移 给 toUserCode
+     * @param osId  所属租户
+     * @param fromUserCode 任务属主
+     * @param toUserCode   新的属主
+     * @param moveDesc     迁移描述
+     * @param optUserCode  操作人员
+     * @return 返回迁移的任务数
+     */
+    int moveUserTaskToByOs(String osId, String fromUserCode, String toUserCode,
+                       String optUserCode, String moveDesc);
 
     /**
      * 将 fromUserCode 所有任务 迁移 给 toUserCode

@@ -22,4 +22,6 @@ public class TaskMove {
     private String moveDesc;
     @ApiModelProperty(value = "如果是部分转移请标准转移任务的节点实例id列表")
     private List<String> nodeInstIds;
+    @ApiModelProperty(value = "任务转移应用id")
+    private String osId;
 }
