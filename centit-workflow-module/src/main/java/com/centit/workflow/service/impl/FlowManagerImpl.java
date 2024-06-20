@@ -16,6 +16,7 @@ import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.common.DateTimeSpan;
+import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.SubmitOptOptions;
@@ -1461,11 +1462,35 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public ResponseData dubboNodeInstance(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        //queryType C 已完成 N 待办， A（ALL） 所有， V 总揽  S 状态统计
         PageDesc pageDescCopy = new PageDesc();
         pageDescCopy.copy(pageDesc);
-        List<NodeInstance> nodeInstances = listNodeInstance(searchColumn, pageDescCopy);
-        PageQueryResult<NodeInstance> pageQueryResult = PageQueryResult.createResultMapDict(nodeInstances, pageDescCopy);
-        return pageQueryResult.toResponseData();
+        String queryType = StringBaseOpt.castObjectToString(searchColumn.get("queryType"), "S");
+        if(StringUtils.equalsAnyIgnoreCase(queryType,"C","N","A","All")){
+            if(StringUtils.equalsAny(queryType,"C","N")){
+                searchColumn.put("nodeState", queryType);
+            }
+            JSONArray nodes = nodeInstanceDao.listNodeInstances(searchColumn, pageDescCopy);
+            return PageQueryResult.createJSONArrayResult(nodes, pageDescCopy).toResponseData();
+        }
+        // 查询需要关联到节点信息
+        String flowInstId = StringBaseOpt.castObjectToString(searchColumn.get("flowInstId"));
+        if(StringUtils.isBlank(flowInstId)){
+            throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "缺少参数 flowInstId ");
+        }
+        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+        if(flowInst==null){
+            throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "找不到对应的流程 flowInstId ");
+        }
+
+        if("V".equals(queryType)){
+            return PageQueryResult.createJSONArrayResult(
+                nodeInstanceDao.viewFlowNodes(flowInstId, flowInst.getFlowCode(), flowInst.getVersion()),
+                PageDesc.createNotPaging()).toResponseData();
+        }
+        return PageQueryResult.createJSONArrayResult(
+            nodeInstanceDao.viewFlowNodeState(flowInstId, flowInst.getFlowCode(), flowInst.getVersion(), searchColumn),
+            PageDesc.createNotPaging()).toResponseData();
     }
 
     /**

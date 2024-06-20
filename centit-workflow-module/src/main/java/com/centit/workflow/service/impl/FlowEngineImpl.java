@@ -2590,12 +2590,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     @Override
     public JSONArray viewFlowNodes(String flowInstId) {
         FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
-
-        Map<String, Object> filterMap = new HashMap<>();
-        filterMap.put("flowInstId", flowInstId);
-        filterMap.put("flowCode", flowInst.getFlowCode());
-        filterMap.put("version", flowInst.getVersion());
-        JSONArray flowNodes = nodeInstanceDao.viewFlowNodes(filterMap);
+        JSONArray flowNodes = nodeInstanceDao.viewFlowNodes(flowInstId, flowInst.getFlowCode(), flowInst.getVersion());
         for (Object flowNode : flowNodes) {
             JSONObject jsonObject = (JSONObject) flowNode;
             jsonObject.putIfAbsent("nodeState", "0");

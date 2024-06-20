@@ -26,8 +26,8 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         filterField.put("nodeInstId", CodeBook.EQUAL_HQL_ID);
         filterField.put("flowInstId", CodeBook.EQUAL_HQL_ID);
         filterField.put("nodeId", CodeBook.EQUAL_HQL_ID);
-        filterField.put("(date)createTime", "createTime like :createTime");
-        filterField.put("(date)lastUpdateTime", "lastUpdateTime like :createTime");
+        filterField.put("(date)createTime", "createTime >= :createTime");
+        filterField.put("(date)lastUpdateTime", "lastUpdateTime >= :createTime");
         filterField.put("lastUpdateUser", CodeBook.EQUAL_HQL_ID);
         filterField.put("startTime", CodeBook.EQUAL_HQL_ID);
         filterField.put("nodeState", CodeBook.EQUAL_HQL_ID);
@@ -156,26 +156,49 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
             new Object[]{flowInstId, flowStageCode});
         return NumberBaseOpt.castObjectToInteger(obj,0);
     }
+
     /**
      * 获取流程实例的节点信息（流程中所有的业务节点 和 节点实例）
-     *
-     * @param filterMap
      * @return
      */
     @Transactional
-    public JSONArray viewFlowNodes(Map<String, Object> filterMap) {
-        String sql = " select n.NODE_ID,n.NODE_CODE,n.NODE_NAME, " +
-            " t.NODE_INST_ID, t.NODE_STATE, t.CREATE_TIME, t.LAST_UPDATE_TIME,t.last_update_user " +
+    public JSONArray viewFlowNodes(String flowInstId, String  flowCode, long version) {
+        String sql = "select n.NODE_ID,n.NODE_CODE,n.NODE_NAME, " +
+            " t.NODE_INST_ID, t.NODE_STATE, t.CREATE_TIME, t.LAST_UPDATE_TIME, t.last_update_user " +
             " from wf_node n " +
-            " left join (select * from wf_node_instance where 1=1  [ :flowInstId| and FLOW_INST_ID = :flowInstId]) t " +
+            " left join (select * from wf_node_instance where FLOW_INST_ID = ? ) t " +
             " on n.NODE_ID = t.NODE_ID  " +
-            " where n.NODE_TYPE = 'C' " +
-            " [ :flowCode| and n.FLOW_CODE = :flowCode] [ :version| and n.VERSION = :version] " +
+            " where n.NODE_TYPE = 'C' and n.FLOW_CODE = ? and n.VERSION = ?" +
             " order by t.last_update_time is null, t.last_update_time asc ,NODE_STATE desc";
-        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql, filterMap);
 
-        return DatabaseOptUtils.listObjectsByNamedSqlAsJson(this, queryAndNamedParams.getQuery(),
-            queryAndNamedParams.getParams());
+        return DatabaseOptUtils.listObjectsBySqlAsJson(this, sql,
+                    new Object[] {flowInstId, flowCode, version});
+    }
+
+
+    @Transactional
+    public JSONArray viewFlowNodeState(String flowInstId, String  flowCode, long version, Map<String, Object> searchColumn) {
+        String sql = "select n.NODE_ID, n.NODE_CODE, n.NODE_NAME, " +
+            " t.NODE_SUMS, t.NODE_STATE, t.CREATE_TIME, t.LAST_UPDATE_TIME, t.last_update_user " +
+            " from wf_node n " +
+            " left join (select NODE_ID, count(*) as NODE_SUMS," +
+            " min(CREATE_TIME) as CREATE_TIME, max(LAST_UPDATE_TIME) as LAST_UPDATE_TIME, max(NODE_STATE) as NODE_STATE " +
+            " from wf_node_instance where FLOW_INST_ID = :flowInstId " +
+            " group by NODE_ID) t " +
+            " on n.NODE_ID = t.NODE_ID  " +
+            " where n.NODE_TYPE = 'C' and n.FLOW_CODE = :flowCode and n.VERSION = :version" +
+            "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
+            "[ :stageArr | and n.STAGE_CODE in (:stageArr) ]" +
+            "[ :optId| and n.OPT_ID = :optId]" +
+            "[ :optCode| and n.OPT_CODE = :optCode]" +
+            "[ :stageCode| and n.STAGE_CODE = :stageCode]" +
+            " order by n.NODE_CODE";
+        QueryAndNamedParams qap = QueryUtils.translateQuery(sql, searchColumn);
+        qap.getParams().put("flowInstId", flowInstId);
+        qap.getParams().put("flowCode", flowCode);
+        qap.getParams().put("version", version);
+
+        return DatabaseOptUtils.listObjectsByNamedSqlAsJson(this, qap.getQuery(), qap.getParams());
     }
 
     public void updateNodeStateById(FlowInstance wfFlowInst) {
@@ -190,4 +213,38 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         DatabaseOptUtils.doExecuteSql(this, sql,new Object[]{paraMap.get("procId"),paraMap.get("nodeInstId"),paraMap.get("flowInstId"),paraMap.get("unitCode"),paraMap.get("unitName"),paraMap.get("userCode"),paraMap.get("userName"),
             paraMap.get("transDate"),paraMap.get("ideaCode"),paraMap.get("transIdea"),paraMap.get("flowPhase"),paraMap.get("nodeCode"),});
     }*/
+
+    private final static String queryNodeInstance =
+        "select b.FLOW_INST_ID, b.NODE_INST_ID, b.UNIT_CODE, b.USER_CODE, b.ROLE_TYPE," +
+        "b.ROLE_CODE, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE, b.NODE_STATE, " +
+        "b.NODE_ID, c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.deadline_time, " +
+        "c.OPT_CODE, c.EXPIRE_OPT, b.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
+        "b.LAST_UPDATE_TIME, b.TIMER_STATUS, c.OPT_ID, b.PREV_NODE_INST_ID, b.pause_time, " +
+        "b.warning_time, c.Time_Limit as promise_Time, b.RUN_TOKEN, b.NODE_PARAM " +
+        "from wf_node_instance b join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
+        "where 1=1 [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]"  +
+        "[ :nodeState| and b.NODE_STATE = :nodeState]" +
+        "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
+        "[ :userCode| and b.USER_CODE = :userCode]" +
+        "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
+        "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
+        "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
+        "[ :optId| and c.OPT_ID = :optId]" +
+        "[ :optCode| and c.OPT_CODE = :optCode]" +
+        "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
+        "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
+        "[ :nodeName| and c.NODE_NAME = :nodeName]" +
+        "[ :nodeNames| and c.NODE_NAME in (:nodeNames)]" +
+        "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
+        "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
+        "[ :nodeCodes| and c.NODE_CODE in (:nodeCodes)]" +
+        "[ :notNodeCode| and c.NODE_CODE <> :notNodeCode]" +
+        "[ :notNodeCodes| and c.NODE_CODE not in (:notNodeCodes)]";
+
+    @Transactional
+    public JSONArray listNodeInstances(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return DatabaseOptUtils.listObjectsByParamsDriverSqlAsJson(this, queryNodeInstance,
+            searchColumn, pageDesc);
+    }
+
 }
