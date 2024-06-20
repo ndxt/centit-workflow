@@ -201,6 +201,24 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         return DatabaseOptUtils.listObjectsByNamedSqlAsJson(this, qap.getQuery(), qap.getParams());
     }
 
+    @Transactional
+    public JSONArray viewFlowNodes(String  flowCode, long version, Map<String, Object> searchColumn) {
+
+        String sql = "select n.NODE_ID, n.NODE_CODE, n.NODE_NAME "+
+            " from wf_node n "+
+            " where n.NODE_TYPE = 'C' and n.FLOW_CODE = :flowCode and n.VERSION = :version" +
+            "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
+            "[ :stageArr | and n.STAGE_CODE in (:stageArr) ]" +
+            "[ :optId| and n.OPT_ID = :optId]" +
+            "[ :optCode| and n.OPT_CODE = :optCode]" +
+            "[ :stageCode| and n.STAGE_CODE = :stageCode]" +
+            " order by n.NODE_CODE";
+        QueryAndNamedParams qap = QueryUtils.translateQuery(sql, searchColumn);
+        qap.getParams().put("flowCode", flowCode);
+        qap.getParams().put("version", version);
+        return DatabaseOptUtils.listObjectsByNamedSqlAsJson(this, qap.getQuery(), qap.getParams());
+    }
+
     public void updateNodeStateById(FlowInstance wfFlowInst) {
         String sql = "update WF_NODE_INSTANCE set NODE_STATE=?, LAST_UPDATE_TIME=?,LAST_UPDATE_USER=? where NODE_STATE = 'N' and FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql, new Object[]{wfFlowInst.getInstState(),

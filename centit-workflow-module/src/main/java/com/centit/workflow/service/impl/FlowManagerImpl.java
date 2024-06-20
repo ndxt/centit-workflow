@@ -1474,22 +1474,35 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return PageQueryResult.createJSONArrayResult(nodes, pageDescCopy).toResponseData();
         }
         // 查询需要关联到节点信息
-        String flowInstId = StringBaseOpt.castObjectToString(searchColumn.get("flowInstId"));
-        if(StringUtils.isBlank(flowInstId)){
-            throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "缺少参数 flowInstId ");
-        }
-        FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
-        if(flowInst==null){
-            throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "找不到对应的流程 flowInstId ");
-        }
-
         if("V".equals(queryType)){
+            String flowInstId = StringBaseOpt.castObjectToString(searchColumn.get("flowInstId"));
+            if(StringUtils.isBlank(flowInstId)){
+                throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "缺少参数 flowInstId ");
+            }
+            FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+            if(flowInst==null){
+                throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "找不到对应的流程 flowInstId ");
+            }
             return PageQueryResult.createJSONArrayResult(
                 nodeInstanceDao.viewFlowNodes(flowInstId, flowInst.getFlowCode(), flowInst.getVersion()),
                 PageDesc.createNotPaging()).toResponseData();
         }
+        String flowInstId = StringBaseOpt.castObjectToString(searchColumn.get("flowInstId"));
+        if(StringUtils.isNotBlank(flowInstId)) {
+            FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
+            if(flowInst!=null) {
+                return PageQueryResult.createJSONArrayResult(
+                    nodeInstanceDao.viewFlowNodeState(flowInstId, flowInst.getFlowCode(), flowInst.getVersion(), searchColumn),
+                    PageDesc.createNotPaging()).toResponseData();
+            }
+        }
+        String flowCode = StringBaseOpt.castObjectToString(searchColumn.get("flowCode"));
+        if(StringUtils.isBlank(flowInstId)){
+            throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "缺少参数 flowInstId 或者 flowCode ");
+        }
+        long version = flowDefDao.getLastVersion(flowCode);
         return PageQueryResult.createJSONArrayResult(
-            nodeInstanceDao.viewFlowNodeState(flowInstId, flowInst.getFlowCode(), flowInst.getVersion(), searchColumn),
+            nodeInstanceDao.viewFlowNodes(flowCode, version, searchColumn),
             PageDesc.createNotPaging()).toResponseData();
     }
 
