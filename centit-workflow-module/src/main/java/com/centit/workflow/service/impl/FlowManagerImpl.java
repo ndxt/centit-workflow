@@ -92,7 +92,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /*@Autowired
     private NotificationCenter notificationCenter;*/
     @Autowired
-    private  FlowStageDao flowStageDao;
+    private FlowStageDao flowStageDao;
 
     @Autowired(required = false)
     private OperationLogWriter optLogManager;
@@ -336,9 +336,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * 更新流程实例状态，同时需更新所有节点实例状态
      * TODO 需要更新 pause_time 恢复的时候自动延长计时，这个需要论证业务上是否可行
-     * @param flowInstId   实例编号
-     * @param state    N 正常/  C 完成/ P 暂停  挂起  / F 因为流程强行结束二结束 /
-     * @param userCode 操作用户
+     *
+     * @param flowInstId 实例编号
+     * @param state      N 正常/  C 完成/ P 暂停  挂起  / F 因为流程强行结束二结束 /
+     * @param userCode   操作用户
      */
     private int updateInstanceState(String flowInstId, String state, String userCode,
                                     String admindesc) {
@@ -375,7 +376,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         flowInst.setInstState(state);
         if (NodeInstance.NODE_STATE_NORMAL.equals(state)) {
             for (NodeInstance nodeInst : flowInst.getFlowNodeInstances()) {
-                if (NodeInstance.NODE_STATE_PAUSE.equals(nodeInst.getNodeState()) ){
+                if (NodeInstance.NODE_STATE_PAUSE.equals(nodeInst.getNodeState())) {
                     //|| "F".equals(nodeInst.getNodeState())) {
                     nodeInst.setNodeState(state);
                     nodeInst.setLastUpdateTime(updateTime);
@@ -489,6 +490,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     /**
      * 设置流程期限
+     *
      * @param nodeInstId     流程节点实例编号
      * @param timeLimit      新的流程期限 5D3h
      * @param mangerUserCode 管理人员代码
@@ -904,7 +906,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
             FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
             OperationLog wfactlog = FlowOptUtils.createActionLog(flowInst.getTopUnit(),
-                       mangerUserCode, nodeInst, "强制提交节点:" + nodeInstId, null);
+                mangerUserCode, nodeInst, "强制提交节点:" + nodeInstId, null);
             wfactlog.time(updateTime)
                 .application(flowInst.getOsId())
                 .method("updateNodeState");
@@ -978,7 +980,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public List<NodeInstance> listFlowInstNodes(String wfinstid) {
         FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(wfinstid);
-        if(flowInst==null){
+        if (flowInst == null) {
             return null;
             //"流程实例不存在,flow_inst_id:" + wfinstid);
         }
@@ -1040,7 +1042,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Date today = DatetimeOpt.currentUtilDate();
         nodeInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
 
-        DateTimeSpan deadLine= DateTimeSpan.calcDateTimeSpan(nodeInst.getPauseTime(), today);
+        DateTimeSpan deadLine = DateTimeSpan.calcDateTimeSpan(nodeInst.getPauseTime(), today);
         nodeInst.setDeadlineTime(workDayManager
             .calcWorkingDeadline(flowInst.getTopUnit(), nodeInst.getDeadlineTime(), deadLine));
         nodeInst.setWarningTime(workDayManager
@@ -1091,7 +1093,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         Date today = DatetimeOpt.currentUtilDate();
         flowInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
 
-        DateTimeSpan deadLine= DateTimeSpan.calcDateTimeSpan(flowInst.getPauseTime(), today);
+        DateTimeSpan deadLine = DateTimeSpan.calcDateTimeSpan(flowInst.getPauseTime(), today);
         flowInst.setDeadlineTime(workDayManager
             .calcWorkingDeadline(flowInst.getTopUnit(), flowInst.getDeadlineTime(), deadLine));
         flowInst.setWarningTime(workDayManager
@@ -1180,9 +1182,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         moveUserTaskTo(nodeInstances, fromUserCode, toUserCode, optUserCode);
         return 0;
     }
+
     @Override
     public int moveUserTaskToByOs(String osId, String fromUserCode, String toUserCode,
-                              String optUserCode, String moveDesc) {
+                                  String optUserCode, String moveDesc) {
         Map<String, Object> filterMap = new HashMap<>();
         filterMap.put("taskAssigned", "S");
         filterMap.put("userCode", fromUserCode);
@@ -1266,8 +1269,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * 获取节点实例的操作日志列表
      *
-     * @param flowInstId     流程实例id
-     * @param topUnit  归宿租户
+     * @param flowInstId 流程实例id
+     * @param topUnit    归宿租户
      * @return List<WfActionLog>
      */
     @Override
@@ -1344,6 +1347,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     public void saveRoleRelegate(RoleRelegate roleRelegate) {
         roleRelegate.setRecordDate(DatetimeOpt.currentSqlDate());
         flowRoleRelegateDao.saveObject(roleRelegate);
+    }
+
+    @Override
+    public void deleteRoleRelegateByUserCode(String grantor, String grantee) {
+        flowRoleRelegateDao.deleteOptRelegate(grantor, grantee);
     }
 
     @Override
@@ -1478,21 +1486,21 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         PageDesc pageDescCopy = new PageDesc();
         pageDescCopy.copy(pageDesc);
         String queryType = StringBaseOpt.castObjectToString(searchColumn.get("queryType"), "S");
-        if(StringUtils.equalsAnyIgnoreCase(queryType,"C","N","A","All")){
-            if(StringUtils.equalsAny(queryType,"C","N")){
+        if (StringUtils.equalsAnyIgnoreCase(queryType, "C", "N", "A", "All")) {
+            if (StringUtils.equalsAny(queryType, "C", "N")) {
                 searchColumn.put("nodeState", queryType);
             }
             JSONArray nodes = nodeInstanceDao.listNodeInstances(searchColumn, pageDescCopy);
             return PageQueryResult.createJSONArrayResult(nodes, pageDescCopy).toResponseData();
         }
         // 查询需要关联到节点信息
-        if("V".equals(queryType)){
+        if ("V".equals(queryType)) {
             String flowInstId = StringBaseOpt.castObjectToString(searchColumn.get("flowInstId"));
-            if(StringUtils.isBlank(flowInstId)){
+            if (StringUtils.isBlank(flowInstId)) {
                 throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "缺少参数 flowInstId ");
             }
             FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
-            if(flowInst==null){
+            if (flowInst == null) {
                 throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "找不到对应的流程 flowInstId ");
             }
             return PageQueryResult.createJSONArrayResult(
@@ -1500,16 +1508,16 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 PageDesc.createNotPaging()).toResponseData();
         }
         String flowInstId = StringBaseOpt.castObjectToString(searchColumn.get("flowInstId"));
-        if(StringUtils.isNotBlank(flowInstId)) {
+        if (StringUtils.isNotBlank(flowInstId)) {
             FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
-            if(flowInst!=null) {
+            if (flowInst != null) {
                 return PageQueryResult.createJSONArrayResult(
                     nodeInstanceDao.viewFlowNodeState(flowInstId, flowInst.getFlowCode(), flowInst.getVersion(), searchColumn),
                     PageDesc.createNotPaging()).toResponseData();
             }
         }
         String flowCode = StringBaseOpt.castObjectToString(searchColumn.get("flowCode"));
-        if(StringUtils.isBlank(flowInstId)){
+        if (StringUtils.isBlank(flowInstId)) {
             throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "缺少参数 flowInstId 或者 flowCode ");
         }
         long version = flowDefDao.getLastVersion(flowCode);
@@ -1521,10 +1529,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     /**
      * 强制修改流程状态以及相关节点实例状态
      *
-     * @param flowInstId  流程实例
+     * @param flowInstId     流程实例
      * @param mangerUserCode 管理员
-     * @param instState 流程状态
-     * @param desc 描述
+     * @param instState      流程状态
+     * @param desc           描述
      */
     @Override
     public void updateFlowState(String flowInstId, String mangerUserCode, String instState, String desc) {
@@ -1623,13 +1631,13 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
     }
 
-    private void innerUpgradeFlowVersion(String flowCode, long newVersion, long oldVersion){
+    private void innerUpgradeFlowVersion(String flowCode, long newVersion, long oldVersion) {
         //数据不完备可能出错，比较稳妥的写法是 查询出来一条一条的处理
         String sqlUpdateNodeInst = "update WF_NODE_INSTANCE a set a.NODE_ID = " +
-                "(select max(b.NODE_ID) from WF_NODE b where b.FLOW_CODE=? and b.VERSION =?" +
+            "(select max(b.NODE_ID) from WF_NODE b where b.FLOW_CODE=? and b.VERSION =?" +
             " and b.NODE_CODE = (select c.NODE_CODE from WF_NODE c where c.NODE_ID = a.NODE_ID)) " +
             " where FLOW_INST_ID in (select f.FLOW_INST_ID from" +
-                "  WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE= ? and f.VERSION = ? ";
+            "  WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE= ? and f.VERSION = ? ";
         DatabaseOptUtils.doExecuteSql(nodeInstanceDao, sqlUpdateNodeInst,
             new Object[]{flowCode, newVersion, flowCode, oldVersion});
 
@@ -1639,9 +1647,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             new Object[]{newVersion, flowCode, oldVersion});
     }
 
-    /** 流程定义时 必须用 nodeCode 进行节点标注
+    /**
+     * 流程定义时 必须用 nodeCode 进行节点标注
      * 将正在执行中的流程从一个版本迁移到另一个版本（只能在同一个流程的不通版本间迁移）
-     * @param flowCode 流程代码
+     *
+     * @param flowCode   流程代码
      * @param newVersion 新的版本 如果 <=0 则替换为 最新版本
      * @param oldVersion 旧的版本， 如果 <=0 则将所有的版本 都迁移过过来
      * @return 返回迁移的流程实例数量
@@ -1649,21 +1659,21 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     @Transactional
     public void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion,
-                                   String topUnit, String mangerUserCode){
+                                   String topUnit, String mangerUserCode) {
 
-        if(newVersion<=0){
+        if (newVersion <= 0) {
             newVersion = flowDefDao.getLastVersion(flowCode);
         }
-        if(oldVersion>0){
+        if (oldVersion > 0) {
             innerUpgradeFlowVersion(flowCode, newVersion, oldVersion);
             return;
         }
-        for(long v = newVersion-1; v>0 ; v--){
+        for (long v = newVersion - 1; v > 0; v--) {
             innerUpgradeFlowVersion(flowCode, newVersion, v);
         }
         FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowCode, newVersion);
         OperationLog managerAct = FlowOptUtils.createActionLog(topUnit,
-            mangerUserCode, flowCode, "流程" +flowCode+ "版本迁移，从版本" +oldVersion +"迁移到"+ newVersion)
+            mangerUserCode, flowCode, "流程" + flowCode + "版本迁移，从版本" + oldVersion + "迁移到" + newVersion)
             .application(flowInfo.getOsId())
             .method("updateFlowVersion");
         managerAct.application(flowInfo.getOsId());
