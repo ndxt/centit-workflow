@@ -341,6 +341,13 @@ public interface FlowManager {
      * @param roleRelegate
      */
     void saveRoleRelegate(RoleRelegate roleRelegate);
+
+    /**
+     * 根据委托与受委托人删除委托
+     *
+     * @param grantor
+     * @param grantee
+     */
     void deleteRoleRelegateByUserCode(String grantor,String grantee);
 
     /**
