@@ -335,7 +335,7 @@ public interface FlowManager {
      * @param relegateno
      * @return
      */
-    RoleRelegate getRoleRelegateById(Long relegateno);
+    RoleRelegate getRoleRelegateById(String relegateno);
 
     /**
      * @param roleRelegate

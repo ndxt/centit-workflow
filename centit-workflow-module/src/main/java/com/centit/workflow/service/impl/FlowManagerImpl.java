@@ -1336,7 +1336,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
 
     @Override
-    public RoleRelegate getRoleRelegateById(Long relegateno) {
+    public RoleRelegate getRoleRelegateById(String relegateno) {
         return flowRoleRelegateDao.getObjectById(relegateno);
     }
 
