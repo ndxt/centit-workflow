@@ -80,11 +80,11 @@ public abstract class FlowOptUtils {
             return currentDate;
         }
         String tlt = timeLimitStr.trim();
-        if (tlt.startsWith("$") || tlt.startsWith("${")) {
-            if(tlt.startsWith("$")){
+        if (tlt.startsWith("{") || tlt.startsWith("${")) {
+            if(tlt.startsWith("{")){
                 tlt = tlt.substring(1, tlt.length()-1);
             } else {
-                tlt = tlt.substring(1, tlt.length()-1);
+                tlt = tlt.substring(2, tlt.length()-1);
             }
             Object object = VariableFormula.calculate(tlt);
             return DatetimeOpt.castObjectToDate(object);
