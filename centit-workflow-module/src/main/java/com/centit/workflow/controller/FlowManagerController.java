@@ -652,7 +652,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/moveUserTaskToByOs", method = RequestMethod.POST)
     public void moveUserTaskToByOs(@RequestBody TaskMove taskMove, HttpServletRequest request) {
         UserInfo userInfo = WebOptUtils.assertUserLogin(request);
-        flowManager.moveUserTaskTo( taskMove.getOsId(),
+        flowManager.moveUserTaskToByOs( taskMove.getOsId(),
             taskMove.getFormUser(),
             taskMove.getToUser(),
             userInfo.getUserCode(),
