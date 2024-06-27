@@ -203,6 +203,10 @@ public class FlowManagerClientImpl implements FlowManager {
         return 0;
     }
 
+    @Override
+    public RoleRelegate getRoleRelegateById(String relegateno) {
+        return null;
+    }
 
 
     /**
@@ -472,21 +476,17 @@ public class FlowManagerClientImpl implements FlowManager {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
-     /**
-     * @param relegateno
-     * @return
-     */
-    @Override
-    public RoleRelegate getRoleRelegateById(Long relegateno) {
-        throw new ObjectException("This function is not been implemented in client.");
-    }
-
     /**
      * @param roleRelegate
      */
     @Override
     public void saveRoleRelegate(RoleRelegate roleRelegate) {
         throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    @Override
+    public void deleteRoleRelegateByUserCode(String grantor, String grantee) {
+
     }
 
     /**
@@ -523,6 +523,11 @@ public class FlowManagerClientImpl implements FlowManager {
     @Override
     public int moveUserTaskTo(String topUnit, String fromUserCode, String toUserCode, String optUserCode, String moveDesc) {
         throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    @Override
+    public int moveUserTaskToByOs(String osId, String fromUserCode, String toUserCode, String optUserCode, String moveDesc) {
+        return 0;
     }
 
     /**
