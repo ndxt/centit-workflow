@@ -1055,7 +1055,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nodeInst.setWarningTime(deadlineTime);
             } else if (NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nextOptNode.getOptType())) {
                 // 检查是否有同步消息
-                FlowEventInfo eventInfo = flowEventService.getEventByFlowEvent(flowInst.getFlowCode(), nextOptNode.getMessageCode());
+                FlowEventInfo eventInfo = flowEventService.getEventByFlowEvent(flowInst.getFlowInstId(), nextOptNode.getMessageCode());
                 if(eventInfo!=null){
                     Object ret = submitOptInside(
                         SubmitOptOptions.create().copy(options).nodeInst(nodeInst.getNodeInstId()), varTrans, application, false, true, false);
