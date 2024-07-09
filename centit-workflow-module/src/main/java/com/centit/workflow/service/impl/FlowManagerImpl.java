@@ -1517,7 +1517,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
         String flowCode = StringBaseOpt.castObjectToString(searchColumn.get("flowCode"));
-        if (StringUtils.isBlank(flowInstId) || StringUtils.isBlank(flowCode)) {
+        if (StringUtils.isBlank(flowInstId) && StringUtils.isBlank(flowCode)) {
             throw new ObjectException(ResponseData.ERROR_FIELD_INPUT_NOT_VALID, "缺少参数 flowInstId 或者 flowCode ");
         }
         long version = flowDefDao.getLastVersion(flowCode);
