@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.basedata.OperationLog;
+import com.centit.framework.model.security.CentitUserDetails;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.po.*;
 
@@ -70,25 +71,25 @@ public interface FlowManager {
      * 更新所有节点状态为F
      * F 强行结束
      */
-    int stopInstance(String flowInstId, String mangerUserCode, String admindesc);
+    int stopInstance(String flowInstId, CentitUserDetails managerUser, String admindesc);
 
     /**
      * 暂停一个流程    P 暂停 挂起
      *
      * @param flowInstId     流程实例id
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser 管理人员代码
      * @param admindesc      管理原因
      */
-    int suspendInstance(String flowInstId, String mangerUserCode, String admindesc);
+    int suspendInstance(String flowInstId, CentitUserDetails managerUser, String admindesc);
 
     /**
      * 激活一个 挂起的或者无效的流程  N 正常
      *
      * @param flowInstId     流程实例id
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser 管理人员代码
      * @param admindesc      管理原因
      */
-    int activizeInstance(String flowInstId, String mangerUserCode, String admindesc);
+    int activizeInstance(String flowInstId, CentitUserDetails managerUser, String admindesc);
 
     /**
      * 查询某人暂停计时的流程
@@ -103,29 +104,29 @@ public interface FlowManager {
      * 暂停流程计时
      *
      * @param flowInstId
-     * @param mangerUserCode
+     * @param managerUser
      */
-    int suspendFlowInstTimer(String flowInstId, String mangerUserCode);
+    int suspendFlowInstTimer(String flowInstId, CentitUserDetails managerUser);
 
 
     /**
      * 唤醒流程计时
      *
      * @param flowInstId
-     * @param mangerUserCode
+     * @param managerUser
      */
-    int activizeFlowInstTimer(String flowInstId, String mangerUserCode);
+    int activizeFlowInstTimer(String flowInstId, CentitUserDetails managerUser);
 
     /**
      * 设置流程期限
      *
      * @param flowInstId     流程实例编号
      * @param timeLimit      新的流程期限 5D3h
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser 管理人员代码
      * @param admindesc      流程期限更改原因说明
      * @return
      */
-    long resetFlowTimelimt(String flowInstId, String timeLimit, String mangerUserCode, String admindesc);
+    long resetFlowTimelimt(String flowInstId, String timeLimit, CentitUserDetails managerUser, String admindesc);
 
     //------------流程属性修改----------------------------------
 
@@ -135,7 +136,7 @@ public interface FlowManager {
      * @param flowInstId 流程实例ID
      * @param unitCode   机构代码
      */
-    void updateFlowInstUnit(String flowInstId, String unitCode, String optUserCode);
+    void updateFlowInstUnit(String flowInstId, String unitCode, CentitUserDetails managerUser);
 
 
     //------日志信息查看-----------------
@@ -159,12 +160,12 @@ public interface FlowManager {
     /**
      * 暂停流程的一个节点  P 暂停
      */
-    long suspendNodeInstance(String nodeInstId, String mangerUserCode);
+    long suspendNodeInstance(String nodeInstId, CentitUserDetails managerUser);
 
     /**
      * 使流程的 挂起和失效的节点 正常运行 N 正常
      */
-    long activizeNodeInstance(String nodeInstId, String mangerUserCode);
+    long activizeNodeInstance(String nodeInstId, CentitUserDetails managerUser);
 
 
     /**
@@ -173,12 +174,12 @@ public interface FlowManager {
      * @param nodeInstId
      * @param newState
      */
-    void updateNodeState(String nodeInstId, String newState);
+    void updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser);
 
     /**
      * 强制流转到下一结点，这个好像不好搞，主要是无法获得业务数据，只能提交没有分支的节点
      */
-    String forceCommit(String nodeInstId, String mangerUserCode);
+    String forceCommit(String nodeInstId, CentitUserDetails managerUser);
 
 
     /**
@@ -194,18 +195,18 @@ public interface FlowManager {
      * 暂停节点定时
      *
      * @param nodeInstId
-     * @param mangerUserCode
+     * @param managerUser
      */
-    int suspendNodeInstTimer(String nodeInstId, String mangerUserCode);
+    int suspendNodeInstTimer(String nodeInstId, CentitUserDetails managerUser);
 
 
     /**
      * 唤醒节点定时
      *
      * @param nodeInstId
-     * @param mangerUserCode
+     * @param managerUser
      */
-    int activizeNodeInstTimer(String nodeInstId, String mangerUserCode);
+    int activizeNodeInstTimer(String nodeInstId, CentitUserDetails managerUser);
 
 
     //----------流程分支管理-------------------------------
@@ -214,15 +215,15 @@ public interface FlowManager {
      * 从这个节点重新运行该流程，包括已经结束的流程
      *
      * @param nodeInstId     节点实例id
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser 管理人员代码
      * @return 新的节点实例
      */
-    NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode);
+    NodeInstance resetFlowToThisNode(String nodeInstId, CentitUserDetails managerUser);
 
     /**
      * 强制一个并行分支的节点为游离状态，在提交其他并行分支前调用
      */
-    String forceDissociateRuning(String nodeInstId, String mangerUserCode);
+    String forceDissociateRuning(String nodeInstId, CentitUserDetails managerUser);
 
 
     //------------节点属性修改----------------------------------
@@ -233,23 +234,23 @@ public interface FlowManager {
      * @param nodeInstId 节点实例ID
      * @param unitCode   机构代码
      */
-    void updateNodeInstUnit(String nodeInstId, String unitCode, String optUserCode);
+    void updateNodeInstUnit(String nodeInstId, String unitCode, CentitUserDetails managerUser);
 
 
     /**
      * 更改节点的角色信息
      */
-    void updateNodeRoleInfo(String nodeInstId, String roleType, String roleCode, String mangerUserCode);
+    void updateNodeRoleInfo(String nodeInstId, String roleType, String roleCode, CentitUserDetails managerUser);
 
     /**
      * 设置流程期限
      *
      * @param nodeInstId     流程节点实例编号
      * @param timeLimit      新的流程期限 5D3h
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser 管理人员代码
      * @return
      */
-    long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode, String topUnit);
+    long resetNodeTimelimt(String nodeInstId, String timeLimit, CentitUserDetails managerUser, String topUnit);
 
 
     //------------流程阶段管理-------------------------
@@ -268,12 +269,12 @@ public interface FlowManager {
      *
      * @param flowInstId     流程实例编号
      * @param timeLimit      新的流程期限 5D3h
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser 管理人员代码
      * @param admindesc      流程期限更改原因说明
      * @return
      */
     long resetStageTimelimt(String flowInstId, String stageId,
-                            String timeLimit, String mangerUserCode, String admindesc);
+                            String timeLimit, CentitUserDetails managerUser, String admindesc);
 
     //------------流程角色管理-----接口参见flowEngine--------------------
     //------------流程机构管理------接口参见flowEngine--------------------
@@ -326,7 +327,7 @@ public interface FlowManager {
      * Task_assigned 设置为 S 如果多于 一个人 放在 ActionTask 表中，并且把  Task_assigned 设置为 T
      */
     int assignNodeTask(String nodeInstId, String userCode,
-                       String mangerUserCode, String authDesc);
+                       CentitUserDetails managerUser, String authDesc);
 
     // ---------节点任务委托--------------------
 
@@ -348,7 +349,7 @@ public interface FlowManager {
      * @param grantor
      * @param grantee
      */
-    void deleteRoleRelegateByUserCode(String grantor,String grantee);
+    void deleteRoleRelegateByUserCode(String grantor, String grantee);
 
     /**
      * 查询别人委托给我的
@@ -374,22 +375,22 @@ public interface FlowManager {
      * @param fromUserCode 任务属主
      * @param toUserCode   新的属主
      * @param moveDesc     迁移描述
-     * @param optUserCode  操作人员
+     * @param managerUser  操作人员
      * @return 返回迁移的任务数
      */
     int moveUserTaskTo(String topUnit, String fromUserCode, String toUserCode,
-                       String optUserCode, String moveDesc);
+                       CentitUserDetails managerUser, String moveDesc);
     /**
      * 将 fromUserCode 所有任务 迁移 给 toUserCode
      * @param osId  所属租户
      * @param fromUserCode 任务属主
      * @param toUserCode   新的属主
      * @param moveDesc     迁移描述
-     * @param optUserCode  操作人员
+     * @param managerUser  操作人员
      * @return 返回迁移的任务数
      */
     int moveUserTaskToByOs(String osId, String fromUserCode, String toUserCode,
-                       String optUserCode, String moveDesc);
+                           CentitUserDetails managerUser, String moveDesc);
 
     /**
      * 将 fromUserCode 所有任务 迁移 给 toUserCode
@@ -398,11 +399,11 @@ public interface FlowManager {
      * @param fromUserCode 任务属主
      * @param toUserCode   新的属主
      * @param moveDesc     迁移描述
-     * @param optUserCode  操作人员
+     * @param managerUser  操作人员
      * @return 返回迁移的任务数
      */
     int moveUserTaskTo(List<String> nodeInstIds, String fromUserCode, String toUserCode,
-                       String optUserCode, String moveDesc);
+                       CentitUserDetails managerUser, String moveDesc);
 
     void updateFlow(FlowInstance flowInstance);
 
@@ -410,10 +411,10 @@ public interface FlowManager {
      * 流程拉回到首节点
      *
      * @param flowInstId
-     * @param managerUserCode
+     * @param managerUser
      * @param force           是否强制，否的话 需要判断流程最后提交人是否是自己
      */
-    NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force);
+    NodeInstance reStartFlow(String flowInstId, CentitUserDetails managerUser, Boolean force);
 
     List<JSONObject> getListRoleRelegateByGrantor(String grantor);
 
@@ -434,7 +435,8 @@ public interface FlowManager {
      */
     FlowInstanceGroup getFlowInstanceGroup(String flowInstGroupId);
 
-    void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName, String flowOptTag, String userCode, String unitCode);
+    void updateFlowInstOptInfoAndUser(String flowInstId, String flowOptName, String flowOptTag,
+                                      String userCode, String unitCode);
 
     NodeInstance getFirstNodeInst(String flowInstId);
 
@@ -466,7 +468,7 @@ public interface FlowManager {
      * @param instState
      * @param desc
      */
-    void updateFlowState(String flowInstId, String userCode, String instState, String desc);
+    void updateFlowState(String flowInstId, CentitUserDetails managerUser, String instState, String desc);
 
     /**
      * 获取流程实例列表，并查询流程相关信息(fgw收文办结列表和发文办结列表)
@@ -492,6 +494,6 @@ public interface FlowManager {
      * @return 返回迁移的流程实例数量
      */
     void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion,
-                            String topUnit, String mangerUserCode);
+                            String topUnit, CentitUserDetails managerUser);
 
 }

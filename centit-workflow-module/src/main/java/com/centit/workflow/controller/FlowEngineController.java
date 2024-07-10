@@ -15,6 +15,7 @@ import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.model.basedata.UserInfo;
 import com.centit.framework.model.basedata.UserUnit;
+import com.centit.framework.model.security.CentitUserDetails;
 import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
@@ -54,16 +55,16 @@ public class FlowEngineController extends BaseController {
     @ApiOperation(value = "创建流程", notes = "创建流程，参数为json格式")
     @WrapUpResponseBody
     @PostMapping(value = "/createInstance")
-    public FlowInstance createFlowInstDefault(@RequestBody CreateFlowOptions newFlowInstanceOptions, HttpServletRequest request) {
-        newFlowInstanceOptions.setClientLocale(WebOptUtils.getCurrentLocale(request));
-
-        if(StringUtils.isBlank(newFlowInstanceOptions.getTopUnit())){
-            newFlowInstanceOptions.setTopUnit(WebOptUtils.getCurrentTopUnit(request));
+    public FlowInstance createFlowInstDefault(@RequestBody CreateFlowOptions options, HttpServletRequest request) {
+        options.setClientLocale(WebOptUtils.getCurrentLocale(request));
+        options.setLoginIp(WebOptUtils.getRequestAddr(request));
+        if(StringUtils.isBlank(options.getTopUnit())){
+            options.setTopUnit(WebOptUtils.getCurrentTopUnit(request));
         }
         FlowInstance flowInstance =
-            flowEngine.createInstance(newFlowInstanceOptions,
+            flowEngine.createInstance(options,
                 new ObjectUserUnitVariableTranslate(
-                    BaseController.collectRequestParameters(request)), null);
+                    BaseController.collectRequestParameters(request)));
 
         return flowEngine.getFlowInstById(flowInstance.getFlowInstId());
     }
@@ -84,8 +85,9 @@ public class FlowEngineController extends BaseController {
         if(StringUtils.isBlank(options.getTopUnit())){
             options.setTopUnit(WebOptUtils.getCurrentTopUnit(request));
         }
+        options.setLoginIp(WebOptUtils.getRequestAddr(request));
         List<String> nextNodeInstList = flowEngine.submitOpt(options, new ObjectUserUnitVariableTranslate(
-            BaseController.collectRequestParameters(request)), null);
+            BaseController.collectRequestParameters(request)));
         // 返回提交后节点的名称
         Set<String> nodeNames = new HashSet<>();
         for (String nodeInstId : nextNodeInstList) {
@@ -442,9 +444,10 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/rollBackNode")
     public String rollBackNode(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
         String nodeInstId = jsonObject.getString("nodeInstId");
-        String managerUserCode = jsonObject.getString("managerUserCode");
+        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+        //String managerUserCode = jsonObject.getString("managerUserCode");
         try {
-            return flowEngine.rollBackNode(nodeInstId, managerUserCode);
+            return flowEngine.rollBackNode(nodeInstId, managerUser);
         } catch (ObjectException e){
             String msg;
             switch (e.getExceptionCode()){
@@ -614,6 +617,7 @@ public class FlowEngineController extends BaseController {
     @PostMapping(value = "/viewNextNode")
     public Set<NodeInfo> viewNextNode(@RequestBody SubmitOptOptions options, HttpServletRequest request) {
         options.setClientLocale(WebOptUtils.getCurrentLocale(request));
+        options.setLoginIp(WebOptUtils.getRequestAddr(request));
         return flowEngine.viewNextNode(options);
     }
 
@@ -625,6 +629,7 @@ public class FlowEngineController extends BaseController {
         String nextNodeId = jsonObject.getString("nextNodeId");
         SubmitOptOptions options = JSON.parseObject(jsonObject.getString("options"), SubmitOptOptions.class);
         options.setClientLocale(WebOptUtils.getCurrentLocale(request));
+        options.setLoginIp(WebOptUtils.getRequestAddr(request));
         return flowEngine.viewNextNodeOperator(nextNodeId, options);
     }
 

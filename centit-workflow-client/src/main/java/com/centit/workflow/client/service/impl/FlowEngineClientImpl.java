@@ -7,6 +7,7 @@ import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
+import com.centit.framework.model.security.CentitUserDetails;
 import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.ObjectException;
@@ -20,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.ServletContext;
 import java.util.*;
 
 /**
@@ -336,10 +336,10 @@ public class FlowEngineClientImpl implements FlowEngine {
 
     //rollBackNode
     @Override
-    public String rollBackNode(String nodeInstId, String managerUserCode) {
+    public String rollBackNode(String nodeInstId, CentitUserDetails managerUser) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("nodeInstId", nodeInstId);
-        paramMap.put("managerUserCode", managerUserCode);
+        paramMap.put("managerUserCode", managerUser.getUserCode());
         String res = RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/rollBackNode", paramMap);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(res);
@@ -634,11 +634,10 @@ public class FlowEngineClientImpl implements FlowEngine {
      *
      * @param options     NewFlowInstanceOptions 流程创建选项编码
      * @param varTrans    UserUnitVariableTranslate 机构执行环境
-     * @param application spring上下文环境。作为独立服务后这个应该不需要了
      * @return FlowInstance
      */
     @Override
-    public FlowInstance createInstance(CreateFlowOptions options, UserUnitVariableTranslate varTrans, ServletContext application) {
+    public FlowInstance createInstance(CreateFlowOptions options, UserUnitVariableTranslate varTrans) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -647,11 +646,10 @@ public class FlowEngineClientImpl implements FlowEngine {
      *
      * @param options     SubmitOptOptions 提交流程操作选项编码
      * @param varTrans    UserUnitVariableTranslate 机构执行环境
-     * @param application
      * @return 节点实例编号列表
      */
     @Override
-    public List<String> submitOpt(SubmitOptOptions options, UserUnitVariableTranslate varTrans, ServletContext application)  {
+    public List<String> submitOpt(SubmitOptOptions options, UserUnitVariableTranslate varTrans)  {
         throw new ObjectException("This function is not been implemented in client.");
     }
 

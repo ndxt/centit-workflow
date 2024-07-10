@@ -41,6 +41,8 @@ public interface FlowOptParamOptions {
 
     Locale getClientLocale();
 
+    String getLoginIp();
+
     //-----------------------------------------------
     void setVariables(Map<String, Object> variables);
 

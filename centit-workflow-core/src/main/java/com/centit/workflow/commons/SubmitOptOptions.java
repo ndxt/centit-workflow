@@ -101,6 +101,7 @@ public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
 
     private Locale clientLocale;
 
+    private String loginIp;
     private SubmitOptOptions() {
         this.lockOptUser = false;
     }
@@ -231,6 +232,7 @@ public class SubmitOptOptions implements FlowOptParamOptions, Serializable {
         this.setClientLocale(options.getClientLocale());
         this.user(options.getUserCode())
             .unit(options.getUnitCode());
+        this.setLoginIp(options.getLoginIp());
         return this;
     }
 

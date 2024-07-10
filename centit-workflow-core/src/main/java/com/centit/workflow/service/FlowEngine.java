@@ -3,12 +3,12 @@ package com.centit.workflow.service;
 import com.alibaba.fastjson2.JSONArray;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.adapter.UserUnitVariableTranslate;
+import com.centit.framework.model.security.CentitUserDetails;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.*;
 
-import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,12 +23,10 @@ public interface FlowEngine {
      *
      * @param options     NewFlowInstanceOptions 流程创建选项编码
      * @param varTrans    UserUnitVariableTranslate 机构执行环境
-     * @param application spring上下文环境。作为独立服务后这个应该不需要了
      * @return FlowInstance
      */
     FlowInstance createInstance(CreateFlowOptions options,
-                                UserUnitVariableTranslate varTrans,
-                                ServletContext application);
+                                UserUnitVariableTranslate varTrans);
     //--------------------创建流程实例接口-----------------------------------
 
     /**
@@ -51,8 +49,7 @@ public interface FlowEngine {
      * @return 节点实例编号列表
      */
     List<String> submitOpt(SubmitOptOptions options,
-                           UserUnitVariableTranslate varTrans,
-                           ServletContext application);
+                           UserUnitVariableTranslate varTrans);
 
     /**
      * 返回下一步节点的节点实例ID
@@ -275,7 +272,7 @@ public interface FlowEngine {
     /**
      * 回退操作-回退到上一个节点
      */
-    String rollBackNode(String nodeInstId, String managerUserCode);
+    String rollBackNode(String nodeInstId, CentitUserDetails managerUser);
 
     /**
      * 检查后续的节点是否被操作过，包括更新和提交
@@ -304,7 +301,7 @@ public interface FlowEngine {
      * @param flowInstId    流程实例号
      * @param curNodeInstId 当前节点实例号
      * @param nodeCode      节点环节代码，这个节点在这个流程中必需唯一
-     * @param topUnit    当前创建用户
+     * @param createUser    当前创建用户
      * @param userCode      指定操作用户
      * @param unitCode      指定机构
      * @return 节点实例

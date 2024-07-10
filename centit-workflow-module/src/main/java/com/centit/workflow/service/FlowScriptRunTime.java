@@ -1,5 +1,6 @@
 package com.centit.workflow.service;
 
+import com.centit.workflow.commons.FlowOptParamOptions;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInstance;
 import com.centit.workflow.service.impl.FlowVariableTranslate;
@@ -24,10 +25,12 @@ public interface FlowScriptRunTime {
      * @param flowInst 流程实例
      * @param nodeInst 节点实例
      * @param varTrans 变量
+     * @param options 运行参数
      * @return 所有变量列表
      */
     Map<String, Object> runFlowScript(String script,
                                       FlowInstance flowInst,
                                       NodeInstance nodeInst,
-                                      FlowVariableTranslate varTrans);
+                                      FlowVariableTranslate varTrans,
+                                      FlowOptParamOptions options);
 }

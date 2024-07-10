@@ -2,6 +2,8 @@ package com.centit.workflow.service.impl;
 
 import com.centit.framework.model.adapter.NotificationCenter;
 import com.centit.framework.model.basedata.NoticeMessage;
+import com.centit.framework.model.basedata.UserInfo;
+import com.centit.framework.model.security.CentitUserDetails;
 import com.centit.support.algorithm.BooleanBaseOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.GeneralAlgorithm;
@@ -9,6 +11,7 @@ import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.LeftRightPair;
 import com.centit.support.compiler.Pretreatment;
 import com.centit.support.compiler.VariableFormula;
+import com.centit.workflow.commons.FlowOptParamOptions;
 import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.dao.NodeInstanceDao;
 import com.centit.workflow.po.FlowEventInfo;
@@ -84,6 +87,14 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
         return params;
     }
 
+    private CentitUserDetails createUserDetails(String userCode, String loginIp){
+        CentitUserDetails userDetails = new CentitUserDetails();
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserCode(userCode);
+        userDetails.setUserInfo(userInfo);
+        userDetails.setLoginIp(loginIp);
+        return userDetails;
+    }
     /**
      * 运行流程脚本，流程脚本包括以下几个函数
      * setValue(字符串常量 name, 表达式 formula); // 计算变量
@@ -103,11 +114,12 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
      * @param flowInst 流程实例
      * @param nodeInst 节点实例
      * @param varTrans 变量
+     * @param options  运行参数
      * @return 所有变量列表
      */
     @Override
     public Map<String, Object> runFlowScript(String script, FlowInstance flowInst, NodeInstance nodeInst,
-                                             FlowVariableTranslate varTrans) {
+                                             FlowVariableTranslate varTrans, FlowOptParamOptions options) {
         VariableFormula formula = new VariableFormula();
         Map<String, Object> retValueMap = new HashMap<>(16);
         formula.setFormula(script);
@@ -117,7 +129,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
 
         while (true) {
             LeftRightPair<String, Object> value = runWorkflowFunction(flowInst, nodeInst,
-                formula, varTrans);
+                formula, varTrans, options);
             if (value != null) {
                 retValueMap.put(value.getLeft(), value.getRight());
             }
@@ -136,7 +148,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
     }
 
     public LeftRightPair<String, Object> runWorkflowFunction(FlowInstance flowInst, NodeInstance nodeInst,
-                                                             VariableFormula formula, FlowVariableTranslate varTrans){
+          VariableFormula formula, FlowVariableTranslate varTrans, FlowOptParamOptions options){
         String currWord = formula.skipAWord();
         if(StringUtils.isBlank(currWord)) {
             return null;
@@ -397,7 +409,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                 }
                 endFunction(formula);
                 flowManager.suspendFlowInstTimer(flowInst.getFlowInstId(),
-                    GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
+                    createUserDetails(GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"), options.getLoginIp()));
                 /*flowInstanceDao.updateFlowTimerState(flowInst.getFlowInstId(),
                     FlowInstance.FLOW_TIMER_STATE_SUSPEND, GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
 
@@ -413,7 +425,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                 }
                 endFunction(formula);
                 flowManager.activizeFlowInstTimer(flowInst.getFlowInstId(),
-                    GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
+                    createUserDetails(GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"), options.getLoginIp()));
                 /*flowInstanceDao.updateFlowTimerState(flowInst.getFlowInstId(),
                     FlowInstance.FLOW_TIMER_STATE_RUN, GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"));
 
@@ -433,7 +445,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                 if(StringUtils.isNotBlank(timeLimt)){
                     flowManager.resetFlowTimelimt(flowInst.getFlowInstId(),
                         StringBaseOpt.castObjectToString(param),
-                        GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"),
+                        createUserDetails(GeneralAlgorithm.nvl(nodeInst.getUserCode(), "system"), options.getLoginIp()),
                         "来自自动运行节点的重置"+nodeInst.getNodeInstId());
                 }
 
@@ -445,7 +457,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                 Object condition = getAFunctionParam(formula);
                 if(BooleanBaseOpt.castObjectToBoolean(condition, false)){
                     LeftRightPair<String, Object> trueRet =
-                        runWorkflowFunction( flowInst,  nodeInst, formula,  varTrans);
+                        runWorkflowFunction( flowInst,  nodeInst, formula, varTrans, options);
                     endFunction(formula);
                     return trueRet;
                 } else {
@@ -453,7 +465,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                     String aWord = formula.skipAWord();
                     if(",".equals(aWord)) {
                         LeftRightPair<String, Object> falseRet =
-                            runWorkflowFunction(flowInst, nodeInst, formula, varTrans);
+                            runWorkflowFunction(flowInst, nodeInst, formula, varTrans, options);
                         endFunction(formula);
                         return falseRet;
                     } // else ")".equals(aWord);

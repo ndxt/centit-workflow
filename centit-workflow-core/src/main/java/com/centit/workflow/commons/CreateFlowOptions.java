@@ -145,6 +145,8 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
 
     private Locale clientLocale;
 
+    private String loginIp;
+
     private CreateFlowOptions() {
         this.lockOptUser = false;
         this.skipFirstNode = false;
@@ -317,6 +319,7 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
         this.setNodeUnits(CollectionsOpt.cloneHashMap(options.getNodeUnits()));
         this.setNodeOptUsers(CollectionsOpt.cloneHashMap(options.getNodeOptUsers()));
         this.setFlowOrganizes(CollectionsOpt.cloneHashMap(options.getFlowOrganizes()));
+        this.setLoginIp(options.getLoginIp());
         this.setClientLocale(options.getClientLocale());
         this.user(options.getUserCode())
             .unit(options.getUnitCode());
