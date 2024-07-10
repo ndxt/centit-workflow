@@ -15,11 +15,7 @@ import com.centit.framework.core.dao.PageQueryResult;
 import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.framework.model.basedata.UserInfo;
-import com.centit.framework.model.security.CentitUserDetails;
-import com.centit.support.algorithm.CollectionsOpt;
-import com.centit.support.algorithm.DatetimeOpt;
-import com.centit.support.algorithm.GeneralAlgorithm;
-import com.centit.support.algorithm.NumberBaseOpt;
+import com.centit.support.algorithm.*;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JSONOpt;
@@ -207,10 +203,9 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/assign/{nodeInstId}/{userCode}", method = RequestMethod.POST)
     @WrapUpResponseBody
     public void assignNodeUser(@PathVariable String nodeInstId, @PathVariable String userCode,
-           @RequestBody UserTask actionTask, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+           @RequestBody UserTask actionTask ) {
         flowManager.assignNodeTask(nodeInstId,
-            actionTask.getUserCode(), managerUser, actionTask.getAuthDesc());
+            actionTask.getUserCode(), StringUtils.isBlank(userCode) ? "admin" : userCode, actionTask.getAuthDesc());
     }
 
 
@@ -338,9 +333,12 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/suspendinst/{wfinstid}", method = RequestMethod.GET)
     public String suspendInstance(@PathVariable String wfinstid, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+        String mangerUserCode = request.getParameter("admin");
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
+        }
         String admindesc = request.getParameter("stopDesc");
-        flowManager.suspendInstance(wfinstid, managerUser, admindesc);
+        flowManager.suspendInstance(wfinstid, mangerUserCode, admindesc);
         return "已暂挂";
     }
 
@@ -362,61 +360,73 @@ public class FlowManagerController extends BaseController {
 
     @ApiOperation(value = "更改机构", notes = "更改机构")
     @PutMapping(value = "/changeunit/{wfinstid}/{unitcode}")
-    @WrapUpResponseBody
-    public void changeUnit(@PathVariable String wfinstid, @PathVariable String unitcode, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.updateFlowInstUnit(wfinstid, unitcode, managerUser);
+    public void changeUnit(@PathVariable String wfinstid, @PathVariable String unitcode, HttpServletResponse response) {
+        flowManager.updateFlowInstUnit(wfinstid, unitcode, "admin");
+        JsonResultUtils.writeSingleDataJson("", response);
     }
 
     /*流程实例状态管理api*/
     @ApiOperation(value = "终止流程实例", notes = "终止流程实例")
     @RequestMapping(value = "/stopinst/{flowInstId}", method = RequestMethod.GET)
-    @WrapUpResponseBody
-    public void stopInstance(@PathVariable String flowInstId, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.stopInstance(flowInstId, managerUser, "");
+    public void stopInstance(@PathVariable String flowInstId, HttpServletRequest request, HttpServletResponse response) {
+        String mangerUserCode = request.getParameter("admin");
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
+        }
+        flowManager.stopInstance(flowInstId, mangerUserCode, "");
+        JsonResultUtils.writeSingleDataJson("", response);
     }
 
     @ApiOperation(value = "激活流程实例", notes = "激活流程实例")
     @WrapUpResponseBody
     @RequestMapping(value = "/activizeinst/{flowInstId}", method = RequestMethod.GET)
     public void activizeInstance(@PathVariable String flowInstId, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+        String mangerUserCode = request.getParameter("admin");
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
+        }
         String admindesc = request.getParameter("stopDesc");
-        flowManager.activizeInstance(flowInstId, managerUser, admindesc);
+        flowManager.activizeInstance(flowInstId, mangerUserCode, admindesc);
     }
 
     @ApiOperation(value = "暂停流程的一个节点", notes = "暂停流程的一个节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/suspendNodeInst/{nodeInstId}", method = RequestMethod.GET)
     public void suspendNodeInstance(@PathVariable String nodeInstId, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.suspendNodeInstance(nodeInstId, managerUser);
+        String mangerUserCode = request.getParameter("admin");
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
+        }
+        flowManager.suspendNodeInstance(nodeInstId, mangerUserCode);
     }
 
     @ApiOperation(value = "激活流程的一个节点", notes = "激活流程的一个节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/activizeNodeInst/{nodeInstId}", method = RequestMethod.GET)
     public void activizeNodeInstance(@PathVariable String nodeInstId, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.activizeNodeInstance(nodeInstId, managerUser);
+        String mangerUserCode = request.getParameter("admin");
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
+        }
+        flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
     }
 
     @ApiOperation(value = "强制修改流程的节点状态", notes = "强制修改流程的节点状态")
     @WrapUpResponseBody
     @PutMapping(value = "/updateNodeState/{nodeInstId}/{newState}")
-    public void updateNodeState(@PathVariable String nodeInstId, @PathVariable String newState,
-                                HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.updateNodeState(nodeInstId, newState, managerUser);
+    public void updateNodeState(@PathVariable String nodeInstId, @PathVariable String newState) {
+        flowManager.updateNodeState(nodeInstId, newState);
     }
 
     @ApiOperation(value = "强制流转到下一节点", notes = "强制流转到下一节点")
     @WrapUpResponseBody
     @RequestMapping(value = "/forceCommit/{nodeInstId}", method = RequestMethod.GET)
     public String forceCommit(@PathVariable String nodeInstId, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        return flowManager.forceCommit(nodeInstId, managerUser);
+        String mangerUserCode = request.getParameter("admin");
+        if (StringUtils.isBlank(mangerUserCode)) {
+            mangerUserCode = "admin";
+        }
+        return flowManager.forceCommit(nodeInstId, mangerUserCode);
     }
 
     /**
@@ -435,31 +445,33 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     public NodeInstance changeFlowInstState(@PathVariable String nodeInstId,
                                             HttpServletRequest request, @PathVariable String bo) {
-
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
         switch (bo.charAt(0)) {
             case '1':
-                flowEngine.rollBackNode(nodeInstId, managerUser);
+                flowEngine.rollBackNode(nodeInstId, "admin");
                 break;//这儿必须有break，不然会继续往后执行的。
             case '2':
-                flowManager.forceCommit(nodeInstId, managerUser);
+                flowManager.forceCommit(nodeInstId, "admin");
                 break;
             case '3':
-                flowManager.forceDissociateRuning(nodeInstId, managerUser);
+                flowManager.forceDissociateRuning(nodeInstId, "admin");
                 break;
             case '6':
+                String mangerUserCode = "admin";
                 String timeLimit = request.getParameter("timeLimit");
+
                 if (timeLimit != null) {
-                    flowManager.resetNodeTimelimt(nodeInstId, timeLimit, managerUser, managerUser.getTopUnitCode());
+                    flowManager.activizeInstance(
+                        flowEngine.getNodeInstById(nodeInstId).getFlowInstId(), timeLimit,
+                        mangerUserCode);
                 } else {
-                    flowManager.activizeNodeInstance(nodeInstId, managerUser);
+                    flowManager.activizeNodeInstance(nodeInstId, mangerUserCode);
                 }
                 break;
             case '7':
-                flowManager.resetFlowToThisNode(nodeInstId, managerUser);
+                flowManager.resetFlowToThisNode(nodeInstId, "admin");
                 break;
             case '8':
-                flowManager.suspendNodeInstance(nodeInstId, managerUser);
+                flowManager.suspendNodeInstance(nodeInstId, "admin");
                 break;
 
         }
@@ -473,7 +485,11 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.POST)
     @WrapUpResponseBody
     public NodeInstance resetToCurrent(@PathVariable String nodeInstId, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+        Map<String, Object> params = BaseController.collectRequestParameters(request);
+        String managerUser = StringBaseOpt.castObjectToString(params.get("userCode"));
+        if (StringUtils.isBlank(managerUser)) {
+            managerUser = WebOptUtils.getCurrentUserCode(request);
+        }
         return flowManager.resetFlowToThisNode(nodeInstId, managerUser);
     }
 
@@ -621,11 +637,11 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/moveUserTaskTo", method = RequestMethod.POST)
     public void moveUserTaskTo(@RequestBody TaskMove taskMove, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
         flowManager.moveUserTaskTo( WebOptUtils.getCurrentTopUnit(request),
             taskMove.getFormUser(),
             taskMove.getToUser(),
-            managerUser, //taskMove.getOperatorUser(),
+            userInfo.getUserCode(), //taskMove.getOperatorUser(),
             taskMove.getMoveDesc());
     }
     /**
@@ -635,11 +651,11 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/moveUserTaskToByOs", method = RequestMethod.POST)
     public void moveUserTaskToByOs(@RequestBody TaskMove taskMove, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
         flowManager.moveUserTaskTo( taskMove.getOsId(),
             taskMove.getFormUser(),
             taskMove.getToUser(),
-            managerUser,
+            userInfo.getUserCode(),
             taskMove.getMoveDesc());
     }
 
@@ -647,11 +663,11 @@ public class FlowManagerController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(value = "/moveSelectedUserTaskTo", method = RequestMethod.POST)
     public void moveSelectedUserTaskTo(@RequestBody TaskMove taskMove, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
         flowManager.moveUserTaskTo(taskMove.getNodeInstIds(),
             taskMove.getFormUser(),
             taskMove.getToUser(),
-            managerUser, //taskMove.getOperatorUser(),
+            userInfo.getUserCode(), //taskMove.getOperatorUser(),
             taskMove.getMoveDesc());
     }
 
@@ -671,9 +687,8 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "终止一个流程，修改其流程id为负数，更新所有节点状态为F", notes = "终止一个流程，修改其流程id为负数，更新所有节点状态为F")
     @PostMapping(value = "/stopAndChangeInstance/{flowInstId}/{userCode}")
     @WrapUpResponseBody
-    public void stopAndChangeInstance(@PathVariable String flowInstId, String desc, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.stopInstance(flowInstId, managerUser, desc);
+    public void stopAndChangeInstance(String flowInstId, String userCode, String desc) {
+        flowManager.stopInstance(flowInstId, userCode, desc);
     }
 
     /**
@@ -685,9 +700,8 @@ public class FlowManagerController extends BaseController {
     @PutMapping(value = "/stopInstance/{flowInstId}/{userCode}")
     @WrapUpResponseBody
     public void stopInstance(@PathVariable String flowInstId, @PathVariable String userCode, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
         try {
-            flowManager.stopInstance(flowInstId, managerUser, "");
+            flowManager.stopInstance(flowInstId, userCode, "");
         } catch (Exception e) {
             throw new ObjectException(WorkflowException.IncorrectNodeState,
                 getI18nMessage("flow.654.flow_cant_stop", request));
@@ -698,8 +712,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "强制修改流程状态以及相关节点实例状态", notes = "强制修改流程状态以及相关节点实例状态")
     @PostMapping(value = "/updateFlowState")
     @WrapUpResponseBody
-    public ResponseData updateFlowState(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+    public ResponseData updateFlowState(@RequestBody JSONObject jsonObject) {
         String flowInstId = jsonObject.getString("flowInstId");
         JSONArray flowInstIds = jsonObject.getJSONArray("flowInstIds");
         String userCode = jsonObject.getString("userCode");
@@ -708,11 +721,11 @@ public class FlowManagerController extends BaseController {
         // 判断是否需要批量修改
         if (flowInstIds != null && !flowInstIds.isEmpty()) {
             for (int i = 0; i < flowInstIds.size(); i++) {
-                flowManager.updateFlowState(flowInstIds.getString(i), managerUser, instState, desc);
+                flowManager.updateFlowState(flowInstIds.getString(i), userCode, instState, desc);
             }
             return ResponseData.makeResponseData(flowInstIds);
         } else {
-            flowManager.updateFlowState(flowInstId, managerUser, instState, desc);
+            flowManager.updateFlowState(flowInstId, userCode, instState, desc);
             return ResponseData.makeResponseData(flowInstId);
 
         }
@@ -730,8 +743,7 @@ public class FlowManagerController extends BaseController {
     public void reStartFlow(@PathVariable String flowInstId, @PathVariable String userCode,
                             @RequestParam(required = false, defaultValue = "false") Boolean force,
                             HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        NodeInstance startNodeInst = flowManager.reStartFlow(flowInstId, managerUser, force);
+        NodeInstance startNodeInst = flowManager.reStartFlow(flowInstId, userCode, force);
         if (startNodeInst == null) {
            throw new ObjectException(WorkflowException.WithoutPermission,
                 getI18nMessage("flow.656.flow_cant_restart", request));
@@ -897,8 +909,9 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/suspendFlowInstTimer/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public void suspendFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.suspendFlowInstTimer(flowInstId, managerUser);
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
+        String userCode = userInfo.getUserCode();// MapUtils.getString(parameters,"userCode","admin");
+        flowManager.suspendFlowInstTimer(flowInstId, userCode);
         //JsonResultUtils.writeSingleDataJson("暂停节点计时成功", response);
     }
 
@@ -906,8 +919,9 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/activizeFlowInstTimer/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
     public void activizeFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.activizeFlowInstTimer(flowInstId, managerUser);
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
+        String userCode = userInfo.getUserCode();
+        flowManager.activizeFlowInstTimer(flowInstId, userCode);
         //JsonResultUtils.writeSingleDataJson("唤醒流程计时成功", response);
     }
 
@@ -917,7 +931,7 @@ public class FlowManagerController extends BaseController {
     public void upgradeFlowVersion(@PathVariable String flowCode,
                                    @RequestBody JSONObject versionDesc,
                                    HttpServletRequest request) {
-        CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
+        UserInfo userInfo = WebOptUtils.assertUserLogin(request);
         long newVersion = -1;
         long oldVersion = -1;
         if(versionDesc!=null){
@@ -926,7 +940,7 @@ public class FlowManagerController extends BaseController {
         }
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         flowManager.upgradeFlowVersion(flowCode, newVersion, oldVersion,
-            topUnit, managerUser);
+            topUnit, userInfo.getUserCode());
     }
 
 }

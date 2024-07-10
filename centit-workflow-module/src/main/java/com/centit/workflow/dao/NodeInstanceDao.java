@@ -38,10 +38,10 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         filterField.put("runToken", CodeBook.EQUAL_HQL_ID);
         filterField.put("taskAssigned", CodeBook.EQUAL_HQL_ID);
         filterField.put("userCode", CodeBook.EQUAL_HQL_ID);
-        filterField.put("osId", "FLOW_CODE in (select a.FLOW_CODE from WF_FLOW_DEFINE a " +
+        filterField.put("osId", "flow_inst_id in (select a.flow_inst_id from wf_flow_instance a " +
             " where a.OS_ID  = :osId)" );
-        filterField.put("topUnit", "FLOW_CODE in (select a.FLOW_CODE from WF_FLOW_DEFINE a " +
-            " join F_OS_INFO b on(a.OS_ID = b.OS_ID) where b.TOP_UNIT = :topUnit)" );
+        filterField.put("topUnit", "flow_inst_id in (select a.flow_inst_id from wf_flow_instance a " +
+            " where a.top_unit  = :topUnit)" );
 
         filterField.put(CodeBook.SELF_ORDER_BY, "nodeInstId desc");
         return filterField;
@@ -163,7 +163,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
      */
     @Transactional
     public JSONArray viewFlowNodes(String flowInstId, String  flowCode, long version) {
-        String sql = "select n.NODE_ID,n.NODE_CODE,n.NODE_NAME, " +
+        String sql = "select n.NODE_ID, n.NODE_CODE, n.NODE_NAME, n.NODE_DESC, " +
             " t.NODE_INST_ID, t.NODE_STATE, t.CREATE_TIME, t.LAST_UPDATE_TIME, t.last_update_user " +
             " from wf_node n " +
             " left join (select * from wf_node_instance where FLOW_INST_ID = ? ) t " +
@@ -178,7 +178,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
 
     @Transactional
     public JSONArray viewFlowNodeState(String flowInstId, String  flowCode, long version, Map<String, Object> searchColumn) {
-        String sql = "select n.NODE_ID, n.NODE_CODE, n.NODE_NAME, " +
+        String sql = "select n.NODE_ID, n.NODE_CODE, n.NODE_NAME, n.NODE_DESC, " +
             " t.NODE_SUMS, t.NODE_STATE, t.CREATE_TIME, t.LAST_UPDATE_TIME, t.last_update_user " +
             " from wf_node n " +
             " left join (select NODE_ID, count(*) as NODE_SUMS," +
@@ -204,7 +204,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
     @Transactional
     public JSONArray viewFlowNodes(String  flowCode, long version, Map<String, Object> searchColumn) {
 
-        String sql = "select n.NODE_ID, n.NODE_CODE, n.NODE_NAME "+
+        String sql = "select n.NODE_ID, n.NODE_CODE, n.NODE_NAME, n.NODE_DESC "+
             " from wf_node n "+
             " where n.NODE_TYPE = 'C' and n.FLOW_CODE = :flowCode and n.VERSION = :version" +
             "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
