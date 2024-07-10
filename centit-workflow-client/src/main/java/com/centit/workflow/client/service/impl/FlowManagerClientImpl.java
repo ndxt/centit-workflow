@@ -7,6 +7,7 @@ import com.centit.framework.appclient.HttpReceiveJSON;
 import com.centit.framework.appclient.RestfulHttpRequest;
 import com.centit.framework.common.ResponseData;
 import com.centit.framework.model.basedata.OperationLog;
+import com.centit.framework.model.security.CentitUserDetails;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
@@ -77,10 +78,10 @@ public class FlowManagerClientImpl implements FlowManager {
 
 
     @Override
-    public int stopInstance(String flowInstId, String mangerUserCode, String admindesc) {
+    public int stopInstance(String flowInstId, CentitUserDetails managerUser, String admindesc) {
         /*String s = */
         RestfulHttpRequest.jsonPut(appSession,
-            "/flow/manager/stopInstance/" + flowInstId + "/" + mangerUserCode, null);
+            "/flow/manager/stopInstance/" + flowInstId + "/" + managerUser.getUserCode(), null);
         return 0;
     }
 
@@ -88,15 +89,15 @@ public class FlowManagerClientImpl implements FlowManager {
      * 暂停一个流程    P 暂停 挂起
      *
      * @param flowInstId     流程实例id
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser 管理人员代码
      * @param admindesc      管理原因
      *                       throws Exception 异常
      * @return 状态码
      */
     @Override
-    public int suspendInstance(String flowInstId, String mangerUserCode, String admindesc) {
+    public int suspendInstance(String flowInstId, CentitUserDetails managerUser, String admindesc) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("admin", mangerUserCode);
+        paramMap.put("admin", managerUser.getUserCode());
         paramMap.put("stopDesc", admindesc);
         RestfulHttpRequest.getResponseData(appSession,
             "/flow/manager/suspendinst/" + flowInstId, paramMap);
@@ -107,14 +108,14 @@ public class FlowManagerClientImpl implements FlowManager {
      * 激活一个 挂起的或者无效的流程  N 正常
      *
      * @param flowInstId     流程实例id
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser .getUserCode() 管理人员代码
      * @param admindesc      管理原因
      * @return 状态码
      */
     @Override
-    public int activizeInstance(String flowInstId, String mangerUserCode, String admindesc) {
+    public int activizeInstance(String flowInstId, CentitUserDetails managerUser, String admindesc) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("admin", mangerUserCode);
+        paramMap.put("admin", managerUser.getUserCode());
         paramMap.put("stopDesc", admindesc);
         RestfulHttpRequest.getResponseData(appSession,
             "/flow/manager/activizeinst/" + flowInstId, paramMap);
@@ -125,13 +126,13 @@ public class FlowManagerClientImpl implements FlowManager {
      * 暂停流程的一个节点  P 暂停
      *
      * @param nodeInstId     节点实例id
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser .getUserCode() 管理人员代码
      * @return 状态码
      */
     @Override
-    public long suspendNodeInstance(String nodeInstId, String mangerUserCode) {
+    public long suspendNodeInstance(String nodeInstId, CentitUserDetails managerUser) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("admin", mangerUserCode);
+        paramMap.put("admin", managerUser.getUserCode());
         RestfulHttpRequest.getResponseData(appSession,
             "/flow/manager/suspendNodeInst/" + nodeInstId, paramMap);
         return 0l;
@@ -141,13 +142,13 @@ public class FlowManagerClientImpl implements FlowManager {
      * 使流程的 挂起和失效的节点 正常运行 N 正常
      *
      * @param nodeInstId     节点实例id
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser .getUserCode() 管理人员代码
      * @return 状态码
      */
     @Override
-    public long activizeNodeInstance(String nodeInstId, String mangerUserCode) {
+    public long activizeNodeInstance(String nodeInstId, CentitUserDetails managerUser) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("admin", mangerUserCode);
+        paramMap.put("admin", managerUser.getUserCode());
         RestfulHttpRequest.jsonPut(appSession,
             "/flow/manager/activizeNodeInst/" + nodeInstId, paramMap);
         return 0l;
@@ -157,13 +158,13 @@ public class FlowManagerClientImpl implements FlowManager {
      * 强制流转到下一结点，这个好像不好搞，主要是无法获得业务数据，只能提交没有分支的节点
      *
      * @param nodeInstId     节点实例id
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser .getUserCode() 管理人员代码
      * @return 状态码
      */
     @Override
-    public String forceCommit(String nodeInstId, String mangerUserCode) {
+    public String forceCommit(String nodeInstId, CentitUserDetails managerUser) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("admin", mangerUserCode);
+        paramMap.put("admin", managerUser.getUserCode());
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             "/flow/manager/forceCommit/" + nodeInstId, paramMap);
         return receiveJSON.getDataAsString();
@@ -173,13 +174,13 @@ public class FlowManagerClientImpl implements FlowManager {
      * 从这个节点重新运行该流程，包括已经结束的流程
      *
      * @param nodeInstId     节点实例id
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser .getUserCode() 管理人员代码
      * @return 新的节点实例id
      */
     @Override
-    public NodeInstance resetFlowToThisNode(String nodeInstId, String mangerUserCode) {
+    public NodeInstance resetFlowToThisNode(String nodeInstId, CentitUserDetails managerUser) {
         String json = RestfulHttpRequest.jsonPost(appSession,
-            "/flow/manager/resetToCurrent/" + nodeInstId + "?userCode=" + mangerUserCode, null);
+            "/flow/manager/resetToCurrent/" + nodeInstId + "?userCode=" + managerUser.getUserCode(), null);
         HttpReceiveJSON receiveJSON = HttpReceiveJSON.valueOfJson(json);
         return receiveJSON.getDataAsObject(NodeInstance.class);
     }
@@ -190,16 +191,16 @@ public class FlowManagerClientImpl implements FlowManager {
      *
      * @param nodeInstId     节点实例ID
      * @param userCode       操作用户
-     * @param mangerUserCode 管理用户
+     * @param managerUser .getUserCode() 管理用户
      * @param authDesc       授权说明
      */
     @Override
-    public int assignNodeTask(String nodeInstId, String userCode, String mangerUserCode, String authDesc) {
+    public int assignNodeTask(String nodeInstId, String userCode, CentitUserDetails managerUser, String authDesc) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("userCode", userCode);
         paramMap.put("authDesc", authDesc);
         RestfulHttpRequest.jsonPost(appSession,
-            "/flow/manager/assign/" + nodeInstId + "/" + mangerUserCode, paramMap);
+            "/flow/manager/assign/" + nodeInstId + "/" + managerUser.getUserCode(), paramMap);
         return 0;
     }
 
@@ -304,10 +305,10 @@ public class FlowManagerClientImpl implements FlowManager {
      * 暂停流程计时
      *
      * @param flowInstId
-     * @param mangerUserCode
+     * @param managerUser .getUserCode()
      */
     @Override
-    public int suspendFlowInstTimer(String flowInstId, String mangerUserCode) {
+    public int suspendFlowInstTimer(String flowInstId, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -315,10 +316,10 @@ public class FlowManagerClientImpl implements FlowManager {
      * 唤醒流程计时
      *
      * @param flowInstId
-     * @param mangerUserCode
+     * @param managerUser .getUserCode()
      */
     @Override
-    public int activizeFlowInstTimer(String flowInstId, String mangerUserCode) {
+    public int activizeFlowInstTimer(String flowInstId, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -327,12 +328,12 @@ public class FlowManagerClientImpl implements FlowManager {
      *
      * @param flowInstId     流程实例编号
      * @param timeLimit      新的流程期限 5D3h
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser .getUserCode() 管理人员代码
      * @param admindesc      流程期限更改原因说明
      * @return
      */
     @Override
-    public long resetFlowTimelimt(String flowInstId, String timeLimit, String mangerUserCode, String admindesc) {
+    public long resetFlowTimelimt(String flowInstId, String timeLimit, CentitUserDetails managerUser, String admindesc) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -341,10 +342,10 @@ public class FlowManagerClientImpl implements FlowManager {
      *
      * @param flowInstId  流程实例ID
      * @param unitCode    机构代码
-     * @param optUserCode
+     * @param managerUser
      */
     @Override
-    public void updateFlowInstUnit(String flowInstId, String unitCode, String optUserCode) {
+    public void updateFlowInstUnit(String flowInstId, String unitCode, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -364,10 +365,10 @@ public class FlowManagerClientImpl implements FlowManager {
      * 暂停节点定时
      *
      * @param nodeInstId
-     * @param mangerUserCode
+     * @param managerUser .getUserCode()
      */
     @Override
-    public int suspendNodeInstTimer(String nodeInstId, String mangerUserCode) {
+    public int suspendNodeInstTimer(String nodeInstId, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -375,10 +376,10 @@ public class FlowManagerClientImpl implements FlowManager {
      * 唤醒节点定时
      *
      * @param nodeInstId
-     * @param mangerUserCode
+     * @param managerUser .getUserCode()
      */
     @Override
-    public int activizeNodeInstTimer(String nodeInstId, String mangerUserCode) {
+    public int activizeNodeInstTimer(String nodeInstId, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -386,10 +387,10 @@ public class FlowManagerClientImpl implements FlowManager {
      * 强制一个并行分支的节点为游离状态，在提交其他并行分支前调用
      *
      * @param nodeInstId
-     * @param mangerUserCode
+     * @param managerUser .getUserCode()
      */
     @Override
-    public String forceDissociateRuning(String nodeInstId, String mangerUserCode) {
+    public String forceDissociateRuning(String nodeInstId, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -398,10 +399,10 @@ public class FlowManagerClientImpl implements FlowManager {
      *
      * @param nodeInstId  节点实例ID
      * @param unitCode    机构代码
-     * @param optUserCode
+     * @param managerUser
      */
     @Override
-    public void updateNodeInstUnit(String nodeInstId, String unitCode, String optUserCode) {
+    public void updateNodeInstUnit(String nodeInstId, String unitCode, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -411,10 +412,10 @@ public class FlowManagerClientImpl implements FlowManager {
      * @param nodeInstId
      * @param roleType
      * @param roleCode
-     * @param mangerUserCode
+     * @param managerUser .getUserCode()
      */
     @Override
-    public void updateNodeRoleInfo(String nodeInstId, String roleType, String roleCode, String mangerUserCode) {
+    public void updateNodeRoleInfo(String nodeInstId, String roleType, String roleCode, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -423,15 +424,15 @@ public class FlowManagerClientImpl implements FlowManager {
      *
      * @param nodeInstId     流程节点实例编号
      * @param timeLimit      新的流程期限 5D3h
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser .getUserCode() 管理人员代码
      * @return
      */
     @Override
-    public long resetNodeTimelimt(String nodeInstId, String timeLimit, String mangerUserCode, String topUnit) {
+    public long resetNodeTimelimt(String nodeInstId, String timeLimit, CentitUserDetails managerUser, String topUnit) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
-     /**
+    /**
      * 获取节点所在阶段信息
      *
      * @param flowInstId
@@ -448,12 +449,12 @@ public class FlowManagerClientImpl implements FlowManager {
      * @param flowInstId     流程实例编号
      * @param stageId
      * @param timeLimit      新的流程期限 5D3h
-     * @param mangerUserCode 管理人员代码
+     * @param managerUser .getUserCode() 管理人员代码
      * @param admindesc      流程期限更改原因说明
      * @return
      */
     @Override
-    public long resetStageTimelimt(String flowInstId, String stageId, String timeLimit, String mangerUserCode, String admindesc) {
+    public long resetStageTimelimt(String flowInstId, String stageId, String timeLimit, CentitUserDetails managerUser, String admindesc) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -472,12 +473,12 @@ public class FlowManagerClientImpl implements FlowManager {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
-     /**
+    /**
      * @param relegateno
      * @return
      */
     @Override
-    public RoleRelegate getRoleRelegateById(Long relegateno) {
+    public RoleRelegate getRoleRelegateById(String relegateno) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -487,6 +488,11 @@ public class FlowManagerClientImpl implements FlowManager {
     @Override
     public void saveRoleRelegate(RoleRelegate roleRelegate) {
         throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    @Override
+    public void deleteRoleRelegateByUserCode(String grantor, String grantee) {
+
     }
 
     /**
@@ -516,13 +522,18 @@ public class FlowManagerClientImpl implements FlowManager {
      * @param topUnit 所属租户
      * @param fromUserCode 任务属主
      * @param toUserCode   新的属主
-     * @param optUserCode  操作人员
+     * @param managerUser  操作人员
      * @param moveDesc     迁移描述
      * @return 返回迁移的任务数
      */
     @Override
-    public int moveUserTaskTo(String topUnit, String fromUserCode, String toUserCode, String optUserCode, String moveDesc) {
+    public int moveUserTaskTo(String topUnit, String fromUserCode, String toUserCode, CentitUserDetails managerUser, String moveDesc) {
         throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    @Override
+    public int moveUserTaskToByOs(String osId, String fromUserCode, String toUserCode, CentitUserDetails managerUser, String moveDesc) {
+        return 0;
     }
 
     /**
@@ -531,12 +542,12 @@ public class FlowManagerClientImpl implements FlowManager {
      * @param nodeInstIds  任务节点结合
      * @param fromUserCode 任务属主
      * @param toUserCode   新的属主
-     * @param optUserCode  操作人员
+     * @param managerUser  操作人员
      * @param moveDesc     迁移描述
      * @return 返回迁移的任务数
      */
     @Override
-    public int moveUserTaskTo(List<String> nodeInstIds, String fromUserCode, String toUserCode, String optUserCode, String moveDesc) {
+    public int moveUserTaskTo(List<String> nodeInstIds, String fromUserCode, String toUserCode, CentitUserDetails managerUser, String moveDesc) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -549,11 +560,11 @@ public class FlowManagerClientImpl implements FlowManager {
      * 流程拉回到首节点
      *
      * @param flowInstId
-     * @param managerUserCode
+     * @param managerUser
      * @param force           是否强制，否的话 需要判断流程最后提交人是否是自己
      */
     @Override
-    public NodeInstance reStartFlow(String flowInstId, String managerUserCode, Boolean force) {
+    public NodeInstance reStartFlow(String flowInstId, CentitUserDetails managerUser, Boolean force) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -619,12 +630,12 @@ public class FlowManagerClientImpl implements FlowManager {
     /**
      * 强制修改流程状态以及相关节点实例状态
      * @param flowInstId
-     * @param userCode
+     * @param managerUser
      * @param instState
      * @param desc
      */
     @Override
-    public void updateFlowState(String flowInstId, String userCode, String instState, String desc) {
+    public void updateFlowState(String flowInstId, CentitUserDetails managerUser, String instState, String desc) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -646,7 +657,7 @@ public class FlowManagerClientImpl implements FlowManager {
 
     @Override
     public void upgradeFlowVersion(String flowCode, long newVersion, long oldVersion,
-                                   String topUnit, String mangerUserCode)  {
+                                   String topUnit, CentitUserDetails managerUser)  {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -657,7 +668,7 @@ public class FlowManagerClientImpl implements FlowManager {
      * @param newState
      */
     @Override
-    public void updateNodeState(String nodeInstId, String newState) {
+    public void updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 }
