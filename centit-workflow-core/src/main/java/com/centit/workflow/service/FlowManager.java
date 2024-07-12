@@ -464,7 +464,7 @@ public interface FlowManager {
      * 强制修改流程状态以及相关节点实例状态
      *
      * @param flowInstId
-     * @param userCode
+     * @param managerUser
      * @param instState
      * @param desc
      */

@@ -655,6 +655,14 @@ public class FlowManagerController extends BaseController {
         return flowManager.listFlowInstNodes(flowInstId);
     }
 
+    @ApiOperation(value = "获取流程的节点信息", notes = "可以根据flowCode获取也可以根据flowInstId获取")
+    @WrapUpResponseBody
+    @RequestMapping(value = "/flowNodes", method = RequestMethod.GET)
+    //queryType C 已完成 N 待办， A（ALL） 所有， V 总揽  S 状态统计
+    public ResponseData listFlowNodes(HttpServletRequest request, PageDesc pageDesc) {
+        return flowManager.dubboNodeInstance(collectRequestParameters(request), pageDesc);
+    }
+
     /**
      * 终止一个流程
      * 修改其流程id为负数
