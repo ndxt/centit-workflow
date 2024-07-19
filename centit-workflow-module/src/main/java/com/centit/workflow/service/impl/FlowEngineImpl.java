@@ -1052,7 +1052,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 FlowEventInfo eventInfo = flowEventService.getEventByFlowEvent(flowInst.getFlowInstId(), nextOptNode.getMessageCode());
                 if(eventInfo!=null){
                     Object ret = submitOptInside(
-                        SubmitOptOptions.create().copy(options).nodeInst(nodeInst.getNodeInstId()), varTrans, false, true, false);
+                        SubmitOptOptions.create().copy(options).nodeInst(nodeInst.getNodeInstId()),
+                        nodeInst, flowInst,
+                        varTrans, false, true, false);
                     eventInfo.setOptResult(StringBaseOpt.castObjectToString(ret));
                     eventInfo.setOptState(FlowEventInfo.OPT_STATE_SUCCESS);
                     eventInfo.setOptTime(DatetimeOpt.currentUtilDate());
