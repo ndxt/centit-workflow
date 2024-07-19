@@ -950,7 +950,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
             //如果是子流程 启动流程
             nodeInst.setNodeState(NodeInstance.NODE_STATE_WAITE_SUBPROCESS);
-
             //子流程的机构 要和 节点的机构一致
             FlowInstance tempFlow = createInstanceInside(
                 CreateFlowOptions.create().copy(options)
@@ -1035,7 +1034,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     }
                 }
             }
-        } else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())) {
+        }
+
+        flowInst.addNodeInstance(nodeInst);
+        if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())) {
             //  新建同步节点
             nodeInst.setNodeState(NodeInstance.NODE_STATE_SYNC);
             //  判断同步节点的同步方式是否为时间触发
@@ -1047,8 +1049,10 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     options.getTopUnit(), DatetimeOpt.currentUtilDate(), nextOptNode.getTimeLimit(), workDayManager, false);
                 nodeInst.setDeadlineTime(deadlineTime);
                 nodeInst.setWarningTime(deadlineTime);
+                nodeInstanceDao.saveNewObject(nodeInst);
             } else if (NodeInfo.SYNC_NODE_TYPE_MESSAGE.equals(nextOptNode.getOptType())) {
                 // 检查是否有同步消息
+                nodeInstanceDao.saveNewObject(nodeInst);
                 FlowEventInfo eventInfo = flowEventService.getEventByFlowEvent(flowInst.getFlowInstId(), nextOptNode.getMessageCode());
                 if(eventInfo!=null){
                     Object ret = submitOptInside(
@@ -1061,7 +1065,11 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     flowEventService.updateEvent(eventInfo);
                 }
             }
+        } else  {
+            nodeInstanceDao.saveNewObject(nodeInst);
         }
+        flowInst.setLastUpdateTime(currentTime);
+        flowInst.setLastUpdateUser(options.getUserCode());
 
         //消息通知需要加强，不仅仅是通知操作人员，后续可能需要添加发送时机、发送方式，这部分应该使用策略模式
         if (NodeInfo.NODE_NOTICE_TYPE_DEFAULT.equals(nextOptNode.getNoticeType())) {
@@ -1091,11 +1099,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 logger.error("发送消息找不到对应的接收人：" + JSON.toJSONString(nodeInst));
             }
         }
-
-        nodeInstanceDao.saveNewObject(nodeInst);
-        flowInst.addNodeInstance(nodeInst);
-        flowInst.setLastUpdateTime(currentTime);
-        flowInst.setLastUpdateUser(options.getUserCode());
 
         //检查自动执行节点 并执行相关操作
         // 添加自动运行的处理结果
