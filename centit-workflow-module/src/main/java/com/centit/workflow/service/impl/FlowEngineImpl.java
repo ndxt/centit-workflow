@@ -261,7 +261,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 getI18nMessage("flow.653.first_node_not_found", options.getClientLocale()));
         }
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-            null, flowInst, flowVariableDao, this, options);
+            null, flowInstanceDao, flowInst, flowVariableDao, this, options);
         flowVarTrans.setFlowVarTrans(varTrans);
 
         List<String> nodeInsts = submitToNextNode(node, "T", flowInst, wf,
@@ -1464,7 +1464,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInstanceDao.updateObject(nodeInst);
         }
         FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-            nodeInst, flowInst, flowVariableDao, this, options);
+            nodeInst, flowInstanceDao, flowInst, flowVariableDao, this, options);
         flowVarTrans.setFlowVarTrans(varTrans);
         String nextNodeId = nodeTran.getEndNodeId();
         nextNodeInsts = submitToNextNode(
@@ -1796,7 +1796,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 nextNodes.add(nextNode);
             } else if (NodeInfo.NODE_TYPE_ROUTE.equals(nextNode.getNodeType())) {
                 FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-                    nodeInst, flowInst, flowVariableDao, this, null);
+                    nodeInst, flowInstanceDao, flowInst, flowVariableDao, this, null);
                 // 分支节点的条件
                 UserUnitVariableTranslate varTrans = new ObjectUserUnitVariableTranslate(
                     CollectionsOpt.unionTwoMap(
@@ -1827,7 +1827,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //判断是否为子流程 A:一般 B:抢先机制 C:多人操作 S:子流程
         if (!NodeInfo.NODE_TYPE_SUBFLOW.equals(nextNode.getNodeType())) {
             FlowVariableTranslate flowVarTrans = FlowOptUtils.createVariableTranslate(
-                nodeInst, flowInst, flowVariableDao, this, null);
+                nodeInst, flowInstanceDao, flowInst, flowVariableDao, this, null);
             UserUnitVariableTranslate varTrans = new ObjectUserUnitVariableTranslate(
                 CollectionsOpt.unionTwoMap(
                     options.getVariables() == null ? new HashMap<>() : options.getVariables(),

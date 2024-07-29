@@ -277,12 +277,27 @@ public abstract class FlowOptUtils {
     }
 
     public static FlowVariableTranslate createVariableTranslate(
-            NodeInstance nodeInstance, FlowInstance flowInstance,
+            NodeInstance nodeInstance, FlowInstanceDao flowInstanceDao, FlowInstance flowInstance,
             FlowVariableDao flowVariableDao, FlowEngineImpl flowEngine,
             FlowOptParamOptions options) {
 
         FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(nodeInstance, flowInstance);
-        boolean hasFlowGroup = StringUtils.isNotBlank(flowInstance.getFlowGroupId());
+        List<String> flowInstPath = new ArrayList<>();
+
+        FlowInstance tempInstance = flowInstance;
+        while(tempInstance!=null) {
+            flowInstPath.add(tempInstance.getFlowInstId());
+            if(StringUtils.isBlank(tempInstance.getPreInstId())){
+                tempInstance = null;
+            }else{
+                tempInstance = flowInstanceDao.getObjectById(tempInstance.getPreInstId());
+            }
+        }
+
+        if(StringUtils.isNotBlank(flowInstance.getFlowGroupId())){
+            flowInstPath.add(flowInstance.getFlowGroupId());
+        }
+
         if (nodeInstance == null) {
             // 创建流程实例的时候，nodeInstance为null
             nodeInstance = new NodeInstance();
@@ -300,44 +315,36 @@ public abstract class FlowOptUtils {
             }
         }
 
-        List<FlowVariable> flowVariables = flowVariableDao.listFlowVariables(flowInstance.getFlowInstId());
-        // 如果有 流程组加载流程组变量
-        if(hasFlowGroup) {
-            List<FlowVariable> groupVariables = flowVariableDao.listFlowVariables(flowInstance.getFlowGroupId());
-            if(flowVariables==null){
-                flowVariables = groupVariables;
-            } else {
-                flowVariables.addAll(groupVariables);
+        List<FlowVariable> flowVariables = new ArrayList<>(64);
+
+
+        for(int i = 0; i< flowInstPath.size(); i++) {
+            List<FlowVariable> tempVariables = flowVariableDao.listFlowVariables(flowInstPath.get(i));
+            if(tempVariables != null && !tempVariables.isEmpty()) {
+                flowVariables.addAll(tempVariables);
             }
         }
-
         // 加载变量的默认值
         List<FlowVariable> defaultVariables = flowVariableDao.listFlowDefaultVariables(
             flowInstance.getFlowInstId(), flowInstance.getFlowCode(), flowInstance.getVersion());
-        if(defaultVariables!=null){
+        if(defaultVariables != null && !defaultVariables.isEmpty()){
             flowVariables.addAll(defaultVariables);
         }
-
         flowVarTrans.setFlowVariables(flowVariables);
-        Map<String, List<String>> flowOrgs = flowEngine.viewFlowOrganize(flowInstance.getFlowInstId());
-        if(hasFlowGroup) {
-            Map<String, List<String>> tempOrgs = flowEngine.viewFlowOrganize(flowInstance.getFlowGroupId());
-            if (null!=flowOrgs)
-               tempOrgs.putAll(flowOrgs);
-            flowOrgs = tempOrgs;
+
+        Map<String, List<String>> flowOrgs = new HashMap<>(64);
+        for(int i = flowInstPath.size()-1; i>=0; i--){
+            Map<String, List<String>> tempOrgs = flowEngine.viewFlowOrganize(flowInstPath.get(i));
+            if (tempOrgs != null && !tempOrgs.isEmpty())
+                flowOrgs.putAll(tempOrgs);
         }
         flowVarTrans.setFlowOrganizes(flowOrgs);
 
-        List<FlowWorkTeam> flowTeams = flowEngine.viewFlowWorkTeam(flowInstance.getFlowInstId());
-        if(flowTeams==null){
-            flowTeams = new ArrayList<>();
-        }
-        if(hasFlowGroup) {
-            List<FlowWorkTeam> tempTeams = flowEngine.viewFlowWorkTeam(flowInstance.getFlowGroupId());
-            for(FlowWorkTeam team : tempTeams){
-                team.setRunToken("T");
-                flowTeams.add(team);
-            }
+        List<FlowWorkTeam> flowTeams =  new ArrayList<>(64);
+        for(int i = flowInstPath.size()-1; i>=0; i--){
+            List<FlowWorkTeam> tempTeams = flowEngine.viewFlowWorkTeam(flowInstPath.get(i));
+            if (null!=tempTeams)
+                flowTeams.addAll(tempTeams);
         }
         flowVarTrans.setFlowWorkTeam(flowTeams);
 
