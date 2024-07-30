@@ -72,13 +72,6 @@ public class ServiceConfig implements EnvironmentAware {
     }
 
     @Bean
-    public CentitUserDetailsService centitUserDetailsService(@Autowired PlatformEnvironment platformEnvironment) {
-        UserDetailsServiceImpl userDetailsService = new UserDetailsServiceImpl();
-        userDetailsService.setPlatformEnvironment(platformEnvironment);
-        return userDetailsService;
-    }
-
-    @Bean
     public CsrfTokenRepository csrfTokenRepository() {
         return new HttpSessionCsrfTokenRepository();
     }
