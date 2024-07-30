@@ -51,6 +51,11 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
     private String parentNodeInstId;
 
     /**
+     * 作为子流程创建式，对应的父流程节点运行时令牌
+     */
+    @ApiModelProperty("父节点运行时令牌")
+    private String parentNodeToken;
+    /**
      * 流程实例ID，指定创建流程的实例编号，UUID要保证不能冲突
      */
     @ApiModelProperty("流程实例ID，指定创建流程的实例编号")
@@ -82,7 +87,6 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
      */
     @ApiModelProperty(value ="提交（操作）用户当前单位（机构）", required = true)
     private String unitCode;
-
 
     /**
      * 租户代码，可以为空，如果是空系统会根据 unitCode 获取
@@ -276,9 +280,10 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
         return this;
     }
 
-    public CreateFlowOptions parentFlow(String flowInstId, String nodeInstId){
+    public CreateFlowOptions parentFlow(String flowInstId, String nodeInstId, String runToken){
         this.parentFlowInstId = flowInstId;
         this.parentNodeInstId = nodeInstId;
+        this.parentNodeToken = runToken;
         return this;
     }
 

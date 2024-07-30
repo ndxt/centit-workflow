@@ -27,6 +27,18 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
     private NodeInstance nodeInst;
     private FlowInstance flowInst;
 
+    public List<FlowWorkTeam> listTeamUserByRole(String roleCode){
+        List<FlowWorkTeam> users = new ArrayList<>();
+        if(flowWorkTeam!=null && !flowWorkTeam.isEmpty()){
+            for(FlowWorkTeam u : flowWorkTeam){
+                if(StringUtils.equals(roleCode ,u.getRoleCode())){
+                    users.add(u);
+                }
+            }
+        }
+        return users;
+    }
+
     public void collectNodeUnitsAndUsers(FlowInstance flowInst) {
         nodeUnits = new HashMap<>();
         nodeUsers = new HashMap<>();

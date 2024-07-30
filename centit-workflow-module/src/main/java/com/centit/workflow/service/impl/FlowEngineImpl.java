@@ -230,6 +230,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInst.setCreateTime(createTime);
         flowInst.setFlowGroupId(options.getFlowGroupId());
         //节点实例编号不为空，为子流程，创建子流程时要给父节点的状态设置为 W：等待子流程返回
+        String flowToken = "T";
         if (StringUtils.isNotBlank(options.getParentNodeInstId())) {
             flowInst.setPreNodeInstId(options.getParentNodeInstId());
             flowInst.setPreInstId(options.getParentFlowInstId());
@@ -243,6 +244,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 flowInst.setFlowGroupId(parentInst.getFlowGroupId());
             }
             flowInst.setIsSubInst(true);
+            if(StringUtils.isNotBlank(options.getParentNodeToken())) {
+                flowToken = options.getParentNodeToken();
+            }
         }
         flowInst.setFlowOptName(options.getFlowOptName());
         flowInst.setFlowOptTag(options.getFlowOptTag());
@@ -253,7 +257,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             stageInstanceDao.saveNewObject(flowStageInstance);
         }
         //----------- 创建 流程阶段实例
-        saveValueAndRoleInOptions(flowInstId, "T", options);
+        saveValueAndRoleInOptions(flowInstId, flowToken, options);
         //生成首节点实例编号
         NodeInfo node = wf.getFirstNode();
         if (node == null) {
@@ -264,7 +268,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             null, flowInstanceDao, flowInst, flowVariableDao, this, options);
         flowVarTrans.setFlowVarTrans(varTrans);
 
-        List<String> nodeInsts = submitToNextNode(node, "T", flowInst, wf,
+        List<String> nodeInsts = submitToNextNode(node, flowToken, flowInst, wf,
             null, null, null,
             options, flowVarTrans);
 
@@ -522,11 +526,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         UserUnitFilterCalcContext context = createCalcUserUnitContext(flowInst,
             preNodeInst, nodeToken, nextOptNode, options, varTrans);
         return calcNodeUnitAndOperator(context, flowInst,
-            nodeToken, nextOptNode, options);
+            nodeToken, nextOptNode, options, varTrans);
     }
 
     private LeftRightPair<Set<String>, Set<String>> calcNodeUnitAndOperator(UserUnitFilterCalcContext context,
-                         FlowInstance flowInst, String nodeToken, NodeInfo nextOptNode, FlowOptParamOptions options) {
+                         FlowInstance flowInst, String nodeToken, NodeInfo nextOptNode,
+                         FlowOptParamOptions options, FlowVariableTranslate varTrans) {
         // 参数指定
         Set<String> nodeUnits = null;
         if (options.getNodeUnits() != null) {
@@ -588,8 +593,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         } else if (SysUserFilterEngine.ROLE_TYPE_ITEM.equalsIgnoreCase(nextOptNode.getRoleType())) {
             optUsers = new HashSet<>();
-            List<FlowWorkTeam> users = flowTeamDao.listFlowWorkTeamByRole(flowInst.getFlowInstId(),
-                nextOptNode.getRoleCode());
+            List<FlowWorkTeam> users = varTrans.listTeamUserByRole(nextOptNode.getRoleCode());
             //nodeToken
             String currNodeToken = null;
             for (FlowWorkTeam u : users) {
@@ -935,7 +939,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
         LeftRightPair<Set<String>, Set<String>> unitAndUser =
             calcNodeUnitAndOperator(context, flowInst,
-                nodeToken, nextOptNode, options);
+                nodeToken, nextOptNode, options, varTrans);
         Set<String> nodeUnits = unitAndUser.getLeft();
         Set<String> optUsers = unitAndUser.getRight();
 
@@ -957,7 +961,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
                     .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
                     .optTag(flowInst.getFlowOptTag())
-                    .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId), varTrans);
+                    .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId, nodeToken), varTrans);
             // TODO 子流程是否要自动添加 父节点 和 父流程的 时间期限， 如果需要在这儿添加逻辑
             nodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
             //对于子流程也设定一个用户作为流程的责任人
