@@ -194,7 +194,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         for(FlowWorkTeam team : flowWorkTeam){
             if(StringUtils.equals(varName, team.getRoleCode())
                     && StringUtils.equals(currentToken, team.getRunToken())){
-                sValue.add(team.getRoleCode());
+                sValue.add(team.getUserCode());
             }
         }
         return sValue;
