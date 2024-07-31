@@ -66,10 +66,11 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
     public FlowVariableTranslate(NodeInstance nodeInstance, FlowInstance flowInstance){
         //可能为 Null
-        innerVariable = new HashMap<>();
-        nodeInst = nodeInstance;
-        flowInst = flowInstance;
-        collectNodeUnitsAndUsers(flowInst);
+        this.innerVariable = new HashMap<>();
+        this.nodeInst = nodeInstance;
+        this.flowInst = flowInstance;
+        this.flowVarTrans = null;
+        collectNodeUnitsAndUsers(this.flowInst);
     }
 
     public void setInnerVariable(String name, String token, Object value) {
@@ -117,7 +118,9 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
     }
 
     public void setFlowVarTrans(UserUnitVariableTranslate flowVarTrans) {
-        this.flowVarTrans = flowVarTrans;
+        if(flowVarTrans != this) {
+            this.flowVarTrans = flowVarTrans;
+        }
     }
 
     public void setFlowVariables(List<FlowVariable> flowVariables) {
