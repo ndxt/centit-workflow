@@ -545,7 +545,7 @@ public class FlowManagerController extends BaseController {
                             }
                             JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].users", sbUsers);
                         }
-                    } else{
+                    } else {
                         int taskInd = 0;
                         if (tasks != null) {
                             for (UserTask task : tasks) {
@@ -575,11 +575,14 @@ public class FlowManagerController extends BaseController {
                         DatetimeOpt.convertDatetimeToString(
                             nodeInst.getLastUpdateTime() == null ? nodeInst.getCreateTime() : nodeInst.getLastUpdateTime()));
                 }
+                if(NodeInfo.NODE_TYPE_SUBFLOW.equals(nodeOptInfo.put("count", nodeInstInd))){
+                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].subFlowInstId", nodeInst.getSubFlowInstId());
+                }
                 nodeInstInd++;
                 //nodeInstId=nodeInst.getNodeInstId();
             }
         }
-        nodeOptInfo.put("count", nodeInstInd);
+
         return nodeOptInfo;
     }
 
