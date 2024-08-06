@@ -950,28 +950,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInst.setUnitCode(null);
         }
 
-        // S：子流程
-        if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
-            //如果是子流程 启动流程
-            nodeInst.setNodeState(NodeInstance.NODE_STATE_WAITE_SUBPROCESS);
-            //子流程的机构 要和 节点的机构一致
-            FlowInstance tempFlow = createInstanceInside(
-                CreateFlowOptions.create().copy(options)
-                    .flow(nextOptNode.getSubFlowCode())
-                    .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
-                    .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
-                    .optTag(flowInst.getFlowOptTag())
-                    .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId, nodeToken), varTrans);
-            // TODO 子流程是否要自动添加 父节点 和 父流程的 时间期限， 如果需要在这儿添加逻辑
-            nodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
-            //对于子流程也设定一个用户作为流程的责任人
-            if (optUsers != null && !optUsers.isEmpty()) {
-                nodeInst.setUserCode(optUsers.iterator().next());
-            }
-            //子流程的时间限制和父流程节点的一致
-            NodeInstance tempFirstNode = tempFlow.fetchFirstNodeInstance();
-            createNodes.add(tempFirstNode.getNodeInstId());
-        } else if (NodeInfo.NODE_TYPE_OPT.equals(nextOptNode.getNodeType())) {
+        if (NodeInfo.NODE_TYPE_OPT.equals(nextOptNode.getNodeType())) {
             //交互节点，计算人员的分配策略
             // NodeInfo.OPT_RUN_TYPE_DYNAMIC.equals(nextOptNode.getOptRunType())
             //      和 SysUserFilterEngine.ROLE_TYPE_GW.equalsIgnoreCase(nextOptNode.getRoleType()) 等价
@@ -1041,7 +1020,29 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         flowInst.addNodeInstance(nodeInst);
-        if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())) {
+        // S：子流程
+        if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
+            //如果是子流程 启动流程
+            nodeInst.setNodeState(NodeInstance.NODE_STATE_WAITE_SUBPROCESS);
+            nodeInstanceDao.saveNewObject(nodeInst);
+            //子流程的机构 要和 节点的机构一致
+            FlowInstance tempFlow = createInstanceInside(
+                CreateFlowOptions.create().copy(options)
+                    .flow(nextOptNode.getSubFlowCode())
+                    .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
+                    .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
+                    .optTag(flowInst.getFlowOptTag())
+                    .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId, nodeToken), varTrans);
+            // TODO 子流程是否要自动添加 父节点 和 父流程的 时间期限， 如果需要在这儿添加逻辑
+            nodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
+            //对于子流程也设定一个用户作为流程的责任人
+            if (optUsers != null && !optUsers.isEmpty()) {
+                nodeInst.setUserCode(optUsers.iterator().next());
+            }
+            //子流程的时间限制和父流程节点的一致
+            NodeInstance tempFirstNode = tempFlow.fetchFirstNodeInstance();
+            createNodes.add(tempFirstNode.getNodeInstId());
+        } else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())) {
             //  新建同步节点
             nodeInst.setNodeState(NodeInstance.NODE_STATE_SYNC);
             //  判断同步节点的同步方式是否为时间触发
@@ -1072,6 +1073,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         } else  {
             nodeInstanceDao.saveNewObject(nodeInst);
         }
+
         flowInst.setLastUpdateTime(currentTime);
         flowInst.setLastUpdateUser(options.getUserCode());
 
