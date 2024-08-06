@@ -525,6 +525,10 @@ public class FlowManagerController extends BaseController {
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].unitname",
                     CodeRepositoryUtil.getValue(CodeRepositoryUtil.UNIT_CODE, nodeInst.getUnitCode(), topUnit, localLang));
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].taskAssign", nodeInst.getTaskAssigned());
+                JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].nodeInstId", nodeInst.getNodeInstId());
+                if(NodeInfo.NODE_TYPE_SUBFLOW.equals(nodeOptInfo.put("count", nodeInstInd))){
+                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].subFlowInstId", nodeInst.getSubFlowInstId());
+                }
 
                 if (NodeInstance.NODE_STATE_NORMAL.equals(nodeInst.getNodeState()) || NodeInstance.NODE_STATE_PAUSE.equals(nodeInst.getNodeState())) {
                     List<UserTask> tasks = flowEngine.listNodeOperators(nodeInst.getNodeInstId());
@@ -575,9 +579,7 @@ public class FlowManagerController extends BaseController {
                         DatetimeOpt.convertDatetimeToString(
                             nodeInst.getLastUpdateTime() == null ? nodeInst.getCreateTime() : nodeInst.getLastUpdateTime()));
                 }
-                if(NodeInfo.NODE_TYPE_SUBFLOW.equals(nodeOptInfo.put("count", nodeInstInd))){
-                    JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].subFlowInstId", nodeInst.getSubFlowInstId());
-                }
+
                 nodeInstInd++;
                 //nodeInstId=nodeInst.getNodeInstId();
             }
