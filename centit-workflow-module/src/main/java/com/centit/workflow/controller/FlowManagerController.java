@@ -526,7 +526,7 @@ public class FlowManagerController extends BaseController {
                     CodeRepositoryUtil.getValue(CodeRepositoryUtil.UNIT_CODE, nodeInst.getUnitCode(), topUnit, localLang));
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].taskAssign", nodeInst.getTaskAssigned());
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].nodeInstId", nodeInst.getNodeInstId());
-                if(NodeInfo.NODE_TYPE_SUBFLOW.equals(nodeOptInfo.put("count", nodeInstInd))){
+                if(NodeInfo.NODE_TYPE_SUBFLOW.equals(nodeInfo.getNodeType())){
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].subFlowInstId", nodeInst.getSubFlowInstId());
                 }
 
@@ -579,12 +579,11 @@ public class FlowManagerController extends BaseController {
                         DatetimeOpt.convertDatetimeToString(
                             nodeInst.getLastUpdateTime() == null ? nodeInst.getCreateTime() : nodeInst.getLastUpdateTime()));
                 }
-
                 nodeInstInd++;
                 //nodeInstId=nodeInst.getNodeInstId();
             }
         }
-
+        nodeOptInfo.put("count", nodeInstInd);
         return nodeOptInfo;
     }
 
