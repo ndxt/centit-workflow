@@ -7,6 +7,7 @@ import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.framework.model.basedata.UserUnit;
 import com.centit.support.algorithm.CollectionsOpt;
+import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.compiler.Lexer;
 import com.centit.support.database.jsonmaptable.GeneralJsonObjectDao;
@@ -127,8 +128,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
         "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         "join WF_ROLE_RELEGATE g on ( g.GRANTOR = b.user_code and " +
-            " ( (g.opt_id is not null and g.opt_id = a.opt_id) or " +
-            " ((g.unit_code is null or b.unit_code = g.unit_code) and (g.ROLE_CODE is null or g.ROLE_CODE = b.ROLE_CODE)) ) ) " +
+            " ( (g.opt_id is not null and g.opt_id = a.opt_id) or " + // 按业务委托 或者 按角色委托
+              " ((g.unit_code is null or b.unit_code = g.unit_code) and (g.ROLE_CODE is null or g.ROLE_CODE = b.ROLE_CODE)) " +
+            ") and g.RELEGATE_TIME < :today and ( g.EXPIRE_TIME is null or g.EXPIRE_TIME> :today ) ) " + // 检验委托时间
         "where b.node_state = 'N' and a.inst_state = 'N' [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
         "[ :(splitforin)flowInstIds| and b.FLOW_INST_ID in (:flowInstIds)]" +
         "[ :flowOptTag| and a.FLOW_OPT_TAG = :flowOptTag]" +
@@ -312,6 +314,8 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
 
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(
             userGrantorTaskBaseSql + " order by " + buildSortSql(filter, true), filter);
+
+        queryAndNamedParams.getParams().put("today", DatetimeOpt.currentUtilDate());
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
             queryAndNamedParams.getQuery(), queryAndNamedParams.getParams(), pageDesc);
 
@@ -329,6 +333,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         String grantorCountSql = QueryUtils.buildGetCountSQLByReplaceFields(grantorSql);//rowcounts
         //合并参数
         grantorQuery.getParams().putAll(staticQuery.getParams());
+        grantorQuery.getParams().put("today", DatetimeOpt.currentUtilDate());
 
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
             "select * from (" + staticSql +" union all " + grantorSql +") t order by " +
@@ -399,6 +404,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         Map<String, Object> queryParamMap = CollectionsOpt.unionTwoMap(grantorQuery.getParams(), filter);
         queryParamMap.putAll(dynamicQuery.getParams());
         queryParamMap.putAll(staticQuery.getParams());
+        queryParamMap.put("today", DatetimeOpt.currentUtilDate());
 
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
             "select * from (" + staticSql +" union all " + grantorSql +" union all " + dynamicSql + ") t order by "
