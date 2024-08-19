@@ -2346,21 +2346,30 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             flowInstId, varName);
     }
 
-    private List<UserTask> listNodeOperators(NodeInstance nodeInst) {
-        UserTask userTask = userTaskListDao.getNodeTaskInfo(nodeInst.getNodeInstId());
-        if (NodeInstance.TASK_ASSIGN_TYPE_STATIC.equals(nodeInst.getTaskAssigned())) {
+    /**
+     * 获取节点的所有操作人员
+     *
+     * @param nodeInstId 节点实例id
+     * @return 操作人员
+     */
+    @Override
+    public List<UserTask> listNodeOperators(String nodeInstId) {
+        UserTask userTask = userTaskListDao.getNodeTaskInfo(nodeInstId);
+        //静态分配任务，或者已经完成的任务 直接返回
+        if (NodeInstance.TASK_ASSIGN_TYPE_STATIC.equals(userTask.getTaskAssigned()) ||
+            ! NodeInstance.NODE_STATE_NORMAL.equals(userTask.getInstState())) {
             return CollectionsOpt.createList(userTask);
         }
+        //动态分配的任务
         UnitInfo ui;
-        if(StringUtils.isBlank(nodeInst.getUnitCode())){
-            FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
+        if(StringUtils.isBlank(userTask.getUnitCode())){
+            FlowInstance flowInst = flowInstanceDao.getObjectById(userTask.getFlowInstId());
             ui = platformEnvironment.loadUnitInfo(flowInst.getUnitCode());
         } else {
             //获取租户
-            ui = platformEnvironment.loadUnitInfo(nodeInst.getUnitCode());
+            ui = platformEnvironment.loadUnitInfo(userTask.getUnitCode());
         }
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(ui.getTopUnit());
-
         Set<String> optUsers = SysUserFilterEngine.getUsersByRoleAndUnit(context,
             SysUserFilterEngine.ROLE_TYPE_GW, userTask.getRoleCode(), userTask.getUnitCode());
         if (optUsers == null || optUsers.size() == 0) {
@@ -2374,20 +2383,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             userTaskList.add(ut);
         }
         return userTaskList;
-
     }
 
-    /**
-     * 获取节点的所有操作人员
-     *
-     * @param nodeInstId 节点实例id
-     * @return 操作人员
-     */
-    @Override
-    public List<UserTask> listNodeOperators(String nodeInstId) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        return nodeInst == null ? null : listNodeOperators(nodeInst);
-    }
 
     /**
      * 获取流程所有活动节点的任务列表
@@ -2403,7 +2400,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
         List<UserTask> userTasks = new ArrayList<>(nodeInsts.size() * 4);
         for (NodeInstance ni : nodeInsts) {
-            List<UserTask> uts = this.listNodeOperators(ni);
+            List<UserTask> uts = this.listNodeOperators(ni.getNodeInstId());
             if (uts != null) {
                 userTasks.addAll(uts);
             }
