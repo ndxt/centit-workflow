@@ -56,8 +56,8 @@ public class InstantiationServiceBeanPostProcessor implements ApplicationListene
         // 创建定时任务
         try {
             Random random = new Random();
-            int second = random.nextInt() % 60;
-            int minute = random.nextInt() % 9 +1;
+            int second = random.nextInt(60);
+            int minute = random.nextInt(9) +1;
             String cornExpress = String.valueOf(second) + " " +String.valueOf(minute) + "/10 8-19 * * ? *";
             SchedulerFactory schedulerFactory = new StdSchedulerFactory();
             Scheduler scheduler = schedulerFactory.getScheduler();
