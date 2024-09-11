@@ -140,6 +140,7 @@ public class FlowTaskImpl {
                     flowWarning.setWarningType("W");
                     flowWarning.setObjType("P");//阶段
                     flowWarning.setFlowInstId(flowInst.getFlowInstId());
+                    flowWarning.setNodeInstId(stageInfo.getStageId());
                     flowWarning.setFlowStage(stageInfo.getStageCode());
                     flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
                     flowWarning.setWarningMsg(message);
@@ -183,6 +184,7 @@ public class FlowTaskImpl {
                     flowWarning.setWarningType("W");
                     flowWarning.setObjType("F");//流程
                     flowWarning.setFlowInstId(flowInst.getFlowInstId());
+                    flowWarning.setNodeInstId(flowInst.getFlowInstId());
                     flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
                     flowWarning.setWarningMsg(message);
                     flowWarning.setSendUsers(StringBaseOpt.castObjectToString(users));
@@ -269,6 +271,7 @@ public class FlowTaskImpl {
                 flowWarning.setWarningType("E");
                 flowWarning.setObjType("F");//流程
                 flowWarning.setFlowInstId(flowInst.getFlowInstId());
+                flowWarning.setNodeInstId(flowInst.getFlowInstId());
                 flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
                 flowWarning.setWarningMsg(message);
                 flowWarning.setSendUsers("system");
@@ -311,6 +314,7 @@ public class FlowTaskImpl {
                 flowWarning.setWarningType("E");
                 flowWarning.setObjType("P");//阶段
                 flowWarning.setFlowInstId(stageInst.getFlowInstId());
+                flowWarning.setNodeInstId(stageInfo.getStageId());
                 flowWarning.setFlowStage(stageInfo.getStageCode());
                 flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
                 flowWarning.setWarningMsg(message);
