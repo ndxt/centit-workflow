@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
  * @create 2012-2-23
  */
 @Component("flowTaskImpl")
+@Transactional
 public class FlowTaskImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowTaskImpl.class);
@@ -381,6 +383,7 @@ public class FlowTaskImpl {
         }
     }
 
+    @Transactional
     public void doFlowTimerJob() {
         runEventTask(100);
         doTimerSyncNodeEvent();
