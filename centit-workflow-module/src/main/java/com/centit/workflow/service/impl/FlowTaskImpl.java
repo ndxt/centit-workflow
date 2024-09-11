@@ -78,7 +78,7 @@ public class FlowTaskImpl {
             return;
         }
         for (NodeInstance nodeInst : activeNodes){
-            NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeCode());
+            NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeId());
             if(!NodeInfo.TIME_EXPIRE_OPT_NONE.equals(nodeInfo.getExpireOpt())){
                 FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
 
@@ -205,7 +205,7 @@ public class FlowTaskImpl {
             return;
         }
         for (NodeInstance nodeInst : activeNodes){
-            NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeCode());
+            NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeId());
             FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
 
             if(NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(nodeInfo.getExpireOpt()) ||
