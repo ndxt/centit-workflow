@@ -1,6 +1,9 @@
 package com.centit.workflow.po;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import com.centit.support.database.orm.GeneratorTime;
+import com.centit.support.database.orm.GeneratorType;
+import com.centit.support.database.orm.ValueGenerator;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +54,7 @@ public class FlowInfo implements java.io.Serializable {
     private String flowXmlDesc;
 
     @Column(name = "FLOW_PUBLISH_DATE")
+    @ValueGenerator(strategy = GeneratorType.FUNCTION, occasion = GeneratorTime.ALWAYS, value = "today()")
     private Date flowPublishDate;
 
     @Column(name = "FIRST_NODE_ID")
