@@ -1632,7 +1632,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     private void checkUpgradeFlowVersion(String flowCode, long newVersion, long oldVersion) {
         //检测迁移是否可行，条件 在办流程的当前节点都有对应的新节点
-        String countNotMapNodes = "select count(a.*) as notMapNodes " +
+        String countNotMapNodes = "select count(0) as notMapNodes " +
             " from WF_NODE_INSTANCE a left join WF_NODE n on (a.NODE_ID=n.NODE_ID) " +
             " where a.FLOW_INST_ID in (select f.FLOW_INST_ID from" +
             "  WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE = ? and f.VERSION = ? )" +
