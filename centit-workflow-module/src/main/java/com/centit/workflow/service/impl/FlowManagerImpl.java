@@ -1632,11 +1632,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     private void checkUpgradeFlowVersion(String flowCode, long newVersion, long oldVersion) {
         //检测迁移是否可行，条件 在办流程的当前节点都有对应的新节点
-        String countNotMapNodes = "select count(a.*) as notMapNodes from WF_NODE_INSTANCE a " +
+        String countNotMapNodes = "select count(a.*) as notMapNodes " +
+            " from WF_NODE_INSTANCE a left join WF_NODE n on (a.NODE_ID=n.NODE_ID) " +
             " where a.FLOW_INST_ID in (select f.FLOW_INST_ID from" +
             "  WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE = ? and f.VERSION = ? )" +
             " and a.NODE_STATE in ('N','P','W') " +
-            " and not exists (select b.* from WF_NODE b where b.FLOW_CODE= ? and b.VERSION =? and b.NODE_CODE = a.NODE_CODE)";
+            " and not exists (select b.* from WF_NODE b where b.FLOW_CODE= ? and b.VERSION =? and b.NODE_CODE = n.NODE_CODE)";
         long notMapNode = NumberBaseOpt.castObjectToLong(
             DatabaseOptUtils.getScalarObjectQuery(nodeInstanceDao, countNotMapNodes,
             new Object[]{flowCode, oldVersion, flowCode, newVersion}),0L);
