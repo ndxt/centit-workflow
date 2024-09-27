@@ -27,6 +27,18 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
     private NodeInstance nodeInst;
     private FlowInstance flowInst;
 
+    public List<FlowWorkTeam> listTeamUserByRole(String roleCode){
+        List<FlowWorkTeam> users = new ArrayList<>();
+        if(flowWorkTeam!=null && !flowWorkTeam.isEmpty()){
+            for(FlowWorkTeam u : flowWorkTeam){
+                if(StringUtils.equals(roleCode ,u.getRoleCode())){
+                    users.add(u);
+                }
+            }
+        }
+        return users;
+    }
+
     public void collectNodeUnitsAndUsers(FlowInstance flowInst) {
         nodeUnits = new HashMap<>();
         nodeUsers = new HashMap<>();
@@ -54,10 +66,11 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
 
     public FlowVariableTranslate(NodeInstance nodeInstance, FlowInstance flowInstance){
         //可能为 Null
-        innerVariable = new HashMap<>();
-        nodeInst = nodeInstance;
-        flowInst = flowInstance;
-        collectNodeUnitsAndUsers(flowInst);
+        this.innerVariable = new HashMap<>();
+        this.nodeInst = nodeInstance;
+        this.flowInst = flowInstance;
+        this.flowVarTrans = null;
+        collectNodeUnitsAndUsers(this.flowInst);
     }
 
     public void setInnerVariable(String name, String token, Object value) {
@@ -105,7 +118,9 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
     }
 
     public void setFlowVarTrans(UserUnitVariableTranslate flowVarTrans) {
-        this.flowVarTrans = flowVarTrans;
+        if(flowVarTrans != this) {
+            this.flowVarTrans = flowVarTrans;
+        }
     }
 
     public void setFlowVariables(List<FlowVariable> flowVariables) {
@@ -182,7 +197,7 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
         for(FlowWorkTeam team : flowWorkTeam){
             if(StringUtils.equals(varName, team.getRoleCode())
                     && StringUtils.equals(currentToken, team.getRunToken())){
-                sValue.add(team.getRoleCode());
+                sValue.add(team.getUserCode());
             }
         }
         return sValue;

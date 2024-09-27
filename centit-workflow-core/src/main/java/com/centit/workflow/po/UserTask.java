@@ -26,6 +26,7 @@ public class UserTask implements java.io.Serializable {
     private String userCode;
 
     private String flowInstId;
+    private String taskAssigned;
     private String authDesc;
     private String flowOptName;
     private String flowOptTag;

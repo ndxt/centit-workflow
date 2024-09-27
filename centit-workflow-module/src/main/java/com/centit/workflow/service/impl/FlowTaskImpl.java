@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
  * @create 2012-2-23
  */
 @Component("flowTaskImpl")
+@Transactional
 public class FlowTaskImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowTaskImpl.class);
@@ -76,7 +78,7 @@ public class FlowTaskImpl {
             return;
         }
         for (NodeInstance nodeInst : activeNodes){
-            NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeCode());
+            NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeId());
             if(!NodeInfo.TIME_EXPIRE_OPT_NONE.equals(nodeInfo.getExpireOpt())){
                 FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
 
@@ -138,6 +140,7 @@ public class FlowTaskImpl {
                     flowWarning.setWarningType("W");
                     flowWarning.setObjType("P");//阶段
                     flowWarning.setFlowInstId(flowInst.getFlowInstId());
+                    flowWarning.setNodeInstId(stageInfo.getStageId());
                     flowWarning.setFlowStage(stageInfo.getStageCode());
                     flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
                     flowWarning.setWarningMsg(message);
@@ -181,6 +184,7 @@ public class FlowTaskImpl {
                     flowWarning.setWarningType("W");
                     flowWarning.setObjType("F");//流程
                     flowWarning.setFlowInstId(flowInst.getFlowInstId());
+                    flowWarning.setNodeInstId(flowInst.getFlowInstId());
                     flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
                     flowWarning.setWarningMsg(message);
                     flowWarning.setSendUsers(StringBaseOpt.castObjectToString(users));
@@ -203,7 +207,7 @@ public class FlowTaskImpl {
             return;
         }
         for (NodeInstance nodeInst : activeNodes){
-            NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeCode());
+            NodeInfo nodeInfo = nodeInfoDao.getObjectById(nodeInst.getNodeId());
             FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
 
             if(NodeInfo.TIME_EXPIRE_OPT_END_FLOW.equals(nodeInfo.getExpireOpt()) ||
@@ -267,6 +271,7 @@ public class FlowTaskImpl {
                 flowWarning.setWarningType("E");
                 flowWarning.setObjType("F");//流程
                 flowWarning.setFlowInstId(flowInst.getFlowInstId());
+                flowWarning.setNodeInstId(flowInst.getFlowInstId());
                 flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
                 flowWarning.setWarningMsg(message);
                 flowWarning.setSendUsers("system");
@@ -309,6 +314,7 @@ public class FlowTaskImpl {
                 flowWarning.setWarningType("E");
                 flowWarning.setObjType("P");//阶段
                 flowWarning.setFlowInstId(stageInst.getFlowInstId());
+                flowWarning.setNodeInstId(stageInfo.getStageId());
                 flowWarning.setFlowStage(stageInfo.getStageCode());
                 flowWarning.setWarningTime(DatetimeOpt.currentUtilDate());
                 flowWarning.setWarningMsg(message);
@@ -381,6 +387,7 @@ public class FlowTaskImpl {
         }
     }
 
+    @Transactional
     public void doFlowTimerJob() {
         runEventTask(100);
         doTimerSyncNodeEvent();

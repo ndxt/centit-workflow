@@ -82,7 +82,6 @@ public class RoleRelegate implements java.io.Serializable {
      * 委托业务
      */
     @Column(name = "OPT_ID")
-//    @DictionaryMap(value = "optId", fieldName = "optName")
     private String optId;
 
     /**
