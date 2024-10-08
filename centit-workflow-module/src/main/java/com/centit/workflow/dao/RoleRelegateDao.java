@@ -8,6 +8,8 @@ import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.NumberBaseOpt;
 import com.centit.support.algorithm.UuidOpt;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.support.database.utils.QueryAndNamedParams;
+import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.RoleRelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -37,7 +39,6 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
         filterField.put("recordDate", CodeBook.EQUAL_HQL_ID);
         filterField.put("optId", CodeBook.EQUAL_HQL_ID);
         filterField.put("topUnit", CodeBook.EQUAL_HQL_ID);
-
         filterField.put(CodeBook.SELF_ORDER_BY, "recordDate desc");
         return filterField;
     }
@@ -51,21 +52,23 @@ public class RoleRelegateDao extends BaseDaoImpl<RoleRelegate, String> {
     }
 
     public JSONArray listRelegateListByUser(Map<String, Object> filterMap, PageDesc pageDesc) {
-        filterMap.put("today", DatetimeOpt.currentUtilDate());
-        return DatabaseOptUtils.listObjectsByParamsDriverSqlAsJson(this,
-            "select a.RELEGATE_NO, a.GRANTOR, a.GRANTEE, a.IS_VALID, a.RELEGATE_TIME," +
-                " a.EXPIRE_TIME, a.UNIT_CODE, a.ROLE_TYPE, a.ROLE_CODE, a.GRANT_DESC," +
-                " a.RECORDER, a.RECORD_DATE, a.OPT_ID, b.OPT_NAME, a.TOP_UNIT " +
-                "from WF_ROLE_RELEGATE a left join f_optinfo b on a.OPT_ID = b.OPT_ID " +
-                " where (a.EXPIRE_TIME is null or a.EXPIRE_TIME> :today) " +
-                " [:grantor | and a.GRANTOR= :grantor ] " +
-                " [:grantee | and a.GRANTEE= :grantee ] " +
-                " [:roleType | and a.ROLE_TYPE= :roleType ] " +
-                " [:roleCode | and a.ROLE_CODE= :roleCode ] " +
-                " [:topUnit | and a.TOP_UNIT= :topUnit ] " +
-                " [:optId | and a.OPT_ID= :optId ] " +
-                " ORDER BY a.GRANTEE, a.RELEGATE_TIME, a.EXPIRE_TIME, a.RECORD_DATE DESC ",
-            filterMap, pageDesc);
+        String querySql = "select a.RELEGATE_NO, a.GRANTOR, a.GRANTEE, a.IS_VALID, a.RELEGATE_TIME," +
+            " a.EXPIRE_TIME, a.UNIT_CODE, a.ROLE_TYPE, a.ROLE_CODE, a.GRANT_DESC," +
+            " a.RECORDER, a.RECORD_DATE, a.OPT_ID, b.OPT_NAME, a.TOP_UNIT " +
+            "from WF_ROLE_RELEGATE a left join f_optinfo b on a.OPT_ID = b.OPT_ID " +
+            " where (a.EXPIRE_TIME is null or a.EXPIRE_TIME> :today) " +
+            " [:grantor | and a.GRANTOR= :grantor ] " +
+            " [:grantee | and a.GRANTEE= :grantee ] " +
+            " [:roleType | and a.ROLE_TYPE= :roleType ] " +
+            " [:roleCode | and a.ROLE_CODE= :roleCode ] " +
+            " [:topUnit | and a.TOP_UNIT= :topUnit ] " +
+            " [:optId | and a.OPT_ID= :optId ] " +
+            " ORDER BY a.GRANTEE, a.RELEGATE_TIME, a.EXPIRE_TIME, a.RECORD_DATE DESC ";
+
+        QueryAndNamedParams qap = QueryUtils.translateQuery( querySql, filterMap);
+        qap.addParam("today", DatetimeOpt.currentUtilDate());
+        return DatabaseOptUtils.listObjectsByNamedSqlAsJson(this, qap.getQuery(),
+            qap.getParams(), pageDesc);
     }
 
     public List<RoleRelegate> listGranteeListByRank(String grantor, String unitCode, String userRank) {
