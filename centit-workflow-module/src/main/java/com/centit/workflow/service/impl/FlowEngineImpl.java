@@ -2291,6 +2291,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      */
     @Override
     public void saveFlowNodeVariable(String flowInstId, String runToken, String sVar, Object sValue) {
+        if(StringUtils.isBlank(sVar)){
+            return;// 这个应该报错
+        }
+        if(StringUtils.isBlank(runToken)){
+            runToken = "T";
+        }
         String objStr = StringBaseOpt.objectToString(sValue);
         if (StringUtils.isBlank(objStr)) {
             flowVariableDao.deleteObjectById(new FlowVariableId(flowInstId,
