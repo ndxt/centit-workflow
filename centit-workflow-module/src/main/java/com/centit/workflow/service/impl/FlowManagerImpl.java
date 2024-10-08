@@ -12,10 +12,7 @@ import com.centit.framework.model.adapter.OperationLogWriter;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.framework.model.security.CentitUserDetails;
 import com.centit.product.oa.service.WorkDayManager;
-import com.centit.support.algorithm.CollectionsOpt;
-import com.centit.support.algorithm.DatetimeOpt;
-import com.centit.support.algorithm.StringBaseOpt;
-import com.centit.support.algorithm.UuidOpt;
+import com.centit.support.algorithm.*;
 import com.centit.support.common.DateTimeSpan;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
@@ -1633,13 +1630,30 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
     }
 
+    private void checkUpgradeFlowVersion(String flowCode, long newVersion, long oldVersion) {
+        //检测迁移是否可行，条件 在办流程的当前节点都有对应的新节点
+        String countNotMapNodes = "select count(0) as notMapNodes " +
+            " from WF_NODE_INSTANCE a left join WF_NODE n on (a.NODE_ID=n.NODE_ID) " +
+            " where a.FLOW_INST_ID in (select f.FLOW_INST_ID from" +
+            "  WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE = ? and f.VERSION = ? )" +
+            " and a.NODE_STATE in ('N','P','W') " +
+            " and not exists (select b.* from WF_NODE b where b.FLOW_CODE= ? and b.VERSION =? and b.NODE_CODE = n.NODE_CODE)";
+        long notMapNode = NumberBaseOpt.castObjectToLong(
+            DatabaseOptUtils.getScalarObjectQuery(nodeInstanceDao, countNotMapNodes,
+            new Object[]{flowCode, oldVersion, flowCode, newVersion}),0L);
+        if(notMapNode > 0){
+            throw new ObjectException(ObjectException.DATA_NOT_INTEGRATED, "又无法迁移的在办节点，流程迁移失败！");
+        }
+
+    }
+
     private void innerUpgradeFlowVersion(String flowCode, long newVersion, long oldVersion) {
         //数据不完备可能出错，比较稳妥的写法是 查询出来一条一条的处理
         String sqlUpdateNodeInst = "update WF_NODE_INSTANCE a set a.NODE_ID = " +
-            "(select max(b.NODE_ID) from WF_NODE b where b.FLOW_CODE=? and b.VERSION =?" +
+            "(select max(b.NODE_ID) from WF_NODE b where b.FLOW_CODE= ? and b.VERSION = ?" +
             " and b.NODE_CODE = (select c.NODE_CODE from WF_NODE c where c.NODE_ID = a.NODE_ID)) " +
             " where FLOW_INST_ID in (select f.FLOW_INST_ID from" +
-            "  WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE= ? and f.VERSION = ? ";
+            "  WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE = ? and f.VERSION = ? )";
         DatabaseOptUtils.doExecuteSql(nodeInstanceDao, sqlUpdateNodeInst,
             new Object[]{flowCode, newVersion, flowCode, oldVersion});
 
@@ -1667,11 +1681,15 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             newVersion = flowDefDao.getLastVersion(flowCode);
         }
         if (oldVersion > 0) {
+            checkUpgradeFlowVersion(flowCode, newVersion, oldVersion);
             innerUpgradeFlowVersion(flowCode, newVersion, oldVersion);
-            return;
-        }
-        for (long v = newVersion - 1; v > 0; v--) {
-            innerUpgradeFlowVersion(flowCode, newVersion, v);
+        }else {
+            for (long v = newVersion - 1; v > 0; v--) {
+                checkUpgradeFlowVersion(flowCode, newVersion, v);
+            }
+            for (long v = newVersion - 1; v > 0; v--) {
+                innerUpgradeFlowVersion(flowCode, newVersion, v);
+            }
         }
         FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowCode, newVersion);
         OperationLog managerAct = FlowOptUtils.createActionLog(topUnit,
