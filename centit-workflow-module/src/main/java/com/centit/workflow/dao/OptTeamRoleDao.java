@@ -8,6 +8,7 @@ import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.database.utils.QueryAndNamedParams;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.OptTeamRole;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,6 +83,7 @@ public class OptTeamRoleDao extends BaseDaoImpl<OptTeamRole, String> {
 
     @Transactional
     public OptTeamRole getItemRole(String optId, String roleCode) {
+        if(StringUtils.isBlank(optId) || StringUtils.isBlank(roleCode)) return null;
         return this.getObjectByProperties(
             CollectionsOpt.createHashMap("optId", optId, "roleCode", roleCode)
         );

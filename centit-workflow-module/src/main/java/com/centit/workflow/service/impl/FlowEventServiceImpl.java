@@ -4,6 +4,7 @@ import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.workflow.dao.FlowEventDao;
 import com.centit.workflow.po.FlowEventInfo;
 import com.centit.workflow.service.FlowEventService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,6 +27,7 @@ public class FlowEventServiceImpl implements FlowEventService {
 
     @Override
     public FlowEventInfo getEventByFlowEvent(String flowInstId, String eventName) {
+        if(StringUtils.isBlank(flowInstId) || StringUtils.isBlank(eventName)) return null;
         return flowEventDao.getObjectByProperties(
             CollectionsOpt.createHashMap("optState",
                 "N", "flowInstId", flowInstId, "eventName", eventName));

@@ -1383,6 +1383,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Override
     public boolean deleteFlowInstById(String flowInstId, String userCode) {
+        if(StringUtils.isBlank(flowInstId) || StringUtils.isBlank(userCode)) {
+            logger.info("用户 {} 或者流程 {} 参数为空。", userCode, flowInstId);
+            return false;
+        }
         // 判断流程是否可以删除
         HashMap<String, Object> filterMap = new HashMap<>();
         filterMap.put("flowInstId", flowInstId);
