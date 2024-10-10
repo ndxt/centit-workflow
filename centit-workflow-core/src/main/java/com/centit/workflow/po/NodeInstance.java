@@ -307,7 +307,8 @@ public class NodeInstance implements java.io.Serializable {
      * @return
      */
     public static String truncTokenGeneration(String token, int generation) {
-        if (token == null) {
+        //修复数据错误的问题，一般是旧数据迁移引起的，正常运行是不会有这个错误的
+        if (StringUtils.isBlank(token)) {
             return NodeInstance.RUN_TOKEN_GLOBAL;
         }
         int nPos = 0;
@@ -325,6 +326,7 @@ public class NodeInstance implements java.io.Serializable {
         if (nPos >= nl) {
             return token;
         }
+        //修复数据错误的问题，一般是旧数据迁移引起的，正常运行是不会有这个错误的
         if(nPos<1){
             return NodeInstance.RUN_TOKEN_GLOBAL;
         }
