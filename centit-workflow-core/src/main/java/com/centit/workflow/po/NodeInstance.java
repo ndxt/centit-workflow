@@ -162,37 +162,16 @@ public class NodeInstance implements java.io.Serializable {
     public NodeInstance() {
         this.timerStatus = "F";
         this.taskAssigned = "D";
+        this.runToken = NodeInstance.RUN_TOKEN_GLOBAL;
         this.node = new NodeInfo();
     }
 
-    public NodeInstance(
-        String nodeInstId
-    ) {
+    public NodeInstance(String nodeInstId) {
         this.timerStatus = "F";
         this.nodeInstId = nodeInstId;
         this.taskAssigned = "D";
+        this.runToken = NodeInstance.RUN_TOKEN_GLOBAL;
         this.node = new NodeInfo();
-    }
-
-    public NodeInstance(String nodeInstId, String wfinstid, String nodeid, Date createtime, Date starttime, String prevnodeinstid,
-                        String nodestate, String subwfinstid, String unitcode,
-                        String transPath, String taskassigned, String runToken, String lastUpdateUser,
-                        String isTimer, String flowPhase) {
-        this.nodeInstId = nodeInstId;
-        this.flowInstId = wfinstid;
-        this.node.setNodeId(nodeid);
-        this.createTime = createtime;
-        this.lastUpdateTime = starttime;
-        this.prevNodeInstId = prevnodeinstid;
-        this.nodeState = nodestate;
-        this.subFlowInstId = subwfinstid;
-        this.unitCode = unitcode;
-        this.transPath = transPath;
-        this.taskAssigned = taskassigned;
-        this.setRunToken(runToken);
-        this.lastUpdateUser = lastUpdateUser;
-        this.timerStatus = isTimer;
-        this.stageCode = flowPhase;
     }
 
     public String getNodeCode() {
@@ -329,7 +308,7 @@ public class NodeInstance implements java.io.Serializable {
      */
     public static String truncTokenGeneration(String token, int generation) {
         if (token == null) {
-            return null;
+            return NodeInstance.RUN_TOKEN_GLOBAL;
         }
         int nPos = 0;
         int g = 0;
@@ -345,6 +324,9 @@ public class NodeInstance implements java.io.Serializable {
         }
         if (nPos >= nl) {
             return token;
+        }
+        if(nPos<1){
+            return NodeInstance.RUN_TOKEN_GLOBAL;
         }
         return token.substring(0, nPos);
     }

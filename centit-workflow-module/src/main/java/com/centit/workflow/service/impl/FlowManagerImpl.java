@@ -862,7 +862,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (otherRunNode == 0)
             return null;//大小于
 //            return -3;
-
         nodeInst.setRunToken(nodeInst.getRunToken() + "." + NodeInstance.RUN_TOKEN_ISOLATED);
         // 设置最后更新时间和更新人
         nodeInst.setLastUpdateUser(managerUser.getUserCode());
