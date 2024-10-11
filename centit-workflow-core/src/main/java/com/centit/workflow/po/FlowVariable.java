@@ -2,6 +2,7 @@ package com.centit.workflow.po;
 
 import com.centit.support.algorithm.StringBaseOpt;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -162,7 +163,7 @@ public class FlowVariable implements java.io.Serializable {
     public void copyNotNullProperty(FlowVariable other) {
         if (other.getFlowInstId() != null)
             this.setFlowInstId(other.getFlowInstId());
-        if (other.getRunToken() != null)
+        if (StringUtils.isNotBlank(other.getRunToken()))
             this.setRunToken(other.getRunToken());
         if (other.getVarName() != null)
             this.setVarName(other.getVarName());

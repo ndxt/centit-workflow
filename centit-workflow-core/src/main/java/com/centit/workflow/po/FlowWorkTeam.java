@@ -1,6 +1,7 @@
 package com.centit.workflow.po;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -161,7 +162,7 @@ public class FlowWorkTeam implements java.io.Serializable {
             this.setUserCode(other.getUserCode());
         if( other.getRoleCode() != null)
             this.setRoleCode(other.getRoleCode());
-        if( other.getRunToken() != null)
+        if (StringUtils.isNotBlank(other.getRunToken()))
             this.setRunToken(other.getRunToken());
 
         if( other.getAuthDesc() != null)
