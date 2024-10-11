@@ -407,6 +407,7 @@ public interface FlowManager {
 
     void updateFlow(FlowInstance flowInstance);
 
+    int changeTaskAssignScheme(TaskMove taskMove, CentitUserDetails managerUser);
     /**
      * 流程拉回到首节点
      *

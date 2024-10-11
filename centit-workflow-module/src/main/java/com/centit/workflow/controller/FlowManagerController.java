@@ -619,7 +619,7 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/moveUserTaskTo", method = RequestMethod.POST)
     public void moveUserTaskTo(@RequestBody TaskMove taskMove, HttpServletRequest request) {
         CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.moveUserTaskTo( WebOptUtils.getCurrentTopUnit(request),
+        flowManager.moveUserTaskTo(WebOptUtils.getCurrentTopUnit(request),
             taskMove.getFormUser(),
             taskMove.getToUser(),
             managerUser, //taskMove.getOperatorUser(),
@@ -633,23 +633,20 @@ public class FlowManagerController extends BaseController {
     @RequestMapping(value = "/moveUserTaskToByOs", method = RequestMethod.POST)
     public void moveUserTaskToByOs(@RequestBody TaskMove taskMove, HttpServletRequest request) {
         CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.moveUserTaskToByOs( taskMove.getOsId(),
+        flowManager.moveUserTaskToByOs(taskMove.getOsId(),
             taskMove.getFormUser(),
             taskMove.getToUser(),
             managerUser,
             taskMove.getMoveDesc());
     }
 
-    @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode", notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")
+    @ApiOperation(value = "将 fromUserCode 所有任务 迁移 给 toUserCode",
+        notes = "将 fromUserCode 所有任务 迁移 给 toUserCode")
     @WrapUpResponseBody
     @RequestMapping(value = "/moveSelectedUserTaskTo", method = RequestMethod.POST)
-    public void moveSelectedUserTaskTo(@RequestBody TaskMove taskMove, HttpServletRequest request) {
+    public void changeTaskAssignScheme(@RequestBody TaskMove taskMove, HttpServletRequest request) {
         CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        flowManager.moveUserTaskTo(taskMove.getNodeInstIds(),
-            taskMove.getFormUser(),
-            taskMove.getToUser(),
-            managerUser, //taskMove.getOperatorUser(),
-            taskMove.getMoveDesc());
+        flowManager.changeTaskAssignScheme(taskMove, managerUser);
     }
 
     @ApiOperation(value = "根据id获取流程实例节点", notes = "根据id获取流程实例节点")

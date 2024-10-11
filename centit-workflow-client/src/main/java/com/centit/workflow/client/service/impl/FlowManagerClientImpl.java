@@ -556,6 +556,11 @@ public class FlowManagerClientImpl implements FlowManager {
         throw new ObjectException("This function is not been implemented in client.");
     }
 
+    @Override
+    public int changeTaskAssignScheme(TaskMove taskMove, CentitUserDetails managerUser) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
     /**
      * 流程拉回到首节点
      *

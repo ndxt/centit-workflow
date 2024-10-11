@@ -1177,7 +1177,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         filterMap.put("nodeState", "N");
         filterMap.put("topUnit", topUnit);
         List<NodeInstance> nodeInstances = nodeInstanceDao.listObjectsByProperties(filterMap);
-        moveUserTaskTo(nodeInstances, fromUserCode, toUserCode, managerUser);
+        innerMoveUserTaskTo(nodeInstances, fromUserCode, toUserCode, managerUser, moveDesc);
         return 0;
     }
 
@@ -1190,13 +1190,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         filterMap.put("nodeState", "N");
         filterMap.put("osId", osId);
         List<NodeInstance> nodeInstances = nodeInstanceDao.listObjectsByProperties(filterMap);
-        moveUserTaskTo(nodeInstances, fromUserCode, toUserCode, managerUser);
+        innerMoveUserTaskTo(nodeInstances, fromUserCode, toUserCode, managerUser, moveDesc);
         return 0;
     }
 
-    private void moveUserTaskTo(List<NodeInstance> nodeInstIds, String fromUserCode, String toUserCode,
-                                CentitUserDetails managerUser) {
-        if (nodeInstIds != null && nodeInstIds.size() > 0) {
+    private void innerMoveUserTaskTo(List<NodeInstance> nodeInstIds, String fromUserCode, String toUserCode,
+                                CentitUserDetails managerUser, String moveDesc) {
+        if (nodeInstIds != null && !nodeInstIds.isEmpty()) {
+            List<String> fields = CollectionsOpt.createList("userCode","lastUpdateTime","lastUpdateUser");
             for (NodeInstance nodeInstance : nodeInstIds) {
                 //将userCode指向新用户
                 if (StringUtils.equals(fromUserCode, nodeInstance.getUserCode()) &&
@@ -1204,11 +1205,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                     nodeInstance.setUserCode(toUserCode);
                     nodeInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
                     nodeInstance.setLastUpdateUser(managerUser.getUserCode());
-                    nodeInstanceDao.updateObject(nodeInstance);
+                    nodeInstanceDao.updateObject(fields, nodeInstance);
                     //日志
                     FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInstance.getFlowInstId());
                     OperationLog wfactlog = FlowOptUtils.createActionLog(flowInst.getTopUnit(),
-                            managerUser.getUserCode(), nodeInstance, "任务从 " + fromUserCode + " 转移到" + toUserCode, null)
+                            managerUser.getUserCode(), nodeInstance,
+                            "任务从 " + fromUserCode + " 转移到" + toUserCode + ":" + moveDesc, null)
                         .application(flowInst.getOsId())
                         .method("updateNodeTask").loginIp(managerUser.getLoginIp());
                     OperationLogCenter.log(wfactlog);
@@ -1233,10 +1235,54 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         List<NodeInstance> nodeInstanceList = new ArrayList<NodeInstance>();
         for (String id : nodeInstIds) {
             NodeInstance nodeInstance = nodeInstanceDao.getObjectById(id);
-            nodeInstanceList.add(nodeInstance);
+            if(nodeInstance!=null)
+                nodeInstanceList.add(nodeInstance);
         }
-        moveUserTaskTo(nodeInstanceList, fromUserCode, toUserCode, managerUser);
-        return 0;
+        innerMoveUserTaskTo(nodeInstanceList, fromUserCode, toUserCode, managerUser, moveDesc);
+        return nodeInstanceList.size();
+    }
+
+    @Override
+    public int changeTaskAssignScheme(TaskMove taskMove, CentitUserDetails managerUser){
+        List<NodeInstance> nodeInstanceList = new ArrayList<NodeInstance>();
+        for (String id : taskMove.getNodeInstIds()) {
+            NodeInstance nodeInstance = nodeInstanceDao.getObjectById(id);
+            if(nodeInstance!=null)
+                nodeInstanceList.add(nodeInstance);
+        }
+        if (nodeInstanceList.isEmpty()) {
+            return 0;
+        }
+        if(!StringUtils.equalsAny(taskMove.getTaskAssigned(),"D","S")){
+            innerMoveUserTaskTo(nodeInstanceList, taskMove.getFormUser(), taskMove.getToUser(), managerUser, taskMove.getMoveDesc());
+            return nodeInstanceList.size();
+        }
+
+        List<String> fields = CollectionsOpt.createList("userCode","lastUpdateTime","lastUpdateUser",
+            "taskAssigned", "unitCode", "roleType", "roleCode");
+        for (NodeInstance nodeInstance : nodeInstanceList) {
+            //将userCode指向新用户
+            if (StringUtils.equals(taskMove.getFormUser(), nodeInstance.getUserCode())) {
+                nodeInstance.setUserCode(taskMove.getToUser());
+                nodeInstance.setTaskAssigned(taskMove.getTaskAssigned());
+                nodeInstance.setUnitCode(taskMove.getUnitCode());
+                nodeInstance.setRoleType(taskMove.getRoleType());
+                nodeInstance.setRoleCode(taskMove.getRoleCode());
+                nodeInstance.setLastUpdateTime(DatetimeOpt.currentUtilDate());
+                nodeInstance.setLastUpdateUser(managerUser.getUserCode());
+                nodeInstanceDao.updateObject(fields, nodeInstance);
+                //日志
+                FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInstance.getFlowInstId());
+                OperationLog wfactlog = FlowOptUtils.createActionLog(flowInst.getTopUnit(),
+                        managerUser.getUserCode(), nodeInstance,
+                        "任务重新分配:" + JSON.toJSONString(taskMove), null)
+                    .application(flowInst.getOsId())
+                    .method("updateNodeTask").loginIp(managerUser.getLoginIp());
+                OperationLogCenter.log(wfactlog);
+            }
+        }
+
+        return nodeInstanceList.size();
     }
 
     /**
