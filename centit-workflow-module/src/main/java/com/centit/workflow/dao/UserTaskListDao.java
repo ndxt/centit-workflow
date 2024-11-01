@@ -41,7 +41,7 @@ import java.util.Map;
 @Repository
 public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
 
-    private final static String flowInstStateSql = "select aa.FLOW_INST_ID, group_concat(DISTINCT bb.Node_Name) as node_name " +
+    private final static String flowInstStateSql = "select aa.FLOW_INST_ID, group_concat(DISTINCT bb.Node_Name) as node_name,bb.opt_id " +
         "from wf_node_instance cc join wf_flow_instance aa on (aa.FLOW_INST_ID = cc.FLOW_INST_ID) " +
         " join WF_NODE bb on (cc.NODE_ID = BB.NODE_ID)" +
         " group by aa.FLOW_INST_ID ";
