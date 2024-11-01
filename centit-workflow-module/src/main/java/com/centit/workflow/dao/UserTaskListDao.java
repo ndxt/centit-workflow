@@ -41,7 +41,7 @@ import java.util.Map;
 @Repository
 public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
 
-    private final static String flowInstStateSql = "select aa.FLOW_INST_ID, group_concat(DISTINCT bb.Node_Name) as node_name,bb.opt_id " +
+    private final static String flowInstStateSql = "select aa.FLOW_INST_ID, group_concat(DISTINCT bb.Node_Name) as node_name " +
         "from wf_node_instance cc join wf_flow_instance aa on (aa.FLOW_INST_ID = cc.FLOW_INST_ID) " +
         " join WF_NODE bb on (cc.NODE_ID = BB.NODE_ID)" +
         " group by aa.FLOW_INST_ID ";
@@ -50,7 +50,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "t.FLOW_OPT_TAG, t.UNIT_CODE, t.USER_CODE, " +
         "t.CREATE_TIME, t.deadline_time as node_Expire_Time, " +
         "n.NODE_NAME, t.LAST_UPDATE_TIME, t.INST_STATE, " +
-        "t.LAST_UPDATE_USER, t.USER_CODE as CREATOR_CODE, t.OS_ID, t.OPT_ID as MODEL_ID, n.OPT_ID" +
+        "t.LAST_UPDATE_USER, t.USER_CODE as CREATOR_CODE, t.OS_ID, t.OPT_ID as MODEL_ID, f.OPT_ID" +
         " from wf_flow_instance t join wf_flow_define f on f.FLOW_CODE=t.FLOW_CODE and f.VERSION=t.VERSION" +
         " left join ("+flowInstStateSql+") n " +
         " on n.FLOW_INST_ID=t.FLOW_INST_ID " +
@@ -62,7 +62,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         " [ :topUnit| and t.TOP_UNIT = :topUnit]" +
         " [ :osId| and t.os_id = :osId] " +
         " [ :modelId| and t.OPT_ID = :modelId] " +
-        " [ :optId| and n.OPT_ID = :optId] " +
+        " [ :optId| and f.OPT_ID = :optId] " +
         " [ :osIds| and t.os_id in (:osIds)] " +
         " [ :(like)nodeName| and n.node_Name like :nodeName] " +
         " order by t.last_update_time desc ";
