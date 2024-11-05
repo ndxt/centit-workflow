@@ -601,14 +601,13 @@ public class FlowManagerController extends BaseController {
 
 
     //新增工作组
-    @ApiOperation(value = "新增工作组", notes = "新增工作组")
-    @RequestMapping(value = "/assignFlowWorkTeam/{flowInstId}/{roleCode}/{userCode}/{authdesc}",
+    @ApiOperation(value = "新增工作组成员", notes = "新增工作组成员， flowInstId、roleCode、runToken、userCode是必须的属性")
+    @RequestMapping(value = "/assignFlowWorkTeam",
         method = RequestMethod.POST)
     @WrapUpResponseBody
-    public void assignFlowWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode,
-                                   @PathVariable String userCode, @PathVariable String authdesc) {
-        flowEngine.assignFlowWorkTeam(flowInstId, roleCode,
-            CollectionsOpt.createList(userCode));
+    public void assignFlowWorkTeam(@RequestBody FlowWorkTeam workTeam) {
+        flowEngine.assignFlowWorkTeam(workTeam.getFlowInstId(), workTeam.getRoleCode(),
+            workTeam.getRunToken(), CollectionsOpt.createList(workTeam.getUserCode()));
     }
 
     /**
