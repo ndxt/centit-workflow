@@ -2076,6 +2076,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if (userCodeSet == null) {
             return;
         }
+        if(StringUtils.isBlank(runToken)){
+            runToken = "T";
+        }
         Date assignDate = new Date(System.currentTimeMillis());
         List<FlowWorkTeam> flowWorkTeams = flowTeamDao.listFlowWorkTeamByRole(flowInstId, roleCode, runToken);
         if(flowWorkTeams != null){

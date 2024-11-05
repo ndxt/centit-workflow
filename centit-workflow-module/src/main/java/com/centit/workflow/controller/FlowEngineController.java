@@ -142,7 +142,6 @@ public class FlowEngineController extends BaseController {
         return flowVariables;
     }
 
-
     @ApiOperation(value = "新增多个办件角色",notes = "新增办件角色,userCode传一个Stringlist，格式为userCode:[\"1\",\"2\"]")
     @WrapUpResponseBody
     @PostMapping(value = "/assignFlowWorkTeam")
@@ -152,7 +151,8 @@ public class FlowEngineController extends BaseController {
             return;
         }
         List<String> userCodes = JSON.parseArray(userCodeList, String.class);
-        flowEngine.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(), flowWorkTeam.getRoleCode(), userCodes);
+        flowEngine.assignFlowWorkTeam(flowWorkTeam.getFlowInstId(),
+            flowWorkTeam.getRoleCode(), flowWorkTeam.getRunToken(), userCodes);
     }
 
     @ApiOperation(value = "新增单个办件角色", notes = "新增单个办件角色")
