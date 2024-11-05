@@ -917,6 +917,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowInfo.setFlowCode(UuidOpt.getUuidAsString32());
         flowInfo.setVersion(0L);
         flowInfo.setFlowName(flowName);
+        flowInfo.setSourceId(flowInfo.getFlowCode());
         flowDefineDao.saveNewObject(flowInfo);
         return flowInfo.getFlowCode();
     }
