@@ -229,9 +229,14 @@ public class FlowVariableTranslate implements UserUnitVariableTranslate {
                 }
                 return varStr;
             } else {
-                return StringBaseOpt.objectToStringList(varStr);
+                List<String> strings = StringBaseOpt.objectToStringList(varStr);
+                if(strings.size() == 1){
+                    return strings.get(0);
+                }
+                return strings;
             }
         }
+
         if(flowWorkTeam !=null ) {
             List<String> users = findFlowTeam(varName);
             if (users != null && !users.isEmpty())
