@@ -787,7 +787,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 || currToken.startsWith(thisToken + '.' + NodeInstance.RUN_TOKEN_ISOLATED)
             )) {
 
-                if (NodeInstance.NODE_STATE_WAITE_SUBPROCESS.equals(nodeInst.getNodeState())) { // 结束子流程
+                if (NodeInstance.NODE_STATE_WAITE_SUBPROCESS.equals(nodeInst.getNodeState()) && StringUtils.isNotEmpty(nodeInst.getSubFlowInstId())) { // 结束子流程
                     FlowInstance subFlowInst = flowInstanceDao
                         .getObjectById(nodeInst.getSubFlowInstId());
                     if (subFlowInst != null) {
