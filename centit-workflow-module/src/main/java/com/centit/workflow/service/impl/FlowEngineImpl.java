@@ -1047,7 +1047,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     flowEventService.updateEvent(eventInfo);
                 }
             }
-        } else // S：子流程
+        } else // S：创建子流程
         if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
             //如果是子流程 启动流程
             nodeInst.setNodeState(NodeInstance.NODE_STATE_WAITE_SUBPROCESS);
