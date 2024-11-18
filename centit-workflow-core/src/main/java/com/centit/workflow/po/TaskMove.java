@@ -24,7 +24,6 @@ public class TaskMove {
     private List<String> nodeInstIds;
     @ApiModelProperty(value = "任务转移应用id")
     private String osId;
-
     @ApiModelProperty(value = "任务分配类型：D：通过 岗位角色 自动匹配 S：静态待办（usercode) ")
     private String taskAssigned;
     @ApiModelProperty(value = "节点归属部门")
