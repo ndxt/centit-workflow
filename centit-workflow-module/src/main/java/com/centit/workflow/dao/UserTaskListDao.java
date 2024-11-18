@@ -2,7 +2,6 @@ package com.centit.workflow.dao;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
 import com.centit.framework.model.basedata.UserUnit;
@@ -33,27 +32,43 @@ import java.util.Map;
 
 /**
  * 流程任务数据操作类
- *
- * @author ljy
+ * @author codefan@sina.com
  * @version $Rev$ <br>
  * $Id$
  */
 @Repository
 public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
 
-    private final static String flowInstStateSql = "select aa.FLOW_INST_ID, group_concat(DISTINCT bb.Node_Name) as node_name " +
+    private final static String flowInstStateSqlMySql = "select aa.FLOW_INST_ID, group_concat(DISTINCT bb.Node_Name) as node_name " +
         "from wf_node_instance cc join wf_flow_instance aa on (aa.FLOW_INST_ID = cc.FLOW_INST_ID) " +
-        " join WF_NODE bb on (cc.NODE_ID = BB.NODE_ID)" +
+        " join WF_NODE bb on (cc.NODE_ID = bb.NODE_ID)" +
         " group by aa.FLOW_INST_ID ";
 
-    private final static String userCompleteTaskBaseSql = "select t.FLOW_INST_ID, t.FLOW_CODE, t.VERSION, t.FLOW_OPT_NAME, " +
+    private final static String flowInstStateSqlPG = "select aa.FLOW_INST_ID, string_agg(DISTINCT bb.Node_Name) as node_name " +
+        "from wf_node_instance cc join wf_flow_instance aa on (aa.FLOW_INST_ID = cc.FLOW_INST_ID) " +
+        " join WF_NODE bb on (cc.NODE_ID = bb.NODE_ID)" +
+        " group by aa.FLOW_INST_ID ";
+
+    private final static String flowInstStateSqlOracle12c = "select aa.FLOW_INST_ID, " +
+        "listagg(to_char(bb.Node_Name),',') within group (order by cc.last_update_time) as node_name " +
+        "from wf_node_instance cc join wf_flow_instance aa on (aa.FLOW_INST_ID = cc.FLOW_INST_ID) " +
+        " join WF_NODE bb on (cc.NODE_ID = bb.NODE_ID)" +
+        " group by aa.FLOW_INST_ID";
+
+    private final static String flowInstStateSqlChinese = "select aa.FLOW_INST_ID, wm_concat(DISTINCT bb.Node_Name) as node_name " +
+        "from wf_node_instance cc join wf_flow_instance aa on (aa.FLOW_INST_ID = cc.FLOW_INST_ID) " +
+        " join WF_NODE bb on (cc.NODE_ID = bb.NODE_ID)" +
+        " group by aa.FLOW_INST_ID ";
+
+    private final static String userCompleteTaskBaseSqlPart1= "select t.FLOW_INST_ID, t.FLOW_CODE, t.VERSION, t.FLOW_OPT_NAME, " +
         "t.FLOW_OPT_TAG, t.UNIT_CODE, t.USER_CODE, " +
         "t.CREATE_TIME, t.deadline_time as node_Expire_Time, " +
         "n.NODE_NAME, t.LAST_UPDATE_TIME, t.INST_STATE, " +
-        "t.LAST_UPDATE_USER, t.USER_CODE as CREATOR_CODE, t.OS_ID, t.OPT_ID as MODEL_ID, n.OPT_ID" +
+        "t.LAST_UPDATE_USER, t.USER_CODE as CREATOR_CODE, t.OS_ID, t.OPT_ID as MODEL_ID, f.OPT_ID " +
         " from wf_flow_instance t join wf_flow_define f on f.FLOW_CODE=t.FLOW_CODE and f.VERSION=t.VERSION" +
-        " left join ("+flowInstStateSql+") n " +
-        " on n.FLOW_INST_ID=t.FLOW_INST_ID " +
+        " left join ";//  ("+flowInstStateSql+") n " +
+
+    private final static String userCompleteTaskBaseSqlPart2 = "n on n.FLOW_INST_ID=t.FLOW_INST_ID " +
         " where t.flow_inst_id in  (select w.flow_inst_id from wf_node_instance w join wf_node n " +
         " on n.node_id=w.node_id where w.NODE_STATE in ('C', 'F', 'P') [ :userCode| and w.last_update_user=:userCode] " +
         " [ :nodeCode| and n.node_code = :nodeCode] [ :nodeCodes | and n.node_code in (:nodeCodes)]  )" +
@@ -62,7 +77,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         " [ :topUnit| and t.TOP_UNIT = :topUnit]" +
         " [ :osId| and t.os_id = :osId] " +
         " [ :modelId| and t.OPT_ID = :modelId] " +
-        " [ :optId| and n.OPT_ID = :optId] " +
+        " [ :optId| and f.OPT_ID = :optId] " +
         " [ :osIds| and t.os_id in (:osIds)] " +
         " [ :(like)nodeName| and n.node_Name like :nodeName] " +
         " order by t.last_update_time desc ";
@@ -208,10 +223,25 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
      */
     @Transactional
     public List<UserTask> listUserCompletedTask(Map<String, Object> filter, PageDesc pageDesc) {
-        String sql = userCompleteTaskBaseSql;
-        DBType dbType = DBType.mapDBType(CodeRepositoryUtil.getSysConfigValue("jdbc.driver"));
-        if (dbType == DBType.Oracle || dbType == DBType.Oscar ||dbType == DBType.DM) {
-            sql = sql.replace("group_concat", "wm_concat");
+        String sql;//= userCompleteTaskBaseSql;
+        DBType dbType = DatabaseOptUtils.doGetDBType(this);
+        switch (dbType){
+            case Oracle:
+                sql = userCompleteTaskBaseSqlPart1 + " (" + flowInstStateSqlOracle12c + ") " + userCompleteTaskBaseSqlPart2;
+                break;
+            case Oscar:
+            case DM:
+                sql = userCompleteTaskBaseSqlPart1 + " (" + flowInstStateSqlChinese + ") " + userCompleteTaskBaseSqlPart2;
+                break;
+            case MySql:
+                sql = userCompleteTaskBaseSqlPart1 + " (" + flowInstStateSqlMySql + ") " + userCompleteTaskBaseSqlPart2;
+                break;
+            case PostgreSql:
+                sql = userCompleteTaskBaseSqlPart1 + " (" + flowInstStateSqlPG + ") " + userCompleteTaskBaseSqlPart2;
+                break;
+            default:
+                sql = userCompleteTaskBaseSqlPart1 + " V_FLOW_INST_STATE " + userCompleteTaskBaseSqlPart2;
+                break;
         }
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql, filter);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
@@ -267,7 +297,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
                     orderSql.append(fieldPair.getRight().getColumnName());
                 }
                 aword = lexer.getAWord();
-                if(StringUtils.equalsAnyIgnoreCase(aword, "desc", "asc")){
+                if(StringUtils.equalsAnyIgnoreCase(aword, "desc", "asc", "nulls", "first", "last")){
                     if(fieldPair!=null){
                         orderSql.append(" ").append(aword);
                     }
@@ -290,7 +320,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
                 : fieldPair.getRight().getColumnName();
 
             String orderField = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.TABLE_SORT_ORDER));
-            if(StringUtils.equalsAnyIgnoreCase(orderField, "desc", "asc")){
+            if(StringUtils.equalsAnyIgnoreCase(orderField, "desc", "asc", "nulls", "first", "last")){
                 return sf + " " +orderField;
             }
             return sf;

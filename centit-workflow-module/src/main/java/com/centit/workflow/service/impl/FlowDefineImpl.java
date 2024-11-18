@@ -392,7 +392,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }
 
         if (StringUtils.isBlank(flowDef.getFlowXmlDesc())) {
-            throw new ObjectException("流程没有内容");
+            throw new ObjectException("流程没有内容，flowXmlDesc字段为空。");
         }
 
         // 获取新的版本号
@@ -917,6 +917,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         flowInfo.setFlowCode(UuidOpt.getUuidAsString32());
         flowInfo.setVersion(0L);
         flowInfo.setFlowName(flowName);
+        flowInfo.setSourceId(flowInfo.getFlowCode());
         flowDefineDao.saveNewObject(flowInfo);
         return flowInfo.getFlowCode();
     }

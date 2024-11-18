@@ -195,7 +195,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
      */
     @Override
     public FlowInstance createInstance(CreateFlowOptions options) {
-
         return createInstance(options,
             new ObjectUserUnitVariableTranslate(
                 CollectionsOpt.unionTwoMap(
@@ -625,7 +624,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
     private void closeNodeInstanceInside(Collection<NodeInstance> sameNodes, Date currentTime, String userCode) {
         for (NodeInstance ni : sameNodes) {
-            if ("W".equals(ni.getNodeState())) { //结束子流程
+            if (NodeInstance.NODE_STATE_WAITE_SUBPROCESS.equals(ni.getNodeState())) { //  "W" 结束子流程
                 FlowInstance subFlowInst = flowInstanceDao.getObjectById(ni.getSubFlowInstId());
                 if (subFlowInst != null) {
                     FlowOptUtils.endInstance(subFlowInst, "F", userCode, flowInstanceDao);
@@ -1020,29 +1019,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         }
 
         flowInst.addNodeInstance(nodeInst);
-        // S：子流程
-        if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
-            //如果是子流程 启动流程
-            nodeInst.setNodeState(NodeInstance.NODE_STATE_WAITE_SUBPROCESS);
-            nodeInstanceDao.saveNewObject(nodeInst);
-            //子流程的机构 要和 节点的机构一致
-            FlowInstance tempFlow = createInstanceInside(
-                CreateFlowOptions.create().copy(options)
-                    .flow(nextOptNode.getSubFlowCode())
-                    .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
-                    .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
-                    .optTag(flowInst.getFlowOptTag())
-                    .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId, nodeToken), varTrans);
-            // TODO 子流程是否要自动添加 父节点 和 父流程的 时间期限， 如果需要在这儿添加逻辑
-            nodeInst.setSubFlowInstId(tempFlow.getFlowInstId());
-            //对于子流程也设定一个用户作为流程的责任人
-            if (optUsers != null && !optUsers.isEmpty()) {
-                nodeInst.setUserCode(optUsers.iterator().next());
-            }
-            //子流程的时间限制和父流程节点的一致
-            NodeInstance tempFirstNode = tempFlow.fetchFirstNodeInstance();
-            createNodes.add(tempFirstNode.getNodeInstId());
-        } else if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())) {
+        if (NodeInfo.NODE_TYPE_SYNC.equals(nextOptNode.getNodeType())) {
             //  新建同步节点
             nodeInst.setNodeState(NodeInstance.NODE_STATE_SYNC);
             //  判断同步节点的同步方式是否为时间触发
@@ -1070,7 +1047,30 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     flowEventService.updateEvent(eventInfo);
                 }
             }
-        } else  {
+        } else // S：创建子流程
+        if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nextOptNode.getNodeType())) {
+            //如果是子流程 启动流程
+            nodeInst.setNodeState(NodeInstance.NODE_STATE_WAITE_SUBPROCESS);
+            // TODO 子流程是否要自动添加 父节点 和 父流程的 时间期限， 如果需要在这儿添加逻辑
+            String subFlowInstId = UuidOpt.getUuidAsString22();
+            nodeInst.setSubFlowInstId(subFlowInstId);
+            //对于子流程也设定一个用户作为流程的责任人
+            if (optUsers != null && !optUsers.isEmpty()) {
+                nodeInst.setUserCode(optUsers.iterator().next());
+            }
+            nodeInstanceDao.saveNewObject(nodeInst);
+            //子流程的机构 要和 节点的机构一致
+            FlowInstance tempFlow = createInstanceInside(
+                CreateFlowOptions.create().copy(options).flowInst(subFlowInstId)
+                    .flow(nextOptNode.getSubFlowCode())
+                    .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
+                    .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
+                    .optTag(flowInst.getFlowOptTag())
+                    .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId, nodeToken), varTrans);
+            //子流程的时间限制和父流程节点的一致
+            NodeInstance tempFirstNode = tempFlow.fetchFirstNodeInstance();
+            createNodes.add(tempFirstNode.getNodeInstId());
+        } else {
             nodeInstanceDao.saveNewObject(nodeInst);
         }
 
@@ -2075,6 +2075,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                                    List<String> userCodeSet) {
         if (userCodeSet == null) {
             return;
+        }
+        if(StringUtils.isBlank(runToken)){
+            runToken = "T";
         }
         Date assignDate = new Date(System.currentTimeMillis());
         List<FlowWorkTeam> flowWorkTeams = flowTeamDao.listFlowWorkTeamByRole(flowInstId, roleCode, runToken);

@@ -61,6 +61,7 @@ public class FlowOptController extends BaseController {
     @WrapUpResponseBody
     @ApiOperation("根据optId获取角色定义列表")
     public PageQueryResult<OptTeamRole> listAllOptTeamRolesByOptId(@PathVariable String optId, PageDesc pageDesc) {
+        pageDesc.setPageSize(-1);
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         List<OptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
@@ -136,6 +137,7 @@ public class FlowOptController extends BaseController {
     @WrapUpResponseBody
     @ApiOperation("根据optId获取变量定义列表")
     public PageQueryResult<OptVariableDefine> listAllOptVariableDefinesByOptId(@PathVariable String optId, PageDesc pageDesc) {
+        pageDesc.setPageSize(-1);
         HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         List<OptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);

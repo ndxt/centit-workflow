@@ -16,10 +16,7 @@ import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.framework.model.basedata.UserInfo;
 import com.centit.framework.model.security.CentitUserDetails;
-import com.centit.support.algorithm.CollectionsOpt;
-import com.centit.support.algorithm.DatetimeOpt;
-import com.centit.support.algorithm.GeneralAlgorithm;
-import com.centit.support.algorithm.NumberBaseOpt;
+import com.centit.support.algorithm.*;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.support.json.JSONOpt;
@@ -601,14 +598,22 @@ public class FlowManagerController extends BaseController {
 
 
     //新增工作组
-    @ApiOperation(value = "新增工作组", notes = "新增工作组")
-    @RequestMapping(value = "/assignFlowWorkTeam/{flowInstId}/{roleCode}/{userCode}/{authdesc}",
+    @ApiOperation(value = "新增工作组成员", notes = "新增工作组成员， flowInstId、roleCode、runToken、userCodes 是必须的属性")
+    @RequestMapping(value = "/assignFlowWorkTeam",
         method = RequestMethod.POST)
     @WrapUpResponseBody
-    public void assignFlowWorkTeam(@PathVariable String flowInstId, @PathVariable String roleCode,
-                                   @PathVariable String userCode, @PathVariable String authdesc) {
-        flowEngine.assignFlowWorkTeam(flowInstId, roleCode,
-            CollectionsOpt.createList(userCode));
+    public void assignFlowWorkTeam(@RequestBody String workTeamJson) {
+        JSONObject workTeam = JSONObject.parseObject(workTeamJson);
+        String flowInstId = workTeam.getString("flowInstId");
+        String roleCode = workTeam.getString("roleCode");
+        String runToken = workTeam.getString("runToken");
+        Object users = workTeam.get("userCodes");
+        if(StringUtils.isAnyBlank(flowInstId, roleCode, runToken) || users==null){
+            throw new ObjectException(ObjectException.DATA_VALIDATE_ERROR, "参数不完整！");
+        }
+
+        flowEngine.assignFlowWorkTeam(flowInstId, roleCode, runToken,
+            StringBaseOpt.objectToStringList(users));
     }
 
     /**
