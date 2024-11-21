@@ -1702,9 +1702,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             "(select max(b.NODE_ID) from WF_NODE b where b.FLOW_CODE= ? and b.VERSION = ?" +
             " and b.NODE_CODE = (select c.NODE_CODE from WF_NODE c where c.NODE_ID = a.NODE_ID)) " +
             " where FLOW_INST_ID in (select f.FLOW_INST_ID from" +
-            "  WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE = ? and f.VERSION = ? )";
+                " WF_FLOW_INSTANCE f where f.INST_STATE in ('N','P') and f.FLOW_CODE = ? and f.VERSION = ? )" +
+                " and exists (select bb.NODE_ID from WF_NODE bb where bb.FLOW_CODE= ? and bb.VERSION = ?" +
+                    " and bb.NODE_CODE = (select c.NODE_CODE from WF_NODE c where c.NODE_ID = a.NODE_ID))";
         DatabaseOptUtils.doExecuteSql(nodeInstanceDao, sqlUpdateNodeInst,
-            new Object[]{flowCode, newVersion, flowCode, oldVersion});
+            new Object[]{flowCode, newVersion, flowCode, oldVersion, flowCode, newVersion});
 
         String sqlUpdateFlowInst = "update WF_FLOW_INSTANCE f set f.VERSION = ? " +
             "where f.INST_STATE in ('N','P') and f.FLOW_CODE= ? and f.VERSION = ?  ";
