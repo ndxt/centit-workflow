@@ -52,12 +52,9 @@ public class RoleFormulaController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     public PageQueryResult<RoleFormula> listAllRoleFormula(PageDesc pageDesc, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> filterMap = BaseController.collectRequestParameters(request);
-        if (WebOptUtils.isTenantTopUnit(request)) {
-            String topUnit = WebOptUtils.getCurrentTopUnit(request);
-            filterMap.put("topUnit", topUnit);
-        }
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        filterMap.put("topUnit", topUnit);
         List<RoleFormula> listObjects = roleFormulaService.listRoleFormulas(filterMap, pageDesc);
-
         return PageQueryResult.createResult(listObjects, pageDesc);
     }
 
@@ -77,10 +74,8 @@ public class RoleFormulaController extends BaseController {
             throw new ObjectException(ResponseData.ERROR_USER_NOT_LOGIN,
                 getI18nMessage( "error.302.user_not_login", request));
         }
-        if (WebOptUtils.isTenantTopUnit(request)) {
-            String topUnit = WebOptUtils.getCurrentTopUnit(request);
-            roleFormula.setTopUnit(topUnit);
-        }
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        roleFormula.setTopUnit(topUnit);
         roleFormulaService.saveRoleFormula(roleFormula);
         return roleFormula;
     }
@@ -97,10 +92,9 @@ public class RoleFormulaController extends BaseController {
     @RequestMapping(value = "/usersByFormulaCode/{formulaCode}", method = RequestMethod.GET)
     public JSONArray viewRoleFormulaUsers(@PathVariable String formulaCode,
                                           HttpServletRequest request) {
-        JSONArray listObjects = roleFormulaService.viewRoleFormulaUsers(
+        return roleFormulaService.viewRoleFormulaUsers(
             formulaCode, WebOptUtils.getCurrentUserCode(request),
             WebOptUtils.getCurrentUnitCode(request));
-        return listObjects;
     }
 
     @ApiOperation(value = "预览权限表达式对应用户", notes =
