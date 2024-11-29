@@ -238,6 +238,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
         }else {
             flowDef.copyNotNullProperty(wfDef);
             flowDef.setFlowState(FlowInfo.FLOW_STATE_DRAFT);//wfDef.getWfstate() == null ? "A":wfDef.getWfstate());
+            flowDef.setFlowPublishDate(new Date(System.currentTimeMillis()));
             flowDefineDao.updateObject(flowDef);
         }
         return true;
