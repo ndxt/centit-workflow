@@ -27,7 +27,7 @@ public class RoleFormulaDao extends BaseDaoImpl<RoleFormula, String> {
      * @return Map String, String
      */
     public Map<String, String> listAllRoleMsg(String topUnit) {
-        List<RoleFormula> flowRoles = this.listObjectsByProperties(CollectionsOpt.createHashMap("topUnit",topUnit));
+        List<RoleFormula> flowRoles = this.listObjectsByProperties(CollectionsOpt.createHashMap("topUnit", topUnit));
         Map<String, String> roleMap = new HashMap<>();
         for (RoleFormula flowRole : flowRoles) {
             roleMap.put(flowRole.getFormulaCode(),flowRole.getFormulaName());

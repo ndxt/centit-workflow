@@ -2436,7 +2436,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         PageDesc pageDescCopy = new PageDesc();
         pageDescCopy.copy(pageDesc);
         List<UserTask> userTaskList = listUserDynamicTask(searchColumn, pageDescCopy);
-        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDescCopy);
+        String topUnit = StringBaseOpt.castObjectToString(searchColumn.get("topUnit"));
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(topUnit, userTaskList, pageDescCopy);
         return pageQueryResult.toResponseData();
     }
 
@@ -2450,7 +2451,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         PageDesc pageDescCopy=new PageDesc();
         pageDescCopy.copy(pageDesc);
         List<UserTask> userTaskList = listUserStaticTask(searchColumn, pageDescCopy);
-        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDescCopy);
+        String topUnit = StringBaseOpt.castObjectToString(searchColumn.get("topUnit"));
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(topUnit, userTaskList, pageDescCopy);
         return pageQueryResult.toResponseData();
     }
 
@@ -2464,7 +2466,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         PageDesc pageDescCopy=new PageDesc();
         pageDescCopy.copy(pageDesc);
         List<UserTask> userTaskList = listUserGrantorTask(searchColumn, pageDescCopy);
-        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDescCopy);
+        String topUnit = StringBaseOpt.castObjectToString(searchColumn.get("topUnit"));
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(topUnit, userTaskList, pageDescCopy);
         return pageQueryResult.toResponseData();
     }
 
@@ -2478,7 +2481,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         PageDesc pageDescCopy=new PageDesc();
         pageDescCopy.copy(pageDesc);
         List<UserTask> userTaskList = listUserStaticAndGrantorTask(searchColumn, pageDescCopy);
-        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDescCopy);
+        String topUnit = StringBaseOpt.castObjectToString(searchColumn.get("topUnit"));
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(topUnit, userTaskList, pageDescCopy);
         return pageQueryResult.toResponseData();
     }
 
@@ -2507,7 +2511,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         PageDesc pageDescCopy=new PageDesc();
         pageDescCopy.copy(pageDesc);
         List<UserTask> userTaskList = listUserAllTask(searchColumn, pageDescCopy);
-        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(userTaskList, pageDescCopy);
+        String topUnit = StringBaseOpt.castObjectToString(searchColumn.get("topUnit"));
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(topUnit, userTaskList, pageDescCopy);
         return pageQueryResult.toResponseData();
     }
 
