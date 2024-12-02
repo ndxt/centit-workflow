@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.centit.framework</groupId>
             <artifactId>framework-dubbo-config</artifactId>
-            <version>${revision}</version>
+           <version>5.5-SNAPSHOT</version>
         </dependency>
 
         <dependency>
