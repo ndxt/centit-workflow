@@ -16,12 +16,12 @@ import com.centit.support.common.ObjectException;
 import com.centit.support.compiler.ObjectTranslate;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.support.network.HtmlFormUtils;
 import com.centit.workflow.po.RoleFormula;
 import com.centit.workflow.service.RoleFormulaService;
 import com.centit.workflow.service.impl.FlowOptUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -118,7 +118,7 @@ public class RoleFormulaController extends BaseController {
             return null;
         }
         return roleFormulaService.viewFormulaUsers(
-            StringEscapeUtils.unescapeHtml4(formula),
+            HtmlFormUtils.htmlString(formula),
             WebOptUtils.getCurrentUserCode(request),
             WebOptUtils.getCurrentUnitCode(request));
     }
@@ -134,7 +134,7 @@ public class RoleFormulaController extends BaseController {
     @RequestMapping(value = "/calcUnits", method = RequestMethod.GET)
     public JSONArray viewFormulaUnits(String formula, HttpServletRequest request) {
         return roleFormulaService.viewFormulaUnits(
-            StringEscapeUtils.unescapeHtml4(formula),
+            HtmlFormUtils.htmlString(formula),
             WebOptUtils.getCurrentUserCode(request),
             WebOptUtils.getCurrentUnitCode(request));
     }

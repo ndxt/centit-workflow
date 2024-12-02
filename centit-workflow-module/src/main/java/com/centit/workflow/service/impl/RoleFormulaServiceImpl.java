@@ -18,7 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @ClassName FlowRoleServiceImpl
@@ -75,26 +78,26 @@ public class RoleFormulaServiceImpl implements RoleFormulaService {
 
     @Override
     public JSONArray viewFormulaUsers(String formula, String userCode, String unitCode) {
-
         UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(fetchTopUnit(unitCode));
         context.addUserParam("C", userCode);
         context.addUnitParam("C", unitCode);
         context.addUnitParam("N", unitCode);
         Set<String> sUsers = UserUnitCalcEngine.calcOperators(
             context, formula);
-
+        if(sUsers == null){
+            return null;
+        }
         List<UserInfo> userInfos = new ArrayList<>();
         for (String uc : sUsers) {
-            userInfos.add(context.getUserInfoByCode(uc));
+            UserInfo ui = context.getUserInfoByCode(uc);
+            if(ui != null) {
+                userInfos.add(ui);
+            }
         }
         // 根据userOrder增加排序
-        Collections.sort(userInfos, new Comparator<UserInfo>() {
-            @Override
-            public int compare(UserInfo o1, UserInfo o2) {
-                Long i = o1.getUserOrder() - o2.getUserOrder();
-                return new Long(i).intValue();
-            }
-
+        userInfos.sort((o1, o2) -> {
+            long i = o1.getUserOrder() - o2.getUserOrder();
+            return (int) i;
         });
         return JSONArray.copyOf(userInfos);
     }
