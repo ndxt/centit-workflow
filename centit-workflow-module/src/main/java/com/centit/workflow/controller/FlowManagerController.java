@@ -12,7 +12,6 @@ import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.DictionaryMapUtils;
 import com.centit.framework.core.dao.PageQueryResult;
-import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.basedata.OperationLog;
 import com.centit.framework.model.basedata.UserInfo;
 import com.centit.framework.model.security.CentitUserDetails;
@@ -826,8 +825,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "获取流程申请信息", notes = "获取流程申请信息（获取流程创建用户的信息）")
     @RequestMapping(value = "/inst/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public ResponseData fetchFlowOptName(@PathVariable String flowInstId) {
-        HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
+    public ResponseData fetchFlowOptName(@PathVariable String flowInstId, HttpServletRequest request) {
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         FlowInstance flowInstance = flowManager.getFlowInstance(flowInstId);
         UserInfo createFlowUser = CodeRepositoryUtil.getUserInfoByCode(topUnit, flowInstance.getUserCode());

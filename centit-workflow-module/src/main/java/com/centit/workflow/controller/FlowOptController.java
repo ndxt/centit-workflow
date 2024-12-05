@@ -5,7 +5,6 @@ import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
-import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.basedata.OptInfo;
 import com.centit.framework.model.basedata.OsInfo;
@@ -60,9 +59,9 @@ public class FlowOptController extends BaseController {
     @GetMapping("/allRoles/{optId}")
     @WrapUpResponseBody
     @ApiOperation("根据optId获取角色定义列表")
-    public PageQueryResult<OptTeamRole> listAllOptTeamRolesByOptId(@PathVariable String optId, PageDesc pageDesc) {
+    public PageQueryResult<OptTeamRole> listAllOptTeamRolesByOptId(
+        @PathVariable String optId, PageDesc pageDesc, HttpServletRequest request) {
         pageDesc.setPageSize(-1);
-        HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         List<OptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
         List<OptTeamRole> tyRoles = new ArrayList<OptTeamRole>();
@@ -136,9 +135,9 @@ public class FlowOptController extends BaseController {
     @GetMapping("/allVariables/{optId}")
     @WrapUpResponseBody
     @ApiOperation("根据optId获取变量定义列表")
-    public PageQueryResult<OptVariableDefine> listAllOptVariableDefinesByOptId(@PathVariable String optId, PageDesc pageDesc) {
+    public PageQueryResult<OptVariableDefine> listAllOptVariableDefinesByOptId(
+        @PathVariable String optId, PageDesc pageDesc, HttpServletRequest request) {
         pageDesc.setPageSize(-1);
-        HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
         String topUnit = WebOptUtils.getCurrentTopUnit(request);
         List<OptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);
         List<OptVariableDefine> tyVariables = new ArrayList<>();

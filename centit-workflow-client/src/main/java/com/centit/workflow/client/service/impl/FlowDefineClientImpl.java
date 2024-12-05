@@ -63,10 +63,9 @@ public class FlowDefineClientImpl implements FlowDefine {
     }
 
     @Override
-    public JSONArray listAllFlowsByOptId(String optId) {
+    public JSONArray listAllFlowsByOptId(String topUnt, String optId) {
         return null;
     }
-
 
     /**
      * 获取 流程信息

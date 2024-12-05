@@ -1144,7 +1144,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     nextOptNode, options.getUserCode());
             } else if (NodeInfo.AUTO_NODE_OPT_CODE_BEAN.equals(nextOptNode.getAutoRunType())) {
                 NodeEventSupport nodeEventExecutor =
-                    NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, this);
+                    NodeEventSupportFactory.createNodeEventSupportBean(flowInst.getTopUnit(), nextOptNode, this);
                 needSubmit = nodeEventExecutor.runAutoOperator(flowInst, preNodeInst == null ? nodeInst : preNodeInst,
                     nextOptNode, options.getUserCode());
             } // 要实现一个 发送内部同步消息的 自动运行节点
@@ -1167,7 +1167,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             }
         } else if (StringUtils.isNotBlank(nextOptNode.getOptBean())) {
             NodeEventSupport nodeEventExecutor =
-                NodeEventSupportFactory.createNodeEventSupportBean(nextOptNode, this);
+                NodeEventSupportFactory.createNodeEventSupportBean(flowInst.getTopUnit(), nextOptNode, this);
             nodeEventExecutor.runAfterCreate(flowInst, nodeInst, nextOptNode, options.getUserCode());
         }
 
@@ -1425,7 +1425,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //删除了多人操作判断的逻辑，
         //节点提交前事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
-            .createNodeEventSupportBean(currNode, this);
+            .createNodeEventSupportBean(flowInst.getTopUnit(), currNode, this);
         nodeEventExecutor.runBeforeSubmit(flowInst, nodeInst, currNode, options.getUserCode());
 
         //判断是否为临时插入节点
@@ -1664,7 +1664,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         flowInstanceDao.updateObject(flowInst);
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
-            .createNodeEventSupportBean(nodedef, this);
+            .createNodeEventSupportBean(flowInst.getTopUnit(), nodedef, this);
         nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, managerUser.getUserCode());
         //调用发送消息接口
         OperationLogCenter.log(FlowOptUtils.createActionLog(flowInst.getTopUnit(),

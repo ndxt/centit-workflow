@@ -7,7 +7,6 @@ import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.core.controller.BaseController;
 import com.centit.framework.core.controller.WrapUpResponseBody;
 import com.centit.framework.core.dao.PageQueryResult;
-import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
 import com.centit.framework.model.basedata.UnitInfo;
 import com.centit.framework.model.basedata.UserInfo;
@@ -69,7 +68,7 @@ public class RoleFormulaController extends BaseController {
     @WrapUpResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public RoleFormula saveFlowRole(HttpServletRequest request, @RequestBody RoleFormula roleFormula) {
-        String loginUser = WebOptUtils.getCurrentUserCode(RequestThreadLocal.getLocalThreadWrapperRequest());
+        String loginUser = WebOptUtils.getCurrentUserCode(request);
         if (StringBaseOpt.isNvl(loginUser)) {
             throw new ObjectException(ResponseData.ERROR_USER_NOT_LOGIN,
                 getI18nMessage( "error.302.user_not_login", request));
@@ -193,6 +192,4 @@ public class RoleFormulaController extends BaseController {
         variableFormula.setFormula(jsonObject.containsKey("formula") ? jsonObject.getString("formula") : "");
         return variableFormula.calcFormula();
     }
-
-
 }

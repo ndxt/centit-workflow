@@ -102,7 +102,8 @@ public class FlowDefineController extends ResourceBaseController {
     @WrapUpResponseBody
     @GetMapping(value = "/optAllFlow/{optId}")
     public ResponseData listAllFlowByOpt(@PathVariable String optId, HttpServletRequest request) {
-        JSONArray jsonArray = flowDefine.listAllFlowsByOptId(optId);
+        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+        JSONArray jsonArray = flowDefine.listAllFlowsByOptId(topUnit, optId);
         if (jsonArray == null) {
             return ResponseData.makeErrorMessage(ObjectException.DATA_NOT_FOUND_EXCEPTION,
                 getI18nMessage("error.604.data_not_found", request));

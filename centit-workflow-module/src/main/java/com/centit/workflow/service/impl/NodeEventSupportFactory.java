@@ -1,9 +1,7 @@
 package com.centit.workflow.service.impl;
 
 import com.centit.framework.appclient.AppSession;
-import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
-import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.basedata.OsInfo;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.po.NodeInfo;
@@ -15,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -38,10 +35,8 @@ public class NodeEventSupportFactory {
         return appSession;
     }
 
-    public static NodeEventSupport createNodeEventSupportBean(NodeInfo nodeInfo, FlowEngine flowEngine) {
+    public static NodeEventSupport createNodeEventSupportBean(String topUnit, NodeInfo nodeInfo, FlowEngine flowEngine) {
         WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
-        HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
-        String topUnit = WebOptUtils.getCurrentTopUnit(request);
         OsInfo osInfo = StringUtils.isBlank(nodeInfo.getOsId()) ?
             null : CodeRepositoryUtil.getOsInfo(topUnit, nodeInfo.getOsId());
 

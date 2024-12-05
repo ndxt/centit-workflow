@@ -3,10 +3,8 @@ package com.centit.workflow.service.impl;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.components.SysUserFilterEngine;
-import com.centit.framework.filter.RequestThreadLocal;
 import com.centit.framework.model.adapter.PlatformEnvironment;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContext;
 import com.centit.framework.model.adapter.UserUnitFilterCalcContextFactory;
@@ -31,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -123,9 +120,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
 
     @Override
     @Transactional
-    public JSONArray listAllFlowsByOptId(String optId) {
-        HttpServletRequest request = RequestThreadLocal.getLocalThreadWrapperRequest();
-        String topUnit = WebOptUtils.getCurrentTopUnit(request);
+    public JSONArray listAllFlowsByOptId(String topUnit, String optId) {
         JSONArray flowDefineJsonArray = new JSONArray();
         List<FlowInfo> flows = flowDefineDao.listLastVersionFlowByOptId(optId);
         List<OptInfo> allOptInfos = platformEnvironment.listAllOptInfo(topUnit);

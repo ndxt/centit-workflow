@@ -118,7 +118,7 @@ public interface FlowDefine {
      * @param optId
      * @return
      */
-    JSONArray listAllFlowsByOptId(String optId);
+    JSONArray listAllFlowsByOptId(String topUnit, String optId);
 
     /**
      * 获取某一流程某一版本号中存在的所有机构表达式
