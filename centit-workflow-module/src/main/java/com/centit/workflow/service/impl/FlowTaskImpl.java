@@ -84,7 +84,7 @@ public class FlowTaskImpl {
 
                 String message = "业务" + flowInst.getFlowOptName() + "(" + flowInst.getFlowInstId() + ")的" +
                     nodeInfo.getNodeName() + "(" + nodeInst.getNodeInstId() + ") 节点超时预警，请尽快处理。";
-                NoticeMessage noticeMessage = NoticeMessage.create().subject("节点预报警提示")
+                NoticeMessage noticeMessage = NoticeMessage.create().topUnit(flowInst.getTopUnit()).subject("节点预报警提示")
                     .content(message)
                     .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInst.getNodeInstId()));
 
@@ -128,7 +128,7 @@ public class FlowTaskImpl {
                         stageInfo.getStageName() + "(" + stageInfo.getStageCode() + ") 超时预警。";
                     for (NodeInstance nodeInst : activeNodes) {
 
-                        NoticeMessage noticeMessage = NoticeMessage.create().subject("流程阶段预报警提示")
+                        NoticeMessage noticeMessage = NoticeMessage.create().topUnit(flowInst.getTopUnit()).subject("流程阶段预报警提示")
                             .content(message + "请尽快处理和您相关业务（" + nodeInst.getNodeInstId() + ")")
                             .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInst.getNodeInstId()));
 
@@ -172,7 +172,7 @@ public class FlowTaskImpl {
                     String message = "业务" + flowInst.getFlowOptName() + "(" + flowInst.getFlowInstId() + ") 超时预警。";
                     for (NodeInstance nodeInst : activeNodes) {
 
-                        NoticeMessage noticeMessage = NoticeMessage.create().subject("流程预报警提示")
+                        NoticeMessage noticeMessage = NoticeMessage.create().topUnit(flowInst.getTopUnit()).subject("流程预报警提示")
                             .content(message + "请尽快处理和您相关业务（" + nodeInst.getNodeInstId()+ ")")
                             .operation("WF_WARNING").method("NOTIFY").tag(String.valueOf(nodeInst.getNodeInstId()));
 

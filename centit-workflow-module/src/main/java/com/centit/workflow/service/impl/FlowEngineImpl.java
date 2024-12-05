@@ -1084,7 +1084,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 && NodeInfo.NODE_TYPE_OPT.equals(nextOptNode.getNodeType())) {
                 if (optUsers != null) {
                     notificationCenter.sendMessage("system", optUsers,
-                        NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
+                        NoticeMessage.create().topUnit(flowInst.getTopUnit()).operation("workflow")
+                            .method("submit").subject("您有新任务")
                             .content(
                                 Pretreatment.mapTemplateString(nextOptNode.getNoticeMessage(), options)));
                 }
@@ -1095,7 +1096,8 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 Set<String> sendMessageUser = UserUnitCalcEngine.calcOperators(context, nextOptNode.getNoticeUserExp());
                 if (sendMessageUser != null && !sendMessageUser.isEmpty()) {
                     notificationCenter.sendMessage("system", sendMessageUser,
-                        NoticeMessage.create().operation("workflow").method("submit").subject("您有新任务")
+                        NoticeMessage.create().topUnit(flowInst.getTopUnit()).operation("workflow")
+                            .method("submit").subject("您有新任务")
                             .content(
                                 Pretreatment.mapTemplateString(nextOptNode.getNoticeMessage(), options)));
                     notSendMessage = false;

@@ -395,7 +395,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                     return null;
                 }
                 notificationCenter.sendMessage("system", StringBaseOpt.objectToStringList(params.get(0)),
-                    NoticeMessage.create().operation("workflow").method("submit").subject(
+                    NoticeMessage.create().topUnit(flowInst.getTopUnit()).operation("workflow").method("submit").subject(
                         StringBaseOpt.castObjectToString(params.get(1)))
                         .content(
                             Pretreatment.mapTemplateString(StringBaseOpt.castObjectToString(params.get(2)), varTrans)));
