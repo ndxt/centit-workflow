@@ -182,7 +182,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
             " t.NODE_SUMS, t.NODE_STATE, t.CREATE_TIME, t.LAST_UPDATE_TIME, t.last_update_user " +
             " from wf_node n " +
             " left join (select NODE_ID, count(*) as NODE_SUMS," +
-            " min(CREATE_TIME) as CREATE_TIME, max(LAST_UPDATE_TIME) as LAST_UPDATE_TIME, max(NODE_STATE) as NODE_STATE " +
+            " min(CREATE_TIME) as CREATE_TIME, max(last_update_user) as last_update_user,max(LAST_UPDATE_TIME) as LAST_UPDATE_TIME, max(NODE_STATE) as NODE_STATE " +
             " from wf_node_instance where FLOW_INST_ID = :flowInstId " +
             " group by NODE_ID) t " +
             " on n.NODE_ID = t.NODE_ID  " +
