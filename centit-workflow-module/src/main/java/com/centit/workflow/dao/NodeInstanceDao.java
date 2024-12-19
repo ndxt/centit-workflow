@@ -181,12 +181,12 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         String sql = "select n.NODE_ID, n.NODE_CODE, n.NODE_NAME, n.NODE_DESC, " +
             " t.NODE_SUMS, t.NODE_STATE, t.CREATE_TIME, t.LAST_UPDATE_TIME, t.last_update_user " +
             " from wf_node n " +
-            " left join (select NODE_ID, count(*) as NODE_SUMS," +
-            " min(CREATE_TIME) as CREATE_TIME, max(last_update_user) as last_update_user,max(LAST_UPDATE_TIME) as LAST_UPDATE_TIME, max(NODE_STATE) as NODE_STATE " +
+            " left join (select NODE_ID, count(*) as NODE_SUMS, min(CREATE_TIME) as CREATE_TIME," +
+            " max(last_update_user) as last_update_user, max(LAST_UPDATE_TIME) as LAST_UPDATE_TIME, max(NODE_STATE) as NODE_STATE " +
             " from wf_node_instance where FLOW_INST_ID = :flowInstId " +
             " group by NODE_ID) t " +
             " on n.NODE_ID = t.NODE_ID  " +
-            " where n.NODE_TYPE = 'C' and n.FLOW_CODE = :flowCode and n.VERSION = :version" +
+            " where n.NODE_TYPE = 'C' and n.FLOW_CODE = :flowCode and n.VERSION = :version " +
             "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
             "[ :stageArr | and n.STAGE_CODE in (:stageArr) ]" +
             "[ :optId| and n.OPT_ID = :optId]" +
@@ -220,7 +220,8 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
     }
 
     public void updateNodeStateById(FlowInstance wfFlowInst) {
-        String sql = "update WF_NODE_INSTANCE set NODE_STATE=?, LAST_UPDATE_TIME=?,LAST_UPDATE_USER=? where NODE_STATE = 'N' and FLOW_INST_ID=?";
+        String sql = "update WF_NODE_INSTANCE set NODE_STATE=?, LAST_UPDATE_TIME=?,LAST_UPDATE_USER=? " +
+            "where NODE_STATE = 'N' and FLOW_INST_ID=?";
         this.getJdbcTemplate().update(sql, new Object[]{wfFlowInst.getInstState(),
             wfFlowInst.getLastUpdateTime(), wfFlowInst.getLastUpdateUser(), wfFlowInst.getFlowInstId()});
 
