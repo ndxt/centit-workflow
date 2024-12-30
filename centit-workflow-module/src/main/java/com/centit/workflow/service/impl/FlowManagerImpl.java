@@ -735,13 +735,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (thisNode == null) {
             return null;
         }
-//            return -1;//d大小于
-
+//      return -1;//d大小于
         FlowInstance flowInst = flowInstanceDao.getObjectWithReferences(thisNode.getFlowInstId());
         if (flowInst == null) {
             return null;
         }
-//            return -2;//d大小于
+//      return -2;//d大小于
         // 当前节点状态必需不能为正常，如果是正常则没有必要重置
         if ("N".equals(thisNode.getNodeState())) {
             //先将流程实例的状态变为正常
@@ -782,10 +781,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 && currToken != null
                 && thisToken != null
                 && (currToken.equals(thisToken)
-                || currToken.startsWith(thisToken + '.')
-                || thisToken.startsWith(currToken + '.')
-                || currToken.startsWith(thisToken + '.' + NodeInstance.RUN_TOKEN_ISOLATED)
-            )) {
+                    || currToken.startsWith(thisToken + '.')
+                    || thisToken.startsWith(currToken + '.')
+                    || currToken.startsWith(thisToken + '.' + NodeInstance.RUN_TOKEN_ISOLATED))
+            ) {
                 if (NodeInstance.NODE_STATE_WAITE_SUBPROCESS.equals(nodeInst.getNodeState())
                             && StringUtils.isNotBlank(nodeInst.getSubFlowInstId())) { // 结束子流程
                     FlowInstance subFlowInst = flowInstanceDao
@@ -808,11 +807,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 // FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, managerUser.getUserCode());
             }
         }
-        thisNode.setNodeState(NodeInstance.NODE_STATE_ROLLBACK);
+        /* thisNode.setNodeState(NodeInstance.NODE_STATE_ROLLBACK);
         // 设置最后更新时间和更新人
         thisNode.setLastUpdateUser(managerUser.getUserCode());
         thisNode.setLastUpdateTime(updateTime);
         nodeInstanceDao.updateObject(thisNode);
+        */
         // 创建新节点
         String lastNodeInstId = UuidOpt.getUuidAsString22();
 //        String lastNodeInstId = nodeInstanceDao.getNextNodeInstId();
