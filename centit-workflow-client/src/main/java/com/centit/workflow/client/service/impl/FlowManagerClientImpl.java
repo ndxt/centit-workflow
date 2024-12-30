@@ -673,7 +673,7 @@ public class FlowManagerClientImpl implements FlowManager {
      * @param newState
      */
     @Override
-    public long updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser) {
+    public void updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser) {
         throw new ObjectException("This function is not been implemented in client.");
     }
 }

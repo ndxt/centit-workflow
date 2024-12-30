@@ -467,8 +467,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param newState
      */
     @Override
-    public long updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser) {
-        return updateNodeInstState(nodeInstId, newState, managerUser);
+    public void updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser) {
+        updateNodeInstState(nodeInstId, newState, managerUser);
     }
 
     /**
