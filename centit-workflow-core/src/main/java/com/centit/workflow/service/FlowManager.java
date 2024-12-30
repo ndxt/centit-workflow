@@ -174,7 +174,7 @@ public interface FlowManager {
      * @param nodeInstId
      * @param newState
      */
-    void updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser);
+    long updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser);
 
     /**
      * 强制流转到下一结点，这个好像不好搞，主要是无法获得业务数据，只能提交没有分支的节点

@@ -467,23 +467,8 @@ public class FlowManagerImpl implements FlowManager, Serializable {
      * @param newState
      */
     @Override
-    public void updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser) {
-        NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
-        if (nodeInst == null) {
-            return;
-        }
-        // 设置最后更新时间
-        nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
-        nodeInst.setNodeState(newState);
-        nodeInstanceDao.updateObject(nodeInst);
-
-        FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
-        OperationLog managerAct = FlowOptUtils.createActionLog(flowInst.getTopUnit(),
-            "admin", nodeInst,
-            "强制修改流程的节点状态为" + newState + "；", null)
-            .application(flowInst.getOsId())
-            .method("updateNodeState").loginIp(managerUser.getLoginIp());
-        OperationLogCenter.log(managerAct);
+    public long updateNodeState(String nodeInstId, String newState, CentitUserDetails managerUser) {
+        return updateNodeInstState(nodeInstId, newState, managerUser);
     }
 
     /**
