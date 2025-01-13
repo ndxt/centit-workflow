@@ -92,10 +92,10 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
         logger.info("自动运行api网关" + nodeInfo.getOptCode() + "，参数:" + params);
         try {
             ddeDubboTaskRun.runTask(nodeInfo.getOptCode(), params);
+            return true;
         } catch (Exception e) {
             throw new ObjectException(WorkflowException.AutoRunNodeDubboError,"api自动运行节点 " + nodeInst.getNodeInstId() + "出错." + e.getMessage());
         }
-        return true;
     }
 
     @Override
