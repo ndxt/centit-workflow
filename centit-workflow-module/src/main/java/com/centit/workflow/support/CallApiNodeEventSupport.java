@@ -8,6 +8,7 @@ import com.centit.support.common.ObjectException;
 import com.centit.support.compiler.Lexer;
 import com.centit.support.compiler.VariableFormula;
 import com.centit.workflow.commons.NodeEventSupport;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.po.FlowInstance;
 import com.centit.workflow.po.NodeInfo;
 import com.centit.workflow.po.NodeInstance;
@@ -48,7 +49,7 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
     @Override
     public boolean runAutoOperator(FlowInstance flowInst, NodeInstance nodeInst,
                                    NodeInfo nodeInfo, String optUserCode) {
-        if(StringUtils.isBlank(nodeInfo.getOptCode())){
+        if (StringUtils.isBlank(nodeInfo.getOptCode())) {
             throw new ObjectException(ObjectException.DATA_NOT_FOUND_EXCEPTION,
                 "配置信息有误，接口调用自动运行节点没有正确配置接口id:" + nodeInfo.getNodeId());
         }
@@ -72,7 +73,7 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
                 nodeParams = "{ " + nodeParams + " }";
             }
             JSONObject paramJson = JSONObject.parseObject(nodeParams);
-            if(paramJson != null) {
+            if (paramJson != null) {
                 // 添加对变量的支持
                 for (Map.Entry<String, Object> ent : paramJson.entrySet()) {
                     if (ent.getValue() instanceof String) {
@@ -89,7 +90,11 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
             }
         }
         logger.info("自动运行api网关" + nodeInfo.getOptCode() + "，参数:" + params);
-        ddeDubboTaskRun.runTask(nodeInfo.getOptCode(), params);
+        try {
+            ddeDubboTaskRun.runTask(nodeInfo.getOptCode(), params);
+        } catch (Exception e) {
+            throw new ObjectException(WorkflowException.AutoRunNodeDubboError,"api自动运行节点 " + nodeInst.getNodeInstId() + "出错." + e.getMessage());
+        }
         return true;
     }
 

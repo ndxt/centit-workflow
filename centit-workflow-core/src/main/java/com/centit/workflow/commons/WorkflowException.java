@@ -23,5 +23,6 @@ public abstract class WorkflowException {
     public static final int BizDataCheckError   = 661; //业务数据验证异常
     public static final int BizLogicError       = 662; //业务逻辑异常
     public static final int BizDefinedError     = 663; //业务自定义异常
+    public static final int AutoRunNodeDubboError= 664;
 
 }
