@@ -405,6 +405,17 @@ public interface FlowManager {
     int moveUserTaskTo(List<String> nodeInstIds, String fromUserCode, String toUserCode,
                        CentitUserDetails managerUser, String moveDesc);
 
+    /**
+     * 将 fromUserCode 所有任务 迁移 给 toUserCode
+     *
+     * @param params  过滤条件
+     * @param fromUserCode 任务属主
+     * @param toUserCode   新的属主
+     * @param moveDesc     迁移描述
+     * @param managerUser  操作人员
+     */
+    void moveUserTaskTo(Map<String, Object> params,String fromUserCode, String toUserCode,CentitUserDetails managerUser, String moveDesc);
+
     void updateFlow(FlowInstance flowInstance);
 
     int changeTaskAssignScheme(TaskMove taskMove, CentitUserDetails managerUser);

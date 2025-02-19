@@ -42,7 +42,10 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
             " where a.OS_ID  = :osId)" );
         filterField.put("topUnit", "flow_inst_id in (select a.flow_inst_id from wf_flow_instance a " +
             " where a.top_unit  = :topUnit)" );
-
+        filterField.put("optId", "flow_inst_id in (select a.flow_inst_id from wf_flow_instance a " +
+            " where a.opt_id  = :optId)" );
+        filterField.put("flowCode", "flow_inst_id in (select a.flow_inst_id from wf_flow_instance a " +
+            " where a.flow_code  = :flowCode)" );
         filterField.put(CodeBook.SELF_ORDER_BY, "nodeInstId desc");
         return filterField;
     }

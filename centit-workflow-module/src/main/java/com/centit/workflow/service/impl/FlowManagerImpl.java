@@ -1164,7 +1164,17 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         innerMoveUserTaskTo(nodeInstances, fromUserCode, toUserCode, managerUser, moveDesc);
         return 0;
     }
-
+    @Override
+    public void moveUserTaskTo(Map<String, Object> params,String fromUserCode, String toUserCode,CentitUserDetails managerUser, String moveDesc){
+        params.put("taskAssigned", "S");
+        params.put("userCode", fromUserCode);
+        params.put("nodeState", "N");
+        if(!params.containsKey("topUnit")) {
+            params.put("topUnit", managerUser.getTopUnitCode());
+        }
+        List<NodeInstance> nodeInstances = nodeInstanceDao.listObjectsByProperties(params);
+        innerMoveUserTaskTo(nodeInstances, fromUserCode, toUserCode, managerUser, moveDesc);
+    }
     @Override
     public int moveUserTaskToByOs(String osId, String fromUserCode, String toUserCode,
                                   CentitUserDetails managerUser, String moveDesc) {
