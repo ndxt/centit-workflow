@@ -278,16 +278,12 @@ public class FlowEngineController extends BaseController {
         return flowEngine.listNodeOperators(nodeInstId);
     }
 
-
-
     @ApiOperation(value = "业务id关联流程", notes = "根据业务id查询关联流程")
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @GetMapping(value = "/listAllFlowInstByOptTag")
     public List<FlowInstance> listAllFlowInstByOptTag(@RequestParam(value = "flowOptTag") String flowOptTag) {
         return flowEngine.listAllFlowInstByOptTag(flowOptTag);
     }
-
-
 
     @ApiOperation(value = "更改流程节点参数", notes = "更改流程业务信息程")
     @WrapUpResponseBody
@@ -378,8 +374,7 @@ public class FlowEngineController extends BaseController {
 
     @ApiOperation(value = "创建流程节点", notes = "创建流程节点")
     @ApiImplicitParam(name = "jsonObject", paramType = "body",
-        value = "{'flowInstId':xxx,'curNodeInstId':'xxx','createUser':'xxx','userCode':'u1','unitCode':'d1','nodeCode':'xxx'}"
-    )
+        value = "{'flowInstId':xxx,'curNodeInstId':'xxx','createUser':'xxx','userCode':'u1','unitCode':'d1','nodeCode':'xxx'}")
     @WrapUpResponseBody
     @PostMapping(value = "/isolatedNode")
     public NodeInstance createIsolatedNodeInst(@RequestBody JSONObject jsonObject, HttpServletRequest request) {
@@ -394,7 +389,6 @@ public class FlowEngineController extends BaseController {
         return /*NodeInstance =*/ flowEngine.createIsolatedNodeInst(flowInstId, curNodeInstId, nodeCode, createUser,
             userCode, unitCode);
     }
-
 
     /**
      * 复制一个多实例节点，用于代替以前给一个节点分配多个操作人员
@@ -664,11 +658,9 @@ public class FlowEngineController extends BaseController {
     @WrapUpResponseBody(contentType = WrapUpContentType.MAP_DICT)
     @ApiImplicitParam(
         name = "flowInstId", value = "流程实例id",
-        required = true, paramType = "path", dataType = "String"
-    )
+        required = true, paramType = "path", dataType = "String")
     @RequestMapping(value = "/flowActiveNodeTask/{flowInstId}", method = RequestMethod.GET)
     public List<UserTask> listFlowActiveNodeOperators(@PathVariable String flowInstId) {
-
         return flowEngine.listFlowActiveNodeOperators(flowInstId);
     }
 }
