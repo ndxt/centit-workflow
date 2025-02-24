@@ -326,8 +326,8 @@ public class CreateFlowOptions implements FlowOptParamOptions, Serializable {
         this.setFlowOrganizes(CollectionsOpt.cloneHashMap(options.getFlowOrganizes()));
         this.setLoginIp(options.getLoginIp());
         this.setClientLocale(options.getClientLocale());
-        this.user(options.getUserCode())
-            .unit(options.getUnitCode());
+        this.setUserCode(options.getUserCode());
+        this.setUnitCode(options.getUnitCode());
         return this;
     }
 

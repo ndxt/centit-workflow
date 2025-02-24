@@ -8,6 +8,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.*;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,8 @@ public interface FlowEngine {
     /**
      * 创建流程实例或子流程实例
      *
-     * @param options     NewFlowInstanceOptions 流程创建选项编码
-     * @param varTrans    UserUnitVariableTranslate 机构执行环境
+     * @param options  NewFlowInstanceOptions 流程创建选项编码
+     * @param varTrans UserUnitVariableTranslate 机构执行环境
      * @return FlowInstance
      */
     FlowInstance createInstance(CreateFlowOptions options,
@@ -138,6 +139,7 @@ public interface FlowEngine {
      * @return 获取待办列表 这里指静态代办
      */
     List<UserTask> listUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
     ResponseData dubboUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 
     /**
@@ -286,6 +288,7 @@ public interface FlowEngine {
 
     /**
      * 撤回（回收）当前节点，将后续的节点终止，重新生成当前节点
+     *
      * @param nodeInstId 流程节点实例id
      * @param userCode   操作用户
      * @return 重新生成的新节点
@@ -321,7 +324,7 @@ public interface FlowEngine {
      * @param nodeCode      节点环节代码
      * @param createUser    当前创建用户
      * @param userCode      指定操作用户
-     //* @param unitCode      指定机构
+     *                      //* @param unitCode      指定机构
      * @return 节点实例
      */
     NodeInstance createIsolatedNodeInst(String flowInstId, String curNodeInstId,
@@ -383,6 +386,14 @@ public interface FlowEngine {
     void assignFlowWorkTeam(String flowInstId, String roleCode,
                             List<String> userCodeSet);
 
+    /**
+     * 分配角色及变量
+     *
+     * @param flowInstId  流程实例号 不能为空
+     * @param flowVariables  变量
+     * @param flowRoleUsers 办件角色
+     */
+    void updateFlowInstanceTeamAndVar(String flowInstId, List<Triple<String, String, String>> flowVariables, Map<String, List<String>> flowRoleUsers);
 
     /**
      * 分配工作小组 --办件角色

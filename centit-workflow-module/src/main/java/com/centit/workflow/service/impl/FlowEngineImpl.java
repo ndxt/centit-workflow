@@ -2109,6 +2109,19 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
 
 
     @Override
+    public void updateFlowInstanceTeamAndVar(String flowInstId, List<Triple<String, String, String>> flowVariables, Map<String, List<String>> flowRoleUsers){
+        if(flowVariables!=null){
+            for(Triple<String, String, String> flowVariable:flowVariables){
+                saveFlowNodeVariable(flowInstId,flowVariable.getMiddle(),flowVariable.getLeft(),flowVariable.getRight());
+            }
+        }
+        if(flowRoleUsers!=null){
+            for(Map.Entry<String, List<String>> ent :flowRoleUsers.entrySet()){
+                assignFlowWorkTeam(flowInstId,ent.getKey(),ent.getValue());
+            }
+        }
+    }
+    @Override
     public void assignFlowWorkTeamByNode(String nodeInstId, String roleCode,
                                          List<String> userCodeSet) {
         NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);

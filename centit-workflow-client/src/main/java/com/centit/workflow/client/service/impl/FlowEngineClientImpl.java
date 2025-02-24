@@ -18,6 +18,7 @@ import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,6 +94,11 @@ public class FlowEngineClientImpl implements FlowEngine {
         paramMap.put("userCode", userCodes);
         RestfulHttpRequest.jsonPost(appSession,
             "/flow/engine/assignFlowWorkTeam", paramMap);
+    }
+
+    @Override
+    public void updateFlowInstanceTeamAndVar(String flowInstId, List<Triple<String, String, String>> flowVariables, Map<String, List<String>> flowRoleUsers) {
+        throw new ObjectException("This function is not been implemented in client.");
     }
 
     /**
@@ -296,6 +302,7 @@ public class FlowEngineClientImpl implements FlowEngine {
             "/flow/engine/viewFlowWorkTeam", paramMap, FlowWorkTeam.class);
     }
 
+    @Override
     public List<String> viewFlowOrganize(String flowInstId, String roleCode) {
         HashMap<java.lang.String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
@@ -305,6 +312,7 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
 
+    @Override
     public void deleteFlowVariable(String flowInstId, String runToken, String varName) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("flowInstId", flowInstId);
