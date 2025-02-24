@@ -552,6 +552,11 @@ public class FlowManagerClientImpl implements FlowManager {
     }
 
     @Override
+    public void moveUserTaskTo(Map<String, Object> params, String fromUserCode, String toUserCode, CentitUserDetails managerUser, String moveDesc) {
+        throw new ObjectException("This function is not been implemented in client.");
+    }
+
+    @Override
     public void updateFlow(FlowInstance flowInstance) {
         throw new ObjectException("This function is not been implemented in client.");
     }
