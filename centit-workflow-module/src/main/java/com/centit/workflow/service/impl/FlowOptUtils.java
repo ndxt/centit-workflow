@@ -311,7 +311,7 @@ public abstract class FlowOptUtils {
 
         if(options != null && options.getGlobalVariables() != null && !options.getGlobalVariables().isEmpty()) {
             for(Map.Entry<String, Object> ent : options.getGlobalVariables().entrySet()) {
-                flowVarTrans.setInnerVariable(ent.getKey(), NodeInstance.TOP_RUNTIME_TOKEN, ent.getValue());
+                flowVarTrans.setInnerVariable(ent.getKey(), NodeInstance.RUN_TOKEN_GLOBAL, ent.getValue());
             }
         }
 

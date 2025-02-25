@@ -20,7 +20,6 @@ import java.util.List;
 @Table(name = "WF_NODE_INSTANCE")
 public class NodeInstance implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
-    public static final String TOP_RUNTIME_TOKEN = "T";
 
     @Id
     @Column(name = "NODE_INST_ID")
@@ -108,7 +107,6 @@ public class NodeInstance implements java.io.Serializable {
     private String taskAssigned;
 
     public static final String RUN_TOKEN_GLOBAL = "T";
-    public static final String RUN_TOKEN_FLOW = RUN_TOKEN_GLOBAL;
     public static final String RUN_TOKEN_ISOLATED = "R";
     public static final String RUN_TOKEN_INSERT = "L";
 

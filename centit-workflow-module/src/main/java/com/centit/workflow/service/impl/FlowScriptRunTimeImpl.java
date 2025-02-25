@@ -199,8 +199,8 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                 endFunction(formula);
                 if(name !=null && value !=null) {
                     LeftRightPair<String, Object> retPair = new LeftRightPair<>(StringBaseOpt.castObjectToString(name),  value);
-                    varTrans.setInnerVariable(retPair.getLeft(), NodeInstance.TOP_RUNTIME_TOKEN, value);
-                    flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), NodeInstance.TOP_RUNTIME_TOKEN,
+                    varTrans.setInnerVariable(retPair.getLeft(), NodeInstance.RUN_TOKEN_GLOBAL, value);
+                    flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), NodeInstance.RUN_TOKEN_GLOBAL,
                         retPair.getLeft(),  value);
                     return retPair;
                 }
@@ -218,7 +218,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                 if(name !=null && value !=null) {
                     String token = NodeInstance.calcSuperToken(nodeInst.getRunToken());
                     if(StringUtils.isBlank(token)){
-                        token = NodeInstance.TOP_RUNTIME_TOKEN;
+                        token = NodeInstance.RUN_TOKEN_GLOBAL;
                     }
                     LeftRightPair<String, Object> retPair = new LeftRightPair<>(StringBaseOpt.castObjectToString(name),  value);
                     varTrans.setInnerVariable(retPair.getLeft(), token, value);
