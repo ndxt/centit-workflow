@@ -269,10 +269,6 @@ public abstract class FlowOptUtils {
                     flowInstanceDao.updateObject(subFlowInst);
                 }
             }
-            //ni.setNodeState("F");//因为流程被强制结束而被强制结束
-            //ni.setLastUpdateTime(updateTime);
-            //ni.setLastUpdateUser(userCode);
-            //}
         }
     }
 
@@ -283,7 +279,6 @@ public abstract class FlowOptUtils {
 
         FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(nodeInstance, flowInstance);
         List<String> flowInstPath = new ArrayList<>();
-
         FlowInstance tempInstance = flowInstance;
         while(tempInstance!=null) {
             flowInstPath.add(tempInstance.getFlowInstId());
@@ -314,10 +309,7 @@ public abstract class FlowOptUtils {
                 flowVarTrans.setInnerVariable(ent.getKey(), NodeInstance.RUN_TOKEN_GLOBAL, ent.getValue());
             }
         }
-
         List<FlowVariable> flowVariables = new ArrayList<>(64);
-
-
         for(int i = 0; i< flowInstPath.size(); i++) {
             List<FlowVariable> tempVariables = flowVariableDao.listFlowVariables(flowInstPath.get(i));
             if(tempVariables != null && !tempVariables.isEmpty()) {
