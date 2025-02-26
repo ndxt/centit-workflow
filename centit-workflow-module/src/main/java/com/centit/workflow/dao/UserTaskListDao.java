@@ -185,7 +185,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time " +
             "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
             "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
-            "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'D'" ;
+            "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'D' " ;
             // " and c.role_type='GW' 目前只有这个
 
     private final static String userDynamicTaskSqlPart2 =
@@ -377,11 +377,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     public static String buildDynamicTaskSql(List<UserUnit> userUnits){
         StringBuilder sqlBuilder = new StringBuilder(3072);
         int uuCount = userUnits.size();
-        sqlBuilder.append(userDynamicTaskSqlPart1).append(" and ");
+        sqlBuilder.append(userDynamicTaskSqlPart1);
         if(uuCount == 1) {
-            sqlBuilder.append("(b.unit_code is null or b.unit_code =:userUnitCode0) and b.role_code = :userStation0");
-        }else  if(uuCount > 1) {
-            sqlBuilder.append(" (");
+            sqlBuilder.append(" and (b.unit_code is null or b.unit_code =:userUnitCode0) and b.role_code = :userStation0");
+        } else if(uuCount > 1) {
+            sqlBuilder.append(" and (");
             for (int i = 0; i < uuCount; i++) {
                 if (i > 0) {
                     sqlBuilder.append(" or ");
@@ -391,7 +391,6 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             }
             sqlBuilder.append(" ) ");
         }
-
         sqlBuilder.append(userDynamicTaskSqlPart2);
         return sqlBuilder.toString();
     }
