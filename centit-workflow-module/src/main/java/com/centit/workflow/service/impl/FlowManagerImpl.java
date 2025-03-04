@@ -1550,6 +1550,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 nodeInstanceDao.viewFlowNodes(flowInstId, flowInst.getFlowCode(), flowInst.getVersion()),
                 PageDesc.createNotPaging()).toResponseData();
         }
+        // S 状态统计
         String flowInstId = StringBaseOpt.castObjectToString(searchColumn.get("flowInstId"));
         if (StringUtils.isNotBlank(flowInstId)) {
             FlowInstance flowInst = flowInstanceDao.getObjectById(flowInstId);
