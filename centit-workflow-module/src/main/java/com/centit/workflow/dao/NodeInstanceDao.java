@@ -172,7 +172,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
             " left join (select * from wf_node_instance where FLOW_INST_ID = ? ) t " +
             " on n.NODE_ID = t.NODE_ID  " +
             " where n.NODE_TYPE = 'C' and n.FLOW_CODE = ? and n.VERSION = ?" +
-            " order by t.last_update_time is null, t.last_update_time asc ,NODE_STATE desc";
+            " order by  t.last_update_time asc ,NODE_STATE desc";
 
         return DatabaseOptUtils.listObjectsBySqlAsJson(this, sql,
                     new Object[] {flowInstId, flowCode, version});
