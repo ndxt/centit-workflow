@@ -118,7 +118,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
         "[ :osId| and a.OS_ID = :osId]" +
         "[ :optId| and c.OPT_ID = :optId]" +
-        "[ :modelId| and a.OPT_ID = :modelId] " +
+        "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
         "[ :osIds| and a.OS_ID  in (:osIds)]" +
         "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
@@ -160,7 +160,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
         "[ :osId| and a.OS_ID = :osId]" +
         "[ :optId| and c.OPT_ID = :optId]" +
-        "[ :modelId| and a.OPT_ID = :modelId] " +
+        "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
         "[ :osIds| and a.OS_ID  in (:osIds)]" +
         "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
@@ -200,7 +200,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
             "[ :osId| and a.OS_ID = :osId]" +
             "[ :optId| and c.OPT_ID = :optId]" +
-            "[ :modelId| and a.OPT_ID = :modelId] " +
+            "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
             "[ :optCode| and c.OPT_CODE = :optCode]" +
             "[ :osIds| and a.OS_ID  in (:osIds)]" +
             "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
