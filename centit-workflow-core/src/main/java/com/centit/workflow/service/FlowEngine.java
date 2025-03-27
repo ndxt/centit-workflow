@@ -393,7 +393,9 @@ public interface FlowEngine {
      * @param flowVariables  变量
      * @param flowRoleUsers 办件角色
      */
-    void updateFlowInstanceTeamAndVar(String flowInstId, List<Triple<String, String, String>> flowVariables, Map<String, List<String>> flowRoleUsers);
+    void updateFlowInstanceTeamAndVar(String flowInstId, String nodeInstId,
+                                      Map<String, String> flowVariables,
+                                      Map<String, List<String>> flowRoleUsers);
 
     /**
      * 分配工作小组 --办件角色

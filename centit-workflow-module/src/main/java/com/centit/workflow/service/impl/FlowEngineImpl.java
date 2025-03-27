@@ -1760,7 +1760,6 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         return nextNodeInst;
     }
 
-
     private Set<NodeInfo> viewRouterNextNodeInside(
         FlowInstance flowInst,
         NodeInstance preNodeInst,
@@ -2108,20 +2107,32 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
-    public void updateFlowInstanceTeamAndVar(String flowInstId,
-                                             List<Triple<String, String, String>> flowVariables,
+    public void updateFlowInstanceTeamAndVar(String flowInstId, String nodeInstId,
+                                             Map<String, String> flowVariables,
                                              Map<String, List<String>> flowRoleUsers){
+        String runToken = NodeInstance.RUN_TOKEN_GLOBAL;
+        if(StringUtils.isNotBlank(nodeInstId)){
+            NodeInstance nodeInst = nodeInstanceDao.getObjectById(nodeInstId);
+            if(nodeInst != null) {
+                runToken = nodeInst.getRunToken();
+                flowInstId = nodeInst.getFlowInstId();
+            }
+        }
+        if(StringUtils.isBlank(flowInstId)){
+            return;
+        }
         if(flowVariables!=null){
-            for(Triple<String, String, String> flowVariable: flowVariables){
-                saveFlowNodeVariable(flowInstId, flowVariable.getMiddle(), flowVariable.getLeft(), flowVariable.getRight());
+            for(Map.Entry<String, String> flowVariable :  flowVariables.entrySet()){
+                saveFlowNodeVariable(flowInstId, runToken, flowVariable.getKey(), flowVariable.getValue());
             }
         }
         if(flowRoleUsers!=null){
             for(Map.Entry<String, List<String>> ent :flowRoleUsers.entrySet()){
-                assignFlowWorkTeam(flowInstId, ent.getKey(), ent.getValue());
+                assignFlowWorkTeam(flowInstId, ent.getKey(), runToken, ent.getValue());
             }
         }
     }
+
     @Override
     public void assignFlowWorkTeamByNode(String nodeInstId, String roleCode,
                                          List<String> userCodeSet) {

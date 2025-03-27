@@ -97,7 +97,9 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     @Override
-    public void updateFlowInstanceTeamAndVar(String flowInstId, List<Triple<String, String, String>> flowVariables, Map<String, List<String>> flowRoleUsers) {
+    public void updateFlowInstanceTeamAndVar(String flowInstId, String nodeInstId,
+                                             Map<String, String> flowVariables,
+                                             Map<String, List<String>> flowRoleUsers){
         throw new ObjectException("This function is not been implemented in client.");
     }
 
@@ -310,7 +312,6 @@ public class FlowEngineClientImpl implements FlowEngine {
         return RestfulHttpRequest.getResponseObjectList(appSession,
             "/flow/engine/viewFlowOrganize", paramMap, String.class);
     }
-
 
     @Override
     public void deleteFlowVariable(String flowInstId, String runToken, String varName) {
