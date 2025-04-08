@@ -808,6 +808,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nextNodeInst.setTaskAssigned(thisNode.getTaskAssigned());
         nextNodeInst.setLastUpdateUser(managerUser.getUserCode());
         nextNodeInst.setLastUpdateTime(updateTime);
+        nextNodeInst.setCreateTime(updateTime);
 
         flowInst.addNodeInstance(nextNodeInst);
         flowInstanceDao.updateObject(flowInst);
