@@ -13,6 +13,7 @@ import com.centit.support.algorithm.CollectionsOpt;
 import com.centit.support.algorithm.DatetimeOpt;
 import com.centit.support.algorithm.StringRegularOpt;
 import com.centit.support.algorithm.UuidOpt;
+import com.centit.support.common.CachedObject;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.dao.*;
@@ -84,7 +85,7 @@ public class FlowDefineImpl implements FlowDefine, Serializable {
     @PostConstruct
     public void registerDictionary() {
         CodeRepositoryUtil.registeExtendedCodeRepo(
-            "flowCode", flowDefineDao.listFlowCodeNameMap()
+            "flowCode", new CachedObject<>(() -> flowDefineDao.listFlowCodeNameMap())
         );
     }
 
