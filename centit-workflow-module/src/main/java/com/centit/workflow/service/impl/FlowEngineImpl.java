@@ -1066,6 +1066,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                     .version(flowDefDao.getLastVersion(nextOptNode.getSubFlowCode()))
                     .optName(flowInst.getFlowOptName() + "--" + nextOptNode.getNodeName())
                     .optTag(flowInst.getFlowOptTag())
+                    .model(flowInst.getOptId())
                     .parentFlow(nodeInst.getFlowInstId(), lastNodeInstId, nodeToken), varTrans);
             //子流程的时间限制和父流程节点的一致
             NodeInstance tempFirstNode = tempFlow.fetchFirstNodeInstance();
