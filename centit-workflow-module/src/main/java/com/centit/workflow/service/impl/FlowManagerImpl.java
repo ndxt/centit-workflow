@@ -167,7 +167,6 @@ public class FlowManagerImpl implements FlowManager, Serializable {
                 //节点状态等于C，被看作 节点已经完成
                 if ("C".equals(nodeInst.getNodeState())) {
                     nodeState.put(nodeInst.getNodeId(), "complete");
-                    nodeState.put(nodeInst.getNodeId(), "complete");
                 }
             }
             Integer nc = nodeInstCount.get(nodeInst.getNodeId());
