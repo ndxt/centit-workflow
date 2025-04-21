@@ -32,7 +32,18 @@ public interface FlowOptService {
      * @param optTeamRole 角色定义
      */
     void saveOptTeamRole(OptTeamRole optTeamRole);
-
+    /**
+     * 批量改变角色菜单
+     * @param optId 菜单id
+     * @param optTeamRoleIds 角色id集合
+     */
+    int[] batchUpdateTeamByOptId(String optId, List<String> optTeamRoleIds);
+    /**
+     * 批量改变变量菜单
+     * @param optId 菜单id
+     * @param optVariableIds 变量id集合
+     */
+    int[] batchUpdateVariableByOptId(String optId, List<String> optVariableIds);
     /**
      * 更新角色定义
      * @param optTeamRole 角色定义

@@ -1,5 +1,6 @@
 package com.centit.workflow.controller;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.centit.framework.common.WebOptUtils;
 import com.centit.framework.components.CodeRepositoryUtil;
 import com.centit.framework.core.controller.BaseController;
@@ -108,7 +109,15 @@ public class FlowOptController extends BaseController {
     public void saveOptTeamRole(@RequestBody OptTeamRole optTeamRole) {
         wfOptService.saveOptTeamRole(optTeamRole);
     }
-
+    @ApiOperation(value = "批量更新角色的业务模块")
+    @PutMapping(value = "/batchUpdateTeamByOptId")
+    @WrapUpResponseBody
+    public JSONObject batchUpdateTeamByOptId(String optId , @RequestBody List<String> optTeamRoleIds) {
+        int[] optTeamRoleArr = wfOptService.batchUpdateTeamByOptId(optId, optTeamRoleIds);
+        JSONObject result = new JSONObject();
+        result.put("optTeamRoleArr",optTeamRoleIds);
+        return result;
+    }
     @PutMapping("/role")
     @WrapUpResponseBody
     @ApiOperation("更新角色定义")
@@ -182,6 +191,16 @@ public class FlowOptController extends BaseController {
     @ApiOperation("保存变量定义")
     public void saveOptVariableDefine(@RequestBody OptVariableDefine optVariableDefine) {
         wfOptService.saveOptVariableDefine(optVariableDefine);
+    }
+
+    @ApiOperation(value = "批量更新角色的业务模块")
+    @PutMapping(value = "/batchUpdateVariableByOptId")
+    @WrapUpResponseBody
+    public JSONObject batchUpdateVariableByOptId(String optId , @RequestBody List<String> optVariableIds) {
+        int[] optVariableRoleArr = wfOptService.batchUpdateVariableByOptId(optId, optVariableIds);
+        JSONObject result = new JSONObject();
+        result.put("optVariableRoleArr",optVariableIds);
+        return result;
     }
 
     @PutMapping("/variable")

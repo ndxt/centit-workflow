@@ -7,9 +7,12 @@ import com.centit.workflow.po.OptTeamRole;
 import com.centit.workflow.po.OptVariableDefine;
 import com.centit.workflow.service.FlowOptService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +47,40 @@ public class FlowOptServiceImpl implements FlowOptService {
     @Transactional
     public void saveOptTeamRole(OptTeamRole optTeamRole) {
         optTeamRoleDao.saveNewObject(optTeamRole);
+    }
+
+    @Override
+    public int[] batchUpdateTeamByOptId(String optId, List<String> optTeamRoleIds) {
+        String sql = "UPDATE wf_opt_team_role SET opt_id=?  WHERE opt_team_role_id = ? ";
+        return optTeamRoleDao.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, optId);
+                ps.setString(2, optTeamRoleIds.get(i));
+            }
+
+            @Override
+            public int getBatchSize() {
+                return optTeamRoleIds.size();
+            }
+        });
+    }
+
+    @Override
+    public int[] batchUpdateVariableByOptId(String optId, List<String> optVariableIds) {
+        String sql = "UPDATE wf_opt_variable_define SET opt_id=?  WHERE opt_variable_id = ? ";
+        return optTeamRoleDao.getJdbcTemplate().batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, optId);
+                ps.setString(2, optVariableIds.get(i));
+            }
+
+            @Override
+            public int getBatchSize() {
+                return optVariableIds.size();
+            }
+        });
     }
 
     @Override
