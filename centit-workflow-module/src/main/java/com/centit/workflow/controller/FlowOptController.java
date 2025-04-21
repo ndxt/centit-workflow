@@ -109,7 +109,7 @@ public class FlowOptController extends BaseController {
     public void saveOptTeamRole(@RequestBody OptTeamRole optTeamRole) {
         wfOptService.saveOptTeamRole(optTeamRole);
     }
-    @ApiOperation(value = "批量更新角色的业务模块")
+    @ApiOperation(value = "批量更新办件角色的业务模块")
     @PutMapping(value = "/batchUpdateTeamByOptId")
     @WrapUpResponseBody
     public JSONObject batchUpdateTeamByOptId(String optId , @RequestBody List<String> optTeamRoleIds) {
@@ -193,7 +193,7 @@ public class FlowOptController extends BaseController {
         wfOptService.saveOptVariableDefine(optVariableDefine);
     }
 
-    @ApiOperation(value = "批量更新角色的业务模块")
+    @ApiOperation(value = "批量更新流程变量的业务模块")
     @PutMapping(value = "/batchUpdateVariableByOptId")
     @WrapUpResponseBody
     public JSONObject batchUpdateVariableByOptId(String optId , @RequestBody List<String> optVariableIds) {
