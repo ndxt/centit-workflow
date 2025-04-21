@@ -115,7 +115,7 @@ public class FlowOptController extends BaseController {
     public JSONObject batchUpdateTeamByOptId(String optId , @RequestBody List<String> optTeamRoleIds) {
         int[] optTeamRoleArr = wfOptService.batchUpdateTeamByOptId(optId, optTeamRoleIds);
         JSONObject result = new JSONObject();
-        result.put("optTeamRoleArr",optTeamRoleIds);
+        result.put("optTeamRoleArr",optTeamRoleArr);
         return result;
     }
     @PutMapping("/role")
@@ -199,7 +199,7 @@ public class FlowOptController extends BaseController {
     public JSONObject batchUpdateVariableByOptId(String optId , @RequestBody List<String> optVariableIds) {
         int[] optVariableRoleArr = wfOptService.batchUpdateVariableByOptId(optId, optVariableIds);
         JSONObject result = new JSONObject();
-        result.put("optVariableRoleArr",optVariableIds);
+        result.put("optVariableRoleArr",optVariableRoleArr);
         return result;
     }
 
