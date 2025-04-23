@@ -56,6 +56,7 @@ public class CallApiNodeEventSupport implements NodeEventSupport {
         Map<String, Object> params = CollectionsOpt.createHashMap(
             "flowInstId", flowInst.getFlowInstId(),
             "nodeInstId", nodeInst.getNodeInstId(),
+            "preInstId",flowInst.getPreInstId(),
             "userCode", optUserCode);
         if (StringUtils.isNotBlank(flowInst.getFlowOptTag())) {
             if ("{".equals(Lexer.getFirstWord(flowInst.getFlowOptTag()))) {
