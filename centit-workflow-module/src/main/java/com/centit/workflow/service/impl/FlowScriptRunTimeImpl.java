@@ -100,6 +100,7 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
      * saveValue(字符串常量 name, 表达式 formula); // 计算变量，并保存到流程的变量表中
      * saveSuperValue(字符串常量 name, 表达式 formula); // 计算变量，并保存到流程的上级分支的变量表中
      * saveGlobalValue(字符串常量 name, 表达式 formula); // 计算变量，并保存到流程的全局变量表中
+     * saveParentValue(字符串常量 name, 表达式 formula); // 计算变量，并保存到父流程对应的节点中
      * setNextOptUser(表达式 user); // 设置下一个交互节点的操作人员
      * closeNodes(字符串常量 nodeCode); //根据环节代码关闭节点
      * closeAllIsolatedNodes();// 关闭所有游离节点
