@@ -65,7 +65,6 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
 
     private Object getAFunctionParam(VariableFormula formula){
         Object object =  formula.calcFormula();
-
         String separatorString = formula.skipAWord();
         if(!",".equals(separatorString)) {
             formula.writeBackAWord(separatorString);
@@ -223,6 +222,31 @@ public class FlowScriptRunTimeImpl implements FlowScriptRunTime {
                     LeftRightPair<String, Object> retPair = new LeftRightPair<>(StringBaseOpt.castObjectToString(name),  value);
                     varTrans.setInnerVariable(retPair.getLeft(), token, value);
                     flowEngine.saveFlowNodeVariable(nodeInst.getFlowInstId(), token,
+                        retPair.getLeft(),  value);
+                    return retPair;
+                }
+            }
+            break;
+
+            case "saveParentValue": // 设置父流程变量
+            {
+                if(!beginFunction(formula)){
+                    return null;
+                }
+                Object name = getAFunctionParam(formula);
+                Object value = getAFunctionParam(formula);
+                endFunction(formula);
+                if(name !=null && value !=null && StringUtils.isNotBlank(flowInst.getPreNodeInstId()) ) {
+                    NodeInstance preNodeInst = flowEngine.getNodeInstById(flowInst.getPreNodeInstId());
+                    if(preNodeInst == null){
+                        return null;
+                    }
+                    String token = preNodeInst.getRunToken();
+                    if(StringUtils.isBlank(token)){
+                        token = NodeInstance.RUN_TOKEN_GLOBAL;
+                    }
+                    LeftRightPair<String, Object> retPair = new LeftRightPair<>(StringBaseOpt.castObjectToString(name),  value);
+                    flowEngine.saveFlowNodeVariable(preNodeInst.getFlowInstId(), token,
                         retPair.getLeft(),  value);
                     return retPair;
                 }
