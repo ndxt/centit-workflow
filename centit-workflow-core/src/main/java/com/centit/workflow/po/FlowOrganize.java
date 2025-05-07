@@ -32,22 +32,14 @@ public class FlowOrganize implements java.io.Serializable {
     public FlowOrganize() {
     }
     /** minimal constructor */
-    public FlowOrganize(FlowOrganizeId id
-
-        , Date  authTime) {
+    public FlowOrganize(FlowOrganizeId id, Date  authTime) {
         this.cid = id;
-
-
         this.authTime= authTime;
     }
 
 /** full constructor */
-    public FlowOrganize(FlowOrganizeId id
-
-    , String  authDesc, Date  authTime) {
+    public FlowOrganize(FlowOrganizeId id, String  authDesc, Date  authTime) {
         this.cid = id;
-
-
         this.authDesc= authDesc;
         this.authTime= authTime;
     }
@@ -127,29 +119,22 @@ public class FlowOrganize implements java.io.Serializable {
         this.authTime = authTime;
     }
 
-
-
     public void copy(FlowOrganize other){
-
         this.setFlowInstId(other.getFlowInstId());
         this.setUnitCode(other.getUnitCode());
         this.setRoleCode(other.getRoleCode());
-
         this.authDesc= other.getAuthDesc();
         this.authTime= other.getAuthTime();
         this.unitOrder = other.getUnitOrder();
-
     }
 
     public void copyNotNullProperty(FlowOrganize other){
-
         if( other.getFlowInstId() != null)
             this.setFlowInstId(other.getFlowInstId());
         if( other.getUnitCode() != null)
             this.setUnitCode(other.getUnitCode());
         if( other.getRoleCode() != null)
             this.setRoleCode(other.getRoleCode());
-
         if( other.getAuthDesc() != null)
             this.authDesc= other.getAuthDesc();
         if( other.getAuthTime() != null)
@@ -159,9 +144,7 @@ public class FlowOrganize implements java.io.Serializable {
     }
 
     public void clearProperties(){
-
         this.authDesc= null;
         this.authTime= null;
-
     }
 }

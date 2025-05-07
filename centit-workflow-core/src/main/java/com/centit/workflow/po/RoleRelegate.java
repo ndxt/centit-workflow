@@ -179,7 +179,6 @@ public class RoleRelegate implements java.io.Serializable {
     }
 
     public void clearProperties() {
-
         this.grantor = null;
         this.grantee = null;
         this.isValid = null;

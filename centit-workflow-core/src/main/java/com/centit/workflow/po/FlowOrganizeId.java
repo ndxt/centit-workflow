@@ -31,12 +31,10 @@ public class FlowOrganizeId implements java.io.Serializable {
     }
     /** full constructor */
     public FlowOrganizeId(String flowInstId, String unitCode, String roleCode) {
-
         this.flowInstId = flowInstId;
         this.unitCode = unitCode;
         this.roleCode = roleCode;
     }
-
 
     public String getFlowInstId() {
         return this.flowInstId;

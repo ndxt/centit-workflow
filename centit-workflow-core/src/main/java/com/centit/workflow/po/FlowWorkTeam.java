@@ -116,7 +116,6 @@ public class FlowWorkTeam implements java.io.Serializable {
         this.cid.setRunToken(runToken);
     }
 
-
     public Long getUserOrder() {
         return userOrder;
     }
@@ -141,10 +140,7 @@ public class FlowWorkTeam implements java.io.Serializable {
         this.authTime = authtime;
     }
 
-
-
     public void copy(FlowWorkTeam other){
-
         this.setFlowInstId(other.getFlowInstId());
         this.setUserCode(other.getUserCode());
         this.setRoleCode(other.getRoleCode());
@@ -155,7 +151,6 @@ public class FlowWorkTeam implements java.io.Serializable {
     }
 
     public void copyNotNullProperty(FlowWorkTeam other){
-
         if( other.getFlowInstId() != null)
             this.setFlowInstId(other.getFlowInstId());
         if( other.getUserCode() != null)
@@ -164,12 +159,10 @@ public class FlowWorkTeam implements java.io.Serializable {
             this.setRoleCode(other.getRoleCode());
         if (StringUtils.isNotBlank(other.getRunToken()))
             this.setRunToken(other.getRunToken());
-
         if( other.getAuthDesc() != null)
             this.authDesc= other.getAuthDesc();
         if( other.getAuthTime() != null)
             this.authTime= other.getAuthTime();
-
         if( other.getUserOrder() != null)
             this.userOrder = other.getUserOrder();
     }

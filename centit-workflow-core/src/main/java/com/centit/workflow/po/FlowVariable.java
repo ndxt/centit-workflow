@@ -150,14 +150,12 @@ public class FlowVariable implements java.io.Serializable {
         this.varType = varType;
     }
 
-
     public void copy(FlowVariable other) {
         this.setFlowInstId(other.getFlowInstId());
         this.setRunToken(other.getRunToken());
         this.setVarName(other.getVarName());
         this.varValue = other.getVarValue();
         this.varType = other.getVarType();
-
     }
 
     public void copyNotNullProperty(FlowVariable other) {

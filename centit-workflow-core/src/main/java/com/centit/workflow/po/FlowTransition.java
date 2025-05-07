@@ -6,10 +6,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -67,8 +64,8 @@ public class FlowTransition implements java.io.Serializable {
     private String flowCode;
 
     @JSONField(serialize=false)
+    @Transient
     private FlowInfo flowDefine;
-
 
     // Constructors
     /** default constructor */
