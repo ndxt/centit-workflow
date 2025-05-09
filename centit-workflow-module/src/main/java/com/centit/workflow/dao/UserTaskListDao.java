@@ -113,7 +113,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :userCode| and b.USER_CODE = :userCode]" +
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
         "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
-        "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
+        "[ :unitCode| and (b.UNIT_CODE is null or b.UNIT_CODE = :unitCode)]" +
         "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
         "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
         "[ :osId| and a.OS_ID = :osId]" +
@@ -155,7 +155,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :grantor| and g.GRANTOR = :grantor]" +
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
         "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
-        "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
+        "[ :unitCode| and (b.UNIT_CODE is null or b.UNIT_CODE = :unitCode)]" +
         "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
         "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
         "[ :osId| and a.OS_ID = :osId]" +
@@ -194,7 +194,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :flowOptTag| and a.FLOW_OPT_TAG = :flowOptTag]" +
             "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
             "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
-            "[ :unitCode| and ( b.unit_code = :unitCode or b.unit_code is null )] " +
+            "[ :unitCode| and (b.UNIT_CODE is null or b.UNIT_CODE = :unitCode)]" +
             "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
             "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
             "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
