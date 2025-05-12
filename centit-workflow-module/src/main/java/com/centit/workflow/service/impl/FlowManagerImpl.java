@@ -1239,6 +1239,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     @Override
     public int changeTaskAssignScheme(TaskMove taskMove, CentitUserDetails managerUser){
         List<NodeInstance> nodeInstanceList = new ArrayList<NodeInstance>();
+        if (taskMove.getNodeInstIds() == null || taskMove.getNodeInstIds().isEmpty()) {
+            return 0;
+        }
         for (String id : taskMove.getNodeInstIds()) {
             NodeInstance nodeInstance = nodeInstanceDao.getObjectById(id);
             if(nodeInstance!=null)
