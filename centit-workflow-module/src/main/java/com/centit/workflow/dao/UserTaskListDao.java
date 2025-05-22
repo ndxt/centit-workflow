@@ -275,7 +275,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     private String buildSortSql(Map<String, Object> filterMap, boolean hasAlias){
         String selfOrderBy = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.SELF_ORDER_BY));
         if(StringUtils.isBlank(selfOrderBy)){
-            StringBaseOpt.objectToString(filterMap.get("orderBy"));
+            selfOrderBy= StringBaseOpt.objectToString(filterMap.get("orderBy"));
         }
         // wf_node_instance b   wf_flow_instance a o join WF_NODE c
         TableMapInfo tabA = JpaMetadata.fetchTableMapInfo(FlowInstance.class);
