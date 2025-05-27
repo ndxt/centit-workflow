@@ -104,9 +104,9 @@ public class FlowInfo implements java.io.Serializable {
     @JSONField(serialize = false)
     private String sourceId;
 
-    @Column(name = "TAG")
-    @Length(max = 256)
-    private String tag;
+    @Column(name = "FLOW_TAG")
+    @Length(max = 200)
+    private String flow_tag;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = FlowStage.class)
     @JoinColumns({
