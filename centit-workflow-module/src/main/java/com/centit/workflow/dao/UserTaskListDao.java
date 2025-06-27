@@ -106,9 +106,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         // (b.task_assigned = 'S' or b.task_assigned = 'P' or b.task_assigned = 'T')
         "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'S' [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
-        " [ :(splitforin)flowInstIds| and b.FLOW_INST_ID in ( :flowInstIds )]" +
+        " [ :(splitforin)flowInstIds_in| and b.FLOW_INST_ID in ( :flowInstIds_in )]" +
         "[ :flowOptTag| and a.FLOW_OPT_TAG = :flowOptTag]" +
-        "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
+        "[ :(splitforin)stageArr_in | and c.STAGE_CODE in (:stageArr_in) ]" +
         "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
         "[ :userCode| and b.USER_CODE = :userCode]" +
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
@@ -120,17 +120,17 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :optId| and c.OPT_ID = :optId]" +
         "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
-        "[ :osIds| and a.OS_ID  in (:osIds)]" +
+        "[ :(splitforin)osIds_in| and a.OS_ID  in (:osIds_in)]" +
         "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
         "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
         "[ :nodeName| and c.NODE_NAME = :nodeName]" +
-        "[ :nodeNames| and c.NODE_NAME in (:nodeNames)]" +
+        "[ :(splitforin)nodeName_in| and c.NODE_NAME in (:nodeName_in)]" +
         "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
         "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
-        "[ :nodeCodes| and c.NODE_CODE in (:nodeCodes)]" +
+        "[ :(splitforin)nodeCode_in| and c.NODE_CODE in (:nodeCode_in)]" +
         "[ :notNodeCode| and c.NODE_CODE <> :notNodeCode]" +
-        "[ :notNodeCodes| and c.NODE_CODE not in (:notNodeCodes)]";
+        "[ :(splitforin)notNodeCode_in| and c.NODE_CODE not in (:notNodeCode_in)]";
 
     private final static String userGrantorTaskBaseSql = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
         "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE,g.GRANTEE as USER_CODE, b.ROLE_TYPE," +
@@ -147,9 +147,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
               " ((g.unit_code is null or b.unit_code = g.unit_code) and (g.ROLE_CODE is null or g.ROLE_CODE = b.ROLE_CODE)) " +
             ") and g.RELEGATE_TIME < :today and ( g.EXPIRE_TIME is null or g.EXPIRE_TIME> :today ) ) " + // 检验委托时间
         "where b.node_state = 'N' and a.inst_state = 'N' [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
-        "[ :(splitforin)flowInstIds| and b.FLOW_INST_ID in (:flowInstIds)]" +
+        "[ :(splitforin)flowInstIds_in | and b.FLOW_INST_ID in (:flowInstIds_in)]" +
         "[ :flowOptTag| and a.FLOW_OPT_TAG = :flowOptTag]" +
-        "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
+        "[ :(splitforin)stageArr_in | and c.STAGE_CODE in (:stageArr_in) ]" +
         "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
         "[ :userCode| and g.GRANTEE = :userCode]" +
         "[ :grantor| and g.GRANTOR = :grantor]" +
@@ -162,17 +162,17 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :optId| and c.OPT_ID = :optId]" +
         "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
-        "[ :osIds| and a.OS_ID  in (:osIds)]" +
+        "[ :(splitforin)osIds_in| and a.OS_ID  in (:osIds_in)]" +
         "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
         "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
         "[ :nodeName| and c.NODE_NAME = :nodeName]" +
-        "[ :nodeNames| and c.NODE_NAME in (:nodeNames)]" +
+        "[ :(splitforin)nodeName_in| and c.NODE_NAME in (:nodeNames_in)]" +
         "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
         "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
-        "[ :nodeCodes| and c.NODE_CODE in (:nodeCodes)]" +
+        "[ :(splitforin)nodeCode_in| and c.NODE_CODE in (:nodeCode_in)]" +
         "[ :notNodeCode| and c.NODE_CODE <> :notNodeCode]" +
-        "[ :notNodeCodes| and c.NODE_CODE not in (:notNodeCodes)]";
+        "[ :(splitforin)notNodeCode_in| and c.NODE_CODE not in (:notNodeCode_in)]";
 
     private final static String userDynamicTaskSqlPart1 =
         "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
@@ -190,9 +190,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
 
     private final static String userDynamicTaskSqlPart2 =
             "[ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
-            "[ :(splitforin)flowInstIds| and b.FLOW_INST_ID in ( :flowInstIds )]" +
+            "[ :(splitforin)flowInstIds_in| and b.FLOW_INST_ID in ( :flowInstIds_in )]" +
             "[ :flowOptTag| and a.FLOW_OPT_TAG = :flowOptTag]" +
-            "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
+            "[ :(splitforin)stageArr_in | and c.STAGE_CODE in (:stageArr_in) ]" +
             "[ :(like)flowOptName| and a.FLOW_OPT_NAME like :flowOptName]" +
             "[ :unitCode| and (b.UNIT_CODE is null or b.UNIT_CODE = :unitCode)]" +
             "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
@@ -202,17 +202,17 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :optId| and c.OPT_ID = :optId]" +
             "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
             "[ :optCode| and c.OPT_CODE = :optCode]" +
-            "[ :osIds| and a.OS_ID  in (:osIds)]" +
+            "[ :(splitforin)osIds_in| and a.OS_ID  in (:osIds_in)]" +
             "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
             "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
             "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
             "[ :nodeName| and c.NODE_NAME = :nodeName]" +
-            "[ :nodeNames| and c.NODE_NAME in (:nodeNames)]" +
+            "[ :(splitforin)nodeName_in| and c.NODE_NAME in (:nodeName_in)]" +
             "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
             "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
-            "[ :nodeCodes| and c.NODE_CODE in (:nodeCodes)]" +
+            "[ :(splitforin)nodeCode_in| and c.NODE_CODE in (:nodeCode_in)]" +
             "[ :notNodeCode| and c.NODE_CODE <> :notNodeCode]" +
-            "[ :notNodeCodes| and c.NODE_CODE not in (:notNodeCodes)]";
+            "[ :(splitforin)notNodeCode_in| and c.NODE_CODE not in (:notNodeCode_in)]";
 
     /**
      * 根据用户编码获取用户已办任务列表
