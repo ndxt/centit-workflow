@@ -131,6 +131,8 @@ public interface FlowEngine {
 
     ResponseData dubboUserStaticTask(Map<String, Object> searchColumn, PageDesc pageDesc);
 
+    ResponseData dubboUnitTask(Map<String, Object> searchColumn, PageDesc pageDesc);
+
     /**
      * 根据条件查询用户被授权的代码
      *

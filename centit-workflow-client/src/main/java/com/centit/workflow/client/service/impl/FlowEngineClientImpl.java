@@ -573,6 +573,11 @@ public class FlowEngineClientImpl implements FlowEngine {
     }
 
     @Override
+    public ResponseData dubboUnitTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        return null;
+    }
+
+    @Override
     public List<UserTask> listUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         HttpReceiveJSON receiveJSON = RestfulHttpRequest.getResponseData(appSession,
             UrlOptUtils.appendParamsToUrl(

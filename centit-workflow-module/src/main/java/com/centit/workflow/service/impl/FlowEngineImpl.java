@@ -2492,6 +2492,16 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
     }
 
     @Override
+    public ResponseData dubboUnitTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
+        PageDesc pageDescCopy=new PageDesc();
+        pageDescCopy.copy(pageDesc);
+        List<UserTask> unitTaskList = userTaskListDao.listUnitTask(searchColumn, pageDescCopy);
+        String topUnit = StringBaseOpt.castObjectToString(searchColumn.get("topUnit"));
+        PageQueryResult<UserTask> pageQueryResult = PageQueryResult.createResultMapDict(topUnit, unitTaskList, pageDescCopy);
+        return pageQueryResult.toResponseData();
+    }
+
+    @Override
     public List<UserTask> listUserGrantorTask(Map<String, Object> searchColumn, PageDesc pageDesc) {
         return userTaskListDao.listUserGrantorTask(searchColumn, pageDesc);
     }

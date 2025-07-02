@@ -214,6 +214,25 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :notNodeCode| and c.NODE_CODE <> :notNodeCode]" +
             "[ :(splitforin)notNodeCode_in| and c.NODE_CODE not in (:notNodeCode_in)]";
 
+    private final static String unitTaskBaseSql = "select a.FLOW_INST_ID, a.FLOW_CODE, a.VERSION, a.FLOW_OPT_NAME," +
+        "a.FLOW_OPT_TAG, b.NODE_INST_ID, b.UNIT_CODE, b.USER_CODE, b.ROLE_TYPE," +
+        "b.ROLE_CODE, '引擎分配' as AUTH_DESC, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE," +
+        "c.OPT_TYPE as NODE_OPT_TYPE,c.OPT_PARAM, b.CREATE_TIME, b.deadline_time as node_Expire_Time, " +
+        "c.OPT_CODE, c.EXPIRE_OPT, c.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
+        "b.LAST_UPDATE_TIME,b.NODE_STATE as INST_STATE, c.OPT_ID, a.OPT_ID as MODEL_ID, a.OS_ID, a.USER_CODE as CREATOR_CODE, " +
+        "b.warning_time as node_warning_Time, a.warning_time as flow_warning_Time, " +
+        "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time,a.create_time as flow_create_time,b.prev_node_inst_id,b.run_token,a.pre_inst_id " +
+        "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
+        "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
+        "where b.node_state = 'N' and a.inst_state = 'N' "+
+         "[ :(splitforin)unitCode| and b.unit_code in ( :unitCode )]" +
+        "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
+        "[ :osId| and a.OS_ID = :osId]"+
+        "[ :optId| and c.OPT_ID = :optId]" +
+        "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
+        "[ :optCode| and c.OPT_CODE = :optCode]" +
+        "[ :flowCode| and a.FLOW_CODE = :flowCode]";
+
     /**
      * 根据用户编码获取用户已办任务列表
      *
@@ -336,6 +355,14 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
             queryAndNamedParams.getQuery(), queryAndNamedParams.getParams(), pageDesc);
 
+        return dataList == null ? null : dataList.toJavaList(UserTask.class);
+    }
+    @Transactional
+    public List<UserTask> listUnitTask(Map<String, Object> filter, PageDesc pageDesc) {
+        QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(
+            unitTaskBaseSql + " order by " + buildSortSql(filter, true), filter);
+        JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
+            queryAndNamedParams.getQuery(), queryAndNamedParams.getParams(), pageDesc);
         return dataList == null ? null : dataList.toJavaList(UserTask.class);
     }
 
