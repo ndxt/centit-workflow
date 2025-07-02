@@ -1646,7 +1646,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             nodeInstanceDao.updateObject(pn);
         }
         // 设置最后更新时间和更新人
-        thisNodeInst.setLastUpdateUser(managerUser.getUserCode());
+        String updateUser = managerUser != null ? managerUser.getUserCode() : "admin";
+        String loginIp = managerUser != null ? managerUser.getLoginIp() : "";
+        thisNodeInst.setLastUpdateUser(updateUser);
         thisNodeInst.setLastUpdateTime(updateTime);
         String lastNodeInstId = UuidOpt.getUuidAsString32();
         NodeInstance nextNodeInst = flowInst.newNodeInstance();
@@ -1661,7 +1663,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         nextNodeInst.setCreateTime(updateTime);
         nextNodeInst.setNodeState(NodeInstance.NODE_STATE_NORMAL);
         nextNodeInst.setTaskAssigned(prevNodeInst.getTaskAssigned());
-        nextNodeInst.setLastUpdateUser(managerUser.getUserCode());
+        nextNodeInst.setLastUpdateUser(updateUser);
         nextNodeInst.setLastUpdateTime(updateTime);
 
         flowInst.addNodeInstance(nextNodeInst);
@@ -1671,12 +1673,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         //执行节点创建后 事件
         NodeEventSupport nodeEventExecutor = NodeEventSupportFactory
             .createNodeEventSupportBean(flowInst.getTopUnit(), nodedef, this);
-        nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, managerUser.getUserCode());
+        nodeEventExecutor.runAfterCreate(flowInst, nextNodeInst, nodedef, updateUser);
         //调用发送消息接口
         OperationLogCenter.log(FlowOptUtils.createActionLog(flowInst.getTopUnit(),
-            managerUser.getUserCode(), flowInst.getFlowInstId(), "回退到上一个节点:"+nodedef.getNodeName())
+                updateUser, flowInst.getFlowInstId(), "回退到上一个节点:"+nodedef.getNodeName())
             .unit(thisNodeInst.getUnitCode()).application(flowInst.getOsId())
-            .method("rollback").loginIp(managerUser.getLoginIp())
+            .method("rollback").loginIp(loginIp)
         );
         return lastNodeInstId;
     }
