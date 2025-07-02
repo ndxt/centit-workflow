@@ -226,12 +226,22 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         "where b.node_state = 'N' and a.inst_state = 'N' "+
          "[ :(splitforin)unitCode| and b.unit_code in ( :unitCode )]" +
+        "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
+        "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
         "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
         "[ :osId| and a.OS_ID = :osId]"+
         "[ :optId| and c.OPT_ID = :optId]" +
         "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
-        "[ :flowCode| and a.FLOW_CODE = :flowCode]";
+        "[ :flowCode| and a.FLOW_CODE = :flowCode]"+
+        "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
+        "[ :nodeName| and c.NODE_NAME = :nodeName]" +
+        "[ :(splitforin)nodeName_in| and c.NODE_NAME in (:nodeName_in)]" +
+        "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
+        "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
+        "[ :(splitforin)nodeCode_in| and c.NODE_CODE in (:nodeCode_in)]" +
+        "[ :notNodeCode| and c.NODE_CODE <> :notNodeCode]" +
+        "[ :(splitforin)notNodeCode_in| and c.NODE_CODE not in (:notNodeCode_in)]";
 
     /**
      * 根据用户编码获取用户已办任务列表
