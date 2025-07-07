@@ -296,7 +296,13 @@ public abstract class FlowOptUtils {
         if (nodeInstance == null) {
             // 创建流程实例的时候，nodeInstance为null
             nodeInstance = new NodeInstance();
+        }else {
+            flowVarTrans.setInnerVariable("__DP", nodeInstance.getRunToken(), nodeInstance.getUnitCode());
+            flowVarTrans.setInnerVariable("__UP", nodeInstance.getRunToken(), nodeInstance.getUserCode());
         }
+        // 添加内置变量
+        flowVarTrans.setInnerVariable("__DF" , nodeInstance.getRunToken(), flowInstance.getUnitCode());
+        flowVarTrans.setInnerVariable("__UF" , nodeInstance.getRunToken(), flowInstance.getUserCode());
         // 优先加载本流程的变量
         if(options != null && options.getVariables() != null && !options.getVariables().isEmpty()) {
             for(Map.Entry<String, Object> ent : options.getVariables().entrySet()) {
@@ -309,6 +315,7 @@ public abstract class FlowOptUtils {
                 flowVarTrans.setInnerVariable(ent.getKey(), NodeInstance.RUN_TOKEN_GLOBAL, ent.getValue());
             }
         }
+
         List<FlowVariable> flowVariables = new ArrayList<>(64);
         for(int i = 0; i< flowInstPath.size(); i++) {
             List<FlowVariable> tempVariables = flowVariableDao.listFlowVariables(flowInstPath.get(i));
