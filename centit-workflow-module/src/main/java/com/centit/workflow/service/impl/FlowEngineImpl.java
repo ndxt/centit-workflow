@@ -812,6 +812,12 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 } else {
                     int nRn = 1;
                     UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(options.getTopUnit());
+                    String unitCode;
+                    if(StringUtils.isNotBlank(options.getUserCode())){
+                        unitCode = context.getUserInfoByCode(options.getUserCode()).getPrimaryUnit();
+                    }else{
+                        unitCode=options.getUnitCode();
+                    }
                     for (String uc : optUsers) {
                         // 持久变量，供后续节点使用
                         this.saveFlowNodeVariable(flowInst.getFlowInstId(), nodeToken + "." + nRn,
@@ -823,7 +829,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             nextNode, nodeToken + "." + nRn, flowInst, flowInfo,
                             preNodeInst, preTransPath.toString(), nodeTran,
                             SubmitOptOptions.create().copy(options).workUser(uc).lockOptUser(true)
-                                .unit(context.getUserInfoByCode(options.getUserCode()).getPrimaryUnit()),
+                                .unit(unitCode),
                             flowVarTrans));
                         nRn++;
                     }
