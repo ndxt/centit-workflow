@@ -2345,23 +2345,22 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         FlowVariableId cid = new FlowVariableId(flowInstId,
             runToken, sVar);
         String objStr = StringBaseOpt.objectToString(sValue);
-        if(StringUtils.isBlank(objStr)){
-            flowVariableDao.deleteObjectById(cid);
-            return ;
+
+        String varType = "S";
+        if(StringUtils.isNotBlank(objStr) && ( sValue.getClass().isArray() || sValue instanceof Collection
+            || objStr.indexOf(',') > 1 )){
+            varType = "E";
         }
 
-        String varType = sValue.getClass().isArray() || sValue instanceof Collection
-            || objStr.indexOf(',') > 1 ? "E" : "S";
-
-        FlowVariable varO = flowVariableDao.getObjectById(cid);
-        if (varO == null) {
-            varO = new FlowVariable(flowInstId,
+        FlowVariable varObj = flowVariableDao.getObjectById(cid);
+        if (varObj == null) {
+            varObj = new FlowVariable(flowInstId,
                 runToken, sVar, objStr, varType);
-            flowVariableDao.saveNewObject(varO);
+            flowVariableDao.saveNewObject(varObj);
         } else {
-            varO.setVarType(varType);
-            varO.setVarValue(objStr);
-            flowVariableDao.updateObject(varO);
+            varObj.setVarType(varType);
+            varObj.setVarValue(objStr);
+            flowVariableDao.updateObject(varObj);
         }
     }
 
