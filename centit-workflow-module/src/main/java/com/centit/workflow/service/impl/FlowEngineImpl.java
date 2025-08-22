@@ -2341,10 +2341,15 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         if(StringUtils.isBlank(runToken)){
             runToken = "T";
         }
-        String objStr = StringBaseOpt.objectToString(sValue);
-//objstr空时也正常更新
+        //objstr 空时也正常更新(删除）
         FlowVariableId cid = new FlowVariableId(flowInstId,
             runToken, sVar);
+        String objStr = StringBaseOpt.objectToString(sValue);
+        if(StringUtils.isBlank(objStr)){
+            flowVariableDao.deleteObjectById(cid);
+            return ;
+        }
+
         String varType = sValue.getClass().isArray() || sValue instanceof Collection
             || objStr.indexOf(',') > 1 ? "E" : "S";
 
