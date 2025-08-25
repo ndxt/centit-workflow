@@ -130,8 +130,9 @@ public class FlowManagerController extends BaseController {
     /**
      * 获取组织机构列表
      * flowEng.viewFlowOrganize(flowInstId)要是直接返回unitInfo更方便
+     *
      * @param flowInstId 流程节点实例
-     * @param pageDesc 分页参数
+     * @param pageDesc   分页参数
      * @return PageQueryResult 分页查询结果
      */
     @ApiOperation(value = "获取组织机构列表", notes = "获取组织机构列表")
@@ -210,11 +211,12 @@ public class FlowManagerController extends BaseController {
     }
 
     /*tab：办件角色管理*/
+
     /**
      * 查询办件角色列表
      *
      * @param flowInstId 查询办件角色列表
-     * @param pageDesc PageDesc
+     * @param pageDesc   PageDesc
      */
     @ApiOperation(value = "查询办件角色列表", notes = "查询办件角色列表")
     @RequestMapping(value = "/getteamlist/{flowInstId}", method = RequestMethod.GET)
@@ -261,11 +263,12 @@ public class FlowManagerController extends BaseController {
     }
 
     /*tab：流程变量管理*/
+
     /**
      * 查询变量列表
      *
      * @param flowInstId 查询变量列表
-     * @param pageDesc PageDesc
+     * @param pageDesc   PageDesc
      */
     @ApiOperation(value = "查询变量列表", notes = "查询变量列表")
     @RequestMapping(value = "/getvariablelist/{flowInstId}", method = RequestMethod.GET)
@@ -305,7 +308,7 @@ public class FlowManagerController extends BaseController {
         Map<String, String> tokenLvbList = new HashMap<>();
 
         List<NodeInstance> nodeInstList = flowManager.listFlowInstNodes(flowInstId);
-        if(nodeInstList!=null) {
+        if (nodeInstList != null) {
             Set<String> tokenSet = new HashSet<>();
             tokenLvbList.put(" ", "------请选择------");
             for (NodeInstance nodeInst : nodeInstList) {
@@ -472,7 +475,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "任务列表查询，查询条件可自助添加", notes = "任务列表查询，查询条件可自助添加")
     @RequestMapping(value = "/listNodeOpers/{nodeInstId}", method = RequestMethod.GET)
     public void listNodeOperators(@PathVariable String nodeInstId, HttpServletResponse response) {
-        List<UserTask> objList =  flowEngine.listNodeOperators(nodeInstId);
+        List<UserTask> objList = flowEngine.listNodeOperators(nodeInstId);
         JsonResultUtils.writeSingleDataJson(objList, response);
     }
 
@@ -522,14 +525,14 @@ public class FlowManagerController extends BaseController {
                     CodeRepositoryUtil.getValue(CodeRepositoryUtil.UNIT_CODE, nodeInst.getUnitCode(), topUnit, localLang));
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].taskAssign", nodeInst.getTaskAssigned());
                 JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].nodeInstId", nodeInst.getNodeInstId());
-                if(NodeInfo.NODE_TYPE_SUBFLOW.equals(nodeInfo.getNodeType())){
+                if (NodeInfo.NODE_TYPE_SUBFLOW.equals(nodeInfo.getNodeType())) {
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].subFlowInstId", nodeInst.getSubFlowInstId());
                 }
 
                 if (NodeInstance.NODE_STATE_NORMAL.equals(nodeInst.getNodeState()) || NodeInstance.NODE_STATE_PAUSE.equals(nodeInst.getNodeState())) {
                     List<UserTask> tasks = flowEngine.listNodeOperators(nodeInst.getNodeInstId());
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state", "办理中");
-                    if(NodeInfo.OPT_RUN_TYPE_DYNAMIC.equals(nodeInfo.getOptRunType())) {
+                    if (NodeInfo.OPT_RUN_TYPE_DYNAMIC.equals(nodeInfo.getOptRunType())) {
 
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].rolecode", nodeInst.getRoleCode());
                         JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].rolename",
@@ -569,8 +572,23 @@ public class FlowManagerController extends BaseController {
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].state",
                         CodeRepositoryUtil.getValue("WFInstType", nodeInst.getNodeState(), topUnit, localLang));
                     //暂时添加当前节点的最后更新人
+                    UserInfo updateUser = CodeRepositoryUtil.getUserInfoByCode(topUnit, nodeInst.getLastUpdateUser());
+                    StringBuilder sbUser = new StringBuilder();
+                    if (updateUser != null) {
+                        sbUser.append(updateUser.getUserName());
+                        sbUser.append("(").append(updateUser.getLoginName()).append(")");
+                        if(StringUtils.isNotBlank(nodeInst.getUserCode()) && !nodeInst.getUserCode().equals(nodeInst.getLastUpdateUser())) {
+                            UserInfo user = CodeRepositoryUtil.getUserInfoByCode(topUnit, nodeInst.getUserCode());
+                            if (user != null) {
+                                sbUser.append(",预计处理人:").append(user.getUserName());
+                                sbUser.append("(").append(user.getLoginName()).append(")");
+                            }
+                        }
+                    }else{
+                        sbUser.append(nodeInst.getLastUpdateUser());
+                    }
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updateuser",
-                        CodeRepositoryUtil.getValue("userCode", nodeInst.getLastUpdateUser(), topUnit, localLang));
+                        sbUser);
                     JSONOpt.setAttribute(nodeOptInfo, "instance[" + nodeInstInd + "].updatetime",
                         DatetimeOpt.convertDatetimeToString(
                             nodeInst.getLastUpdateTime() == null ? nodeInst.getCreateTime() : nodeInst.getLastUpdateTime()));
@@ -607,7 +625,7 @@ public class FlowManagerController extends BaseController {
         String roleCode = workTeam.getString("roleCode");
         String runToken = workTeam.getString("runToken");
         Object users = workTeam.get("userCodes");
-        if(StringUtils.isAnyBlank(flowInstId, roleCode, runToken) || users==null){
+        if (StringUtils.isAnyBlank(flowInstId, roleCode, runToken) || users == null) {
             throw new ObjectException(ObjectException.DATA_VALIDATE_ERROR, "参数不完整！");
         }
 
@@ -629,6 +647,7 @@ public class FlowManagerController extends BaseController {
             managerUser, //taskMove.getOperatorUser(),
             taskMove.getMoveDesc());
     }
+
     /**
      * 将 fromUserCode 所有任务 迁移 给 toUserCode
      */
@@ -795,7 +814,7 @@ public class FlowManagerController extends BaseController {
         List<? extends OperationLog> operationLogs =
             flowManager.listFlowActionLogs(flowInstId, WebOptUtils.getCurrentTopUnit(request));
 
-        if (CollectionUtils.sizeIsEmpty(operationLogs)){
+        if (CollectionUtils.sizeIsEmpty(operationLogs)) {
             return ResponseData.makeResponseData(Collections.emptyList());
         }
         return ResponseData.makeResponseData(DictionaryMapUtils.objectsToJSONArray(operationLogs));
@@ -855,7 +874,7 @@ public class FlowManagerController extends BaseController {
     )
     public ResponseData batchDeleteFlowInst(HttpServletRequest request) {
         String flowInstIds = MapUtils.getString(collectRequestParameters(request), "flowInstIds");
-        if (StringUtils.isBlank(flowInstIds)){
+        if (StringUtils.isBlank(flowInstIds)) {
             return ResponseData.makeErrorMessage(ResponseData.ERROR_FIELD_INPUT_NOT_VALID,
                 getI18nMessage("error.701.field_is_blank", request, "flowCode,flowName"));
         }
@@ -901,7 +920,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "暂停流程计时", notes = "暂停流程计时")
     @RequestMapping(value = "/suspendFlowInstTimer/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public void suspendFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request) {
+    public void suspendFlowInstTimer(@PathVariable String flowInstId, HttpServletRequest request) {
         CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
         flowManager.suspendFlowInstTimer(flowInstId, managerUser);
         //JsonResultUtils.writeSingleDataJson("暂停节点计时成功", response);
@@ -910,7 +929,7 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "唤醒流程计时", notes = "唤醒流程计时")
     @RequestMapping(value = "/activizeFlowInstTimer/{flowInstId}", method = RequestMethod.GET)
     @WrapUpResponseBody
-    public void activizeFlowInstTimer(@PathVariable String flowInstId,HttpServletRequest request) {
+    public void activizeFlowInstTimer(@PathVariable String flowInstId, HttpServletRequest request) {
         CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
         flowManager.activizeFlowInstTimer(flowInstId, managerUser);
         //JsonResultUtils.writeSingleDataJson("唤醒流程计时成功", response);
@@ -925,7 +944,7 @@ public class FlowManagerController extends BaseController {
         CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
         long newVersion = -1;
         long oldVersion = -1;
-        if(versionDesc!=null){
+        if (versionDesc != null) {
             newVersion = NumberBaseOpt.castObjectToLong(versionDesc.get("newVersion"), -1l);
             oldVersion = NumberBaseOpt.castObjectToLong(versionDesc.get("oldVersion"), -1l);
         }
