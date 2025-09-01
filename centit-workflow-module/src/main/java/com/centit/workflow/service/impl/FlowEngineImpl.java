@@ -499,7 +499,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             context.addUserParam("L", oldNodeInst.getLastUpdateUser());
         }
         // P 前面一个节点的 用户和机构
-        NodeInstance preNode = flowInst.getNearestNode(preNodeInst, nodeToken);
+        NodeInstance preNode = flowInst.getNearestOptNode(preNodeInst/*, nodeToken*/);
         if (preNode != null) {
             context.addUnitParam("P", preNode.getUnitCode());
             context.addUserParam("P", preNode.getUserCode());

@@ -361,16 +361,17 @@ public class FlowInstance implements java.io.Serializable {
      * 获取相同Token的最新节点所属机构
      *
      * @param nodeInst  节点
-     * @param thisToken 令牌
+     * param thisToken 令牌
      * @return NodeInstance 实例
      */
-    public NodeInstance getNearestNode(NodeInstance nodeInst, String thisToken) {
+    public NodeInstance getNearestOptNode(NodeInstance nodeInst) {
         NodeInstance curNode = nodeInst;
         while (curNode != null) {
-            String prevToken = curNode.getRunToken();
-            if (thisToken == null || prevToken == null
+            //String prevToken = curNode.getRunToken();
+            if(StringUtils.isNotBlank(curNode.getUserCode()))
+            /*if (thisToken == null || prevToken == null
                 || thisToken.equals(prevToken)
-                || thisToken.startsWith(prevToken + '.'))
+                || thisToken.startsWith(prevToken + '.'))*/
                 return curNode;
             if (curNode.getPrevNodeInstId() == null)
                 return null;
