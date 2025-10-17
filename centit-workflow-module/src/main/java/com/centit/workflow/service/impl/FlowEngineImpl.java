@@ -803,7 +803,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
             } else if (NodeInfo.ROUTER_MULTI_TYPE_USER.equals(nextRouterNode.getMultiInstType())) {
                 Set<String> optUsers = unitAndUsers.getRight();
-                if (optUsers == null || optUsers.size() == 0) {
+                if (optUsers == null || optUsers.isEmpty()) {
                     throw new ObjectException(WorkflowException.NoValueForMultiInst,
                         getI18nMessage("flow.657.no_user_for_multi_inst", options.getClientLocale(),
                             flowInst.getFlowInstId(),
@@ -878,7 +878,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
             if (flowInst.getIsSubInst()) {
                 return submitOptInside(SubmitOptOptions.create()
                         .copy(options).nodeInst(flowInst.getPreNodeInstId()),
-                    varTrans, true);
+                    varTrans.getFlowVarTrans(), true);
             }
             //返回一个不存在的id表示0流程结束
             return CollectionsOpt.createList("0");
