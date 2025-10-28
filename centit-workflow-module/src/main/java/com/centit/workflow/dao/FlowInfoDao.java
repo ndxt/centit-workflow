@@ -1,6 +1,7 @@
 package com.centit.workflow.dao;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.centit.framework.core.dao.CodeBook;
 import com.centit.framework.jdbc.dao.BaseDaoImpl;
 import com.centit.framework.jdbc.dao.DatabaseOptUtils;
@@ -10,7 +11,6 @@ import com.centit.support.database.utils.QueryAndNamedParams;
 import com.centit.support.database.utils.QueryUtils;
 import com.centit.workflow.po.FlowInfo;
 import com.centit.workflow.po.FlowInfoId;
-import com.centit.workflow.po.LastVersionFlowDefine;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,17 +112,28 @@ public class FlowInfoDao extends BaseDaoImpl<FlowInfo, FlowInfoId> {
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(sql,filterMap);
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
                 queryAndNamedParams.getQuery(),queryAndNamedParams.getParams(),pageDesc);
-        List<LastVersionFlowDefine> ls = new ArrayList<>();
+        List<FlowInfo> ls = new ArrayList<>();
         if(dataList != null) {
-            ls = JSONArray.parseArray(dataList.toJSONString(),LastVersionFlowDefine.class);
-        }
-        List<FlowInfo>all=new ArrayList<FlowInfo>();
-        if(ls != null && ls.size() > 0) {
-            for (LastVersionFlowDefine s : ls) {
-                all.add(s.toWfFlowDefine());
+            for(Object obj : dataList) {
+                if(obj instanceof JSONObject) {
+                    JSONObject jo = (JSONObject)obj;
+                    FlowInfo lf = new FlowInfo();
+                    lf.setVersion(jo.getLong("version"));
+                    lf.setFlowCode(jo.getString("flowCode"));
+                    lf.setFlowName(jo.getString("flowName"));
+                    lf.setFlowClass(jo.getString("flowClass"));
+                    lf.setFlowState(jo.getString("flowState"));
+                    lf.setFlowDesc(jo.getString("flowDesc"));
+                    lf.setFlowXmlDesc(jo.getString("flowXmlDesc"));
+                    lf.setFlowPublishDate(jo.getDate("flowPublishDate"));
+                    lf.setOptId(jo.getString("optId"));
+                    lf.setTimeLimit(jo.getString("timeLimit"));
+                    ls.add(lf);
+                }
             }
         }
-        return all;
+
+        return ls;
     }
 
     @Transactional
