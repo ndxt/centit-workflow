@@ -811,9 +811,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                             nextRouterNode.getNodeId()));
                 } else {
                     int nRn = 1;
-                    UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(options.getTopUnit());
                     String unitCode;
                     if(StringUtils.isNotBlank(options.getUserCode())){
+                        UserUnitFilterCalcContext context = userUnitFilterFactory.createCalcContext(options.getTopUnit());
                         unitCode = context.getUserInfoByCode(options.getUserCode()).getPrimaryUnit();
                     }else{
                         unitCode=options.getUnitCode();
