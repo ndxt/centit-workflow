@@ -4,6 +4,7 @@ import com.centit.framework.core.dao.DictionaryMap;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 /**
  * FAddressBook entity.
@@ -70,20 +71,16 @@ public class FlowOrganizeId implements java.io.Serializable {
             return false;
 
         FlowOrganizeId castOther = (FlowOrganizeId) other;
-        boolean ret = true;
-
-        ret = ret && ( this.getFlowInstId() == castOther.getFlowInstId() ||
+        boolean ret = this.getFlowInstId().equals(castOther.getFlowInstId()) ||
                        (this.getFlowInstId() != null && castOther.getFlowInstId() != null
-                               && this.getFlowInstId().equals(castOther.getFlowInstId())));
+                               && this.getFlowInstId().equals(castOther.getFlowInstId()));
 
-        ret = ret && ( this.getUnitCode() == castOther.getUnitCode() ||
+        ret = ret && this.getUnitCode().equals(castOther.getUnitCode()) ||
                        (this.getUnitCode() != null && castOther.getUnitCode() != null
-                               && this.getUnitCode().equals(castOther.getUnitCode())));
-
-        ret = ret && ( this.getRoleCode() == castOther.getRoleCode() ||
+                               && this.getUnitCode().equals(castOther.getUnitCode()));
+        ret = ret && this.getRoleCode().equals(castOther.getRoleCode()) ||
                        (this.getRoleCode() != null && castOther.getRoleCode() != null
-                               && this.getRoleCode().equals(castOther.getRoleCode())));
-
+                               && this.getRoleCode().equals(castOther.getRoleCode()));
         return ret;
     }
 
