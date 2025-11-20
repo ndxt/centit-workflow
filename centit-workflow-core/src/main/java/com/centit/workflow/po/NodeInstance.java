@@ -23,7 +23,7 @@ public class NodeInstance implements java.io.Serializable {
 
     @Id
     @Column(name = "NODE_INST_ID")
-    @ValueGenerator(strategy = GeneratorType.UUID22)
+    @ValueGenerator(strategy = GeneratorType.UUID)
     private String nodeInstId;
     /**
      * 流程实例ID
