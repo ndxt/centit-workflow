@@ -1327,7 +1327,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         /*if (!withNodeAction) {
             filterMap.put("optMethod", "flowOpt");
         }*/
-        return optLogManager.listOptLog("workflow", filterMap, -1, -1);
+        return optLogManager.listOptLog("workflow", filterMap, 0, 1000);
     }
 
     /**
