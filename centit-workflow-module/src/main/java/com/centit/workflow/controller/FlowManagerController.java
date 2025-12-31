@@ -753,7 +753,7 @@ public class FlowManagerController extends BaseController {
     @PutMapping(value = "/reStartFlow/{flowInstId}/{userCode}")
     @WrapUpResponseBody
     public void reStartFlow(@PathVariable String flowInstId, @PathVariable String userCode,
-                            @RequestParam(required = false, defaultValue = "false") Boolean force,
+                            @RequestParam(required = false, defaultValue = "true") Boolean force,
                             HttpServletRequest request) {
         CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
         NodeInstance startNodeInst = flowManager.reStartFlow(flowInstId, managerUser, force);
