@@ -197,6 +197,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :unitCode| and (b.UNIT_CODE is null or b.UNIT_CODE = :unitCode)]" +
             "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
             "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
+            "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
             "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
             "[ :osId| and a.OS_ID = :osId]" +
             "[ :optId| and c.OPT_ID = :optId]" +
@@ -228,6 +229,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
          "[ :(splitforin)unitCode| and b.unit_code in ( :unitCode )]" +
         "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
         "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
+        "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
         "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
         "[ :osId| and a.OS_ID = :osId]"+
         "[ :optId| and c.OPT_ID = :optId]" +

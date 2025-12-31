@@ -31,7 +31,7 @@ public class FlowInstance implements java.io.Serializable {
 
     @Id
     @Column(name = "FLOW_INST_ID")
-    @ValueGenerator(strategy = GeneratorType.UUID22)
+    @ValueGenerator(strategy = GeneratorType.UUID)
     private String flowInstId;
 
     /**
