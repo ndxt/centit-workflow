@@ -735,6 +735,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return null;
 //            return -6;
         }
+
+        if(StringUtils.equalsAny(thisNode.getNodeState(), "W", "P", "S")){
+            throw new ObjectException("当前节点状态为暂停、挂起、等待为，不能从该节点从新运行！");
+        }
+
         NodeInfo nodedef = flowNodeDao.getObjectById(thisNode.getNodeId());
         if (NodeInfo.NODE_TYPE_START.equals(nodedef.getNodeType())
             || NodeInfo.NODE_TYPE_END.equals(nodedef.getNodeType())) {
