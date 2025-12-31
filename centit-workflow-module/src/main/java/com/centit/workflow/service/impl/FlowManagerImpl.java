@@ -737,7 +737,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
 
         if(StringUtils.equalsAny(thisNode.getNodeState(), "W", "P", "S")){
-            throw new ObjectException("当前节点状态为暂停、挂起、等待为，不能从该节点从新运行！");
+            throw new ObjectException("当前节点状态为暂停、挂起或等待，不能从该节点重新运行！");
         }
 
         NodeInfo nodedef = flowNodeDao.getObjectById(thisNode.getNodeId());
