@@ -218,7 +218,7 @@ public interface FlowManager {
      * @param managerUser 管理人员代码
      * @return 新的节点实例
      */
-    NodeInstance resetFlowToThisNode(String nodeInstId, CentitUserDetails managerUser);
+    NodeInstance resetFlowToThisNode(String nodeInstId, String closeNodeType, CentitUserDetails managerUser);
 
     /**
      * 强制一个并行分支的节点为游离状态，在提交其他并行分支前调用

@@ -4,7 +4,6 @@ import com.centit.framework.core.dao.DictionaryMap;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.util.Objects;
 
 /**
  * FAddressBook entity.

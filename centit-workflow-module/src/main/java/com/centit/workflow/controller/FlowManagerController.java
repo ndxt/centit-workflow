@@ -422,7 +422,12 @@ public class FlowManagerController extends BaseController {
      * 7.从这个节点重新运行该流程，包括已经结束的流程
      * 8.暂挂一个节点实例
      */
-    @ApiOperation(value = "节点状态管理api", notes = "1.回滚一个流程节点到上一节点2.提交，强制一个流程节点前进到下一个节点3.对一个正在运行的节点实例强制游离6.唤醒一个暂挂节点实例7.从这个节点重新运行该流程，包括已经结束的流程8.暂挂一个节点实例")
+    @ApiOperation(value = "节点状态管理api", notes = "1.回滚一个流程节点到上一节点" +
+        "2.提交，强制一个流程节点前进到下一个节点" +
+        "3.对一个正在运行的节点实例强制游离" +
+        "6.唤醒一个暂挂节点实例" +
+        "7.从这个节点重新运行该流程，包括已经结束的流程" +
+        "8.暂挂一个节点实例")
     @RequestMapping(value = "/nodestate/{nodeInstId}/{bo}", method = RequestMethod.POST)
     @WrapUpResponseBody
     public NodeInstance changeFlowInstState(@PathVariable String nodeInstId,
@@ -448,7 +453,9 @@ public class FlowManagerController extends BaseController {
                 }
                 break;
             case '7':
-                flowManager.resetFlowToThisNode(nodeInstId, managerUser);
+                flowManager.resetFlowToThisNode(nodeInstId,
+                    StringBaseOpt.castObjectToString(request.getParameter("closeNodeType"), "A"),
+                    managerUser);
                 break;
             case '8':
                 flowManager.suspendNodeInstance(nodeInstId, managerUser);
@@ -464,9 +471,12 @@ public class FlowManagerController extends BaseController {
     @ApiOperation(value = "从这个节点重新运行该流程，包括已经结束的流程", notes = "从这个节点重新运行该流程，包括已经结束的流程")
     @RequestMapping(value = "/resetToCurrent/{nodeInstId}", method = RequestMethod.POST)
     @WrapUpResponseBody
-    public NodeInstance resetToCurrent(@PathVariable String nodeInstId, HttpServletRequest request) {
+    public NodeInstance resetToCurrent(@PathVariable String nodeInstId, String closeNodeType, HttpServletRequest request) {
         CentitUserDetails managerUser = WebOptUtils.assertUserDetails(request);
-        return flowManager.resetFlowToThisNode(nodeInstId, managerUser);
+        if(StringUtils.isBlank(closeNodeType)) {
+            closeNodeType = "A";
+        }
+        return flowManager.resetFlowToThisNode(nodeInstId, closeNodeType, managerUser);
     }
 
     /**

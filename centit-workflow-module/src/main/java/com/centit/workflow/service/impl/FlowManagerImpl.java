@@ -712,11 +712,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     /**
+     * TODO 添加 关闭节点策略
+     *
      * 从这个节点重新运行该流程，包括已经结束的流程
      */
     @Override
-    public NodeInstance resetFlowToThisNode(String nodeInstId, CentitUserDetails managerUser) {
-
+    public NodeInstance resetFlowToThisNode(String nodeInstId, String closeNodeType, CentitUserDetails managerUser) {
         NodeInstance thisNode = nodeInstanceDao.getObjectWithReferences(nodeInstId);
         if (thisNode == null) {
             return null;
@@ -749,8 +750,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
 
         for (NodeInstance nodeInst : flowInst.getFlowNodeInstances()) {
-            if (("N".equals(nodeInst.getNodeState())
-                || "W".equals(nodeInst.getNodeState()))
+            if ("N,W,P,S".contains(nodeInst.getNodeState())
                 && (nodeInst.getNodeId().equals(thisNode.getNodeId()))
                 && nodeInst.getRunToken().equals(thisNode.getRunToken())) {
                 // 已经有一个正在运行的相同节点实例，不能重置到该节点
@@ -759,43 +759,45 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
             }
         }
-
-        flowInst.setInstState("N");
-        // 将所有的下层正常节点都设置为 B 已回退
-        String thisToken = thisNode.getRunToken();
         Date updateTime = DatetimeOpt.currentUtilDate();
         String updateUser = managerUser != null ? managerUser.getUserCode() : "admin";
         String loginIp = managerUser != null ? managerUser.getLoginIp() : "";
-        for (NodeInstance nodeInst : flowInst.getFlowNodeInstances()) {
-            String currToken = nodeInst.getRunToken();
-            if ("N,W".contains(nodeInst.getNodeState())
-                && currToken != null
-                && thisToken != null
-                && (currToken.equals(thisToken)
+
+        flowInst.setInstState("N");
+        if(!"N".equals(closeNodeType)) { // N 表示不关闭其他任何节点
+            // 将所有的下层正常节点都设置为 B 已回退
+            String thisToken = thisNode.getRunToken();
+            for (NodeInstance nodeInst : flowInst.getFlowNodeInstances()) {
+                String currToken = nodeInst.getRunToken();
+                if ("N,W,P,S".contains(nodeInst.getNodeState()) && ( "O".equals(closeNodeType) ||
+                    ( currToken != null
+                    && thisToken != null
+                    && ( currToken.equals(thisToken)
                     || currToken.startsWith(thisToken + '.')
                     || thisToken.startsWith(currToken + '.')
-                    || currToken.startsWith(thisToken + '.' + NodeInstance.RUN_TOKEN_ISOLATED))
-            ) {
-                if (NodeInstance.NODE_STATE_WAITE_SUBPROCESS.equals(nodeInst.getNodeState())
-                            && StringUtils.isNotBlank(nodeInst.getSubFlowInstId())) { // 结束子流程
-                    FlowInstance subFlowInst = flowInstanceDao
-                        .getObjectById(nodeInst.getSubFlowInstId());
-                    if (subFlowInst != null) {
-                        subFlowInst.setLastUpdateUser(updateUser);
-                        FlowOptUtils.endInstance(subFlowInst, FlowInstance.FLOW_STATE_FORCE,
-                            updateUser, flowInstanceDao);
-                        flowInstanceDao.updateObject(subFlowInst);
-                        //更新子流程下的所有消息为已办
-                        //FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(), managerUser.getUserCode());
+                    || currToken.startsWith(thisToken + '.' + NodeInstance.RUN_TOKEN_ISOLATED)) ) )
+                ) {
+                    if (NodeInstance.NODE_STATE_WAITE_SUBPROCESS.equals(nodeInst.getNodeState())
+                        && StringUtils.isNotBlank(nodeInst.getSubFlowInstId())) { // 结束子流程
+                        FlowInstance subFlowInst = flowInstanceDao
+                            .getObjectById(nodeInst.getSubFlowInstId());
+                        if (subFlowInst != null) {
+                            subFlowInst.setLastUpdateUser(updateUser);
+                            FlowOptUtils.endInstance(subFlowInst, FlowInstance.FLOW_STATE_FORCE,
+                                updateUser, flowInstanceDao);
+                            flowInstanceDao.updateObject(subFlowInst);
+                            //更新子流程下的所有消息为已办
+                            //FlowOptUtils.sendFinishMsg(subFlowInst.getFlowInstId(), managerUser.getUserCode());
+                        }
                     }
+                    nodeInst.setNodeState(NodeInstance.NODE_STATE_ROLLBACK);
+                    // 设置最后更新时间和更新人
+                    nodeInst.setLastUpdateUser(updateUser);
+                    nodeInst.setLastUpdateTime(updateTime);
+                    nodeInstanceDao.updateObject(nodeInst);
+                    //更新消息为已办
+                    // FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, managerUser.getUserCode());
                 }
-                nodeInst.setNodeState(NodeInstance.NODE_STATE_ROLLBACK);
-                // 设置最后更新时间和更新人
-                nodeInst.setLastUpdateUser(updateUser);
-                nodeInst.setLastUpdateTime(updateTime);
-                nodeInstanceDao.updateObject(nodeInst);
-                //更新消息为已办
-                // FlowOptUtils.sendMsg(nodeInst.getNodeInstId(), null, managerUser.getUserCode());
             }
         }
         /* thisNode.setNodeState(NodeInstance.NODE_STATE_ROLLBACK);
@@ -1463,6 +1465,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             }
         }
         NodeInstance startNodeInst = this.resetFlowToThisNode(flowInstance.fetchFirstNodeInstance().getNodeInstId(),
+            "O", //O：others 关闭其他所有的节点
             managerUser);
         //退回首节点之后，删除流程变量
         flowEngine.deleteFlowVariable(flowInstId, "", "");
