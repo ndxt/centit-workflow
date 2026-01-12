@@ -213,10 +213,10 @@ public interface FlowManager {
 
     /**
      * 从这个节点重新运行该流程，包括已经结束的流程
-     *
      * @param nodeInstId     节点实例id
-     * @param managerUser 管理人员代码
-     * @return 新的节点实例
+     * @param closeNodeType  A ： auto自动，就是现在这个， N ： none 一个也不关闭，相当于新建一个， O ：others 关闭所有其他的节点
+     * @param managerUser .getUserCode() 管理人员代码
+     * @return 新的节点实例id
      */
     NodeInstance resetFlowToThisNode(String nodeInstId, String closeNodeType, CentitUserDetails managerUser);
 

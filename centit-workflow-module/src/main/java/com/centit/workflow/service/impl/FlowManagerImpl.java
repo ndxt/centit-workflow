@@ -712,9 +712,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
     }
 
     /**
-     * TODO 添加 关闭节点策略
-     *
      * 从这个节点重新运行该流程，包括已经结束的流程
+     * @param nodeInstId     节点实例id
+     * @param closeNodeType  A ： auto自动，就是现在这个， N ： none 一个也不关闭，相当于新建一个， O ：others 关闭所有其他的节点
+     * @param managerUser .getUserCode() 管理人员代码
+     * @return 新的节点实例id
      */
     @Override
     public NodeInstance resetFlowToThisNode(String nodeInstId, String closeNodeType, CentitUserDetails managerUser) {
