@@ -125,6 +125,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
         "[ :nodeName| and c.NODE_NAME = :nodeName]" +
+        "[ :(like)nodeName_lk| and c.NODE_NAME like :nodeName_lk]" +
         "[ :(splitforin)nodeName_in| and c.NODE_NAME in (:nodeName_in)]" +
         "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
         "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
@@ -167,6 +168,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
         "[ :nodeName| and c.NODE_NAME = :nodeName]" +
+        "[ :(like)nodeName_lk| and c.NODE_NAME like :nodeName_lk]" +
         "[ :(splitforin)nodeName_in| and c.NODE_NAME in (:nodeNames_in)]" +
         "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
         "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
@@ -208,6 +210,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
             "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
             "[ :nodeName| and c.NODE_NAME = :nodeName]" +
+                "[ :(like)nodeName_lk| and c.NODE_NAME like :nodeName_lk]" +
             "[ :(splitforin)nodeName_in| and c.NODE_NAME in (:nodeName_in)]" +
             "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
             "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
@@ -238,6 +241,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :flowCode| and a.FLOW_CODE = :flowCode]"+
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
         "[ :nodeName| and c.NODE_NAME = :nodeName]" +
+        "[ :(like)nodeName_lk| and c.NODE_NAME like :nodeName_lk]" +
         "[ :(splitforin)nodeName_in| and c.NODE_NAME in (:nodeName_in)]" +
         "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
         "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
