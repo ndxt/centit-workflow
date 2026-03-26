@@ -18,6 +18,7 @@ import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.SubmitOptOptions;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
@@ -740,7 +741,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
 
         if(StringUtils.equalsAny(thisNode.getNodeState(), "W", "P", "S")){
-            throw new ObjectException("当前节点状态为暂停、挂起或等待，不能从该节点重新运行！");
+            throw new ObjectException(WorkflowException.IncorrectNodeState,"当前节点状态为暂停、挂起或等待，不能从该节点重新运行！");
         }
 
         NodeInfo nodedef = flowNodeDao.getObjectById(thisNode.getNodeId());
