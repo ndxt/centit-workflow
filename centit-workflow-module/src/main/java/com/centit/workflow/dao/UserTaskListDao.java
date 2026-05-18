@@ -32,6 +32,7 @@ import java.util.Map;
 
 /**
  * 流程任务数据操作类
+ *
  * @author codefan@sina.com
  * @version $Rev$ <br>
  * $Id$
@@ -60,7 +61,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         " join WF_NODE bb on (cc.NODE_ID = bb.NODE_ID)" +
         " group by aa.FLOW_INST_ID ";
 
-    private final static String userCompleteTaskBaseSqlPart1= "select t.FLOW_INST_ID, t.FLOW_CODE, t.VERSION, t.FLOW_OPT_NAME, " +
+    private final static String userCompleteTaskBaseSqlPart1 = "select t.FLOW_INST_ID, t.FLOW_CODE, t.VERSION, t.FLOW_OPT_NAME, " +
         "t.FLOW_OPT_TAG, t.UNIT_CODE, t.USER_CODE, " +
         "t.CREATE_TIME, t.deadline_time as node_Expire_Time, " +
         "n.NODE_NAME, t.LAST_UPDATE_TIME, t.INST_STATE, " +
@@ -70,8 +71,10 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
 
     private final static String userCompleteTaskBaseSqlPart2 = "n on n.FLOW_INST_ID=t.FLOW_INST_ID " +
         " where t.flow_inst_id in  (select w.flow_inst_id from wf_node_instance w join wf_node n " +
-        " on n.node_id=w.node_id where w.NODE_STATE in ('C', 'F', 'P') [ :userCode| and w.last_update_user=:userCode] " +
-        " [ :nodeCode| and n.node_code = :nodeCode] [ :nodeCodes | and n.node_code in (:nodeCodes)]  )" +
+        " on n.node_id=w.node_id where w.NODE_STATE in ('C', 'F', 'P') " +
+        "[ :userCode| and w.last_update_user=:userCode] " +
+        " [ :nodeCode| and n.node_code = :nodeCode] " +
+        "[ :nodeCodes | and n.node_code in (:nodeCodes)]  )" +
         " [ :(like)flowOptName| and t.flow_Opt_Name like :flowOptName] " +
         " [ :(like)flowName| and f.flow_Name like :flowName] " +
         " [ :topUnit| and t.TOP_UNIT = :topUnit]" +
@@ -103,9 +106,10 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "b.warning_time as node_warning_Time, a.warning_time as flow_warning_Time, " +
         "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time,a.create_time as flow_create_time,b.prev_node_inst_id,b.run_token,a.pre_inst_id " +
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
-            "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
+        "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         // (b.task_assigned = 'S' or b.task_assigned = 'P' or b.task_assigned = 'T')
-        "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'S' [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
+        "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'S' " +
+        "[ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
         " [ :(splitforin)flowInstIds_in| and b.FLOW_INST_ID in ( :flowInstIds_in )]" +
         "[ :flowOptTag| and a.FLOW_OPT_TAG = :flowOptTag]" +
         "[ :(splitforin)stageArr_in | and c.STAGE_CODE in (:stageArr_in) ]" +
@@ -121,7 +125,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
         "[ :(splitforin)osIds_in| and a.OS_ID  in (:osIds_in)]" +
-        "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
+        "[ :(splitforin)nodeInstId| and b.NODE_INST_ID in (:nodeInstId)]" +
         "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
         "[ :nodeName| and c.NODE_NAME = :nodeName]" +
@@ -144,10 +148,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
         "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
         "join WF_ROLE_RELEGATE g on ( g.GRANTOR = b.user_code and " +
-            " ( (g.opt_id is not null and g.opt_id = a.opt_id) or " + // 按业务委托 或者 按角色委托
-              " ((g.unit_code is null or b.unit_code = g.unit_code) and (g.ROLE_CODE is null or g.ROLE_CODE = b.ROLE_CODE)) " +
-            ") and g.RELEGATE_TIME < :today and ( g.EXPIRE_TIME is null or g.EXPIRE_TIME> :today ) ) " + // 检验委托时间
-        "where b.node_state = 'N' and a.inst_state = 'N' [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
+        " ( (g.opt_id is not null and g.opt_id = a.opt_id) or " + // 按业务委托 或者 按角色委托
+        " ((g.unit_code is null or b.unit_code = g.unit_code) and (g.ROLE_CODE is null or g.ROLE_CODE = b.ROLE_CODE)) " +
+        ") and g.RELEGATE_TIME < :today and ( g.EXPIRE_TIME is null or g.EXPIRE_TIME> :today ) ) " + // 检验委托时间
+        "where b.node_state = 'N' and a.inst_state = 'N' "+
+        "[ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
         "[ :(splitforin)flowInstIds_in | and b.FLOW_INST_ID in (:flowInstIds_in)]" +
         "[ :flowOptTag| and a.FLOW_OPT_TAG = :flowOptTag]" +
         "[ :(splitforin)stageArr_in | and c.STAGE_CODE in (:stageArr_in) ]" +
@@ -164,7 +169,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
         "[ :(splitforin)osIds_in| and a.OS_ID  in (:osIds_in)]" +
-        "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
+        "[ :(splitforin)nodeInstId| and b.NODE_INST_ID in (:nodeInstId)]" +
         "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
         "[ :nodeName| and c.NODE_NAME = :nodeName]" +
@@ -187,11 +192,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time,a.create_time as flow_create_time,b.prev_node_inst_id,b.run_token,a.pre_inst_id " +
             "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
             "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
-            "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'D' " ;
-            // " and c.role_type='GW' 目前只有这个
+            "where b.node_state = 'N' and a.inst_state = 'N' and b.task_assigned = 'D' ";
+    // " and c.role_type='GW' 目前只有这个
 
     private final static String userDynamicTaskSqlPart2 =
-            "[ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
+        "[ :flowInstId| and b.FLOW_INST_ID = :flowInstId]" +
             "[ :(splitforin)flowInstIds_in| and b.FLOW_INST_ID in ( :flowInstIds_in )]" +
             "[ :flowOptTag| and a.FLOW_OPT_TAG = :flowOptTag]" +
             "[ :(splitforin)stageArr_in | and c.STAGE_CODE in (:stageArr_in) ]" +
@@ -206,11 +211,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
             "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
             "[ :optCode| and c.OPT_CODE = :optCode]" +
             "[ :(splitforin)osIds_in| and a.OS_ID  in (:osIds_in)]" +
-            "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
+            "[ :(splitforin)nodeInstId| and b.NODE_INST_ID in (:nodeInstId)]" +
             "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
             "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
             "[ :nodeName| and c.NODE_NAME = :nodeName]" +
-                "[ :(like)nodeName_lk| and c.NODE_NAME like :nodeName_lk]" +
+            "[ :(like)nodeName_lk| and c.NODE_NAME like :nodeName_lk]" +
             "[ :(splitforin)nodeName_in| and c.NODE_NAME in (:nodeName_in)]" +
             "[ :nodeCode| and c.NODE_CODE = :nodeCode]" +
             "[ :(startWith)nodeCodeStart | and c.NODE_CODE like :nodeCodeStart]" +
@@ -228,17 +233,17 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         "a.deadline_time as flow_Expire_Time, c.Time_Limit as promise_Time,a.create_time as flow_create_time,b.prev_node_inst_id,b.run_token,a.pre_inst_id " +
         "from wf_node_instance b join wf_flow_instance a on (a.FLOW_INST_ID = b.FLOW_INST_ID) " +
         "join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
-        "where b.node_state = 'N' and a.inst_state = 'N' "+
-         "[ :(splitforin)unitCode| and b.unit_code in ( :unitCode )]" +
+        "where b.node_state = 'N' and a.inst_state = 'N' " +
+        "[ :(splitforin)unitCode| and b.unit_code in ( :unitCode )]" +
         "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
         "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
         "[ :creatorCode| and a.USER_CODE = :creatorCode]" +
         "[ :topUnit| and a.TOP_UNIT = :topUnit]" +
-        "[ :osId| and a.OS_ID = :osId]"+
+        "[ :osId| and a.OS_ID = :osId]" +
         "[ :optId| and c.OPT_ID = :optId]" +
         "[ :(splitforin)modelId| and a.OPT_ID in (:modelId)] " +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
-        "[ :flowCode| and a.FLOW_CODE = :flowCode]"+
+        "[ :flowCode| and a.FLOW_CODE = :flowCode]" +
         "[ :stageCode| and c.STAGE_CODE = :stageCode]" +
         "[ :nodeName| and c.NODE_NAME = :nodeName]" +
         "[ :(like)nodeName_lk| and c.NODE_NAME like :nodeName_lk]" +
@@ -252,7 +257,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     /**
      * 根据用户编码获取用户已办任务列表
      *
-     * @param filter 过滤条件
+     * @param filter   过滤条件
      * @param pageDesc 分页信息
      * @return 用户待办
      */
@@ -260,7 +265,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     public List<UserTask> listUserCompletedTask(Map<String, Object> filter, PageDesc pageDesc) {
         String sql;//= userCompleteTaskBaseSql;
         DBType dbType = DatabaseOptUtils.doGetDBType(this);
-        switch (dbType){
+        switch (dbType) {
             case Oracle:
                 sql = userCompleteTaskBaseSqlPart1 + " (" + flowInstStateSqlOracle12c + ") " + userCompleteTaskBaseSqlPart2;
                 break;
@@ -294,73 +299,73 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     }
 
     private Pair<String, SimpleTableField> findField(TableMapInfo tabA, TableMapInfo tabB, TableMapInfo tabC,
-                                                     String fieldName){
+                                                     String fieldName) {
         SimpleTableField field = tabB.findFieldByName(fieldName);
-        if(field!=null)
+        if (field != null)
             return new ImmutablePair<>("b.", field);
         field = tabA.findFieldByName(fieldName);
-        if(field!=null)
+        if (field != null)
             return new ImmutablePair<>("a.", field);
         field = tabC.findFieldByName(fieldName);
-        if(field!=null)
+        if (field != null)
             return new ImmutablePair<>("c.", field);
         return null;
     }
 
-    private String buildSortSql(Map<String, Object> filterMap, boolean hasAlias){
+    private String buildSortSql(Map<String, Object> filterMap, boolean hasAlias) {
         String selfOrderBy = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.SELF_ORDER_BY));
-        if(StringUtils.isBlank(selfOrderBy)){
-            selfOrderBy= StringBaseOpt.objectToString(filterMap.get("orderBy"));
+        if (StringUtils.isBlank(selfOrderBy)) {
+            selfOrderBy = StringBaseOpt.objectToString(filterMap.get("orderBy"));
         }
         // wf_node_instance b   wf_flow_instance a o join WF_NODE c
         TableMapInfo tabA = JpaMetadata.fetchTableMapInfo(FlowInstance.class);
         TableMapInfo tabB = JpaMetadata.fetchTableMapInfo(NodeInstance.class);
         TableMapInfo tabC = JpaMetadata.fetchTableMapInfo(NodeInfo.class);
 
-        if(StringUtils.isNotBlank(selfOrderBy)){
+        if (StringUtils.isNotBlank(selfOrderBy)) {
             StringBuilder orderSql = new StringBuilder();
             Lexer lexer = new Lexer(selfOrderBy, Lexer.LANG_TYPE_SQL);
             String aword = lexer.getAWord();
-            while(StringUtils.isNotBlank(aword)){
+            while (StringUtils.isNotBlank(aword)) {
                 Pair<String, SimpleTableField> fieldPair = findField(tabA, tabB, tabC, aword);
-                if(fieldPair!=null){
-                    if(orderSql.length()>0){
+                if (fieldPair != null) {
+                    if (orderSql.length() > 0) {
                         orderSql.append(", ");
                     }
-                    if(hasAlias)
+                    if (hasAlias)
                         orderSql.append(fieldPair.getLeft());
                     orderSql.append(fieldPair.getRight().getColumnName());
                 }
                 aword = lexer.getAWord();
-                if(StringUtils.equalsAnyIgnoreCase(aword, "desc", "asc", "nulls", "first", "last")){
-                    if(fieldPair!=null){
+                if (StringUtils.equalsAnyIgnoreCase(aword, "desc", "asc", "nulls", "first", "last")) {
+                    if (fieldPair != null) {
                         orderSql.append(" ").append(aword);
                     }
                     aword = lexer.getAWord();
                 }
-                if(!",".equals(aword)){
+                if (!",".equals(aword)) {
                     break;
                 }
             }
 
-            if(orderSql.length()>0){
+            if (orderSql.length() > 0) {
                 return orderSql.toString();
             }
         }
 
         String sortField = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.TABLE_SORT_FIELD));
         Pair<String, SimpleTableField> fieldPair = findField(tabA, tabB, tabC, sortField);
-        if(fieldPair!=null){
-            String sf= hasAlias? fieldPair.getLeft() + fieldPair.getRight().getColumnName()
+        if (fieldPair != null) {
+            String sf = hasAlias ? fieldPair.getLeft() + fieldPair.getRight().getColumnName()
                 : fieldPair.getRight().getColumnName();
 
             String orderField = StringBaseOpt.objectToString(filterMap.get(GeneralJsonObjectDao.TABLE_SORT_ORDER));
-            if(StringUtils.equalsAnyIgnoreCase(orderField, "desc", "asc", "nulls", "first", "last")){
-                return sf + " " +orderField;
+            if (StringUtils.equalsAnyIgnoreCase(orderField, "desc", "asc", "nulls", "first", "last")) {
+                return sf + " " + orderField;
             }
             return sf;
         }
-        return hasAlias? "b.CREATE_TIME desc" : "CREATE_TIME desc";
+        return hasAlias ? "b.CREATE_TIME desc" : "CREATE_TIME desc";
     }
 
     @Transactional
@@ -373,6 +378,7 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
 
         return dataList == null ? null : dataList.toJavaList(UserTask.class);
     }
+
     @Transactional
     public List<UserTask> listUnitTask(Map<String, Object> filter, PageDesc pageDesc) {
         QueryAndNamedParams queryAndNamedParams = QueryUtils.translateQuery(
@@ -398,10 +404,10 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     // userStaticTaskBaseSql +" union all " + userGrantorTaskBaseSql;
     @Transactional
     public List<UserTask> listUserStaticAndGrantorTask(Map<String, Object> filter, PageDesc pageDesc) {
-        QueryAndNamedParams staticQuery = QueryUtils.translateQuery(userStaticTaskBaseSql , filter);
+        QueryAndNamedParams staticQuery = QueryUtils.translateQuery(userStaticTaskBaseSql, filter);
         String staticSql = staticQuery.getQuery();
         String staticCountSql = QueryUtils.buildGetCountSQLByReplaceFields(staticSql);//rowcounts
-        QueryAndNamedParams grantorQuery = QueryUtils.translateQuery(userGrantorTaskBaseSql , filter);
+        QueryAndNamedParams grantorQuery = QueryUtils.translateQuery(userGrantorTaskBaseSql, filter);
         String grantorSql = grantorQuery.getQuery();
         String grantorCountSql = QueryUtils.buildGetCountSQLByReplaceFields(grantorSql);//rowcounts
         //合并参数
@@ -409,21 +415,21 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         grantorQuery.getParams().put("today", DatetimeOpt.currentUtilDate());
 
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
-            "select * from (" + staticSql +" union all " + grantorSql +") t order by " +
-                buildSortSql(filter, false),  null,
-            "select sum(t.rowcounts) as rowcounts from (" + staticCountSql +" union all " + grantorCountSql +") t",
+            "select * from (" + staticSql + " union all " + grantorSql + ") t order by " +
+                buildSortSql(filter, false), null,
+            "select sum(t.rowcounts) as rowcounts from (" + staticCountSql + " union all " + grantorCountSql + ") t",
             grantorQuery.getParams(), pageDesc);
 
         return dataList == null ? null : dataList.toJavaList(UserTask.class);
     }
 
-    public static String buildDynamicTaskSql(List<UserUnit> userUnits){
+    public static String buildDynamicTaskSql(List<UserUnit> userUnits) {
         StringBuilder sqlBuilder = new StringBuilder(3072);
         int uuCount = userUnits.size();
         sqlBuilder.append(userDynamicTaskSqlPart1);
-        if(uuCount == 1) {
+        if (uuCount == 1) {
             sqlBuilder.append(" and (b.unit_code is null or b.unit_code =:userUnitCode0) and b.role_code = :userStation0");
-        } else if(uuCount > 1) {
+        } else if (uuCount > 1) {
             sqlBuilder.append(" and (");
             for (int i = 0; i < uuCount; i++) {
                 if (i > 0) {
@@ -438,11 +444,11 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         return sqlBuilder.toString();
     }
 
-    public static void appendDynamicQueryParams( Map<String, Object> queryMap, List<UserUnit> userUnits){
-        int i=0;
-        for(UserUnit uu : userUnits){
-            queryMap.put("userUnitCode"+i, uu.getUnitCode());
-            queryMap.put("userStation"+i, uu.getUserStation());
+    public static void appendDynamicQueryParams(Map<String, Object> queryMap, List<UserUnit> userUnits) {
+        int i = 0;
+        for (UserUnit uu : userUnits) {
+            queryMap.put("userUnitCode" + i, uu.getUnitCode());
+            queryMap.put("userStation" + i, uu.getUserStation());
             i++;
         }
     }
@@ -463,13 +469,13 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
     @Transactional
     public List<UserTask> listUserAllTask(List<UserUnit> userUnits, Map<String, Object> filter, PageDesc pageDesc) {
 
-        QueryAndNamedParams staticQuery = QueryUtils.translateQuery(userStaticTaskBaseSql , filter);
+        QueryAndNamedParams staticQuery = QueryUtils.translateQuery(userStaticTaskBaseSql, filter);
         String staticSql = staticQuery.getQuery();
         String staticCountSql = QueryUtils.buildGetCountSQLByReplaceFields(staticSql);//rowcounts
-        QueryAndNamedParams grantorQuery = QueryUtils.translateQuery(userGrantorTaskBaseSql , filter);
+        QueryAndNamedParams grantorQuery = QueryUtils.translateQuery(userGrantorTaskBaseSql, filter);
         String grantorSql = grantorQuery.getQuery();
         String grantorCountSql = QueryUtils.buildGetCountSQLByReplaceFields(grantorSql);//rowcounts
-        QueryAndNamedParams dynamicQuery = QueryUtils.translateQuery(buildDynamicTaskSql(userUnits) , filter);
+        QueryAndNamedParams dynamicQuery = QueryUtils.translateQuery(buildDynamicTaskSql(userUnits), filter);
         String dynamicSql = dynamicQuery.getQuery();
         String dynamicCountSql = QueryUtils.buildGetCountSQLByReplaceFields(dynamicSql);//rowcounts
 
@@ -479,9 +485,9 @@ public class UserTaskListDao extends BaseDaoImpl<NodeInstance, String> {
         queryParamMap.put("today", DatetimeOpt.currentUtilDate());
 
         JSONArray dataList = DatabaseOptUtils.listObjectsByNamedSqlAsJson(this,
-            "select * from (" + staticSql +" union all " + grantorSql +" union all " + dynamicSql + ") t order by "
-             + buildSortSql(filter, false) , null,
-            "select sum(t.rowcounts) as rowcounts from (" + staticCountSql +" union all " + grantorCountSql +" union all " + dynamicCountSql +") t",
+            "select * from (" + staticSql + " union all " + grantorSql + " union all " + dynamicSql + ") t order by "
+                + buildSortSql(filter, false), null,
+            "select sum(t.rowcounts) as rowcounts from (" + staticCountSql + " union all " + grantorCountSql + " union all " + dynamicCountSql + ") t",
             queryParamMap, pageDesc);
 
         return dataList == null ? null : dataList.toJavaList(UserTask.class);

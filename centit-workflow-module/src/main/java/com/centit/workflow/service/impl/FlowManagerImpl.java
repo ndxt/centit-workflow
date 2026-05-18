@@ -19,6 +19,7 @@ import com.centit.support.database.utils.PageDesc;
 import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.SubmitOptOptions;
+import com.centit.workflow.commons.WorkflowException;
 import com.centit.workflow.dao.*;
 import com.centit.workflow.po.*;
 import com.centit.workflow.service.FlowEngine;
@@ -400,7 +401,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         OperationLog managerAct = FlowOptUtils.createActionLog(flowInst.getTopUnit(),
             updateUser, flowInstId, "更改流程状态为" + state + ";" + admindesc);
-        String loginIp = managerUser != null ? managerUser.getLoginIp() : "";
+        String loginIp = managerUser != null ? managerUser.getLoginIp() : "localhost";
         managerAct.newObject(actionDesc + admindesc)
             .unit(flowInst.getUnitCode()).application(flowInst.getOsId())
             .method("updateFlowState").loginIp(loginIp);
@@ -414,9 +415,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (nodeInst == null) {
             return 0;
         }
-
+        String updateUser = "admin";
+        String loginIp = "localhost";
         // 设置最后更新时间和更新人
-        nodeInst.setLastUpdateUser(managerUser.getUserCode());
+        if(managerUser != null) {
+            updateUser = managerUser.getUserCode();
+            loginIp = managerUser.getLoginIp();
+        }
+        nodeInst.setLastUpdateUser(updateUser);
         nodeInst.setLastUpdateTime(new Date(System.currentTimeMillis()));
         /*
          * N 正常  B 已回退    C 完成   F被强制结束
@@ -444,10 +450,10 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
         OperationLog managerAct = FlowOptUtils.createActionLog(flowInst.getTopUnit(),
-            managerUser.getUserCode(), nodeInst,
+                updateUser, nodeInst,
             "唤醒流程节点；" + actionDesc, null)
             .application(flowInst.getOsId())
-            .method("updateNodeState").loginIp(managerUser.getLoginIp());
+            .method("updateNodeState").loginIp(loginIp);
         OperationLogCenter.log(managerAct);
         return 1;
     }
@@ -747,7 +753,7 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         }
 
         if(StringUtils.equalsAny(thisNode.getNodeState(), "W", "P", "S")){
-            throw new ObjectException("当前节点状态为暂停、挂起或等待，不能从该节点重新运行！");
+            throw new ObjectException(WorkflowException.IncorrectNodeState,"当前节点状态为暂停、挂起或等待，不能从该节点重新运行！");
         }
 
         NodeInfo nodedef = flowNodeDao.getObjectById(thisNode.getNodeId());
