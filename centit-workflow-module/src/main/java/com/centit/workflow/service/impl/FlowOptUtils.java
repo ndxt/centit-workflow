@@ -10,10 +10,12 @@ import com.centit.support.algorithm.StringBaseOpt;
 import com.centit.support.common.DateTimeSpan;
 import com.centit.support.common.ObjectException;
 import com.centit.support.compiler.VariableFormula;
+import com.centit.support.compiler.VariableTranslate;
 import com.centit.workflow.commons.FlowOptParamOptions;
 import com.centit.workflow.dao.FlowInstanceDao;
 import com.centit.workflow.dao.FlowVariableDao;
 import com.centit.workflow.po.*;
+import com.centit.workflow.service.FlowEngine;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -26,7 +28,7 @@ public abstract class FlowOptUtils {
     /**
      * 创建流程实例
      */
-    public static FlowInstance createFlowInst(String topUnit, String unitcode, String usercode,
+    public static FlowInstance createFlowInst(VariableTranslate varTrans, String topUnit, String unitcode, String usercode,
                                               FlowInfo wf, String flowInstId, String timeLimitStr,
                                               WorkDayManager workDayManager) {
         if(StringUtils.isBlank(topUnit)){
@@ -66,16 +68,16 @@ public abstract class FlowOptUtils {
             // 不计时F 、计时T(有期限)、暂停P  忽略(无期限) F
             flowInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
             Date today = DatetimeOpt.currentUtilDate();
-            flowInst.setDeadlineTime(calcTimeLimit(topUnit, today, timeLimit, workDayManager, false));
-            flowInst.setWarningTime(calcTimeLimit(topUnit,
+            flowInst.setDeadlineTime(calcTimeLimit(varTrans, topUnit, today, timeLimit, workDayManager, false));
+            flowInst.setWarningTime(calcTimeLimit(varTrans, topUnit,
                 flowInst.getDeadlineTime(), wf.getWarningParam(), workDayManager, true));
         }
 
         return flowInst;
     }
 
-    public static Date calcTimeLimit(String topUnit, Date  currentDate, String timeLimitStr,
-                                              WorkDayManager workDayManager, boolean isMinus ) {
+    public static Date calcTimeLimit(VariableTranslate varTrans, String topUnit, Date  currentDate, String timeLimitStr,
+                                     WorkDayManager workDayManager, boolean isMinus ) {
         if(StringUtils.isBlank(timeLimitStr)) {
             return currentDate;
         }
@@ -86,22 +88,22 @@ public abstract class FlowOptUtils {
             } else {
                 tlt = tlt.substring(2, tlt.length()-1);
             }
-            Object object = VariableFormula.calculate(tlt);
+            Object object = VariableFormula.calculate(tlt, varTrans);
             return DatetimeOpt.castObjectToDate(object);
         }
         DateTimeSpan deadLine = new DateTimeSpan(tlt);
         if(isMinus){
-            deadLine.setTimeSpan(0 - deadLine.getTimeSpan());
+            deadLine.setTimeSpan( - deadLine.getTimeSpan());
         }
         return workDayManager.calcWorkingDeadline(topUnit, currentDate, deadLine);
 
     }
 
-    public static void setNewNodeInstTimelimit(NodeInstance nodeInst, String timeLimit,
-                                               FlowInstance flowInst, NodeInstance preNodeInst,
-                                               FlowInfo flowInfo, NodeInfo node,
-                                               FlowVariableTranslate varTrans,
-                                               WorkDayManager workDayManager) {
+    public static void calcNodeInstTimeLimit(NodeInstance nodeInst, String timeLimit,
+                                             FlowInstance flowInst, NodeInstance preNodeInst,
+                                             FlowInfo flowInfo, NodeInfo node,
+                                             FlowVariableTranslate varTrans,
+                                             WorkDayManager workDayManager) {
         String tlt = timeLimit;
         if(StringUtils.isNotBlank(tlt)) {
             if (tlt.startsWith("ref:")) {
@@ -143,12 +145,12 @@ public abstract class FlowOptUtils {
         }
 
         Date today = DatetimeOpt.currentUtilDate();
-        nodeInst.setDeadlineTime(calcTimeLimit(flowInst.getTopUnit(), today, tlt, workDayManager, false));
+        nodeInst.setDeadlineTime(calcTimeLimit(varTrans, flowInst.getTopUnit(), today, tlt, workDayManager, false));
         if(extend.isPositiveTimeSpan()){
             nodeInst.setDeadlineTime(workDayManager.calcWorkingDeadline(
                 flowInst.getTopUnit(), nodeInst.getDeadlineTime(), extend));
         }
-        nodeInst.setWarningTime(calcTimeLimit(flowInst.getTopUnit(),
+        nodeInst.setWarningTime(calcTimeLimit(varTrans, flowInst.getTopUnit(),
             nodeInst.getDeadlineTime(), node.getWarningParam(), workDayManager, true));
     }
 
@@ -205,12 +207,12 @@ public abstract class FlowOptUtils {
                     // 是否需要重复预警
                     // nodeInst.setTimerStatus(sameInst.getTimerStatus());
                 } else {
-                    setNewNodeInstTimelimit(nodeInst, timeLimit,
+                    calcNodeInstTimeLimit(nodeInst, timeLimit,
                         flowInst, preNodeInst, flowInfo, node, varTrans, workDayManager);
                 }
             } else if (NodeInfo.TIME_LIMIT_TYPE_FIX.equals(timeLimitType)) {
                 //nodeInst.setTimeLimit( new DateTimeSpan(timeLimit).toNumber() );
-                setNewNodeInstTimelimit(nodeInst, timeLimit,
+                calcNodeInstTimeLimit(nodeInst, timeLimit,
                     flowInst, preNodeInst, flowInfo, node, varTrans, workDayManager);
             }
         } else {
@@ -274,9 +276,8 @@ public abstract class FlowOptUtils {
 
     public static FlowVariableTranslate createVariableTranslate(
             NodeInstance nodeInstance, FlowInstanceDao flowInstanceDao, FlowInstance flowInstance,
-            FlowVariableDao flowVariableDao, FlowEngineImpl flowEngine,
+            FlowVariableDao flowVariableDao, FlowEngine flowEngine,
             FlowOptParamOptions options) {
-
         FlowVariableTranslate flowVarTrans = new FlowVariableTranslate(nodeInstance, flowInstance);
         List<String> flowInstPath = new ArrayList<>();
         FlowInstance tempInstance = flowInstance;
@@ -288,7 +289,6 @@ public abstract class FlowOptUtils {
                 tempInstance = flowInstanceDao.getObjectById(tempInstance.getPreInstId());
             }
         }
-
         if(StringUtils.isNotBlank(flowInstance.getFlowGroupId())){
             flowInstPath.add(flowInstance.getFlowGroupId());
         }

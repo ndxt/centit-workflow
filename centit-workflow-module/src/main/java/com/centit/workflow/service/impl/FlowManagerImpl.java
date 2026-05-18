@@ -16,6 +16,7 @@ import com.centit.support.algorithm.*;
 import com.centit.support.common.DateTimeSpan;
 import com.centit.support.common.ObjectException;
 import com.centit.support.database.utils.PageDesc;
+import com.centit.workflow.commons.CreateFlowOptions;
 import com.centit.workflow.commons.NodeEventSupport;
 import com.centit.workflow.commons.SubmitOptOptions;
 import com.centit.workflow.dao.*;
@@ -72,6 +73,9 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
     @Autowired
     RoleRelegateDao flowRoleRelegateDao;
+
+    @Autowired
+    private FlowVariableDao flowVariableDao;
 
     @Autowired
     FlowEngine flowEngine;
@@ -486,19 +490,21 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         if (nodeInst == null) {
             return 0;
         }
+        FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
         NodeInfo node = flowNodeDao.getObjectById(nodeInst.getNodeId());
         Date today = DatetimeOpt.currentUtilDate();
-        nodeInst.setDeadlineTime(FlowOptUtils.calcTimeLimit(
+        FlowVariableTranslate varTrans = FlowOptUtils.createVariableTranslate(
+            nodeInst, flowInstanceDao, flowInst, flowVariableDao, flowEngine, CreateFlowOptions.create());
+
+        nodeInst.setDeadlineTime(FlowOptUtils.calcTimeLimit(varTrans,
             topUnit, today, timeLimit, workDayManager, false));
-        nodeInst.setWarningTime(FlowOptUtils.calcTimeLimit(topUnit,
+        nodeInst.setWarningTime(FlowOptUtils.calcTimeLimit(varTrans, topUnit,
             nodeInst.getDeadlineTime(), node.getWarningParam(), workDayManager, true));
 
         nodeInst.setLastUpdateTime(today);
         nodeInst.setLastUpdateUser(managerUser.getUserCode());
         // 设置最后更新时间和更新人
         nodeInstanceDao.updateObject(nodeInst);
-
-        FlowInstance flowInst = flowInstanceDao.getObjectById(nodeInst.getFlowInstId());
         OperationLog managerAct = FlowOptUtils.createActionLog(flowInst.getTopUnit(),
             managerUser.getUserCode(), nodeInst,
             "重置节点期限：" + new DateTimeSpan(timeLimit).getTimeSpanDesc(), null)
@@ -690,11 +696,12 @@ public class FlowManagerImpl implements FlowManager, Serializable {
             return 0;
         }
         FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
-
+        FlowVariableTranslate varTrans = FlowOptUtils.createVariableTranslate(
+            null, flowInstanceDao, flowInst, flowVariableDao, flowEngine, CreateFlowOptions.create());
         Date today = DatetimeOpt.currentUtilDate();
-        flowInst.setDeadlineTime(FlowOptUtils.calcTimeLimit(
+        flowInst.setDeadlineTime(FlowOptUtils.calcTimeLimit(varTrans,
             flowInst.getTopUnit(), today, timeLimit, workDayManager, false));
-        flowInst.setWarningTime(FlowOptUtils.calcTimeLimit(flowInst.getTopUnit(),
+        flowInst.setWarningTime(FlowOptUtils.calcTimeLimit(varTrans, flowInst.getTopUnit(),
             flowInst.getDeadlineTime(), flowInfo.getWarningParam(), workDayManager, true));
 
         flowInst.setLastUpdateTime(today);
@@ -819,7 +826,11 @@ public class FlowManagerImpl implements FlowManager, Serializable {
         nextNodeInst.setLastUpdateUser(updateUser);
         nextNodeInst.setLastUpdateTime(updateTime);
         nextNodeInst.setCreateTime(updateTime);
-
+        FlowInfo flowInfo = flowDefDao.getFlowDefineByID(flowInst.getFlowCode(), flowInst.getVersion());
+        FlowVariableTranslate varTrans = FlowOptUtils.createVariableTranslate(
+            nextNodeInst, flowInstanceDao, flowInst, flowVariableDao, flowEngine, CreateFlowOptions.create());
+        FlowOptUtils.calcNodeInstTimeLimit(nextNodeInst, nodedef.getTimeLimit(),
+            flowInst, null, flowInfo, nodedef, varTrans, workDayManager);
         flowInst.addNodeInstance(nextNodeInst);
         flowInstanceDao.updateObject(flowInst);
         nodeInstanceDao.saveNewObject(nextNodeInst);
@@ -1135,15 +1146,14 @@ public class FlowManagerImpl implements FlowManager, Serializable {
 
         StageInstance stageInst = stageInstanceDao.getObject(flowInstId, stageId);
         FlowStage flowStage = flowStageDao.getObjectById(stageInst.getStageId());
-
+        FlowVariableTranslate varTrans = FlowOptUtils.createVariableTranslate(
+            null, flowInstanceDao, flowInst, flowVariableDao, flowEngine, CreateFlowOptions.create());
         Date today = DatetimeOpt.currentUtilDate();
-        stageInst.setDeadlineTime(FlowOptUtils.calcTimeLimit(
+        stageInst.setDeadlineTime(FlowOptUtils.calcTimeLimit(varTrans,
             flowInst.getTopUnit(), today, timeLimit, workDayManager, false));
-        stageInst.setWarningTime(FlowOptUtils.calcTimeLimit(flowInst.getTopUnit(),
+        stageInst.setWarningTime(FlowOptUtils.calcTimeLimit(varTrans, flowInst.getTopUnit(),
             stageInst.getDeadlineTime(), flowStage.getWarningParam(), workDayManager, true));
-
         stageInst.setLastUpdateTime(today);
-
         flowInstanceDao.updateObject(flowInst);
 
         OperationLog managerAct = FlowOptUtils.createActionLog(flowInst.getTopUnit(),

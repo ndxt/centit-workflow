@@ -220,7 +220,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
         String flowInstId = StringUtils.isBlank(options.getFlowInstId()) ?
             UuidOpt.getUuidAsString32() : options.getFlowInstId();
 
-        FlowInstance flowInst = FlowOptUtils.createFlowInst(options.getTopUnit(),
+        FlowInstance flowInst = FlowOptUtils.createFlowInst(varTrans, options.getTopUnit(),
             options.getUnitCode(), options.getUserCode(), wf, flowInstId, options.getTimeLimitStr(),
             workDayManager);
         if (options.getModelId() != null) {
@@ -921,9 +921,9 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                         stageInst.setBeginTime(today);
                         stageInst.setTimerStatus(FlowWarning.TIMER_STATUS_RUN);
 
-                        stageInst.setDeadlineTime(FlowOptUtils.calcTimeLimit(
+                        stageInst.setDeadlineTime(FlowOptUtils.calcTimeLimit(varTrans,
                             flowInst.getTopUnit(), today, stageInfo.getTimeLimit(), workDayManager, false));
-                        stageInst.setWarningTime(FlowOptUtils.calcTimeLimit(flowInst.getTopUnit(),
+                        stageInst.setWarningTime(FlowOptUtils.calcTimeLimit(varTrans, flowInst.getTopUnit(),
                             stageInst.getDeadlineTime(), stageInfo.getWarningParam(), workDayManager, true));
                     }
                 } else {
@@ -1033,7 +1033,7 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 // 设置时间
                 nodeInst.setTimerStatus(FlowWarning.TIMER_STATUS_SYNC);
                 //TODO 通过变量获取同步节点的同步时间
-                Date deadlineTime = FlowOptUtils.calcTimeLimit(
+                Date deadlineTime = FlowOptUtils.calcTimeLimit(varTrans,
                     options.getTopUnit(), DatetimeOpt.currentUtilDate(), nextOptNode.getTimeLimit(), workDayManager, false);
                 nodeInst.setDeadlineTime(deadlineTime);
                 nodeInst.setWarningTime(deadlineTime);
