@@ -752,19 +752,18 @@ public class FlowEngineImpl implements FlowEngine, Serializable {
                 }
 
                 FlowTransition nodeTran = selectOptNodeTransition(nextRouterNode, options);
-                String nextNodeId = "";
-                if (nodeTran != null) {
-                    nextNodeId = nodeTran.getEndNodeId();
-                }
-                for (FlowTransition f : flowInfo.getTransList()) {
-                    if (nextRouterNode.getNodeId().equals(f.getEndNodeId()) && trans != null && !f.getTransId().equals(trans.getTransId())) {
-                        preTransPath.append(",").append(f.getTransId());
+                if (nodeTran != null) { // == null 说明汇聚节点是最后一个节点，则结束（无法提交）
+                    String nextNodeId = nodeTran.getEndNodeId();
+                    for (FlowTransition f : flowInfo.getTransList()) {
+                        if (nextRouterNode.getNodeId().equals(f.getEndNodeId()) && trans != null && !f.getTransId().equals(trans.getTransId())) {
+                            preTransPath.append(",").append(f.getTransId());
+                        }
                     }
+                    resNodes = submitToNextNode(
+                        flowNodeDao.getObjectById(nextNodeId), preRunToken, flowInst, flowInfo,
+                        preNodeInst, preTransPath.toString(), nodeTran, options,
+                        flowVarTrans);
                 }
-                resNodes = submitToNextNode(
-                    flowNodeDao.getObjectById(nextNodeId), preRunToken, flowInst, flowInfo,
-                    preNodeInst, preTransPath.toString(), nodeTran, options,
-                    flowVarTrans);
             }
         } else if (NodeInfo.ROUTER_TYPE_MULTI_INST.equals(routerType)) {// G 多实例
             FlowTransition nodeTran = selectOptNodeTransition(nextRouterNode, options);
