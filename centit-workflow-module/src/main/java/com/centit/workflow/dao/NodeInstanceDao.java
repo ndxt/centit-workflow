@@ -238,12 +238,14 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
 
     private final static String queryNodeInstance =
         "select b.FLOW_INST_ID, b.NODE_INST_ID, b.UNIT_CODE, b.USER_CODE, b.ROLE_TYPE," +
-        "b.ROLE_CODE, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE, b.NODE_STATE, " +
-        "b.NODE_ID, c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.deadline_time, " +
-        "c.OPT_CODE, c.EXPIRE_OPT, b.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
-        "b.LAST_UPDATE_TIME, b.TIMER_STATUS, c.OPT_ID, b.PREV_NODE_INST_ID, b.pause_time, " +
-        "b.warning_time, c.Time_Limit as promise_Time, b.RUN_TOKEN, b.NODE_PARAM, b.OS_ID " +
+            "b.ROLE_CODE, c.NODE_CODE, c.NODE_NAME, c.NODE_TYPE, b.NODE_STATE, " +
+            "b.NODE_ID, c.OPT_TYPE as NODE_OPT_TYPE, c.OPT_PARAM, b.CREATE_TIME, b.deadline_time, " +
+            "c.OPT_CODE, c.EXPIRE_OPT, b.STAGE_CODE, b.GRANTOR, b.LAST_UPDATE_USER," +
+            "b.LAST_UPDATE_TIME, b.TIMER_STATUS, c.OPT_ID, b.PREV_NODE_INST_ID, b.pause_time, " +
+            "b.warning_time, c.Time_Limit as promise_Time, b.RUN_TOKEN, b.NODE_PARAM, a.OS_ID," +
+            "a.FLOW_OPT_NAME, a.FLOW_OPT_TAG " +
         "from wf_node_instance b join WF_NODE c on (b.NODE_ID = c.NODE_ID) " +
+            "join wf_flow_instance a on (b.FLOW_INST_ID=a.FLOW_INST_ID) " +
         "where 1=1 [ :flowInstId| and b.FLOW_INST_ID = :flowInstId]"  +
         "[ :nodeState| and b.NODE_STATE = :nodeState]" +
         "[ :stageArr | and c.STAGE_CODE in (:stageArr) ]" +
@@ -251,7 +253,7 @@ public class NodeInstanceDao extends BaseDaoImpl<NodeInstance, String> {
         "[ :unitCode| and b.UNIT_CODE = :unitCode]" +
         "[ :(DATETIME)beginTime| and b.CREATE_TIME >= :beginTime]" +
         "[ :(DATETIME)endTime| and b.CREATE_TIME <= :endTime]" +
-        "[ :osId| and b.OS_ID = :osId]" +
+        "[ :osId| and a.OS_ID = :osId]" +
         "[ :optId| and c.OPT_ID = :optId]" +
         "[ :optCode| and c.OPT_CODE = :optCode]" +
         "[ :nodeInstId| and b.NODE_INST_ID = :nodeInstId]" +
