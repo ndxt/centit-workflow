@@ -99,6 +99,23 @@ public abstract class FlowOptUtils {
 
     }
 
+    /**
+     * 将两个日期之间的自然时间差换算为工作时间
+     * 用自然时间差减去区间内非工作日(整天)的时间
+     * 和 WorkDayManager.calcWorkingDeadline 顺延非工作日的规则互逆
+     */
+    private static DateTimeSpan calcWorkTimeSpan(String topUnit, Date beginDate, Date endDate,
+                                                 WorkDayManager workDayManager) {
+        DateTimeSpan span = DateTimeSpan.calcDateTimeSpan(beginDate, endDate);
+        if (span.isPositiveTimeSpan()) {
+            int holidays = workDayManager.calcHolidays(topUnit, beginDate, endDate);
+            if (holidays > 0) {
+                span.setTimeSpan(span.getTimeSpan() - holidays * DateTimeSpan.DAY_MILLISECONDS);
+            }
+        }
+        return span;
+    }
+
     public static void calcNodeInstTimeLimit(NodeInstance nodeInst, String timeLimit,
                                              FlowInstance flowInst, NodeInstance preNodeInst,
                                              FlowInfo flowInfo, NodeInfo node,
@@ -119,8 +136,8 @@ public abstract class FlowOptUtils {
                 && preNodeInst.getLastUpdateTime() != null && preNodeInst.getDeadlineTime() != null
                 && preNodeInst.getLastUpdateTime().before(preNodeInst.getDeadlineTime())) {
 
-                extend = DateTimeSpan.calcDateTimeSpan(
-                        preNodeInst.getLastUpdateTime(), preNodeInst.getDeadlineTime());
+                extend = calcWorkTimeSpan(flowInst.getTopUnit(),
+                    preNodeInst.getLastUpdateTime(), preNodeInst.getDeadlineTime(), workDayManager);
 
             }
         } else if (NodeInfo.TIME_LIMIT_INHERIT_ASSIGNED.equals(node.getInheritType())) {
@@ -130,6 +147,10 @@ public abstract class FlowOptUtils {
             for (NodeInfo thisNode : nodes) {
                 NodeInstance tempInst = flowInst.findLastSameNodeInst
                     (thisNode.getNodeId(), nodeInst, nodeInst.getNodeInstId());
+                //指定节点还没有实例 不继承 继承时间为0
+                if (tempInst == null) {
+                    continue;
+                }
                 if (inhertInst == null || inhertInst.getCreateTime().before(tempInst.getCreateTime()))//大小于
                     inhertInst = tempInst;
             }
@@ -138,8 +159,8 @@ public abstract class FlowOptUtils {
                 && inhertInst.getLastUpdateTime() != null && inhertInst.getDeadlineTime() != null
                 && inhertInst.getLastUpdateTime().before(inhertInst.getDeadlineTime())) {
 
-                extend = DateTimeSpan.calcDateTimeSpan(
-                    inhertInst.getLastUpdateTime(), inhertInst.getDeadlineTime());
+                extend = calcWorkTimeSpan(flowInst.getTopUnit(),
+                    inhertInst.getLastUpdateTime(), inhertInst.getDeadlineTime(), workDayManager);
 
             }
         }
